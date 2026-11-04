@@ -1,0 +1,5 @@
+# eliasrutten.com welcomes search engines and AI answer engines.
+User-agent: *
+Allow: /
+
+Sitemap: https://eliasrutten.com/sitemap.xml
