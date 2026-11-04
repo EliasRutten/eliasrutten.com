@@ -12,7 +12,7 @@ Key facts:
 
 ## Interactive
 
-- [The Imperial Stack](https://eliasrutten.com/imperial-stack/): interactive map of how US tech firms, the dollar and the American state work as one machine, built around Pax Silica, with ten scenarios (Starlink over Crimea, Huawei, Nexperia, Russia’s frozen reserves, Nayara Energy, stablecoins in Kenya and more).
+- [The Imperial Stack](https://eliasrutten.com/imperial-stack/): interactive map of how US tech firms, the dollar and the American state work as one machine, built around Pax Silica: the dollar loop from platform rents to Treasury debt management, who finances the AI build-out, and fourteen scenarios (Starlink over Crimea, Huawei, Nexperia, Russia’s frozen reserves, Nayara Energy, stablecoins in Kenya and more).
 
 ## Investigations and long reads (Follow the Money, in Dutch)
 
