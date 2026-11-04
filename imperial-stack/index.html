@@ -1164,6 +1164,31 @@ button.res:hover { transform: none; box-shadow: none; }
 
 .segm { flex-wrap: nowrap; margin-top: 7px; } .segm button { padding: 3px 9px; font-size: 12px; white-space: nowrap; } .segm span { padding: 0 4px; }
 
+/* v8.2: short laptop screens */
+@media (min-width: 761px) {
+  .globebox { height: clamp(540px, min(66vw, calc(100vh - 24px)), 960px); }
+  &.ring-sm .ring { transform: scale(.78); transform-origin: 0 0; }
+  &.ring-xs .ring { transform: scale(.6); transform-origin: 0 0; }
+  &.ring-off .ring { display: none; }
+  &.cmd-tight .cmd6 .tournarr p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+  &.cmd-tight .cmd6 .tournarr.open p { display: block; }
+}
+@media (min-width: 761px) and (max-height: 820px) {
+  .cmd6 { bottom: 70px; }
+  .cmd6 .tournarr { padding: 10px 14px 8px; }
+  .cmd6 .tournarr h3 { font-size: 19px; }
+  .cmd6 .tournarr p { font-size: 13px; line-height: 1.45; margin-top: 4px; }
+  .cmd6 .tfig { margin-top: 6px; padding-top: 6px; }
+  .cmd6 .tfig .v { font-size: 21px; }
+  .cmd6 .tnav { margin-top: 7px; }
+  .bigbtn { padding: 6px 10px; } .bigbtn i { display: none; }
+}
+
+@media (min-width: 761px) and (max-width: 1360px) {
+  .res { padding: 4px 8px 3px; } .res .k { font-size: 9px; letter-spacing: .03em; } .res .v { font-size: 14px; } .res .rq { display: none; } .res .k { padding-right: 0; }
+  .brand h1 { font-size: 30px; white-space: nowrap; }
+}
+
 }
 </style>
 
@@ -2922,6 +2947,7 @@ function after5() {
   narr6(); ring5(); legend6();
   $('mapnote').textContent = STEPS[step].key === 'surplus' ? surNote() : $('mapnote').textContent;
   const tb = $('tabs').querySelectorAll('.tb'); STEPS.forEach((s, i) => { const b = tb[i + 1]; if (b) b.classList.toggle('vis', VIS.has(i)); });
+  requestAnimationFrame(fit6);
 }
 function surNote() { return surMode === 'ai' ? 'Bars: gross AI-hardware exports, % of GDP, 2025 (*Taiwan: broader ICT category)' : 'Bars: current-account balance, 2025, $bn; labels add % of GDP'; }
 function narr6() {
@@ -3033,6 +3059,19 @@ function table6(s, host) {
   gmList(host);
   return true;
 }
+
+/* v8.2: keep the ring and the card apart on short laptop screens */
+function fit6() {
+  const ring = $('ring'), cmd = $('cmd'); if (!ring || !cmd) return;
+  ROOT.classList.remove('ring-sm', 'ring-xs', 'ring-off', 'cmd-tight');
+  if (view !== 'map' || window.innerWidth <= 760) return;
+  const gap = () => ring.getBoundingClientRect().bottom + 6 - cmd.getBoundingClientRect().top;
+  for (const k of ['ring-sm', 'ring-xs', 'ring-off']) { if (gap() <= 0) break; ROOT.classList.remove('ring-sm', 'ring-xs'); ROOT.classList.add(k); }
+  const rb = $('resbar').getBoundingClientRect().bottom;
+  if (cmd.getBoundingClientRect().top < rb + 10) ROOT.classList.add('cmd-tight');
+}
+let fitRaf = 0;
+window.addEventListener('resize', () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fit6); });
 
 /* ================= v8: Financing the AI Manhattan Project, as a dashboard ================= */
 FINM[0][2] = 'Who funds whom'; FINM[1][2] = 'The capital stack';
