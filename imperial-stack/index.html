@@ -3662,6 +3662,14 @@ FINM[0][2] = 'The plumbing'; FINM[1][2] = 'The capital stack';
 LEVERS[1].fx[0][1] = 'Operations in 10- to 30-year bonds doubled to at least $4bn on 19 August; up to $6bn per operation was announced on 9 September, three times the standard $2bn';
 LEVERS[1].fx.push(['+', 'On 4 November the Treasury said it expects to buy back up to $70bn across the curve for liquidity support']);
 LEVERS[1].src += ' Reuters (4 Nov 2026).';
+/* v.1.5: the rate hike as a subsidy to the financial sector and a new issuance channel */
+LEVERS[5].fx.push(
+  ['+', 'With this much debt in bills, a hike is a transfer: banks earn it on reserves, money-fund holders and stablecoin issuers on bills. The Treasury pays'],
+  ['+', 'That income can lift asset prices, the opposite of what a hike is meant to do'],
+  ['+', 'Higher prices reopen the window for new shares: Alphabet ≈$85bn (2 Jun), Meta $37.5bn (Oct), the SpaceX IPO (12 Jun)'],
+  ['=', 'The transfer is arithmetic; the price effect is this page’s reading, not a measured result']
+);
+LEVERS[5].src += ' Alphabet pricing press release (2 Jun 2026); Meta share sale (Oct 2026, see the capital stack); SpaceX IPO (priced 11 Jun 2026, Nasdaq).';
 
 /* who pulls each lever, and which group it belongs to */
 const LGROUPS = [
@@ -3749,6 +3757,7 @@ const FIC = {
   barrel: '<path d="M6 4h12M6 20h12M6 4c-1.6 3-1.6 13 0 16M18 4c1.6 3 1.6 13 0 16M6 9h12M6 15h12"/>',
   pump: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M4 20h11M7 8h5M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
   usd: '<path d="M12 3v18M16 7.5c-1-1-2.4-1.5-4-1.5-2.3 0-4 1.2-4 3s1.7 2.4 4 3 4 1.2 4 3-1.7 3-4 3c-1.6 0-3-.5-4-1.5"/>',
+  issue: '<path d="M7 3h7l4 4v14H7zM14 3v4h4M12 18v-6M9.5 14.5 12 12l2.5 2.5"/>',
   all: '<circle cx="12" cy="12" r="8"/>',
 };
 const fic = (k, sz) => `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FIC[k] || FIC.all}</svg>`;
@@ -3782,6 +3791,7 @@ const FN = {
   HYP: N('ai', 'ai', 0, 'rack', 'Hyperscalers', 'capex ≈$730bn', '#ffb547', 'Amazon, Alphabet, Microsoft, Meta, Oracle: collect the rents, place the hardware orders, borrow in five currencies.'),
   LAB: N('ai', 'ai', 2, 'spark', 'AI labs', 'OpenAI ≈$50bn rev.', '#ff5d8f', 'OpenAI, Anthropic and others: buy compute on multi-year contracts; their revenue has to cover the leases.'),
   SPX: N('ai', 'ai', 3, 'bars', 'AI stocks', '49% of S&P 500', '#44d7ec', 'JPMorgan’s basket of 41 AI-related stocks: 49% of S&P 500 market value in October 2026.'),
+  ISS: N('ai', 'ai', 1, 'issue', 'New shares', 'IPOs, share sales', '#ffb547', 'Share sales by the firms in the build-out and new listings. Alphabet announced an equity raise of about $85bn on 2 June 2026 (with $10bn from Berkshire Hathaway), Meta sold $37.5bn of shares in October, and SpaceX listed on Nasdaq on 12 June at a $1.77tn valuation. Rising share prices keep the window open: equity becomes a second way to fund capex besides bonds and private credit.'),
   /* households */
   CON: N('hh', 'hh', 1, 'bag', 'All consumers', '67.6% of GDP', '#3ee6b8', 'American households as a whole: consumer spending was 67.6% of GDP in Q3 2026 (FRED). They buy goods, not chips: what they buy is made abroad, and that is how American demand keeps the exporters, and through them the chip supply chain, busy.'),
   TOP: N('hh', 'hh', 2, 'ppl', 'Top 10%', 'own 88% of stocks', '#3ee6b8', 'The richest tenth of US households own 88% of household stocks and do more than 45% of consumer spending.'),
@@ -3805,7 +3815,7 @@ const FE = [
   ['TSY', 'CEN', 'debt', '+$245bn in a year, partly the basis trade'],
   ['BNK', 'CEN', 'cash', 'Repo loans finance leveraged positions'],
   ['MMF', 'BNK', 'cash', 'Cash lent in repo'],
-  ['FED', 'BNK', 'cash', 'Reserves for bills, Dec 2025 to Jul 2026'],
+  ['FED', 'BNK', 'cash', 'Reserves for bills, Dec 2025 to Jul 2026; the Fed pays interest on those reserves'],
   ['REG', 'BNK', 'rule', 'Leverage rule eased: room for Treasuries'],
   ['CGR', 'STB', 'rule', 'GENIUS Act: tokens must hold cash and bills'],
   ['TSY', 'Y10', 'sig', 'Fewer long bonds in private hands'],
@@ -3851,6 +3861,9 @@ const FE = [
   ['OIL', 'INF', 'sig', 'Energy prices feed inflation'],
   ['INF', 'FED', 'sig', 'Oil and tariffs pushed prices up; the Fed hiked on 16 Sep'],
   ['OIL', 'Y10', 'sig', 'Inflation risk lifts long yields'],
+  ['MMF', 'SPX', 'cash', 'Interest paid on bills, reserves and token reserves is income for fund holders, banks and issuers; part of it can flow into assets'],
+  ['SPX', 'ISS', 'sig', 'Higher share prices open the window for new shares and listings'],
+  ['ISS', 'HYP', 'cash', 'Share sales fund capex: Alphabet ≈$85bn (Jun 2026), Meta $37.5bn (Oct 2026)'],
 ];
 const EIDX = {}; FE.forEach((e, i) => { EIDX[e[0] + '>' + e[1]] = i; });
 const E = (...ids) => ids.map(k => { if (!(k in EIDX)) console.error('unknown relation ' + k); return EIDX[k]; }).filter(i => i != null);
@@ -3914,7 +3927,7 @@ const LEDGE = [
   E('FED>BNK'),
   E('REG>BNK', 'TSY>BNK'),
   E('CGR>STB', 'TSY>STB'),
-  E('FED>Y10', 'Y10>PCR', 'INF>FED'),
+  E('FED>Y10', 'Y10>PCR', 'INF>FED', 'TSY>MMF', 'TSY>BNK', 'TSY>STB', 'FED>BNK', 'MMF>SPX', 'SPX>ISS', 'ISS>HYP'),
   E('ENG>OIL', 'OIL>FUEL', 'FUEL>CON'),
   E('ENG>PET', 'PET>OIL'),
   E('HOR>OIL', 'OIL>INF'),
