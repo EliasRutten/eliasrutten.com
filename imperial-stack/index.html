@@ -67,6 +67,8 @@ body { margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); paddi
 @keyframes isx-burst { from { opacity: 1; transform: translate(0, 0) rotate(0); } to { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--r)); } }
 @keyframes isx-flash { 0% { box-shadow: 0 0 0 2px #ffd27a, 0 0 40px rgba(255, 210, 122, .35); } 100% { box-shadow: 0 0 0 0 transparent; } }
 @keyframes isx-bmcglow { 0%, 100% { box-shadow: 0 0 8px rgba(255, 214, 90, .14); } 50% { box-shadow: 0 0 18px rgba(255, 214, 90, .36); } }
+@keyframes isx-hot { 0%, 100% { box-shadow: 0 0 6px color-mix(in srgb, var(--tc) 18%, transparent); } 50% { box-shadow: 0 0 16px color-mix(in srgb, var(--tc) 42%, transparent); } }
+@keyframes isx-dos { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .isx {
 /* Layout: one large "war-room" frame holding three views: a WebGL globe (the circuit), the imperial-arm machine and
    the chains of action. Title, view switch and toggle float on top; tabs along the bottom edge.
@@ -957,11 +959,6 @@ dfn.df:hover, dfn.df:focus-visible { color: #fff; text-decoration-color: #ffd27a
 .fe.dim { opacity: .06; }
 .feh { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; cursor: help; }
 .fn { cursor: pointer; transition: opacity .25s; }
-.fn rect:first-child { fill: #0e1822; stroke: color-mix(in srgb, var(--nc) 45%, #22313f); stroke-width: 1.2; transition: stroke .15s, fill .15s; }
-.fn .fnb { fill: var(--nc); }
-.fn:hover rect:first-child, .fn:focus-visible rect:first-child { fill: color-mix(in srgb, var(--nc) 14%, #0e1822); stroke: var(--nc); }
-.fn.sel rect:first-child { stroke: var(--nc); stroke-width: 2.2; filter: drop-shadow(0 0 8px var(--nc)); }
-.fn.dim { opacity: .28; }
 .fnt { font-family: var(--display); font-weight: 600; font-size: 14.5px; letter-spacing: .04em; fill: #eef3f7; pointer-events: none; text-transform: uppercase; }
 .fns { font-family: var(--mono); font-size: 9.8px; fill: var(--ink2); pointer-events: none; }
 .rside { padding: 12px 14px; min-height: 420px; }
@@ -1446,6 +1443,160 @@ button.res:hover { transform: none; box-shadow: none; }
   .mapmodes { top: 222px; }
 }
 
+/* ---------- v.1.4 ---------- */
+/* the circuit card: one consistent corner treatment (bracket top left and bottom right, same radius, accent line inside) */
+.cmd6 .tournarr { border-radius: 12px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--sc) 70%, transparent) 50%, transparent) 50% 0 / calc(100% - 48px) 2px no-repeat, linear-gradient(180deg, rgba(14, 23, 33, .92), rgba(8, 14, 21, .94)); }
+.cmd6 .tournarr::before, .cmd6 .tournarr::after { content: ""; position: absolute; left: auto; right: auto; top: auto; bottom: auto; width: 16px; height: 16px; background: none; opacity: 1; border: 0 solid color-mix(in srgb, var(--sc) 80%, #6f8aa3); pointer-events: none; }
+.cmd6 .tournarr::before { left: -1px; top: -1px; border-width: 2px 0 0 2px; border-radius: 12px 0 0 0; }
+.cmd6 .tournarr::after { right: -1px; bottom: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 12px 0; }
+
+/* act rails: label chip, then a rail the width of the group; the current act glows */
+.tabs-bottom .actg { gap: 4px; }
+.tabs-bottom .actg .actsep { gap: 6px; padding: 0 2px; font-size: 9.5px; letter-spacing: .15em; font-weight: 600; text-transform: uppercase; opacity: .78; transition: opacity .2s; }
+.tabs-bottom .actg .actsep i { display: inline-grid; place-items: center; min-width: 17px; height: 15px; padding: 0 4px; margin: 0; border-radius: 5px; background: color-mix(in srgb, var(--ac) 22%, transparent); color: var(--ac); font-style: normal; font-size: 9px; letter-spacing: .02em; opacity: 1; }
+.tabs-bottom .actg .actsep i::after { content: none; }
+.tabs-bottom .actg .actsep::after { flex: none; content: none; }
+.tabs-bottom .actg::before { content: ""; order: 1; height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--ac) 38%, #1a2631); box-shadow: 0 0 0 transparent; transition: background .25s, box-shadow .25s; }
+.tabs-bottom .actg .actrow { order: 2; }
+.tabs-bottom .actg:has(.tb[aria-current="true"])::before { background: var(--ac); box-shadow: 0 0 10px color-mix(in srgb, var(--ac) 60%, transparent); }
+.tabs-bottom .actg:has(.tb[aria-current="true"]) .actsep { opacity: 1; }
+.tabs-bottom .actg .actsep { order: 0; }
+
+/* the coming-soon tab */
+.seg button.soon { display: inline-flex; align-items: center; gap: 7px; cursor: default; color: var(--ink3); border: 1px dashed #2b3a49; background: transparent; }
+.seg button.soon:hover { color: var(--ink3); background: transparent; box-shadow: none; }
+.seg button.soon em { font-style: normal; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #ffb547; border: 1px solid rgba(255, 181, 71, .45); border-radius: 999px; padding: 1px 7px 0; }
+@media (max-width: 1680px) { .seg button.soon .lg { display: none; } .seg button.soon .sm { display: inline; } }
+@media (max-width: 1100px) { .seg button.soon em { display: none; } }
+
+/* v.1.4: five tabs now share the bar; shorten labels before the brand or the toggles are squeezed */
+@media (min-width: 761px) and (max-width: 1560px) {
+  .seg button { padding-left: 12px; padding-right: 12px; letter-spacing: .08em; }
+  .seg #isx-v-map .lg, .seg #isx-v-arm .lg, .seg #isx-v-story .lg, .seg #isx-v-crisis .lg { display: none; }
+  .seg #isx-v-map .sm, .seg #isx-v-arm .sm, .seg #isx-v-story .sm, .seg #isx-v-crisis .sm { display: inline; }
+}
+@media (min-width: 761px) and (max-width: 1440px) {
+  .seg #isx-v-fin .lg { display: none; } .seg #isx-v-fin .sm { display: inline; }
+}
+
+/* ---------- v.1.4: the simulator as a cockpit ---------- */
+.finhead.cp { max-width: none; margin: 0 0 12px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 28px; text-align: left; }
+.finhead.cp .fhl { flex: 1 1 560px; min-width: 0; }
+.finhead.cp .fht { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 20px; }
+.finhead.cp h2 { margin: 2px 0 0; font-size: clamp(24px, 2.2vw, 30px); }
+.finhead.cp p { flex: 1 1 340px; margin: 0; max-width: 78ch; font-size: 13px; line-height: 1.4; }
+.finhead.cp .fsw { margin-top: 0; padding: 3px; } .finhead.cp .fsw button { padding: 6px 14px; } .finhead.cp .fsw button small { display: none; }
+.cock { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px 14px 14px; margin-bottom: 12px; }
+/* plays */
+.pbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pbl { margin-right: 4px; font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink3); }
+.pchip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--pc) 38%, #22313f); background: color-mix(in srgb, var(--pc) 9%, #0d1620); color: var(--ink); cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .05em; text-transform: uppercase; transition: transform .12s, border-color .15s, background .15s, box-shadow .15s; }
+.pchip svg { color: var(--pc); }
+.pchip:hover { transform: translateY(-1px); border-color: var(--pc); box-shadow: 0 0 14px color-mix(in srgb, var(--pc) 28%, transparent); }
+.pchip.on { border-color: var(--pc); background: color-mix(in srgb, var(--pc) 26%, #0d1620); box-shadow: 0 0 18px color-mix(in srgb, var(--pc) 38%, transparent); }
+.pbsp { flex: 1; }
+.pcnt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink3); }
+.pcnt b { color: #fff; font-weight: 400; }
+.pclr { padding: 4px 10px; border-radius: 8px; border: 1px solid #2b3a49; background: transparent; color: var(--ink2); font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.pclr:hover { color: #fff; border-color: #ffb547; }
+/* the HUD: one cluster above each column of the map */
+.hud6 { display: grid; grid-template-columns: 160fr 160fr 312fr 160fr 160fr 160fr; column-gap: 1.1844%; align-items: stretch; }
+.hc { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.hc h4 { display: flex; align-items: center; gap: 8px; margin: 0; font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--zc); white-space: nowrap; }
+.hc h4::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--zc) 35%, transparent); }
+.hct { flex: 1; display: grid; grid-auto-rows: 1fr; gap: 5px; }
+.hc-fin .hct { grid-template-columns: 1fr 1fr; }
+.hc-fin .tile:last-child { grid-column: 1 / -1; }
+.tile { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 0; padding: 5px 9px 5px 12px; border-radius: 9px; border: 1px solid #1f2c38; background: linear-gradient(180deg, #111c27, #0b131b); color: var(--ink); text-align: left; font: inherit; cursor: pointer; overflow: hidden; transition: border-color .15s, box-shadow .2s, background .2s, transform .12s; }
+.tile::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 2px 2px 0; background: var(--tc); opacity: .75; }
+.tk { display: flex; align-items: center; gap: 5px; min-width: 0; font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk i { display: inline-flex; flex: none; color: var(--tc); }
+.tr { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
+.tv { font-family: var(--mono); font-size: 18px; line-height: 1.15; color: var(--tc); white-space: nowrap; }
+.tile small { font-size: 10px; line-height: 1.25; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg svg { display: block; width: 58px; height: auto; }
+.tile:hover { transform: translateY(-1px); border-color: var(--tc); box-shadow: 0 0 14px color-mix(in srgb, var(--tc) 26%, transparent); }
+.tile.hot { border-color: var(--tc); background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 14%, #111c27), #0b131b); animation: isx-hot 1.8s ease-in-out infinite; }
+.tile.on { border-color: var(--tc); box-shadow: 0 0 0 1px var(--tc), 0 0 18px color-mix(in srgb, var(--tc) 35%, transparent); }
+/* the map */
+.mapstage { position: relative; border-radius: 12px; background: radial-gradient(ellipse at 50% 40%, rgba(63, 155, 255, .05), transparent 70%), rgba(6, 11, 17, .55); border: 1px solid #16212b; }
+.mapscroll { overflow-x: auto; }
+.mapscroll svg { display: block; width: 100%; height: auto; }
+.fz { fill: color-mix(in srgb, var(--zc) 4%, transparent); stroke: color-mix(in srgb, var(--zc) 26%, #17222d); stroke-dasharray: none; stroke-width: 1; }
+.fzb { fill: var(--zc); opacity: .6; }
+.fzg .fzt { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; fill: var(--zc); }
+.fzs { font-family: var(--mono); font-size: 7.6px; letter-spacing: .1em; fill: var(--ink3); }
+.fe { stroke-width: 1.4; opacity: .24; }
+.fe.goods { opacity: .55; stroke-width: 1.9; }
+.fe.debt, .fe.sell { opacity: .36; }
+.fe.on { opacity: 1; stroke-width: 2.6; }
+.fe.dim { opacity: .05; }
+.fn { cursor: pointer; transition: opacity .25s; outline: none; }
+.fnr { fill: #0d1721; stroke: color-mix(in srgb, var(--nc) 38%, #22313f); stroke-width: 1.2; transition: stroke .15s, fill .15s; }
+.fn.lm .fnr { fill: #101b27; stroke: color-mix(in srgb, var(--nc) 50%, #22313f); }
+.fnm { fill: color-mix(in srgb, var(--nc) 14%, #0d1721); stroke: color-mix(in srgb, var(--nc) 55%, transparent); stroke-width: 1; }
+.fni, .wm { fill: none; stroke: var(--nc); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.wm { opacity: .14; stroke-width: 1.3; }
+.fn:hover .fnr, .fn:focus-visible .fnr { fill: color-mix(in srgb, var(--nc) 12%, #0d1721); stroke: var(--nc); }
+.fn.lit .fnr { stroke: var(--nc); }
+.fn.sel .fnr { stroke: var(--nc); stroke-width: 2.2; filter: drop-shadow(0 0 8px var(--nc)); }
+.fn.dim { opacity: .3; }
+.fnt { font-family: var(--display); font-weight: 600; font-size: 12.5px; letter-spacing: .05em; fill: #eef3f7; pointer-events: none; text-transform: uppercase; }
+.fns { font-family: var(--mono); font-size: 8.8px; fill: var(--ink2); pointer-events: none; }
+/* the dossier floats over the side the action is not on */
+.dossier { position: absolute; top: 10px; right: 10px; z-index: 3; width: min(390px, 42%); max-height: calc(100% - 20px); overflow: auto; padding: 14px 16px 16px; border-radius: 12px; background: rgba(8, 14, 21, .95); backdrop-filter: blur(6px); border: 1px solid color-mix(in srgb, var(--dc, #ffd27a) 55%, #22313f); box-shadow: 0 14px 40px rgba(0, 0, 0, .55), 0 0 22px color-mix(in srgb, var(--dc, #ffd27a) 16%, transparent); animation: isx-dos .2s ease-out; }
+.dossier.l { right: auto; left: 10px; }
+.dossier.b { top: auto; bottom: 10px; }
+.dossier[hidden] { display: none; }
+.dx { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; border: 1px solid #2b3a49; background: #0d1620; color: var(--ink2); font-size: 17px; line-height: 1; cursor: pointer; }
+.dx:hover { color: #fff; border-color: #ffb547; }
+.dossier .pk { display: flex; align-items: center; gap: 6px; margin-right: 30px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
+.dossier h4 { margin: 6px 30px 4px 0; font-family: var(--display); font-weight: 600; font-size: 21px; letter-spacing: .04em; text-transform: uppercase; line-height: 1.1; }
+.dossier h5 { margin: 12px 0 4px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); font-weight: 400; }
+.dossier p { margin: 6px 0; font-family: var(--serif); font-size: 13.5px; line-height: 1.5; color: #d6e0e8; }
+.dossier .ld { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+.dossier .nb { color: var(--dc, #ffd27a); }
+.dossier .go { padding: 0; border: 0; background: none; color: #fff; font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline dotted rgba(255, 255, 255, .4); text-underline-offset: 3px; }
+.dossier .go:hover { color: var(--dc, #ffd27a); }
+.dossier .nrel li { grid-template-columns: 12px minmax(0, 1fr); }
+.dtile { margin-top: 8px; padding: 7px 10px; border-radius: 8px; background: rgba(255, 255, 255, .04); border-left: 3px solid var(--dc, #ffd27a); }
+.dtile b { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--dc, #ffd27a); }
+.dtile em { font-style: normal; font-size: 11px; color: var(--ink2); }
+.dtile p { margin: 3px 0 2px; font-size: 12.5px; }
+.cock .rkey { padding: 0; }
+/* the ability bar: levers */
+.levbar { display: grid; grid-template-columns: 6fr 2fr 3fr 3fr; gap: 8px 14px; }
+.lvg { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.lvh { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--gc); white-space: nowrap; }
+.lvh b { font-weight: 400; }
+.lvh::after { content: ""; flex: 1; height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--gc) 38%, #1a2631); }
+.lvg:has(.lv.on) .lvh::after { background: var(--gc); box-shadow: 0 0 10px color-mix(in srgb, var(--gc) 60%, transparent); }
+.lvr { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; }
+.lv { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; padding: 8px 3px 7px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--lc) 30%, #22313f); background: linear-gradient(180deg, color-mix(in srgb, var(--lc) 7%, #121d28), #0c151e); color: var(--ink); cursor: pointer; font: inherit; transition: transform .12s, border-color .15s, background .15s, box-shadow .15s; }
+.lv .lvi { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; color: var(--lc); background: color-mix(in srgb, var(--lc) 14%, #0b131b); border: 1px solid color-mix(in srgb, var(--lc) 45%, transparent); }
+.lv b { font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; line-height: 1.1; text-align: center; overflow-wrap: anywhere; }
+.lv:hover { transform: translateY(-2px); border-color: var(--lc); box-shadow: 0 0 16px color-mix(in srgb, var(--lc) 28%, transparent); }
+.lv:active { transform: translateY(1px); }
+.lv.on { border-color: var(--lc); background: linear-gradient(180deg, color-mix(in srgb, var(--lc) 26%, #162230), color-mix(in srgb, var(--lc) 8%, #0c151e)); box-shadow: 0 0 20px color-mix(in srgb, var(--lc) 38%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--lc) 45%, transparent); }
+.lv.on::after { content: "✓"; position: absolute; top: 3px; right: 5px; font-size: 10px; color: var(--lc); }
+@media (max-width: 1100px) {
+  .hud6 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .hc-fin .hct { grid-template-columns: 1fr; } .hc-fin .tile:last-child { grid-column: auto; }
+  .mapscroll svg { min-width: 900px; }
+  .levbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lvr { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+}
+@media (max-width: 900px) {
+  .dossier, .dossier.l, .dossier.b { position: static; width: auto; max-height: none; margin: 10px; animation: none; }
+}
+@media (max-width: 620px) {
+  .hud6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .levbar { grid-template-columns: minmax(0, 1fr); }
+  .cock { padding: 10px; }
+  .pchip { padding: 4px 9px 4px 7px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .tile.hot, .dossier { animation: none; } }
+
 }
 </style>
 
@@ -1458,6 +1609,7 @@ button.res:hover { transform: none; box-shadow: none; }
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
         <button type="button" id="isx-v-fin" aria-pressed="false"><span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span></button>
         <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">Scenarios</span><span class="sm">Scenarios</span></button>
+        <button type="button" id="isx-v-crisis" class="soon" disabled title="Coming soon: what happens when the AI bubble pops"><span class="lg">Crisis simulation</span><span class="sm">Crisis</span><em>coming soon</em></button>
       </div>
       <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="false"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
       <div class="mswitch" id="isx-mswitch" role="group" aria-label="Arm view" hidden><button type="button" id="isx-m-machine" aria-pressed="true">Machine</button><button type="button" id="isx-m-rev" aria-pressed="false">Revenue map</button></div>
@@ -1513,7 +1665,7 @@ button.res:hover { transform: none; box-shadow: none; }
   </section>
 
   <div class="cbar6" id="isx-cbar">
-    <span class="cb-l"><b>v.1.3</b> · data as of 5 Nov 2026</span>
+    <span class="cb-l"><b>v.1.4</b> · data as of 5 Nov 2026</span>
     <div class="cb-c"><a class="thesis6" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener" data-tip="<b>The thesis</b><p>One essay explaining the whole map: how the dollar system rebuilt itself around US profits, and why the AI boom is its newest form. Coming soon: subscribe to get it.</p>"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg><span>Read the thesis</span><em>coming soon</em></a><a class="bmc6" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">☕ Support<span class="cb-x"> this free map</span></a></div>
     <button type="button" class="fsbtn" id="isx-fs" aria-label="Full screen"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Full screen</span></button>
   </div>
@@ -2928,7 +3080,7 @@ const STEP6 = {
     cap: 'US shares held abroad, mid-2026, against $9.3tn of Treasuries',
     deep: [
       ['The shift', 'Foreigners held 47% of US federal debt in 2014 and 30% in 2025. After 2014 foreign central banks stopped adding to their Treasuries. What they and private investors buy now is US equity: claims on US corporate profits.'],
-      ['The loop', '<b>Extract</b>: platforms collect {{rents|rents}} worldwide. <b>Spend</b>: rents become orders for hardware made by allies. <b>Produce</b>: allied machines, chips and servers. <b>Return</b>: the allies’ surpluses buy US assets. <b>Underwrite</b>: the state keeps the markets liquid, and higher valuations pay for the next round.'],
+      ['The loop', '<b>Extract</b>: platforms collect {{rents|rents}} worldwide. <b>Spend</b>: rents become orders for hardware made by allies. <b>Produce</b>: allied machines, chips and servers. <b>Return</b>: the allies’ surpluses buy US assets. <b>Imperial management</b>: the state keeps the markets liquid, and higher valuations pay for the next round.'],
       ['The frame', '{{paxsilica|Pax Silica}}, with 26 signatories by 23 October 2026, is the political wrapper around the loop. China’s {{waico|WAICO}} is the rival bloc.'],
       ['How to read it', 'Follow the ten steps with the buttons, the ring or the arrow keys. Click any country. Dotted underlines are defined terms: hover or tap them.'],
     ], defs: ['rents', 'paxsilica', 'waico'] },
@@ -3406,9 +3558,19 @@ function table6(s, host) {
 function fit6() {
   const cmd = $('cmd'); if (!cmd) return;
   ROOT.classList.remove('cmd-tight');
+  placeModes();
   if (view !== 'map' || window.innerWidth <= 760) return;
   const rb = $('resbar').getBoundingClientRect().bottom;
   if (cmd.getBoundingClientRect().top < rb + 10) ROOT.classList.add('cmd-tight');
+}
+/* v.1.4: keep the map-mode panel clear of the tiles above it and of the zoom buttons below it (full screen included) */
+function placeModes() {
+  const mm = $('mapmodes'), fr = $('frame'), z = $('zoom'), rb = $('resbar');
+  if (!mm || !fr) return;
+  if (view !== 'map' || mm.hidden || window.innerWidth <= 760) { mm.style.top = ''; mm.style.maxHeight = ''; mm.style.overflowY = ''; return; }
+  const f = fr.getBoundingClientRect(), r = rb && !rb.hidden ? rb.getBoundingClientRect() : null, zr = z.getBoundingClientRect();
+  const top = Math.max(r ? r.bottom - f.top : 0, 0) + 14, avail = (zr.height ? zr.top - f.top : f.height) - top - 12;
+  mm.style.top = top + 'px'; mm.style.maxHeight = Math.max(96, avail) + 'px'; mm.style.overflowY = 'auto';
 }
 let fitRaf = 0;
 window.addEventListener('resize', () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fit6); });
@@ -3491,6 +3653,10 @@ function initFolds() {
   foldOn($('method'), 'method', 'How we count', false);
 }
 
+/* v.1.4: act V is called Imperial management */
+A5[4] = 'Imperial management';
+document.fonts && document.fonts.ready.then(() => requestAnimationFrame(fit6));
+
 /* ================= v.1.2: the Scott Bessent Simulator (was: Financing the AI Manhattan Project) ================= */
 FINM[0][2] = 'The plumbing'; FINM[1][2] = 'The capital stack';
 LEVERS[1].fx[0][1] = 'Operations in 10- to 30-year bonds doubled to at least $4bn on 19 August; up to $6bn per operation was announced on 9 September, three times the standard $2bn';
@@ -3532,39 +3698,105 @@ LEVERS.push(
     src: 'Korea Economic Institute of America, The Peninsula (2025); terms were still disputed when reported. Check current status.' },
 );
 const LCOL = { debt: '#ffd27a', home: '#3ee6b8', abroad: '#44d7ec', comm: '#b7f36b' };
+/* ================= v.1.4: the cockpit: geometry, icons, nodes, relations ================= */
+const NW = 140, NH = 48, PITCH = 56, cyOf = r => 50 + PITCH * r;
+const CX = { abroad: 80, state: 254, finL: 426, finR: 582, ai: 754, hh: 928, energy: 1102 };
+/* zones: id, title, colour, x, width, first row, last row, footer labels? */
+const FZ = [
+  ['abroad', 'Abroad', '#44d7ec', 0, 160, 0, 5, 0],
+  ['state', 'The state', '#ffd27a', 174, 160, 2, 6, 0],
+  ['fin', 'Financial sector', '#ffb547', 348, 312, 2, 5, 1],
+  ['ai', 'AI build-out', '#ff5d8f', 674, 160, 0, 3, 0],
+  ['hh', 'Households', '#3ee6b8', 848, 160, 1, 4, 0],
+  ['energy', 'Energy and prices', '#b7f36b', 1022, 160, 1, 6, 0],
+];
+const MAPW = 1182, MAPH = cyOf(6) + NH / 2 + 10;
+const zoneRect = ([, , , x, w, r0, r1, foot]) => { const y = cyOf(r0) - 50, b = cyOf(r1) + NH / 2 + (foot ? 20 : 9); return [x, y, w, b - y]; };
 
-const FZ = [['state', 'The state', 230, 16, 760, 176], ['foreign', 'Foreign sector', 12, 208, 180, 536], ['private', 'Private capital and households', 212, 208, 560, 350], ['commod', 'Commodities', 212, 574, 560, 170], ['signal', 'Signals', 792, 208, 196, 536]];
-const FN = {
-  TSY: ['state', 330, 62, 'US Treasury', 'bills 22.2% of debt', '#ffd27a', 'Issues the debt that funds the deficit. Leans on bills and buys back long bonds.'],
-  FED: ['state', 500, 62, 'Federal Reserve', 'funds rate 3.75–4%', '#ffd27a', 'Sets the policy rate (raised on 16 September 2026) and bought bills from December 2025 to July 2026 to keep reserves ample. Its FIMA repo facility lets foreign central banks borrow up to $60bn against Treasuries.'],
-  REG: ['state', 670, 62, 'Bank regulators', 'leverage rule eased', '#ffd27a', 'Fed, FDIC and OCC: cut the enhanced supplementary leverage ratio for the largest banks from April 2026.'],
-  POL: ['state', 870, 62, 'White House, Congress', 'GENIUS Act · tariffs', '#e4ebf1', 'Writes the rules: the GENIUS Act for stablecoins, the 2025 tax law, tariffs and export controls on producers, trade deals and state stakes in strategic firms.'],
-  ESF: ['state', 330, 140, 'Swaps and the ESF', 'Argentina $20bn', '#44d7ec', 'The Treasury’s Exchange Stabilization Fund, nearly $220bn, is the usual source of foreign-policy swaps such as the $20bn framework for Argentina (October 2025).'],
-  ENG: ['state', 500, 140, 'Energy policy', 'stocks, waivers, escorts', '#b7f36b', 'Emergency stock releases (400 million barrels agreed through the IEA in March 2026, 172 million of them American), the waiver on Russian oil at sea (12 March, extended 18 May) and Navy escorts for tankers.'],
-  OFF: ['foreign', 102, 256, 'Foreign central banks', '−$164bn in a year', '#ff5a4e', 'Official holders: central banks, finance ministries, sovereign funds. Held $3.76tn of Treasuries in August 2026, $164bn less than a year earlier.'],
-  CEN: ['foreign', 102, 366, 'Financial centres', '+$245bn in a year', '#c9d4de', 'Hedge funds and custodians booked in seven financial centres (UK, Belgium, Cayman Islands, Luxembourg, Ireland, Switzerland, Bermuda). Their Treasuries rose $245bn in the year to August 2026, partly in the basis trade.'],
-  GOV: ['foreign', 102, 476, 'Partner governments', 'JP · KR · AR · UAE', '#44d7ec', 'Governments Washington bargains with: Japan ($550bn investment pledge), South Korea ($350bn), Argentina ($20bn swap framework) and the UAE (swap talks, May 2026).'],
-  SAV: ['foreign', 102, 586, 'Allied savers', 'pensions, insurers', '#ffb547', 'Japanese, Korean and Dutch pension funds and insurers; Norway’s oil fund. US shares booked in Japan: $1,169bn; Norway: $826bn (June 2025).'],
-  PRO: ['foreign', 102, 696, 'Allied producers', 'TSMC, Foxconn, ASML', '#44d7ec', 'TSMC, Samsung, SK Hynix, Foxconn, ASML and their suppliers: the factories that fill the orders, and whose surpluses depend on American demand.'],
-  MMF: ['private', 300, 264, 'Money funds', 'hold bills as cash', '#ffd27a', 'Money-market funds hold bills and lend cash in repo: the bridge between household savings and Treasury bills.'],
-  BNK: ['private', 492, 264, 'Big banks, dealers', 'dealers, repo', '#ffd27a', 'Primary dealers buy at auction, make markets, lend in repo and underwrite the hyperscalers’ bonds.'],
-  STB: ['private', 684, 264, 'Stablecoin issuers', 'Tether ≈$132bn', '#d78bff', 'Tether, Circle and others: dollar tokens backed mostly by bills and repo; Tether held about $132bn of Treasury exposure at the end of September 2026.'],
-  INS: ['private', 300, 388, 'US insurers, pensions', '$85.2bn AI-linked', '#8fa3b6', 'Life insurers, annuity writers and pension funds: long-term money looking for yield. US life insurers held $85.2bn of AI-linked investments at the end of June 2026.'],
-  PCR: ['private', 492, 388, 'Private credit, SPVs', '≈$800bn to 2028', '#8fa3b6', 'Apollo, Blackstone, Blue Owl, PIMCO and others lend to special-purpose vehicles that build data centres and buy chips, off the platforms’ balance sheets.'],
-  HH: ['private', 684, 388, 'Households, top 10%', 'own 88% of stocks', '#3ee6b8', 'The richest tenth of US households own 88% of household stocks and do more than 45% of consumer spending.'],
-  LAB: ['private', 300, 512, 'AI labs', 'OpenAI rev. ≈$50bn', '#ff5d8f', 'OpenAI, Anthropic and others: buy compute on multi-year contracts; their revenue has to cover the leases.'],
-  HYP: ['private', 492, 512, 'Hyperscalers', 'capex ≈$730bn', '#ffb547', 'Amazon, Alphabet, Microsoft, Meta, Oracle: collect the rents, place the hardware orders, borrow in five currencies.'],
-  CON: ['private', 684, 512, 'US consumers, all', '67.6% of GDP', '#3ee6b8', 'American households as a whole: consumer spending was 67.6% of GDP in Q3 2026 (FRED). The US runs the deficit that absorbs the world’s surpluses, about 0.9% of world GDP (IMF, July 2026): when American households buy, allied factories stay busy and their surpluses keep flowing.'],
-  PET: ['commod', 300, 650, 'Oil exporters', 'Gulf, Russia, Iran', '#b7f36b', 'Producers whose revenue has long been recycled into US assets. The war with Iran closed the Strait of Hormuz from 28 February 2026, cutting about a fifth of world oil supply.'],
-  OIL: ['commod', 492, 650, 'Brent crude', '≈$97 on 5 Nov', '#b7f36b', 'The benchmark oil price: about $80 on 2 March, a peak near $118 in late March, about $104.5 on 25 September and about $97 on 5 November after a near-9% fall on 4 November, as traders weighed a diplomatic end to the war (Trading Economics).'],
-  FUEL: ['commod', 684, 650, 'Diesel and petrol', 'diesel $6.53/gal', '#b7f36b', 'US diesel cost $6.53 a gallon on 22 September 2026, up 77% in a year (AAA, EIA data): a tax on household spending and on every truck that delivers it.'],
-  Y10: ['signal', 890, 264, '10-year yield', '5.10%, peak 5.33%', '#ffd27a', 'The benchmark price of long-term money for every bond and loan behind the build-out.'],
-  MOV: ['signal', 890, 372, 'Bond volatility', 'MOVE ≈100', '#ff8a5c', 'The MOVE index: when it spikes, leveraged buyers such as basis traders are forced to sell.'],
-  SPX: ['signal', 890, 480, 'AI share of S&P 500', '49%', '#44d7ec', 'JPMorgan’s basket of 41 AI-related stocks: 49% of S&P 500 market value in October 2026.'],
-  YEN: ['signal', 890, 588, 'Yen', '155.20 on 31 Jul', '#44d7ec', 'The yen slid to 40-year lows before the joint US–Japan action of 31 July 2026 lifted it to 155.20. Japan, the largest foreign holder of Treasuries, would have to sell some if the slide became disorderly.'],
-  INF: ['signal', 890, 696, 'US inflation', 'PCE +2.1% (Q3 ann.)', '#ff8a5c', 'The PCE price index rose at a 2.1% annual rate in the third quarter of 2026, down from 5% in the second; 2.5% excluding food and energy (BEA, 29 October 2026).'],
+/* icons: 24 x 24, stroke only */
+const FIC = {
+  cap: '<path d="M3 21h18M5 21v-5h14v5M7 16v-3h10v3M8.5 13c0-3 1.5-5 3.5-5s3.5 2 3.5 5M12 8V3.5h3.5"/>',
+  wh: '<path d="M3 21h18M4 21v-3h16v3M5 18v-7M9 18v-7M12 18v-7M15 18v-7M19 18v-7M3.5 11L12 5.5l8.5 5.5z"/>',
+  tsy: '<path d="M3 9.5L12 4l9 5.5zM5 9.5V18M9.5 9.5V18M14.5 9.5V18M19 9.5V18M3 21h18M4 18h16"/>',
+  fed: '<path d="M3 21h18M5 21V10.5h14V21M4.5 10.5L12 4l7.5 6.5"/><circle cx="12" cy="15.5" r="2.6"/>',
+  reg: '<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2.2 2.2L15 10"/>',
+  drop: '<path d="M12 3c3 4 6 7 6 10a6 6 0 0 1-12 0c0-3 3-6 6-10z"/>',
+  bank: '<path d="M3 9.5L12 4l9 5.5M5 9.5V18M19 9.5V18M3 21h18"/><circle cx="12" cy="13.5" r="2.6"/>',
+  coin: '<circle cx="12" cy="12" r="8.5"/><path d="M12 6.5v11M9.2 9.4c.6-.9 1.6-1.3 2.8-1.3 1.6 0 2.8.7 2.8 1.9s-1.1 1.6-2.8 2-2.8.8-2.8 2 1.2 1.9 2.8 1.9c1.3 0 2.3-.5 2.9-1.3"/>',
+  sky: '<path d="M3 21h18M5 21V10h5v11M10 21V4.5h5V21M15 21v-8h4v8"/>',
+  umb: '<path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6a2 2 0 0 1-4 0"/>',
+  lay: '<path d="M12 4l9 5-9 5-9-5z"/><path d="M3 14l9 5 9-5"/>',
+  chart: '<path d="M3 4v16h18"/><path d="M6 15l4-5 3 3 5-7"/>',
+  pulse: '<path d="M3 12h4l2-6 4 12 2-6h6"/>',
+  rack: '<rect x="4" y="4" width="16" height="6" rx="1.2"/><rect x="4" y="14" width="16" height="6" rx="1.2"/><path d="M7.5 7h.01M7.5 17h.01M12 7h5M12 17h5"/>',
+  chip: '<rect x="7" y="7" width="10" height="10" rx="1.2"/><path d="M9.5 3v4M14.5 3v4M9.5 17v4M14.5 17v4M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>',
+  spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+  bars: '<path d="M5 20v-8M10 20V8M15 20v-6M20 20V5"/>',
+  house: '<path d="M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"/>',
+  bag: '<path d="M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1"/>',
+  jar: '<path d="M7 4h10M8 4v2M16 4v2M6 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM9 14h6"/>',
+  ppl: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20a6 6 0 0 1 12 0M15 15a5 5 0 0 1 6 5"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  flag: '<path d="M6 21V4M6 5h11l-2 4 2 4H6"/>',
+  vault: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M12 17v-1.5M8.5 12H7M17 12h-1.5"/>',
+  yen: '<circle cx="12" cy="12" r="9"/><path d="M8.5 7l3.5 5 3.5-5M12 12v5.5M9.5 13h5M9.5 15.5h5"/>',
+  fact: '<path d="M3 20V11l6 3v-3l6 3V5h3v15z"/>',
+  stack: '<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3 3 7 3s7-1.3 7-3v-5"/>',
+  bolt: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+  narrows: '<path d="M3 7c5 0 5 3 9 3s4-3 9-3M3 17c5 0 5-3 9-3s4 3 9 3"/>',
+  derrick: '<path d="M12 3L7 20h10zM9 12h6M8 16h8"/>',
+  barrel: '<path d="M6 4h12M6 20h12M6 4c-1.6 3-1.6 13 0 16M18 4c1.6 3 1.6 13 0 16M6 9h12M6 15h12"/>',
+  pump: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M4 20h11M7 8h5M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
+  usd: '<path d="M12 3v18M16 7.5c-1-1-2.4-1.5-4-1.5-2.3 0-4 1.2-4 3s1.7 2.4 4 3 4 1.2 4 3-1.7 3-4 3c-1.6 0-3-.5-4-1.5"/>',
+  all: '<circle cx="12" cy="12" r="8"/>',
 };
-const FT = { debt: ['#ffd27a', 'Treasuries and bills'], cash: ['#ffb547', 'Money and credit'], eq: ['#d78bff', 'Shares and stakes'], rule: ['#e4ebf1', 'Rules and policy'], goods: ['#44d7ec', 'Hardware orders and trade'], sell: ['#ff5a4e', 'Selling'], sig: ['#7d8fa0', 'Moves a signal'] };
+const fic = (k, sz) => `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FIC[k] || FIC.all}</svg>`;
+
+/* nodes: zone, x, y, title, sub (the value), accent, description, icon */
+const N = (z, cx, r, ic, t, s, c, d) => [z, CX[cx], cyOf(r), t, s, c, d, ic];
+const FN = {
+  /* abroad */
+  CHP: N('abroad', 'abroad', 0, 'chip', 'Fabs and tools', 'TSMC · ASML', '#44d7ec', 'The factories that fill the hyperscalers’ orders. Nvidia and Broadcom design the chips; TSMC, Samsung, SK Hynix and Foxconn build and assemble them; ASML and others make the tools. The US imported computers, peripherals and parts at an annual rate of $601bn in the second quarter of 2026.'),
+  EXP: N('abroad', 'abroad', 1, 'fact', 'Exporters', 'fed by US demand', '#44d7ec', 'The economies that make what American households buy: their surpluses mirror the US deficit, which absorbs about 0.9% of world GDP (IMF, July 2026). Households do not buy chips or lithography tools; they buy goods, and that spending keeps these economies, and their demand for chips and tools, running.'),
+  OFF: N('abroad', 'abroad', 2, 'vault', 'Central banks', '−$164bn in a year', '#ff5a4e', 'Official holders: central banks, finance ministries, sovereign funds. Held $3.76tn of Treasuries in August 2026, $164bn less than a year earlier.'),
+  GOV: N('abroad', 'abroad', 3, 'flag', 'Partner govts', 'JP · KR · AR · UAE', '#44d7ec', 'Governments Washington bargains with: Japan ($550bn investment pledge), South Korea ($350bn), Argentina ($20bn swap framework) and the UAE (swap talks, May 2026).'),
+  SAV: N('abroad', 'abroad', 4, 'stack', 'Allied savers', 'pension funds', '#ffb547', 'Japanese, Korean and Dutch pension funds and insurers; Norway’s oil fund. US shares booked in Japan: $1,169bn; Norway: $826bn (June 2025).'),
+  YEN: N('abroad', 'abroad', 5, 'yen', 'Yen', '155.20 on 31 Jul', '#44d7ec', 'The yen slid to 40-year lows before the joint US–Japan action of 31 July 2026 lifted it to 155.20. Japan, the largest foreign holder of Treasuries, would have to sell some if the slide became disorderly.'),
+  /* the state */
+  CGR: N('state', 'state', 2, 'cap', 'Congress', 'tax law · GENIUS', '#e4ebf1', 'Writes the law behind the plumbing: the GENIUS Act (July 2025), which makes stablecoin issuers hold cash and short-term Treasuries, and the 2025 tax law behind the larger 2026 refunds.'),
+  WH: N('state', 'state', 3, 'wh', 'White House', 'tariffs · deals', '#e4ebf1', 'Sets tariffs and export controls, bargains over trade (the investment pledges from Japan and South Korea) and takes state stakes in strategic firms.'),
+  TSY: N('state', 'state', 4, 'tsy', 'US Treasury', 'bills 22.2%', '#ffd27a', 'Issues the debt that funds the deficit. Leans on bills and buys back long bonds. Its Exchange Stabilization Fund, nearly $220bn, is the usual source of foreign-policy swaps such as the $20bn framework for Argentina (October 2025).'),
+  REG: N('state', 'state', 5, 'reg', 'Regulators', 'leverage eased', '#ffd27a', 'Fed, FDIC and OCC: cut the enhanced supplementary leverage ratio for the largest banks from April 2026.'),
+  FED: N('state', 'state', 6, 'fed', 'Federal Reserve', 'rate 3.75–4%', '#ffd27a', 'Sets the policy rate (raised on 16 September 2026) and bought bills from December 2025 to July 2026 to keep reserves ample. Its FIMA repo facility lets foreign central banks borrow up to $60bn against Treasuries.'),
+  /* the financial sector: short-term money (left), long-term money and prices (right) */
+  MMF: N('fin', 'finL', 2, 'drop', 'Money funds', 'bills as cash', '#ffd27a', 'Money-market funds hold bills and lend cash in repo: the bridge between household savings and Treasury bills.'),
+  BNK: N('fin', 'finL', 3, 'bank', 'Banks, dealers', 'repo, auctions', '#ffd27a', 'Primary dealers buy at auction, make markets, lend in repo and underwrite the hyperscalers’ bonds.'),
+  STB: N('fin', 'finL', 4, 'coin', 'Stablecoins', 'Tether ≈$132bn', '#d78bff', 'Tether, Circle and others: dollar tokens backed mostly by bills and repo; Tether held about $132bn of Treasury exposure at the end of September 2026.'),
+  CEN: N('fin', 'finL', 5, 'sky', 'Financial hubs', '+$245bn in a year', '#c9d4de', 'Hedge funds and custodians booked in seven financial centres (UK, Belgium, Cayman Islands, Luxembourg, Ireland, Switzerland, Bermuda). Their Treasuries rose $245bn in the year to August 2026, partly in the basis trade.'),
+  INS: N('fin', 'finR', 2, 'umb', 'Insurers', '$85.2bn AI-linked', '#8fa3b6', 'Life insurers, annuity writers and pension funds: long-term money looking for yield. US life insurers held $85.2bn of AI-linked investments at the end of June 2026.'),
+  PCR: N('fin', 'finR', 3, 'lay', 'Private credit', '≈$800bn to 2028', '#8fa3b6', 'Apollo, Blackstone, Blue Owl, PIMCO and others lend to special-purpose vehicles that build data centres and buy chips, off the platforms’ balance sheets.'),
+  Y10: N('fin', 'finR', 4, 'chart', '10-year yield', '5.14%, peak 5.33%', '#ffd27a', 'The benchmark price of long-term money for every bond and loan behind the build-out. The October 2026 average of daily closes was 5.14%; it touched 5.33% intraday.'),
+  MOV: N('fin', 'finR', 5, 'pulse', 'Bond volatility', 'MOVE ≈100', '#ff8a5c', 'The MOVE index: when it spikes, leveraged buyers such as basis traders are forced to sell.'),
+  /* the AI build-out */
+  HYP: N('ai', 'ai', 0, 'rack', 'Hyperscalers', 'capex ≈$730bn', '#ffb547', 'Amazon, Alphabet, Microsoft, Meta, Oracle: collect the rents, place the hardware orders, borrow in five currencies.'),
+  LAB: N('ai', 'ai', 2, 'spark', 'AI labs', 'OpenAI ≈$50bn rev.', '#ff5d8f', 'OpenAI, Anthropic and others: buy compute on multi-year contracts; their revenue has to cover the leases.'),
+  SPX: N('ai', 'ai', 3, 'bars', 'AI stocks', '49% of S&P 500', '#44d7ec', 'JPMorgan’s basket of 41 AI-related stocks: 49% of S&P 500 market value in October 2026.'),
+  /* households */
+  CON: N('hh', 'hh', 1, 'bag', 'All consumers', '67.6% of GDP', '#3ee6b8', 'American households as a whole: consumer spending was 67.6% of GDP in Q3 2026 (FRED). They buy goods, not chips: what they buy is made abroad, and that is how American demand keeps the exporters, and through them the chip supply chain, busy.'),
+  TOP: N('hh', 'hh', 2, 'ppl', 'Top 10%', 'own 88% of stocks', '#3ee6b8', 'The richest tenth of US households own 88% of household stocks and do more than 45% of consumer spending.'),
+  MTG: N('hh', 'hh', 3, 'house', 'Mortgages', '30-yr 7.24%', '#3ee6b8', 'The 30-year fixed mortgage rate averaged 7.24% in the week to 29 October 2026, down from 7.32% a week earlier (Freddie Mac). Long yields reach households here.'),
+  SVR: N('hh', 'hh', 4, 'jar', 'Saving rate', '3.8% of income', '#3ee6b8', 'The personal saving rate was 3.8% in September 2026. Income rose 0.2% on the month and spending 0.5% (BEA, 29 October 2026).'),
+  /* energy and prices */
+  FUEL: N('energy', 'energy', 1, 'pump', 'Diesel, petrol', 'diesel $6.53/gal', '#b7f36b', 'US diesel cost $6.53 a gallon on 22 September 2026, up 77% in a year (AAA, EIA data): a tax on household spending and on every truck that delivers it.'),
+  OIL: N('energy', 'energy', 2, 'barrel', 'Brent crude', '≈$97 on 5 Nov', '#b7f36b', 'The benchmark oil price: about $80 on 2 March, a peak near $118 in late March, about $104.5 on 25 September and about $97 on 5 November after a near-9% fall on 4 November, as traders weighed a diplomatic end to the war (Trading Economics).'),
+  HOR: N('energy', 'energy', 3, 'narrows', 'Hormuz strait', 'shut since 28 Feb', '#b7f36b', 'The narrow passage for about a fifth of world oil supply. The war with Iran closed it from 28 February 2026.'),
+  PET: N('energy', 'energy', 4, 'derrick', 'Oil exporters', 'Gulf, Russia, Iran', '#b7f36b', 'Producers whose revenue has long been recycled into US assets, the petrodollar loop. Russian oil already at sea was made saleable by a US waiver from 12 March 2026.'),
+  ENG: N('energy', 'energy', 5, 'bolt', 'Energy policy', 'stocks · waivers', '#b7f36b', 'Emergency stock releases (400 million barrels agreed through the IEA in March 2026, 172 million of them American), the waiver on Russian oil at sea (12 March, extended 18 May) and Navy escorts for tankers.'),
+  INF: N('energy', 'energy', 6, 'tag', 'Inflation', 'PCE +2.1% (Q3)', '#ff8a5c', 'The PCE price index rose at a 2.1% annual rate in the third quarter of 2026, down from 5% in the second; 2.5% excluding food and energy (BEA, 29 October 2026).'),
+};
+const FT = { debt: ['#ffd27a', 'Treasuries and bills'], cash: ['#ffb547', 'Money and credit'], eq: ['#d78bff', 'Shares and stakes'], rule: ['#e4ebf1', 'Rules and policy'], goods: ['#44d7ec', 'Goods and orders'], sell: ['#ff5a4e', 'Selling'], sig: ['#7d8fa0', 'Moves a signal'] };
+/* relations: from, to, type, label. An edge is named FROM>TO. */
 const FE = [
   ['OFF', 'TSY', 'sell', 'Sold $164bn of Treasuries in the year to August 2026'],
   ['TSY', 'MMF', 'debt', 'Bills: near-money for savers'],
@@ -3575,7 +3807,7 @@ const FE = [
   ['MMF', 'BNK', 'cash', 'Cash lent in repo'],
   ['FED', 'BNK', 'cash', 'Reserves for bills, Dec 2025 to Jul 2026'],
   ['REG', 'BNK', 'rule', 'Leverage rule eased: room for Treasuries'],
-  ['POL', 'STB', 'rule', 'GENIUS Act: tokens must hold cash and bills'],
+  ['CGR', 'STB', 'rule', 'GENIUS Act: tokens must hold cash and bills'],
   ['TSY', 'Y10', 'sig', 'Fewer long bonds in private hands'],
   ['TSY', 'MOV', 'sig', 'Buybacks aim at volatility'],
   ['FED', 'Y10', 'sig', 'Rate hike on 16 September 2026'],
@@ -3587,91 +3819,113 @@ const FE = [
   ['PCR', 'HYP', 'cash', 'Off-balance-sheet campuses: Hyperion, $27.3bn'],
   ['LAB', 'HYP', 'cash', 'Lease payments for compute'],
   ['HYP', 'LAB', 'eq', 'Stakes in the labs'],
-  ['HYP', 'PRO', 'goods', '$601bn a year of computer imports'],
-  ['PRO', 'SAV', 'cash', 'Surpluses become savings'],
-  ['HH', 'HYP', 'eq', 'Own the shares'],
+  ['HYP', 'CHP', 'goods', 'Orders for chips and servers: $601bn a year of computer imports'],
+  ['CHP', 'SAV', 'cash', 'Chip-chain surpluses become savings'],
+  ['TOP', 'HYP', 'eq', 'Own the shares'],
   ['HYP', 'SPX', 'sig', '49% of the S&P 500'],
-  ['SPX', 'HH', 'sig', 'Wealth effect: top 10% do 45% of spending'],
+  ['SPX', 'TOP', 'sig', 'Wealth effect: top 10% do 45% of spending'],
   ['CEN', 'HYP', 'eq', 'Fund domiciles hold US shares'],
-  ['POL', 'PRO', 'rule', 'Tariffs and export controls'],
+  ['WH', 'CHP', 'rule', 'Export controls and tariffs on the chip chain'],
   ['BNK', 'HYP', 'cash', 'Underwrite ≈$194bn of bonds in 2026 to July'],
   ['MOV', 'CEN', 'sig', 'A spike forces leveraged sellers out'],
-  /* 30+: v.1.2 */
-  ['ESF', 'GOV', 'cash', '$20bn swap framework for Argentina, Oct 2025; Gulf and Asian requests considered'],
-  ['ESF', 'YEN', 'sig', 'Joint intervention with Japan, 31 Jul 2026'],
+  ['TSY', 'GOV', 'cash', '$20bn swap framework for Argentina, Oct 2025; Gulf and Asian requests considered'],
+  ['TSY', 'YEN', 'sig', 'Joint intervention with Japan, 31 Jul 2026'],
   ['YEN', 'OFF', 'sig', 'A weak yen pushes Japan, the largest holder, toward selling Treasuries'],
   ['FED', 'OFF', 'cash', 'FIMA repo: foreign central banks borrow up to $60bn against Treasuries'],
-  ['GOV', 'POL', 'cash', 'Pledged investment: $550bn from Japan, $350bn from Korea, projects picked with a US-led committee'],
-  ['CON', 'PRO', 'goods', 'Consumer of last resort: the US deficit (≈0.9% of world GDP) absorbs others’ surpluses'],
-  ['POL', 'CON', 'cash', 'Tax law: 2026 refunds ≈$350bn, about $55bn more than in 2025'],
-  ['HH', 'CON', 'cash', 'The top 10% do more than 45% of consumer spending'],
+  ['GOV', 'WH', 'cash', 'Pledged investment: $550bn from Japan, $350bn from Korea, projects picked with a US-led committee'],
+  ['CON', 'EXP', 'goods', 'Consumer of last resort: the US deficit (≈0.9% of world GDP) absorbs others’ surpluses'],
+  ['EXP', 'OFF', 'cash', 'Export surpluses become official reserves'],
+  ['WH', 'EXP', 'rule', 'Tariffs on what the exporters sell'],
+  ['CGR', 'CON', 'cash', 'Tax law: 2026 refunds ≈$350bn, about $55bn more than in 2025'],
+  ['TOP', 'CON', 'cash', 'The top 10% do more than 45% of consumer spending'],
+  ['WH', 'CON', 'rule', 'Tariffs raise prices at the till; court-ordered refunds (≈$165bn) go to importers'],
+  ['Y10', 'MTG', 'sig', 'Long yields set mortgage rates: 10-year 5.14%, 30-year mortgage 7.24%'],
+  ['MTG', 'CON', 'sig', 'Housing costs take a share of income'],
+  ['SVR', 'CON', 'sig', 'A thin cushion: income +0.2%, spending +0.5% in September'],
   ['ENG', 'OIL', 'sig', 'Stock releases (400m barrels, Mar 2026) aim to cap the price'],
   ['ENG', 'PET', 'rule', 'Waiver: stranded Russian cargoes may be sold (12 Mar, extended 18 May)'],
-  ['PET', 'OIL', 'sig', 'Hormuz closed from 28 Feb 2026: about a fifth of world supply'],
-  ['PET', 'OFF', 'cash', 'Oil revenue recycled into US assets: the petrodollar loop'],
+  ['PET', 'OIL', 'sig', 'Supply from the Gulf, Russia and Iran'],
+  ['HOR', 'OIL', 'sig', 'Closed from 28 Feb 2026: about a fifth of world supply'],
   ['OIL', 'FUEL', 'sig', 'Crude feeds pump prices'],
   ['FUEL', 'CON', 'sig', 'Diesel $6.53 a gallon, +77% in a year (22 Sep): a tax on spending'],
   ['OIL', 'INF', 'sig', 'Energy prices feed inflation'],
   ['INF', 'FED', 'sig', 'Oil and tariffs pushed prices up; the Fed hiked on 16 Sep'],
   ['OIL', 'Y10', 'sig', 'Inflation risk lifts long yields'],
-  ['POL', 'CON', 'rule', 'Tariffs raise prices at the till; court-ordered refunds (≈$165bn) go to importers'],
 ];
+const EIDX = {}; FE.forEach((e, i) => { EIDX[e[0] + '>' + e[1]] = i; });
+const E = (...ids) => ids.map(k => { if (!(k in EIDX)) console.error('unknown relation ' + k); return EIDX[k]; }).filter(i => i != null);
+const PSH = ['Cheap money', 'Data centre', 'Savings return', 'If it breaks', 'The consumer', 'Dollar backstop', 'Oil squeeze', 'Kitchen table'];
 const PLAYS = [
   { t: 'The state keeps money cheap', ic: 'gap', c: '#ffd27a', steps: [
-    ['Central banks step back', 'Foreign central banks sold $164bn of Treasuries in the year to August 2026. Someone else has to buy.', [0]],
-    ['Bills, not bonds', 'The Treasury funds itself with bills, 22.2% of marketable debt, which money funds, banks and stablecoin issuers treat as cash.', [1, 2, 3]],
-    ['The Fed and the regulators help', 'The Fed bought bills to add reserves; regulators eased the leverage rule; the GENIUS Act makes stablecoins buyers of bills.', [7, 8, 9]],
-    ['Financial centres take the rest', 'Funds booked in seven financial centres added $245bn of Treasuries, partly in the basis trade, financed with repo.', [4, 5, 6]],
-    ['A calmer long end, mostly', 'Fewer long bonds and targeted buybacks aim to calm long yields and volatility: the price of credit for everyone else. Not always: the 10-year touched 5.33% in October.', [10, 11, 12, 13]],
+    ['Central banks step back', 'Foreign central banks sold $164bn of Treasuries in the year to August 2026. Someone else has to buy.', E('OFF>TSY')],
+    ['Bills, not bonds', 'The Treasury funds itself with bills, 22.2% of marketable debt, which money funds, banks and stablecoin issuers treat as cash.', E('TSY>MMF', 'TSY>BNK', 'TSY>STB')],
+    ['The Fed and the regulators help', 'The Fed bought bills to add reserves; regulators eased the leverage rule; the GENIUS Act makes stablecoins buyers of bills.', E('FED>BNK', 'REG>BNK', 'CGR>STB')],
+    ['Financial hubs take the rest', 'Funds booked in seven financial centres added $245bn of Treasuries, partly in the basis trade, financed with repo.', E('TSY>CEN', 'BNK>CEN', 'MMF>BNK')],
+    ['A calmer long end, mostly', 'Fewer long bonds and targeted buybacks aim to calm long yields and volatility: the price of credit for everyone else. Not always: the 10-year touched 5.33% in October.', E('TSY>Y10', 'TSY>MOV', 'FED>Y10', 'Y10>PCR')],
   ] },
   { t: 'A data centre gets paid for', ic: 'capex', c: '#8fa3b6', steps: [
-    ['A lab needs compute', 'AI labs sign multi-year compute contracts. About $200bn of Google’s TPU contracts depend on Anthropic’s lease payments.', [19, 20]],
-    ['Off the balance sheet', 'Special-purpose vehicles borrow to build or buy: Meta’s Hyperion ($27.3bn bond), the TPU vehicle for Anthropic ($35bn).', [17, 18]],
-    ['Whose money', 'Private credit is funded by insurers, annuities and pension funds, at home and among the allies. US life insurers alone held $85.2bn of AI-linked investments.', [15, 16]],
-    ['Orders abroad', 'The money becomes hardware orders in Taiwan, Mexico, Korea and Southeast Asia: $601bn a year of computer imports.', [21]],
+    ['A lab needs compute', 'AI labs sign multi-year compute contracts. About $200bn of Google’s TPU contracts depend on Anthropic’s lease payments.', E('LAB>HYP', 'HYP>LAB')],
+    ['Off the balance sheet', 'Special-purpose vehicles borrow to build or buy: Meta’s Hyperion ($27.3bn bond), the TPU vehicle for Anthropic ($35bn).', E('PCR>LAB', 'PCR>HYP')],
+    ['Whose money', 'Private credit is funded by insurers, annuities and pension funds, at home and among the allies. US life insurers alone held $85.2bn of AI-linked investments.', E('SAV>PCR', 'INS>PCR')],
+    ['Orders abroad', 'The money becomes hardware orders in Taiwan, Mexico, Korea and Southeast Asia: $601bn a year of computer imports.', E('HYP>CHP')],
   ] },
   { t: 'The allies’ savings come back', ic: 'recycle', c: '#ffb547', steps: [
-    ['Orders', 'The hyperscalers buy the hardware abroad.', [21]],
-    ['Surpluses', 'The producers run surpluses; what they do not consume at home is saved, by pension funds, insurers and households.', [22]],
-    ['Back to Wall Street', 'The savings buy US shares and bonds: $1,169bn of US shares are booked in Japan and $826bn in Norway. Some is US money routed through fund centres.', [14, 26]],
-    ['Valuations and wealth', 'AI stocks reach 49% of the S&P 500; the richest tenth of households own 88% of household stocks and spend accordingly.', [23, 24, 25]],
+    ['Orders', 'The hyperscalers buy the hardware abroad.', E('HYP>CHP')],
+    ['Surpluses', 'The producers run surpluses; what they do not consume at home is saved, by pension funds, insurers and households.', E('CHP>SAV', 'EXP>OFF')],
+    ['Back to Wall Street', 'The savings buy US shares and bonds: $1,169bn of US shares are booked in Japan and $826bn in Norway. Some is US money routed through fund centres.', E('SAV>HYP', 'CEN>HYP')],
+    ['Valuations and wealth', 'AI stocks reach 49% of the S&P 500; the richest tenth of households own 88% of household stocks and spend accordingly.', E('TOP>HYP', 'HYP>SPX', 'SPX>TOP')],
   ] },
   { t: 'If it breaks', ic: 'asset', c: '#ff5a4e', steps: [
-    ['Revenue falls short', 'OpenAI’s annualised revenue was close to $50bn in October, about $20bn short of what it had signalled to investors.', [19]],
-    ['Leases at risk', 'Vehicles that depend on one customer feel it first. Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', [17, 18, 28]],
-    ['Insurers exposed', 'US insurance supervisors began examining insurers’ exposure to data-centre financing in June 2026.', [16]],
-    ['Volatility', 'A spike in bond volatility forces leveraged buyers out, as in March 2020, when the Fed became the buyer of last resort.', [29, 4, 5]],
-    ['The wealth effect in reverse', 'With 49% of the S&P 500 in AI stocks, a fall hits the richest households, who do more than 45% of spending.', [24, 25]],
+    ['Revenue falls short', 'OpenAI’s annualised revenue was close to $50bn in October, about $20bn short of what it had signalled to investors.', E('LAB>HYP')],
+    ['Leases at risk', 'Vehicles that depend on one customer feel it first. Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', E('PCR>LAB', 'PCR>HYP', 'BNK>HYP')],
+    ['Insurers exposed', 'US insurance supervisors began examining insurers’ exposure to data-centre financing in June 2026.', E('INS>PCR')],
+    ['Volatility', 'A spike in bond volatility forces leveraged buyers out, as in March 2020, when the Fed became the buyer of last resort.', E('MOV>CEN', 'TSY>CEN', 'BNK>CEN')],
+    ['The wealth effect in reverse', 'With 49% of the S&P 500 in AI stocks, a fall hits the richest households, who do more than 45% of spending.', E('HYP>SPX', 'SPX>TOP')],
   ] },
-];
-PLAYS.push(
   { t: 'The consumer keeps the surpluses flowing', ic: 'surplus', c: '#3ee6b8', steps: [
-    ['Tax cuts reach households', 'The 2025 tax law lifted 2026 refunds by about $55bn, to roughly $350bn. Morgan Stanley expected much of it to be saved or used to pay down debt before it was spent.', [36]],
-    ['The top tenth does the spending', 'The richest 10% own 88% of household stocks and do more than 45% of consumer spending, so AI valuations and consumption move together.', [37, 24, 25]],
-    ['Spending becomes imports', 'Consumer spending was 67.6% of GDP in the third quarter of 2026; real final sales to private domestic purchasers grew 4.9% and imports rose faster than in the second quarter. The US deficit, about 0.9% of world GDP, is the world’s demand.', [35]],
-    ['The surpluses come back', 'Allied producers save what they do not consume; their pension funds and insurers buy US shares and bonds. The loop closes only while the American consumer keeps buying.', [35, 22, 14]],
-    ['If the consumer stops', 'Diesel at $6.53 a gallon and tariffs that raise prices at the till squeeze spending; a weaker consumer means smaller surpluses abroad and less money coming back.', [43, 47]],
+    ['Tax cuts reach households', 'The 2025 tax law lifted 2026 refunds by about $55bn, to roughly $350bn. Morgan Stanley expected much of it to be saved or used to pay down debt before it was spent.', E('CGR>CON')],
+    ['The top tenth does the spending', 'The richest 10% own 88% of household stocks and do more than 45% of consumer spending, so AI valuations and consumption move together.', E('TOP>CON', 'HYP>SPX', 'SPX>TOP')],
+    ['Spending becomes imports', 'Consumer spending was 67.6% of GDP in the third quarter of 2026; real final sales to private domestic purchasers grew 4.9% and imports rose faster than in the second quarter. The US deficit, about 0.9% of world GDP, is the world’s demand. Households buy goods, not chips: the chip chain is busy because the exporters are.', E('CON>EXP')],
+    ['The surpluses come back', 'Exporters save what they do not consume; their pension funds and insurers buy US shares and bonds. The loop closes only while the American consumer keeps buying.', E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>HYP')],
+    ['If the consumer stops', 'Diesel at $6.53 a gallon and tariffs that raise prices at the till squeeze spending; a weaker consumer means smaller surpluses abroad and less money coming back.', E('FUEL>CON', 'WH>CON')],
   ] },
   { t: 'Abroad: the dollar’s backstop', ic: 'rent', c: '#44d7ec', steps: [
-    ['Swaps for friends', 'In October 2025 the Treasury announced a $20bn swap framework with Argentina’s central bank. Swaps like this come from the Exchange Stabilization Fund, nearly $220bn.', [30]],
-    ['Joint action for the yen', 'On 31 July 2026 the US and Japan intervened together for the first time since 2011. Japan holds $1.14tn of Treasuries; a disorderly yen could force it to sell.', [31, 32]],
-    ['The Fed’s repo window', 'Foreign central banks can borrow up to $60bn for seven days against their Treasuries, so they need not sell them. Bessent urged the Fed to upsize it.', [33]],
-    ['Tariffs buy investment', 'Tariff deals with Japan and South Korea pair 15% rates with pledges of $550bn and $350bn for US projects picked with a US-led committee.', [34]],
+    ['Swaps for friends', 'In October 2025 the Treasury announced a $20bn swap framework with Argentina’s central bank. Swaps like this come from the Exchange Stabilization Fund, nearly $220bn.', E('TSY>GOV')],
+    ['Joint action for the yen', 'On 31 July 2026 the US and Japan intervened together for the first time since 2011. Japan holds $1.14tn of Treasuries; a disorderly yen could force it to sell.', E('TSY>YEN', 'YEN>OFF')],
+    ['The Fed’s repo window', 'Foreign central banks can borrow up to $60bn for seven days against their Treasuries, so they need not sell them. Bessent urged the Fed to upsize it.', E('FED>OFF')],
+    ['Tariffs buy investment', 'Tariff deals with Japan and South Korea pair 15% rates with pledges of $550bn and $350bn for US projects picked with a US-led committee.', E('GOV>WH')],
   ] },
   { t: 'Oil squeezes the loop', ic: 'inputs', c: '#b7f36b', steps: [
-    ['A supply shock', 'War with Iran closed the Strait of Hormuz from 28 February 2026, cutting about a fifth of world oil supply. Brent peaked near $118 in late March.', [40]],
-    ['Washington tries to cap it', 'The IEA released 400 million barrels, 172 million of them American, and the Treasury waived sanctions on Russian oil already at sea. Brent was still above $100 in September.', [38, 39]],
-    ['The pump and the price index', 'US diesel reached $6.53 a gallon, up 77% in a year, and energy fed inflation.', [42, 43, 44]],
-    ['The Fed answers, yields rise', 'The Fed raised rates on 16 September and the 10-year touched 5.33% in October: dearer oil meant dearer money for the build-out.', [45, 12, 46]],
+    ['A supply shock', 'War with Iran closed the Strait of Hormuz from 28 February 2026, cutting about a fifth of world oil supply. Brent peaked near $118 in late March.', E('HOR>OIL', 'PET>OIL')],
+    ['Washington tries to cap it', 'The IEA released 400 million barrels, 172 million of them American, and the Treasury waived sanctions on Russian oil already at sea. Brent was still above $100 in September.', E('ENG>OIL', 'ENG>PET')],
+    ['The pump and the price index', 'US diesel reached $6.53 a gallon, up 77% in a year, and energy fed inflation.', E('OIL>FUEL', 'FUEL>CON', 'OIL>INF')],
+    ['The Fed answers, yields rise', 'The Fed raised rates on 16 September and the 10-year touched 5.33% in October: dearer oil meant dearer money for the build-out.', E('INF>FED', 'FED>Y10', 'OIL>Y10')],
   ] },
-);
-const LEDGE = [[1, 2, 3, 10], [11, 10], [7], [8, 2], [9, 3], [12, 13, 45], [38, 42, 43], [39, 40], [40, 44], [36, 37], [47, 28], [30], [31, 32, 33], [34]];
-let fsel = null, fplay = null, fpstep = 0, flev = new Set(), fhover = null, fdeal = 0, ftower = null, fRAF = null;
+  { t: 'From the bond market to the kitchen table', ic: 'gap', c: '#3ee6b8', steps: [
+    ['Long yields set the mortgage', 'The 10-year Treasury yield averaged 5.14% in October 2026; the 30-year fixed mortgage averaged 7.24% in the week to 29 October (Freddie Mac).', E('Y10>MTG')],
+    ['A thin cushion', 'The saving rate was 3.8% in September: income rose 0.2%, spending 0.5% (BEA, 29 October 2026). Housing costs and thin savings leave little room if prices rise.', E('MTG>CON', 'SVR>CON')],
+    ['Spending still holds the world up', 'Consumer spending was 67.6% of GDP in the third quarter. As long as households keep buying, the exporters keep their surpluses.', E('CON>EXP')],
+  ] },
+];
+/* which relations each lever moves (levers are in the order of LEVERS) */
+const LEDGE = [
+  E('TSY>MMF', 'TSY>BNK', 'TSY>STB', 'TSY>Y10'),
+  E('TSY>MOV', 'TSY>Y10'),
+  E('FED>BNK'),
+  E('REG>BNK', 'TSY>BNK'),
+  E('CGR>STB', 'TSY>STB'),
+  E('FED>Y10', 'Y10>PCR', 'INF>FED'),
+  E('ENG>OIL', 'OIL>FUEL', 'FUEL>CON'),
+  E('ENG>PET', 'PET>OIL'),
+  E('HOR>OIL', 'OIL>INF'),
+  E('CGR>CON', 'TOP>CON'),
+  E('WH>CON', 'WH>CHP', 'WH>EXP'),
+  E('TSY>GOV'),
+  E('TSY>YEN', 'YEN>OFF', 'FED>OFF'),
+  E('GOV>WH'),
+];
+const LSH = ['Bills', 'Buybacks', 'Fed bills', 'Bank rule', 'Stablecoins', 'Rate hike', 'Oil stocks', 'Oil waiver', 'Escorts', 'Tax cuts', 'Tariffs', 'Swap lines', 'Yen action', 'Pledges'];
 
-function finDials() {
-  const map = ['MOV', 'TSY', 'Y10', 'OFF', 'FED', 'FED', 'OIL', 'CON'];
-  return `<div class="dials">${(LIVE.gauges || []).map((g, i) => `<button type="button" class="dial ${g.type}" data-node="${map[i]}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="dk2">${fe(g.k)}</span>${g.type === 'pct' || g.type === 'band' ? gaugeSVG(g) : ''}<span class="dv">${fe(g.v)}${g.delta ? `<small>${fe(g.delta)}</small>` : ''}</span></button>`).join('')}</div>`;
-}
 /* ---------- v.1.2: what this tab explains, and what Washington did ---------- */
 function plumbText() {
   const L = (g, t, x) => `<div class="exl" style="--gc:${LCOL[g]}"><b>${t}</b><p>${x}</p></div>`;
@@ -3682,7 +3936,7 @@ function plumbText() {
         <p>The circuit tab follows the money round the whole dollar system. This tab opens up its last steps, 08 to 10, where the state itself works the machinery.</p></div>
       <div class="expc"><h4>Why “Scott Bessent”</h4><p>Scott Bessent runs the Treasury, which holds many of these levers: debt issuance and buybacks, sanctions, swaps, currency action. Others are pulled elsewhere. The Fed sets rates and buys bills, Congress writes tax and stablecoin law, the Supreme Court struck down the emergency tariffs, the White House bargains over trade. <b>Each lever below says who pulls it.</b></p>
         <p>The name is a shorthand for a system in which debt management, trade and foreign policy have fused.</p></div>
-      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. Badges and dials carry measured values, each with a date and a source. Nothing here is a forecast: pulling a lever shows what the real action moved, not what would happen if you repeated it.</p>
+      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The tiles above it carry measured values, each with a date and a source (hover for it). Running a play, pulling a lever or clicking an actor lights the relations involved and the tiles that measure them. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
         <p>Some labels are this map’s reading, not the government’s. Michael Howell calls the bill strategy “Treasury QE”; the Treasury calls its buybacks “liquidity support”.</p></div>
       </div>
       <div class="expcol">
@@ -3730,22 +3984,64 @@ function wireActions(host) {
   host.querySelectorAll('.tlf button').forEach(b => b.addEventListener('click', () => { aFilter = b.dataset.f; apply(); }));
   apply();
 }
+/* ================= v.1.4: the cockpit: HUD, map, plays, lever bar, dossier ================= */
+let fsel = null, fplay = null, fpstep = 0, flev = new Set(), fhover = null, fdeal = 0, ftower = null, fRAF = null, fnodes = new Set();
 
+/* HUD tiles, grouped by zone. Existing gauges come from livedata.json; the rest carry their own date and source. */
+const GX = {
+  dxy: { k: 'US dollar index (DXY)', v: '101.55', delta: '5 Nov 2026', note: 'The dollar against a basket of six major currencies, 5 November 2026', src: 'Trading Economics (5 Nov 2026)' },
+  tether: { k: 'Tether’s Treasury exposure', v: '≈$132bn', delta: 'end of Sep 2026', note: 'Tether held about $132bn of US Treasury exposure at the end of September 2026', src: 'Tether attestation for Q3 2026, via Bitcoin.com News (30 Oct 2026)' },
+  save: { k: 'Personal saving rate', v: '3.8%', delta: 'Sep 2026', note: 'Personal saving was $911.1bn in September 2026; income rose 0.2% on the month and spending 0.5%', src: 'BEA, Personal Income and Outlays (29 Oct 2026)' },
+  mtg: { k: '30-year mortgage rate', v: '7.24%', delta: '29 Oct 2026', note: 'Freddie Mac weekly average; 7.32% a week earlier', src: 'Freddie Mac, via Trading Economics (29 Oct 2026)' },
+  dsl: { k: 'US diesel price', v: '$6.53/gal', delta: '22 Sep, +77% in a year', note: 'Up 77% on a year earlier', src: 'AAA, EIA data (22 Sep 2026)' },
+};
+let TILES = [];
+function buildHud() {
+  const G = k => (LIVE.gauges || []).find(g => g.k.indexOf(k) === 0) || { k, v: '', note: '', src: '' };
+  const R = id => (LIVE.resbar || []).find(r => r.id === id) || { k: id, v: '', t: '', what: '' };
+  const cap = R('capex'), ai = R('ai');
+  const capg = { k: cap.k, v: cap.v.replace('~', '≈'), delta: cap.d, note: cap.what, src: cap.t }, aig = { k: ai.k, v: ai.v, delta: ai.d, note: ai.what, src: ai.t };
+  const T = (n, ic, k, g) => ({ n, ic, k, g });
+  return [
+    ['abroad', 'Abroad', '#44d7ec', [T('OFF', 'vault', 'Official Treasuries', G('Foreign official')), T('YEN', 'usd', 'Dollar index', GX.dxy)]],
+    ['state', 'The state', '#ffd27a', [T('FED', 'fed', 'Fed funds target', G('Fed funds')), T('FED', 'bank', 'Bank reserves', G('Bank reserves')), T('TSY', 'tsy', 'Bills share of debt', G('Bills'))]],
+    ['fin', 'Financial sector', '#ffb547', [T('Y10', 'chart', '10-year yield', G('10-year')), T('MOV', 'pulse', 'Bond volatility', G('Bond volatility')), T('STB', 'coin', 'Tether’s Treasuries', GX.tether)]],
+    ['ai', 'AI build-out', '#ff5d8f', [T('HYP', 'rack', 'Big Tech capex 2026', capg), T('SPX', 'bars', 'AI share of S&P 500', aig)]],
+    ['hh', 'Households', '#3ee6b8', [T('CON', 'bag', 'Consumer spending', G('Consumer spending')), T('SVR', 'jar', 'Saving rate', GX.save), T('MTG', 'house', '30-year mortgage', GX.mtg)]],
+    ['energy', 'Energy and prices', '#b7f36b', [T('OIL', 'barrel', 'Brent crude', Object.assign({}, G('Brent'), { delta: '5 Nov 2026' })), T('FUEL', 'pump', 'US diesel', GX.dsl)]],
+  ];
+}
+function tileHTML(T, c) {
+  const g = T.g, mini = g.type === 'pct' || g.type === 'band' ? gaugeSVG(g).replace(/<text[^>]*>.*?<\/text>/g, '') : '';
+  return `<button type="button" class="tile" data-node="${T.n}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="tk"><i>${fic(T.ic, 13)}</i>${fe(T.k)}</span><span class="tr"><span class="tv">${fe(g.v)}</span>${mini ? `<span class="tg">${mini}</span>` : ''}</span>${g.delta && !mini ? `<small>${fe(g.delta)}</small>` : ''}</button>`;
+}
+const hudHTML = () => `<div class="hud6" role="group" aria-label="Key variables, latest values">${TILES.map(([z, t, c, tiles]) => `<div class="hc hc-${z}" style="--zc:${c}"><h4>${fe(t)}</h4><div class="hct">${tiles.map(T => tileHTML(T, c)).join('')}</div></div>`).join('')}</div>`;
+
+/* ---------- plumbing text ---------- */
+const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
+function levBarHTML() {
+  return `<div class="levbar" role="group" aria-label="Levers">${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
+}
+function playBarHTML() {
+  return `<div class="pbar"><span class="pbl">Plays</span>${PLAYS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${P.steps.length} moves, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(PSH[i])}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
+}
 function renderFin() {
   const host = $('fin'); if (!host) return;
-  const head = (t, x) => `<header class="finhead"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><h2>${t}</h2><p>${x}</p>${finSwitch()}</header>`;
+  const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
   if (finMode === 'plumb') {
-    host.innerHTML = head('The plumbing', 'Foreign central banks are stepping back and the AI build-out needs cheap money, so Washington runs the plumbing itself: at home, in households, abroad and in oil. Pull the levers or click any node.')
+    TILES = buildHud();
+    host.innerHTML = head('The plumbing', 'Foreign central banks are stepping back and the AI build-out needs cheap money, so Washington runs the plumbing itself: at home, in households, abroad and in oil. Run a play, pull a lever or click anything.')
+      + `<section class="cock panel" id="isx-cock" aria-label="The simulator">`
+      + playBarHTML() + hudHTML()
+      + `<div class="mapstage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" role="img" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div><aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside></div>`
+      + `<div class="rkey">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div>`
+      + levBarHTML()
+      + `</section>`
       + plumbText()
-      + `<div class="relh"><h3>Who funds whom <span>pick a play, pull a lever or click any node</span></h3></div>`
-      + finDials()
-      + `<div class="rgrid"><div class="rmapw panel"><svg id="isx-rmap" viewBox="0 0 1000 760" role="img" aria-label="Relations between the state, private capital and households, the foreign sector, commodities and market signals"></svg><div class="rkey">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div></div><aside class="rside panel" id="isx-rside" aria-live="polite"></aside></div>`
-      + `<section class="levsec"><h3>Pull a lever <span>Bessent’s desk and the rest of Washington’s: click to see what each one moves, combine as many as you like</span></h3>${LGROUPS.map(([g, t, x]) => `<div class="levgrp" style="--gc:${LCOL[g]}"><h4>${fe(t)} <span>${fe(x)}</span></h4><div class="levrow">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lev${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}"><span class="li">${L.ic}</span><b>${fe(L.t)}</b><small>${fe(L.d)}</small><em class="who">${fe(L.who)}</em></button>`).join('')}</div></div>`).join('')}</section>`
       + actionsHTML();
     drawRmap(); renderSide();
     wireActions(host);
-    host.querySelectorAll('.lev').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; if (flev.has(i)) flev.delete(i); else flev.add(i); fplay = null; fsel = null; b.classList.toggle('on', flev.has(i)); b.setAttribute('aria-pressed', String(flev.has(i))); styleRmap(); renderSide(i); }));
-    host.querySelectorAll('.dial').forEach(b => b.addEventListener('click', () => { fsel = b.dataset.node; fplay = null; styleRmap(); renderSide(); }));
+    wireCockpit(host);
   } else {
     host.innerHTML = head('The capital stack', 'Cash flow no longer covers the build-out. Bonds in five currencies, new shares and off-balance-sheet vehicles fill the gap, financed in the end by insurers, annuities and pension funds: savings of people who never chose to fund the AI race.')
       + `<div class="cgrid"><section class="panel tower"><h3>Where the money comes from <span>click a layer</span></h3><svg id="isx-tower" viewBox="0 0 460 480" role="img" aria-label="Funding of the build-out by source"></svg><div class="tinfo" id="isx-tinfo"></div></section>`
@@ -3760,68 +4056,118 @@ function renderFin() {
   finLoop();
 }
 
-/* ---------- relations map ---------- */
-function boxPt(n, tx, ty) { const [, x, y] = FN[n], w = 80, h = 25, dx = tx - x, dy = ty - y; const s = Math.min(w / Math.abs(dx || 1e-6), h / Math.abs(dy || 1e-6)); return [x + dx * s, y + dy * s]; }
+/* ---------- selection state ---------- */
+function clearSel() { fsel = null; fplay = null; fpstep = 0; flev.clear(); }
+function pickNode(n) { const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
+function wireCockpit(host) {
+  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); if (!was) snd('step'); }));
+  host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; snd('step'); } styleRmap(); renderSide(); }));
+  host.querySelectorAll('.tile').forEach(b => {
+    b.addEventListener('click', () => pickNode(b.dataset.node));
+    b.addEventListener('mouseenter', () => { fhover = b.dataset.node; styleRmap(); }); b.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
+  });
+  const clr = $('pclr'); if (clr) clr.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); });
+}
+
+/* ---------- the map ---------- */
+function ePath(a, b, i) {
+  const A = FN[a], B = FN[b], hw = NW / 2, hh = NH / 2, ax = A[1], ay = A[2], bx = B[1], by = B[2];
+  if (Math.abs(ax - bx) < 4) {
+    const dy = by - ay, s = Math.sign(dy);
+    if (Math.abs(dy) <= PITCH + 1) { const o = FE.some(e => e[0] === b && e[1] === a) ? (a < b ? -10 : 10) : 0; return `M${ax + o},${ay + s * hh} L${bx + o},${by - s * (hh + 3)}`; }
+    const k = 24 + (i % 3) * 5; return `M${ax + hw},${ay} C${ax + hw + k},${ay} ${bx + hw + k},${by} ${bx + hw + 3},${by}`;
+  }
+  const r = bx > ax, sx = ax + (r ? hw : -hw), ex = bx + (r ? -hw - 3 : hw + 3), dx = ex - sx;
+  return `M${sx},${ay} C${sx + dx * .5},${ay} ${ex - dx * .5},${by} ${ex},${by}`;
+}
 function drawRmap() {
   const svg = $('rmap'); if (!svg) return;
-  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '</defs>';
-  h += FZ.map(([k, t, x, y, w, hh]) => `<rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="14"/><text class="fzt" x="${x + 12}" y="${y + 17}">${fe(t).toUpperCase()}</text>`).join('');
+  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '</defs>';
+  h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
   FE.forEach(([a, b, ty, lab], i) => {
-    const A = FN[a], B = FN[b], [x0, y0] = boxPt(a, B[1], B[2]), [x1, y1] = boxPt(b, A[1], A[2]), mx = (x0 + x1) / 2, my = (y0 + y1) / 2, len = Math.hypot(x1 - x0, y1 - y0), bend = (i % 2 ? 1 : -1) * Math.min(46, len * .14);
-    const cx = mx - (y1 - y0) / len * bend, cy = my + (x1 - x0) / len * bend;
-    h += `<path class="fe ${ty}" data-e="${i}" d="M${x0.toFixed(1)},${y0.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}" stroke="${FT[ty][0]}" marker-end="url(#isx-fa-${ty})"><title>${fe(lab)}</title></path>`;
-    h += `<path class="feh" data-e="${i}" d="M${x0.toFixed(1)},${y0.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}" data-tip="<b>${fe(FN[a][3])} → ${fe(FN[b][3])}</b><p>${fe(lab)}</p>"/>`;
-  });
-  Object.entries(FN).forEach(([k, [z, x, y, t, sub, c]]) => {
-    h += `<g class="fn" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect x="${x - 80}" y="${y - 25}" width="160" height="50" rx="10"/><rect class="fnb" x="${x - 80}" y="${y - 25}" width="4" height="50" rx="2"/><text class="fnt" x="${x - 68}" y="${y - 4}">${fe(t)}</text><text class="fns" x="${x - 68}" y="${y + 13}">${fe(sub)}</text></g>`;
+    const d = ePath(a, b, i);
+    h += `<path class="fe ${ty}" data-e="${i}" d="${d}" stroke="${FT[ty][0]}" marker-end="url(#isx-fa-${ty})"><title>${fe(lab)}</title></path>`;
+    h += `<path class="feh" data-e="${i}" d="${d}" data-tip="<b>${fe(FN[a][3])} → ${fe(FN[b][3])}</b><p>${fe(lab)}</p>"/>`;
   });
   h += '<g id="isx-fpart"></g>';
+  Object.entries(FN).forEach(([k, [z, x, y, t, sub, c, , ic]]) => {
+    const l = x - NW / 2, lm = z === 'state';
+    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}">${fe(sub)}</text></g>`;
+  });
   svg.innerHTML = h;
   svg.querySelectorAll('.fn').forEach(g => {
-    const n = g.dataset.n, go = () => { fsel = fsel === n ? null : n; fplay = null; flev.clear(); ROOT.querySelectorAll('.lev').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); }); styleRmap(); renderSide(); };
-    g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    const n = g.dataset.n;
+    g.addEventListener('click', () => pickNode(n)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickNode(n); } });
     g.addEventListener('mouseenter', () => { fhover = n; styleRmap(); }); g.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
   });
   styleRmap();
 }
-function activeEdges() {
-  if (fplay != null) return new Set(PLAYS[fplay].steps[fpstep][2]);
+function activeEdges(all) {
+  if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : PLAYS[fplay].steps[fpstep][2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
-  const n = fhover || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
+  const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
   return null;
 }
+function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); if (fsel) s.add(fsel); return s; }
 function styleRmap() {
   const svg = $('rmap'); if (!svg) return;
-  const act = activeEdges(), nodes = new Set(); if (act) act.forEach(i => { nodes.add(FE[i][0]); nodes.add(FE[i][1]); }); if (fsel) nodes.add(fsel);
+  const act = activeEdges(), nodes = nodesOf(act); fnodes = nodes;
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
-  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('sel', n === fsel); });
-  ROOT.querySelectorAll('.dial').forEach(b => b.classList.toggle('on', b.dataset.node === fsel));
+  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n)); g.classList.toggle('sel', n === fsel); });
+  ROOT.querySelectorAll('.tile').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); });
+  ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
+  if (cnt) cnt.innerHTML = flev.size ? `<b>${flev.size}</b> of ${LEVERS.length} levers pulled · ` + (act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : '') : act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : `${FE.length} relations · ${Object.keys(FN).length} actors`;
+  if (cl) cl.hidden = !any;
   finParticles(act);
+}
+
+/* ---------- the dossier: a floating card on the side the action is not ---------- */
+function placeDossier() {
+  const s = $('rside'), st = $('stage'), svg = $('rmap'); if (!s || !st || !svg || s.hidden) return;
+  if (window.innerWidth <= 900) { s.classList.remove('l', 'b'); s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
+  const sr = st.getBoundingClientRect(), vr = svg.getBoundingClientRect(), k = vr.width / (MAPW + 6), ox = vr.left - sr.left, oy = vr.top - sr.top;
+  const w = s.offsetWidth, h = s.offsetHeight, m = 10, lit = [...nodesOf(activeEdges())].map(n => { const F = FN[n]; return [ox + (F[1] - NW / 2 + 3) * k, oy + (F[2] - NH / 2 + 3) * k, NW * k, NH * k]; });
+  let cx = 0; lit.forEach(r => { cx += r[0] + r[2] / 2; }); cx = lit.length ? cx / lit.length : 0;
+  const prefRight = cx < sr.width / 2, cands = [[prefRight, 1], [!prefRight, 1], [prefRight, 0], [!prefRight, 0]];
+  let best = null;
+  cands.forEach(([right, top], ci) => {
+    const x0 = right ? sr.width - m - w : m, y0 = top ? m : sr.height - m - h;
+    const hit = lit.reduce((n, [x, y, ww, hh]) => n + (x < x0 + w && x + ww > x0 && y < y0 + h && y + hh > y0 ? 1 : 0), 0);
+    if (!best || hit < best.hit) best = { hit, right, top };
+  });
+  s.classList.toggle('l', !best.right); s.classList.toggle('b', !best.top);
 }
 function renderSide(lev) {
   const s = $('rside'); if (!s) return;
+  const X = '<button type="button" class="dx" id="isx-dx" aria-label="Close">×</button>';
+  const done = () => { const dx = $('dx'); if (dx) dx.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); }); };
   if (fplay != null) {
     const P = PLAYS[fplay], st = P.steps[fpstep];
-    s.innerHTML = `<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="pexit" id="isx-px">× Leave the play</button>`;
+    s.hidden = false; s.style.setProperty('--dc', P.c);
+    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div>`;
     $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); snd('back'); });
-    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); snd('step'); } else { snd('win'); burst(); fplay = null; styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below.</p>`, 4500); } });
-    $('px').addEventListener('click', () => { fplay = null; styleRmap(); renderSide(); });
-    return;
+    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); snd('step'); } else { snd('win'); burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below the map.</p>`, 4500); } });
+    placeDossier(); done(); return;
   }
   if (lev != null && flev.has(lev)) {
     const L = LEVERS[lev];
-    s.innerHTML = `<div class="pk" style="color:${L.c}">Lever pulled · by ${fe(L.who)}</div><h4><span class="li">${L.ic}</span> ${fe(L.t)}</h4><div class="ld">${fe(L.d)}</div><ul class="lfx">${L.fx.map(([g, t]) => `<li class="${g === '+' ? 'up' : g === '−' ? 'dn' : 'eq'}"><b>${g === '=' ? '→' : g}</b>${fe(t)}</li>`).join('')}</ul><div class="lsrc">${fe(L.src)}</div>${lev < 6 ? (k => `<a class="pess" href="${ESSAYS[k][1]}" target="_blank" rel="noopener">${SSL}<span>Related essay: ${fe(ESSAYS[k][0])}</span></a>`)(lev === 4 ? 'crypto' : 'house') : ''}`;
-    return;
+    s.hidden = false; s.style.setProperty('--dc', L.c);
+    s.innerHTML = `${X}<div class="pk" style="color:${L.c}">Lever pulled · by ${fe(L.who)}</div><h4><span class="li">${L.ic}</span> ${fe(L.t)}</h4><div class="ld">${fe(L.d)}</div><ul class="lfx">${L.fx.map(([g, t]) => `<li class="${g === '+' ? 'up' : g === '−' ? 'dn' : 'eq'}"><b>${g === '=' ? '→' : g}</b>${fe(t)}</li>`).join('')}</ul><div class="lsrc">${fe(L.src)}</div>${lev < 6 ? (k => `<a class="pess" href="${ESSAYS[k][1]}" target="_blank" rel="noopener">${SSL}<span>Related essay: ${fe(ESSAYS[k][0])}</span></a>`)(lev === 4 ? 'crypto' : 'house') : ''}`;
+    placeDossier(); done(); return;
   }
+  if (flev.size) { const last = [...flev].pop(); renderSide(last); return; }
   if (fsel) {
     const N = FN[fsel], ins = FE.map((e, i) => [e, i]).filter(([e]) => e[1] === fsel), outs = FE.map((e, i) => [e, i]).filter(([e]) => e[0] === fsel);
-    const li = (arr, dir) => arr.map(([e]) => `<li><i style="background:${FT[e[2]][0]}"></i><b>${dir ? '→ ' + fe(FN[e[1]][3]) : fe(FN[e[0]][3]) + ' →'}</b> ${fe(e[3])}</li>`).join('');
-    s.innerHTML = `<div class="pk" style="color:${N[5]}">${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><div class="nb">${fe(N[4])}</div><p>${fe(N[6])}</p>${outs.length ? `<h5>Gives</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>Gets</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}<button type="button" class="pexit" id="isx-px">× Back to the plays</button>`;
-    $('px').addEventListener('click', () => { fsel = null; styleRmap(); renderSide(); });
-    return;
+    const li = (arr, dir) => arr.map(([e]) => { const o = dir ? e[1] : e[0]; return `<li><i style="background:${FT[e[2]][0]}"></i><span><button type="button" class="go" data-go="${o}">${dir ? '→ ' : ''}${fe(FN[o][3])}${dir ? '' : ' →'}</button> ${fe(e[3])}</span></li>`; }).join('');
+    const tl = TILES.flatMap(([, , c, ts]) => ts.map(T => [T, c])).filter(([T]) => T.n === fsel).map(([T]) => `<div class="dtile"><b>${fe(T.g.k)}: ${fe(T.g.v)}</b>${T.g.delta ? ` <em>${fe(T.g.delta)}</em>` : ''}<p>${fe(T.g.note)}</p><div class="lsrc">${fe(T.g.src)}</div></div>`).join('');
+    s.hidden = false; s.style.setProperty('--dc', N[5]);
+    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><div class="nb">${fe(N[4])}</div><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>Gives</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>Gets</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}`;
+    s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
+    placeDossier(); done(); return;
   }
-  s.innerHTML = `<div class="pk">Plays</div><p class="pint">Seven short walk-throughs of how the pieces move together: the state, the consumer, the allies and oil. Each lights up the relations on the map.</p>${PLAYS.map((P, i) => `<button type="button" class="play6" data-p="${i}" style="--pc:${P.c}"><span class="pi">${svgIc(P.ic, 20)}</span><span><b>${fe(P.t)}</b><small>${P.steps.length} moves</small></span><span class="pg">▶</span></button>`).join('')}<p class="pint2">Or click a node to see what it gives and gets, or a dial above to find it.</p>`;
-  s.querySelectorAll('.play6').forEach(b => b.addEventListener('click', () => { fplay = +b.dataset.p; fpstep = 0; fsel = null; flev.clear(); ROOT.querySelectorAll('.lev').forEach(x => { x.classList.remove('on'); x.setAttribute('aria-pressed', 'false'); }); styleRmap(); renderSide(); snd('step'); }));
+  s.hidden = true; s.innerHTML = '';
 }
 
 /* ---------- moving particles along the active relations ---------- */
@@ -3830,7 +4176,7 @@ function finParticles(act) {
   const svg = $('rmap'), g = svg && svg.querySelector('#isx-fpart'); if (!g) return;
   g.innerHTML = ''; fparts = [];
   const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig');
-  idx.forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p) return; const L = p.getTotalLength(), n = act ? 3 : 1; for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.4 : 2.2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.55'); g.appendChild(c); fparts.push({ c, p, L, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); } });
+  idx.forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p) return; const L = p.getTotalLength(), n = act ? 3 : 1; for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, p, L, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); } });
 }
 function finLoop() {
   cancelAnimationFrame(fRAF); if (reduce) { fparts.forEach(q => { const pt = q.p.getPointAtLength(q.L * .5); q.c.setAttribute('cx', pt.x); q.c.setAttribute('cy', pt.y); }); return; }
@@ -3889,8 +4235,8 @@ function wrap(s, n) { const w = String(s).split(' '), out = []; let l = ''; w.fo
 
 function finNarr() {
   if (finMode === 'plumb') return { h: 'The plumbing', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
-    x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed in the panel on the right.',
-    scale: 'The map is schematic: lines show relations, not amounts. Badges and dials carry the measured values, with dates and sources.' };
+    x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
+    scale: 'The map is schematic: lines show relations, not amounts. The tiles above the map carry the measured values, with dates and sources.' };
   return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
     x: 'Goldman Sachs expects debt to fund about a third of hyperscaler capex in 2026. The rest of the gap is filled off balance sheet: special-purpose vehicles financed by private credit, anchored by firms such as Apollo, Blackstone and PIMCO, whose money comes in large part from insurers, annuities and pension funds. US life insurers alone held $85.2bn of AI-linked investments in mid-2026. The hyperscalers also borrow abroad in euros, sterling, Swiss francs, Canadian dollars and yen.',
     scale: 'The tower is drawn to scale; * = implied. Deal diagrams show who pays whom, in what order.' };
