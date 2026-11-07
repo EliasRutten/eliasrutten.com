@@ -78,6 +78,7 @@ body { margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); paddi
 @keyframes isx-a-right { from { opacity: 0; translate: 10px 0; } to { opacity: 1; translate: 0 0; } }
 @keyframes isx-a-down { from { opacity: 0; translate: 0 -8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes isx-a-up { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+@keyframes isx-dash7 { to { stroke-dashoffset: -36; } }
 .isx {
 /* Layout: one large "war-room" frame holding three views: a WebGL globe (the circuit), the imperial-arm machine and
    the chains of action. Title, view switch and toggle float on top; tabs along the bottom edge.
@@ -1802,6 +1803,89 @@ button.res:hover { transform: none; box-shadow: none; }
 .intro6 .in-text em { font-style: normal; color: #ffd27a; }
 @media (max-height: 880px) { .intro6 .in-body { padding-top: 34px; padding-bottom: 28px; } .intro6 .in-title { font-size: clamp(26px, min(6.2vw, 8.6vh), 58px); } .intro6 .in-card { margin-top: 20px; } .intro6 .in-acts { margin-top: 20px; } }
 @media (max-width: 760px) { .intro6 .in-text { padding: 18px 18px 20px; } .intro6 .in-text p { font-size: 14px; } }
+
+/* ---------- v.1.7: the entry screen as a four-step guide ---------- */
+.intro6 [hidden] { display: none !important; }
+.intro6 { --acc: #ffb547; }
+.intro6 .in-sub { margin: 12px 0 0; font-family: var(--display); font-weight: 500; font-size: clamp(15px, 1.7vw, 19px); letter-spacing: .22em; text-transform: uppercase; text-align: center; color: #ffd9a0; text-shadow: 0 0 18px rgba(255, 181, 71, .35); animation: isx-fade 1.2s ease backwards .7s; }
+.intro6 .in-card.g7 { margin-top: 26px; width: min(780px, 100%); text-align: center; border-radius: 16px; border: 1px solid color-mix(in srgb, var(--acc) 55%, rgba(154, 171, 186, .3)); background: linear-gradient(180deg, rgba(14, 23, 33, .82), rgba(7, 12, 18, .9)); box-shadow: 0 0 0 1px rgba(255, 255, 255, .025) inset, 0 0 42px -8px color-mix(in srgb, var(--acc) 42%, transparent), 0 0 120px -30px color-mix(in srgb, var(--acc) 30%, transparent), 0 40px 80px -40px rgba(0, 0, 0, .9); transition: border-color .7s ease, box-shadow .7s ease; animation: isx-rise 1s ease backwards .9s; }
+.intro6 .in-card.g7::after { content: ""; position: absolute; inset: 6px; pointer-events: none; border-radius: 11px; --cl: color-mix(in srgb, var(--acc) 85%, #fff); background: linear-gradient(var(--cl), var(--cl)) top left / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) top left / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) top right / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) top right / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) bottom left / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) bottom left / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) bottom right / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) bottom right / 1.5px 16px; background-repeat: no-repeat; opacity: .9; }
+.intro6 .in-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid rgba(154, 171, 186, .14); }
+.intro6 .in-st { position: relative; display: flex; align-items: baseline; justify-content: center; gap: 8px; padding: 15px 8px 13px; border: 0; background: none; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color .35s ease; }
+.intro6 .in-st + .in-st { border-left: 1px solid rgba(154, 171, 186, .1); }
+.intro6 .in-st b { font-weight: 400; color: inherit; opacity: .8; }
+.intro6 .in-st::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--sa); opacity: 0; transition: opacity .4s ease, box-shadow .4s ease; }
+.intro6 .in-st:hover { color: var(--ink2); }
+.intro6 .in-st.done { color: var(--ink2); }
+.intro6 .in-st.done::after { opacity: .35; }
+.intro6 .in-st.on { color: #fff; text-shadow: 0 0 12px color-mix(in srgb, var(--sa) 70%, transparent); }
+.intro6 .in-st.on b { color: var(--sa); opacity: 1; }
+.intro6 .in-st.on::after { opacity: 1; box-shadow: 0 0 12px var(--sa), 0 0 3px var(--sa); }
+.intro6 .in-st:focus-visible { outline: 2px solid #fff; outline-offset: -4px; border-radius: 8px; }
+.intro6 .in-panes { display: grid; }
+.intro6 .in-pane { grid-area: 1 / 1; padding: 26px 40px 30px; display: flex; flex-direction: column; align-items: center; opacity: 0; visibility: hidden; translate: 0 8px; transition: opacity .55s ease, translate .7s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .55s; }
+.intro6 .in-pane.on { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .7s ease .12s, translate .8s cubic-bezier(.2, .7, .2, 1) .12s, visibility 0s; }
+.intro6 .in-pane h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(23px, 2.9vw, 33px); line-height: 1.12; letter-spacing: .045em; text-transform: uppercase; text-wrap: balance; color: #fff; text-shadow: 0 0 24px color-mix(in srgb, var(--acc) 55%, transparent), 0 0 60px color-mix(in srgb, var(--acc) 22%, transparent); }
+.intro6 .in-pane p { margin: 14px 0 0; max-width: 60ch; font-size: 15px; line-height: 1.62; color: #b7c5d1; text-wrap: pretty; }
+.intro6 .in-pane p em { font-style: normal; color: color-mix(in srgb, var(--acc) 70%, #fff); }
+.intro6 .in-loop { display: block; width: 100%; max-width: 600px; height: auto; margin-top: 16px; overflow: visible; }
+.intro6 .in-loop .lb { fill: none; stroke: rgba(255, 181, 71, .22); stroke-width: 2; }
+.intro6 .in-loop .lf { fill: none; stroke: #ffb547; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 2 16; filter: drop-shadow(0 0 4px rgba(255, 181, 71, .9)); animation: isx-dash7 2.6s linear infinite; }
+.intro6 .in-loop .b2 { stroke: rgba(215, 139, 255, .24); }
+.intro6 .in-loop .lf.b2 { stroke: #e3b0ff; filter: drop-shadow(0 0 4px rgba(215, 139, 255, .9)); }
+.intro6 .in-loop circle { fill: #fff; filter: drop-shadow(0 0 6px #fff); }
+.intro6 .in-loop text { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; fill: var(--ink); }
+.intro6 .in-loop text.t2 { font-size: 11px; fill: var(--ink2); }
+.intro6 .in-figs { margin-top: 20px; width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.intro6 .in-figs > div { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 13px 14px 12px; text-align: left; border-radius: 10px; border: 1px solid rgba(154, 171, 186, .16); border-bottom-color: var(--fc); background: linear-gradient(180deg, rgba(255, 255, 255, .02), color-mix(in srgb, var(--fc) 9%, transparent)); box-shadow: 0 8px 22px -12px color-mix(in srgb, var(--fc) 60%, transparent); }
+.intro6 .in-figs b { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1; letter-spacing: .02em; color: var(--fc); text-shadow: 0 0 16px color-mix(in srgb, var(--fc) 50%, transparent); }
+.intro6 .in-figs span { font-size: 12.5px; line-height: 1.3; color: var(--ink); }
+.intro6 .in-figs i { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.intro6 .in-flows { margin-top: 20px; display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: center; gap: 10px 26px; }
+.intro6 .in-flows div { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--ink); text-align: left; }
+.intro6 .in-flows i { flex: none; width: 26px; height: 3px; border-radius: 3px; background: var(--fc); box-shadow: 0 0 8px var(--fc); }
+.intro6 .in-where { margin-top: 18px; width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.intro6 .in-where div { display: flex; flex-direction: column; gap: 4px; padding: 11px 13px 10px; text-align: left; border-radius: 10px; border: 1px solid rgba(62, 230, 184, .2); background: rgba(62, 230, 184, .035); }
+.intro6 .in-where i { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #3ee6b8; }
+.intro6 .in-where span { font-size: 12.5px; line-height: 1.35; color: var(--ink); }
+.intro6 .in-acts { margin-top: 22px; animation: isx-rise .9s ease backwards 1.6s; }
+.intro6 .in-back { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px; border-radius: 12px; border: 1px solid rgba(154, 171, 186, .3); background: rgba(10, 16, 23, .6); color: var(--ink2); font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color .2s ease, border-color .2s ease; }
+.intro6 .in-back:hover { color: var(--ink); border-color: rgba(154, 171, 186, .55); }
+.intro6 .in-back:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.intro6 .in-go { min-width: 200px; border-color: color-mix(in srgb, var(--acc) 75%, transparent); background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 18%, transparent), color-mix(in srgb, var(--acc) 5%, transparent)); box-shadow: 0 0 26px color-mix(in srgb, var(--acc) 18%, transparent), inset 0 1px 0 rgba(255, 255, 255, .1); transition: background .5s ease, border-color .5s ease, box-shadow .5s ease, translate .2s ease; }
+.intro6 .in-go:hover { border-color: var(--acc); background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 28%, transparent), color-mix(in srgb, var(--acc) 8%, transparent)); box-shadow: 0 0 36px color-mix(in srgb, var(--acc) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.intro6 .in-go.final { border-color: rgba(255, 181, 71, .85); background: linear-gradient(180deg, rgba(255, 181, 71, .2), rgba(255, 181, 71, .06)); box-shadow: 0 0 34px rgba(255, 181, 71, .26), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.intro6 .in-foot { margin-top: 16px; animation-delay: 2s; }
+@media (max-height: 880px) { .intro6 .in-sub { margin-top: 8px; } .intro6 .in-card.g7 { margin-top: 18px; } .intro6 .in-pane { padding: 20px 36px 24px; } .intro6 .in-pane p { font-size: 14.5px; line-height: 1.55; margin-top: 12px; } .intro6 .in-loop { margin-top: 10px; max-width: 540px; } .intro6 .in-figs, .intro6 .in-flows, .intro6 .in-where { margin-top: 14px; } .intro6 .in-acts { margin-top: 18px; } .intro6 .in-foot { margin-top: 12px; } }
+@media (max-width: 760px) { .intro6 .in-sub { letter-spacing: .14em; } .intro6 .in-st { flex-direction: column; align-items: center; gap: 3px; padding: 12px 4px 11px; font-size: 9.5px; letter-spacing: .08em; } .intro6 .in-pane { padding: 20px 18px 22px; } .intro6 .in-pane p { font-size: 14px; } .intro6 .in-figs, .intro6 .in-where { grid-template-columns: minmax(0, 1fr); gap: 8px; } .intro6 .in-figs > div { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; } .intro6 .in-figs b { font-size: 24px; } .intro6 .in-flows { grid-template-columns: repeat(2, minmax(0, auto)); gap: 9px 18px; } .intro6 .in-loop text { font-size: 15px; } .intro6 .in-loop text.t2 { font-size: 14px; } .intro6 .in-go { min-width: 0; } .intro6 .in-acts { flex-wrap: nowrap; } .intro6 .in-acts .in-thesis { flex-basis: 100%; } }
+@media (max-width: 760px) { .intro6 .in-acts:has(.in-thesis:not([hidden])) { flex-wrap: wrap; } .intro6 .in-back { padding: 0 16px; } }
+@media (max-width: 420px) { .intro6 .in-st span { display: none; } .intro6 .in-st { font-size: 11px; } }
+/* v.1.7 guide: loop figure with HTML labels, panes centred vertically, compact phone layout */
+.intro6 .in-pane { justify-content: center; }
+.intro6 .in-loopw { margin-top: 18px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 14px; }
+.intro6 .in-loopw .in-loop { margin: 0; flex: 0 1 440px; min-width: 0; }
+.intro6 .in-loopw .nl { flex: none; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.intro6 .in-loop text.t2 { font-size: 11px; fill: #ffd9a0; }
+.intro6 .in-loop text.t3 { fill: #e9c6ff; }
+.intro6 .in-loopcap { display: none; }
+@media (max-height: 880px) { .intro6 .in-loopw { margin-top: 12px; } .intro6 .in-loopw .in-loop { flex-basis: 400px; } }
+@media (max-width: 760px) {
+  .intro6 .in-sub { font-size: 12.5px; letter-spacing: .1em; }
+  .intro6 .in-pane p { font-size: 13.5px; line-height: 1.55; }
+  .intro6 .in-pane h3 { font-size: 22px; }
+  .intro6 .in-loopw { gap: 8px; margin-top: 14px; }
+  .intro6 .in-loopw .nl { font-size: 9.5px; letter-spacing: .08em; max-width: 58px; line-height: 1.3; }
+  .intro6 .in-loop text.t2 { display: none; }
+  .intro6 .in-loopcap { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #ffd9a0; }
+  .intro6 .in-loopcap .c2 { color: #e9c6ff; }
+  .intro6 .in-where { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-top: 14px; }
+  .intro6 .in-where div { padding: 8px 9px 8px; }
+  .intro6 .in-where i { font-size: 9px; letter-spacing: .06em; }
+  .intro6 .in-where span { font-size: 11.5px; line-height: 1.3; }
+  .intro6 .in-figs { margin-top: 14px; }
+  .intro6 .in-body { padding-top: 52px; }
+}
+@media (max-width: 760px) { .intro6 .in-acts { gap: 10px; } .intro6 .in-go { width: auto; flex: 1 1 auto; min-width: 150px; max-width: 300px; padding: 0 16px; font-size: 17px; letter-spacing: .1em; } .intro6 .in-back { flex: none; padding: 0 14px; font-size: 15px; letter-spacing: .1em; } .intro6 .in-acts .in-thesis { flex: 1 1 100%; max-width: 100%; } }
 
 }
 </style>
@@ -4514,32 +4598,81 @@ function gaugeSVG(g) {
 
 const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', 'The plumbing', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
 
-/* ================= v.1.5: the entry screen =================
-   An overlay inside #isx-root, shown on every fresh load, skipped for deep links,
+/* ================= v.1.5–1.7: the entry screen =================
+   A four-step guide (v.1.7: the loop, the new cycle, reading the map, where to find it) in an overlay inside #isx-root, shown on every fresh load, skipped for deep links,
    reopened with “About this map” (top left) or the title. Flat on purpose: a dark field with a slow colour hue and fine grain.
    “Enter the stack” is a gentle pass-through: the text drifts toward the viewer and dissolves, the hue opens up,
    the overlay fades, the globe fades in while the camera glides toward it, then the panels settle one by one
    (classes isx-pre / isx-arrive on #isx-root, CSS in parts6/v8.css). No blur or scale is ever applied to the globe,
    because some browsers drop a WebGL canvas under CSS filters. */
 const INTRO_KEY = 'isx-intro-seen';
+const GUIDE = [
+  { k: 'The loop', acc: '#ffb547' },
+  { k: 'The new cycle', acc: '#d78bff' },
+  { k: 'Reading the map', acc: '#44d7ec' },
+  { k: 'Where to find it', acc: '#3ee6b8' }
+];
+const INTRO_FLOWS = [['var(--dollar)', 'Dollars'], ['var(--goods)', 'Chips and hardware'], ['var(--tools)', 'Chip-making tools'], ['var(--mat)', 'Wafers, minerals, energy'], ['var(--rent)', 'Rents: software, cloud, ads'], ['var(--cap)', 'State stakes and grants']];
+const INTRO_WHERE = [
+  ['Tab · Circuit', 'The ten-step dollar loop, on the globe'],
+  ['Tab · Arm', 'The firms and agencies that run it'],
+  ['Tab · Simulator', 'Pull Washington’s levers, watch the plumbing'],
+  ['Tab · Scenarios', 'Fourteen cases of the stack at work'],
+  ['Right · Map mode', 'Blocs, surpluses, exports, holdings of US shares'],
+  ['Page foot · How we count', 'Every source, date and definition']
+];
 const INTRO_HTML = `
   <div class="in-hue" aria-hidden="true"></div>
   <button type="button" class="in-skip" id="isx-in-skip">Skip intro <span aria-hidden="true">×</span></button>
   <div class="in-body">
     <h2 class="in-title" id="isx-intro-h"><span>Imperial</span> <span>Stack</span></h2>
-    <div class="in-card">
-      <div class="in-text">
-        <p class="in-first">The dollar system runs as a loop.</p>
-        <p>America buys goods and services from the world. The world’s producers earn dollars from that, and from what they pay American platforms for cloud, apps and AI, and they cannot spend all of it at home. They send the surplus back into American assets. That recycling keeps the dollar at the centre, and keeps American borrowing cheap.</p>
-        <p>What has changed is what the dollars flow into. Foreign official holders have stopped adding to US Treasuries: in the year to August 2026 they sold $164bn, while foreign investors bought $1.01tn of US shares. The AI boom has started a new cycle inside the dollar system. Platforms earn rents from the world, spend hundreds of billions on chips and data centres, and the producers abroad send their earnings back into American shares and bonds, often those of the same companies. The system now leans, more than ever, on high profits and high equity valuations. The US debt machine, meanwhile, is mostly financed and managed at home: foreigners held 30% of federal debt in 2025, against 47% in 2014.</p>
-        <p>To read the map, press <em>Enter the stack</em> and follow the ten steps of the loop. The map shows how the mechanism works: arcs are money, goods and tools in motion, and the card under the map explains each step. Every figure is dated and sourced, every term is defined, and what is left out is said plainly. The method is under “How we count”, at the foot of the page.</p>
+    <p class="in-sub">How the AI boom rewired the dollar system</p>
+    <div class="in-card g7">
+      <div class="in-steps" role="group" aria-label="Introduction, four steps">${GUIDE.map((g, i) => `<button type="button" class="in-st" data-i="${i}" style="--sa:${g.acc}"><b>0${i + 1}</b><span>${g.k}</span></button>`).join('')}</div>
+      <div class="in-panes">
+        <section class="in-pane" data-i="0">
+          <h3>The world earns dollars. Then it sends them back.</h3>
+          <p>America buys more from the world than it sells: its current-account deficit was <em>$1.18tn</em> in 2025. The producers who earn those dollars, from goods and from what they pay American platforms, cannot spend them all at home. So they park the surplus in American assets. That recycling keeps the dollar at the centre, and American borrowing cheap.</p>
+          <div class="in-loopw">
+            <span class="nl">The world</span>
+            <svg class="in-loop" viewBox="0 0 440 120" role="img" aria-label="Dollars flow from the United States to the world and are recycled back into American assets">
+              <path class="lb" d="M426,54 C340,-6 100,-6 14,54"/><path class="lf" d="M426,54 C340,-6 100,-6 14,54"/>
+              <path class="lb b2" d="M14,66 C100,126 340,126 426,66"/><path class="lf b2" d="M14,66 C100,126 340,126 426,66"/>
+              <circle cx="14" cy="60" r="6.5"/><circle cx="426" cy="60" r="6.5"/>
+              <text class="t2" x="220" y="40" text-anchor="middle">Dollars out · goods, cloud, AI</text>
+              <text class="t2 t3" x="220" y="88" text-anchor="middle">Dollars back · Treasuries, shares</text>
+            </svg>
+            <span class="nl">United States</span>
+          </div>
+          <div class="in-loopcap"><span>Dollars out · goods, cloud, AI</span><span class="c2">Dollars back · Treasuries, shares</span></div>
+        </section>
+        <section class="in-pane" data-i="1">
+          <h3>The AI boom rewired the loop.</h3>
+          <p>Foreign central banks are selling Treasuries. Foreign investors buy American shares instead, often of the platforms that earn rents abroad and pour hundreds of billions into chips and data centres. The loop now leans, more than ever, on <em>high profits and high valuations</em>, while the US debt machine is financed and managed mostly at home.</p>
+          <div class="in-figs">
+            <div style="--fc:#ff5a4e"><b>−$164bn</b><span>Foreign central banks’ Treasuries</span><i>Aug 2025 → Aug 2026</i></div>
+            <div style="--fc:#d78bff"><b>$1.01tn</b><span>Foreign buying of US shares</span><i>12 months to Aug 2026</i></div>
+            <div style="--fc:#ffb547"><b>30%</b><span>Foreign share of federal debt</span><i>2025, against 47% in 2014</i></div>
+          </div>
+        </section>
+        <section class="in-pane" data-i="2">
+          <h3>Ten steps, one loop.</h3>
+          <p>Press <em>Play</em>, or walk the step bar along the bottom, from rents to the moment the loop closes. Each arc is a flow in that step, as wide as its value. The step card explains what happens and opens its sources; the tiles along the top carry the headline figures. Click any country for its own card.</p>
+          <div class="in-flows">${INTRO_FLOWS.map(([c, t]) => `<div style="--fc:${c}"><i></i><span>${t}</span></div>`).join('')}</div>
+        </section>
+        <section class="in-pane" data-i="3">
+          <h3>Four views. One method.</h3>
+          <p>The tabs at the top switch views. Switches top right add China’s WAICO bloc and the June 2026 AI statement. Every figure is dated and sourced, every term defined. <em>About this map</em>, top left, brings you back here.</p>
+          <div class="in-where">${INTRO_WHERE.map(([a, b]) => `<div><i>${a}</i><span>${b}</span></div>`).join('')}</div>
+        </section>
       </div>
     </div>
     <div class="in-acts">
-      <button type="button" class="in-go" id="isx-in-go"><span>Enter the stack</span><i aria-hidden="true">→</i></button>
-      <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it.">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
+      <button type="button" class="in-back" id="isx-in-back"><i aria-hidden="true">←</i><span>Back</span></button>
+      <button type="button" class="in-go" id="isx-in-go"><span>Next</span><i aria-hidden="true">→</i></button>
+      <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it." hidden>${SSL}<span>Read the thesis</span><em>coming soon</em></a>
     </div>
-    <p class="in-foot">Work in progress · v.1.5 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
+    <p class="in-foot">Work in progress · v.1.5 · data as of 5 Nov 2026 · By Elias Rutten</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -4590,13 +4723,36 @@ function introOpen() {
   const wrap = ROOT.querySelector('.wrap');
   if (wrap) wrap.inert = true;
   try { introHtmlOv = document.documentElement.style.overflow; document.documentElement.style.overflow = 'hidden'; } catch (e) { introHtmlOv = ''; }
-  const go = el.querySelector('#isx-in-go'), skip = el.querySelector('#isx-in-skip'), ths = el.querySelector('.in-thesis');
-  go.addEventListener('click', () => introClose(true));
+  const go = el.querySelector('#isx-in-go'), skip = el.querySelector('#isx-in-skip'), back = el.querySelector('#isx-in-back'), ths = el.querySelector('.in-thesis');
+  const last = GUIDE.length - 1;
+  let at = 0;
+  const show = n => {
+    at = Math.max(0, Math.min(last, n));
+    el.style.setProperty('--acc', GUIDE[at].acc);
+    el.querySelectorAll('.in-pane').forEach((p, i) => { p.classList.toggle('on', i === at); p.inert = i !== at; });
+    el.querySelectorAll('.in-st').forEach((b, i) => { b.classList.toggle('on', i === at); b.classList.toggle('done', i < at); if (i === at) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    back.hidden = at === 0; ths.hidden = at !== last;
+    go.classList.toggle('final', at === last);
+    go.querySelector('span').textContent = at === last ? 'Enter the stack' : 'Next';
+  };
+  show(0);
+  el.querySelectorAll('.in-st').forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+  go.addEventListener('click', () => { if (at === last) introClose(true); else show(at + 1); });
+  back.addEventListener('click', () => show(at - 1));
   skip.addEventListener('click', () => introClose(false));
   el.addEventListener('keydown', e => {
+    const onBtn = e.target.closest && e.target.closest('button, a');
     if (e.key === 'Escape') { e.preventDefault(); introClose(false); }
-    else if (e.key === 'Enter' && e.target !== skip && e.target !== go && e.target !== ths) { e.preventDefault(); introClose(true); }
-    else if (e.key === 'Tab') { const a = document.activeElement; if (e.shiftKey && (a === skip || a === el)) { e.preventDefault(); ths.focus(); } else if (!e.shiftKey && a === ths) { e.preventDefault(); skip.focus(); } }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
+    else if (e.key === 'Enter' && !onBtn) { e.preventDefault(); go.click(); }
+    else if (e.key === 'Tab') {
+      const f = [...el.querySelectorAll('button, a[href]')].filter(x => !x.hidden && !x.closest('[inert]') && x.getClientRects().length);
+      if (!f.length) return;
+      const a = document.activeElement, i = f.indexOf(a);
+      if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (i === f.length - 1 || i === -1 && a !== el)) { e.preventDefault(); f[0].focus(); }
+    }
   });
   el.tabIndex = -1; el.focus({ preventScroll: true });
 }
