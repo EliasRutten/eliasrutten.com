@@ -22,6 +22,11 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "@id": "https://eliasrutten.com/imperial-stack/#work", "name": "The Imperial Stack", "headline": "The Imperial Stack: how US tech, the dollar and the American state work as one machine", "description": "An interactive map of the imperial stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe, see who finances the AI build-out, the firms that act for the state, and fourteen cases from Starlink to Nexperia. By Elias Rutten.", "url": "https://eliasrutten.com/imperial-stack/", "inLanguage": "en", "isAccessibleForFree": true, "dateModified": "2026-11-07", "image": "https://eliasrutten.com/assets/img/og-stack.jpg", "genre": "Interactive data visualisation", "author": {"@type": "Person", "@id": "https://eliasrutten.com/#elias", "name": "Elias Rutten", "url": "https://eliasrutten.com/"}, "keywords": ["Pax Silica", "dollar hegemony", "profit dollar", "US current account", "Treasury QE", "AI capex", "private credit", "big tech", "Palantir", "Starlink", "stablecoins", "Tether", "weaponized interdependence", "Nexperia", "Huawei", "financial statecraft"], "isPartOf": {"@type": "WebSite", "@id": "https://eliasrutten.com/#site"}}</script>
 <style>
+/* v.1.5 fix: the page stays dark until the entry screen is in place (no globe before the intro) */
+.isx.booting { background: #05080d; }
+.isx.booting > .wrap { visibility: hidden; }
+</style>
+<style>
 .er-about { max-width: 760px; margin: 40px auto 56px; padding: 26px 26px 22px; border: 1px solid #1a2631; border-radius: 16px; background: #0a1016; color: #cfd9e2;
   font-family: "Newsreader", Georgia, serif; font-size: 17px; line-height: 1.65; }
 .er-about h2 { margin: 0 0 10px; font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-weight: 700; font-size: 24px; letter-spacing: .05em; text-transform: uppercase; color: #e4ebf1; }
@@ -1786,7 +1791,7 @@ button.res:hover { transform: none; box-shadow: none; }
 }
 </style>
 
-<div class="isx" id="isx-root"><div class="wrap">
+<div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
       <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.5</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
@@ -4576,6 +4581,7 @@ function introOpen() {
 }
 
 function initIntro() {
+  ROOT.classList.remove('booting'); /* the page may now show; the overlay is already in place */
   const ab = $('about'); if (ab) ab.addEventListener('click', () => introOpen());
   const h1 = ROOT.querySelector('.hud-top .brand h1');
   if (h1) { h1.classList.add('introlink'); h1.title = 'About this map: replay the introduction'; h1.addEventListener('click', () => introOpen()); }
