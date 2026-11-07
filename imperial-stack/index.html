@@ -1794,6 +1794,15 @@ button.res:hover { transform: none; box-shadow: none; }
 .stats dd.lg { grid-column: 1 / -1; margin: -2px 0 2px; text-align: left; font-family: var(--sans); font-size: 12.5px; line-height: 1.45; color: var(--ink); font-variant-numeric: normal; }
 .stats dd.lg.fn { font-size: 11px; color: var(--ink3); margin-top: -4px; }
 
+/* v.1.6: the entry screen as one text (replaces the lede, three beats and the two-ways block) */
+.intro6 .in-text { padding: 22px 30px 24px; text-align: left; animation: isx-fade 1s ease backwards .5s; }
+.intro6 .in-text p { margin: 0 0 12px; max-width: 70ch; font-size: 14.5px; line-height: 1.6; color: var(--ink2); }
+.intro6 .in-text p:last-child { margin-bottom: 0; }
+.intro6 .in-text .in-first { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.2; letter-spacing: .05em; text-transform: uppercase; color: #fff; margin-bottom: 10px; }
+.intro6 .in-text em { font-style: normal; color: #ffd27a; }
+@media (max-height: 880px) { .intro6 .in-body { padding-top: 34px; padding-bottom: 28px; } .intro6 .in-title { font-size: clamp(26px, min(6.2vw, 8.6vh), 58px); } .intro6 .in-card { margin-top: 20px; } .intro6 .in-acts { margin-top: 20px; } }
+@media (max-width: 760px) { .intro6 .in-text { padding: 18px 18px 20px; } .intro6 .in-text p { font-size: 14px; } }
+
 }
 </style>
 
@@ -4506,7 +4515,7 @@ function gaugeSVG(g) {
 const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', 'The plumbing', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
 
 /* ================= v.1.5: the entry screen =================
-   An overlay inside #isx-root, shown once per browser session (sessionStorage, guarded), skipped for deep links,
+   An overlay inside #isx-root, shown on every fresh load, skipped for deep links,
    reopened with “About this map” (top left) or the title. Flat on purpose: a dark field with a slow colour hue and fine grain.
    “Enter the stack” is a gentle pass-through: the text drifts toward the viewer and dissolves, the hue opens up,
    the overlay fades, the globe fades in while the camera glides toward it, then the panels settle one by one
@@ -4519,18 +4528,11 @@ const INTRO_HTML = `
   <div class="in-body">
     <h2 class="in-title" id="isx-intro-h"><span>Imperial</span> <span>Stack</span></h2>
     <div class="in-card">
-      <p class="in-lede">A dollar built on central banks is becoming a dollar built on corporate profits.</p>
-      <div class="in-beats">
-        <section style="--bc:#ffb547"><span>01 · The shift</span><p>In the year to August 2026, foreign central banks sold $164bn of US Treasuries. Foreign investors bought $1.01tn of US shares.</p></section>
-        <section style="--bc:#44d7ec"><span>02 · The machine</span><p>Behind that sits a loop. The world pays American platforms for cloud, apps and AI. The platforms order chips and build data centres. The producers abroad run surpluses, and those savings flow back into American assets. The state keeps the plumbing running.</p></section>
-        <section style="--bc:#d78bff"><span>03 · The question</span><p>Is this still a reserve currency, or something new: a dollar system carried by private capital and corporate profit, and held in place by the state?</p></section>
-      </div>
-      <div class="in-how">
-        <h3>Read it as a story, or as a ledger.</h3>
-        <div class="in-ways">
-          <p><b>The story.</b> Press <em>Enter the stack</em> and follow the ten stops of the loop. Each tells its part in a few lines while the map lights up.</p>
-          <p><b>The ledger.</b> Every figure is dated and sourced, every term defined, and what is left out is said plainly. The method sits under “How we count”, at the foot of the page.</p>
-        </div>
+      <div class="in-text">
+        <p class="in-first">The dollar system runs as a loop.</p>
+        <p>America buys goods and services from the world. The world’s producers earn dollars from that, and from what they pay American platforms for cloud, apps and AI, and they cannot spend all of it at home. They send the surplus back into American assets. That recycling keeps the dollar at the centre, and keeps American borrowing cheap.</p>
+        <p>What has changed is what the dollars flow into. Foreign official holders have stopped adding to US Treasuries: in the year to August 2026 they sold $164bn, while foreign investors bought $1.01tn of US shares. The AI boom has started a new cycle inside the dollar system. Platforms earn rents from the world, spend hundreds of billions on chips and data centres, and the producers abroad send their earnings back into American shares and bonds, often those of the same companies. The system now leans, more than ever, on high profits and high equity valuations. The US debt machine, meanwhile, is mostly financed and managed at home: foreigners held 30% of federal debt in 2025, against 47% in 2014.</p>
+        <p>To read the map, press <em>Enter the stack</em> and follow the ten steps of the loop. The map shows how the mechanism works: arcs are money, goods and tools in motion, and the card under the map explains each step. Every figure is dated and sourced, every term is defined, and what is left out is said plainly. The method is under “How we count”, at the foot of the page.</p>
       </div>
     </div>
     <div class="in-acts">
@@ -4605,7 +4607,7 @@ function initIntro() {
   const h1 = ROOT.querySelector('.hud-top .brand h1');
   if (h1) { h1.classList.add('introlink'); h1.title = 'About this map: replay the introduction'; h1.addEventListener('click', () => introOpen()); }
   const deep = location.hash && location.hash !== '#';
-  if (!deep && !introSeen()) introOpen();
+  if (!deep) introOpen(); /* every fresh load opens on the entry screen; deep links skip it */
 }
 
 /* v8 init: sound button, methodology */
