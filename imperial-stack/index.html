@@ -78,7 +78,6 @@ body { margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); paddi
 @keyframes isx-a-right { from { opacity: 0; translate: 10px 0; } to { opacity: 1; translate: 0 0; } }
 @keyframes isx-a-down { from { opacity: 0; translate: 0 -8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes isx-a-up { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
-@keyframes isx-dash7 { to { stroke-dashoffset: -36; } }
 .isx {
 /* Layout: one large "war-room" frame holding three views: a WebGL globe (the circuit), the imperial-arm machine and
    the chains of action. Title, view switch and toggle float on top; tabs along the bottom edge.
@@ -1795,97 +1794,30 @@ button.res:hover { transform: none; box-shadow: none; }
 .stats dd.lg { grid-column: 1 / -1; margin: -2px 0 2px; text-align: left; font-family: var(--sans); font-size: 12.5px; line-height: 1.45; color: var(--ink); font-variant-numeric: normal; }
 .stats dd.lg.fn { font-size: 11px; color: var(--ink3); margin-top: -4px; }
 
-/* v.1.6: the entry screen as one text (replaces the lede, three beats and the two-ways block) */
-.intro6 .in-text { padding: 22px 30px 24px; text-align: left; animation: isx-fade 1s ease backwards .5s; }
-.intro6 .in-text p { margin: 0 0 12px; max-width: 70ch; font-size: 14.5px; line-height: 1.6; color: var(--ink2); }
-.intro6 .in-text p:last-child { margin-bottom: 0; }
-.intro6 .in-text .in-first { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.2; letter-spacing: .05em; text-transform: uppercase; color: #fff; margin-bottom: 10px; }
-.intro6 .in-text em { font-style: normal; color: #ffd27a; }
-@media (max-height: 880px) { .intro6 .in-body { padding-top: 34px; padding-bottom: 28px; } .intro6 .in-title { font-size: clamp(26px, min(6.2vw, 8.6vh), 58px); } .intro6 .in-card { margin-top: 20px; } .intro6 .in-acts { margin-top: 20px; } }
-@media (max-width: 760px) { .intro6 .in-text { padding: 18px 18px 20px; } .intro6 .in-text p { font-size: 14px; } }
-
-/* ---------- v.1.7: the entry screen as a four-step guide ---------- */
-.intro6 [hidden] { display: none !important; }
-.intro6 { --acc: #ffb547; }
-.intro6 .in-sub { margin: 12px 0 0; font-family: var(--display); font-weight: 500; font-size: clamp(15px, 1.7vw, 19px); letter-spacing: .22em; text-transform: uppercase; text-align: center; color: #ffd9a0; text-shadow: 0 0 18px rgba(255, 181, 71, .35); animation: isx-fade 1.2s ease backwards .7s; }
-.intro6 .in-card.g7 { margin-top: 26px; width: min(780px, 100%); text-align: center; border-radius: 16px; border: 1px solid color-mix(in srgb, var(--acc) 55%, rgba(154, 171, 186, .3)); background: linear-gradient(180deg, rgba(14, 23, 33, .82), rgba(7, 12, 18, .9)); box-shadow: 0 0 0 1px rgba(255, 255, 255, .025) inset, 0 0 42px -8px color-mix(in srgb, var(--acc) 42%, transparent), 0 0 120px -30px color-mix(in srgb, var(--acc) 30%, transparent), 0 40px 80px -40px rgba(0, 0, 0, .9); transition: border-color .7s ease, box-shadow .7s ease; animation: isx-rise 1s ease backwards .9s; }
-.intro6 .in-card.g7::after { content: ""; position: absolute; inset: 6px; pointer-events: none; border-radius: 11px; --cl: color-mix(in srgb, var(--acc) 85%, #fff); background: linear-gradient(var(--cl), var(--cl)) top left / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) top left / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) top right / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) top right / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) bottom left / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) bottom left / 1.5px 16px, linear-gradient(var(--cl), var(--cl)) bottom right / 16px 1.5px, linear-gradient(var(--cl), var(--cl)) bottom right / 1.5px 16px; background-repeat: no-repeat; opacity: .9; }
-.intro6 .in-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid rgba(154, 171, 186, .14); }
-.intro6 .in-st { position: relative; display: flex; align-items: baseline; justify-content: center; gap: 8px; padding: 15px 8px 13px; border: 0; background: none; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color .35s ease; }
-.intro6 .in-st + .in-st { border-left: 1px solid rgba(154, 171, 186, .1); }
-.intro6 .in-st b { font-weight: 400; color: inherit; opacity: .8; }
-.intro6 .in-st::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--sa); opacity: 0; transition: opacity .4s ease, box-shadow .4s ease; }
-.intro6 .in-st:hover { color: var(--ink2); }
-.intro6 .in-st.done { color: var(--ink2); }
-.intro6 .in-st.done::after { opacity: .35; }
-.intro6 .in-st.on { color: #fff; text-shadow: 0 0 12px color-mix(in srgb, var(--sa) 70%, transparent); }
-.intro6 .in-st.on b { color: var(--sa); opacity: 1; }
-.intro6 .in-st.on::after { opacity: 1; box-shadow: 0 0 12px var(--sa), 0 0 3px var(--sa); }
-.intro6 .in-st:focus-visible { outline: 2px solid #fff; outline-offset: -4px; border-radius: 8px; }
-.intro6 .in-panes { display: grid; }
-.intro6 .in-pane { grid-area: 1 / 1; padding: 26px 40px 30px; display: flex; flex-direction: column; align-items: center; opacity: 0; visibility: hidden; translate: 0 8px; transition: opacity .55s ease, translate .7s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .55s; }
-.intro6 .in-pane.on { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .7s ease .12s, translate .8s cubic-bezier(.2, .7, .2, 1) .12s, visibility 0s; }
-.intro6 .in-pane h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(23px, 2.9vw, 33px); line-height: 1.12; letter-spacing: .045em; text-transform: uppercase; text-wrap: balance; color: #fff; text-shadow: 0 0 24px color-mix(in srgb, var(--acc) 55%, transparent), 0 0 60px color-mix(in srgb, var(--acc) 22%, transparent); }
-.intro6 .in-pane p { margin: 14px 0 0; max-width: 60ch; font-size: 15px; line-height: 1.62; color: #b7c5d1; text-wrap: pretty; }
-.intro6 .in-pane p em { font-style: normal; color: color-mix(in srgb, var(--acc) 70%, #fff); }
-.intro6 .in-loop { display: block; width: 100%; max-width: 600px; height: auto; margin-top: 16px; overflow: visible; }
-.intro6 .in-loop .lb { fill: none; stroke: rgba(255, 181, 71, .22); stroke-width: 2; }
-.intro6 .in-loop .lf { fill: none; stroke: #ffb547; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 2 16; filter: drop-shadow(0 0 4px rgba(255, 181, 71, .9)); animation: isx-dash7 2.6s linear infinite; }
-.intro6 .in-loop .b2 { stroke: rgba(215, 139, 255, .24); }
-.intro6 .in-loop .lf.b2 { stroke: #e3b0ff; filter: drop-shadow(0 0 4px rgba(215, 139, 255, .9)); }
-.intro6 .in-loop circle { fill: #fff; filter: drop-shadow(0 0 6px #fff); }
-.intro6 .in-loop text { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; fill: var(--ink); }
-.intro6 .in-loop text.t2 { font-size: 11px; fill: var(--ink2); }
-.intro6 .in-figs { margin-top: 20px; width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.intro6 .in-figs > div { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 13px 14px 12px; text-align: left; border-radius: 10px; border: 1px solid rgba(154, 171, 186, .16); border-bottom-color: var(--fc); background: linear-gradient(180deg, rgba(255, 255, 255, .02), color-mix(in srgb, var(--fc) 9%, transparent)); box-shadow: 0 8px 22px -12px color-mix(in srgb, var(--fc) 60%, transparent); }
-.intro6 .in-figs b { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1; letter-spacing: .02em; color: var(--fc); text-shadow: 0 0 16px color-mix(in srgb, var(--fc) 50%, transparent); }
-.intro6 .in-figs span { font-size: 12.5px; line-height: 1.3; color: var(--ink); }
-.intro6 .in-figs i { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
-.intro6 .in-flows { margin-top: 20px; display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: center; gap: 10px 26px; }
-.intro6 .in-flows div { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--ink); text-align: left; }
-.intro6 .in-flows i { flex: none; width: 26px; height: 3px; border-radius: 3px; background: var(--fc); box-shadow: 0 0 8px var(--fc); }
-.intro6 .in-where { margin-top: 18px; width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.intro6 .in-where div { display: flex; flex-direction: column; gap: 4px; padding: 11px 13px 10px; text-align: left; border-radius: 10px; border: 1px solid rgba(62, 230, 184, .2); background: rgba(62, 230, 184, .035); }
-.intro6 .in-where i { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #3ee6b8; }
-.intro6 .in-where span { font-size: 12.5px; line-height: 1.35; color: var(--ink); }
-.intro6 .in-acts { margin-top: 22px; animation: isx-rise .9s ease backwards 1.6s; }
-.intro6 .in-back { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px; border-radius: 12px; border: 1px solid rgba(154, 171, 186, .3); background: rgba(10, 16, 23, .6); color: var(--ink2); font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color .2s ease, border-color .2s ease; }
-.intro6 .in-back:hover { color: var(--ink); border-color: rgba(154, 171, 186, .55); }
-.intro6 .in-back:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.intro6 .in-go { min-width: 200px; border-color: color-mix(in srgb, var(--acc) 75%, transparent); background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 18%, transparent), color-mix(in srgb, var(--acc) 5%, transparent)); box-shadow: 0 0 26px color-mix(in srgb, var(--acc) 18%, transparent), inset 0 1px 0 rgba(255, 255, 255, .1); transition: background .5s ease, border-color .5s ease, box-shadow .5s ease, translate .2s ease; }
-.intro6 .in-go:hover { border-color: var(--acc); background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 28%, transparent), color-mix(in srgb, var(--acc) 8%, transparent)); box-shadow: 0 0 36px color-mix(in srgb, var(--acc) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, .12); }
-.intro6 .in-go.final { border-color: rgba(255, 181, 71, .85); background: linear-gradient(180deg, rgba(255, 181, 71, .2), rgba(255, 181, 71, .06)); box-shadow: 0 0 34px rgba(255, 181, 71, .26), inset 0 1px 0 rgba(255, 255, 255, .12); }
-.intro6 .in-foot { margin-top: 16px; animation-delay: 2s; }
-@media (max-height: 880px) { .intro6 .in-sub { margin-top: 8px; } .intro6 .in-card.g7 { margin-top: 18px; } .intro6 .in-pane { padding: 20px 36px 24px; } .intro6 .in-pane p { font-size: 14.5px; line-height: 1.55; margin-top: 12px; } .intro6 .in-loop { margin-top: 10px; max-width: 540px; } .intro6 .in-figs, .intro6 .in-flows, .intro6 .in-where { margin-top: 14px; } .intro6 .in-acts { margin-top: 18px; } .intro6 .in-foot { margin-top: 12px; } }
-@media (max-width: 760px) { .intro6 .in-sub { letter-spacing: .14em; } .intro6 .in-st { flex-direction: column; align-items: center; gap: 3px; padding: 12px 4px 11px; font-size: 9.5px; letter-spacing: .08em; } .intro6 .in-pane { padding: 20px 18px 22px; } .intro6 .in-pane p { font-size: 14px; } .intro6 .in-figs, .intro6 .in-where { grid-template-columns: minmax(0, 1fr); gap: 8px; } .intro6 .in-figs > div { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; } .intro6 .in-figs b { font-size: 24px; } .intro6 .in-flows { grid-template-columns: repeat(2, minmax(0, auto)); gap: 9px 18px; } .intro6 .in-loop text { font-size: 15px; } .intro6 .in-loop text.t2 { font-size: 14px; } .intro6 .in-go { min-width: 0; } .intro6 .in-acts { flex-wrap: nowrap; } .intro6 .in-acts .in-thesis { flex-basis: 100%; } }
-@media (max-width: 760px) { .intro6 .in-acts:has(.in-thesis:not([hidden])) { flex-wrap: wrap; } .intro6 .in-back { padding: 0 16px; } }
-@media (max-width: 420px) { .intro6 .in-st span { display: none; } .intro6 .in-st { font-size: 11px; } }
-/* v.1.7 guide: loop figure with HTML labels, panes centred vertically, compact phone layout */
-.intro6 .in-pane { justify-content: center; }
-.intro6 .in-loopw { margin-top: 18px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 14px; }
-.intro6 .in-loopw .in-loop { margin: 0; flex: 0 1 440px; min-width: 0; }
-.intro6 .in-loopw .nl { flex: none; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
-.intro6 .in-loop text.t2 { font-size: 11px; fill: #ffd9a0; }
-.intro6 .in-loop text.t3 { fill: #e9c6ff; }
-.intro6 .in-loopcap { display: none; }
-@media (max-height: 880px) { .intro6 .in-loopw { margin-top: 12px; } .intro6 .in-loopw .in-loop { flex-basis: 400px; } }
-@media (max-width: 760px) {
-  .intro6 .in-sub { font-size: 12.5px; letter-spacing: .1em; }
-  .intro6 .in-pane p { font-size: 13.5px; line-height: 1.55; }
-  .intro6 .in-pane h3 { font-size: 22px; }
-  .intro6 .in-loopw { gap: 8px; margin-top: 14px; }
-  .intro6 .in-loopw .nl { font-size: 9.5px; letter-spacing: .08em; max-width: 58px; line-height: 1.3; }
-  .intro6 .in-loop text.t2 { display: none; }
-  .intro6 .in-loopcap { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #ffd9a0; }
-  .intro6 .in-loopcap .c2 { color: #e9c6ff; }
-  .intro6 .in-where { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-top: 14px; }
-  .intro6 .in-where div { padding: 8px 9px 8px; }
-  .intro6 .in-where i { font-size: 9px; letter-spacing: .06em; }
-  .intro6 .in-where span { font-size: 11.5px; line-height: 1.3; }
-  .intro6 .in-figs { margin-top: 14px; }
-  .intro6 .in-body { padding-top: 52px; }
-}
-@media (max-width: 760px) { .intro6 .in-acts { gap: 10px; } .intro6 .in-go { width: auto; flex: 1 1 auto; min-width: 150px; max-width: 300px; padding: 0 16px; font-size: 17px; letter-spacing: .1em; } .intro6 .in-back { flex: none; padding: 0 14px; font-size: 15px; letter-spacing: .1em; } .intro6 .in-acts .in-thesis { flex: 1 1 100%; max-width: 100%; } }
+/* ---------- v.1.7: the entry screen, back to the three beats ----------
+   A headline instead of the bare title, a centred subtitle, the original card (lede, three beats, how to read the map)
+   with a clearer hairline edge and the soft text glow Elias set on the site in v.1.5 (commit 618b84a). */
+.intro6 .in-kick { margin: 0 0 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--ink3); animation: isx-fade 1.2s ease backwards .2s; }
+.intro6 .in-title.hl { font-size: clamp(19px, 3.3vw, 40px); line-height: 1.28; letter-spacing: .07em; gap: 0 .45em; animation: isx-rise 1.6s cubic-bezier(.2, .7, .2, 1) backwards .1s; }
+.intro6.enter .in-title.hl { letter-spacing: .09em; }
+.intro6 .in-sub { margin: 14px 0 0; font-family: var(--display); font-weight: 500; font-size: clamp(14px, 1.8vw, 20px); letter-spacing: .22em; text-transform: uppercase; text-align: center; text-wrap: balance; color: #ffd9a0; text-shadow: 0 0 18px rgba(255, 181, 71, .38); animation: isx-fade 1.2s ease backwards .7s; }
+.intro6 .in-card { width: min(900px, 100%); margin-top: 28px; border-color: rgba(154, 171, 186, .3); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(255, 181, 71, .06), 0 0 50px -24px rgba(255, 181, 71, .35); animation: isx-rise 1s ease backwards .9s; }
+.intro6 .in-card::before { height: 1.5px; }
+.intro6 .in-lede { padding: 24px 40px 20px; font-size: clamp(16px, 1.9vw, 21px); line-height: 1.4; text-wrap: balance; }
+.intro6 .in-lede b { font-family: var(--display); font-weight: 600; font-size: 1.12em; letter-spacing: .02em; color: #ffd27a; text-shadow: 0 0 14px rgba(255, 181, 71, .45); }
+.intro6 .in-beats section { padding: 16px 22px 20px; animation-fill-mode: backwards; }
+.intro6 .in-beats span { font-size: 11px; letter-spacing: .18em; text-shadow: 0 0 9px color-mix(in srgb, var(--bc) 52%, transparent); }
+.intro6 .in-beats p { margin: 9px 0 0; font-family: var(--sans); font-weight: 500; font-size: 15px; line-height: 1.58; letter-spacing: .005em; color: #e6edf3; text-shadow: 0 0 16px color-mix(in srgb, var(--bc) 24%, transparent); }
+.intro6 .in-how { padding: 16px 22px 20px; animation-fill-mode: backwards; }
+.intro6 .in-how h3 { font-size: 17px; letter-spacing: .1em; color: #fff; }
+.intro6 .in-ways p { font-size: 14px; line-height: 1.55; color: #b9c7d3; }
+.intro6 .in-acts { animation-fill-mode: backwards; }
+.intro6 .in-foot { animation-fill-mode: backwards; }
+.intro6 .in-skip.in-top { padding: 8px 16px; border-color: rgba(255, 181, 71, .6); background: rgba(10, 14, 20, .82); color: #ffe2b0; font-size: 11px; letter-spacing: .14em; box-shadow: 0 0 18px rgba(255, 181, 71, .14); }
+.intro6 .in-skip.in-top:hover { color: #fff; border-color: #ffb547; box-shadow: 0 0 24px rgba(255, 181, 71, .28); }
+@media (max-height: 880px) { .intro6 .in-body { padding-top: 40px; padding-bottom: 30px; } .intro6 .in-card { margin-top: 22px; } .intro6 .in-lede { padding: 18px 36px 16px; } .intro6 .in-beats p { font-size: 14.5px; line-height: 1.52; } .intro6 .in-acts { margin-top: 20px; } }
+@media (max-width: 760px) { .intro6 .in-body { padding-top: 64px; } .intro6 .in-kick { font-size: 9.5px; letter-spacing: .16em; margin-bottom: 10px; } .intro6 .in-title.hl { font-size: clamp(17px, 5.4vw, 24px); letter-spacing: .04em; } .intro6 .in-sub { font-size: 13px; letter-spacing: .12em; } .intro6 .in-lede { padding: 20px 18px 16px; font-size: 16px; } .intro6 .in-beats section, .intro6 .in-how { padding: 14px 18px 16px; } .intro6 .in-beats p { font-size: 14.5px; } .intro6 .in-ways p { font-size: 13.5px; } }
+@media (min-width: 761px) { .intro6 .in-body { width: min(1080px, 100%); } .intro6 .in-title.hl { font-size: clamp(19px, 2.55vw, 34px); } }
 
 }
 </style>
@@ -1893,7 +1825,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.5</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.7</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -1901,7 +1833,7 @@ button.res:hover { transform: none; box-shadow: none; }
         <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">Scenarios</span><span class="sm">Scenarios</span></button>
         <button type="button" id="isx-v-crisis" class="soon" disabled title="Coming soon: what happens when the AI bubble pops"><span class="lg">Crisis simulation</span><span class="sm">Crisis</span><em>coming soon</em></button>
       </div>
-      <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="false"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle" id="isx-aistmt" type="button" role="switch" aria-checked="false"><span class="knob"></span><span class="lbl">AI statement, June 2026</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
+      <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="false"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
       <div class="mswitch" id="isx-mswitch" role="group" aria-label="Arm view" hidden><button type="button" id="isx-m-machine" aria-pressed="true">Machine</button><button type="button" id="isx-m-rev" aria-pressed="false">Revenue map</button></div>
     </div>
     <div class="resbar" id="isx-resbar" aria-label="Key numbers"></div>
@@ -2342,13 +2274,12 @@ function flowsFor(key) {
   return out;
 }
 
-let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = false, showAI = false, hoverIso = null, hlFlow = null;
+let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = false, hoverIso = null, hlFlow = null;
 const HUBS = new Set(['PLAT', 'NYC', 'FAB', 'DC', 'SLV', 'DEFHUB', 'R_EUR', 'R_CHN', 'R_APAC', 'R_AMER', 'R_MEA', 'MPM', ...DCS.map(d => d[0])]);
 function blocColour(iso) {
   const c = CTY[iso];
   if (!c) return null;
   if (iso === 'USA') return '#9fd8ff';
-  if (showAI && c.ai) return '#ffd27a';
   if (showWaico && c.waico && c.pax) return '#c08cff';
   if (showWaico && c.waico) return '#ff5f7e';
   if (c.endorse) return '#73c8ff';
@@ -2368,14 +2299,15 @@ function strokeColor(f) {
   const iso = f.properties.iso, col = blocColour(iso);
   if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .95) : 'rgba(140,170,200,.15)'; }
   if (iso && (iso === selIso || iso === hoverIso)) return '#ffffff';
+  if (CTY[iso] && CTY[iso].ai) return '#ffd27a';
   return col ? rgba(col, .9) : 'rgba(140,170,200,.22)';
 }
-function polyAlt(f) { const iso = f.properties.iso; return iso && (iso === selIso || iso === hoverIso) ? .028 : blocColour(iso) ? .007 : .004; }
+function polyAlt(f) { const iso = f.properties.iso; return iso && (iso === selIso || iso === hoverIso) ? .028 : (mapMode === 'bloc' && CTY[iso] && CTY[iso].ai) ? .02 : blocColour(iso) ? .007 : .004; }
 let declTimer = null;
 function declutter() {
   clearInterval(declTimer);
   declTimer = setInterval(() => {
-    if (!globe || $('scene-map').hidden) return;
+    if (!globe || $('scene-map').hidden || document.hidden || introEl) return;
     const els = [...$('globe').querySelectorAll('.glab')].filter(e => e.style.opacity !== '0');
     els.sort((a, b) => +b.dataset.pri - +a.dataset.pri);
     const kept = [...ROOT.querySelectorAll('.hud-top > *, #isx-tabs .tb, #isx-hint, #isx-mapnote, #isx-resbar .res, #isx-mapmodes, #isx-tournarr')].map(e => e.getBoundingClientRect()).filter(r => r.width);
@@ -2388,7 +2320,9 @@ function declutter() {
     });
   }, 220);
 }
-function repaint() { if (globe) globe.polygonCapColor(capColor).polygonStrokeColor(strokeColor).polygonAltitude(polyAlt); }
+function repaint() { if (globe) globe.polygonCapColor(capColor).polygonSideColor(sideColor).polygonStrokeColor(strokeColor).polygonAltitude(polyAlt); }
+/* v.1.7: signatories of the June 2026 AI statement stand slightly raised on the Blocs map, with gold walls and a gold edge */
+function sideColor(f) { const iso = f.properties.iso; return mapMode === 'bloc' && CTY[iso] && CTY[iso].ai && iso !== selIso && iso !== hoverIso ? 'rgba(255,210,122,.42)' : null; }
 function statusOf(iso) {
   const c = CTY[iso]; if (!c) return 'Neither bloc';
   if (iso === 'USA') return 'Pax Silica, leading signatory';
@@ -2408,13 +2342,13 @@ function initGlobe() {
   const host = $('globe');
   if (typeof Globe !== 'function') { host.innerHTML = '<div class="nogl">The 3D globe could not load in this browser.</div>'; return; }
   try {
-    globe = Globe({ rendererConfig: { antialias: true, alpha: true, powerPreference: 'high-performance' } })(host)
+    globe = Globe({ rendererConfig: { antialias: true, alpha: true, powerPreference: 'default' } })(host)
       .backgroundColor('rgba(0,0,0,0)')
       .showAtmosphere(true).atmosphereColor('#3d8eff').atmosphereAltitude(.2)
       .showGraticules(true)
       .polygonsData(COUNTRIES.features.filter(f => f.properties.iso)).polygonCapCurvatureResolution(4)
-      .polygonCapColor(capColor).polygonSideColor(() => null).polygonStrokeColor(strokeColor).polygonAltitude(polyAlt)
-      .polygonLabel(f => { const iso = f.properties.iso; return `<b>${esc(CTY[iso].name)}</b><div class="st">${esc(statusOf(iso))}</div>${mmText(iso) ? `<div class="v" style="font-size:14px">${esc(mmText(iso))}</div>` : ''}`; })
+      .polygonCapColor(capColor).polygonSideColor(sideColor).polygonStrokeColor(strokeColor).polygonAltitude(polyAlt)
+      .polygonLabel(f => { const iso = f.properties.iso; return `<b>${esc(CTY[iso].name)}</b><div class="st">${esc(statusOf(iso))}${CTY[iso].ai ? ' · AI statement, Jun 2026' : ''}</div>${mmText(iso) ? `<div class="v" style="font-size:14px">${esc(mmText(iso))}</div>` : ''}`; })
       .onPolygonHover(f => { const iso = f && f.properties.iso; if ((iso || null) === hoverIso) return; hoverIso = iso || null; repaint(); host.style.cursor = iso ? 'pointer' : ''; })
       .onPolygonClick(f => { const iso = f.properties.iso; if (iso && view === 'map') select(iso === selIso ? null : iso); })
       .polygonsTransitionDuration(300)
@@ -2434,7 +2368,8 @@ function initGlobe() {
     if ('shininess' in mat) mat.shininess = 4;
     declutter();
     const ctr = globe.controls(); ctr.enableZoom = false; ctr.autoRotateSpeed = .35; ctr.enableDamping = true;
-    const fit = () => { const r = host.getBoundingClientRect(); globe.width(r.width).height(r.height); };
+    try { globe.renderer().setPixelRatio(Math.min(window.devicePixelRatio || 1, innerWidth < 761 ? 1.5 : 2)); } catch (e) { /* ignore */ }
+    const fit = () => { const r = host.getBoundingClientRect(); if (!globe || r.width < 2 || r.height < 2) return; globe.width(r.width).height(r.height); };
     fit(); new ResizeObserver(fit).observe(host);
   } catch (e) { host.innerHTML = '<div class="nogl">The 3D globe could not start in this browser (WebGL is needed).</div>'; globe = null; }
 }
@@ -3502,7 +3437,7 @@ const METHOD6 = [
   ['The map', 'Arc width is proportional to value within each step, not across steps. Thin, regular arcs are schematic: they show a relation, not an amount. Bars are proportional to the value in their label; node rings to a country’s flows in the step.'],
   ['Estimates and updates', '* marks figures that are implied, derived or uncertain; sources are dated. The key numbers are checked monthly against their primary sources; the date is on the map.'],
   ['Not counted', 'Direct investment, derivatives and services trade other than the platforms’ rents.'],
-  ['Alignment', 'Country cards show whether a country signed the Joint Statement on AI Opportunity (25 Jun 2026, 35 signatories; Armenia, Bahrain, New Zealand and Türkiye are not on this map). The AI-statement switch on the map colours the signatories on the map. Most of them are also Pax Silica members or EU members; the switch shows the statement, not a separate bloc. Governments are not tracked.'],
+  ['Alignment', 'Country cards show whether a country signed the Joint Statement on AI Opportunity (25 Jun 2026, 35 signatories; Armenia, Bahrain, New Zealand and Türkiye are not on this map). On the Blocs map the signatories stand slightly raised, with a gold edge, over their bloc colour: every signatory on the map is also a Pax Silica or EU member, so the statement is shown as a second layer, not a separate bloc. Governments are not tracked.'],
 ];
 
 /* ================= v8: command card, icon ring, game feel, definitions, legend, resource bar ================= */
@@ -3961,7 +3896,43 @@ function polRows(iso, row, st) {
   const e = document.createElement('dt'); e.className = 'sh'; e.textContent = 'Alignment · as of 7 Nov 2026'; st.appendChild(e);
   row('Joint Statement on AI Opportunity, 25 Jun 2026', c.ai ? 'Signed' : 'Not a signatory', c.ai ? 'pos' : '');
 }
-$('aistmt').addEventListener('click', () => { showAI = !showAI; $('aistmt').setAttribute('aria-checked', String(showAI)); repaint(); renderLegend(); });
+/* ---------- v.1.7: a lighter, self-healing globe ----------
+   Browsers drop WebGL canvases under memory or GPU pressure (several tabs or artifact previews at once, a phone
+   in the background, a laptop switching graphics chips). The globe then vanishes without an error.
+   So: render only when the globe can be seen (not behind the entry screen, not scrolled away, not in a hidden tab),
+   and if the context is lost anyway, build a fresh globe and redraw the current step. */
+let gSeen = true, gLostT = 0, gRebuilding = false;
+function globeView() { return view === 'map' || (view === 'arm' && armMode === 'rev'); }
+function globeLost() { try { const g = globe && globe.renderer().getContext(); return !!(g && g.isContextLost()); } catch (e) { return false; } }
+function globeWake() { if (!globe) return; if (globeView() && gSeen && !introEl && !document.hidden) { if (globeLost()) { rebuildGlobe(); return; } globe.resumeAnimation(); } else globe.pauseAnimation(); }
+function rebuildGlobe() {
+  if (gRebuilding) return; gRebuilding = true;
+  try { if (globe) { globe.pauseAnimation(); if (typeof globe._destructor === 'function') globe._destructor(); } } catch (e) { /* the old context is gone anyway */ }
+  globe = null; $('globe').innerHTML = '';
+  initGlobe(); watchGlobe();
+  if (globe) { try { renderGlobe(true); repaint(); } catch (e) { /* ignore */ } }
+  gRebuilding = false; globeWake();
+}
+function watchGlobe() {
+  if (!globe) return;
+  const c = globe.renderer().domElement;
+  c.addEventListener('webglcontextlost', () => { clearTimeout(gLostT); gLostT = setTimeout(() => { if (!document.hidden) rebuildGlobe(); }, 900); });
+  c.addEventListener('webglcontextrestored', () => { clearTimeout(gLostT); setTimeout(rebuildGlobe, 60); });
+}
+function guardGlobe() {
+  if (!globe) return;
+  watchGlobe();
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { es.forEach(e => { gSeen = e.isIntersecting; }); globeWake(); }, { threshold: 0.02 }).observe(ROOT.querySelector('.globebox'));
+  window.addEventListener('pageshow', () => globeWake());
+  /* a cheap check every few seconds: a lost context, or a canvas left at the wrong size */
+  setInterval(() => {
+    if (!globe || document.hidden || !globeView() || introEl) return;
+    if (globeLost()) { rebuildGlobe(); return; }
+    const r = $('globe').getBoundingClientRect(), cv = globe.renderer().domElement;
+    if (r.width > 2 && r.height > 2 && (Math.abs(cv.clientWidth - r.width) > 2 || Math.abs(cv.clientHeight - r.height) > 2)) globe.width(r.width).height(r.height);
+  }, 3000);
+  globeWake();
+}
 
 /* ================= v.1.2: the Scott Bessent Simulator (was: Financing the AI Manhattan Project) ================= */
 FINM[0][2] = 'The plumbing'; FINM[1][2] = 'The capital stack';
@@ -4599,80 +4570,40 @@ function gaugeSVG(g) {
 const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', 'The plumbing', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
 
 /* ================= v.1.5–1.7: the entry screen =================
-   A four-step guide (v.1.7: the loop, the new cycle, reading the map, where to find it) in an overlay inside #isx-root, shown on every fresh load, skipped for deep links,
+   Headline, subtitle, one card (lede, three beats, how to read the map), Enter buttons top right and below; an overlay inside #isx-root, shown on every fresh load, skipped for deep links,
    reopened with “About this map” (top left) or the title. Flat on purpose: a dark field with a slow colour hue and fine grain.
    “Enter the stack” is a gentle pass-through: the text drifts toward the viewer and dissolves, the hue opens up,
    the overlay fades, the globe fades in while the camera glides toward it, then the panels settle one by one
    (classes isx-pre / isx-arrive on #isx-root, CSS in parts6/v8.css). No blur or scale is ever applied to the globe,
    because some browsers drop a WebGL canvas under CSS filters. */
 const INTRO_KEY = 'isx-intro-seen';
-const GUIDE = [
-  { k: 'The loop', acc: '#ffb547' },
-  { k: 'The new cycle', acc: '#d78bff' },
-  { k: 'Reading the map', acc: '#44d7ec' },
-  { k: 'Where to find it', acc: '#3ee6b8' }
-];
-const INTRO_FLOWS = [['var(--dollar)', 'Dollars'], ['var(--goods)', 'Chips and hardware'], ['var(--tools)', 'Chip-making tools'], ['var(--mat)', 'Wafers, minerals, energy'], ['var(--rent)', 'Rents: software, cloud, ads'], ['var(--cap)', 'State stakes and grants']];
-const INTRO_WHERE = [
-  ['Tab · Circuit', 'The ten-step dollar loop, on the globe'],
-  ['Tab · Arm', 'The firms and agencies that run it'],
-  ['Tab · Simulator', 'Pull Washington’s levers, watch the plumbing'],
-  ['Tab · Scenarios', 'Fourteen cases of the stack at work'],
-  ['Right · Map mode', 'Blocs, surpluses, exports, holdings of US shares'],
-  ['Page foot · How we count', 'Every source, date and definition']
-];
 const INTRO_HTML = `
   <div class="in-hue" aria-hidden="true"></div>
-  <button type="button" class="in-skip" id="isx-in-skip">Skip intro <span aria-hidden="true">×</span></button>
+  <button type="button" class="in-skip in-top" id="isx-in-skip">Enter the stack <span aria-hidden="true">→</span></button>
   <div class="in-body">
-    <h2 class="in-title" id="isx-intro-h"><span>Imperial</span> <span>Stack</span></h2>
-    <p class="in-sub">How the AI boom rewired the dollar system</p>
-    <div class="in-card g7">
-      <div class="in-steps" role="group" aria-label="Introduction, four steps">${GUIDE.map((g, i) => `<button type="button" class="in-st" data-i="${i}" style="--sa:${g.acc}"><b>0${i + 1}</b><span>${g.k}</span></button>`).join('')}</div>
-      <div class="in-panes">
-        <section class="in-pane" data-i="0">
-          <h3>The world earns dollars. Then it sends them back.</h3>
-          <p>America buys more from the world than it sells: its current-account deficit was <em>$1.18tn</em> in 2025. The producers who earn those dollars, from goods and from what they pay American platforms, cannot spend them all at home. So they park the surplus in American assets. That recycling keeps the dollar at the centre, and American borrowing cheap.</p>
-          <div class="in-loopw">
-            <span class="nl">The world</span>
-            <svg class="in-loop" viewBox="0 0 440 120" role="img" aria-label="Dollars flow from the United States to the world and are recycled back into American assets">
-              <path class="lb" d="M426,54 C340,-6 100,-6 14,54"/><path class="lf" d="M426,54 C340,-6 100,-6 14,54"/>
-              <path class="lb b2" d="M14,66 C100,126 340,126 426,66"/><path class="lf b2" d="M14,66 C100,126 340,126 426,66"/>
-              <circle cx="14" cy="60" r="6.5"/><circle cx="426" cy="60" r="6.5"/>
-              <text class="t2" x="220" y="40" text-anchor="middle">Dollars out · goods, cloud, AI</text>
-              <text class="t2 t3" x="220" y="88" text-anchor="middle">Dollars back · Treasuries, shares</text>
-            </svg>
-            <span class="nl">United States</span>
-          </div>
-          <div class="in-loopcap"><span>Dollars out · goods, cloud, AI</span><span class="c2">Dollars back · Treasuries, shares</span></div>
-        </section>
-        <section class="in-pane" data-i="1">
-          <h3>The AI boom rewired the loop.</h3>
-          <p>Foreign central banks are selling Treasuries. Foreign investors buy American shares instead, often of the platforms that earn rents abroad and pour hundreds of billions into chips and data centres. The loop now leans, more than ever, on <em>high profits and high valuations</em>, while the US debt machine is financed and managed mostly at home.</p>
-          <div class="in-figs">
-            <div style="--fc:#ff5a4e"><b>−$164bn</b><span>Foreign central banks’ Treasuries</span><i>Aug 2025 → Aug 2026</i></div>
-            <div style="--fc:#d78bff"><b>$1.01tn</b><span>Foreign buying of US shares</span><i>12 months to Aug 2026</i></div>
-            <div style="--fc:#ffb547"><b>30%</b><span>Foreign share of federal debt</span><i>2025, against 47% in 2014</i></div>
-          </div>
-        </section>
-        <section class="in-pane" data-i="2">
-          <h3>Ten steps, one loop.</h3>
-          <p>Press <em>Play</em>, or walk the step bar along the bottom, from rents to the moment the loop closes. Each arc is a flow in that step, as wide as its value. The step card explains what happens and opens its sources; the tiles along the top carry the headline figures. Click any country for its own card.</p>
-          <div class="in-flows">${INTRO_FLOWS.map(([c, t]) => `<div style="--fc:${c}"><i></i><span>${t}</span></div>`).join('')}</div>
-        </section>
-        <section class="in-pane" data-i="3">
-          <h3>Four views. One method.</h3>
-          <p>The tabs at the top switch views. Switches top right add China’s WAICO bloc and the June 2026 AI statement. Every figure is dated and sourced, every term defined. <em>About this map</em>, top left, brings you back here.</p>
-          <div class="in-where">${INTRO_WHERE.map(([a, b]) => `<div><i>${a}</i><span>${b}</span></div>`).join('')}</div>
-        </section>
+    <p class="in-kick">The Imperial Stack · an interactive map</p>
+    <h2 class="in-title hl" id="isx-intro-h"><span>This is how America finances</span> <span>its imperial stack</span></h2>
+    <p class="in-sub">and how the imperial stack keeps the dollar afloat</p>
+    <div class="in-card">
+      <p class="in-lede">The imperial stack: America’s platforms, chips, cloud and finance, held together by the state. Foreigners now own <b>$22.2tn</b> of US shares, against <b>$9.3tn</b> of Treasuries.</p>
+      <div class="in-beats">
+        <section style="--bc:#ffb547"><span>01 · The loop</span><p>America buys more from the world than it sells: a current-account deficit of $1.18tn in 2025. Producers abroad earn those dollars, from goods and from paying American platforms, and send the surplus back into American assets.</p></section>
+        <section style="--bc:#44d7ec"><span>02 · The new cycle</span><p>The AI boom started a new round. Foreign central banks sold $164bn of Treasuries in the year to August 2026; foreign investors bought $1.01tn of US shares. The loop now runs on high profits and high valuations.</p></section>
+        <section style="--bc:#d78bff"><span>03 · The debt at home</span><p>The US debt machine, meanwhile, is financed and managed mostly at home: foreigners held 30% of federal debt in 2025, against 47% in 2014. The Treasury, the Fed, banks and money funds keep it running.</p></section>
+      </div>
+      <div class="in-how">
+        <h3>How to read the map</h3>
+        <div class="in-ways">
+          <p><b>Follow the loop.</b> Press <em>Enter the stack</em>, then <em>Play</em> or the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
+          <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the Scott Bessent Simulator and 14 Scenarios. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
+        </div>
       </div>
     </div>
     <div class="in-acts">
-      <button type="button" class="in-back" id="isx-in-back"><i aria-hidden="true">←</i><span>Back</span></button>
-      <button type="button" class="in-go" id="isx-in-go"><span>Next</span><i aria-hidden="true">→</i></button>
-      <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it." hidden>${SSL}<span>Read the thesis</span><em>coming soon</em></a>
+      <button type="button" class="in-go" id="isx-in-go"><span>Enter the stack</span><i aria-hidden="true">→</i></button>
+      <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it.">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
     </div>
-    <p class="in-foot">Work in progress · v.1.5 · data as of 5 Nov 2026 · By Elias Rutten</p>
+    <p class="in-foot">Work in progress · v.1.7 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -4692,6 +4623,7 @@ function introGlobeIn(p) { if (!p) return; try { globe.pointOfView(p, 2800); } c
 
 function introClose(enter) {
   if (!introEl || introBusy) return; introBusy = true; introMark();
+  if (globe && (view === 'map' || (view === 'arm' && armMode === 'rev')) && !document.hidden) globe.resumeAnimation();
   const el = introEl, wrap = ROOT.querySelector('.wrap'), anim = enter && !reduce;
   const restore = () => { try { document.documentElement.style.overflow = introHtmlOv; } catch (e) { /* ignore */ } };
   if (wrap) wrap.inert = false;
@@ -4723,37 +4655,22 @@ function introOpen() {
   const wrap = ROOT.querySelector('.wrap');
   if (wrap) wrap.inert = true;
   try { introHtmlOv = document.documentElement.style.overflow; document.documentElement.style.overflow = 'hidden'; } catch (e) { introHtmlOv = ''; }
-  const go = el.querySelector('#isx-in-go'), skip = el.querySelector('#isx-in-skip'), back = el.querySelector('#isx-in-back'), ths = el.querySelector('.in-thesis');
-  const last = GUIDE.length - 1;
-  let at = 0;
-  const show = n => {
-    at = Math.max(0, Math.min(last, n));
-    el.style.setProperty('--acc', GUIDE[at].acc);
-    el.querySelectorAll('.in-pane').forEach((p, i) => { p.classList.toggle('on', i === at); p.inert = i !== at; });
-    el.querySelectorAll('.in-st').forEach((b, i) => { b.classList.toggle('on', i === at); b.classList.toggle('done', i < at); if (i === at) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
-    back.hidden = at === 0; ths.hidden = at !== last;
-    go.classList.toggle('final', at === last);
-    go.querySelector('span').textContent = at === last ? 'Enter the stack' : 'Next';
-  };
-  show(0);
-  el.querySelectorAll('.in-st').forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
-  go.addEventListener('click', () => { if (at === last) introClose(true); else show(at + 1); });
-  back.addEventListener('click', () => show(at - 1));
-  skip.addEventListener('click', () => introClose(false));
+  const go = el.querySelector('#isx-in-go'), skip = el.querySelector('#isx-in-skip');
+  go.addEventListener('click', () => introClose(true));
+  skip.addEventListener('click', () => introClose(true));
   el.addEventListener('keydown', e => {
     const onBtn = e.target.closest && e.target.closest('button, a');
     if (e.key === 'Escape') { e.preventDefault(); introClose(false); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
-    else if (e.key === 'Enter' && !onBtn) { e.preventDefault(); go.click(); }
+    else if (e.key === 'Enter' && !onBtn) { e.preventDefault(); introClose(true); }
     else if (e.key === 'Tab') {
-      const f = [...el.querySelectorAll('button, a[href]')].filter(x => !x.hidden && !x.closest('[inert]') && x.getClientRects().length);
+      const f = [...el.querySelectorAll('button, a[href]')].filter(x => x.getClientRects().length);
       if (!f.length) return;
-      const a = document.activeElement, i = f.indexOf(a);
-      if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
-      else if (!e.shiftKey && (i === f.length - 1 || i === -1 && a !== el)) { e.preventDefault(); f[0].focus(); }
+      const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (i === f.length - 1 || i === -1)) { e.preventDefault(); f[0].focus(); }
     }
   });
+  if (globe) globe.pauseAnimation(); /* nothing to draw behind the entry screen: spare the GPU */
   el.tabIndex = -1; el.focus({ preventScroll: true });
 }
 
@@ -4953,7 +4870,7 @@ function renderLegend() {
   if (view === 'map') {
     [[C.dollar, 'Dollars: payments and recycled surpluses'], [C.goods, 'Chips and finished hardware'], [C.tools, 'Chip-making tools'], [C.mat, 'Wafers, minerals and energy'], [C.rent, 'Rents: software, ads, cloud, models, payments'], ['#ffd27a', 'Liquidity and asset prices'], [C.cap, 'State stakes and grants'], ...(circMode === 'dollar' ? [['#8fa3b6', 'Booked in fund and custody centres; owners mostly elsewhere*'], [C.deficit, 'Falling official holdings of Treasuries']] : [['#ff3b5c', 'Export controls']])].forEach(([c, t]) => legRow(a, dots(c), t));
     legRow(a, '<div class="sw-dot" style="background:#fff;box-shadow:0 0 8px #fff;width:10px;height:10px"></div>', 'Node: ring size ∝ the country’s flows in this step');
-    legRow(b, hexsw('#3f9bff'), 'Pax Silica signatory'); legRow(b, hexsw('#2f78c4'), 'In through the EU’s signature'); legRow(b, hexsw('#73c8ff'), 'Endorses, not signed (Taiwan)'); if (showAI) legRow(b, hexsw('#ffd27a'), 'Signed the Joint Statement on AI Opportunity, 25 Jun 2026');
+    legRow(b, hexsw('#3f9bff'), 'Pax Silica signatory'); legRow(b, hexsw('#2f78c4'), 'In through the EU’s signature'); legRow(b, hexsw('#73c8ff'), 'Endorses, not signed (Taiwan)'); legRow(b, '<div class="sw-fill" style="background:rgba(63,155,255,.3);border:2px solid #ffd27a"></div>', 'Raised, gold edge: also signed the Joint Statement on AI Opportunity, 25 Jun 2026');
     if (showWaico) { legRow(b, hexsw('#ff5f7e'), 'WAICO member'); legRow(b, hexsw('#c08cff'), 'Both blocs (Kazakhstan)');
       const n = document.createElement('div'); n.className = 'note'; n.textContent = 'WAICO, the China-led World AI Cooperation Organization, had 37 members by 31 July 2026. China appears in the hardware web as a destination; flows inside WAICO are not drawn.'; b.appendChild(n); }
     legRow(b, '<div class="sw-dot" style="background:#fff;box-shadow:0 0 8px #fff"></div>', 'US hubs: platforms, fabs, Wall Street');
@@ -4999,7 +4916,7 @@ function setView(v) {
   $('firmsbox').hidden = v !== 'map';
   $('src').textContent = SRC[v]; foldView(v);
   stopPlay(); pArm.stop(); pCh.stop();
-  if (globe) { if (globeOn) globe.resumeAnimation(); else globe.pauseAnimation(); }
+  if (globe) globeWake();
   $('card').style.removeProperty('--sc');
   if (v === 'map') { renderGlobe(true); renderCountryCard(); }
   else if (v === 'arm' && armMode === 'rev') { selIso = null; renderGlobe(true); renderRevCard(); }
@@ -5015,7 +4932,7 @@ $('clear').addEventListener('click', () => select(null));
 $('waico').addEventListener('click', () => { showWaico = !showWaico; $('waico').setAttribute('aria-checked', String(showWaico)); repaint(); renderLegend(); });
 window.addEventListener('resize', () => { if (view === 'arm') pArm.size(); if (view === 'chain') pCh.size(); });
 
-initIntro(); buildResbar(); buildMapModes(); initGlobe(); buildArm(); renderFirms();
+initIntro(); buildResbar(); buildMapModes(); initGlobe(); guardGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
 $('t-more').addEventListener('click', () => crisp($('narr')));
 $('t-fold').addEventListener('click', () => { const t = $('tournarr'); t.classList.toggle('folded'); $('t-fold').textContent = t.classList.contains('folded') ? '+' : '–'; });
@@ -5030,7 +4947,7 @@ const start = { '#arm': 'arm', '#revenue': 'arm', '#chains': 'story', '#scenario
 setView(start);
 if (start === 'map') setStep(0);
 if (location.hash === '#tour') setTimeout(play, 3500);
-document.addEventListener('visibilitychange', () => { if (!globe) return; if (document.hidden) globe.pauseAnimation(); else if (view === 'map' || (view === 'arm' && armMode === 'rev')) globe.resumeAnimation(); });
+document.addEventListener('visibilitychange', () => { if (!globe) return; if (document.hidden) globe.pauseAnimation(); else globeWake(); });
 })();
 </script>
 
