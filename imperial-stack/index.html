@@ -1841,13 +1841,24 @@ button.res:hover { transform: none; box-shadow: none; }
 .ftable .fsrc { grid-column: 1 / -1; font-size: 11px; color: var(--ink3); margin: -3px 0 6px; line-height: 1.45; }
 @media (max-width: 760px) { .rt6 { grid-template-columns: minmax(80px, 1fr) 50px 40px; } .rt6 .rs { grid-column: 1 / -1; padding-top: 0; } .rt6 .fh:last-child { display: none; } }
 
+/* ===== v.1.9: shares and bonds sold ===== */
+.isa { margin-left: auto; font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--gc); letter-spacing: .02em; }
+.tlb .lsrc a { color: inherit; text-decoration: underline; text-decoration-color: rgba(143, 211, 255, .35); text-underline-offset: 2px; }
+.tlb .lsrc a:hover { color: #fff; }
+.isum { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 26px; margin: 0 0 14px; padding: 10px 14px; border: 1px solid #1a2631; border-radius: 10px; background: rgba(255, 255, 255, .015); }
+.isum > div { display: flex; align-items: baseline; gap: 8px; }
+.isum b { font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: .02em; color: var(--gc); }
+.isum span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; color: var(--ink3); }
+.isum p { flex-basis: 100%; margin: 0; font-family: var(--serif); font-size: 13.5px; line-height: 1.5; color: var(--ink3); }
+@media (max-width: 700px) { .isa { margin-left: 0; } .isum b { font-size: 20px; } }
+
 }
 </style>
 
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.8</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.9</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -3308,6 +3319,9 @@ const DEFS = {
   bills: ['Bills', 'Treasury debt that matures within a year. Notes run 2 to 10 years, bonds 20 or 30 years.'],
   marketable: ['Marketable debt', 'Treasury securities that can be traded: bills, notes, bonds, inflation-linked and floating-rate notes. $31.4tn at the end of July 2026. Gross federal debt ($40.25tn in October 2026) also counts debt held by government trust funds.'],
   wam: ['Average maturity', 'The average time until marketable debt must be repaid, weighted by amount. It moves slowly, because the stock of old long bonds dominates.'],
+  forward: ['Forward sale', 'Shares sold to investors now, at today’s price, through banks that borrow them. The company receives the cash only when the agreement settles, by a date set in the contract.'],
+  mcp: ['Mandatory convertible preferred', 'Preferred shares that pay a fixed dividend and turn into common shares on a set date: equity-like money now, income for the holder until the conversion.'],
+  atm: ['At-the-market programme', 'A company sells new shares gradually into the market through a bank, instead of in one offering. The programme sets a ceiling; what counts is what has actually been sold.'],
   rollover: ['Rollover', 'Repaying maturing debt by selling new debt, at the interest rate of the day.'],
   repo: ['Repo', 'A short loan, usually overnight, against collateral, mostly Treasuries. The Office of Financial Research put the US repo market at about $12.6tn of daily exposures in Q3 2025, 69% of it backed by Treasuries.'],
   buyback: ['Buyback', 'The Treasury buys back its own older securities before they mature, here mainly long bonds, paid for with new borrowing.'],
@@ -3979,6 +3993,48 @@ function guardGlobe() {
 }
 
 /* ================= v.1.2: the Scott Bessent Simulator (was: Financing the AI Manhattan Project) ================= */
+/* ================= v.1.9: new shares and new bonds, deal by deal =================
+   One row per deal or per filing period. d = date for sorting (a year, a month or a day), dl = date as shown,
+   t = s (shares) or b (bonds), a = US$ bn (as the filing states it, or at the issue-date rate in the filing),
+   p = part of a not yet paid in (forward sale), q = estimate (*). Public equity and bonds of listed firms only. */
+const IWIN = '2025-11-09'; /* start of the 12 months to 8 November 2026 */
+const SEC = 'https://www.sec.gov/Archives/edgar/data/';
+const ISSUE = [
+  /* ---- shares ---- */
+  { d: '2026-11-02', dl: '2 Nov 2026', t: 's', who: 'Oracle', a: 10.0, x: 'Common stock: 86,206,897 shares at $116.00, sold at the same time as $10.0bn of senior notes (below).', s: 'Oracle prospectus supplement, Form 424B5 (2 Nov 2026)', u: SEC + '0001341439/000119312526445847/d181425d424b5.htm' },
+  { d: '2026-10-26', dl: '26 Oct 2026', t: 's', who: 'Meta', a: 37.5, p: 25.0, x: '$25.0bn of Class A common (40m shares at $625) sold through {{forward|forward sale}} agreements, so the cash arrives only at settlement, by 19 Nov 2027, and $12.5bn of Series A {{mcp|mandatory convertible preferred}}. A planned {{atm|at-the-market}} programme of up to $60bn has no signed agreement and is not counted.', s: 'Meta prospectus supplements, Form 424B5 (26 Oct 2026)', u: SEC + '0001326801/000119312526436410/d94886d424b5.htm' },
+  { d: '2026-08-31', dl: 'Jun to Aug 2026', t: 's', who: 'Oracle', a: 19.9, x: '141m shares sold through its {{atm|at-the-market}} programme (limit $20bn, now fully used), net proceeds. Shown at the end of the quarter in which they were sold.', s: 'Oracle 10-Q for the quarter ended 31 Aug 2026, Note 7', u: SEC + '0001341439/000119312526389274/orcl-20260831.htm' },
+  { d: '2026-06-12', dl: '11–12 Jun 2026', t: 's', who: 'SpaceX', a: 75.0, x: 'IPO on Nasdaq (SPCX): 555,555,555 Class A shares at $135, about $74.4bn after costs. The underwriters’ option on 83,333,333 more shares is not counted; one report puts the total at $85.7bn once it was used*.', s: 'SpaceX underwriting agreement (11 Jun 2026), SEC Form 8-K; Stockopedia for the option*', u: 'https://edgar-mirror.sec-api.io/Archives/edgar/data/1181412/000162828026043288/exhibit11-8xk.htm' },
+  { d: '2026-06-03', dl: '2–3 Jun 2026', t: 's', who: 'Alphabet', a: 44.75, x: '$18.0bn of Class A and C common, $16.75bn of 6.25% {{mcp|mandatory convertible preferred}} and a $10.0bn private placement with Berkshire Hathaway. Up to $40.0bn of {{atm|at-the-market}} sales were also authorised, not expected before the third quarter of 2026 and not counted.', s: 'Alphabet pricing press release (3 Jun 2026)', u: 'https://s206.q4cdn.com/479360582/files/doc_news/2026/Jun/03/attachments/Alphabet-Pricing-Press-Release_2026-06-03.pdf' },
+  { d: '2026-05-15', dl: '15 May 2026', t: 's', who: 'Cerebras', a: 6.4, x: 'IPO: 34.5m shares at $185, including 4.5m shares from the underwriters’ option.', s: 'Cerebras closing report, Form 8-K (15 May 2026)', u: SEC + '0002021728/000162828026035605/closing8-k.htm' },
+  { d: '2026-02-02', dl: '2 Feb 2026', t: 's', who: 'Oracle', a: 5.0, x: '6.50% Series D {{mcp|mandatory convertible preferred}}: 100m depositary shares at $50. The same day Oracle set up the $20bn at-the-market programme above.', s: 'Oracle prospectus supplement, Form 424B5 (2 Feb 2026)', u: SEC + '1341439/000119312526037818/d60756d424b5.htm' },
+  { d: '2025-09-15', dl: '15 Sep 2025', t: 's', who: 'Intel', a: 5.0, x: 'Nvidia buys 214,776,632 new shares at $23.28 in a private placement.', s: 'Intel Form 8-K (15 Sep 2025)', u: SEC + '50863/000005086325000155/intc-20250915.htm' },
+  { d: '2025-08-22', dl: '22 Aug 2025', t: 's', who: 'Intel', a: 8.9, x: 'The US government takes 433.3m new shares at $20.47, paid for with $5.7bn of CHIPS grants already awarded and a $3.2bn Secure Enclave award: a stake, not fresh cash.', s: 'Intel press release (22 Aug 2025)', u: 'https://d1io3yog0oux5.cloudfront.net/_57627f36f021419831e44f49449e5f89/intel/news/2025-08-22_Intel_and_Trump_Administration_Reach_Historic_1748.pdf' },
+  { d: '2025-08-18', dl: '18 Aug 2025', t: 's', who: 'Intel', a: 2.0, x: 'SoftBank buys 86,956,522 new shares at $23.00 in a private placement.', s: 'Intel Form 8-K (18 Aug 2025)', u: SEC + '50863/000005086325000126/intc-20250818.htm' },
+  { d: '2025-03-27', dl: '27 Mar 2025', t: 's', who: 'CoreWeave', a: 1.5, x: 'IPO on Nasdaq: 37.5m shares at $40, of which 36.59m were new and 0.91m sold by existing holders.', s: 'CoreWeave pricing release (27 Mar 2025)', u: 'https://wf.coreweave.com/blog/coreweave-announces-pricing-of-initial-public-offering' },
+  /* ---- bonds ---- */
+  { d: '2026-11-02', dl: '2 Nov 2026', t: 'b', who: 'Oracle', a: 10.0, x: 'Senior notes, sold at the same time as the $10.0bn of shares above.', s: 'Oracle prospectus supplement, Form 424B5 (2 Nov 2026), which describes the concurrent notes', u: SEC + '0001341439/000119312526445847/d181425d424b5.htm' },
+  { d: '2026-09-09', dl: '9 Sep 2026', t: 'b', who: 'Amazon', a: 5.637, x: '£4.3bn of sterling notes, coupons 5.20–6.65%, due 2029–2045.', s: 'Amazon 10-Q for the quarter ended 30 Sep 2026', u: SEC + '0001018724/000101872426000040/amzn-20260930.htm' },
+  { d: '2026-09-30', dl: 'Jan to Sep 2026', t: 'b', who: 'Alphabet', a: 80.8, x: '$45.0bn in dollars and $35.8bn in other currencies. The total includes the February sale of almost $32bn in 24 hours, with a 100-year sterling bond (press reports), and in the third quarter $25.1bn in dollars (coupon 5.55% on average) and A$5.6bn.', s: 'Alphabet 10-Q for the quarter ended 30 Sep 2026; Bloomberg via Swissinfo (Feb 2026)', u: SEC + '0001652044/000165204426000084/goog-20260930.htm' },
+  { d: '2026-07-07', dl: '7 Jul 2026', t: 'b', who: 'Amazon', a: 25.0, x: 'Eight tranches of dollar notes, 4.20–6.25%, due 2029–2066.', s: 'Amazon 10-Q for the quarter ended 30 Sep 2026', u: SEC + '0001018724/000101872426000040/amzn-20260930.htm' },
+  { d: '2026-06-11', dl: '11 Jun 2026', t: 'b', who: 'CoreWeave', a: 3.5, q: 1, x: '$1.25bn at 9.625% and €2bn at 8.500%, both due 2032 and sold at par. The euro leg is converted at about $1.13 per euro*.', s: 'CoreWeave pricing release (11 Jun 2026)', u: 'https://www.businesswire.com/news/home/20260611950890/en/CoreWeave-Announces-Pricing-of-$1.25-Billion-of-Senior-Notes-and-%E2%82%AC2-Billion-of-Senior-Notes' },
+  { d: '2026-06-08', dl: '8 Jun 2026', t: 'b', who: 'Amazon', a: 9.834, x: 'C$14.0bn of Canadian-dollar notes, coupons 3.40–5.00%, due 2029–2056.', s: 'Amazon 10-Q for the quarter ended 30 Sep 2026', u: SEC + '0001018724/000101872426000040/amzn-20260930.htm' },
+  { d: '2026-06', dl: 'Jun 2026', t: 'b', who: 'Nvidia', a: 25.0, x: 'Seven tranches of senior notes, its first bond sale since 2021.', s: 'Nvidia 10-Q for the quarter ended 26 Jul 2026', u: SEC + '0001045810/000104581026000075/nvda-20260726.htm' },
+  { d: '2026-05', dl: 'May 2026', t: 'b', who: 'Meta', a: 25.0, x: 'Fixed-rate senior unsecured notes in six series.', s: 'Meta 10-Q for the quarter ended 30 Sep 2026, Note 9', u: SEC + '0001326801/000162828026066773/meta-20260930.htm' },
+  { d: '2026-05-01', dl: 'May 2026', t: 'b', who: 'Amazon', a: 3.375, x: 'CHF 2.8bn of Swiss-franc notes, coupons 0.84–2.08%, due 2029–2051.', s: 'Amazon 10-Q for the quarter ended 30 Sep 2026', u: SEC + '0001018724/000101872426000040/amzn-20260930.htm' },
+  { d: '2026-03', dl: 'Mar 2026', t: 'b', who: 'Amazon', a: 53.427, x: '$37.0bn in dollars (3.85–6.05%, due 2028–2076) and €14.5bn in euros (2.50–4.85%), which the 10-Q values at $16.4bn. IFR counted the sale at $53.8bn at the pricing-day rate: the largest corporate bond sale on record.', s: 'Amazon 10-Q for the quarter ended 30 Sep 2026; IFR (Mar 2026)', u: SEC + '0001018724/000101872426000040/amzn-20260930.htm' },
+  { d: '2026-02', dl: 'Feb 2026', t: 'b', who: 'Oracle', a: 25.0, q: 1, x: 'Senior notes, part of a $45–50bn funding plan for 2026. The 10-Q gives $43.0bn of notes for fiscal 2026 in total; the $25bn and $18bn split is from press reports*.', s: 'Oracle 10-Q for the quarter ended 31 Aug 2026; Oracle free writing prospectus (1 Feb 2026)', u: SEC + '0001341439/000119312526389274/orcl-20260831.htm' },
+  { d: '2025-11-17', dl: '17 Nov 2025', t: 'b', who: 'Amazon', a: 15.0, x: 'Six series of dollar notes, 3.900–5.550%, due 2028–2065.', s: 'Amazon underwriting agreement, Form 8-K (17 Nov 2025)', u: SEC + '1018724/000110465925114647/tm2530638d3_ex1-1.htm' },
+  { d: '2025-11', dl: 'Nov 2025', t: 'b', who: 'Meta', a: 30.0, x: 'Senior notes at 4.20–5.75%; priced on 30 October (press reports).', s: 'Meta 10-Q for the quarter ended 30 Sep 2026, Note 9', u: SEC + '0001326801/000162828026066773/meta-20260930.htm' },
+  { d: '2025-09', dl: 'Sep 2025*', t: 'b', who: 'Oracle', a: 18.0, q: 1, x: 'Senior notes; the date and the $18bn are from press reports*. See the February 2026 row for the 10-Q total.', s: 'Oracle 10-Q for the quarter ended 31 Aug 2026 (total only)', u: SEC + '0001341439/000119312526389274/orcl-20260831.htm' },
+  { d: '2025', dl: '2025', t: 'b', who: 'Alphabet', a: 38.1, q: 1, x: 'Dollar notes of $22.5bn and euro notes of $15.6bn, as carried at 31 December 2025*. Issue dates are not given in the 10-Q.', s: 'Alphabet 10-Q for the quarter ended 30 Sep 2026', u: SEC + '0001652044/000165204426000084/goog-20260930.htm' },
+];
+const iwin = e => e.d >= IWIN;
+const ISUM = (() => { const o = { s: 0, b: 0, p: 0, ns: 0, nb: 0 }; ISSUE.forEach(e => { if (!iwin(e)) return; o[e.t] += e.a; if (e.t === 's') { o.p += e.p || 0; o.ns++; } else o.nb++; }); return o; })();
+const bn0 = x => '≈$' + Math.round(x) + 'bn';
+const bn1 = x => '$' + x.toFixed(1) + 'bn';
+
+
 FINM[0][2] = 'The plumbing'; FINM[1][2] = 'The capital stack';
 LEVERS[1].fx[0][1] = 'Operations in 10- to 30-year bonds doubled to at least $4bn on 19 August; up to $6bn per operation was announced on 9 September, three times the standard $2bn';
 LEVERS[1].fx.push(['+', 'On 4 November the Treasury said it expects to buy back up to $70bn across the curve for liquidity support']);
@@ -3987,10 +4043,11 @@ LEVERS[1].src += ' Reuters (4 Nov 2026).';
 LEVERS[5].fx.push(
   ['+', 'With this much debt in bills, a hike is a transfer: banks earn it on reserves, money-fund holders and stablecoin issuers on bills. The Treasury pays'],
   ['+', 'That income can lift asset prices, the opposite of what a hike is meant to do'],
-  ['+', 'Higher prices reopen the window for new shares: Alphabet ≈$85bn (2 Jun), Meta $37.5bn (Oct), the SpaceX IPO (12 Jun)'],
+  ['+', `Higher prices reopen the window for new shares: ${bn0(ISUM.s)} in the 12 months to 8 November, among them the SpaceX IPO ($75.0bn), Alphabet ($44.75bn), Meta ($37.5bn) and Oracle ($34.9bn)`],
+  ['−', `The same hike is the cost side of every new bond: bonds are priced over Treasury yields, and the build-out sold ${bn0(ISUM.b)} in the same 12 months. Amazon’s dollar notes carried coupons of 3.85–6.05% in March and 4.20–6.25% in July`],
   ['=', 'The transfer is arithmetic; the price effect is this page’s reading, not a measured result']
 );
-LEVERS[5].src += ' Alphabet pricing press release (2 Jun 2026); Meta share sale (Oct 2026, see the capital stack); SpaceX IPO (priced 11 Jun 2026, Nasdaq).';
+LEVERS[5].src += ' Share and bond sales: filings listed in “Shares and bonds sold” below (SpaceX underwriting agreement, 11 Jun 2026; Alphabet pricing release, 3 Jun 2026; Meta 424B5, 26 Oct 2026; Oracle 10-Q and 424B5; Amazon 10-Q, Q3 2026).';
 
 /* who pulls each lever, and which group it belongs to */
 const LGROUPS = [
@@ -4027,6 +4084,7 @@ LEVERS.push(
     src: 'Korea Economic Institute of America, The Peninsula (2025); terms were still disputed when reported. Check current status.' },
 );
 const LCOL = { debt: '#ffd27a', home: '#3ee6b8', abroad: '#44d7ec', comm: '#b7f36b' };
+
 /* ================= v.1.4: the cockpit: geometry, icons, nodes, relations ================= */
 const NW = 140, NH = 48, PITCH = 56, cyOf = r => 50 + PITCH * r;
 const CX = { abroad: 80, state: 254, finL: 426, finR: 582, ai: 754, hh: 928, energy: 1102 };
@@ -4035,7 +4093,7 @@ const FZ = [
   ['abroad', 'Abroad', '#44d7ec', 0, 160, 0, 5, 0],
   ['state', 'The state', '#ffd27a', 174, 160, 2, 6, 0],
   ['fin', 'Financial sector', '#ffb547', 348, 312, 2, 5, 1],
-  ['ai', 'AI build-out', '#ff5d8f', 674, 160, 0, 3, 0],
+  ['ai', 'AI build-out', '#ff5d8f', 674, 160, 0, 4, 0],
   ['hh', 'Households', '#3ee6b8', 848, 160, 1, 4, 0],
   ['energy', 'Energy and prices', '#b7f36b', 1022, 160, 1, 6, 0],
 ];
@@ -4078,6 +4136,7 @@ const FIC = {
   barrel: '<path d="M6 4h12M6 20h12M6 4c-1.6 3-1.6 13 0 16M18 4c1.6 3 1.6 13 0 16M6 9h12M6 15h12"/>',
   pump: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M4 20h11M7 8h5M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
   usd: '<path d="M12 3v18M16 7.5c-1-1-2.4-1.5-4-1.5-2.3 0-4 1.2-4 3s1.7 2.4 4 3 4 1.2 4 3-1.7 3-4 3c-1.6 0-3-.5-4-1.5"/>',
+  bond: '<rect x="4" y="5" width="16" height="14" rx="1.6"/><path d="M8 9.5h8M8 13h4.5"/><circle cx="16.5" cy="14.5" r="2"/>',
   issue: '<path d="M7 3h7l4 4v14H7zM14 3v4h4M12 18v-6M9.5 14.5 12 12l2.5 2.5"/>',
   all: '<circle cx="12" cy="12" r="8"/>',
 };
@@ -4112,7 +4171,8 @@ const FN = {
   HYP: N('ai', 'ai', 0, 'rack', 'Hyperscalers', 'capex ≈$730bn', '#ffb547', 'Amazon, Alphabet, Microsoft, Meta, Oracle: collect the rents, place the hardware orders, borrow in five currencies.'),
   LAB: N('ai', 'ai', 2, 'spark', 'AI labs', 'OpenAI ≈$50bn rev.', '#ff5d8f', 'OpenAI, Anthropic and others: buy compute on multi-year contracts; their revenue has to cover the leases.'),
   SPX: N('ai', 'ai', 3, 'bars', 'AI stocks', '49% of S&P 500', '#44d7ec', 'JPMorgan’s basket of 41 AI-related stocks: 49% of S&P 500 market value in October 2026.'),
-  ISS: N('ai', 'ai', 1, 'issue', 'New shares', 'IPOs, share sales', '#ffb547', 'Share sales by the firms in the build-out and new listings. Alphabet announced an equity raise of about $85bn on 2 June 2026 (with $10bn from Berkshire Hathaway), Meta sold $37.5bn of shares in October, and SpaceX listed on Nasdaq on 12 June at a $1.77tn valuation. Rising share prices keep the window open: equity becomes a second way to fund capex besides bonds and private credit.'),
+  ISS: N('ai', 'ai', 1, 'issue', 'New shares', bn0(ISUM.s) + ' in a year', '#ffb547', 'Public equity sold by the firms in the build-out and by new listings. In the 12 months to 8 November 2026 the list below counts ' + bn0(ISUM.s) + ': the SpaceX IPO ($75.0bn, 12 June), Alphabet ($44.75bn of firm sales on 2–3 June, with up to $40bn more of at-the-market capacity not counted), Meta ($37.5bn on 26 October, $25bn of it paid only when the forward sale settles) and Oracle ($34.9bn across preferred stock, at-the-market sales and common stock). Rising share prices keep the window open: equity becomes a second way to fund capex besides bonds and private credit.'),
+  BND: N('ai', 'ai', 4, 'bond', 'New bonds', bn0(ISUM.b) + ' in a year', '#9aa4ff', 'Senior notes sold by the firms in the build-out. In the 12 months to 8 November 2026 the list below counts ' + bn0(ISUM.b) + ': Alphabet $80.8bn (January to September), Amazon $112.3bn in five currencies since November 2025, Oracle $35.0bn, Meta $25.0bn and Nvidia $25.0bn. Treasury yields price them, insurers, pension funds and bond funds buy them, dealers underwrite them, and the proceeds pay for capex.'),
   /* households */
   CON: N('hh', 'hh', 1, 'bag', 'All consumers', '67.6% of GDP', '#3ee6b8', 'American households as a whole: consumer spending was 67.6% of GDP in Q3 2026 (FRED). They buy goods, not chips: what they buy is made abroad, and that is how American demand keeps the exporters, and through them the chip supply chain, busy.'),
   TOP: N('hh', 'hh', 2, 'ppl', 'Top 10%', 'own 88% of stocks', '#3ee6b8', 'The richest tenth of US households own 88% of household stocks and do more than 45% of consumer spending.'),
@@ -4157,7 +4217,7 @@ const FE = [
   ['SPX', 'TOP', 'sig', 'Wealth effect: top 10% do 45% of spending'],
   ['CEN', 'HYP', 'eq', 'Fund domiciles hold US shares'],
   ['WH', 'CHP', 'rule', 'Export controls and tariffs on the chip chain'],
-  ['BNK', 'HYP', 'cash', 'Underwrite ≈$194bn of bonds in 2026 to July'],
+  ['BNK', 'BND', 'cash', 'Dealers underwrite the sales: ≈$194bn of bonds in 2026 to July'],
   ['MOV', 'CEN', 'sig', 'A spike forces leveraged sellers out'],
   ['TSY', 'GOV', 'cash', '$20bn swap framework for Argentina, Oct 2025; Gulf and Asian requests considered'],
   ['TSY', 'YEN', 'sig', 'Joint intervention with Japan, 31 Jul 2026'],
@@ -4184,11 +4244,14 @@ const FE = [
   ['OIL', 'Y10', 'sig', 'Inflation risk lifts long yields'],
   ['MMF', 'SPX', 'cash', 'Interest paid on bills, reserves and token reserves is income for fund holders, banks and issuers; part of it can flow into assets'],
   ['SPX', 'ISS', 'sig', 'Higher share prices open the window for new shares and listings'],
-  ['ISS', 'HYP', 'cash', 'Share sales fund capex: Alphabet ≈$85bn (Jun 2026), Meta $37.5bn (Oct 2026)'],
+  ['ISS', 'HYP', 'cash', 'Share sales fund capex: Alphabet $44.75bn (Jun 2026), Meta $37.5bn (Oct 2026), Oracle $34.9bn (Feb to Nov 2026)'],
+  ['Y10', 'BND', 'sig', 'Treasury yields price the paper: a new note is sold at a spread over them'],
+  ['INS', 'BND', 'cash', 'Insurers, pension funds and bond funds buy the notes'],
+  ['BND', 'HYP', 'cash', 'Bond sales fund capex: ' + bn0(ISUM.b) + ' in the 12 months to 8 Nov 2026'],
 ];
 const EIDX = {}; FE.forEach((e, i) => { EIDX[e[0] + '>' + e[1]] = i; });
 const E = (...ids) => ids.map(k => { if (!(k in EIDX)) console.error('unknown relation ' + k); return EIDX[k]; }).filter(i => i != null);
-const PSH = ['Cheap money', 'Data centre', 'Savings return', 'If it breaks', 'The consumer', 'Dollar backstop', 'Oil squeeze', 'Kitchen table'];
+const PSH = ['Cheap money', 'Data centre', 'Savings return', 'If it breaks', 'The consumer', 'Dollar backstop', 'Oil squeeze', 'Kitchen table', 'Shares and bonds'];
 const PLAYS = [
   { t: 'The state keeps money cheap', ic: 'gap', c: '#ffd27a', steps: [
     ['Central banks step back', 'Foreign central banks sold $164bn of Treasuries in the year to August 2026. Someone else has to buy.', E('OFF>TSY')],
@@ -4211,7 +4274,7 @@ const PLAYS = [
   ] },
   { t: 'If it breaks', ic: 'asset', c: '#ff5a4e', steps: [
     ['Revenue falls short', 'OpenAI’s annualised revenue was close to $50bn in October, about $20bn short of what it had signalled to investors.', E('LAB>HYP')],
-    ['Leases at risk', 'Vehicles that depend on one customer feel it first. Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', E('PCR>LAB', 'PCR>HYP', 'BNK>HYP')],
+    ['Leases at risk', 'Vehicles that depend on one customer feel it first. Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', E('PCR>LAB', 'PCR>HYP', 'BNK>BND', 'BND>HYP')],
     ['Insurers exposed', 'US insurance supervisors began examining insurers’ exposure to data-centre financing in June 2026.', E('INS>PCR')],
     ['Volatility', 'A spike in bond volatility forces leveraged buyers out, as in March 2020, when the Fed became the buyer of last resort.', E('MOV>CEN', 'TSY>CEN', 'BNK>CEN')],
     ['The wealth effect in reverse', 'With 49% of the S&P 500 in AI stocks, a fall hits the richest households, who do more than 45% of spending.', E('HYP>SPX', 'SPX>TOP')],
@@ -4240,6 +4303,14 @@ const PLAYS = [
     ['A thin cushion', 'The saving rate was 3.8% in September: income rose 0.2%, spending 0.5% (BEA, 29 October 2026). Housing costs and thin savings leave little room if prices rise.', E('MTG>CON', 'SVR>CON')],
     ['Spending still holds the world up', 'Consumer spending was 67.6% of GDP in the third quarter. As long as households keep buying, the exporters keep their surpluses.', E('CON>EXP')],
   ] },
+  { t: 'Two ways to fund the build-out: bonds and shares', ic: 'capex', c: '#9aa4ff', steps: [
+    ['Yields price the bond', 'Every new note is sold at a spread over the Treasury yield. Amazon’s dollar notes carried coupons of 3.85–6.05% in March 2026 and 4.20–6.25% in July.', E('Y10>BND')],
+    ['Savers buy the paper', `Dealers underwrite the sales; insurers, pension funds and bond funds take the notes. The firms in the build-out sold ${bn0(ISUM.b)} of bonds in the 12 months to 8 November 2026.`, E('BNK>BND', 'INS>BND')],
+    ['The proceeds become capex', 'Bond money pays for data centres, chips and power. Amazon, Alphabet, Meta, Oracle and Nvidia are the largest sellers on the list below.', E('BND>HYP')],
+    ['Rising shares open a second door', 'With AI stocks at 49% of the S&P 500, the market is open for new shares and listings.', E('HYP>SPX', 'SPX>ISS')],
+    ['Shares fund capex too', `New shares raised ${bn0(ISUM.s)} in the same 12 months: SpaceX $75.0bn, Alphabet $44.75bn, Meta $37.5bn (of which $25.0bn is paid only when the forward sale settles) and Oracle $34.9bn.`, E('ISS>HYP')],
+    ['Both are priced by long yields', 'The Fed raised rates on 16 September and the 10-year touched 5.33% in October. On 2 November Oracle sold $10bn of shares and $10bn of notes at the same time.', E('FED>Y10', 'Y10>BND')],
+  ] },
 ];
 /* which relations each lever moves (levers are in the order of LEVERS) */
 const LEDGE = [
@@ -4248,7 +4319,7 @@ const LEDGE = [
   E('FED>BNK'),
   E('REG>BNK', 'TSY>BNK'),
   E('CGR>STB', 'TSY>STB'),
-  E('FED>Y10', 'Y10>PCR', 'INF>FED', 'TSY>MMF', 'TSY>BNK', 'TSY>STB', 'FED>BNK', 'MMF>SPX', 'SPX>ISS', 'ISS>HYP'),
+  E('FED>Y10', 'Y10>PCR', 'INF>FED', 'TSY>MMF', 'TSY>BNK', 'TSY>STB', 'FED>BNK', 'MMF>SPX', 'SPX>ISS', 'ISS>HYP', 'Y10>BND', 'BND>HYP'),
   E('ENG>OIL', 'OIL>FUEL', 'FUEL>CON'),
   E('ENG>PET', 'PET>OIL'),
   E('HOR>OIL', 'OIL>INF'),
@@ -4314,8 +4385,34 @@ function actionsHTML() {
 }
 function wireActions(host) {
   host.querySelectorAll('details.fd').forEach(d => d.addEventListener('toggle', () => { if (d.open) fdOpen.add(d.id); else fdOpen.delete(d.id); }));
-  const apply = () => { host.querySelectorAll('.tlr').forEach(r => { r.hidden = aFilter !== 'all' && r.dataset.g !== aFilter; }); host.querySelectorAll('.tlyr').forEach(y => { let n = y.nextElementSibling, any = false; while (n && !n.classList.contains('tlyr')) { if (!n.hidden) any = true; n = n.nextElementSibling; } y.hidden = !any; }); host.querySelectorAll('.tlf button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === aFilter))); };
-  host.querySelectorAll('.tlf button').forEach(b => b.addEventListener('click', () => { aFilter = b.dataset.f; apply(); }));
+  const apply = () => { host.querySelectorAll('#isx-actions .tlr').forEach(r => { r.hidden = aFilter !== 'all' && r.dataset.g !== aFilter; }); host.querySelectorAll('#isx-actions .tlyr').forEach(y => { let n = y.nextElementSibling, any = false; while (n && !n.classList.contains('tlyr')) { if (!n.hidden) any = true; n = n.nextElementSibling; } y.hidden = !any; }); host.querySelectorAll('#isx-actions .tlf button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === aFilter))); };
+  host.querySelectorAll('#isx-actions .tlf button').forEach(b => b.addEventListener('click', () => { aFilter = b.dataset.f; apply(); }));
+  apply();
+}
+/* ---------- v.1.9: shares and bonds sold: a dated, filterable list ---------- */
+const IFIL = { all: ['All', '#e4ebf1'], s: ['Shares', '#ffb547'], b: ['Bonds', '#9aa4ff'], w: ['Last 12 months', '#e4ebf1'] };
+const ICOL = { s: '#ffb547', b: '#9aa4ff' };
+let iFilter = 'all';
+function issueHTML() {
+  const list = ISSUE.slice().sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0);
+  let yr = '';
+  const rows = list.map(e => {
+    const y = e.d.slice(0, 4), head = y !== yr ? `<div class="tlyr" data-y="${y}">${y}</div>` : ''; yr = y;
+    const amt = bn1(e.a) + (e.q ? '*' : '');
+    return head + `<div class="tlr" data-t="${e.t}" data-w="${iwin(e) ? 1 : 0}" style="--gc:${ICOL[e.t]}"><div class="tld">${fe(e.dl)}</div><i class="tlk" aria-hidden="true"></i><div class="tlb"><div class="tlw"><span class="tlc">${e.t === 's' ? 'Shares' : 'Bonds'}</span> <b>${fe(e.who)}</b><span class="isa">${fe(amt)}</span></div><p>${richText(fe(e.x))}</p><div class="lsrc">${e.u ? `<a href="${fe(e.u)}" target="_blank" rel="noopener">${fe(e.s)}</a>` : fe(e.s)}</div></div></div>`;
+  }).join('');
+  const sum = `<div class="isum"><div style="--gc:${ICOL.s}"><b>${bn0(ISUM.s)}</b><span>new shares, ${ISUM.ns} sales</span></div><div style="--gc:${ICOL.b}"><b>${bn0(ISUM.b)}</b><span>new bonds, ${ISUM.nb} sales</span></div><p>in the 12 months to 8 November 2026. ${bn1(ISUM.p)} of the shares, Meta’s forward sale, is paid only at settlement.</p></div>`;
+  return `<details class="fd actions panel" id="isx-issue"${fdOpen.has('isx-issue') ? ' open' : ''}><summary><b>Shares and bonds sold</b><span>${ISSUE.length} dated sales since March 2025, newest first, with sources</span></summary>${sum}<div class="tlf" role="group" aria-label="Filter by type">${Object.entries(IFIL).map(([k, [t, c]]) => `<button type="button" data-f="${k}" style="--gc:${c}" aria-pressed="${iFilter === k}">${fe(t)}</button>`).join('')}</div><div class="tl6">${rows}</div><p class="tlnote">What is counted: public equity and bonds of listed firms in the build-out, and the largest new listings. Amounts are those in the filing; euro, sterling, Swiss-franc and Canadian-dollar notes are at the dollar value Amazon’s 10-Q gives. Not counted: private rounds (OpenAI, Anthropic), loans (Amazon’s $17.5bn term loan), private credit, at-the-market capacity not yet used (Alphabet up to $40bn, Meta up to $60bn) and listings still to come. No Microsoft share or bond sale was found in the period. Not exhaustive, and * marks an estimate or a figure from press reports.</p></details>`;
+}
+function wireIssue(host) {
+  const d = host.querySelector('#isx-issue'); if (!d) return;
+  d.addEventListener('toggle', () => { if (d.open) fdOpen.add(d.id); else fdOpen.delete(d.id); });
+  const apply = () => {
+    d.querySelectorAll('.tlr').forEach(r => { r.hidden = iFilter === 'w' ? r.dataset.w !== '1' : iFilter !== 'all' && r.dataset.t !== iFilter; });
+    d.querySelectorAll('.tlyr').forEach(y => { let n = y.nextElementSibling, any = false; while (n && !n.classList.contains('tlyr')) { if (!n.hidden) any = true; n = n.nextElementSibling; } y.hidden = !any; });
+    d.querySelectorAll('.tlf button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === iFilter)));
+  };
+  d.querySelectorAll('.tlf button').forEach(b => b.addEventListener('click', () => { iFilter = b.dataset.f; apply(); }));
   apply();
 }
 /* ================= v.1.4: the cockpit: HUD, map, plays, lever bar, dossier ================= */
@@ -4327,6 +4424,8 @@ const GX = {
   tether: { k: 'Tether’s Treasury exposure', v: '≈$132bn', delta: 'end of Sep 2026', note: 'Tether held about $132bn of US Treasury exposure at the end of September 2026', src: 'Tether attestation for Q3 2026, via Bitcoin.com News (30 Oct 2026)' },
   save: { k: 'Personal saving rate', v: '3.8%', delta: 'Sep 2026', note: 'Personal saving was $911.1bn in September 2026; income rose 0.2% on the month and spending 0.5%', src: 'BEA, Personal Income and Outlays (29 Oct 2026)' },
   mtg: { k: '30-year mortgage rate', v: '7.24%', delta: '29 Oct 2026', note: 'Freddie Mac weekly average; 7.32% a week earlier', src: 'Freddie Mac, via Trading Economics (29 Oct 2026)' },
+  shr: { k: 'Shares sold, 12 months', v: bn0(ISUM.s), delta: 'to 8 Nov 2026', note: `New shares sold by listed firms in the build-out, ${ISUM.ns} sales in the list below. Gross proceeds, except Oracle’s at-the-market sales (net). ${bn1(ISUM.p)} of it, Meta’s forward sale, is paid only at settlement. Up to $40bn of Alphabet at-the-market capacity is not counted.`, src: 'Company filings, listed in “Shares and bonds sold” below' },
+  bnd: { k: 'Bonds sold, 12 months', v: bn0(ISUM.b), delta: 'to 8 Nov 2026', note: `Senior notes sold by the same firms, ${ISUM.nb} sales in the list below, at the dollar value the filings give. Excludes Amazon’s $17.5bn term loan and private credit.`, src: 'Company filings, listed in “Shares and bonds sold” below' },
   dsl: { k: 'US diesel price', v: '$6.53/gal', delta: '22 Sep, +77% in a year', note: 'Up 77% on a year earlier', src: 'AAA, EIA data (22 Sep 2026)' },
 };
 let TILES = [];
@@ -4340,7 +4439,7 @@ function buildHud() {
     ['abroad', 'Abroad', '#44d7ec', [T('OFF', 'vault', 'Official Treasuries', G('Foreign official')), T('YEN', 'usd', 'Dollar index', GX.dxy)]],
     ['state', 'The state', '#ffd27a', [T('FED', 'fed', 'Fed funds target', G('Fed funds')), T('FED', 'bank', 'Bank reserves', G('Bank reserves')), T('TSY', 'tsy', 'Bills share of debt', G('Bills'))]],
     ['fin', 'Financial sector', '#ffb547', [T('Y10', 'chart', '10-year yield', G('10-year')), T('MOV', 'pulse', 'Bond volatility', G('Bond volatility')), T('STB', 'coin', 'Tether’s Treasuries', GX.tether)]],
-    ['ai', 'AI build-out', '#ff5d8f', [T('HYP', 'rack', 'Big Tech capex 2026', capg), T('SPX', 'bars', 'AI share of S&P 500', aig)]],
+    ['ai', 'AI build-out', '#ff5d8f', [T('HYP', 'rack', 'Big Tech capex 2026', capg), T('SPX', 'bars', 'AI share of S&P 500', aig), T('ISS', 'issue', 'Shares sold, 12 months', GX.shr), T('BND', 'bond', 'Bonds sold, 12 months', GX.bnd)]],
     ['hh', 'Households', '#3ee6b8', [T('CON', 'bag', 'Consumer spending', G('Consumer spending')), T('SVR', 'jar', 'Saving rate', GX.save), T('MTG', 'house', '30-year mortgage', GX.mtg)]],
     ['energy', 'Energy and prices', '#b7f36b', [T('OIL', 'barrel', 'Brent crude', Object.assign({}, G('Brent'), { delta: '5 Nov 2026' })), T('FUEL', 'pump', 'US diesel', GX.dsl)]],
   ];
@@ -4372,9 +4471,10 @@ function renderFin() {
       + levBarHTML()
       + `</section>`
       + plumbText()
-      + actionsHTML();
+      + actionsHTML()
+      + issueHTML();
     drawRmap(); renderSide();
-    wireActions(host);
+    wireActions(host); wireIssue(host);
     wireCockpit(host);
   } else {
     host.innerHTML = head('The capital stack', 'Cash flow no longer covers the build-out. Bonds in five currencies, new shares and off-balance-sheet vehicles fill the gap, financed in the end by insurers, annuities and pension funds: savings of people who never chose to fund the AI race.')
@@ -4382,8 +4482,9 @@ function renderFin() {
       + `<section class="panel anat" style="--zc:#ffb547;--pc:#ffb547"><h3>Inside the deals <span>follow the payments</span></h3><div class="dtabs" role="tablist">${DEALS.map((D, i) => `<button type="button" role="tab" class="pchip" style="--pc:${DCHIP[i][1]}" aria-selected="${i === fdeal}" data-d="${i}">${fic(DCHIP[i][0], 15)}<b>${fe(D.t)}</b></button>`).join('')}</div><svg id="isx-anat" viewBox="0 0 640 380" role="img" aria-label="Structure of the selected deal"></svg><p class="anote" id="isx-anote"></p></section></div>`
       + `<div class="cgrid3 cs6"><section class="panel" style="--zc:#3ee6b8;--pc:#3ee6b8"><h3>Whose savings</h3><a class="pess" href="${ESSAYS.grandma[1]}" target="_blank" rel="noopener">${SSL}<span>Related essay: ${fe(ESSAYS.grandma[0])}</span></a>${SAVERS.map(([w, v, t, s]) => `<div class="sav6"><b>${fe(v)}</b><div><span>${fe(w)}</span> ${fe(t)}<div class="lsrc">${fe(s)}</div></div></div>`).join('')}</section>`
       + `<section class="panel" style="--zc:#44d7ec;--pc:#44d7ec"><h3>Borrowing in the allies’ currencies</h3><div class="coins">${FX.map(([c, who, t]) => `<div class="coin6" tabindex="0" data-tip="<b>${fe(who)} · ${fe(c)}</b><p>${fe(t)}</p>"><span>${fe(c)}</span><small>${fe(who)}</small></div>`).join('')}</div><p class="fpx">The hyperscalers borrow directly in the currencies of the allies whose surpluses fund them. Alphabet raised almost $32bn in under 24 hours in February 2026; its 100-year sterling bond drew close to ten times the orders.</p><div class="lsrc">Bloomberg via Swissinfo (Feb 2026); MarketScreener (Feb 2026); The Next Web (May 2026); IFR (Mar 2026).</div></section>`
-      + `<section class="panel risk" style="--zc:#ff5a4e;--pc:#ff5a4e"><h3>Weak points</h3>${WEAK.map(([t, x, s]) => `<div class="weak6"><b><i aria-hidden="true">⚠</i> ${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)}</div></div>`).join('')}</section></div>`;
-    drawTower(); drawDeal();
+      + `<section class="panel risk" style="--zc:#ff5a4e;--pc:#ff5a4e"><h3>Weak points</h3>${WEAK.map(([t, x, s]) => `<div class="weak6"><b><i aria-hidden="true">⚠</i> ${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)}</div></div>`).join('')}</section></div>`
+      + issueHTML();
+    drawTower(); drawDeal(); wireIssue(host);
     host.querySelectorAll('.dtabs button').forEach(b => b.addEventListener('click', () => { fdeal = +b.dataset.d; host.querySelectorAll('.dtabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); drawDeal(); }));
   }
   host.querySelectorAll('.fsw [data-fm]').forEach(b => b.addEventListener('click', () => { if (finMode === b.dataset.fm) return; finMode = b.dataset.fm; buildTabs(); renderFin(); narrate(); renderFinCard(); }));
@@ -4580,7 +4681,7 @@ function wrap(s, n, max) { const w = String(s).split(' '), out = []; let l = '';
 
 function finNarr() {
   if (finMode === 'plumb') return { h: 'The plumbing', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
-    x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
+    x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Two more channels fund the build-out itself, new shares and new bonds, and are listed with their sources under the map. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
     scale: 'The map is schematic: lines show relations, not amounts. The tiles above the map carry the measured values, with dates and sources.' };
   return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
     x: 'Goldman Sachs expects debt to fund about a third of hyperscaler capex in 2026. The rest of the gap is filled off balance sheet: special-purpose vehicles financed by private credit, anchored by firms such as Apollo, Blackstone and PIMCO, whose money comes in large part from insurers, annuities and pension funds. US life insurers alone held $85.2bn of AI-linked investments in mid-2026. The hyperscalers also borrow abroad in euros, sterling, Swiss francs, Canadian dollars and yen.',
