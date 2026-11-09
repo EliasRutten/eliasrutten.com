@@ -1852,6 +1852,14 @@ button.res:hover { transform: none; box-shadow: none; }
 .isum p { flex-basis: 100%; margin: 0; font-family: var(--serif); font-size: 13.5px; line-height: 1.5; color: var(--ink3); }
 @media (max-width: 700px) { .isa { margin-left: 0; } .isum b { font-size: 20px; } }
 
+/* v.1.9: rents, by company / by region switch */
+.rtv { display: inline-flex; gap: 3px; padding: 3px; margin-top: 8px; border: 1px solid var(--line); border-radius: 999px 999px 9px 9px; background: rgba(255, 255, 255, .02); }
+.rtv button { background: transparent; border: 1px solid transparent; border-radius: 999px 999px 7px 7px; padding: 4px 13px 3px; cursor: pointer; font-family: var(--display); font-size: 13.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+.rtv button[aria-pressed="true"] { color: var(--bg); background: var(--ink); }
+.rtv + .rt6 { margin-top: 10px; }
+.rg6 .rbar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .05); margin-bottom: 5px; }
+.rg6 .rbar i { display: block; height: 100%; border-radius: 3px; background: var(--rent); }
+
 }
 </style>
 
@@ -3809,19 +3817,43 @@ function toolsTable(host) {
   host.querySelectorAll('.tr6[data-k]').forEach(el => { const go = () => { if (CTY[el.dataset.k]) select(el.dataset.k); }; el.addEventListener('click', go); el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
   $('c-note').innerHTML = richText('Source: UN Comtrade, 2025, each economy’s own customs data, partner “World”. Exports are valued at the border (FOB), imports including freight (CIF), so world exports and imports do not match exactly. Singapore, Malaysia and Hong Kong include re-exports and the output of foreign toolmakers’ plants, so gross totals count some machines twice. * Taiwan does not report to Comtrade: the figures are its partners’ records of trade with Taiwan. World = all reporting economies plus Taiwan.');
 }
-function rentTable(host) {
+function rentFirms(host, tog) {
   const SEC = ['plat', 'cloud', 'pay'], firms = REV.firms.filter(f => SEC.includes(f[0])).map(f => ({ n: f[1], fy: f[2], tot: f[3], ab: f[3] * (1 - (f[4].US || 0)), basis: f[5], note: f[6], src: (REV.src || {})[f[1]] || {} })).sort((a, b) => b.ab - a.ab);
   const sum = firms.reduce((a, f) => a + f.ab, 0), ip = REV.bop.ip;
   $('c-title').textContent = 'The rents, firm by firm';
   $('c-status').innerHTML = richText('Service revenue earned outside the US, latest fiscal year, $bn: ' + firms.length + ' firms, each with its source. {{rents|What counts as a rent}}. Rows marked “est.” rest on an estimated regional split.');
   const bas = f => f.basis === 'rep' ? 'reported' : f.basis === 'part' ? 'part est.' : 'est.';
   const lk = f => f.src.url ? `<a href="${esc(f.src.url)}" target="_blank" rel="noopener noreferrer">${esc(f.src.src)}</a>` : esc(f.src.src || '');
-  host.innerHTML = '<div class="rt6"><div class="fh">Firm</div><div class="fh r">Abroad</div><div class="fh r">Abroad %</div><div class="fh">Basis · source</div>'
+  host.innerHTML = tog + '<div class="rt6"><div class="fh">Firm</div><div class="fh r">Abroad</div><div class="fh r">Abroad %</div><div class="fh">Basis · source</div>'
     + firms.map(f => `<div class="rn"><b>${esc(f.n)}</b><span>${esc(f.fy)}</span></div><div class="r">${fmtBn(f.ab)}</div><div class="r dim">${Math.round(f.ab / f.tot * 100)}%</div><div class="rs"><span class="stt ${f.src.st}">${esc(REVST[f.src.st] || '')}</span> <em>${bas(f)}</em><br>${lk(f)}${f.note ? `<small>${esc(f.note)}</small>` : ''}</div>`).join('')
     + `<div class="rn tot"><b>Total abroad</b></div><div class="r tot">${fmtBn(sum)}</div><div class="r"></div><div class="rs"></div></div>`
     + '<div class="gmh" style="margin-top:14px">The official statistic is narrower</div>'
     + `<div class="fnote" style="margin-top:2px">US receipts for the use of intellectual property (BEA, balance of payments): ${Object.keys(ip).slice(-3).map(y => '$' + (ip[y] / 1e3).toFixed(1) + 'bn in ' + y).join(', ')}. That is a different measure from the table above, which counts service revenue earned by foreign subsidiaries and booked abroad, Europe’s mostly in Ireland. <a href="${esc(REV.bop.url)}" target="_blank" rel="noopener noreferrer">BEA via FRED, series IEAXSIPA</a>, updated 24 Jun 2026, checked ${esc(REV.bop.checked)}.</div>`;
   $('c-note').innerHTML = richText('Sources: the companies’ annual reports (10-K) for the latest fiscal year, linked in each row. Where a firm does not report revenue by region, the split is our estimate from its disclosures and is marked “est.”. Chip firms and defence firms are not counted here: the imperial arm tab lists all five sectors. The same figures, with dates and status, are kept in the data inventory behind this page (sheet “Rents”).');
+}
+/* v.1.9: the rents, by region: where the customer sits; each region shows its biggest payers and how much rests on estimated splits */
+function rentRegions(host, tog) {
+  const SEC = ['plat', 'cloud', 'pay'], firms = REV.firms.filter(f => SEC.includes(f[0]));
+  const regs = REV.regions.filter(([r]) => r !== 'US').map(([r, nm]) => {
+    const per = firms.map(f => ({ n: f[1], v: f[3] * (f[4][r] || 0), b: f[5] })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    const v = per.reduce((a, x) => a + x.v, 0), sh = b => v ? per.filter(x => x.b === b).reduce((a, x) => a + x.v, 0) / v : 0;
+    return { r, nm, v, per, rep: sh('rep'), part: sh('part'), est: sh('est') };
+  }).sort((a, b) => b.v - a.v);
+  const tot = regs.reduce((a, g) => a + g.v, 0), mx = regs[0].v;
+  $('c-title').textContent = 'The rents, region by region';
+  $('c-status').innerHTML = richText('Service revenue earned outside the US, latest fiscal year, $bn, by where the customer sits: ' + firms.length + ' firms. {{rents|What counts as a rent}}. The last column shows how much of each region’s figure rests on reported, partly estimated or estimated splits.');
+  host.innerHTML = tog + '<div class="rt6 rg6"><div class="fh">Region</div><div class="fh r">Revenue</div><div class="fh r">Share</div><div class="fh">Largest payers · basis of the split</div>'
+    + regs.map(g => `<div class="rn"><b>${esc(g.nm)}</b><span>${g.per.length} firms</span></div><div class="r">${fmtBn(g.v)}</div><div class="r dim">${Math.round(g.v / tot * 100)}%</div><div class="rs"><div class="rbar"><i style="width:${(g.v / mx * 100).toFixed(1)}%"></i></div>${g.per.slice(0, 4).map(x => esc(x.n) + ' ' + fmtBn(x.v) + (x.b === 'est' ? '*' : x.b === 'part' ? '†' : '')).join(' · ')}<small>Split reported ${Math.round(g.rep * 100)}% · partly estimated ${Math.round(g.part * 100)}% · estimated ${Math.round(g.est * 100)}%</small></div>`).join('')
+    + `<div class="rn tot"><b>Total abroad</b></div><div class="r tot">${fmtBn(tot)}</div><div class="r"></div><div class="rs"></div></div>`
+    + '<div class="gmh" style="margin-top:14px">How to read it</div>'
+    + '<div class="fnote" style="margin-top:2px">Each firm’s foreign revenue is spread over regions with the split in its annual report (10-K). Most firms report only broad regions such as “Europe, Middle East and Africa” or “Asia-Pacific”; the split inside them is our estimate. † marks a firm whose split is partly estimated, * a firm whose split is estimated; unmarked firms report the region. Greater China is shown separately where the firm reports it; for others it sits inside Asia-Pacific. Switch to “By company” for each firm’s source.</div>';
+  $('c-note').innerHTML = richText('Sources: the companies’ annual reports (10-K) for the latest fiscal year; the same regional figures, with dates and status, are in the data inventory behind this page (sheet “Rents”). Arc width on the map follows this table.');
+}
+function rentTable(host) {
+  const v = rentTable.view || 'firm';
+  const tog = `<div class="rtv" role="group" aria-label="Show the rents by company or by region"><button type="button" data-v="firm" aria-pressed="${v === 'firm'}">By company</button><button type="button" data-v="region" aria-pressed="${v === 'region'}">By region</button></div>`;
+  (v === 'region' ? rentRegions : rentFirms)(host, tog);
+  host.querySelectorAll('.rtv button').forEach(b => b.addEventListener('click', () => { rentTable.view = b.dataset.v; rentTable(host); }));
 }
 function table6(s, host) {
   if (s.key === 'rent') { rentTable(host); return true; }
