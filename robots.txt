@@ -1,5 +1,31 @@
 # eliasrutten.com welcomes search engines and AI answer engines.
+# AI training and text-and-data mining are reserved: see the notice in the page footer.
 User-agent: *
 Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
 
 Sitemap: https://eliasrutten.com/sitemap.xml

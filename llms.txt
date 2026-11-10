@@ -10,6 +10,8 @@ Key facts:
 - Investigation with Sebastiaan Brommersma (FTM, 2026) revealed an undisclosed 2014 Palantir contract for analysing passenger data used by the Royal Netherlands Marechaussee. It led to parliamentary questions from D66 and Volt, and the Dutch Ministry of Defence cited the reporting when it announced it would stop using Palantir within two years. An English version is at https://eliasrutten.substack.com/p/royal-dutch-military-police-worked.
 - Contact: via https://eliasrutten.com/#contact (email on request, Signal for tips)
 
+Rights: © 2026 Elias Rutten. Quotes are welcome with credit and a link. Other reuse of the text, analysis or graphics needs written permission. Training AI models on this material, and text-and-data mining, are reserved. Pages may be read and cited; this file does not grant a licence to train models.
+
 ## Interactive
 
 - [The Imperial Stack](https://eliasrutten.com/imperial-stack/): interactive map of how US tech firms, the dollar and the American state work as one machine, built around Pax Silica: the dollar loop from platform rents to Treasury debt management, who finances the AI build-out, and fourteen scenarios (Starlink over Crimea, Huawei, Nexperia, Russia’s frozen reserves, Nayara Energy, stablecoins in Kenya and more).
