@@ -207,6 +207,69 @@
 #isx-root .intro6 .in-thesis em { background: rgba(0, 0, 0, .14); }
 #isx-root .ctarow6 .cta6-th em { background: rgba(0, 0, 0, .1); }
 #isx-root #isx-c-links:empty { display: none; }
+
+/* ================= v.1.11: phone step control, share button ================= */
+
+/* --- phone step control: under the globe block, sticky while the card is read; never on desktop --- */
+#isx-root .mstep { display: none; }
+@media (max-width: 760px) {
+  #isx-root.v-map .mstep { display: flex; order: 2; position: sticky; top: 8px; z-index: 12; align-items: stretch; gap: 8px; margin: 8px 10px 4px; padding: 6px;
+    border-radius: 16px; background: rgba(9, 15, 22, .94); border: 1px solid color-mix(in srgb, var(--sc, #ffb547) 38%, #22313f);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .85); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: border-color .3s ease; }
+  #isx-root .mstep .ms-b { flex: none; width: 58px; min-height: 48px; display: grid; place-items: center; padding: 0; border-radius: 12px; border: 1px solid #2b3a49; background: #0f1922; color: #fff; cursor: pointer; transition: border-color .15s, background .15s, transform .1s, opacity .2s; }
+  #isx-root .mstep .ms-next { border-color: color-mix(in srgb, var(--sc, #ffb547) 55%, #2b3a49); background: color-mix(in srgb, var(--sc, #ffb547) 10%, #0f1922); }
+  #isx-root .mstep .ms-b:active:not(:disabled) { transform: scale(.96); }
+  #isx-root .mstep .ms-b:disabled { opacity: .32; cursor: default; }
+  #isx-root .mstep .ms-b:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+  #isx-root .mstep .ms-b svg { width: 22px; height: 22px; }
+  #isx-root .mstep .ms-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 0 2px; }
+  #isx-root .mstep .ms-top { display: flex; align-items: baseline; gap: 6px; min-width: 0; white-space: nowrap; }
+  #isx-root .mstep .ms-n { font-family: var(--mono); font-size: 19px; line-height: 1; letter-spacing: .02em; color: var(--sc, #ffb547); font-variant-numeric: tabular-nums; }
+  #isx-root .mstep .ms-of { font-family: var(--mono); font-size: 13px; line-height: 1; color: var(--ink3); font-variant-numeric: tabular-nums; }
+  #isx-root .mstep .ms-t { flex: 1; min-width: 0; margin-left: 6px; text-align: right; overflow: hidden; text-overflow: ellipsis; font-family: var(--display); font-weight: 600; font-size: 15px; line-height: 1; letter-spacing: .07em; text-transform: uppercase; color: var(--ink); }
+  #isx-root .mstep .ms-bar { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+  #isx-root .mstep .ms-bar i { height: 4px; border-radius: 2px; background: #243444; transition: background .3s ease; }
+  #isx-root .mstep .ms-bar i.done { background: color-mix(in srgb, var(--sc, #ffb547) 50%, #243444); }
+  #isx-root .mstep .ms-bar i.cur { background: var(--sc, #ffb547); }
+  /* the card keeps its text; its Back and Next buttons give way to this control */
+  #isx-root .cmd6 > .bigbtn { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #isx-root .mstep, #isx-root .mstep .ms-b, #isx-root .mstep .ms-bar i { transition: none; }
+}
+
+/* --- share: the fourth pill in the dock; the step bar makes room for it --- */
+/* four pills instead of three: on laptops they slim down so all ten steps still fit; from 1520 px they keep their full size */
+@media (min-width: 1200px) and (max-width: 1399px) { #isx-root.v-map .tabs-bottom { right: 172px; } #isx-root.v-map .dock6 .dk { width: 34px; } }
+@media (min-width: 1400px) and (max-width: 1519px) { #isx-root.v-map .tabs-bottom { right: 188px; } #isx-root.v-map .dock6 .dk { width: 38px; } }
+@media (min-width: 1400px) and (max-width: 1429px) {
+  #isx-root.v-map .tabs-bottom .tb { padding-left: 6px; padding-right: 6px; }
+  #isx-root.v-map .tabs-bottom .tb .t { font-size: 12.5px; letter-spacing: .03em; }
+}
+@media (min-width: 1520px) { #isx-root.v-map .tabs-bottom { right: 204px; } }
+#isx-root .dock6 .dk-sh[aria-expanded="true"] { color: #fff; border-color: #8fa3b6; }
+#isx-root .shpop { position: absolute; right: 0; bottom: calc(100% + 10px); z-index: 30; width: 264px; padding: 12px 10px 10px; border-radius: 14px; background: #09101a;
+  border: 1px solid #2a3a4a; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .85); font-family: var(--sans); text-align: left;
+  opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s; }
+#isx-root .shpop.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+#isx-root .shpop::before { content: ""; position: absolute; left: 18px; right: 18px; top: -1px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, #ffb547, transparent); opacity: .85; }
+#isx-root .shpop .shk { padding: 0 4px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: #ffb547; }
+#isx-root .shpop .shn { padding: 0 4px; margin: 3px 0 8px; font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+#isx-root .shpop .shi { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 40px; margin: 0; padding: 6px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent;
+  color: var(--ink); font: 500 14px/1.25 var(--sans); text-align: left; text-decoration: none; cursor: pointer; box-sizing: border-box; transition: border-color .15s, background .15s; }
+#isx-root .shpop .shi:hover, #isx-root .shpop .shi:focus-visible { border-color: #2b3a49; background: rgba(255, 255, 255, .04); }
+#isx-root .shpop .shi:focus-visible { outline: 2px solid #ffb547; outline-offset: 1px; }
+#isx-root .shpop .shi small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.3; font-weight: 400; color: var(--ink2); }
+#isx-root .shpop .shi .sx { flex: none; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+#isx-root .shpop .shi.ok .sx { color: #ffb547; }
+#isx-root .shpop .shu { margin: 8px 4px 0; padding-top: 8px; border-top: 1px dashed #23323f; font-family: var(--mono); font-size: 10.5px; line-height: 1.45; color: var(--ink2); word-break: break-all; -webkit-user-select: all; user-select: all; }
+@media (pointer: coarse) { #isx-root .shpop .shi { min-height: 46px; } }
+@media (max-width: 760px) {
+  #isx-root .dock6 { position: relative; }
+  #isx-root .shpop { right: auto; left: 50%; width: min(300px, calc(100vw - 32px)); transform: translate(-50%, 6px); }
+  #isx-root .shpop.on { transform: translate(-50%, 0); }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .shpop { transition: none; } }
 </style>
 
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -2038,7 +2101,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.10</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.11</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -2090,6 +2153,7 @@ button.res:hover { transform: none; box-shadow: none; }
     </div>
 
     <div class="scene" id="isx-scene-fin" hidden><div class="fin" id="isx-fin"></div></div>
+    <div class="mstep" id="isx-mstep" role="group" aria-label="Step through the dollar loop"><button type="button" class="ms-b ms-prev" id="isx-ms-prev" aria-label="Previous step"></button><div class="ms-mid"><div class="ms-top"><b class="ms-n" id="isx-ms-n">00</b><span class="ms-of" id="isx-ms-of">/ 10</span><span class="ms-t" id="isx-ms-t">Overview</span></div><div class="ms-bar" id="isx-ms-bar" aria-hidden="true"></div></div><button type="button" class="ms-b ms-next" id="isx-ms-next" aria-label="Next step"></button></div>
     <div class="cmd6" id="isx-cmd">
       <button type="button" class="bigbtn prev" id="isx-t-prev" aria-label="Previous step"><span class="ar" aria-hidden="true">◀</span><span class="bi" id="isx-t-previ"></span><span class="bt"><small>Back</small><b id="isx-t-prevl"></b></span></button>
       <div class="tournarr panel" id="isx-tournarr"><button type="button" class="tfold" id="isx-t-fold" aria-label="Fold">–</button><div class="tk" id="isx-t-k"></div><h3 id="isx-t-h"></h3><p id="isx-t-p"></p><div class="tfig"><div class="v" id="isx-t-v"></div><div class="vc" id="isx-t-c"></div></div><div class="tx6" id="isx-t-x"></div><div class="tnav"><button type="button" class="godeep" id="isx-t-more">Go deeper <span aria-hidden="true">↓</span></button><a class="essay6" id="isx-t-essay" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"></a></div><div class="tmeta"><button type="button" class="howc" data-how>How we count</button></div><div class="legm" id="isx-t-legm"></div><div class="pips" id="isx-t-pips" aria-hidden="true"></div><div class="tnudge" id="isx-t-nudge" hidden></div></div>
@@ -2097,9 +2161,11 @@ button.res:hover { transform: none; box-shadow: none; }
     </div>
     <div class="mapnote" id="isx-mapnote"></div>
     <nav class="tabs-bottom" id="isx-tabs" aria-label="Steps"></nav>
-    <div class="dock6" id="isx-dock" role="group" aria-label="Thesis, support and full screen">
+    <div class="dock6" id="isx-dock" role="group" aria-label="Thesis, support, share and full screen">
       <a class="dk dk-th" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener" aria-label="Read the thesis, coming soon" data-tip="<b>Read the thesis · coming soon</b><p>One essay explaining the whole map: how the dollar system rebuilt itself around US profits, and why the AI boom is its newest form. Subscribe to get it.</p>"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg></a>
       <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map" data-tip="<b>Support this free map</b><p>It is free and has no ads. A coffee keeps it going.</p>"><span class="cup" aria-hidden="true">☕</span></a>
+      <button type="button" class="dk dk-sh" id="isx-share" aria-label="Share this tab" aria-expanded="false" aria-controls="isx-sharepop" data-tip="<b>Share</b><p>Copy a link to this tab, or post it.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v6.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
+      <div class="shpop" id="isx-sharepop" role="group" aria-label="Share this tab"><div class="shk">Share this tab</div><div class="shn" id="isx-sh-name"></div><button type="button" class="shi" id="isx-sh-copy" data-sx=""><span class="sl">Copy link</span><span class="sx" aria-hidden="true"></span></button><a class="shi" id="isx-sh-x" href="https://x.com/intent/tweet" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Post on X</span><span class="sx" aria-hidden="true">↗</span></a><a class="shi" id="isx-sh-li" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Share on LinkedIn<small>The text is copied, to paste into your post</small></span><span class="sx" aria-hidden="true">↗</span></a><div class="shu" id="isx-sh-url"></div><span class="dl" id="isx-sh-live" role="status" aria-live="polite"></span></div>
       <button type="button" class="dk dk-fs" id="isx-fs" aria-label="Full screen" data-tip="<b>Full screen</b>"><span class="dl">Full screen</span><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </section>
@@ -3859,7 +3925,7 @@ function narr6() {
   $('t-nudge').hidden = true;
   tr.classList.remove('in'); void tr.offsetWidth; tr.classList.add('in');
   $('n-cap').innerHTML = richText(val(s.cap) || '');
-  deep6(s);
+  deep6(s); mstepSync();
 }
 function deep6(s) {
   const host = $('deep'); if (!host) return;
@@ -4677,7 +4743,7 @@ function renderFin() {
     drawTower(); drawDeal(); wireIssue(host);
     host.querySelectorAll('.dtabs button').forEach(b => b.addEventListener('click', () => { fdeal = +b.dataset.d; host.querySelectorAll('.dtabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); drawDeal(); }));
   }
-  host.querySelectorAll('.fsw [data-fm]').forEach(b => b.addEventListener('click', () => { if (finMode === b.dataset.fm) return; finMode = b.dataset.fm; buildTabs(); renderFin(); narrate(); renderFinCard(); }));
+  host.querySelectorAll('.fsw [data-fm]').forEach(b => b.addEventListener('click', () => { if (finMode === b.dataset.fm) return; finMode = b.dataset.fm; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); }));
   finLoop();
 }
 
@@ -4939,7 +5005,7 @@ const INTRO_HTML = `
       <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it.">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
     </div>
     <label class="in-off"><input type="checkbox" id="isx-in-off"><span>Don’t show this screen again</span></label>
-    <p class="in-foot">Work in progress · v.1.10 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
+    <p class="in-foot">Work in progress · v.1.11 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -5041,7 +5107,7 @@ function buildTabs() {
   } else if (view === 'arm') {
     AF.forEach(k => tab(k === 'all' ? '●' : '—', k === 'all' ? 'Whole machine' : ATAB[k], k === 'all' ? '#e4ebf1' : ATYPE[k].c, k === armFilter, () => { armFilter = k; buildTabs(); renderArm(); narrate(); renderArmCard(); }));
   } else if (view === 'fin') {
-    FINM.forEach(([k, n, t, c]) => tab(n, t, c, k === finMode, () => { finMode = k; buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
+    FINM.forEach(([k, n, t, c]) => tab(n, t, c, k === finMode, () => { finMode = k; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
   } else if (view === 'story') {
   } else {
     CH.chains.forEach((c, i) => tab(c.id, c.t, CHC[c.kind], i === chainIdx, () => { chainIdx = i; buildTabs(); renderChain(); narrate(); renderChainCard(); }, i === 5 ? 'gap' : ''));
@@ -5266,7 +5332,7 @@ function setView(v) {
   else if (v === 'fin') { renderFin(); renderFinCard(); }
   else if (v === 'story') { buildStoryPicker(); buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); requestAnimationFrame(storyScroll); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
-  buildTabs(); narrate(); renderLegend(); after5();
+  buildTabs(); narrate(); renderLegend(); after5(); routeSync();
 }
 ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
 ['machine', 'rev'].forEach(m => $('m-' + m).addEventListener('click', () => { armMode = m; $('m-machine').setAttribute('aria-pressed', String(m === 'machine')); $('m-rev').setAttribute('aria-pressed', String(m === 'rev')); setView('arm'); }));
@@ -5334,7 +5400,7 @@ function gTips() {
   return [
     { k: 'drag', h: 'Turn the globe', p: COARSE ? 'Swipe sideways across the globe to turn it. Swipe up or down to scroll the page as usual.' : 'Drag the globe to turn it. It stops spinning as soon as you take hold.' },
     { k: 'select', h: COARSE ? 'Tap a country' : 'Click a country', p: 'The globe turns to it and its card opens under the map, with its figures for this step. ' + (COARSE ? 'Tap it again' : 'Click it again') + ' to go back.' },
-    { k: 'step', h: 'Step through the loop', p: COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: '#isx-tabs' },
+    { k: 'step', h: 'Step through the loop', p: PHONE() ? 'The arrows under the globe take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: PHONE() ? '#isx-mstep' : '#isx-tabs' },
     { k: 'zoom', h: 'Zoom', p: (COARSE ? '+ and −' : '+ and − (or the + and − keys)') + ' zoom in and out; ⟲ brings back the view for this step.', t: '#isx-zoom' },
   ];
 }
@@ -5457,6 +5523,144 @@ function simTipsShow() {
   const b = el.querySelector('.cgo'); if (b) b.focus({ preventScroll: true });
 }
 
+
+/* ================= v.1.11: linkable tabs, phone step control, share =================
+   Tabs: #circuit, #arm, #simulator, #scenarios (plus #revenue for the Arm’s revenue map and #capital-stack for the
+   simulator’s second view). Old hashes (#chains, #story, #financing, #plumbing) still open the right tab.
+   A tab switch pushes a history entry (Back goes to the previous tab); a switch inside a tab replaces it.
+   Nothing is written to the address bar until the reader switches tab, so a plain visit still opens on the entry screen.
+   Phone step control: under the globe block, sticky while the card is read (phones only, CSS decides).
+   Share: copies the link to the active tab; touch devices with the Web Share API open the system sheet instead.
+   No scripts, pixels or SDKs: X and LinkedIn are plain links the reader chooses to open. */
+const PHONE = () => { try { return matchMedia('(max-width: 760px)').matches; } catch (e) { return false; } };
+
+/* ---------- routes ---------- */
+const ROUTES = new Map([
+  ['circuit', ['map']], ['arm', ['arm', 'machine']], ['revenue', ['arm', 'rev']],
+  ['simulator', ['fin', 'plumb']], ['plumbing', ['fin', 'plumb']], ['financing', ['fin', 'plumb']], ['capital-stack', ['fin', 'stack']],
+  ['scenarios', ['story']], ['chains', ['story']], ['story', ['story']],
+]);
+let routeMute = true, lastView = 'map';
+function routeOf(h) { return ROUTES.get(String(h || '').replace(/^#\/?/, '').toLowerCase()) || null; }
+function slugOf(v, m) {
+  if (v === 'arm') return m === 'rev' ? 'revenue' : 'arm';
+  if (v === 'fin') return m === 'stack' ? 'capital-stack' : 'simulator';
+  if (v === 'story' || v === 'chain') return 'scenarios';
+  return 'circuit';
+}
+function hashFor() { return slugOf(view, view === 'arm' ? armMode : finMode); }
+function applyModes(r) {
+  if (r[0] === 'arm') { armMode = r[1]; $('m-machine').setAttribute('aria-pressed', String(armMode === 'machine')); $('m-rev').setAttribute('aria-pressed', String(armMode === 'rev')); }
+  if (r[0] === 'fin') finMode = r[1];
+}
+function routeSync() {
+  if (routeMute) return;
+  const slug = hashFor(), want = '#' + slug, tabChanged = view !== lastView;
+  lastView = view; closeShare();
+  if (location.hash === want) return;
+  try { (tabChanged ? history.pushState : history.replaceState).call(history, null, '', want); } catch (e) { /* sandboxed frame: the tab still works, the address just stays put */ }
+  if (tabChanged) track('Tab', { tab: slug });
+}
+function onRoute() {
+  const r = routeOf(location.hash); if (!r) return;
+  if (slugOf(r[0], r[1]) === hashFor()) return;
+  routeMute = true;
+  try { applyModes(r); setView(r[0]); } finally { routeMute = false; }
+  lastView = view;
+}
+addEventListener('popstate', onRoute); addEventListener('hashchange', onRoute);
+
+/* ---------- phone step control ---------- */
+const MS_ARR = { l: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>',
+  r: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>',
+  loop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4.5V9h-4.5"/></svg>' };
+function mstepSync() {
+  const el = $('mstep'); if (!el || !STEPS[step]) return;
+  const n = STEPS.length - 1, s = STEPS[step], last = step === n, pv = step > 0 ? STEPS[step - 1] : null, nx = last ? STEPS[1] : STEPS[step + 1];
+  el.style.setProperty('--sc', s.c);
+  $('ms-n').textContent = s.n; $('ms-of').textContent = '/ ' + String(n).padStart(2, '0'); $('ms-t').textContent = step ? s.t : 'Overview';
+  const bar = $('ms-bar'); if (bar.childElementCount !== n) bar.innerHTML = '<i></i>'.repeat(n);
+  [...bar.children].forEach((i, k) => { i.className = k + 1 === step ? 'cur' : k + 1 < step ? 'done' : ''; });
+  const p = $('ms-prev'), x = $('ms-next');
+  p.disabled = !pv; p.setAttribute('aria-label', pv ? 'Previous step: ' + (pv.n === '00' ? 'Overview' : pv.n + ' ' + pv.t) : 'Previous step');
+  x.innerHTML = last ? MS_ARR.loop : MS_ARR.r;
+  x.setAttribute('aria-label', (step === 0 ? 'Start the loop: ' : last ? 'Close the loop: ' : 'Next step: ') + nx.n + ' ' + nx.t);
+}
+$('ms-prev').addEventListener('click', () => stepBy(-1)); $('ms-next').addEventListener('click', () => stepBy(1));
+$('ms-prev').innerHTML = MS_ARR.l;
+/* the line under the globe names what the phone layout offers */
+(() => {
+  const hint = $('hint'); if (!hint || !hint.firstChild) return;
+  const base = hint.firstChild.textContent, mq = matchMedia('(max-width: 760px)');
+  const set = () => { if (mq.matches) hint.firstChild.textContent = (COARSE ? 'Swipe sideways to turn the globe · tap a country' : 'Drag to turn the globe · click a country') + ' · use the arrows below to step '; else hint.firstChild.textContent = COARSE ? 'Swipe sideways to turn the globe · tap a country · use the step bar to step ' : base; };
+  set(); if (mq.addEventListener) mq.addEventListener('change', set);
+})();
+
+/* ---------- share ---------- */
+const SHARE_BASE = (() => { const c = document.querySelector('link[rel="canonical"]'); return (c && c.href) || (location.origin + location.pathname); })();
+const SH_TXT = {
+  circuit: 'The Imperial Stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe. An interactive by Elias Rutten.',
+  arm: 'The Imperial Stack, the arm: how the US state and its tech firms are tied together, and how much of their revenue comes from abroad. An interactive by Elias Rutten.',
+  simulator: 'The Imperial Stack, the Scott Bessent simulator: how Washington keeps money cheap for the AI build-out, one lever at a time. An interactive by Elias Rutten.',
+  scenarios: 'The Imperial Stack, scenarios: fourteen cases of how US tech and the dollar give Washington leverage. An interactive by Elias Rutten.',
+};
+const SH_NAME = { circuit: 'The circuit', arm: 'The imperial arm', revenue: 'The imperial arm · revenue map', simulator: 'Scott Bessent Simulator', 'capital-stack': 'Simulator · capital stack', scenarios: 'Scenarios' };
+function shareData() {
+  const slug = hashFor(), k = slug === 'revenue' ? 'arm' : slug === 'capital-stack' ? 'simulator' : slug;
+  return { slug, url: SHARE_BASE + '#' + slug, text: SH_TXT[k], name: SH_NAME[slug], title: 'The Imperial Stack · ' + SH_NAME[slug] };
+}
+function copyText(t) {
+  const legacy = () => { try { const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; ROOT.appendChild(a); a.select(); a.setSelectionRange(0, t.length); const ok = document.execCommand('copy'); a.remove(); return ok; } catch (e) { return false; } };
+  try { if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(() => true, () => legacy()); } catch (e) { /* fall through */ }
+  return Promise.resolve(legacy());
+}
+let shOpen = false, shTimer = null;
+function shFlash(row, msg, live) {
+  const sx = row.querySelector('.sx'); row.classList.add('ok'); if (sx) sx.textContent = msg;
+  const l = $('sh-live'); if (l) l.textContent = live;
+  clearTimeout(shTimer); shTimer = setTimeout(() => { row.classList.remove('ok'); if (sx) sx.textContent = row.dataset.sx || ''; if (l) l.textContent = ''; }, 2200);
+}
+function shFill() {
+  const d = shareData();
+  $('sh-name').textContent = d.name; $('sh-url').textContent = d.url.replace(/^https?:\/\//, '');
+  $('sh-x').href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(d.text) + '&url=' + encodeURIComponent(d.url);
+  $('sh-li').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(d.url);
+  return d;
+}
+function openShare() {
+  if (shOpen) return; shFill(); shOpen = true;
+  const b = $('share'), p = $('sharepop'); b.setAttribute('aria-expanded', 'true'); p.classList.add('on'); hideTip();
+  const f = $('sh-copy'); if (f) f.focus({ preventScroll: true });
+}
+function closeShare(back) {
+  if (!shOpen) return; shOpen = false;
+  const b = $('share'), p = $('sharepop'); b.setAttribute('aria-expanded', 'false'); p.classList.remove('on');
+  if (back) b.focus({ preventScroll: true });
+}
+$('share').addEventListener('click', () => {
+  if (COARSE && typeof navigator.share === 'function') {
+    const d = shareData(), data = { title: d.title, text: d.text, url: d.url };
+    if (!navigator.canShare || navigator.canShare(data)) { navigator.share(data).catch(err => { if (!err || err.name !== 'AbortError') openShare(); }); track('Share', { how: 'native', tab: d.slug }); return; }
+  }
+  if (shOpen) closeShare(); else openShare();
+});
+$('sh-copy').addEventListener('click', () => {
+  const d = shareData(), row = $('sh-copy');
+  copyText(d.url).then(ok => {
+    if (ok) shFlash(row, 'Copied ✓', 'Link copied');
+    else { shFlash(row, 'Select below', 'Could not copy. The link is shown below, select it to copy.'); try { const r = document.createRange(); r.selectNodeContents($('sh-url')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) { /* ignore */ } }
+  });
+  track('Share', { how: 'copy', tab: d.slug });
+});
+$('sh-x').addEventListener('click', () => { track('Share', { how: 'x', tab: shareData().slug }); setTimeout(() => closeShare(), 150); });
+$('sh-li').addEventListener('click', () => {
+  const d = shareData(); copyText(d.text); /* LinkedIn takes only the link: the standard text is on the clipboard to paste into the post */
+  shFlash($('sh-li'), 'Text copied ✓', 'Text copied, paste it into your LinkedIn post'); track('Share', { how: 'linkedin', tab: d.slug });
+});
+document.addEventListener('pointerdown', e => { if (shOpen && !e.target.closest('#isx-sharepop, #isx-share')) closeShare(); });
+document.addEventListener('keydown', e => { if (shOpen && e.key === 'Escape') { e.preventDefault(); closeShare(true); } });
+$('sharepop').addEventListener('focusout', e => { if (shOpen && e.relatedTarget && !e.relatedTarget.closest('#isx-sharepop, #isx-share')) closeShare(); });
+
 initIntro(); buildResbar(); buildMapModes(); bootGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
 $('t-more').addEventListener('click', () => crisp($('narr')));
@@ -5465,15 +5669,15 @@ $('t-p').addEventListener('click', () => $('tournarr').classList.toggle('open'))
 $('stap-p').addEventListener('click', () => storyGo(-1)); $('stap-n').addEventListener('click', () => storyGo(1));
 document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } else if (view === 'story' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); storyGo(ev.key === 'ArrowRight' ? 1 : -1); } });
 if (location.hash === '#tour') ROOT.classList.add('tour');
-if (location.hash === '#revenue') { armMode = 'rev'; $('m-machine').setAttribute('aria-pressed', 'false'); $('m-rev').setAttribute('aria-pressed', 'true'); }
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
-if (location.hash === '#capital-stack') finMode = 'stack';
-const start = { '#arm': 'arm', '#revenue': 'arm', '#chains': 'story', '#scenarios': 'story', '#story': 'story', '#financing': 'fin', '#plumbing': 'fin', '#capital-stack': 'fin' }[location.hash] || 'map';
-setView(start);
+const R0 = routeOf(location.hash); if (R0) applyModes(R0);
+const start = R0 ? R0[0] : 'map';
+setView(start); lastView = view;
+if (R0 && location.hash !== '#' + slugOf(R0[0], R0[1])) { try { history.replaceState(null, '', '#' + slugOf(R0[0], R0[1])); } catch (e) { /* ignore */ } } /* old and mixed-case hashes become the clean one */
 if (start === 'map') setStep(0);
 if (location.hash === '#tour') setTimeout(play, 3500);
 document.addEventListener('visibilitychange', () => { if (!globe) return; if (document.hidden) globe.pauseAnimation(); else globeWake(); })
-isxBooted = true;;
+isxBooted = true; routeMute = false;
 })();
 </script>
 
