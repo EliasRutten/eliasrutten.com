@@ -270,6 +270,262 @@
   #isx-root .shpop.on { transform: translate(-50%, 0); }
 }
 @media (prefers-reduced-motion: reduce) { #isx-root .shpop { transition: none; } }
+
+/* ================= v.1.12: the simulator as a story ================= */
+@keyframes isx-nin { from { opacity: 0; transform: translateY(7px) scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes isx-efade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes isx-hring { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.16); } }
+@keyframes isx-lvin { 0% { opacity: 0; transform: translateY(12px); } 55% { opacity: 1; box-shadow: 0 0 26px color-mix(in srgb, var(--lc) 55%, transparent); } 100% { opacity: 1; transform: none; } }
+@keyframes isx-sbin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* --- the mode switch: Story (recommended) or Full view --- */
+#isx-root .sbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+#isx-root .smode { display: inline-flex; gap: 4px; padding: 3px; border-radius: 12px; border: 1px solid #22313f; background: #0b131b; }
+#isx-root .smode button { min-height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--ink2); cursor: pointer;
+  font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; transition: color .15s, background .25s, border-color .25s; }
+#isx-root .smode button small { font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .12em; color: #ffb547; }
+#isx-root .smode button:hover { color: #fff; }
+#isx-root .smode button[aria-pressed="true"] { color: #fff; border-color: rgba(255, 181, 71, .6); background: rgba(255, 181, 71, .1); }
+#isx-root .smode button:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root .scount { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink3); }
+#isx-root .scount b { color: #fff; font-weight: 400; font-variant-numeric: tabular-nums; }
+#isx-root .cock:not(.st) .scount { display: none; }
+#isx-root .cock.st .pbar { display: none; }
+#isx-root.sim-story #isx-stips, #isx-root.sim-story .phelpw { display: none; }
+
+/* --- layout: the dashboard and, in story mode, the narrator column beside it --- */
+#isx-root .sbody { display: grid; grid-template-columns: minmax(0, 1fr) 0px; column-gap: 0px; transition: grid-template-columns .6s cubic-bezier(.3, .7, .2, 1), column-gap .6s cubic-bezier(.3, .7, .2, 1); }
+#isx-root .sdash { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+#isx-root .snarr { min-width: 0; overflow: hidden; transition: opacity .35s ease; }
+#isx-root .cock:not(.st) .snarr { opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility 0s linear .6s; }
+#isx-root .sn-in { position: sticky; top: 12px; width: 356px; max-height: calc(100vh - 92px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #2b3a49 transparent;
+  display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 14px; border: 1px solid #22313f; background: linear-gradient(180deg, rgba(14, 23, 32, .97), rgba(8, 14, 21, .97)); box-shadow: 0 14px 40px -20px rgba(0, 0, 0, .8); }
+@media (min-width: 1280px) {
+  /* the dashboard parts and the narrator share one grid; the lever bar runs under both, as wide as in full view */
+  #isx-root .sbody { row-gap: 10px; }
+  #isx-root .sdash { display: contents; }
+  #isx-root .sdash > * { grid-column: 1; min-width: 0; }
+  #isx-root .sdash > .levbar { grid-column: 1 / -1; }
+  #isx-root .snarr { grid-column: 2; grid-row: 1 / span 4; }
+  #isx-root .cock.st .snarr { grid-row: 1 / span 3; }
+  #isx-root .cock.st .sbody { grid-template-columns: minmax(0, 1fr) 356px; column-gap: 16px; }
+  /* the step controls stay at the foot of the column when a step is long */
+  #isx-root .sn-in .sn-fork { position: sticky; bottom: 66px; z-index: 1; background: color-mix(in srgb, #ffb547 4%, #0a121a); box-shadow: 0 -18px 22px -10px rgba(8, 14, 21, .95); }
+  #isx-root .sn-in .sn-nav { position: sticky; bottom: -14px; z-index: 2; margin: auto -16px -14px; padding: 12px 16px 14px; background: linear-gradient(180deg, rgba(9, 15, 22, .9), #080e15 40%); }
+}
+#isx-root .cock.st .mapscroll { overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 20px, #000 calc(100% - 14px), transparent); mask-image: linear-gradient(to bottom, transparent, #000 20px, #000 calc(100% - 14px), transparent); }
+#isx-root .cock.st .tile .tk { white-space: normal; line-height: 1.25; }
+#isx-root .cock.st .mapscroll svg { min-width: 0; }
+
+/* --- what the story has not reached yet: faint outlines --- */
+#isx-root .fn .fnm, #isx-root .fn .fni, #isx-root .fn .fnt, #isx-root .fn .fns, #isx-root .fn .wm { transition: opacity .45s ease; }
+#isx-root .fn.gh { pointer-events: none; opacity: 1 !important; }
+#isx-root .fn.gh .fnm, #isx-root .fn.gh .fni, #isx-root .fn.gh .fnt, #isx-root .fn.gh .fns, #isx-root .fn.gh .wm { opacity: 0; }
+#isx-root .fn.gh .fnr { fill: transparent; stroke: rgba(143, 163, 182, .15); stroke-dasharray: 3 4; stroke-width: 1; filter: none; }
+#isx-root .fe.gh, #isx-root .feh.gh { opacity: 0 !important; pointer-events: none; }
+#isx-root .fzg .fz, #isx-root .fzg .fzb, #isx-root .fzg .fzt, #isx-root .fzg .fzs { transition: opacity .5s ease, stroke .5s ease, fill .5s ease; }
+#isx-root .fzg.gh .fz { fill: transparent; stroke: rgba(143, 163, 182, .13); stroke-dasharray: 4 5; }
+#isx-root .fzg.gh .fzb { opacity: 0; }
+#isx-root .fzg.gh .fzt, #isx-root .fzg.gh .fzs { opacity: .3; }
+#isx-root .tile > *, #isx-root .tile::before, #isx-root .lv > * { transition: opacity .45s ease; }
+#isx-root .tile.gh { pointer-events: none; border-style: dashed; border-color: rgba(143, 163, 182, .12); background: transparent; box-shadow: none; animation: none; }
+#isx-root .tile.gh > *, #isx-root .tile.gh::before { opacity: 0; }
+#isx-root .hc h4 { transition: opacity .45s ease; }
+#isx-root .hc.gh h4 { opacity: .35; }
+#isx-root .lv.gh { pointer-events: none; border-style: dashed; border-color: rgba(143, 163, 182, .13); background: transparent; box-shadow: none; }
+#isx-root .lv.gh > * { opacity: 0; }
+#isx-root .lvg .lvh { transition: opacity .45s ease; }
+#isx-root .lvg.gh .lvh { opacity: .35; }
+
+/* --- the story on the map: the step lit, the step before it as a trail, the hinge between them --- */
+#isx-root .cock.st .fe.dim { opacity: .12; }
+#isx-root .cock.st .fe.dim.tr { opacity: .42; }
+#isx-root .cock.st .fn.dim { opacity: .5; }
+#isx-root .fn.tmp .fnr { stroke: #ff8a5c; stroke-dasharray: 4 3; }
+#isx-root .cock.alt .fe.on { filter: drop-shadow(0 0 3px rgba(255, 138, 92, .7)); }
+#isx-root .sn-pill { position: absolute; left: 12px; top: 10px; z-index: 2; padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(255, 138, 92, .6); background: rgba(9, 15, 22, .92);
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #ff8a5c; pointer-events: none; }
+#isx-root .sn-pill[hidden] { display: none; }
+#isx-root .hring { fill: none; stroke: var(--rc, #ffd27a); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: isx-hring 1.2s cubic-bezier(.2, .7, .3, 1) .35s both; pointer-events: none; }
+
+/* --- entrances --- */
+#isx-root .fn.nw { transform-box: fill-box; transform-origin: center; animation: isx-nin .62s cubic-bezier(.2, .75, .25, 1) both; animation-delay: var(--d, 0ms); }
+#isx-root .fe.efade { animation: isx-efade .7s ease both; animation-delay: var(--d, 0ms); }
+#isx-root .tile.nw { animation: isx-sbin .55s cubic-bezier(.2, .75, .25, 1) both; animation-delay: var(--d, 0ms); }
+#isx-root .lv.nw { animation: isx-lvin .9s cubic-bezier(.2, .75, .25, 1) both; animation-delay: var(--d, 0ms); }
+#isx-root .lv.fresh::before { content: "New"; position: absolute; top: 6px; left: 8px; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--lc); }
+
+/* --- the narrator --- */
+#isx-root .sn-head { display: flex; align-items: center; gap: 12px; }
+#isx-root .sn-mark { flex: none; width: 66px; color: #46596b; }
+#isx-root .sn-mark svg { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: .9; stroke-linecap: round; stroke-linejoin: round; }
+#isx-root .sn-k { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+#isx-root .sn-k span { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #ffb547; }
+#isx-root .sn-k b { font-family: var(--display); font-weight: 600; font-size: 14.5px; letter-spacing: .05em; text-transform: uppercase; line-height: 1.15; color: var(--ink); }
+#isx-root .sn-tools { flex: none; display: flex; gap: 6px; }
+#isx-root .sn-tb { height: 32px; min-width: 32px; display: inline-grid; place-items: center; padding: 0 10px; border-radius: 9px; border: 1px solid #2b3a49; background: #0d1620; color: var(--ink2); cursor: pointer;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; transition: color .15s, border-color .15s; }
+#isx-root .sn-tb.sn-rst { padding: 0; width: 32px; }
+#isx-root .sn-tb:hover, #isx-root .sn-tb[aria-expanded="true"] { color: #fff; border-color: #8fa3b6; }
+#isx-root .sn-tb:focus-visible, #isx-root .snarr button:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+/* stories */
+#isx-root .sn-pick { display: flex; flex-direction: column; gap: 3px; padding: 10px; border-radius: 12px; border: 1px solid #2a3a4a; background: #09101a; animation: isx-sbin .25s ease both; }
+#isx-root .sn-pick[hidden] { display: none; }
+#isx-root .pk-h { margin: 6px 4px 3px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .pk-h:first-child { margin-top: 0; }
+#isx-root .pk-l, #isx-root .pk-c { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; padding: 5px 9px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--ink); cursor: pointer; text-align: left; font: 500 13px/1.25 var(--sans); }
+#isx-root .pk-l b { flex: 1; font-weight: 500; }
+#isx-root .pk-l small { flex: none; font-family: var(--mono); font-size: 10px; color: var(--ink3); }
+#isx-root .pk-l i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--pc); }
+#isx-root .pk-l.on { border-color: #2b3a49; background: rgba(255, 255, 255, .04); }
+#isx-root .pk-l:hover, #isx-root .pk-c:hover { border-color: #2b3a49; }
+#isx-root .pk-chs { list-style: none; margin: 0 0 2px; padding: 0 0 0 12px; border-left: 1px solid #1d2a36; margin-left: 12px; }
+#isx-root .pk-c { min-height: 30px; font-size: 12.5px; color: var(--ink2); }
+#isx-root .pk-c span { width: 14px; font-family: var(--mono); font-size: 10px; color: #ffb547; }
+/* progress */
+#isx-root .sn-ch { display: grid; gap: 2px; }
+#isx-root .sn-ch span, #isx-root .sn-ch em { font-family: var(--mono); font-style: normal; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .sn-ch b { font-family: var(--display); font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); line-height: 1.15; }
+#isx-root .sn-seg { display: flex; gap: 5px; margin-top: 9px; }
+#isx-root .sn-seg .g { display: flex; gap: 2px; flex: var(--n) 1 0; min-width: 0; }
+#isx-root .sn-seg i { flex: 1; height: 4px; border-radius: 2px; background: #1f2c38; cursor: pointer; transition: background .4s ease, box-shadow .4s ease; }
+#isx-root .sn-seg .g.cur i { background: #2c3b49; }
+#isx-root .sn-seg i.done, #isx-root .sn-seg .g.cur i.done { background: color-mix(in srgb, var(--lc) 52%, #1f2c38); }
+#isx-root .sn-seg i.cur, #isx-root .sn-seg .g.cur i.cur { background: var(--lc); box-shadow: 0 0 8px color-mix(in srgb, var(--lc) 60%, transparent); }
+/* the body changes with a soft cross-fade */
+#isx-root .sn-body { display: flex; flex-direction: column; gap: 12px; transition: opacity .14s ease, transform .14s ease; }
+#isx-root .sn-body.out { opacity: 0; transform: translateY(-4px); }
+#isx-root .sn-body.in > * { animation: isx-sbin .42s cubic-bezier(.2, .75, .25, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+#isx-root .sn-det:empty { display: none; }
+/* problem → what was done → consequence */
+#isx-root .sn-tri { display: grid; gap: 5px; padding: 9px 11px; border-radius: 11px; border: 1px solid #1b2733; background: rgba(255, 255, 255, .02); }
+#isx-root .sn-tri .r { position: relative; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+#isx-root .sn-tri .r > span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--rc); }
+#isx-root .sn-tri .r > div { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 12.5px; line-height: 1.35; }
+#isx-root .sn-tri .c { padding: 0; border: 0; background: none; font: inherit; color: #5f7183; }
+#isx-root .sn-tri button.c { color: var(--ink2); cursor: pointer; text-align: left; text-decoration: underline dotted rgba(207, 217, 226, .35); text-underline-offset: 3px; }
+#isx-root .sn-tri button.c:hover { color: #fff; }
+#isx-root .sn-tri b.c.cur { color: #fff; font-weight: 600; }
+#isx-root .sn-tri .c.fb { color: var(--ink2); }
+/* why this follows */
+#isx-root .sn-why { padding: 2px 0 2px 12px; border-left: 2px solid color-mix(in srgb, var(--rc) 55%, #22313f); }
+#isx-root .sn-why > span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .sn-why button { padding: 0; border: 0; background: none; color: var(--ink2); font: 600 12.5px var(--sans); cursor: pointer; text-decoration: underline dotted rgba(207, 217, 226, .35); text-underline-offset: 3px; }
+#isx-root .sn-why button:hover { color: #fff; }
+#isx-root .sn-why p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.45; color: #e4ebf1; }
+/* the step */
+#isx-root .sn-tag { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--rc); }
+#isx-root .sn-tag i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--rc); box-shadow: 0 0 8px var(--rc); }
+#isx-root .sn-tag span { margin-left: auto; color: var(--ink3); letter-spacing: .06em; text-align: right; }
+#isx-root .sn-beat h3, #isx-root .sn-intro h3 { margin: 7px 0 6px; font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: .04em; text-transform: uppercase; line-height: 1.1; color: #fff; }
+#isx-root .sn-beat p, #isx-root .sn-intro p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #d6e0e8; }
+#isx-root .sn-intro p + p { margin-top: 8px; }
+#isx-root .sn-intro .sn-lede { margin-top: 8px; font-size: 15px; color: #e4ebf1; }
+#isx-root .sn-beat .sn-note { margin-top: 8px; font-size: 12.5px; color: var(--ink2); }
+#isx-root .sn-beat .lsrc { margin-top: 4px; }
+#isx-root .sn-pickd { margin-top: 4px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink2); }
+#isx-root .sn-new { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 11px; }
+#isx-root .sn-new > span:first-child { width: 100%; font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .sn-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 11px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--nc) 40%, #22313f); background: color-mix(in srgb, var(--nc) 8%, #0d1620);
+  color: var(--ink); font: 500 12.5px var(--sans); cursor: pointer; transition: border-color .15s, background .15s; }
+#isx-root .sn-chip i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--nc); }
+#isx-root .sn-chip > span { color: var(--nc); }
+#isx-root button.sn-chip:hover { border-color: var(--nc); background: color-mix(in srgb, var(--nc) 16%, #0d1620); }
+#isx-root .sn-chip.ghost { cursor: default; border-style: dashed; background: transparent; color: var(--ink2); }
+#isx-root .sn-chip.lv2 { font-family: var(--display); font-weight: 600; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; }
+/* the choice */
+#isx-root .sn-fork { padding: 12px; border-radius: 12px; border: 1px solid #2a3a4a; background: rgba(255, 181, 71, .035); }
+#isx-root .sn-q { margin: 0 0 10px; font-size: 14px; line-height: 1.45; color: #fff; }
+#isx-root .sn-q span { display: block; margin-bottom: 3px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #ffb547; }
+#isx-root .sn-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+#isx-root .sn-opt { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4px; min-height: 104px; padding: 10px 12px 11px; border-radius: 11px; border: 1px solid #2b3a49; background: #0d1620;
+  color: var(--ink); cursor: pointer; text-align: left; font: inherit; transition: border-color .15s, background .15s, transform .12s; }
+#isx-root .sn-opt small { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .sn-opt b { font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; line-height: 1.12; }
+#isx-root .sn-opt span { font-size: 12px; line-height: 1.35; color: var(--ink2); }
+#isx-root .sn-opt.real { border-color: rgba(255, 181, 71, .6); background: rgba(255, 181, 71, .08); }
+#isx-root .sn-opt.real small { color: #ffb547; }
+#isx-root .sn-opt.alt small { color: #ff9a72; }
+#isx-root .sn-opt:hover { transform: translateY(-1px); border-color: #ffb547; }
+#isx-root .sn-opt.alt:hover { border-color: #ff8a5c; }
+/* intro and end */
+#isx-root .sn-fact { padding: 8px 10px; border-radius: 9px; background: rgba(255, 181, 71, .06); border: 1px solid rgba(255, 181, 71, .22); color: #f0e4cf !important; font-size: 13.5px !important; }
+#isx-root .sn-chs { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 2px; counter-reset: none; }
+#isx-root .sn-chs button { display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 8px; width: 100%; padding: 5px 6px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
+#isx-root .sn-chs button:hover { border-color: #2b3a49; background: rgba(255, 255, 255, .03); }
+#isx-root .sn-chs span { grid-row: span 2; font-family: var(--mono); font-size: 10.5px; color: #ffb547; padding-top: 2px; }
+#isx-root .sn-chs b { font-weight: 500; font-size: 13.5px; line-height: 1.25; }
+#isx-root .sn-chs em { font-style: normal; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; color: var(--ink3); }
+#isx-root .sn-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; }
+#isx-root .sn-go { height: 46px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 12px; border: 1px solid #ffb547; background: rgba(255, 181, 71, .14); color: #fff; cursor: pointer;
+  font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; transition: background .15s, transform .12s; }
+#isx-root .sn-go:hover { background: rgba(255, 181, 71, .24); }
+#isx-root .sn-go:active { transform: translateY(1px); }
+#isx-root .sn-rec { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #ffb547; }
+#isx-root .sn-q2, #isx-root .sn-skip, #isx-root .sn-more button { min-height: 32px; padding: 0; border: 0; background: none; color: var(--ink2); cursor: pointer; font: 500 12.5px var(--sans); text-decoration: underline; text-decoration-color: rgba(207, 217, 226, .3); text-underline-offset: 3px; }
+#isx-root .sn-skip { display: block; margin-top: 6px; }
+#isx-root .sn-q2:hover, #isx-root .sn-skip:hover, #isx-root .sn-more button:hover { color: #fff; }
+#isx-root .sn-more { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 10px; }
+#isx-root .sn-rest { list-style: none; margin: 8px 0 8px; padding: 0; display: grid; gap: 6px; }
+#isx-root .sn-rest li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 6px; align-items: baseline; font-size: 12.5px; line-height: 1.4; color: var(--ink2); }
+#isx-root .sn-rest i { width: 12px; height: 3px; border-radius: 2px; transform: translateY(-3px); }
+#isx-root .sn-rest b { color: var(--ink); font-weight: 600; }
+/* step controls */
+#isx-root .sn-nav { display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #1b2733; }
+#isx-root .sn-nav[hidden] { display: none; }
+#isx-root .sn-b { height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; border: 1px solid #2b3a49; background: #0f1922; color: #fff; cursor: pointer; transition: border-color .15s, background .15s, transform .1s; }
+#isx-root .sn-back { width: 52px; flex: none; }
+#isx-root .sn-next { flex: 1; padding: 0 16px; border-color: color-mix(in srgb, #ffb547 60%, #2b3a49); background: rgba(255, 181, 71, .1); font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+#isx-root .sn-b:hover { border-color: #ffb547; }
+#isx-root .sn-b:active { transform: translateY(1px); }
+#isx-root .sn-cnt { flex: none; min-width: 64px; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--ink3); font-variant-numeric: tabular-nums; }
+#isx-root .sn-cnt b { color: #fff; font-weight: 400; font-size: 15px; }
+#isx-root .sn-hint, #isx-root .sn-sp { flex: 1; text-align: right; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+/* the dossier sits in the narrator column in story mode */
+#isx-root .snarr .dossier { position: relative; top: auto; right: auto; left: auto; bottom: auto; width: auto; max-height: none; overflow: visible; margin: 0; box-shadow: none; backdrop-filter: none; }
+#isx-root .snarr .dossier[hidden] { display: none; }
+/* full view: a play can be followed as a thread */
+#isx-root .sn-asstory { display: block; margin: 10px 0 0; padding: 0; min-height: 30px; border: 0; background: none; color: #ffb547; cursor: pointer; font: 500 12.5px var(--sans); text-decoration: underline; text-decoration-color: rgba(255, 181, 71, .4); text-underline-offset: 3px; }
+
+/* --- narrower than 1280 px: the narrator sits under the map, the controls stay in reach --- */
+@media (max-width: 1279px) {
+  #isx-root .cock:not(.st) .snarr { display: none; }
+  #isx-root .cock.st .sbody { display: flex; flex-direction: column; gap: 10px; }
+  #isx-root .cock.st .sdash { display: contents; }
+  #isx-root .cock.st .hud6 { order: 1; } #isx-root .cock.st .mapstage { order: 2; } #isx-root .cock.st .snarr { order: 3; overflow: visible; }
+  #isx-root .cock.st .rkey { order: 4; } #isx-root .cock.st .levbar { order: 5; }
+  #isx-root .cock.st .sn-in { position: static; width: auto; max-height: none; overflow: visible; }
+  /* readings: only what has been introduced, in one swipeable row; levers: only those introduced */
+  #isx-root .cock.st .hud6 { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; scrollbar-width: none; }
+  #isx-root .cock.st .hud6::-webkit-scrollbar { display: none; }
+  #isx-root .cock.st .hc { flex: none; }
+  #isx-root .cock.st .hc .hct { display: flex; gap: 6px; }
+  #isx-root .cock.st .hc .tile { width: 148px; scroll-snap-align: start; }
+  #isx-root .cock.st .hc.gh, #isx-root .cock.st .tile.gh { display: none; }
+  #isx-root .cock.st .lvg.gh, #isx-root .cock.st .lv.gh { display: none; }
+  #isx-root .cock.st .sn-nav { position: sticky; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 6; margin: 0 -6px -6px; padding: 6px; border: 1px solid #22313f; border-radius: 14px;
+    background: rgba(9, 15, 22, .96); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .85); }
+}
+@media (max-width: 760px) {
+  #isx-root .sbar { gap: 8px; }
+  #isx-root .smode { width: 100%; }
+  #isx-root .smode button { flex: 1; justify-content: center; min-height: 44px; padding: 0 8px; }
+  #isx-root .scount { width: 100%; text-align: center; font-size: 10px; letter-spacing: .02em; }
+  #isx-root .cock.st .sn-in { padding: 12px; }
+  #isx-root .sn-mark { width: 44px; }
+  #isx-root .sn-head { gap: 10px; }
+  #isx-root .sn-k b { font-size: 13.5px; }
+  #isx-root .sn-opts { grid-template-columns: minmax(0, 1fr); }
+  #isx-root .sn-opt { min-height: 0; }
+  #isx-root .sn-beat h3, #isx-root .sn-intro h3 { font-size: 20px; }
+  #isx-root .sn-tri .r { grid-template-columns: 84px minmax(0, 1fr); }
+  #isx-root .sn-pill { left: 8px; top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #isx-root .sbody, #isx-root .snarr, #isx-root .sn-body { transition: none; }
+  #isx-root .fn.nw, #isx-root .fe.efade, #isx-root .hring, #isx-root .tile.nw, #isx-root .lv.nw, #isx-root .sn-body.in > *, #isx-root .sn-pick { animation: none; }
+  #isx-root .hring { display: none; }
+}
 </style>
 
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -2101,7 +2357,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.11</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.12</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -4717,13 +4973,15 @@ function renderFin() {
   const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
   if (finMode === 'plumb') {
     TILES = buildHud();
-    host.innerHTML = head('The plumbing', 'Foreign central banks are stepping back and the AI build-out needs cheap money, so Washington runs the plumbing itself: at home, in households, abroad and in oil. Run a play, pull a lever or click anything.')
+    host.innerHTML = head('The plumbing', 'Foreign central banks are stepping back and the AI build-out needs cheap money, so Washington runs the plumbing itself: at home, in households, abroad and in oil. Follow the story step by step, or open the full view to run a play, pull a lever and click anything.')
       + simTipsHTML()
       + `<section class="cock panel" id="isx-cock" aria-label="The simulator">`
+      + simBarHTML() + `<div class="sbody"><div class="sdash">`
       + playBarHTML() + hudHTML()
       + `<div class="mapstage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div><aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside></div>`
       + `<div class="rkey">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div>`
       + levBarHTML()
+      + `</div>` + simNarrHTML() + `</div>`
       + `</section>`
       + plumbText()
       + actionsHTML()
@@ -4731,7 +4989,8 @@ function renderFin() {
     drawRmap(); renderSide();
     wireActions(host); wireIssue(host);
     wireCockpit(host); wireSimTips();
-    { const fk = host.querySelector('.finhead .fk'); if (fk) fk.insertAdjacentHTML('beforeend', ' · <button type="button" class="tipsre" id="isx-phelp" data-tips="sim">How to use</button>'); }
+    { const fk = host.querySelector('.finhead .fk'); if (fk) fk.insertAdjacentHTML('beforeend', '<span class="phelpw"> · <button type="button" class="tipsre" id="isx-phelp" data-tips="sim">How to use</button></span>'); }
+    simMount();
   } else {
     host.innerHTML = head('The capital stack', 'Cash flow no longer covers the build-out. Bonds in five currencies, new shares and off-balance-sheet vehicles fill the gap, financed in the end by insurers, annuities and pension funds: savings of people who never chose to fund the AI race.')
       + `<div class="cgrid cs6"><section class="panel tower" style="--zc:#3ee6b8;--pc:#3ee6b8"><h3>Where the money comes from <span>click a layer</span></h3><svg id="isx-tower" viewBox="0 0 460 480" role="group" aria-label="Funding of the build-out by source"></svg><div class="tinfo" id="isx-tinfo"></div></section>`
@@ -4774,7 +5033,7 @@ function ePath(a, b, i) {
 function drawRmap() {
   const svg = $('rmap'); if (!svg) return;
   let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '</defs>';
-  h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
+  h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" data-z="${Z[0]}" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
   FE.forEach(([a, b, ty, lab], i) => {
     const d = ePath(a, b, i);
     h += `<path class="fe ${ty}" data-e="${i}" d="${d}" stroke="${FT[ty][0]}" marker-end="url(#isx-fa-${ty})"><title>${fe(lab)}</title></path>`;
@@ -4783,7 +5042,7 @@ function drawRmap() {
   h += '<g id="isx-fpart"></g>';
   Object.entries(FN).forEach(([k, [z, x, y, t, sub, c, , ic]]) => {
     const l = x - NW / 2, lm = z === 'state';
-    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}">${fe(sub)}</text></g>`;
+    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}"> ${fe(sub)}</text></g>`;
   });
   svg.innerHTML = h;
   svg.querySelectorAll('.fn').forEach(g => {
@@ -4797,6 +5056,7 @@ function activeEdges(all) {
   if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : PLAYS[fplay].steps[fpstep][2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
+  if (!all) { const se = simActive(); if (se) return se; } /* v.1.12: in story mode the step in hand is lit */
   return null;
 }
 function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); if (fsel) s.add(fsel); return s; }
@@ -4811,11 +5071,12 @@ function styleRmap() {
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
   if (cnt) cnt.innerHTML = flev.size ? `<b>${flev.size}</b> of ${LEVERS.length} levers pulled · ` + (act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : '') : act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : `${FE.length} relations · ${Object.keys(FN).length} actors`;
   if (cl) cl.hidden = !any;
-  finParticles(act);
+  simStyle(act); finParticles(act);
 }
 
 /* ---------- the dossier: a floating card on the side the action is not ---------- */
 function placeDossier() {
+  if (simOn()) { simDossier(); return; }
   const s = $('rside'), st = $('stage'), svg = $('rmap'); if (!s || !st || !svg || s.hidden) return;
   if (window.innerWidth <= 900) { s.classList.remove('l', 'b'); s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
   const sr = st.getBoundingClientRect(), vr = svg.getBoundingClientRect(), k = vr.width / (MAPW + 6), ox = vr.left - sr.left, oy = vr.top - sr.top;
@@ -4837,7 +5098,7 @@ function renderSide(lev) {
   if (fplay != null) {
     const P = PLAYS[fplay], st = P.steps[fpstep];
     s.hidden = false; s.style.setProperty('--dc', P.c);
-    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div>`;
+    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play as a story</button>`;
     $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); snd('back'); });
     $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); snd('step'); } else { snd('win'); burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below the map.</p>`, 4500); } });
     placeDossier(); done(); return;
@@ -4867,7 +5128,7 @@ function finParticles(act) {
   const svg = $('rmap'), g = svg && svg.querySelector('#isx-fpart'); if (!g) return;
   g.innerHTML = ''; fparts = [];
   const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig');
-  idx.forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p) return; const L = p.getTotalLength(), n = act ? 3 : 1; for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, p, L, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); } });
+  idx.forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh')) return; const L = p.getTotalLength(), n = act ? 3 : 1; for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, p, L, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); } });
 }
 function finLoop() {
   cancelAnimationFrame(fRAF); if (reduce) { fparts.forEach(q => { const pt = q.p.getPointAtLength(q.L * .5); q.c.setAttribute('cx', pt.x); q.c.setAttribute('cy', pt.y); }); return; }
@@ -5005,7 +5266,7 @@ const INTRO_HTML = `
       <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it.">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
     </div>
     <label class="in-off"><input type="checkbox" id="isx-in-off"><span>Don’t show this screen again</span></label>
-    <p class="in-foot">Work in progress · v.1.11 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
+    <p class="in-foot">Work in progress · v.1.12 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -5660,6 +5921,426 @@ $('sh-li').addEventListener('click', () => {
 document.addEventListener('pointerdown', e => { if (shOpen && !e.target.closest('#isx-sharepop, #isx-share')) closeShare(); });
 document.addEventListener('keydown', e => { if (shOpen && e.key === 'Escape') { e.preventDefault(); closeShare(true); } });
 $('sharepop').addEventListener('focusout', e => { if (shOpen && e.relatedTarget && !e.relatedTarget.closest('#isx-sharepop, #isx-share')) closeShare(); });
+
+
+/* ================= v.1.12: the simulator as a story =================
+   Two modes for “The plumbing”. Story: the map, tiles and levers appear as a story introduces them, with a narrator
+   column (below the map on narrow screens). Full view: the whole cockpit, as before. Nothing is removed from full view.
+   Stories are built from the nine plays: one main story, “How the plumbing was built” (7 chapters, 37 steps), and each
+   play as a thread of its own. Every step reuses its play’s text; this block adds a role (problem, what was done,
+   consequence), a date label, the causal link from the step before, and the levers it introduces.
+   At three steps the reader chooses: one option follows what happened, the other shows a different possible outcome
+   on the map and then returns to what happened. Those outcomes use only facts already on this page.
+   State lives in SIM; what is drawn is a pure function of (mode, story, step, choice), so any jump restores exactly.
+   Mode is remembered (localStorage isx-sim-mode); the place in the story for the session (sessionStorage isx-sim-pos). */
+const SROLE = { p: ['Problem', '#ff5a4e'], d: ['What was done', '#ffd27a'], c: ['Consequence', '#44d7ec'] };
+/* per play, per step: role, date label, the link from the step before it in that play, levers it introduces */
+const SMETA = [
+  [['p', 'Year to Aug 2026', '', []],
+    ['d', 'Since 2023', 'Someone else has to buy, so the Treasury sells the debt that cash-holders want: bills.', [0]],
+    ['d', 'Jul 2025 to Apr 2026', 'More bills need more buyers: the Fed buys some, and new rules create others.', [2, 3, 4]],
+    ['c', 'Year to Aug 2026', 'The long bonds still need a home: leveraged funds take them, with borrowed cash.', []],
+    ['d', 'Aug to Oct 2026', 'Funds that hold bonds on borrowed cash sell when volatility spikes, so the Treasury takes long bonds back.', [1]]],
+  [['p', '2026', '', []],
+    ['d', 'Oct 2025 and Jun 2026', 'The leases need financing, and the platforms prefer it off their own books.', []],
+    ['c', 'End of Jun 2026', 'Private credit lends money it raises from insurers, annuities and pension funds.', []],
+    ['c', 'Q2 2026', 'The chips and servers are made abroad, so the money becomes hardware orders there.', []]],
+  [['d', '', '', []],
+    ['p', '', 'Orders abroad become export earnings there; what is not spent is saved.', []],
+    ['d', 'Jun 2025', 'Those savings need a deep, open market, and the US offers one.', []],
+    ['c', 'Oct 2026', 'That money lifts the platforms’ shares, and with them the wealth of the richest households.', []]],
+  [['p', 'Oct 2026', '', []],
+    ['c', 'Feb to Jul 2026', 'Vehicles built around one customer are the first to feel a shortfall.', []],
+    ['d', 'Jun 2026', 'The losses would land with the savers behind private credit, so supervisors start to look.', []],
+    ['c', 'As in Mar 2020', 'Stress in credit can spill into the bond market, where leveraged funds are forced to sell.', []],
+    ['c', '', 'Falling AI stocks would hit the households that do most of the spending.', []]],
+  [['d', 'Jul 2025 law, 2026 refunds', '', [9]],
+    ['c', '', 'Spending rests on a narrow base: the households that own the stocks.', []],
+    ['c', 'Q3 2026', 'Americans buy goods made abroad, so their spending is the world’s demand.', []],
+    ['c', '', 'What the exporters earn and do not spend is saved, and comes back to US markets.', []],
+    ['p', 'Sep 2026', 'Dearer fuel and tariffs at the till squeeze the spending the loop depends on.', [10]]],
+  [['d', 'Oct 2025', '', [11]],
+    ['d', '31 Jul 2026', 'The yen slides to 40-year lows, and Japan is the largest foreign holder of Treasuries.', [12]],
+    ['d', 'Aug 2026', 'A backstop, so foreign central banks can borrow dollars against Treasuries instead of selling them.', []],
+    ['d', 'Jul to Nov 2025', 'Washington also bargains with the surplus countries directly.', [13]]],
+  [['p', '28 Feb 2026', '', []],
+    ['d', 'Mar to May 2026', 'Dear oil threatens prices and the consumer, so Washington tries to add supply.', [6, 7, 8]],
+    ['c', 'Sep 2026', 'Brent was still above $100 in September, and crude feeds the pump and the price index.', []],
+    ['d', '16 Sep to Oct 2026', 'Higher prices push the Fed to act, and long yields rise with it.', [5]]],
+  [['c', 'Oct 2026', '', []],
+    ['p', 'Sep 2026', 'Dear housing and thin savings leave households little room.', []],
+    ['c', 'Q3 2026', 'Even so, households keep buying, and the exporters keep their surpluses.', []]],
+  [['c', 'Mar and Jul 2026', '', []],
+    ['d', '12 months to 8 Nov 2026', 'Dealers sell the notes on to long-term savers.', []],
+    ['c', '', 'The money raised is spent on data centres, chips and power.', []],
+    ['c', 'Oct 2026', 'Higher share prices open the window for new shares.', []],
+    ['d', '12 months to 8 Nov 2026', 'So the firms raise equity as well as debt.', []],
+    ['c', '16 Sep to 2 Nov 2026', 'Both ways of raising money depend on the same long yields.', []]],
+];
+/* the main story: chapters of play steps [play, step, link override] in causal order */
+const SMAIN = {
+  t: 'How the plumbing was built', c: '#ffd27a',
+  lede: 'Foreign central banks stepped back from US debt just as the AI build-out needed cheap money. Follow what happened, step by step: what Washington did, and what followed, from the first problem to the whole machine.',
+  ch: [
+    { t: 'Who buys the debt?', w: '2023 to Oct 2026', b: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]] },
+    { t: 'A data centre gets paid for', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'Long yields set the price of credit, and the AI build-out runs on credit.'], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
+    { t: 'The allies’ savings come back', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
+    { t: 'The consumer keeps it flowing', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
+    { t: 'Abroad: the dollar’s backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'The allies’ currencies and reserves have to hold', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 3, 'The surpluses that fund the loop belong to allies, so Washington bargains with them directly.'], [5, 0, 'When a friendly government runs short of dollars, the Treasury can lend them.'], [5, 1], [5, 2]] },
+    { t: 'Oil squeezes the loop', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 3, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.']] },
+    { t: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
+  ],
+};
+/* the three choices, keyed by the step that what happened leads to. The other outcome uses facts already on this page. */
+const SFORK = {
+  '0-1': { q: 'Central banks are no longer buying. How does the Treasury fund the deficit?',
+    real: ['Sell more bills', 'short-term debt that money funds and banks treat as cash'],
+    alt: ['Keep selling long bonds', 'and leave the market to find the buyers'],
+    out: { t: 'The long end takes the strain', e: E('OFF>TSY', 'TSY>Y10', 'Y10>BND', 'Y10>PCR', 'Y10>MTG'),
+      x: 'With central banks stepping back, every extra long bond needs a private buyer, and the more long bonds the market has to absorb, the higher the yield it tends to ask. That yield prices credit across this map: corporate bonds, the loans behind data centres, mortgages. How fast the long end can move when buyers hesitate showed in April 2025: after the tariff announcement of 2 April, the 10-year yield jumped about half a point in a week, the biggest weekly rise since 2001.',
+      n: 'The mechanism is this map’s reading; the April 2025 move is measured.', s: 'Bloomberg (11 Apr 2025)' } },
+  '0-4': { q: 'Long yields are climbing, and funds hold more long bonds on borrowed cash. What does the Treasury do?',
+    real: ['Buy back long bonds', 'take them out of private hands'],
+    alt: ['Leave the long end alone', 'and let the market absorb it'],
+    out: { t: 'Volatility does the selling', e: E('TSY>CEN', 'BNK>CEN', 'MOV>CEN'),
+      x: 'Funds that hold long bonds on borrowed cash are forced to sell when bond volatility spikes, and their selling pushes yields higher still. In March 2020 it took the Fed, as buyer of last resort, to stop it. Buying back long bonds is meant to keep that risk smaller; leaving the long end alone keeps more of it with leveraged funds.',
+      n: 'Follows the March 2020 pattern described in “If it breaks”.', s: '' } },
+  '5-1': { q: 'The yen slides to 40-year lows. What does Washington do?',
+    real: ['Intervene with Japan', 'buy yen together, the first joint action since 2011'],
+    alt: ['Let the yen slide', 'and leave it to Tokyo'],
+    out: { t: 'Japan sells Treasuries', e: E('YEN>OFF', 'OFF>TSY', 'TSY>Y10'),
+      x: 'A central bank defends a falling currency by selling dollar assets and buying its own. Japan, the largest foreign holder, had $1.14tn of Treasuries at the end of May 2026 and would have to sell some if the slide became disorderly: more selling on top of the $164bn that official holders had cut in the year to August 2026. Long yields, and the cost of credit for the build-out, would carry it.',
+      n: 'The selling mechanism is this map’s reading.', s: 'Reuters via StreetInsider (2 Aug 2026); Al Jazeera (3 Aug 2026)' } },
+};
+
+/* ---------- stories as data: beats, chapters and what each step has put on the map ---------- */
+const enodes = es => { const s = new Set(); es.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); return s; };
+function sBeat(p, s, ch, why) {
+  const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s;
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SFORK[k] ? k : null };
+}
+const SLINES = (() => {
+  const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, w: C.w, tri: C.tri })), beats: [] }];
+  SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why]) => L[0].beats.push(sBeat(p, s, ci, why))));
+  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, chs: [{ t: P.t, w: '', tri: i === 5 ? SMAIN.ch[4].tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
+  L.forEach(l => {
+    let n = new Set(), e = new Set(), v = new Set();
+    l.cum = l.beats.map(B => { n = new Set([...n, ...enodes(B.e)]); e = new Set([...e, ...B.e]); v = new Set([...v, ...B.lev]); return { n, e, l: v }; });
+    l.first = l.chs.map((c, ci) => l.beats.findIndex(B => B.ch === ci));
+  });
+  return L;
+})();
+const SALL = { n: new Set(Object.keys(FN)), e: new Set(FE.map((x, i) => i)), l: new Set(LEVERS.map((x, i) => i)) };
+const SNONE = { n: new Set(), e: new Set(), l: new Set() };
+const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
+
+/* ---------- state ---------- */
+const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), pick: false, wired: false };
+const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
+(() => {
+  SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
+  try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0)); } } catch (e) { /* ignore */ }
+})();
+const simOn = () => SIM.mode === 'story' && view === 'fin' && finMode === 'plumb' && !!$('snarr');
+const sLine = () => SLINES[SIM.line];
+const sCur = () => { const L = sLine(); return SIM.beat >= 0 && SIM.beat < L.beats.length ? L.beats[SIM.beat] : null; };
+const sNextFork = () => { const L = sLine(), B = L.beats[SIM.beat + 1]; return SIM.beat >= 0 && B && B.fork ? B.fork : null; };
+/* what is on the map now */
+function simReveal() {
+  if (SIM.mode !== 'story') return Object.assign({ tmp: new Set(), ne: SALL.e.size }, SALL);
+  const L = sLine(), b = SIM.beat;
+  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign({ tmp: new Set(), ne: F.e.size }, F); }
+  const base = b >= 0 ? L.cum[b] : SNONE, R = { n: base.n, e: new Set(base.e), l: base.l, tmp: new Set(), ne: base.e.size };
+  if (SIM.alt) { const O = SFORK[SIM.alt].out; O.e.forEach(i => R.e.add(i)); enodes(O.e).forEach(n => { if (!R.n.has(n)) R.tmp.add(n); }); }
+  return R;
+}
+/* the relations lit for the story (activeEdges() asks this when nothing is selected) */
+function simActive() {
+  if (!simOn()) return null;
+  if (SIM.alt) return new Set(SFORK[SIM.alt].out.e);
+  const B = sCur(); if (B) return new Set(B.e);
+  if (SIM.beat >= sLine().beats.length && sLine().main && SREST.length) return new Set(SREST);
+  return null;
+}
+
+/* ---------- drawing what is revealed ---------- */
+function simStyle(act) {
+  const svg = $('rmap'); if (!svg) return;
+  const on = simOn() && !!SIM.R, R = SIM.R, vis = n => !on || R.n.has(n) || R.tmp.has(n);
+  const B = on && !SIM.alt ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
+  const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...enodes(P.e)].filter(n => enodes(B.e).has(n)) : [];
+  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('gh', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n)); });
+  svg.querySelectorAll('.fe, .feh').forEach(p => {
+    const i = +p.dataset.e, e = FE[i], show = !on || R.e.has(i) || (!!act && act.has(i) && vis(e[0]) && vis(e[1]));
+    p.classList.toggle('gh', !show); p.classList.toggle('tr', on && trail.has(i));
+  });
+  svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('gh', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
+  const cock = $('cock'); if (!cock) return;
+  cock.querySelectorAll('.tile').forEach(t => t.classList.toggle('gh', on && !R.n.has(t.dataset.node)));
+  cock.querySelectorAll('.hc').forEach(h => h.classList.toggle('gh', on && !h.querySelector('.tile:not(.gh)')));
+  cock.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l; b.classList.toggle('gh', on && !R.l.has(i)); b.classList.toggle('fresh', !!B && B.lev.includes(i)); });
+  cock.querySelectorAll('.lvg').forEach(g => g.classList.toggle('gh', on && !g.querySelector('.lv:not(.gh)')));
+}
+/* entrances: new actors rise in from left to right, new relations draw themselves, readings count up */
+function simEnter(prev, R, fwd) {
+  const svg = $('rmap'), cock = $('cock'); if (!svg || !cock) return;
+  const had = new Set([...prev.n, ...prev.tmp]), now = [...R.n, ...R.tmp].filter(n => !had.has(n)).sort((a, b) => FN[a][1] - FN[b][1] || FN[a][2] - FN[b][2]);
+  const many = now.length > 8, gap = many ? 28 : 75;
+  now.forEach((n, k) => { const g = svg.querySelector(`.fn[data-n="${n}"]`); if (!g) return; g.style.setProperty('--d', Math.min(720, k * gap) + 'ms'); g.classList.remove('nw'); void g.getBBox(); g.classList.add('nw'); setTimeout(() => g.classList.remove('nw'), 1500); });
+  const base = now.length ? Math.min(420, 160 + now.length * (many ? 10 : 40)) : 0;
+  let k = 0;
+  [...R.e].filter(i => !prev.e.has(i)).sort((a, b) => FN[FE[a][0]][1] - FN[FE[b][0]][1]).forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (p) drawOn(p, base + Math.min(600, k++ * (many ? 12 : 60))); });
+  cock.querySelectorAll('.tile').forEach((t, j) => { if (R.n.has(t.dataset.node) && !prev.n.has(t.dataset.node)) { t.style.setProperty('--d', Math.min(500, j * 40) + 'ms'); t.classList.add('nw'); setTimeout(() => t.classList.remove('nw'), 1300); const v = t.querySelector('.tv'); if (v) setTimeout(() => countUp(v), Math.min(500, j * 40)); } });
+  cock.querySelectorAll('.lv').forEach((b, j) => { const i = +b.dataset.l; if (R.l.has(i) && !prev.l.has(i)) { b.style.setProperty('--d', (many ? Math.min(400, j * 25) : 380) + 'ms'); b.classList.add('nw'); setTimeout(() => b.classList.remove('nw'), 1600); } });
+  /* the hinge: where this step picks up from the last one */
+  if (fwd) {
+    const fx = svg.querySelector('#isx-sfx'); if (fx) {
+      fx.innerHTML = ''; const rc = (SROLE[(sCur() || {}).r] || SROLE.d)[1];
+      svg.querySelectorAll('.fn.hg').forEach(g => { const F = FN[g.dataset.n], r = document.createElementNS(NS, 'rect'); r.setAttribute('class', 'hring'); r.setAttribute('x', F[1] - NW / 2 - 3); r.setAttribute('y', F[2] - NH / 2 - 3); r.setAttribute('width', NW + 6); r.setAttribute('height', NH + 6); r.setAttribute('rx', 11); r.style.setProperty('--rc', rc); fx.appendChild(r); });
+      setTimeout(() => { fx.innerHTML = ''; }, 1400);
+    }
+  }
+}
+function drawOn(p, delay) {
+  if (p.classList.contains('rule') || p.classList.contains('sig')) { p.style.setProperty('--d', delay + 'ms'); p.classList.add('efade'); setTimeout(() => p.classList.remove('efade'), delay + 800); return; }
+  const L = p.getTotalLength(), mk = p.getAttribute('marker-end');
+  p.removeAttribute('marker-end'); p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
+  void p.getBBox();
+  p.style.transition = `stroke-dashoffset .8s cubic-bezier(.45,.05,.25,1) ${delay}ms, opacity .25s, stroke-width .25s`; p.style.strokeDashoffset = '0';
+  setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); }, delay + 850);
+}
+
+/* ---------- camera: frames what the story has introduced (phones: the step in hand) ---------- */
+const SFULL = [-3, -3, MAPW + 6, MAPH + 6];
+function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = simOn() ? (PHONE() ? '1.12' : '2.25') : ''; }
+function simCamTarget() {
+  if (!simOn()) return SFULL;
+  const L = sLine(), b = SIM.beat; if (b < 0 || (b >= L.beats.length && L.main)) return SFULL;
+  const phone = PHONE(), act = simActive(), R = SIM.R;
+  const set = phone && act ? enodes([...act]) : new Set([...R.n, ...R.tmp]); if (!set.size) return SFULL;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  set.forEach(n => { const F = FN[n]; x0 = Math.min(x0, F[1] - NW / 2); x1 = Math.max(x1, F[1] + NW / 2); y0 = Math.min(y0, F[2] - NH / 2); y1 = Math.max(y1, F[2] + NH / 2); });
+  const pad = phone ? 14 : 34; x0 -= pad; x1 += pad; y0 -= pad + 22; y1 += pad;
+  const svg = $('rmap'), ar = svg.clientWidth / Math.max(1, svg.clientHeight) || (MAPW + 6) / (MAPH + 6);
+  let w = Math.max(x1 - x0, phone ? 300 : 560), h = y1 - y0, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  if (w / h > ar) h = w / ar; else w = h * ar;
+  if (w >= SFULL[2] && h >= SFULL[3]) { const s = Math.max(SFULL[2] / ar, SFULL[3]); h = s; w = s * ar; return [SFULL[0] + SFULL[2] / 2 - w / 2, SFULL[1] + SFULL[3] / 2 - h / 2, w, h]; }
+  let x = cx - w / 2, y = cy - h / 2;
+  x = w <= SFULL[2] ? Math.max(SFULL[0], Math.min(x, SFULL[0] + SFULL[2] - w)) : SFULL[0] + SFULL[2] / 2 - w / 2;
+  y = h <= SFULL[3] ? Math.max(SFULL[1], Math.min(y, SFULL[1] + SFULL[3] - h)) : SFULL[1] + SFULL[3] / 2 - h / 2;
+  return [x, y, w, h];
+}
+function simCam(anim) {
+  const svg = $('rmap'); if (!svg) return;
+  const to = simCamTarget(), from = SIM.cam;
+  const set = v => { SIM.cam = v; svg.setAttribute('viewBox', v.map(n => n.toFixed(1)).join(' ')); };
+  cancelAnimationFrame(SIM.camRAF);
+  if (!anim || reduce || !from) { set(to); return; }
+  const t0 = performance.now(), D = 950, ez = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const f = now => { const k = Math.min(1, (now - t0) / D), q = ez(k); set(from.map((a, i) => a + (to[i] - a) * q)); if (k < 1) SIM.camRAF = requestAnimationFrame(f); };
+  SIM.camRAF = requestAnimationFrame(f);
+}
+
+/* ---------- the narrator ---------- */
+/* a quiet fine-line contour of the Treasury building (15th Street colonnade) beside the narrator text */
+const STSY = (() => { let d = 'M4 61H116M9 57H111M13 53H107M17 49H103'; for (let i = 0; i < 9; i++) { const x = 22 + i * 9.5; d += `M${x - 1.3} 49V25M${x + 1.3} 49V25M${x - 2.6} 25H${x + 2.6}`; } d += 'M17 23H103M17 19.5H103M21 19.5V11H99V19.5M27 11V19.5M93 11V19.5M21 15H99'; return `<svg viewBox="0 0 120 64" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`; })();
+const simBarHTML = () => `<div class="sbar"><div class="smode" role="group" aria-label="How to view the simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Story <small>recommended</small></button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div><span class="scount" id="isx-scount" aria-live="off"></span></div>`;
+const simNarrHTML = () => `<aside class="snarr" id="isx-snarr" aria-label="Story"><div class="sn-in" id="isx-sn-in">
+  <div class="sn-head"><span class="sn-mark">${STSY}</span><div class="sn-k"><span>Story</span><b id="isx-sn-line"></b></div><div class="sn-tools"><button type="button" class="sn-tb" id="isx-sn-pickb" aria-expanded="false" aria-controls="isx-sn-pick">Stories</button><button type="button" class="sn-tb sn-rst" id="isx-sn-rst" aria-label="Start this story again" data-tip="<b>Start again</b><p>Back to the beginning of this story.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4.5V9h4.5"/></svg></button></div></div>
+  <div class="sn-pick" id="isx-sn-pick" hidden></div>
+  <div class="sn-prog" id="isx-sn-prog"></div>
+  <div class="sn-det" id="isx-sn-det"></div>
+  <div class="sn-body" id="isx-sn-body" aria-live="polite"></div>
+  <div class="sn-nav" id="isx-sn-nav"></div>
+</div></aside>`;
+const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
+const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
+function simPickHTML() {
+  const M = SLINES[0];
+  return `<div class="pk-h">Main story</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
+    + `<ol class="pk-chs">${M.chs.map((C, ci) => `<li><button type="button" class="pk-c" data-sl="0" data-sb="${M.first[ci]}"><span>${ci + 1}</span>${fe(C.t)}</button></li>`).join('')}</ol>`
+    + `<div class="pk-h">Follow one thread</div>` + SLINES.slice(1).map((L, i) => `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`).join('');
+}
+function simProgHTML() {
+  const L = sLine(), b = SIM.beat, B = sCur() || (b >= L.beats.length ? L.beats[L.beats.length - 1] : null), ci = B ? B.ch : -1;
+  const head = L.main
+    ? (ci >= 0 && b < L.beats.length ? `<div class="sn-ch"><span>Chapter ${ci + 1} of ${L.chs.length}</span><b>${fe(L.chs[ci].t)}</b><em>${fe(L.chs[ci].w)}</em></div>` : `<div class="sn-ch"><span>${b < 0 ? L.chs.length + ' chapters · ' + L.beats.length + ' steps' : 'All ' + L.beats.length + ' steps'}</span></div>`)
+    : `<div class="sn-ch"><span>${b >= L.beats.length ? 'All ' + L.beats.length + ' steps' : 'Thread · step ' + (b + 1) + ' of ' + L.beats.length}</span></div>`;
+  const seg = `<div class="sn-seg" aria-hidden="true" style="--lc:${L.main ? SMAIN.c : L.c}">${L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c); return `<span class="g${c === ci ? ' cur' : ''}" style="--n:${idx.length}">${idx.map(i => `<i data-sb="${i}" class="${i === b && !SIM.alt ? 'cur' : i < b || (i === b && SIM.alt) || b >= L.beats.length ? 'done' : ''}"></i>`).join('')}</span>`; }).join('')}</div>`;
+  return head + seg;
+}
+/* problem → what was done → consequence, for the chapter in hand */
+function simTriHTML(B) {
+  const L = sLine(), idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === B.ch);
+  return `<div class="sn-tri" aria-label="This chapter: problem, what was done, consequence">${['p', 'd', 'c'].map(r => { const list = idx.filter(i => L.beats[i].r === r); const fb = (L.chs[B.ch].tri || {})[r]; return `<div class="r" style="--rc:${SROLE[r][1]}"><span>${SROLE[r][0]}</span><div>${!list.length && fb ? `<span class="c fb">${fe(fb)}</span>` : list.length ? list.map(i => i === SIM.beat ? `<b class="c cur" aria-current="step">${fe(L.beats[i].t)}</b>` : i < SIM.beat ? `<button type="button" class="c done" data-sb="${i}">${fe(L.beats[i].t)}</button>` : `<span class="c">${fe(L.beats[i].t)}</span>`).join('') : '<span class="c">none in this thread</span>'}</div></div>`; }).join('')}</div>`;
+}
+const sWord = n => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n] || String(n);
+const sChip = n => `<button type="button" class="sn-chip" data-sn="${n}" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</button>`;
+function simBodyHTML() {
+  const L = sLine(), b = SIM.beat, n = L.beats.length;
+  if (b < 0) {
+    const lede = L.main ? SMAIN.lede : `One thread through the machine, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
+    const forks = L.beats.filter(B => B.fork).length;
+    return `<div class="sn-intro"><div class="sn-tag" style="--rc:${L.c}"><i></i>${L.main ? L.chs.length + ' chapters · ' + n + ' steps' : n + ' steps'}</div><p class="sn-lede">${fe(lede)}</p>`
+      + (forks ? `<p class="sn-fact">At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. This follows what actually happened. The other option shows a different possible outcome.</p>` : '')
+      + (L.main ? `<ol class="sn-chs">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : '')
+      + `<div class="sn-cta"><button type="button" class="sn-go" data-sg="start">Start the ${L.main ? 'story' : 'thread'} ${sArrR}</button>${L.main ? '<span class="sn-rec">Recommended · about ten minutes</span>' : `<button type="button" class="sn-q2" data-sl="0" data-sb="-1">Back to the main story</button>`}</div>`
+      + `<button type="button" class="sn-skip" data-sm="full">Skip the story and open the full view</button></div>`;
+  }
+  if (b >= n) {
+    const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
+    const nxt = L.main ? null : SLINES[SIM.line % (SLINES.length - 1) + 1];
+    return `<div class="sn-intro fin"><div class="sn-tag" style="--rc:${L.c}"><i></i>${L.main ? 'Story complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Thread complete'}</h3>`
+      + (L.main ? `<p>${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.${SREST.length ? ` ${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the story; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:` : ''}</p>${rest ? `<ul class="sn-rest">${rest}</ul>` : ''}`
+        : `<p>${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.</p>`)
+      + `<p>Open the full view to run the plays, pull any lever and click anything.</p>`
+      + `<div class="sn-cta"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
+      + `<div class="sn-more">${L.main ? `<button type="button" data-sp="1">Follow one thread</button><button type="button" data-fm2="stack">The capital stack</button>` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next thread: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The main story</button>`}<button type="button" data-sg="restart">Start again</button></div></div>`;
+  }
+  if (SIM.alt) {
+    const F = SFORK[SIM.alt], O = F.out, tmp = [...SIM.R.tmp];
+    return `<article class="sn-beat alt" style="--rc:#ff8a5c"><div class="sn-tag"><i></i>Other outcome</div><div class="sn-pickd">Choice: ${fe(F.alt[0])}</div><h3>${fe(O.t)}</h3><p>${fe(O.x)}</p><p class="sn-note">${fe(O.n)}</p>${O.s ? `<div class="lsrc">${fe(O.s)}</div>` : ''}`
+      + (tmp.length ? `<div class="sn-new"><span>Lit on the map, later in the story</span>${tmp.map(n => `<span class="sn-chip ghost" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</span>`).join('')}</div>` : '') + `</article>`;
+  }
+  const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
+  const nw = [...enodes(B.e)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
+  let h = simTriHTML(B);
+  if (B.why && P) h += `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button><p>${fe(B.why)}</p></div>`;
+  h += `<article class="sn-beat" style="--rc:${R[1]}"><div class="sn-tag"><i></i>${R[0]}${B.w ? `<span>${fe(B.w)}</span>` : ''}</div><h3>${fe(B.t)}</h3><p>${fe(B.x)}</p>`
+    + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : '')
+    + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''} · pull to see what ${B.lev.length > 1 ? 'they move' : 'it moves'}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '')
+    + `</article>`;
+  if (fk) {
+    const F = SFORK[fk], seen = SIM.seen.has(fk);
+    h += `<div class="sn-fork"><p class="sn-q"><span>Your choice</span>${fe(F.q)}</p><div class="sn-opts"><button type="button" class="sn-opt real" data-fk="real"><small>What happened</small><b>${fe(F.real[0])}</b><span>${fe(F.real[1])}</span></button><button type="button" class="sn-opt alt" data-fk="alt"><small>Other outcome${seen ? ' · seen' : ''}</small><b>${fe(F.alt[0])}</b><span>${fe(F.alt[1])}</span></button></div></div>`;
+  }
+  return h;
+}
+function simNavHTML() {
+  const L = sLine(), b = SIM.beat, n = L.beats.length;
+  if (b < 0) return '';
+  const cnt = `<span class="sn-cnt"><b>${String(Math.min(b, n - 1) + 1).padStart(2, '0')}</b> / ${String(n).padStart(2, '0')}</span>`;
+  const back = `<button type="button" class="sn-b sn-back" data-sg="back" aria-label="${SIM.alt ? 'Back to the choice' : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : 'Previous step: ' + fe(L.beats[b - 1].t)}">${sArrL}</button>`;
+  if (b >= n) return back + cnt + '<span class="sn-sp"></span>';
+  if (SIM.alt) return back + `<button type="button" class="sn-b sn-next" data-sg="next">Back to what happened ${sArrR}</button>`;
+  if (sNextFork()) return back + cnt + `<span class="sn-hint">Choose above</span>`;
+  const nx = b === n - 1 ? (L.main ? 'See the whole machine' : 'Finish') : 'Next';
+  return back + cnt + `<button type="button" class="sn-b sn-next" data-sg="next" aria-label="${b === n - 1 ? nx : 'Next step: ' + fe(L.beats[b + 1].t)}">${nx} ${sArrR}</button>`;
+}
+function simNarr(anim) {
+  const body = $('sn-body'); if (!body) return;
+  const L = sLine();
+  $('sn-line').textContent = L.t; $('sn-in').querySelector('.sn-k span').textContent = L.main ? 'Story' : 'Thread';
+  $('sn-prog').innerHTML = simProgHTML(); $('sn-prog').hidden = SIM.beat < 0;
+  const pk = $('sn-pick'); pk.hidden = !SIM.pick; if (SIM.pick) pk.innerHTML = simPickHTML(); $('sn-pickb').setAttribute('aria-expanded', String(SIM.pick));
+  const put = () => {
+    body.innerHTML = simBodyHTML(); $('sn-nav').innerHTML = simNavHTML(); $('sn-nav').hidden = SIM.beat < 0;
+    if (anim) $('sn-in').scrollTop = 0; /* a new step starts at its top */
+    [...body.children].forEach((c, i) => c.style.setProperty('--i', i));
+    body.classList.remove('out'); if (anim && !reduce) { body.classList.remove('in'); void body.offsetWidth; body.classList.add('in'); }
+    const ph = $('sn-pill'); if (ph) { ph.hidden = !SIM.alt; if (SIM.alt) ph.textContent = 'Other outcome · ' + SFORK[SIM.alt].alt[0]; }
+  };
+  clearTimeout(SIM.nt);
+  if (anim && !reduce && body.childElementCount) { body.classList.add('out'); SIM.nt = setTimeout(put, 150); } else put();
+  const sc = $('scount'), R = SIM.R; if (sc && R) sc.innerHTML = `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}`;
+}
+
+/* ---------- one place that applies the state ---------- */
+function simApply(anim, fwd) {
+  const cock = $('cock'); if (!cock) return;
+  const on = simOn(), prev = SIM.shown;
+  cock.classList.toggle('st', on); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
+  cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
+  const R = simReveal(); SIM.R = R;
+  const rs = $('rside'), home = on ? $('sn-det') : $('stage'); if (rs && home && rs.parentNode !== home) { rs.classList.remove('l', 'b'); home.appendChild(rs); }
+  simAspect();
+  styleRmap(); renderSide();
+  if (anim && prev && !reduce) simEnter(prev, R, fwd);
+  SIM.shown = R;
+  if (on) simNarr(anim);
+  simCam(anim);
+  try { stSet(SKEY.pos, JSON.stringify({ l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
+}
+function simGo(line, beat, how) {
+  const fwd = line === SIM.line && beat === SIM.beat + 1 && !SIM.alt;
+  SIM.line = line; SIM.beat = beat; SIM.alt = null; SIM.pick = false; clearSel();
+  simApply(true, fwd);
+  track('Story', { story: sLine().id, step: String(beat) });
+  if (how === 'focus') simFocus();
+}
+function simNext() {
+  const L = sLine(), n = L.beats.length;
+  if (SIM.alt) { const b = SIM.beat; SIM.alt = null; simGo(SIM.line, b + 1, 'focus'); return; }
+  if (SIM.beat >= n) return;
+  simGo(SIM.line, SIM.beat + 1, 'focus');
+}
+function simBack() {
+  if (SIM.alt) { SIM.alt = null; clearSel(); simApply(true); simFocus(); return; }
+  if (SIM.beat < 0) return;
+  simGo(SIM.line, SIM.beat - 1, 'focus');
+}
+function simChoose(k) {
+  const fk = sNextFork(); if (!fk) return;
+  track('Choice', { fork: fk, pick: k });
+  if (k === 'real') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }
+  SIM.seen.add(fk); SIM.alt = fk; clearSel(); simApply(true); simFocus();
+}
+function simSetMode(m) {
+  if (SIM.mode === m) return;
+  SIM.mode = m; stSet(SKEY.mode, m); SIM.pick = false; track('Mode', { mode: m });
+  simApply(true);
+  if (m === 'full') { const fr = $('cock'); if (fr && fr.getBoundingClientRect().top < 0) fr.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' }); }
+}
+/* keep keyboard focus on the control that moves the story */
+function simFocus() {
+  const ae = document.activeElement; if (!ae || !ae.closest || !ae.closest('#isx-snarr')) return;
+  setTimeout(() => { const t = ROOT.querySelector('#isx-sn-nav .sn-next') || ROOT.querySelector('#isx-sn-body .sn-opt.real') || ROOT.querySelector('#isx-sn-body .sn-go') || ROOT.querySelector('#isx-sn-nav .sn-back'); if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170);
+}
+/* the node dossier and lever card sit in the narrator column in story mode */
+function simDossier() {
+  const s = $('rside'); if (!s || s.hidden || !SIM.R) return;
+  s.querySelectorAll('.go').forEach(b => { if (!SIM.R.n.has(b.dataset.go) && !SIM.R.tmp.has(b.dataset.go)) { b.disabled = true; b.classList.add('later'); b.title = 'Later in the story'; } });
+  if (window.innerWidth < 1280) s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+}
+function simMount() {
+  const cock = $('cock'); if (!cock) return;
+  SIM.cam = null; SIM.shown = null; SIM.pick = false;
+  const stage = $('stage'); if (stage && !$('sn-pill')) stage.insertAdjacentHTML('afterbegin', '<span class="sn-pill" id="isx-sn-pill" hidden></span>');
+  const fx = $('rmap') && $('rmap').querySelector('#isx-fpart'); if (fx && !$('sfx')) fx.insertAdjacentHTML('afterend', '<g id="isx-sfx"></g>');
+  cock.addEventListener('click', e => {
+    const t = e.target.closest('button, i[data-sb]'); if (!t || !cock.contains(t)) return;
+    const d = t.dataset;
+    if (d.sm) { simSetMode(d.sm); return; }
+    if (d.fk) { simChoose(d.fk); return; }
+    if (d.sg === 'next') { simNext(); return; }
+    if (d.sg === 'back') { simBack(); return; }
+    if (d.sg === 'start') { simGo(SIM.line, 0, 'focus'); return; }
+    if (d.sg === 'restart') { simGo(SIM.line, -1, 'focus'); return; }
+    if (d.sl != null) { simGo(+d.sl, +d.sb, 'focus'); return; }
+    if (d.sb != null && t.closest('#isx-snarr')) { simGo(SIM.line, +d.sb); return; }
+    if (d.sp) { SIM.pick = true; simNarr(false); const f = $('sn-pick').querySelector('button'); if (f) f.focus({ preventScroll: true }); return; }
+    if (d.sn) { pickNode(d.sn); return; }
+    if (d.slv != null) { const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }
+    if (d.fm2) { finMode = d.fm2; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
+    if (t.id === 'isx-sn-pickb') { SIM.pick = !SIM.pick; simNarr(false); if (SIM.pick) { const f = $('sn-pick').querySelector('.pk-l.on') || $('sn-pick').querySelector('button'); if (f) f.focus({ preventScroll: true }); } return; }
+    if (t.id === 'isx-sn-rst') { simGo(SIM.line, -1, 'focus'); return; }
+  });
+  cock.addEventListener('keydown', e => { if (e.key === 'Escape' && SIM.pick) { e.preventDefault(); SIM.pick = false; simNarr(false); $('sn-pickb').focus({ preventScroll: true }); } });
+  simApply(false);
+}
+/* ← → move through the story while the simulator is in view */
+document.addEventListener('keydown', ev => {
+  if (!simOn() || ev.defaultPrevented || ev.ctrlKey || ev.metaKey || ev.altKey || (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft')) return;
+  const t = ev.target; if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"], .mapscroll')) return;
+  const r = $('cock').getBoundingClientRect(); if (r.bottom < 80 || r.top > window.innerHeight - 80) return;
+  ev.preventDefault();
+  if (ev.key === 'ArrowLeft') simBack();
+  else { const fk = sNextFork(); if (fk && !SIM.alt) simChoose('real'); else simNext(); }
+});
+let simRT = 0;
+window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (simOn()) { simAspect(); simCam(false); } }, 120); });
+/* a play in full view can be followed as a thread */
+ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.alt = null; clearSel(); simApply(true); });
 
 initIntro(); buildResbar(); buildMapModes(); bootGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
