@@ -34,10 +34,10 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "@id": "https://eliasrutten.com/imperial-stack/#work", "name": "The Imperial Stack", "headline": "The Imperial Stack: how US tech, the dollar and the American state work as one machine", "description": "An interactive map of the imperial stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe, see who finances the AI build-out, the firms that act for the state, and fourteen cases from Starlink to Nexperia. By Elias Rutten.", "url": "https://eliasrutten.com/imperial-stack/", "inLanguage": "en", "isAccessibleForFree": true, "dateModified": "2026-11-11", "image": "https://eliasrutten.com/assets/img/og-stack-2026-11.jpg", "genre": "Interactive data visualisation", "author": {"@type": "Person", "@id": "https://eliasrutten.com/#elias", "name": "Elias Rutten", "url": "https://eliasrutten.com/"}, "keywords": ["Pax Silica", "dollar hegemony", "profit dollar", "US current account", "Treasury QE", "AI capex", "private credit", "big tech", "Palantir", "Starlink", "stablecoins", "Tether", "weaponized interdependence", "Nexperia", "Huawei", "financial statecraft"], "isPartOf": {"@type": "WebSite", "@id": "https://eliasrutten.com/#site"}}</script>
 <style>
 .er-about { max-width: 760px; margin: 40px auto 56px; padding: 26px 26px 22px; border: 1px solid #1a2631; border-radius: 16px; background: #0a1016; color: #cfd9e2;
-  font-family: "Newsreader", Georgia, serif; font-size: 17px; line-height: 1.65; }
-.er-about h2 { margin: 0 0 10px; font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-weight: 700; font-size: 24px; letter-spacing: .05em; text-transform: uppercase; color: #e4ebf1; }
+  font-family: "Saira", system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
+.er-about h2 { margin: 0 0 10px; font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 600; font-size: 24px; letter-spacing: .05em; text-transform: uppercase; color: #e4ebf1; }
 .er-about p { margin: 0 0 12px; }
-.er-about .by { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7f91a0; }
+.er-about .by { font-family: "Share Tech Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7f91a0; }
 .er-about .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .er-about a.b { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; text-decoration: none; font-weight: 500; font-size: 14.5px; }
 .er-about a.b1 { border: 1px solid #ff6719; color: #e4ebf1; }
@@ -3432,10 +3432,6 @@ const RES = [
   { k: 'Fed reserves', v: '$3.04tn', c: '#ffd27a', t: 'Bank reserves at the Federal Reserve, 9 September 2026' },
   { k: 'Tether’s Treasuries', v: '$141bn', c: '#d78bff', t: 'Tether’s direct and indirect exposure to US Treasuries, end of 2025 (attestation)' },
 ];
-function buildResbar() {
-  const host = $('resbar'); host.innerHTML = '';
-  RES.forEach(r => { const d = document.createElement('div'); d.className = 'res panel'; d.title = r.t; d.style.setProperty('--rc', r.c); d.style.setProperty('--pc', r.c); d.innerHTML = `<span class="k">${esc(r.k)}</span><span class="v">${esc(r.v)}</span>`; host.appendChild(d); });
-}
 let mapMode = 'bloc';
 const MM = {
   bloc: { name: 'Blocs', c: '#3f9bff' },
@@ -3503,8 +3499,6 @@ function renderChainList() {
   host.style.setProperty('--sc', CHC[ch.kind]);
   host.innerHTML = '<ol>' + ch.steps.map(([lay, who, text, ev], i) => `<li class="${ev}"><span class="num">${String(i + 1).padStart(2, '0')}</span><div class="lay">${esc(L[lay])} · ${esc(EVN[ev])}</div><div class="who">${esc(who)}</div><div class="tx">${esc(text)}</div></li>`).join('') + '</ol>';
 }
-function stepBy(d) { const n = Math.max(0, Math.min(STEPS.length - 1, step + d)); if (n !== step) { stopPlay(); setStep(n); centreTab(); } }
-function centreTab() { const host = $('tabs'), t = host.querySelector('.tb[aria-current="true"]'); if (t && host.scrollWidth > host.clientWidth) host.scrollTo({ left: t.offsetLeft - host.clientWidth / 2 + t.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth' }); }
 
 /* ================= v7: loop ring, minerals toggle, step tables, layer strip, support ================= */
 const SORDER = [["Kill chains",["ukr","maven","gaza","mh17"]],["Pointed inward",["protest","ice","border"]],["Switches and sanctions",["icc","russia","nayara","garantex"]],["Money",["kenya"]],["The tech squeeze",["nexperia","huawei"]]];
@@ -3513,59 +3507,6 @@ const SECD = { SEED: 'The state seeds the firms it needs through In-Q-Tel and co
 const NOTE5 = { recycle: 'Grey: booked in fund and custody centres, owners mostly elsewhere*', gap: 'Gold: the state’s levers · red: official holders selling · grey: financial-centre buyers', loop: 'AI campuses, IT power (Epoch AI estimates*)', mchoke: 'Work in progress', mall: 'Work in progress' };
 [...STEPS_D, ...STEPS_M].forEach(s => { if (NOTE5[s.key]) s.note = NOTE5[s.key]; });
 
-function ring5() {
-  const host = $('ring'); if (!host) return;
-  const n = STEPS.length - 1, R = 52, cx = 76, cy = 76, ang = i => (-90 + (i - 1) * 360 / n) * Math.PI / 180;
-  const P = i => [cx + R * Math.cos(ang(i)), cy + R * Math.sin(ang(i))];
-  const s = STEPS[step], dollar = circMode === 'dollar';
-  let h = `<svg viewBox="0 0 152 152" role="img" aria-label="${dollar ? 'The dollar loop' : 'The other stack'}: step ${step} of ${n}">`;
-  h += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="14"/>`;
-  for (let i = 1; i <= n; i++) {
-    const j = i === n ? (dollar ? 1 : null) : i + 1; if (!j) continue;
-    const a = ang(i) + .16, b = ang(j) - .16 + (j < i ? 2 * Math.PI : 0), done = step && (i < step || (i === n && step === 1 && dollar));
-    const x0 = cx + R * Math.cos(a), y0 = cy + R * Math.sin(a), x1 = cx + R * Math.cos(b), y1 = cy + R * Math.sin(b);
-    h += `<path d="M${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}" fill="none" stroke="${i === n ? '#ffd27a' : STEPS[j].c}" stroke-opacity="${done || i + 1 === step ? .85 : .28}" stroke-width="2" ${i === n ? 'stroke-dasharray="3 3"' : ''} marker-end="url(#isx-rh)"/>`;
-  }
-  h += '<defs><marker id="isx-rh" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L6,3L0,6z" fill="#9aabba"/></marker></defs>';
-  for (let i = 1; i <= n; i++) {
-    const [x, y] = P(i), cur = i === step, c = STEPS[i].c, lx = cx + (R + 15) * Math.cos(ang(i)), ly = cy + (R + 15) * Math.sin(ang(i));
-    h += `<g class="rd${cur ? ' cur' : ''}" data-i="${i}" tabindex="0" role="button" aria-label="Step ${i}: ${esc(STEPS[i].t)}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${cur ? 8.5 : 5.5}" fill="${c}" ${cur ? `style="filter:drop-shadow(0 0 6px ${c})"` : `fill-opacity=".75"`}/><text x="${lx.toFixed(1)}" y="${(ly + 3.5).toFixed(1)}" text-anchor="middle">${STEPS[i].n}</text></g>`;
-  }
-  const act = s.act != null ? A5[s.act] : (step ? '' : dollar ? 'Start ▸' : 'Start ▸');
-  h += `<text class="rc1" x="${cx}" y="${cy - 9}" text-anchor="middle">${dollar ? 'THE DOLLAR' : 'THE OTHER'}</text><text class="rc1" x="${cx}" y="${cy + 3}" text-anchor="middle">${dollar ? 'LOOP' : 'STACK'}</text>`;
-  h += `<text class="rc2" x="${cx}" y="${cy + 18}" text-anchor="middle" ${step ? '' : 'data-i="1" role="button"'} fill="${step ? (s.act != null ? ACOL[s.act] : s.c) : '#ffb547'}">${esc(dollar ? act : (step ? s.t : 'Start ▸'))}</text>`;
-  host.innerHTML = h + '</svg>';
-}
-function tabs5(tab) {
-  const host = $('tabs');
-  STEPS.forEach((s, i) => {
-    if (s.act != null && (i === 1 || STEPS[i - 1].act !== s.act)) { const d = document.createElement('span'); d.className = 'actsep'; d.style.setProperty('--ac', ACOL[s.act]); d.textContent = A5[s.act]; host.appendChild(d); }
-    tab(i === STEPS.length - 1 && circMode === 'dollar' ? s.n + ' ↻' : s.n, s.t, s.c, i === step, () => { stopPlay(); setStep(i); });
-  });
-}
-function stepBy(d) {
-  let n = step + d;
-  if (n > STEPS.length - 1) n = circMode === 'dollar' ? 1 : 0;
-  if (n < 0) n = 0;
-  if (n !== step) { stopPlay(); setStep(n); }
-}
-function after5() {
-  ROOT.classList.toggle('minmode', circMode === 'min');
-  if (view !== 'map') return;
-  const last = step === STEPS.length - 1;
-  $('t-next').textContent = last ? (circMode === 'dollar' ? '↻ Back to 01' : '↻ Overview') : 'Next →';
-  $('t-nudge').hidden = !(last && circMode === 'dollar');
-  ring5();
-  if (!selIso && STEPS[step].key === 'surplus') gmList($('c-table'));
-}
-function setCirc(m) {
-  circMode = m; STEPS = m === 'min' ? STEPS_M : STEPS_D;
-  $('min').setAttribute('aria-checked', String(m === 'min'));
-  if (m === 'min' && !showWaico) { showWaico = true; $('waico').setAttribute('aria-checked', 'true'); }
-  stopPlay(); selIso = null;
-  if (view !== 'map') setView('map');
-  setStep(0); renderLegend();
-}
 $('min').addEventListener('click', () => setCirc(circMode === 'min' ? 'dollar' : 'min'));
 $('ring')?.addEventListener('click', e => { const t = e.target.closest('[data-i]'); if (t) { stopPlay(); setStep(+t.dataset.i); } });
 $('ring')?.addEventListener('keydown', e => { const t = e.target.closest('[data-i]'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); stopPlay(); setStep(+t.dataset.i); } });
@@ -3695,38 +3636,6 @@ const WEAK = [['Demand cools', 'Cover ratios on hyperscaler bonds fell from near
   ['One customer', '$200bn of Google’s TPU contracts depend on Anthropic’s lease payments.', 'Financial Times (Aug 2026)'],
   ['Revenue gap', 'OpenAI’s annualised revenue was close to $50bn in October, about $20bn short of what it had signalled to investors.', 'Financial Times (Oct 2026)']];
 const fe = esc;
-function gaugeSVG(g) {
-  if (g.type === 'pct') {
-    const a = Math.PI * (1 - g.p / 100), x = 60 + 46 * Math.cos(a), y = 58 - 46 * Math.sin(a);
-    return `<svg viewBox="0 0 120 66" class="gsvg" aria-hidden="true"><path d="M14,58 A46,46 0 0 1 106,58" fill="none" stroke="#1d2a36" stroke-width="9"/><path d="M14,58 A46,46 0 0 1 ${x.toFixed(1)},${y.toFixed(1)}" fill="none" stroke="url(#isx-gg)" stroke-width="9"/><defs><linearGradient id="isx-gg"><stop offset="0" stop-color="#3ee6b8"/><stop offset=".6" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff5a4e"/></linearGradient></defs><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="#fff"/><text x="60" y="54" text-anchor="middle" class="gv">${g.p}th</text></svg>`;
-  }
-  if (g.type === 'band') {
-    const X = v => 4 + (v - g.min) / (g.max - g.min) * 112;
-    return `<svg viewBox="0 0 120 30" class="gsvg band" aria-hidden="true"><rect x="4" y="12" width="112" height="7" rx="3" fill="#1d2a36"/><rect x="${X(g.lo).toFixed(1)}" y="12" width="${(X(g.hi) - X(g.lo)).toFixed(1)}" height="7" fill="rgba(62,230,184,.45)"/><line x1="${X(g.x).toFixed(1)}" x2="${X(g.x).toFixed(1)}" y1="6" y2="25" stroke="#ff8a5c" stroke-width="2.5"/><text x="${X(g.lo).toFixed(1)}" y="30" class="gt">${g.lo}%</text><text x="${X(g.hi).toFixed(1)}" y="30" class="gt">${g.hi}%</text></svg>`;
-  }
-  return '';
-}
-function renderFin() {
-  const host = $('fin'); if (!host) return;
-  const head = (t, x) => `<header class="finhead"><div class="fk">Financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><h2>${t}</h2><p>${x}</p></header>`;
-  if (finMode === 'plumb') {
-    const g = (LIVE.gauges || []).map(g => `<div class="gauge ${g.type}" title="${fe(g.src)}"><div class="gk">${fe(g.k)}</div>${gaugeSVG(g)}<div class="gvv">${fe(g.v)}${g.delta ? `<span class="gd">${fe(g.delta)}</span>` : ''}</div><div class="gn">${fe(g.note)}</div></div>`).join('');
-    const cards = LEVERS.map(L => `<article class="lever" style="--lc:${L.c}"><div class="lh"><span class="li">${L.ic}</span><div><h4>${fe(L.t)}</h4><div class="ld">${fe(L.d)}</div></div></div><ul>${L.fx.map(([s, t]) => `<li class="${s === '+' ? 'up' : s === '−' ? 'dn' : 'eq'}"><b>${s === '=' ? '→' : s}</b>${fe(t)}</li>`).join('')}</ul><div class="lsrc">${fe(L.src)}</div></article>`).join('');
-    host.innerHTML = head('The state’s plumbing', 'Foreign central banks have stepped back from US debt, and the AI build-out needs cheap capital. Washington’s answer is to engineer domestic demand for its own debt and keep the bond market calm. None of these levers is money printing on its own; together they take long-term debt out of private hands and put liquidity in.')
-      + `<div class="fgrid"><section class="panel fpan"><h3>Ledger · United States</h3><div class="gauges">${g}</div></section><section class="panel fpan"><h3>Levers pulled</h3><div class="levers">${cards}</div></section></div>`
-      + `<section class="panel fpan"><h3>How the pieces fit</h3>${treeSVG()}</section>`;
-  } else {
-    const mix = `<div class="mixrow"><div class="mixl">2026, five hyperscalers (Goldman Sachs)</div><div class="mixbar"><i style="flex:2;background:#3ee6b8">Operating cash flow ≈ $778bn, against capex of ≈ $750bn</i></div><div class="mixbar"><i style="flex:2;background:rgba(62,230,184,.25);color:#cfd9e2">Capex funded from cash flow: about two-thirds</i><i style="flex:1;background:#ffb547">Debt: about one-third</i></div><div class="mixn">Cash flow also pays dividends and buybacks, so debt fills the rest: Goldman expects about $250bn of hyperscaler bonds in 2026 and $400bn in 2027.</div></div>`
-      + `<div class="mixrow"><div class="mixl">Data centres worldwide to 2028: $2.9tn (Morgan Stanley, 2025)</div><div class="mixbar"><i style="flex:1.4;background:rgba(62,230,184,.25);color:#cfd9e2">Internal ≈ $1.4tn*</i><i style="flex:.8;background:#8fa3b6">Private credit ≈ $800bn</i><i style="flex:.2;background:#ffb547" title="Investment-grade bonds">IG</i><i style="flex:.15;background:#d78bff" title="Securitised">ABS</i><i style="flex:.35;background:#5d6f80" title="Other: about $350bn">Other</i></div><div class="mixn">External gap ≈ $1.5tn: private credit ≈ $800bn, investment-grade bonds ≈ $200bn, securitised ≈ $150bn, other ≈ $350bn. *Implied: $2.9tn minus the gap.</div></div>`;
-    const deals = DEALS.map(D => `<article class="deal" style="--lc:${D.c}"><div class="dh"><h4>${fe(D.t)}</h4><span>${fe(D.d)}</span></div><div class="dflow">${D.flow.map(([a, b]) => `<div class="dbox">${a ? `<b>${fe(a)}</b>` : ''}<span>${fe(b)}</span></div>`).join('<i class="dar">→</i>')}</div><p>${fe(D.x)}</p><div class="lsrc">${fe(D.src)}</div></article>`).join('');
-    const fx = FX.map(([c, who, t]) => `<div class="fxc"><span class="fxs">${fe(c)}</span><div><b>${fe(who)}</b> ${fe(t)}</div></div>`).join('');
-    const sv = SAVERS.map(([w, v, t, s]) => `<div class="sav"><div class="svv">${fe(v)}</div><div><b>${fe(w)}</b> ${fe(t)}<div class="lsrc">${fe(s)}</div></div></div>`).join('');
-    host.innerHTML = head('The capital stack', 'Cash flow no longer covers the build-out on its own. The gap is filled with bonds in five currencies, new shares and off-balance-sheet vehicles financed by private credit, which in turn draws on insurers, annuities and pension funds: savings of people who never chose to fund the AI race.')
-      + `<div class="fgrid"><section class="panel fpan"><h3>Who pays for the build-out</h3>${mix}</section><section class="panel fpan"><h3>Borrowing the allies’ savings</h3><p class="fpx">The hyperscalers now borrow directly in the currencies of the allies whose surpluses fund them. Alphabet raised almost $32bn in under 24 hours in February 2026; its 100-year sterling bond drew close to ten times the orders.</p><div class="fxs-grid">${fx}</div><div class="lsrc">Bloomberg via Swissinfo (Feb 2026); MarketScreener (Feb 2026); The Next Web (May 2026); IFR (Mar 2026).</div></section></div>`
-      + `<section class="panel fpan"><h3>The deals</h3><div class="deals">${deals}</div></section>`
-      + `<div class="fgrid"><section class="panel fpan"><h3>Whose savings</h3>${sv}</section><section class="panel fpan"><h3>Weak points</h3>${WEAK.map(([t, x, s]) => `<div class="weak"><b>${fe(t)}</b> ${fe(x)}<div class="lsrc">${fe(s)}</div></div>`).join('')}</section></div>`;
-  }
-}
 function treeSVG() {
   const N = [
     ['T', 10, 40, 'US Treasury', 'deficit ≈ 6–7% of GDP'], ['B', 215, 40, 'Bills', '22% of marketable debt'], ['BB', 215, 150, 'Buybacks', 'up to $6bn per operation'],
@@ -3743,25 +3652,6 @@ function treeSVG() {
   N.forEach(([k, x, y, t, sub]) => { s += `<g class="tn"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/><text x="${x + 10}" y="${y + 17}" class="tt">${fe(t)}</text><text x="${x + 10}" y="${y + 32}" class="ts">${fe(sub)}</text></g>`; });
   return s + '</svg>';
 }
-function finNarr() {
-  if (finMode === 'plumb') return { h: 'The state’s plumbing', c: '#ffd27a', fig: '22.2%', cap: 'bills as a share of marketable Treasury debt, July 2026',
-    x: 'This is step 08 of the circuit in detail. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington engineers domestic demand: bills for money funds and banks, a looser leverage rule so the biggest banks can hold more, Fed bill purchases that added reserves, stablecoins built on bills, and buybacks that take long bonds out of the market. The bond market still pushes back: in October the 10-year yield touched 5.33% and bond volatility sat in its 92nd–94th percentile.',
-    scale: 'Gauges: the MOVE percentile and the bills share against the recommended range are measured values; other tiles are levels. Hover a gauge for its source.' };
-  return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
-    x: 'This is step 10 of the circuit in detail. Goldman Sachs expects debt to fund about a third of hyperscaler capex in 2026. The rest of the gap is filled off balance sheet: special-purpose vehicles financed by private credit, anchored by firms such as Apollo, Blackstone and PIMCO, whose money comes in large part from insurers, annuities and pension funds. US life insurers alone held $85.2bn of AI-linked investments in mid-2026. The hyperscalers also borrow abroad in euros, sterling, Swiss francs, Canadian dollars and yen.',
-    scale: 'Bars are proportional within each row. * = implied or uncertain.' };
-}
-function renderFinCard() {
-  resetCardParts(); $('clear').hidden = true;
-  if (finMode === 'plumb') {
-    $('c-title').textContent = 'Dates to watch'; $('c-status').textContent = 'What could change the numbers on this page.';
-    $('c-table').innerHTML = tbl(['Date', 'Event'], [['10 Nov 2026', 'China’s pause on its October 2025 export controls ends unless extended'], ['18 Nov 2026', 'TIC data for September: who bought US assets'], ['27 Nov 2026', 'China’s suspension of its gallium, germanium and antimony ban on the US ends'], ['10 Jan 2027', 'The extended US–China trade truce expires']].map(r => r.map(fe)), 'auto minmax(0,1fr)')
-      + '<div class="fnote">Sources: US Treasury (TIC release calendar); trade trackers on China’s export controls; Supply Chain Dive (23 Sep 2026).</div>';
-  } else {
-    $('c-title').textContent = 'Deals in numbers'; $('c-status').textContent = 'The largest financings named on this page.';
-    $('c-table').innerHTML = tbl(['Deal', 'Size', 'When'], [['Google’s TPU contracts for Anthropic', '≈$200bn', '2026'], ['Broadcom purchase commitments, FY2027–28', '$128bn', '2026'], ['Amazon bond (USD and EUR)', '$53.8bn', 'Mar 2026'], ['Google data-centre lease guarantees, maximum', '$44bn', '2026'], ['Meta shares and convertible preferred', '$37.5bn', 'Oct 2026'], ['Compute SPV (TPUs for Anthropic)', '$35bn', 'Jun 2026'], ['Alphabet, three currencies in 24 hours', '≈$32bn', 'Feb 2026'], ['Hyperion bond (Meta, Blue Owl)', '$27.3bn', 'Oct 2025']].map(r => r.map(fe)), 'minmax(0,1fr) auto auto');
-  }
-}
 function finLegend(a, b) {
   legRow(a, '<div class="sw-fill" style="background:rgba(255,210,122,.3);border-color:#ffd27a"></div>', 'State levers: Treasury, Fed, regulators');
   legRow(a, '<div class="sw-fill" style="background:rgba(255,181,71,.3);border-color:#ffb547"></div>', 'Bonds');
@@ -3771,10 +3661,6 @@ function finLegend(a, b) {
   legRow(b, '<div></div>', '* implied, derived or uncertain');
 }
 
-function buildResbar() {
-  const host = $('resbar'); host.innerHTML = '';
-  (LIVE.resbar || []).forEach(r => { const d = document.createElement('div'); d.className = 'res panel'; d.title = r.t; d.style.setProperty('--rc', r.c); d.style.setProperty('--pc', r.c); d.innerHTML = `<span class="k">${esc(r.k)}</span><span class="v">${esc(r.v)}</span>`; host.appendChild(d); });
-}
 /* ================= v8: step text as summary + deep layers, definitions, methodology ================= */
 const SUBSTACK = 'https://eliasrutten.substack.com';
 const ESSAYS = {
@@ -3989,33 +3875,7 @@ const svgIc = (k, sz) => `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" 
 const SSL = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>';
 const richText = t => String(t == null ? '' : t).replace(/\{\{(\w+)\|([^}]+)\}\}/g, (m, k, x) => DEFS[k] ? `<dfn class="df" data-d="${k}" tabindex="0">${x}</dfn>` : x);
 const VIS = new Set();
-let surMode = 'ca', ringPrev = null, sndPrev = null, loops6 = 0;
-
-/* ---------- sound: synthesised, off by default ---------- */
-let sndOn = false, actx = null;
-try { sndOn = localStorage.getItem('isx-snd') === '1'; } catch (e) { /* storage blocked */ }
-function snd(kind) {
-  return; /* sound removed in v8.1 */
-  if (!sndOn) return;
-  try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    if (actx.state === 'suspended') actx.resume();
-    const t = actx.currentTime, out = actx.createGain(); out.gain.value = .55; out.connect(actx.destination);
-    const tone = (f, at, dur, type, vol) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(f, t + at); g.gain.setValueAtTime(0, t + at); g.gain.linearRampToValueAtTime(vol || .08, t + at + .006); g.gain.exponentialRampToValueAtTime(.0001, t + at + dur); o.connect(g); g.connect(out); o.start(t + at); o.stop(t + at + dur + .02); };
-    const noise = (at, dur, f, vol) => { const b = actx.createBuffer(1, Math.ceil(actx.sampleRate * dur), actx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length); const s = actx.createBufferSource(), bp = actx.createBiquadFilter(), g = actx.createGain(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 1.4; g.gain.value = vol; s.buffer = b; s.connect(bp); bp.connect(g); g.connect(out); s.start(t + at); };
-    if (kind === 'click') { noise(0, .03, 2600, .35); tone(1320, 0, .045, 'triangle', .05); }
-    else if (kind === 'step') { tone(587, 0, .09, 'triangle', .07); tone(880, .065, .13, 'triangle', .07); noise(0, .05, 1800, .12); }
-    else if (kind === 'back') { tone(880, 0, .08, 'triangle', .06); tone(587, .06, .12, 'triangle', .06); }
-    else if (kind === 'open') { noise(0, .16, 1200, .25); tone(440, 0, .12, 'sine', .05); tone(660, .05, .14, 'sine', .05); }
-    else if (kind === 'win') { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .075, .22, 'triangle', .07)); tone(1568, .32, .35, 'sine', .04); }
-  } catch (e) { /* audio unavailable */ }
-}
-function setSnd(on, quiet) {
-  sndOn = on; try { localStorage.setItem('isx-snd', on ? '1' : '0'); } catch (e) { /* storage blocked */ }
-  const b = $('snd'); if (!b) return;
-  b.setAttribute('aria-pressed', String(on)); b.innerHTML = svgIc(on ? 'snd' : 'mute', 14) + `<span>Sound ${on ? 'on' : 'off'}</span>`;
-  if (on && !quiet) snd('click');
-}
+let surMode = 'ca', ringPrev = null, loops6 = 0;
 
 /* ---------- crisp scrolling, count-up, toasts, bursts ---------- */
 function crisp(el, off) {
@@ -4053,7 +3913,7 @@ function burst(cx, cy) {
   }
 }
 function celebrate() {
-  loops6++; snd('win'); const nb = $('t-next').getBoundingClientRect(); burst(nb.left + nb.width / 2, nb.top + nb.height / 2);
+  loops6++; const nb = $('t-next').getBoundingClientRect(); burst(nb.left + nb.width / 2, nb.top + nb.height / 2);
   toast6(`<div class="tk6">Loop closed ✓${loops6 > 1 ? ' · ' + loops6 + '×' : ''}</div><b>You followed the dollar around the world.</b><p>This map is free and independent. The essays behind it are on Substack.</p><div class="ta6"><a href="${SUBSTACK}" target="_blank" rel="noopener">Read the essays</a><a href="${BMC6}" target="_blank" rel="noopener" class="bm">☕ Support this map</a></div>`, 9000);
 }
 
@@ -4076,14 +3936,12 @@ ROOT.addEventListener('click', e => { const el = e.target.closest('.df'); if (el
 window.addEventListener('scroll', hideTip, { passive: true });
 ROOT.addEventListener('scroll', hideTip, { passive: true });
 
-/* ---------- global click: sounds, “how we count”, surplus switch ---------- */
+/* ---------- global click: “how we count”, surplus switch ---------- */
 ROOT.addEventListener('click', e => {
   const how = e.target.closest('[data-how]');
   if (how) { e.preventDefault(); const m = $('method'); crisp(m, 20); m.classList.remove('flash'); void m.offsetWidth; m.classList.add('flash'); }
   const sm = e.target.closest('.segm [data-m]');
   if (sm) { surMode = sm.dataset.m; renderGlobe(false); if (!selIso) renderCountryCard(); after5(); if (globe && !reduce) { const p = surMode === 'ai' ? { lat: 18, lng: 108, altitude: 1.75 } : STEPS[step].pov; globe.controls().autoRotate = false; globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: p.altitude * (window.innerWidth > 760 ? 1.05 : 1) }, 900); } }
-  const b = e.target.closest('button, [role="button"], a');
-  if (b && !b.closest('#isx-tabs, #isx-ring, .bigbtn, .res, .df')) snd(b.matches('.godeep') ? 'open' : 'click');
 }, true);
 
 /* ---------- the ring: icons for each step, a token that travels ---------- */
@@ -4147,8 +4005,7 @@ function after5() {
   ROOT.classList.toggle('minmode', circMode === 'min');
   stageChip();
   if (view !== 'map') return;
-  if (sndPrev != null && sndPrev !== step) snd(step > sndPrev || (sndPrev === STEPS.length - 1 && step === 1) ? 'step' : 'back');
-  sndPrev = step; VIS.add(step);
+  VIS.add(step);
   narr6(); legend6(); supProg();
   $('mapnote').textContent = STEPS[step].key === 'surplus' ? surNote() : $('mapnote').textContent;
   const tb = $('tabs').querySelectorAll('.tb'); STEPS.forEach((s, i) => { const b = tb[i + 1]; if (b) b.classList.toggle('vis', VIS.has(i)); });
@@ -4226,7 +4083,7 @@ function buildResbar() {
     b.innerHTML = `<span class="k"><span class="ri6">${svgIc(ic, 12)}</span>${esc(r.k)}</span><span class="v">${esc(r.v)}${dir}</span><span class="rd6">${esc(r.d || '')}</span><span class="rq" aria-hidden="true">?</span>`;
     b.setAttribute('aria-label', `${r.k}: ${r.v}. ${r.what} Why it matters: ${w[0]}`);
     b.dataset.tip = `<b>${esc(r.k)}: ${esc(r.v)}</b><p><em>What it is.</em> ${esc(r.what)}</p><p><em>Why it matters.</em> ${esc(w[0])}</p><p class="ts">${esc(r.t)}${si > 0 ? ' · Click for step ' + STEPS_D[si].n + ', ' + esc(STEPS_D[si].t) : ''}</p>`;
-    b.addEventListener('click', () => { if (si > 0) { stopPlay(); if (selIso) { selIso = null; renderCountryCard(); } snd('step'); setStep(si); } });
+    b.addEventListener('click', () => { if (si > 0) { stopPlay(); if (selIso) { selIso = null; renderCountryCard(); } setStep(si); } });
     host.appendChild(b);
   });
 }
@@ -5010,8 +4867,8 @@ function renderFin() {
 function clearSel() { fsel = null; fplay = null; fpstep = 0; flev.clear(); }
 function pickNode(n) { const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
 function wireCockpit(host) {
-  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); if (!was) snd('step'); }));
-  host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; snd('step'); } styleRmap(); renderSide(); }));
+  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
+  host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
   host.querySelectorAll('.tile').forEach(b => {
     b.addEventListener('click', () => pickNode(b.dataset.node));
     b.addEventListener('mouseenter', () => { fhover = b.dataset.node; styleRmap(); }); b.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
@@ -5099,8 +4956,8 @@ function renderSide(lev) {
     const P = PLAYS[fplay], st = P.steps[fpstep];
     s.hidden = false; s.style.setProperty('--dc', P.c);
     s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play as a story</button>`;
-    $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); snd('back'); });
-    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); snd('step'); } else { snd('win'); burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below the map.</p>`, 4500); } });
+    $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); });
+    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); } else { burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below the map.</p>`, 4500); } });
     placeDossier(); done(); return;
   }
   if (lev != null && flev.has(lev)) {
@@ -5350,7 +5207,7 @@ function initIntro() {
   else setTimeout(() => tipsMaybe('globe'), 1200);
 }
 
-/* v8 init: sound button, methodology */
+/* v8 init: methodology */
 initFolds();
 $('mg').innerHTML = METHOD6.map(([k, t]) => `<div><b>${esc(k)}</b><p>${esc(t)}</p></div>`).join('');
 $('mglos').innerHTML = Object.values(DEFS).sort((a, b) => a[0].localeCompare(b[0])).map(([k, t]) => `<div><dt>${esc(k)}</dt><dd>${esc(t)}</dd></div>`).join('');
