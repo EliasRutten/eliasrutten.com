@@ -28,6 +28,7 @@
 <link rel="canonical" href="https://eliasrutten.com/imperial-stack/">
 <meta name="theme-color" content="#04070b">
 <link rel="preload" href="/imperial-stack/vendor/globe.gl-2.41.4.min.js" as="script">
+<link rel="stylesheet" href="/imperial-stack/v2/v2.css">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -2357,7 +2358,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.1.12</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -2374,7 +2375,7 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-map">
       <div class="globebox"><div class="gskel" aria-hidden="true"><i></i><span>Loading the globe</span></div><div id="isx-globe" role="img" aria-label="3D globe of Pax Silica with flows between allies and to and from the United States"></div></div>
       <div class="zoom6" id="isx-zoom" role="group" aria-label="Zoom the globe"><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Reset view">⟲</button></div>
-      <div class="hint" id="isx-hint">Drag to turn the globe · click a country · ← → to step <button type="button" class="tipsre" data-tips="globe">How to use the globe</button></div>
+      <div class="hint" id="isx-hint">Drag to turn the globe · click a country · ← → to step <button type="button" class="tipsre" data-tips="globe">How to use the globe</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
       <div class="mapmodes panel" id="isx-mapmodes" role="group" aria-label="Map mode"></div>
     </div>
     <div class="scene" id="isx-scene-arm" hidden>
@@ -2420,8 +2421,8 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="dock6" id="isx-dock" role="group" aria-label="Thesis, support, share and full screen">
       <a class="dk dk-th" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener" aria-label="Read the thesis, coming soon" data-tip="<b>Read the thesis · coming soon</b><p>One essay explaining the whole map: how the dollar system rebuilt itself around US profits, and why the AI boom is its newest form. Subscribe to get it.</p>"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg></a>
       <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map" data-tip="<b>Support this free map</b><p>It is free and has no ads. A coffee keeps it going.</p>"><span class="cup" aria-hidden="true">☕</span></a>
-      <button type="button" class="dk dk-sh" id="isx-share" aria-label="Share this tab" aria-expanded="false" aria-controls="isx-sharepop" data-tip="<b>Share</b><p>Copy a link to this tab, or post it.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v6.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
-      <div class="shpop" id="isx-sharepop" role="group" aria-label="Share this tab"><div class="shk">Share this tab</div><div class="shn" id="isx-sh-name"></div><button type="button" class="shi" id="isx-sh-copy" data-sx=""><span class="sl">Copy link</span><span class="sx" aria-hidden="true"></span></button><a class="shi" id="isx-sh-x" href="https://x.com/intent/tweet" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Post on X</span><span class="sx" aria-hidden="true">↗</span></a><a class="shi" id="isx-sh-li" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Share on LinkedIn<small>The text is copied, to paste into your post</small></span><span class="sx" aria-hidden="true">↗</span></a><div class="shu" id="isx-sh-url"></div><span class="dl" id="isx-sh-live" role="status" aria-live="polite"></span></div>
+      <button type="button" class="dk dk-sh" id="isx-share" aria-label="Share this view" aria-expanded="false" aria-controls="isx-sharepop" data-tip="<b>Share this view</b><p>Copy a link that opens the map exactly as you see it now, or post it.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v6.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
+      <div class="shpop" id="isx-sharepop" role="group" aria-label="Share this view"><div class="shk">Share this view</div><div class="shn" id="isx-sh-name"></div><button type="button" class="shi" id="isx-sh-copy" data-sx=""><span class="sl">Copy link</span><span class="sx" aria-hidden="true"></span></button><a class="shi" id="isx-sh-x" href="https://x.com/intent/tweet" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Post on X</span><span class="sx" aria-hidden="true">↗</span></a><a class="shi" id="isx-sh-li" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Share on LinkedIn<small>The text is copied, to paste into your post</small></span><span class="sx" aria-hidden="true">↗</span></a><div class="shu" id="isx-sh-url"></div><span class="dl" id="isx-sh-live" role="status" aria-live="polite"></span></div>
       <button type="button" class="dk dk-fs" id="isx-fs" aria-label="Full screen" data-tip="<b>Full screen</b>"><span class="dl">Full screen</span><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </section>
@@ -2481,6 +2482,7 @@ button.res:hover { transform: none; box-shadow: none; }
   <footer><div id="isx-src"></div><div class="brandline">eliasrutten.substack.com</div><p class="rights">© 2026 Elias Rutten. Quotes are welcome with credit and a link. Other reuse of the text, analysis or graphics needs written permission. Training AI models on this material, and text-and-data mining, are reserved.</p></footer>
 </div></div>
 
+<script src="/imperial-stack/v2/perf.js"></script>
 <script async src="/imperial-stack/vendor/globe.gl-2.41.4.min.js" onload="window.__isxGlib='ok';window.dispatchEvent(new Event('isx-glib'))" onerror="window.__isxGlib='err';window.dispatchEvent(new Event('isx-glib'))"></script>
 <script>
 (() => {
@@ -2499,7 +2501,12 @@ const LAYERS = { S: { name: 'Software, platforms, models', c: C.rent }, H: { nam
 const NS = 'http://www.w3.org/2000/svg';
 const ROOT = document.getElementById('isx-root');
 const $ = id => document.getElementById('isx-' + id);
-const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+let reduce = RMQ.matches; /* v2: followed live, see “v2: the seam” at the end of this script */
+const ISXP = window.ISXP || { tier: 'high', k: { dpr: 2, streams: 1, sim: 1, arm: 1, rings: 2, glow: true }, loop: l => l, sync() {}, on() {}, watch() {}, apply() {} };
+const EV = {}, GLAY = [];
+const on = (k, f) => { (EV[k] = EV[k] || []).push(f); };
+const emit = (k, d) => { (EV[k] || []).forEach(f => { try { f(d); } catch (e) { /* a listener never breaks the page */ } }); };
 function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
 const fmtBn = v => (v < 0 ? '−' : '') + '$' + (Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(2) + 'tn' : (Math.abs(v) >= 100 ? Math.round(Math.abs(v)) : Math.abs(v) >= 10 ? Math.abs(v).toFixed(1) : Math.abs(v).toFixed(2)) + 'bn');
 const XNAME = { PLAT: 'US platforms', NYC: 'Wall Street', FAB: 'US fabs', USA: 'United States', DC: 'Washington', SLV: 'Tether (El Salvador)', DEFHUB: 'US defence and space firms', R_EUR: 'Europe', R_CHN: 'Greater China', R_APAC: 'Rest of Asia-Pacific', R_AMER: 'Canada and Latin America', R_MEA: 'Middle East and Africa', M_LA: 'Los Angeles', M_CHI: 'Chicago', M_HOU: 'Houston', M_MIA: 'Miami', M_SEA: 'Seattle', M_ATL: 'Atlanta', M_DAL: 'Dallas', M_DEN: 'Denver', M_BOS: 'Boston', M_PHX: 'Phoenix' };
@@ -2512,10 +2519,10 @@ const val = v => typeof v === 'function' ? v() : v;
 function Particles(canvas, vbW, vbH) {
   const ctx = canvas.getContext('2d');
   let flows = [], last = 0, scale = 1, raf = 0, running = false;
-  function size() { const dpr = Math.min(2, window.devicePixelRatio || 1); canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr)); canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr)); scale = canvas.width / vbW; }
+  function size() { const dpr = Math.min(ISXP.k.dpr, window.devicePixelRatio || 1); canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr)); canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr)); scale = canvas.width / vbW; }
   function pt(f, t) { const u = 1 - t; if (f.c2) return { x: u * u * u * f.a.x + 3 * u * u * t * f.c.x + 3 * u * t * t * f.c2.x + t * t * t * f.b.x, y: u * u * u * f.a.y + 3 * u * u * t * f.c.y + 3 * u * t * t * f.c2.y + t * t * t * f.b.y }; return { x: u * u * f.a.x + 2 * u * t * f.c.x + t * t * f.b.x, y: u * u * f.a.y + 2 * u * t * f.c.y + t * t * f.b.y }; }
   function set(list) {
-    flows = list.map(f => { const len = f.c2 ? .85 * (Math.hypot(f.c.x - f.a.x, f.c.y - f.a.y) + Math.hypot(f.c2.x - f.c.x, f.c2.y - f.c.y) + Math.hypot(f.b.x - f.c2.x, f.b.y - f.c2.y)) : Math.hypot(f.c.x - f.a.x, f.c.y - f.a.y) + Math.hypot(f.b.x - f.c.x, f.b.y - f.c.y); const ps = []; for (let i = 0; i < (f.n || 3); i++) ps.push({ t: i / (f.n || 3) + Math.random() * .4 / (f.n || 3) }); return { ...f, len, ps }; });
+    flows = list.map(f => { const len = f.c2 ? .85 * (Math.hypot(f.c.x - f.a.x, f.c.y - f.a.y) + Math.hypot(f.c2.x - f.c.x, f.c2.y - f.c.y) + Math.hypot(f.b.x - f.c2.x, f.b.y - f.c2.y)) : Math.hypot(f.c.x - f.a.x, f.c.y - f.a.y) + Math.hypot(f.b.x - f.c.x, f.b.y - f.c.y); const ps = [], n = Math.max(1, Math.round((f.n || 3) * ISXP.k.arm)); for (let i = 0; i < n; i++) ps.push({ t: i / n + Math.random() * .4 / n }); return { ...f, len, ps }; });
     if (reduce) draw(0);
   }
   function draw(dt) {
@@ -2789,7 +2796,7 @@ function flowsFor(key) {
   return out;
 }
 
-let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = false, hoverIso = null, hlFlow = null;
+let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = false, hoverIso = null, hlFlow = null, hlPred = null;
 const HUBS = new Set(['PLAT', 'NYC', 'FAB', 'DC', 'SLV', 'DEFHUB', 'R_EUR', 'R_CHN', 'R_APAC', 'R_AMER', 'R_MEA', 'MPM', ...DCS.map(d => d[0])]);
 function blocColour(iso) {
   const c = CTY[iso];
@@ -2818,20 +2825,26 @@ function strokeColor(f) {
   return col ? rgba(col, .9) : 'rgba(140,170,200,.22)';
 }
 function polyAlt(f) { const iso = f.properties.iso; return iso && (iso === selIso || iso === hoverIso) ? .028 : (mapMode === 'bloc' && CTY[iso] && CTY[iso].ai) ? .02 : blocColour(iso) ? .007 : .004; }
-let declTimer = null;
+let declTimer = null, declSig = '', declHold = 0, zLevel = '';
 function declutter() {
   clearInterval(declTimer);
   declTimer = setInterval(() => {
     if (!globe || $('scene-map').hidden || document.hidden || introEl) return;
+    /* v2: three zoom levels (far, mid, near) set how dense the labels are; the work below runs only while the view is changing */
+    const pv = globe.pointOfView(), z = pv.altitude > 2.7 ? 'far' : pv.altitude < 1.2 ? 'near' : 'mid';
+    if (z !== zLevel) { zLevel = z; ROOT.dataset.z = z; emit('zoom', z); }
+    const sig = [pv.lat.toFixed(1), pv.lng.toFixed(1), pv.altitude.toFixed(2), $('globe').querySelectorAll('.glab').length, window.innerWidth, window.innerHeight].join('|');
+    if (sig === declSig) { if (declHold <= 0) return; declHold--; } else { declSig = sig; declHold = 5; }
+    const cap = z === 'far' ? 9 : 1e9; let shown = 0;
     const els = [...$('globe').querySelectorAll('.glab')].filter(e => e.style.opacity !== '0');
     els.sort((a, b) => +b.dataset.pri - +a.dataset.pri);
-    const kept = [...ROOT.querySelectorAll('.hud-top > *, #isx-tabs .tb, #isx-hint, #isx-mapnote, #isx-resbar .res, #isx-mapmodes, #isx-tournarr')].map(e => e.getBoundingClientRect()).filter(r => r.width);
+    const kept = [...ROOT.querySelectorAll('.hud-top > *, #isx-tabs .tb, #isx-hint, #isx-mapnote, #isx-resbar .res, #isx-mapmodes, #isx-tournarr, #isx-insight, #isx-vchip')].map(e => e.getBoundingClientRect()).filter(r => r.width);
     const box = $('globe').getBoundingClientRect();
     els.forEach(e => {
       const r = e.getBoundingClientRect(); if (!r.width) return;
-      const hit = r.left < box.left + 2 || r.right > box.right - 2 || r.top < box.top + 24 || kept.some(k => r.left < k.right + 4 && r.right > k.left - 4 && r.top < k.bottom + 2 && r.bottom > k.top - 2);
+      const hit = shown >= cap || r.left < box.left + 2 || r.right > box.right - 2 || r.top < box.top + 24 || kept.some(k => r.left < k.right + 4 && r.right > k.left - 4 && r.top < k.bottom + 2 && r.bottom > k.top - 2);
       e.style.visibility = hit ? 'hidden' : 'visible';
-      if (!hit) kept.push(r);
+      if (!hit) { kept.push(r); shown++; }
     });
   }, 220);
 }
@@ -2885,11 +2898,12 @@ function initGlobe() {
     const ctr = globe.controls(); ctr.enableZoom = false; ctr.autoRotateSpeed = .35; ctr.enableDamping = true;
     if (typeof globe.onGlobeReady === 'function') globe.onGlobeReady(globeReady);
     if (COARSE) { try { globe.renderer().domElement.style.touchAction = 'pan-y'; ctr.rotateSpeed = 1.15; } catch (e) { /* ignore */ } }
-    try { globe.renderer().setPixelRatio(Math.min(window.devicePixelRatio || 1, innerWidth < 761 ? 1.5 : 2)); } catch (e) { /* ignore */ }
+    try { globe.renderer().setPixelRatio(globeDpr()); } catch (e) { /* ignore */ }
     const fit = () => { const r = host.getBoundingClientRect(); if (!globe || r.width < 2 || r.height < 2) return; globe.width(r.width).height(r.height); };
     fit(); new ResizeObserver(fit).observe(host);
   } catch (e) { host.innerHTML = '<div class="nogl">The 3D globe could not start in this browser (WebGL is needed).</div>'; globe = null; }
 }
+const globeDpr = () => Math.min(window.devicePixelRatio || 1, innerWidth < 761 ? Math.min(1.5, ISXP.k.dpr) : ISXP.k.dpr);
 const REVPOV = { lat: 22, lng: -35, altitude: 2.15 };
 function renderGlobe(move) {
   if (!globe) return;
@@ -2898,7 +2912,7 @@ function renderGlobe(move) {
   const arcs = [], rings = [], points = [], html = [];
   const node = {};
   const fkey = f => f.from + '>' + f.to;
-  const inv = f => hlFlow ? fkey(f) === hlFlow : (!selIso || [f.from, f.to].includes(selIso) || (selIso === 'USA' && (HUBS.has(f.from) || HUBS.has(f.to))));
+  const inv = f => hlPred ? hlPred(f) : hlFlow ? fkey(f) === hlFlow : (!selIso || [f.from, f.to].includes(selIso) || (selIso === 'USA' && (HUBS.has(f.from) || HUBS.has(f.to))));
   if (s.key === 'inputs' && !revMode) { toolsWorld(points, html, rings); } else if (s.key === 'surplus' && surMode === 'ai') { surplusAI(points, html); } else if (s.key === 'surplus') {
     Object.entries(CTY).filter(([k, c]) => c.ca && LL[k] && (k === 'USA' || c.pax || c.eu || c.endorse || c.waico || ['MEX', 'THA', 'CAN', 'CHE'].includes(k))).forEach(([k, c]) => {
       const v = c.ca[0]; if (Math.abs(v) < 2) return;
@@ -2913,10 +2927,13 @@ function renderGlobe(move) {
       const a = LL[f.from], b = LL[f.to]; if (!a || !b) return;
       const on = inv(f), w = .12 + .95 * f.k;
       const lab = `<b>${esc(NAME(f.from))} → ${esc(NAME(f.to))}</b>${f.v != null ? `<div class="v" style="color:${f.color}">${f.lab || fmtBn(f.v)}</div>` : ''}${f.sec ? `<div class="st">${esc(REV.sectors[f.sec][0])}</div>` : ''}${f.d ? `<div class="st">${esc(f.d)}</div>` : ''}`;
-      arcs.push({ s: a, e: b, color: [rgba(f.color, on ? .32 : .08), rgba(f.color, on ? .32 : .08)], stroke: Math.max(.45, w * .8), dl: 1, dg: 0, ig: 0, time: 0, label: lab });
+      /* v2: one hierarchy per step. A flow’s track is as strong as its share of the step (k); the moving stream is brightest on the
+         leading flows and thins on the small ones, so the eye lands on what carries the step. Dimmed flows keep a faint track. */
+      const lead = f.k >= .45, ta = on ? .13 + .25 * Math.min(1, f.k) : .05, sa = on ? .5 + .45 * Math.min(1, f.k * 1.5) : .12;
+      arcs.push({ s: a, e: b, color: [rgba(f.color, ta), rgba(f.color, ta)], stroke: Math.max(.45, w * .8), dl: 1, dg: 0, ig: 0, time: 0, label: lab, from: f.from, to: f.to, track: 1, on });
       const d = gcMid(a, b, .5).dist;
-      const nstream = f.schem ? 1 : 1 + Math.round(2 * f.k);
-      for (let i = 0; i < nstream; i++) arcs.push({ s: a, e: b, color: [rgba(f.color, on ? .95 : .2), rgba('#ffffff', on ? .95 : .2)], stroke: w * 1.15 + .12, dl: .035 + .03 * f.k, dg: .16 + Math.random() * .1, ig: Math.random(), time: reduce ? 0 : 900 + d * 2600, label: lab });
+      const nstream = on || ISXP.k.streams >= 1 ? Math.max(1, Math.round((f.schem ? 1 : 1 + 2 * f.k) * ISXP.k.streams)) : 0;
+      for (let i = 0; i < nstream; i++) arcs.push({ s: a, e: b, color: [rgba(f.color, sa), rgba('#ffffff', on ? (lead ? .98 : .78) : .14)], stroke: w * 1.15 + .12, dl: .035 + .03 * f.k, dg: .16 + Math.random() * .1, ig: Math.random(), time: reduce ? 0 : 900 + d * 2600, label: lab, from: f.from, to: f.to, on });
       for (const k of [f.from, f.to]) node[k] = (node[k] || 0) + (f.v || 3);
       if (on && !f.schem && f.v != null && (f.k >= .3 || selIso || hlFlow) && !(revMode && revSec === 'all')) {
         const hubEnd = HUBS.has(f.to) ? f.from : HUBS.has(f.from) ? f.to : null;
@@ -2952,7 +2969,12 @@ function renderGlobe(move) {
     if (k.startsWith('D_')) { const d = DCS.find(x => x[0] === k); val = dcGW(d).toFixed(1) + ' GW'; }
     if (!(reg && html.some(h => h.ll === LL[k]))) html.push({ ll: LL[k], alt: .03, el: makeLabel(lab, reg ? '' : 'hub', val, reg ? 2e5 : 1e9) });
   }
+  /* v2: no pulsing rings under reduced motion; on a low tier only the hubs keep theirs. Then the extra layers (v2 modules) add theirs. */
+  if (reduce) rings.length = 0; else if (ISXP.k.rings < 2) { for (let i = rings.length - 1; i >= 0; i--) if (rings[i].color !== '#ffffff') rings.splice(i, 1); }
+  const G = { step: s, arcs, rings, points, html, sel: { iso: selIso, firm: selFirm }, rev: revMode };
+  GLAY.forEach(fn => { try { fn(G); } catch (e) { /* a layer never breaks the globe */ } });
   globe.arcsData(arcs).ringsData(rings).pointsData(points).htmlElementsData(html);
+  declSig = '';
   repaint();
   if (move) {
     const r = $('globe').getBoundingClientRect(), asp = r.width / Math.max(1, r.height), k = asp < .95 ? .95 / asp : 1;
@@ -2960,6 +2982,7 @@ function renderGlobe(move) {
     globe.controls().autoRotate = !!s.spin && !reduce;
   }
   $('mapnote').textContent = revMode ? 'Revenue by region, latest fiscal year' : s.key === 'surplus' ? 'Current account, 2025' : (s.note || '');
+  emit('globe', s.key);
 }
 
 /* ================= the imperial arm: sectors, firms and the state ================= */
@@ -3467,7 +3490,7 @@ function buildMapModes() {
     b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); }); host.appendChild(b);
     if (k === mapMode && m.grad) { host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${m.lo}</span><span>${m.hi}</span></div>`); }
   });
-  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">How to use the globe</button></div>');
+  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">How to use the globe</button><button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
 }
 /* phone: the arm as tap-open lists */
@@ -4009,7 +4032,10 @@ function after5() {
   narr6(); legend6(); supProg();
   $('mapnote').textContent = STEPS[step].key === 'surplus' ? surNote() : $('mapnote').textContent;
   const tb = $('tabs').querySelectorAll('.tb'); STEPS.forEach((s, i) => { const b = tb[i + 1]; if (b) b.classList.toggle('vis', VIS.has(i)); });
+  /* v2: the tiles a step speaks to are lit, the others stay calm */
+  let lit = 0; $('resbar').querySelectorAll('.res').forEach(b => { const on = step > 0 && +b.dataset.si === step; b.classList.toggle('lit', on); if (on) lit++; }); $('resbar').classList.toggle('haslit', lit > 0);
   requestAnimationFrame(fit6);
+  emit('narr');
 }
 function surNote() { return surMode === 'ai' ? 'Bars: gross AI-hardware exports as % of GDP, 2025, on a square-root scale so smaller economies stay visible (*Taiwan: broader ICT category)' : 'Bars: current-account balance, 2025, $bn; labels add % of GDP'; }
 function narr6() {
@@ -4078,7 +4104,7 @@ function buildResbar() {
   const host = $('resbar'); host.innerHTML = '';
   (LIVE.resbar || []).forEach(r => {
     const w = RESW[r.id] || ['', null], si = STEPS_D.findIndex(x => x.key === w[1]);
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'res panel'; b.style.setProperty('--rc', r.c); b.style.setProperty('--pc', r.c);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'res panel'; b.style.setProperty('--rc', r.c); b.style.setProperty('--pc', r.c); b.dataset.si = si;
     const ic = si > 0 ? STEPS_D[si].ic : 'all', dir = r.dir === 'down' ? '<i class="dir dn" aria-hidden="true">▼</i>' : r.dir === 'up' ? '<i class="dir up" aria-hidden="true">▲</i>' : '';
     b.innerHTML = `<span class="k"><span class="ri6">${svgIc(ic, 12)}</span>${esc(r.k)}</span><span class="v">${esc(r.v)}${dir}</span><span class="rd6">${esc(r.d || '')}</span><span class="rq" aria-hidden="true">?</span>`;
     b.setAttribute('aria-label', `${r.k}: ${r.v}. ${r.what} Why it matters: ${w[0]}`);
@@ -4980,20 +5006,26 @@ function renderSide(lev) {
 }
 
 /* ---------- moving particles along the active relations ---------- */
-let fparts = [];
+/* v2: each relation's path is sampled once (41 points) when the particles are built; the loop only interpolates, so a frame costs
+   two attribute writes per particle instead of a path query. The loop itself is owned by the registry in v2/perf.js: it runs only while
+   the simulator is on screen, the browser tab is visible and motion is allowed. */
+let fparts = [], fOn = false;
 function finParticles(act) {
   const svg = $('rmap'), g = svg && svg.querySelector('#isx-fpart'); if (!g) return;
   g.innerHTML = ''; fparts = [];
-  const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig');
-  idx.forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh')) return; const L = p.getTotalLength(), n = act ? 3 : 1; for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, p, L, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); } });
+  const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig'), N = 40;
+  idx.forEach(i => {
+    const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh')) return;
+    const L = p.getTotalLength(), n = act ? Math.max(1, Math.round(3 * ISXP.k.sim)) : (ISXP.k.sim < .5 && i % 2 ? 0 : 1), pts = new Float32Array((N + 1) * 2);
+    if (!n) return;
+    for (let j = 0; j <= N; j++) { const q = p.getPointAtLength(L * j / N); pts[j * 2] = q.x; pts[j * 2 + 1] = q.y; }
+    for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, pts, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); }
+  });
 }
-function finLoop() {
-  cancelAnimationFrame(fRAF); if (reduce) { fparts.forEach(q => { const pt = q.p.getPointAtLength(q.L * .5); q.c.setAttribute('cx', pt.x); q.c.setAttribute('cy', pt.y); }); return; }
-  const t0 = performance.now();
-  (function f(now) { if (view !== 'fin') return; const dt = now - t0;
-    fparts.forEach(q => { const u = (q.o + dt * q.sp) % 1, pt = q.p.getPointAtLength(q.L * u); q.c.setAttribute('cx', pt.x.toFixed(1)); q.c.setAttribute('cy', pt.y.toFixed(1)); });
-    fRAF = requestAnimationFrame(f); })(t0);
-}
+function finPlace(q, u) { const x = u * 40, j = Math.min(39, x | 0), t = x - j, P = q.pts; q.c.setAttribute('cx', (P[j * 2] + (P[j * 2 + 2] - P[j * 2]) * t).toFixed(1)); q.c.setAttribute('cy', (P[j * 2 + 1] + (P[j * 2 + 3] - P[j * 2 + 1]) * t).toFixed(1)); }
+function finStart() { if (fOn || reduce || !fparts.length) return; fOn = true; (function f(now) { if (!fOn) return; for (const q of fparts) finPlace(q, (q.o + now * q.sp) % 1); fRAF = requestAnimationFrame(f); })(performance.now()); }
+function finStop() { fOn = false; cancelAnimationFrame(fRAF); }
+function finLoop() { finStop(); fparts.forEach(q => finPlace(q, reduce ? .5 : q.o % 1)); if (!reduce) ISXP.sync(); }
 
 /* ---------- the capital stack: tower and deal anatomy ---------- */
 const TOWER = [
@@ -5098,7 +5130,7 @@ const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view
 const INTRO_KEY = 'isx-intro-seen';
 const INTRO_HTML = `
   <div class="in-hue" aria-hidden="true"></div>
-  <button type="button" class="in-skip in-top" id="isx-in-skip">Enter the stack <span aria-hidden="true">→</span></button>
+  <button type="button" class="in-skip in-top" id="isx-in-skip">Back to the map <span aria-hidden="true">→</span></button>
   <div class="in-body">
     <p class="in-kick">The Imperial Stack · an interactive map</p>
     <h2 class="in-title hl" id="isx-intro-h"><span>This is how America finances</span> <span>its imperial stack</span></h2>
@@ -5113,17 +5145,16 @@ const INTRO_HTML = `
       <div class="in-how">
         <h3>How to read the map</h3>
         <div class="in-ways">
-          <p><b>Follow the loop.</b> Press <em>Enter the stack</em>, then <em>Play</em> or the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
+          <p><b>Follow the loop.</b> Press <em>Play</em> or use the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
           <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the Scott Bessent Simulator and 14 Scenarios. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
         </div>
       </div>
     </div>
     <div class="in-acts">
-      <button type="button" class="in-go" id="isx-in-go"><span>Enter the stack</span><i aria-hidden="true">→</i></button>
+      <button type="button" class="in-go" id="isx-in-go"><span>Back to the map</span><i aria-hidden="true">→</i></button>
       <a class="in-thesis" href="${SUBSTACK}/subscribe" target="_blank" rel="noopener" title="One essay explaining the whole map. Coming soon: subscribe to get it.">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
     </div>
-    <label class="in-off"><input type="checkbox" id="isx-in-off"><span>Don’t show this screen again</span></label>
-    <p class="in-foot">Work in progress · v.1.12 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
+    <p class="in-foot">Work in progress · v.2.0 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -5143,7 +5174,6 @@ function introGlobeIn(p) { if (!p) return; try { globe.pointOfView(p, 2800); } c
 
 function introClose(enter) {
   if (!introEl || introBusy) return; introBusy = true; introMark();
-  setTimeout(() => tipsMaybe('globe'), enter && !reduce ? 2700 : 800); /* first-visit globe tips, once the map has settled */
   if (globe && (view === 'map' || (view === 'arm' && armMode === 'rev')) && !document.hidden) globe.resumeAnimation();
   const el = introEl, wrap = ROOT.querySelector('.wrap'), anim = enter && !reduce;
   const restore = () => { try { document.documentElement.style.overflow = introHtmlOv; } catch (e) { /* ignore */ } };
@@ -5179,8 +5209,6 @@ function introOpen() {
   const go = el.querySelector('#isx-in-go'), skip = el.querySelector('#isx-in-skip');
   go.addEventListener('click', () => introClose(true));
   skip.addEventListener('click', () => introClose(true));
-  const off = el.querySelector('#isx-in-off');
-  if (off) { off.checked = introOff(); off.addEventListener('change', () => stSet(TKEY.intro, off.checked ? '1' : null)); }
   el.addEventListener('keydown', e => {
     const onBtn = e.target.closest && e.target.closest('button, a, input, label');
     if (e.key === 'Escape') { e.preventDefault(); introClose(false); }
@@ -5202,9 +5230,8 @@ function initIntro() {
   const ab = $('about'); if (ab) ab.addEventListener('click', () => introOpen());
   const h1 = ROOT.querySelector('.hud-top .brand h1');
   if (h1) { h1.classList.add('introlink'); h1.title = 'About this map: replay the introduction'; h1.addEventListener('click', () => introOpen()); }
-  const deep = location.hash && location.hash !== '#';
-  if (!deep && !introOff()) introOpen(); /* every fresh load opens on the entry screen unless the reader turned it off; deep links skip it */
-  else setTimeout(() => tipsMaybe('globe'), 1200);
+  /* v2: the page opens straight on the instrument. The first moment (v2/insight.js) replaces the automatic entry screen and tips;
+     “About this map” still opens this screen and “How to use the globe”, under the map, still opens the tips. */
 }
 
 /* v8 init: methodology */
@@ -5265,7 +5292,7 @@ function narrate() {
   nb.style.setProperty('--sc', sc);
   $('n-title').textContent = h; $('n-text').textContent = x; $('n-scale').textContent = scale; $('n-fig').textContent = fig; $('n-cap').textContent = cap;
 }
-function setStep(i) { tipsAct('step'); if (isxBooted) track('Step', { step: String(i) }); step = i; hlFlow = null; buildTabs(); narrate(); renderGlobe(true); if (!selIso && view === 'map') renderCountryCard(); requestAnimationFrame(centreTab); after5(); }
+function setStep(i) { tipsAct('step'); if (isxBooted) track('Step', { step: String(i) }); step = i; hlFlow = null; buildTabs(); narrate(); renderGlobe(true); if (!selIso && view === 'map') renderCountryCard(); requestAnimationFrame(centreTab); after5(); routeSync(); emit('step', step); }
 function stopPlay() { clearInterval(timer); timer = null; const pb = document.getElementById('isx-play'); if (pb) pb.querySelector('.t').textContent = 'Play'; }
 function play() {
   if (timer) { stopPlay(); return; }
@@ -5279,11 +5306,12 @@ function select(iso, firm) {
   ROOT.querySelectorAll('.firm').forEach(f => f.classList.toggle('sel', !!firm && f.dataset.name === firm.name));
   renderCountryCard(); renderGlobe(false); after5();
   if (iso && globe && LL[iso] && !reduce && !$('scene-map').hidden) { globe.controls().autoRotate = false; const pov = globe.pointOfView(); globe.pointOfView({ lat: LL[iso][0] * .8, lng: LL[iso][1], altitude: Math.max(1.4, Math.min(pov.altitude, 2.2)) }, 1200); }
+  routeSync(); emit('select', { iso: selIso, firm: selFirm });
 }
 function renderCountryCard() {
   resetCardParts();
   $('clear').hidden = !selIso;
-  if (!selIso) { renderStepTable(); return; }
+  if (!selIso) { renderStepTable(); emit('card'); return; }
   const iso = selIso, c = CTY[iso];
   $('c-title').innerHTML = ''; if (FLAG[c.cc]) { const i = document.createElement('img'); i.src = FLAG[c.cc]; i.alt = ''; $('c-title').appendChild(i); }
   $('c-title').appendChild(document.createTextNode(c.name));
@@ -5314,6 +5342,7 @@ function renderCountryCard() {
   FIRMS.filter(f => f.iso === iso).forEach(f => $('c-firms').appendChild(firmChip(f)));
   const notes = { TWN: 'Taiwan endorses Pax Silica through a separate US–Taiwan statement.', KAZ: 'The only country in both Pax Silica and WAICO.', MEX: 'In neither bloc, Mexico is the second-largest source of US computer imports: server assembly for US platforms.', VNM: 'Vietnam joined WAICO on 31 July 2026.', MYS: 'A founding WAICO member and a major chip packaging and testing hub.', CHN: 'The largest buyer of chips and chip-making tools from the alliance in 2025.', NLD: 'Home of ASML, the only maker of EUV lithography machines.' };
   $('c-note').innerHTML = (GM[iso] ? '<b>Growth model.</b> ' + esc(GM[iso]) + ' ' : '') + esc(notes[iso] || '') + (ownNote(iso) ? ' <b>Who owns the US shares booked here.</b> ' + esc(ownNote(iso)) : '');
+  emit('card');
 }
 
 function renderStepTable() {
@@ -5451,6 +5480,7 @@ function setView(v) {
   else if (v === 'story') { buildStoryPicker(); buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); requestAnimationFrame(storyScroll); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
   buildTabs(); narrate(); renderLegend(); after5(); routeSync();
+  emit('view', view); ISXP.sync();
 }
 ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
 ['machine', 'rev'].forEach(m => $('m-' + m).addEventListener('click', () => { armMode = m; $('m-machine').setAttribute('aria-pressed', String(m === 'machine')); $('m-rev').setAttribute('aria-pressed', String(m === 'rev')); setView('arm'); }));
@@ -5468,11 +5498,10 @@ window.addEventListener('resize', () => { if (view === 'arm') pArm.size(); if (v
    “How to use the globe” under the map and “How to use” in the simulator bring them back. */
 var isxBooted = false, gt = null, gtStep = 0, gtBusy = false;
 const COARSE = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } })();
-const TKEY = { globe: 'isx-tips-globe', sim: 'isx-tips-sim', intro: 'isx-intro-off' };
+const TKEY = { globe: 'isx-tips-globe', sim: 'isx-tips-sim' };
 function stGet(k, s) { try { return (s ? sessionStorage : localStorage).getItem(k); } catch (e) { return null; } }
 function stSet(k, v, s) { try { if (v == null) (s ? sessionStorage : localStorage).removeItem(k); else (s ? sessionStorage : localStorage).setItem(k, v); } catch (e) { /* storage blocked: tips simply show again */ } }
 function tipsOff(k) { return stGet(TKEY[k]) === 'off' || stGet(TKEY[k], true) === 'skip'; }
-function introOff() { return stGet(TKEY.intro) === '1'; }
 
 /* Analytics: off by design. The site loads no third-party scripts, so track() does nothing today.
    To switch on Plausible (cookie-free): add Plausible’s deferred script tag to the head of this page
@@ -5521,11 +5550,6 @@ function gTips() {
     { k: 'step', h: 'Step through the loop', p: PHONE() ? 'The arrows under the globe take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: PHONE() ? '#isx-mstep' : '#isx-tabs' },
     { k: 'zoom', h: 'Zoom', p: (COARSE ? '+ and −' : '+ and − (or the + and − keys)') + ' zoom in and out; ⟲ brings back the view for this step.', t: '#isx-zoom' },
   ];
-}
-function tipsMaybe(k) {
-  if (k !== 'globe' || gt || introEl || view !== 'map' || tipsOff('globe') || !isxBooted || ROOT.classList.contains('no-gl')) return;
-  if (!globe) { setTimeout(() => tipsMaybe(k), 1500); return; } /* the globe library is still on its way */
-  gtOpen(false);
 }
 function gtMark(t) { ROOT.querySelectorAll('.isx-tipon').forEach(e => e.classList.remove('isx-tipon')); if (t) { const e = ROOT.querySelector(t); if (e) e.classList.add('isx-tipon'); } }
 function gtPlace() {
@@ -5659,21 +5683,23 @@ const ROUTES = new Map([
   ['scenarios', ['story']], ['chains', ['story']], ['story', ['story']],
 ]);
 let routeMute = true, lastView = 'map';
-function routeOf(h) { return ROUTES.get(String(h || '').replace(/^#\/?/, '').toLowerCase()) || null; }
+function routeOf(h) { return ROUTES.get(String(h || '').replace(/^#\/?/, '').split('/')[0].toLowerCase()) || null; }
 function slugOf(v, m) {
   if (v === 'arm') return m === 'rev' ? 'revenue' : 'arm';
   if (v === 'fin') return m === 'stack' ? 'capital-stack' : 'simulator';
   if (v === 'story' || v === 'chain') return 'scenarios';
   return 'circuit';
 }
-function hashFor() { return slugOf(view, view === 'arm' ? armMode : finMode); }
+function slugNow() { return slugOf(view, view === 'arm' ? armMode : finMode); }
+/* v2: the link also holds the state inside the tab; v2/state.js writes and reads that part */
+function hashFor() { let d = ''; try { d = window.ISX && ISX.hashDetail ? ISX.hashDetail() || '' : ''; } catch (e) { /* ignore */ } return slugNow() + d; }
 function applyModes(r) {
   if (r[0] === 'arm') { armMode = r[1]; $('m-machine').setAttribute('aria-pressed', String(armMode === 'machine')); $('m-rev').setAttribute('aria-pressed', String(armMode === 'rev')); }
   if (r[0] === 'fin') finMode = r[1];
 }
 function routeSync() {
   if (routeMute) return;
-  const slug = hashFor(), want = '#' + slug, tabChanged = view !== lastView;
+  const slug = slugNow(), want = '#' + hashFor(), tabChanged = view !== lastView;
   lastView = view; closeShare();
   if (location.hash === want) return;
   try { (tabChanged ? history.pushState : history.replaceState).call(history, null, '', want); } catch (e) { /* sandboxed frame: the tab still works, the address just stays put */ }
@@ -5681,9 +5707,8 @@ function routeSync() {
 }
 function onRoute() {
   const r = routeOf(location.hash); if (!r) return;
-  if (slugOf(r[0], r[1]) === hashFor()) return;
   routeMute = true;
-  try { applyModes(r); setView(r[0]); } finally { routeMute = false; }
+  try { if (slugOf(r[0], r[1]) !== slugNow()) { applyModes(r); setView(r[0]); } if (window.ISX && ISX.applyDetail) ISX.applyDetail(location.hash); } finally { routeMute = false; }
   lastView = view;
 }
 addEventListener('popstate', onRoute); addEventListener('hashchange', onRoute);
@@ -5724,8 +5749,9 @@ const SH_TXT = {
 };
 const SH_NAME = { circuit: 'The circuit', arm: 'The imperial arm', revenue: 'The imperial arm · revenue map', simulator: 'Scott Bessent Simulator', 'capital-stack': 'Simulator · capital stack', scenarios: 'Scenarios' };
 function shareData() {
-  const slug = hashFor(), k = slug === 'revenue' ? 'arm' : slug === 'capital-stack' ? 'simulator' : slug;
-  return { slug, url: SHARE_BASE + '#' + slug, text: SH_TXT[k], name: SH_NAME[slug], title: 'The Imperial Stack · ' + SH_NAME[slug] };
+  const slug = slugNow(), k = slug === 'revenue' ? 'arm' : slug === 'capital-stack' ? 'simulator' : slug;
+  let more = ''; try { more = window.ISX && ISX.viewName ? ISX.viewName() || '' : ''; } catch (e) { /* ignore */ }
+  return { slug, url: SHARE_BASE + '#' + hashFor(), text: SH_TXT[k], name: SH_NAME[slug] + (more ? ' · ' + more : ''), title: 'The Imperial Stack · ' + SH_NAME[slug] };
 }
 function copyText(t) {
   const legacy = () => { try { const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; ROOT.appendChild(a); a.select(); a.setSelectionRange(0, t.length); const ok = document.execCommand('copy'); a.remove(); return ok; } catch (e) { return false; } };
@@ -6211,13 +6237,51 @@ if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
 const R0 = routeOf(location.hash); if (R0) applyModes(R0);
 const start = R0 ? R0[0] : 'map';
 setView(start); lastView = view;
-if (R0 && location.hash !== '#' + slugOf(R0[0], R0[1])) { try { history.replaceState(null, '', '#' + slugOf(R0[0], R0[1])); } catch (e) { /* ignore */ } } /* old and mixed-case hashes become the clean one */
+window.__isxHash0 = location.hash; /* v2: the link as it arrived, for v2/state.js to restore the state inside the tab */
+if (R0 && location.hash.replace(/^#\/?/, '').split('/')[0] !== slugOf(R0[0], R0[1])) { try { history.replaceState(null, '', '#' + slugOf(R0[0], R0[1]) + location.hash.replace(/^#\/?[^/]*/, '')); } catch (e) { /* ignore */ } } /* old and mixed-case hashes become the clean one */
 if (start === 'map') setStep(0);
 if (location.hash === '#tour') setTimeout(play, 3500);
 document.addEventListener('visibilitychange', () => { if (!globe) return; if (document.hidden) globe.pauseAnimation(); else globeWake(); })
-isxBooted = true; routeMute = false;
+
+/* ================= v2: the seam =================
+   One interface for the v2 modules (/imperial-stack/v2/*.js). They read state through it, call the setters above, listen to events
+   (view, step, select, card, narr, globe, zoom, motion) and add layers to the globe. They never reach into this script. */
+window.ISX = {
+  version: '2.0', root: ROOT, $, on, emit, perf: ISXP,
+  get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
+  get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
+  data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
+  setView, setStep, stepBy, select, stopPlay, renderGlobe, repaint, renarrate: () => { narr6(); legend6(); }, recard: renderCountryCard, routeSync, introOpen, tipsOpen: () => { stSet(TKEY.globe, null, true); gtOpen(true); },
+  util: { esc, rgba, fmtBn, makeLabel, gcMid, NAME, svgIc, stGet, stSet, crisp, copyText, COARSE, PHONE },
+  globeLayer(fn) { GLAY.push(fn); },
+  highlight(pred) { hlPred = pred || null; renderGlobe(false); },
+  hashDetail: null, applyDetail: null, viewName: null,
+  load(name) {
+    const el = document.getElementById('isx-data-' + name);
+    if (el) { try { return Promise.resolve(JSON.parse(el.textContent)); } catch (e) { return Promise.reject(e); } }
+    return fetch('/imperial-stack/data/' + name + '.json').then(r => { if (!r.ok) throw new Error(name + ' ' + r.status); return r.json(); });
+  },
+};
+/* every continuous loop is registered, so one place decides when it may run */
+ISXP.loop({ name: 'globe', still: true, start: globeWake, stop: globeWake });
+ISXP.loop({ name: 'arm', el: $('scene-arm'), want: () => view === 'arm' && armMode !== 'rev', start: () => pArm.start(), stop: () => pArm.stop() });
+ISXP.loop({ name: 'sim', el: $('scene-fin'), want: () => view === 'fin' && finMode === 'plumb', start: finStart, stop: finStop });
+/* the tier changed (slow frames), or the reader switched reduced motion on or off: redraw what moves with the new budget */
+ISXP.on(() => {
+  reduce = RMQ.matches;
+  try { if (globe) { globe.renderer().setPixelRatio(globeDpr()); if (reduce) globe.controls().autoRotate = false; } } catch (e) { /* ignore */ }
+  if (globeView()) renderGlobe(false);
+  if (view === 'arm' && armMode !== 'rev') { pArm.stop(); pArm.size(); renderArm(); }
+  if (view === 'fin' && finMode === 'plumb' && $('rmap')) styleRmap();
+  ISXP.sync(); emit('motion', reduce);
+});
+setTimeout(() => ISXP.watch(), 3000);
+isxBooted = true; routeMute = false; ISXP.sync();
 })();
 </script>
+<script defer src="/imperial-stack/v2/state.js"></script>
+<script defer src="/imperial-stack/v2/insight.js"></script>
+<script defer src="/imperial-stack/v2/own.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

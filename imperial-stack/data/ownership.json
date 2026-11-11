@@ -1,0 +1,386 @@
+{
+  "asof": "11 Nov 2026",
+  "note": "Ownership is a snapshot with a date. Holders are shown where their head office sits, which is not always where the money comes from: index-fund managers hold for savers worldwide. A star marks a figure taken from a secondary source or not confirmed in a filing. Sites are those named in the source given; the list is not complete.",
+  "roles": {
+    "hq": ["Seat", "Registered or principal office"],
+    "rhq": ["Regional head office", "Country or regional headquarters"],
+    "fab": ["Wafer fab", "Where chips are made on wafers (front end)"],
+    "at": ["Assembly and test", "Where chips are packaged and tested (back end)"],
+    "eq": ["Equipment plant", "Where machines or modules are built"],
+    "rd": ["Development", "Research and development site"],
+    "srv": ["Server assembly", "Where servers and racks are built"],
+    "dc": ["AI data-centre campus", "Campus on this map’s step 10"],
+    "site": ["Site", "Listed by the firm without a stated role"]
+  },
+  "firms": {
+    "ASML": {
+      "legal": "ASML Holding N.V.",
+      "seat": { "city": "Veldhoven", "iso": "NLD", "ll": [51.42, 5.4] },
+      "listing": "Euronext Amsterdam and Nasdaq (ASML)",
+      "control": "none",
+      "summary": "No controlling owner. The two holders above 3% in the Dutch register are US fund managers; the machines are built in Veldhoven and at factories in Taiwan.",
+      "holders": [
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 5.95, "txt": "5.95% of capital", "date": "notified 10 May 2021", "src": 0 },
+        { "name": "Capital Research and Management", "iso": "USA", "ll": [34.05, -118.25], "pct": 4.98, "txt": "4.98% of votes", "date": "notified 12 Jun 2025", "src": 1 }
+      ],
+      "sites": [
+        { "city": "Linkou", "iso": "TWN", "ll": [25.08, 121.39], "role": "eq", "note": "Linkou Factory", "src": 2 },
+        { "city": "Tainan", "iso": "TWN", "ll": [23.1, 120.28], "role": "eq", "note": "Tainan Factory", "src": 2 },
+        { "city": "Hsinchu", "iso": "TWN", "ll": [24.78, 121.0], "role": "rhq", "note": "Taiwan head office", "src": 2 },
+        { "city": "Hwaseong", "iso": "KOR", "ll": [37.21, 127.06], "role": "rhq", "note": "South Korea head office and training centre", "src": 2 },
+        { "city": "Shanghai", "iso": "CHN", "ll": [31.23, 121.47], "role": "rhq", "note": "China head office", "src": 2 },
+        { "city": "Tokyo", "iso": "JPN", "ll": [35.67, 139.74], "role": "rhq", "note": "Japan head office", "src": 2 },
+        { "city": "Wilton", "iso": "USA", "ll": [41.2, -73.44], "role": "site", "src": 2 },
+        { "city": "San Diego", "iso": "USA", "ll": [32.9, -117.1], "role": "site", "src": 2 },
+        { "city": "Berlin", "iso": "DEU", "ll": [52.52, 13.4], "role": "site", "src": 2 }
+      ],
+      "open": ["The roles of Wilton, San Diego and Berlin are not stated on ASML’s locations page; the annual report was not opened in this round.", "The register shows each holder’s last notification, not today’s position."],
+      "src": [
+        ["AFM register of substantial holdings: BlackRock Inc. in ASML Holding N.V.", "seen 11 Nov 2026", "https://www.afm.nl/en/sector/registers/meldingenregisters/substantiele-deelnemingen/details?id=111840"],
+        ["AFM register of substantial holdings: Capital Research and Management Company in ASML Holding N.V.", "seen 11 Nov 2026", "https://www.afm.nl/en/sector/registers/meldingenregisters/substantiele-deelnemingen/details?id=176150"],
+        ["ASML, locations", "seen 11 Nov 2026", "https://www.asml.com/en/company/about-asml/locations"]
+      ]
+    },
+    "ASM Intl": {
+      "legal": "ASM International N.V.",
+      "seat": { "city": "Almere", "iso": "NLD", "ll": [52.37, 5.22] },
+      "listing": "Euronext Amsterdam (ASM)",
+      "control": "none",
+      "summary": "No controlling owner. A Japanese rival and supplier of the same fabs, Tokyo Electron, holds 4.66%.",
+      "holders": [
+        { "name": "Tokyo Electron", "iso": "JPN", "ll": [35.67, 139.74], "pct": 4.66, "txt": "4.66%", "date": "notified 3 Nov 2025", "src": 0, "firm": "Tokyo Electron" },
+        { "name": "Norges Bank", "iso": "NOR", "ll": [59.91, 10.74], "pct": 4.86, "txt": "4.86%*", "date": "undated listing, seen 11 Nov 2026", "src": 1, "star": true }
+      ],
+      "sites": [
+        { "city": "Almere", "iso": "NLD", "ll": [52.35, 5.25], "role": "rd", "note": "New head office, training hub and R&D site planned on the High Tech Campus; agreement announced December 2025", "src": 2 }
+      ],
+      "open": ["Production and development sites outside the Netherlands are not yet mapped.", "Norges Bank’s share comes from a market-data site, not from the register."],
+      "src": [
+        ["AFM register of substantial holdings: Tokyo Electron Limited in ASM International N.V.", "seen 11 Nov 2026", "https://www.afm.nl/en/sector/registers/meldingenregisters/substantiele-deelnemingen/details?id=182797"],
+        ["MarketScreener, ASM International shareholders (secondary)", "seen 11 Nov 2026", "https://uk.marketscreener.com/quote/stock/ASM-INTERNATIONAL-N-V-6312/company-shareholders/"],
+        ["Bits&Chips, ASM plots major expansion on Almere’s new high tech campus", "18 Dec 2025", "https://bits-chips.com/article/asm-plots-major-expansion-on-almeres-new-high-tech-campus/"]
+      ]
+    },
+    "Besi": {
+      "legal": "BE Semiconductor Industries N.V.",
+      "seat": { "city": "Duiven", "iso": "NLD", "ll": [51.95, 6.02] },
+      "listing": "Euronext Amsterdam (BESI)",
+      "control": "none",
+      "summary": "Dutch-listed, built in Asia. Applied Materials of the US is raising its stake to about 20%; the machines are made in Malaysia and China.",
+      "holders": [
+        { "name": "Applied Materials", "iso": "USA", "ll": [37.35, -121.96], "pct": 20, "txt": "≈20%, pending", "date": "announced 26 Oct 2026", "note": "Accelerated share purchase; delivery waits for the US antitrust (HSR) period. First investment April 2025, widely reported as about 9%*. No board seat sought; no present intention to go beyond about 20%.", "src": 0, "firm": "Applied Materials" }
+      ],
+      "sites": [
+        { "city": "Shah Alam", "iso": "MYS", "ll": [3.07, 101.52], "role": "eq", "note": "Production: moulding and plating equipment, tools", "src": 1 },
+        { "city": "Leshan", "iso": "CHN", "ll": [29.55, 103.77], "role": "eq", "note": "Production (Fico)", "src": 1 },
+        { "city": "Steinhausen", "iso": "CHE", "ll": [47.2, 8.49], "role": "rd", "note": "Die Attach group head office and development", "src": 1 },
+        { "city": "Radfeld", "iso": "AUT", "ll": [47.45, 11.91], "role": "rd", "src": 1 },
+        { "city": "’s-Hertogenbosch", "iso": "NLD", "ll": [51.69, 5.3], "role": "rd", "src": 1 },
+        { "city": "Singapore", "iso": "SGP", "ll": [1.35, 103.82], "role": "rd", "src": 1 }
+      ],
+      "open": ["The group’s legal seat and the full list of Die Attach production sites.", "The other large shareholders."],
+      "src": [
+        ["Applied Materials, press release: Applied Materials to increase its strategic investment in BE Semiconductor Industries", "26 Oct 2026", "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-increase-its-strategic-investment-be/"],
+        ["Besi, company overview (checked 7 Nov 2026)", "7 Nov 2026", "https://www.besi.com/"]
+      ]
+    },
+    "Nexperia": {
+      "legal": "Nexperia B.V.",
+      "seat": { "city": "Nijmegen", "iso": "NLD", "ll": [51.84, 5.86] },
+      "listing": "Not listed; owner listed in Shanghai",
+      "control": "disputed",
+      "summary": "Owned from China, run from the Netherlands, split in two. Wingtech is still the shareholder, but a Dutch court handed almost all its votes to an administrator in October 2025.",
+      "holders": [
+        { "name": "Wingtech Technology", "iso": "CHN", "ll": [31.23, 121.47], "pct": 100, "txt": "shareholder; votes with a court-appointed administrator", "date": "as reported 3 Nov 2026", "note": "The Enterprise Chamber in Amsterdam suspended the chief executive and transferred almost all voting rights on Wingtech’s shares to an independent administrator (October 2025), then ordered an investigation (February 2026). Wingtech sued in China for 8bn yuan (May 2026); Nexperia is claiming more than $2bn from Wingtech in Amsterdam (disclosed 3 Nov 2026). Wingtech’s exact percentage is not in the source*.", "src": 0, "disputed": true, "star": true }
+      ],
+      "sites": [
+        { "city": "Hamburg", "iso": "DEU", "ll": [53.55, 9.99], "role": "fab", "src": 1, "star": true },
+        { "city": "Greater Manchester", "iso": "GBR", "ll": [53.38, -2.12], "role": "fab", "src": 1, "star": true },
+        { "city": "Dongguan", "iso": "CHN", "ll": [23.02, 113.75], "role": "at", "note": "China restricted exports from here in October 2025; shipments resumed after talks between the two governments", "src": 0 },
+        { "city": "Seremban", "iso": "MYS", "ll": [2.73, 101.94], "role": "at", "src": 1, "star": true },
+        { "city": "Cabuyao", "iso": "PHL", "ll": [14.27, 121.12], "role": "at", "src": 1, "star": true }
+      ],
+      "open": ["Wingtech’s exact percentage and whether it is still the only shareholder.", "Who runs the Chinese units day to day.", "The date of the Dutch government’s own order under the Goods Availability Act (September or October 2025)."],
+      "src": [
+        ["NL Times, Nijmegen-based Nexperia sues Chinese parent company Wingtech for more than $2 billion", "3 Nov 2026", "https://nltimes.nl/2026/11/03/nijmegen-based-nexperia-sues-chinese-parent-company-wingtech-2-billion"],
+        ["Wikipedia, Nexperia (secondary; checked 7 Nov 2026)", "7 Nov 2026", "https://en.wikipedia.org/wiki/Nexperia"]
+      ]
+    },
+    "NXP": {
+      "legal": "NXP Semiconductors N.V.",
+      "seat": { "city": "Eindhoven", "iso": "NLD", "ll": [51.44, 5.47] },
+      "listing": "Nasdaq (NXPI)",
+      "control": "none",
+      "summary": "A Dutch company in law, American in ownership: listed only in New York, with five US fund managers above 5%. It makes chips on three continents.",
+      "holders": [
+        { "name": "FMR (Fidelity)", "iso": "USA", "ll": [42.35, -71.05], "pct": 10.19, "txt": "10.19%*", "date": "proxy table at 10 Apr 2026", "src": 0, "star": true },
+        { "name": "JPMorgan Chase", "iso": "USA", "ll": [40.755, -73.975], "pct": 8.06, "txt": "8.06%", "date": "proxy table at 10 Apr 2026", "src": 0 },
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 7.27, "txt": "7.27%*", "date": "proxy table at 10 Apr 2026", "src": 0, "star": true },
+        { "name": "Vanguard", "iso": "USA", "ll": [40.04, -75.51], "pct": 5.24, "txt": "5.24%*", "date": "proxy table at 10 Apr 2026", "src": 0, "star": true },
+        { "name": "Wellington Management", "iso": "USA", "ll": [42.36, -71.06], "pct": 5.16, "txt": "5.16%", "date": "proxy table at 10 Apr 2026", "src": 0 }
+      ],
+      "sites": [
+        { "city": "Nijmegen", "iso": "NLD", "ll": [51.83, 5.8], "role": "fab", "note": "200 mm, wholly owned", "src": 1 },
+        { "city": "Austin", "iso": "USA", "ll": [30.3, -97.66], "role": "fab", "note": "200 mm, wholly owned", "src": 1 },
+        { "city": "Chandler", "iso": "USA", "ll": [33.31, -111.84], "role": "fab", "note": "200 mm and a 150 mm gallium-nitride line, wholly owned", "src": 1 },
+        { "city": "Singapore", "iso": "SGP", "ll": [1.37, 103.93], "role": "fab", "note": "SSMC, 200 mm: NXP 61.2%, with TSMC. VSMC, 300 mm, from 2027: NXP 40%, Vanguard International 60%", "src": 1 },
+        { "city": "Dresden", "iso": "DEU", "ll": [51.13, 13.72], "role": "fab", "note": "ESMC, 300 mm, from 2028: TSMC 70%; Bosch, Infineon and NXP 10% each", "src": 1 },
+        { "city": "Kaohsiung", "iso": "TWN", "ll": [22.72, 120.3], "role": "at", "src": 1 },
+        { "city": "Bangkok", "iso": "THA", "ll": [13.76, 100.5], "role": "at", "src": 1 },
+        { "city": "Kuala Lumpur", "iso": "MYS", "ll": [3.1, 101.6], "role": "at", "src": 1 },
+        { "city": "Tianjin", "iso": "CHN", "ll": [39.08, 117.2], "role": "at", "src": 1 }
+      ],
+      "links": [{ "to": "TSMC", "t": "Joint fabs in Singapore (SSMC) and Dresden (ESMC)" }],
+      "open": ["The proxy’s shares for FMR, BlackRock and Vanguard rest on filings dated 2023 and 2024; newer 13G filings exist and were not opened."],
+      "src": [
+        ["NXP Semiconductors N.V., proxy statement (DEF 14A), security ownership table", "27 Apr 2026", "https://www.sec.gov/Archives/edgar/data/0001413447/000141344726000026/nxpi-20260427.htm"],
+        ["NXP Semiconductors N.V., annual report (10-K) for 2025, manufacturing", "19 Feb 2026", "https://www.boardroomalpha.com/sec/nxpi-10-k-2026-02-19-0001413447-26-000008"]
+      ]
+    },
+    "TSMC": {
+      "legal": "Taiwan Semiconductor Manufacturing Company Limited",
+      "seat": { "city": "Hsinchu", "iso": "TWN", "ll": [24.78, 121.0] },
+      "listing": "Taiwan Stock Exchange (2330) and New York (TSM)",
+      "control": "state",
+      "summary": "A fifth of the shares trade in New York as depositary receipts; Taiwan’s state fund holds 6.38%. Almost all advanced production still sits on the island.",
+      "holders": [
+        { "name": "Depositary receipts, New York", "iso": "USA", "ll": [40.72, -74.01], "pct": 20.49, "txt": "20.49%", "date": "17 Dec 2025", "note": "Shares held through the ADR programme; the owners behind it are investors worldwide", "src": 0 },
+        { "name": "National Development Fund, Executive Yuan", "iso": "TWN", "ll": [25.04, 121.52], "pct": 6.38, "txt": "6.38%", "date": "17 Dec 2025", "src": 0, "state": true },
+        { "name": "Government of Singapore (GIC)", "iso": "SGP", "ll": [1.28, 103.85], "pct": 2.08, "txt": "2.08%", "date": "17 Dec 2025", "src": 0, "state": true },
+        { "name": "Norges Bank", "iso": "NOR", "ll": [59.91, 10.74], "pct": 1.81, "txt": "1.81%", "date": "17 Dec 2025", "src": 0, "state": true }
+      ],
+      "sites": [
+        { "city": "Hsinchu Science Park", "iso": "TWN", "ll": [24.77, 121.01], "role": "fab", "note": "Fabs 12A, 12B and 20 (300 mm); Fabs 2, 3, 5 and 8; advanced packaging", "src": 1 },
+        { "city": "Taichung", "iso": "TWN", "ll": [24.21, 120.62], "role": "fab", "note": "Fabs 15A and 15B (300 mm); advanced packaging", "src": 1 },
+        { "city": "Tainan", "iso": "TWN", "ll": [23.1, 120.28], "role": "fab", "note": "Fabs 14A, 14B, 18A and 18B (300 mm); Fab 6; advanced packaging", "src": 1 },
+        { "city": "Kaohsiung", "iso": "TWN", "ll": [22.72, 120.31], "role": "fab", "note": "Fab 22 (300 mm)", "src": 1 },
+        { "city": "Taoyuan (Longtan)", "iso": "TWN", "ll": [24.86, 121.21], "role": "at", "note": "Advanced packaging", "src": 1 },
+        { "city": "Miaoli (Zhunan)", "iso": "TWN", "ll": [24.69, 120.88], "role": "at", "note": "Advanced packaging", "src": 1 },
+        { "city": "Phoenix", "iso": "USA", "ll": [33.68, -112.08], "role": "fab", "note": "TSMC Arizona (300 mm)", "src": 1 },
+        { "city": "Camas", "iso": "USA", "ll": [45.59, -122.4], "role": "fab", "note": "TSMC Washington, Fab 11 (200 mm)", "src": 1 },
+        { "city": "Kikuyo, Kumamoto", "iso": "JPN", "ll": [32.86, 130.83], "role": "fab", "note": "JASM (300 mm)", "src": 1 },
+        { "city": "Nanjing", "iso": "CHN", "ll": [32.06, 118.63], "role": "fab", "note": "Fab 16 (300 mm)", "src": 1 },
+        { "city": "Shanghai (Songjiang)", "iso": "CHN", "ll": [31.03, 121.23], "role": "fab", "note": "Fab 10 (200 mm)", "src": 1 },
+        { "city": "Dresden", "iso": "DEU", "ll": [51.13, 13.72], "role": "fab", "note": "ESMC, from 2028: TSMC 70%; Bosch, Infineon and NXP 10% each", "src": 2 }
+      ],
+      "links": [{ "to": "NXP", "t": "Joint fabs in Singapore (SSMC) and Dresden (ESMC)" }, { "to": "Nvidia", "t": "Makes Nvidia’s accelerators" }],
+      "src": [
+        ["TSMC, annual report 2025, chapter 4: major shareholders at 17 Dec 2025", "2026", "https://investor.tsmc.com/static/annualReports/2025/english/pdf/2025_tsmc_ar_e_ch4.pdf"],
+        ["TSMC, fab locations", "seen 11 Nov 2026", "https://www.tsmc.com/japanese/aboutTSMC/TSMC_Fabs"],
+        ["NXP Semiconductors N.V., annual report (10-K) for 2025", "19 Feb 2026", "https://www.boardroomalpha.com/sec/nxpi-10-k-2026-02-19-0001413447-26-000008"]
+      ]
+    },
+    "Samsung": {
+      "legal": "Samsung Electronics Co., Ltd.",
+      "seat": { "city": "Suwon", "iso": "KOR", "ll": [37.26, 127.03] },
+      "listing": "Korea Exchange (005930)",
+      "control": "controlled",
+      "summary": "Controlled through the Samsung group: an insurer and a holding company in the same group own about 13.5% between them, the state pension fund about 7.8%.*",
+      "holders": [
+        { "name": "Samsung Life Insurance", "iso": "KOR", "ll": [37.5, 127.03], "pct": 8.5, "txt": "≈8.5%*", "date": "as reported 21 Jul 2026", "src": 0, "star": true },
+        { "name": "National Pension Service", "iso": "KOR", "ll": [35.84, 127.06], "pct": 7.8, "txt": "≈7.8%*", "date": "early 2026", "src": 0, "star": true, "state": true },
+        { "name": "Samsung C&T", "iso": "KOR", "ll": [37.52, 127.1], "pct": 5, "txt": "≈5%*", "date": "as reported 21 Jul 2026", "note": "Lee Jae-yong holds about 22% of Samsung C&T (31 Mar 2026) and about 1.6% of Samsung Electronics directly", "src": 0, "star": true }
+      ],
+      "sites": [
+        { "city": "Giheung", "iso": "KOR", "ll": [37.22, 127.12], "role": "fab", "note": "200 mm Line 6 and 300 mm S1", "src": 1 },
+        { "city": "Hwaseong", "iso": "KOR", "ll": [37.21, 127.06], "role": "fab", "note": "300 mm S3", "src": 1 },
+        { "city": "Pyeongtaek", "iso": "KOR", "ll": [37.02, 127.06], "role": "fab", "note": "300 mm S5, advanced nodes", "src": 1 },
+        { "city": "Austin", "iso": "USA", "ll": [30.37, -97.64], "role": "fab", "note": "300 mm S2, since 1996", "src": 1 },
+        { "city": "Taylor", "iso": "USA", "ll": [30.57, -97.41], "role": "fab", "note": "New advanced fab", "src": 1 }
+      ],
+      "open": ["Shares come from a secondary summary; Korea’s DART filings were not opened.", "Memory fabs outside Korea (for example in China) are not on the foundry page used here."],
+      "src": [
+        ["Revenue Memo, Who owns Samsung? (secondary)", "21 Jul 2026", "https://www.revenuememo.com/p/who-owns-samsung"],
+        ["Samsung Semiconductor, foundry manufacturing sites", "seen 11 Nov 2026", "https://semiconductor.samsung.com/foundry/manufacturing/manufacturing-sites"]
+      ]
+    },
+    "SK Hynix": {
+      "legal": "SK hynix Inc.",
+      "seat": { "city": "Icheon", "iso": "KOR", "ll": [37.27, 127.44] },
+      "listing": "Korea Exchange (000660); depositary receipts on Nasdaq from July 2026*",
+      "control": "controlled",
+      "summary": "Controlled by the SK group through SK Square, at the legal minimum of about 20%. Its DRAM comes from Korea and Wuxi, its NAND partly from Dalian.",
+      "holders": [
+        { "name": "SK Square", "iso": "KOR", "ll": [37.57, 126.98], "pct": 20.5, "txt": "20.5%, about 20% after the US listing", "date": "2 Jul 2026", "src": 0 }
+      ],
+      "sites": [
+        { "city": "Cheongju", "iso": "KOR", "ll": [36.64, 127.44], "role": "fab", "note": "M17 fab approved; P&T7 advanced packaging from 2028", "src": 1 },
+        { "city": "Yongin", "iso": "KOR", "ll": [37.24, 127.18], "role": "fab", "note": "Y2 fab approved, August 2026", "src": 1 },
+        { "city": "Wuxi", "iso": "CHN", "ll": [31.49, 120.31], "role": "fab", "note": "DRAM", "src": 1 },
+        { "city": "Dalian", "iso": "CHN", "ll": [38.91, 121.62], "role": "fab", "note": "NAND, bought with Intel’s NAND business", "src": 1 },
+        { "city": "Chongqing", "iso": "CHN", "ll": [29.56, 106.55], "role": "at", "note": "Packaging since 2014; a sale of all or part is under consideration (August 2026)", "src": 1 },
+        { "city": "West Lafayette", "iso": "USA", "ll": [40.43, -86.91], "role": "at", "note": "Advanced packaging for AI memory, planned for the second half of 2028", "src": 1 }
+      ],
+      "open": ["The National Pension Service’s share.", "Whether the Nasdaq listing was completed as planned on 10 July 2026."],
+      "src": [
+        ["Financial News (Korea), citing DART filings of 2 Jul 2026", "2 Jul 2026", "https://en.fnnews.com/news/202607020737260018"],
+        ["TrendForce, SK hynix’s Chongqing sale plan signals a global production reset", "10 Aug 2026", "https://www.trendforce.com/news/2026/08/10/news-sk-hynixs-chongqing-sale-plan-signals-a-global-production-reset-not-a-china-exit-or-full-ownership-of-every-site/"]
+      ]
+    },
+    "Nvidia": {
+      "legal": "NVIDIA Corporation",
+      "seat": { "city": "Santa Clara", "iso": "USA", "ll": [37.37, -121.96] },
+      "listing": "Nasdaq (NVDA)",
+      "control": "none",
+      "summary": "No controlling owner and one class of share. Two US index-fund managers hold about 7% each, the founder 3.58%. It owns no fabs: the chips are made by TSMC.",
+      "holders": [
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 7.43, "txt": "7.43%", "date": "23 Mar 2026", "src": 0 },
+        { "name": "Vanguard", "iso": "USA", "ll": [40.04, -75.51], "pct": 7.31, "txt": "7.31%", "date": "23 Mar 2026", "src": 0 },
+        { "name": "Jen-Hsun Huang, founder", "iso": "USA", "ll": [37.37, -121.96], "pct": 3.58, "txt": "3.58%", "date": "23 Mar 2026", "src": 0, "person": true }
+      ],
+      "sites": [],
+      "links": [{ "to": "TSMC", "t": "Makes its accelerators" }, { "to": "Foxconn", "t": "Builds its servers; joint AI-server plant in Houston" }],
+      "open": ["Development sites are not mapped; Nvidia has no production of its own."],
+      "src": [
+        ["NVIDIA Corporation, proxy statement (DEF 14A), security ownership at 23 Mar 2026", "12 May 2026", "https://www.boardroomalpha.com/sec/nvda-def-14a-2026-05-12-0001045810-26-000036"]
+      ]
+    },
+    "Foxconn": {
+      "legal": "Hon Hai Precision Industry Co., Ltd.",
+      "seat": { "city": "New Taipei (Tucheng)", "iso": "TWN", "ll": [24.97, 121.44] },
+      "listing": "Taiwan Stock Exchange (2317)",
+      "control": "founder",
+      "summary": "The founder, Terry Gou, is the largest holder with about 12%.* AI servers for US customers are now also built in Texas and Wisconsin.",
+      "holders": [
+        { "name": "Terry Gou, founder", "iso": "TWN", "ll": [24.97, 121.44], "pct": 12.4, "txt": "12.4%*", "date": "undated listing, seen 11 Nov 2026", "src": 0, "person": true, "star": true }
+      ],
+      "sites": [
+        { "city": "Houston", "iso": "USA", "ll": [29.76, -95.37], "role": "srv", "note": "AI servers, built with Nvidia; small-volume production expected from about September 2026", "src": 1 },
+        { "city": "Wisconsin", "iso": "USA", "ll": [42.71, -87.88], "role": "srv", "note": "Servers", "src": 1 },
+        { "city": "Ohio", "iso": "USA", "ll": [41.17, -80.86], "role": "site", "note": "Output follows orders and new-product tests", "src": 1 }
+      ],
+      "links": [{ "to": "Nvidia", "t": "Joint AI-server plant in Houston" }],
+      "open": ["Plants in China, Mexico, India and Vietnam are not yet mapped.", "The founder’s share comes from a market-data site, which lists him as ‘Tai Ming Kuo’."],
+      "src": [
+        ["MarketScreener, Hon Hai Precision Industry shareholders (secondary)", "seen 11 Nov 2026", "https://in.marketscreener.com/quote/stock/HON-HAI-PRECISION-INDUSTR-6492357/company-shareholders/"],
+        ["Taipei Times, Hon Hai’s US AI-server production", "18 Jul 2026", "https://www.taipeitimes.com/News/biz/archives/2026/07/18/2003860925"]
+      ]
+    },
+    "Tokyo Electron": {
+      "legal": "Tokyo Electron Limited",
+      "seat": { "city": "Tokyo", "iso": "JPN", "ll": [35.67, 139.74] },
+      "listing": "Tokyo Stock Exchange (8035)",
+      "control": "unmapped",
+      "summary": "Its own shareholders are not yet mapped. On this map it appears as an owner: it holds 4.66% of ASM International.",
+      "holders": [],
+      "sites": [],
+      "links": [{ "to": "ASM Intl", "t": "Holds 4.66% (notified 3 Nov 2025)" }],
+      "open": ["Major shareholders: the annual securities report was not opened in this round.", "Plants in Japan are not yet mapped."],
+      "src": [
+        ["AFM register of substantial holdings: Tokyo Electron Limited in ASM International N.V.", "seen 11 Nov 2026", "https://www.afm.nl/en/sector/registers/meldingenregisters/substantiele-deelnemingen/details?id=182797"]
+      ]
+    },
+    "Applied Materials": {
+      "legal": "Applied Materials, Inc.",
+      "seat": { "city": "Santa Clara", "iso": "USA", "ll": [37.35, -121.98] },
+      "listing": "Nasdaq (AMAT)",
+      "control": "none",
+      "summary": "No controlling owner: two US index-fund managers hold about 19% between them. It is itself becoming the largest owner of the Dutch toolmaker Besi.",
+      "holders": [
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 9.69, "txt": "9.69%", "date": "31 Dec 2025", "src": 0 },
+        { "name": "Vanguard", "iso": "USA", "ll": [40.04, -75.51], "pct": 9.35, "txt": "9.35%", "date": "31 Dec 2025", "src": 0 }
+      ],
+      "sites": [],
+      "links": [{ "to": "Besi", "t": "Raising its stake to about 20% (announced 26 Oct 2026)" }],
+      "open": ["Plants (for example in the US and Singapore) are not yet mapped."],
+      "src": [
+        ["Applied Materials, Inc., proxy statement (DEF 14A), principal shareholders", "28 Jan 2026", "https://www.boardroomalpha.com/sec/amat-def-14a-2026-01-28-0001193125-26-027307"]
+      ]
+    },
+    "Microsoft": {
+      "legal": "Microsoft Corporation",
+      "seat": { "city": "Redmond", "iso": "USA", "ll": [47.67, -122.12] },
+      "listing": "Nasdaq (MSFT)",
+      "control": "none",
+      "summary": "No controlling owner. The only holders above 5% are two US index-fund managers, at about 7.5% each.",
+      "holders": [
+        { "name": "Vanguard", "iso": "USA", "ll": [40.04, -75.51], "pct": 7.48, "txt": "7.48%", "date": "30 Sep 2026", "src": 0 },
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 7.3, "txt": "7.30%*", "date": "30 Sep 2026", "note": "The proxy’s figure rests on a filing of February 2024", "src": 0, "star": true }
+      ],
+      "sites": [
+        { "city": "Mount Pleasant, Wisconsin", "iso": "USA", "llk": "D_WI", "role": "dc", "note": "Fairwater: 2.26 GW planned*", "src": 1 },
+        { "city": "Atlanta, Georgia", "iso": "USA", "llk": "D_ATL", "role": "dc", "note": "Fairwater: 0.64 GW now*", "src": 1 }
+      ],
+      "src": [
+        ["Microsoft Corporation, proxy statement (DEF 14A), principal shareholders", "Oct 2026", "https://www.sec.gov/Archives/edgar/data/0000789019/000119312526427849/d61756ddef14a.htm"],
+        ["This map, step 10: Epoch AI, Frontier Data Centers hub (estimates, about ±40%; link not stored)", "Nov 2026", ""]
+      ]
+    },
+    "Amazon": {
+      "legal": "Amazon.com, Inc.",
+      "seat": { "city": "Seattle", "iso": "USA", "ll": [47.62, -122.34] },
+      "listing": "Nasdaq (AMZN)",
+      "control": "founder",
+      "summary": "The founder is still the largest single owner, with 8.8%, ahead of two US index-fund managers. One class of share: no extra votes.",
+      "holders": [
+        { "name": "Jeffrey Bezos, founder", "iso": "USA", "ll": [47.62, -122.34], "pct": 8.8, "txt": "8.8%", "date": "24 Feb 2026", "src": 0, "person": true },
+        { "name": "Vanguard", "iso": "USA", "ll": [40.04, -75.51], "pct": 7.2, "txt": "7.2%", "date": "24 Feb 2026", "src": 0 },
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 5.9, "txt": "5.9%", "date": "24 Feb 2026", "src": 0 }
+      ],
+      "sites": [
+        { "city": "New Carlisle, Indiana", "iso": "USA", "llk": "D_NC", "role": "dc", "note": "Built for Anthropic: 1.04 GW now, 1.93 GW planned*", "src": 1 }
+      ],
+      "src": [
+        ["Amazon.com, Inc., proxy statement (DEF 14A), beneficial ownership at 24 Feb 2026", "9 Apr 2026", "https://www.boardroomalpha.com/sec/amzn-def-14a-2026-04-09-0001104659-26-041026"],
+        ["This map, step 10: Epoch AI, Frontier Data Centers hub (estimates, about ±40%; link not stored)", "Nov 2026", ""]
+      ]
+    },
+    "Alphabet": {
+      "legal": "Alphabet Inc.",
+      "seat": { "city": "Mountain View", "iso": "USA", "ll": [37.42, -122.08] },
+      "listing": "Nasdaq (GOOGL, GOOG)",
+      "control": "founder",
+      "summary": "Controlled by its two founders through shares with ten votes each: Larry Page and Sergey Brin hold 52.7% of the votes between them.",
+      "holders": [
+        { "name": "Larry Page, founder", "iso": "USA", "ll": [37.42, -122.08], "pct": 27.4, "txt": "27.4% of votes", "date": "6 Apr 2026", "src": 0, "person": true, "votes": true },
+        { "name": "Sergey Brin, founder", "iso": "USA", "ll": [37.42, -122.08], "pct": 25.3, "txt": "25.3% of votes", "date": "6 Apr 2026", "src": 0, "person": true, "votes": true },
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 6.1, "txt": "6.1% of Class A", "date": "6 Apr 2026", "src": 0 }
+      ],
+      "sites": [
+        { "city": "Lake Mariner, New York", "iso": "USA", "llk": "D_TWF", "role": "dc", "note": "TeraWulf campus, Google-backed, for Anthropic: 0.36 GW planned*", "src": 1 }
+      ],
+      "open": ["Vanguard’s Class A holding was cut off in the copy of the proxy that was read."],
+      "src": [
+        ["Alphabet Inc., proxy statement (DEF 14A), beneficial ownership at 6 Apr 2026", "24 Apr 2026", "https://www.sec.gov/Archives/edgar/data/0001652044/000130817926000342/goog-20260424.htm"],
+        ["This map, step 10: Financial Times (Aug 2026) and Epoch AI (estimates; links not stored)", "2026", ""]
+      ]
+    },
+    "Meta": {
+      "legal": "Meta Platforms, Inc.",
+      "seat": { "city": "Menlo Park", "iso": "USA", "ll": [37.48, -122.15] },
+      "listing": "Nasdaq (META)",
+      "control": "founder",
+      "summary": "Controlled by one person: Mark Zuckerberg holds 60.8% of the votes through shares with ten votes each.",
+      "holders": [
+        { "name": "Mark Zuckerberg, founder", "iso": "USA", "ll": [37.48, -122.15], "pct": 60.8, "txt": "60.8% of votes", "date": "1 Apr 2026", "src": 0, "person": true, "votes": true },
+        { "name": "BlackRock", "iso": "USA", "ll": [40.76, -73.97], "pct": 7.2, "txt": "7.2% of Class A", "date": "1 Apr 2026", "src": 0 },
+        { "name": "FMR (Fidelity)", "iso": "USA", "ll": [42.35, -71.05], "pct": 6.1, "txt": "6.1% of Class A", "date": "1 Apr 2026", "src": 0 }
+      ],
+      "sites": [
+        { "city": "Richland Parish, Louisiana", "iso": "USA", "llk": "D_HYP", "role": "dc", "note": "Hyperion: 1.63 GW planned*", "src": 1 }
+      ],
+      "src": [
+        ["Meta Platforms, Inc., proxy statement (DEF 14A), beneficial ownership at 1 Apr 2026", "16 Apr 2026", "https://www.boardroomalpha.com/sec/meta-def-14a-2026-04-16-0001628280-26-025532"],
+        ["This map, step 10: Epoch AI, Frontier Data Centers hub (estimates, about ±40%; link not stored)", "Nov 2026", ""]
+      ]
+    },
+    "SpaceX": {
+      "legal": "Space Exploration Technologies Corp.",
+      "seat": { "city": "Starbase, Texas", "iso": "USA", "ll": [25.99, -97.18] },
+      "listing": "Nasdaq (SPCX), since 12 Jun 2026",
+      "control": "founder",
+      "summary": "Listed since June 2026 and controlled by one person: Elon Musk holds 82.4% of the votes, on about 42% of the shares.*",
+      "holders": [
+        { "name": "Elon Musk, founder", "iso": "USA", "ll": [25.99, -97.18], "pct": 82.4, "txt": "82.4% of votes; about 42% of shares*", "date": "after the offering of 11 Jun 2026", "note": "Class B shares carry ten votes each. The share of equity is from press reports, not from the prospectus text that was read.", "src": 0, "person": true, "votes": true }
+      ],
+      "sites": [
+        { "city": "Memphis, Tennessee", "iso": "USA", "llk": "D_MEM", "role": "dc", "note": "xAI Colossus 2: 0.95 GW now, 1.53 GW planned*", "src": 1 }
+      ],
+      "open": ["Other holders above 5%: the principal-stockholders table was not in the part of the prospectus that was read.", "The seat is given as Starbase; the prospectus address was not in the text that was read."],
+      "src": [
+        ["Space Exploration Technologies Corp., prospectus (424B4): Texas corporation, 555,555,555 Class A shares at $135", "11 Jun 2026", "https://www.stocktitan.net/sec-filings/SPCX/424b4-space-exploration-technologies-corp-prospectus-filed-pursuant-t-fe58dbdacff5.html"],
+        ["This map, step 10: Epoch AI, Frontier Data Centers hub (estimates, about ±40%; link not stored)", "Nov 2026", ""]
+      ]
+    }
+  }
+}

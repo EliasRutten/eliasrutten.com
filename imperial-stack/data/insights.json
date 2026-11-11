@@ -1,0 +1,57 @@
+{
+  "asof": "11 Nov 2026",
+  "first": {
+    "k": "The Imperial Stack",
+    "t": "Foreign investors bought $1.01tn of US shares in a year. Their central banks sold $164bn of Treasuries.",
+    "src": "12 months to August 2026 · US Treasury",
+    "go": { "label": "Follow the dollar", "step": 1 },
+    "pov": [36, -42, 1.95]
+  },
+  "insights": [
+    { "id": "hk", "on": "step:chips", "care": true, "t": "More than half of China’s chip imports now arrive through Hong Kong, which this map does not draw. Read the arcs into China as a floor.", "src": "Bloomberg, 2 Jul 2026, via The Next Web" },
+    { "id": "besi", "on": "step:inputs", "t": "Besi is listed in Amsterdam, builds its machines in Malaysia and China, and is about to be one-fifth American-owned.", "src": "Applied Materials, 26 Oct 2026", "go": { "label": "See its footprint", "firm": "Besi" } },
+    { "id": "ca", "on": "step:surplus", "care": true, "t": "Officially China’s 2025 surplus was 3.8% of GDP. Measured by its own customs data it is about 4.4%.", "src": "Federal Reserve, FEDS Notes, 22 Sep 2026" },
+    { "id": "custody", "on": "step:recycle", "t": "43% of the US shares held abroad sit in fund and custody centres. The map shows where they are booked, not who owns them.", "src": "US Treasury survey, 30 June 2025" },
+    { "id": "ust", "on": "step:gap", "care": true, "t": "China’s Treasuries fell by $109bn on paper while Belgium’s rose by $39bn. In this data, selling and moving look the same.", "src": "US Treasury TIC, Aug 2025 to Aug 2026" },
+    { "id": "firm", "on": "firm", "t": "Purple marks the owners, where their head offices sit. White lines run to the firm’s sites.", "src": "" }
+  ],
+  "notes": {
+    "CHN": [
+      { "id": "hk", "h": "Chips through Hong Kong are not drawn", "steps": ["chips", "all", "mhostage"], "t": "In January–May 2026 Hong Kong handled more than half of China’s $239bn of chip imports and re-exported $124bn of chips to the mainland. Hong Kong is not on this map, and the arcs into China count direct shipments only: read them as a floor.", "s": "More than half of China’s chip imports now arrive through Hong Kong, which this map does not draw. Read the arcs into China as a floor.", "src": "Bloomberg review of official data, 2 Jul 2026, as reported by The Next Web, 4 Jul 2026", "u": "https://thenextweb.com/news/hong-kong-china-ai-chip-trade-hub" },
+      { "id": "basis", "h": "Two yardsticks in one step", "steps": ["chips", "mhostage"], "t": "The largest arc, Taiwan to China, is captioned on the card as China’s import data, while this map’s data inventory records it as Taiwan’s export data. Korea’s and Japan’s arcs are their own export data to mainland China. Until that is settled the arcs are not on one basis.*", "src": "This map’s data inventory, v.1.4, sheet ‘Trade flows’" },
+      { "id": "ai", "h": "AI chips outside the trade data", "steps": ["chips", "capex"], "mark": false, "t": "Restricted AI accelerators also reach China outside recorded trade. Epoch AI’s median estimate is 660,000 H100-equivalents diverted by the end of 2025 (90% range: 290,000 to 1.6 million), mostly through intermediaries. Computing rented abroad by Chinese firms is not counted at all.", "src": "Epoch AI, Diversion and resale: estimating compute smuggling to China, 29 Apr 2026", "u": "https://epoch.ai/publications/chip-smuggling" },
+      { "id": "ca", "h": "The surplus is larger at the border", "steps": ["surplus"], "t": "The official current-account surplus was 3.8% of GDP in 2025. With customs data for goods trade it is about 4.4%: a gap of roughly $120bn. China revised its trade series back to 2019, and Federal Reserve staff conclude that the official figure appears to understate the surplus.", "s": "Officially China’s 2025 surplus was 3.8% of GDP. Measured by its own customs data it is about 4.4%.", "src": "Federal Reserve Board, FEDS Notes, 22 Sep 2026", "u": "https://www.federalreserve.gov/econres/notes/feds-notes/revisiting-chinas-current-account-evidence-from-recent-revisions-20260922.html" },
+      { "id": "ust", "h": "Selling, or moving", "steps": ["gap", "recycle", "asset"], "t": "US data count Treasuries where they are held, not who owns them. China’s recorded holdings fell to $591bn in August 2026 while Belgium’s rose to $490.5bn. Brad Setser of the Council on Foreign Relations puts Chinese holdings with custodians in Belgium, Luxembourg, France and Canada at roughly $300bn to $500bn, with wide uncertainty. Part of the red arc may be a change of custodian.", "s": "China’s Treasuries fell to $591bn on paper. Estimates put another $300bn to $500bn with custodians in Europe and Canada.", "src": "Fortune, 18 Oct 2026, citing Brad Setser (CFR) and US Treasury TIC data", "u": "https://fortune.com/2026/10/18/china-dedollarization-us-treasury-debt-holdings-stealth-canada-belgium-custodians/" }
+    ],
+    "KOR": [
+      { "id": "hk", "h": "Chips to China are understated", "steps": ["chips"], "t": "The arc uses Korean export data for mainland China only. With Hong Kong included, China took 51.7% of Korea’s chip exports in January–November 2024, down from 61.1% in 2020.", "src": "TrendForce, 6 Jan 2025, citing CNA and Korea JoongAng Daily", "u": "https://www.trendforce.com/news/2025/01/06/news-south-koreas-chip-exports-to-taiwan-and-vietnam-rise-in-2024-as-chinas-share-falls/" }
+    ],
+    "TWN": [
+      { "id": "un", "h": "Absent from UN trade data", "steps": ["chips", "asm", "inputs", "surplus", "capex"], "mark": false, "t": "Taiwan does not report to UN Comtrade. Its flows here come from its partners’ records, where it is listed as ‘Other Asia, not elsewhere specified’, or from its Ministry of Finance, whose categories are broader.", "src": "This map, ‘How we count’" }
+    ],
+    "MEX": [
+      { "id": "asm", "h": "Assembled here, made elsewhere", "steps": ["asm", "capex", "loop"], "mark": false, "t": "US import data record where a machine was last assembled. Servers from Mexico are built from imported parts: Mexico imported $16.3bn of computers and parts from Taiwan and $6.3bn from China in 2025.", "src": "UN Comtrade 2025, Mexico’s import data (this map, step 05)" }
+    ],
+    "VNM": [
+      { "id": "asm", "h": "Assembled here, made elsewhere", "steps": ["asm", "capex", "chips"], "mark": false, "t": "The $48bn of computers and parts the US imported from Vietnam in 2025 is a gross figure: Korea alone shipped $22.2bn of chips to Vietnam. A US–Vietnam deal of July 2025 set a 40% tariff on goods ‘transshipped’ from China without defining the term.", "src": "This map, steps 04 and 05; Fortune, 9 Nov 2026", "u": "https://fortune.com/2026/11/09/vietnam-trade-surplus-not-driven-by-illegal-transshipment/" }
+    ],
+    "SGP": [
+      { "id": "tools", "h": "Shipped from here, built by others", "steps": ["inputs"], "mark": false, "t": "Much of what Singapore ships in chip-making tools is made in the plants of US, Japanese and European toolmakers there. The country of shipment is not the nationality of the maker.", "src": "This map, step 03" }
+    ],
+    "MYS": [
+      { "id": "tools", "h": "Shipped from here, built by others", "steps": ["inputs"], "mark": false, "t": "Much of what Malaysia ships in chip-making tools is made in the plants of US, Japanese and European toolmakers there. Besi, for one, builds in Shah Alam.", "src": "This map, step 03; Besi" }
+    ],
+    "IRL": [
+      { "id": "books", "h": "The books of US firms", "steps": ["surplus", "recycle", "asset", "rent"], "mark": false, "t": "Ireland’s external accounts largely record the tax structures of US multinationals: intellectual property and profits booked in Irish subsidiaries, and goods counted as Irish exports that never pass through Ireland. Its US shares are mostly held by funds sold to savers elsewhere.", "src": "Council on Foreign Relations (Cole Frank, for Brad Setser), 25 Apr 2018; this map, step 07", "u": "https://www.cfr.org/blog/tax-avoidance-and-irish-balance-payments" }
+    ],
+    "BEL": [
+      { "id": "custody", "h": "Custody, not ownership", "steps": ["gap", "recycle", "asset"], "mark": false, "t": "Belgium’s holdings are mostly securities kept with custodians there for owners elsewhere. Its recorded Treasuries rose from $451.1bn to $490.5bn in the year to August 2026, while China’s fell.", "src": "US Treasury TIC; Fortune, 18 Oct 2026", "u": "https://fortune.com/2026/10/18/china-dedollarization-us-treasury-debt-holdings-stealth-canada-belgium-custodians/" }
+    ],
+    "RUS": [
+      { "id": "withheld", "h": "Statistics withheld", "steps": ["surplus"], "mark": false, "t": "Since the invasion of 2022 Russia has made its customs data and the central bank’s reserves confidential, classified oil and gas output in 2023, and withheld further series in 2025. Its external figures rest on what is still published.", "src": "The Moscow Times, 1 Aug 2025", "u": "https://www.themoscowtimes.com/2025/08/01/russia-limits-access-to-key-economic-and-demographic-data-amid-downturn-concerns-a90068" }
+    ],
+    "ARE": [
+      { "id": "gdp", "h": "A surplus without a denominator", "steps": ["surplus", "recycle"], "mark": false, "t": "The source gives the UAE’s surplus in dollars but no share of GDP, and part of its US shares is booked in London.*", "src": "World Bank; this map, step 07" }
+    ]
+  }
+}
