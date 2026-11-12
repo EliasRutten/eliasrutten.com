@@ -48,6 +48,14 @@
 #isx-root .hint .instog { margin-left: 0; }
 @media (max-width: 760px) {
   #isx-root .ins2 { position: fixed; z-index: 61; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); width: auto; background: #091018; }
+  #isx-root .ins2.first { width: auto; padding: 12px 44px 10px 14px; }
+  #isx-root .ins2.first .it { font-size: 15.5px; line-height: 1.4; }
+  #isx-root .ins2.first .ik { display: none; }
+  /* the “viewing” chip: one line at the foot of the globe (the page moves it into the globe box on a phone), instead of a wrapped block over the step bar */
+  #isx-root .vchip { position: absolute; z-index: 7; top: auto; bottom: 6px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 16px); white-space: nowrap; }
+  #isx-root .vchip .vk, #isx-root .vchip .vl { display: none; }
+  #isx-root .vchip b { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  #isx-root .vchip button { min-height: 40px; padding: 0 14px; flex: none; }
   #isx-root .ins2 .ix { width: 44px; height: 44px; top: 0; right: 0; }
   #isx-root .ins2 .ig { min-height: 44px; } #isx-root .ins2 .io { min-height: 44px; }
 }
@@ -64,11 +72,22 @@
 #isx-root .care2 .cs { display: block; margin-top: 1px; font-family: var(--mono); font-size: 10.5px; color: var(--ink2); }
 #isx-root .care2 .cs a { color: var(--ink2); text-decoration: underline; text-decoration-color: rgba(154, 171, 186, .45); text-underline-offset: 3px; }
 #isx-root .care2 .cs a:hover { color: #fff; }
+#isx-root .care2 details { margin-top: 8px; }
+#isx-root .care2 details.solo { margin-top: 0; }
+#isx-root .care2 summary { cursor: pointer; min-height: 28px; display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink2); list-style: none; }
+#isx-root .care2 summary::-webkit-details-marker { display: none; }
+#isx-root .care2 summary::before { content: "+"; font-family: var(--mono); color: var(--care); }
+#isx-root .care2 details[open] > summary::before { content: "–"; }
+#isx-root .care2 summary:hover { color: #fff; }
+#isx-root .care2 summary:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; border-radius: 4px; }
+#isx-root .care2 details > ul { margin-top: 6px; }
+#isx-root .ownruler { position: absolute; left: -9999px; top: 0; visibility: hidden; pointer-events: none; white-space: nowrap; }
 
 /* ---------- ownership and sites on the globe ---------- */
 #isx-root .glab.own { display: inline-flex; align-items: center; gap: 6px; text-shadow: 0 1px 3px #000, 0 0 10px rgba(4, 7, 11, .9); }
 #isx-root .glab.own::before, #isx-root .ownk { content: ""; display: inline-block; flex: none; width: 9px; height: 9px; box-sizing: border-box; }
 #isx-root .glab.own b { margin-left: 0; }
+#isx-root .glab.own.flip { flex-direction: row-reverse; }
 #isx-root .glab.own.seat { font-weight: 600; font-size: 14px; letter-spacing: .12em; color: #fff; }
 #isx-root .glab.own.seat::before, #isx-root .ownk.seat { width: 10px; height: 10px; transform: rotate(45deg); background: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, .8); }
 #isx-root .glab.own.seat b { color: var(--ink2); }
@@ -98,6 +117,8 @@
 #isx-root .ownrow { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: baseline; margin-top: 8px; padding-top: 8px; border-top: 1px solid #1f2c38; font-size: 12.5px; }
 #isx-root .ownrow span { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
 #isx-root .ownrow b { font-weight: 500; color: #dbe4ec; line-height: 1.4; }
+#isx-root .ownc { appearance: none; background: none; border: 0; border-bottom: 1px dotted #5c7186; border-radius: 0; padding: 1px 0; margin: 0; font: inherit; color: inherit; cursor: pointer; }
+#isx-root .ownc:hover, #isx-root .ownc:focus-visible { color: #fff; border-bottom-color: var(--own); }
 #isx-root .ownacts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 #isx-root .ownacts .godeep { font-size: 13.5px; padding: 6px 12px; }
 #isx-root .ownacts .godeep[data-own="back"] { background: none; border-color: #2c3e50; color: var(--ink2); box-shadow: none; }

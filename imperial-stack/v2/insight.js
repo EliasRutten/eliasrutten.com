@@ -140,7 +140,7 @@
     var st = X.steps[X.step], any = st && Object.keys(D.notes).some(function (iso) { return notesFor(iso, st.key).some(function (n) { return n.mark !== false; }); });
     var old = L.querySelector('.lr.nu'); if (old) old.remove();
     if (!any || X.sel.firm) return;
-    var r = document.createElement('div'); r.className = 'lr nu'; r.innerHTML = '<i class="arc care"></i><span>◇ Broken track: a figure to read with care. Open the country for why.</span>';
+    var r = document.createElement('div'); r.className = 'lr nu'; r.innerHTML = '<i class="arc care"></i><span>◇ Broken track: read with care (open the country)</span>';
     var lw = L.querySelector('.lw'); L.insertBefore(r, lw || null);
   });
   /* in the country card: the notes, with sources */
@@ -150,11 +150,12 @@
     if (!sel.iso || sel.firm) return;
     var N = notesFor(sel.iso); if (!N.length) return;
     var st = X.steps[X.step], here = st ? st.key : '';
-    N = N.slice().sort(function (a, b) { return (b.steps && b.steps.indexOf(here) >= 0 ? 1 : 0) - (a.steps && a.steps.indexOf(here) >= 0 ? 1 : 0); });
-    var d = document.createElement('div'); d.className = 'care2';
-    d.innerHTML = '<h4><i aria-hidden="true">◇</i> Read with care</h4><ul>' + N.map(function (n) {
-      return '<li><b>' + U.esc(n.h) + '.</b> ' + U.esc(n.t) + ' <span class="cs">' + (n.u ? '<a href="' + U.esc(n.u) + '" target="_blank" rel="noopener">' + U.esc(n.src) + '</a>' : U.esc(n.src || '')) + '</span></li>';
-    }).join('') + '</ul>';
+    /* the notes that bear on this step are shown; the others wait behind one line */
+    var now = N.filter(function (n) { return n.steps && n.steps.indexOf(here) >= 0; }), rest = N.filter(function (n) { return now.indexOf(n) < 0; });
+    var li = function (n) { return '<li><b>' + U.esc(n.h) + '.</b> ' + U.esc(n.t) + ' <span class="cs">' + (n.u ? '<a href="' + U.esc(n.u) + '" target="_blank" rel="noopener">' + U.esc(n.src) + '</a>' : U.esc(n.src || '')) + '</span></li>'; };
+    var nm = X.data.CTY[sel.iso].name, d = document.createElement('div'); d.className = 'care2';
+    d.innerHTML = '<h4><i aria-hidden="true">◇</i> Read with care' + (now.length ? ' · this step' : '') + '</h4>' + (now.length ? '<ul>' + now.map(li).join('') + '</ul>' : '')
+      + (rest.length ? '<details' + (now.length ? '' : ' class="solo"') + '><summary>' + (now.length ? rest.length + ' more on ' + U.esc(nm) + '’s figures' : rest.length + (rest.length > 1 ? ' notes' : ' note') + ' on ' + U.esc(nm) + '’s figures') + '</summary><ul>' + rest.map(li).join('') + '</ul></details>' : '');
     host.parentNode.insertBefore(d, host.nextSibling);
   });
   /* a country with a note for this step: the note is also the insight, once */

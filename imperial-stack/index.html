@@ -28,7 +28,6 @@
 <link rel="canonical" href="https://eliasrutten.com/imperial-stack/">
 <meta name="theme-color" content="#04070b">
 <link rel="preload" href="/imperial-stack/vendor/globe.gl-2.41.4.min.js" as="script">
-<link rel="stylesheet" href="/imperial-stack/v2/v2.css">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -1430,7 +1429,7 @@ dfn.df:hover, dfn.df:focus-visible { color: #fff; text-decoration-color: #ffd27a
 .sxl { position: relative; height: 13px; border-radius: 3px; background: #121c26; }
 .sxl i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
 .sxl i.us { border: 1.5px solid rgba(255, 255, 255, .9); background: transparent; }
-.sxl em { position: absolute; right: 4px; top: -1px; font-style: normal; font-family: var(--mono); font-size: 10.5px; color: #e4ebf1; text-shadow: 0 0 4px #000; }
+.sxl em { position: absolute; right: 3px; top: 0; line-height: 13px; padding: 0 3px; border-radius: 2px; background: rgba(9, 14, 20, .8); font-style: normal; font-family: var(--mono); font-size: 10.5px; color: #e4ebf1; }
 .sxl em small { color: var(--ink3); font-size: 10px; }
 
 /* ---------- financing dashboard ---------- */
@@ -2353,6 +2352,7 @@ button.res:hover { transform: none; box-shadow: none; }
 
 }
 </style>
+<link rel="stylesheet" href="/imperial-stack/v2/v2.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2412,9 +2412,9 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-fin" hidden><div class="fin" id="isx-fin"></div></div>
     <div class="mstep" id="isx-mstep" role="group" aria-label="Step through the dollar loop"><button type="button" class="ms-b ms-prev" id="isx-ms-prev" aria-label="Previous step"></button><div class="ms-mid"><div class="ms-top"><b class="ms-n" id="isx-ms-n">00</b><span class="ms-of" id="isx-ms-of">/ 10</span><span class="ms-t" id="isx-ms-t">Overview</span></div><div class="ms-bar" id="isx-ms-bar" aria-hidden="true"></div></div><button type="button" class="ms-b ms-next" id="isx-ms-next" aria-label="Next step"></button></div>
     <div class="cmd6" id="isx-cmd">
-      <button type="button" class="bigbtn prev" id="isx-t-prev" aria-label="Previous step"><span class="ar" aria-hidden="true">◀</span><span class="bi" id="isx-t-previ"></span><span class="bt"><small>Back</small><b id="isx-t-prevl"></b></span></button>
+      <button type="button" class="bigbtn prev" id="isx-t-prev"><span class="ar" aria-hidden="true">◀</span><span class="bi" id="isx-t-previ" aria-hidden="true"></span><span class="bt"><small>Back</small> <b id="isx-t-prevl"></b></span></button>
       <div class="tournarr panel" id="isx-tournarr"><button type="button" class="tfold" id="isx-t-fold" aria-label="Fold">–</button><div class="tk" id="isx-t-k"></div><h3 id="isx-t-h"></h3><p id="isx-t-p"></p><div class="tfig"><div class="v" id="isx-t-v"></div><div class="vc" id="isx-t-c"></div></div><div class="tx6" id="isx-t-x"></div><div class="tnav"><button type="button" class="godeep" id="isx-t-more">Go deeper <span aria-hidden="true">↓</span></button><a class="essay6" id="isx-t-essay" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"></a></div><div class="tmeta"><button type="button" class="howc" data-how>How we count</button></div><div class="legm" id="isx-t-legm"></div><div class="pips" id="isx-t-pips" aria-hidden="true"></div><div class="tnudge" id="isx-t-nudge" hidden></div></div>
-      <button type="button" class="bigbtn next" id="isx-t-next" aria-label="Next step"><span class="bt"><small id="isx-t-nextk">Next</small><b id="isx-t-nextl"></b><i id="isx-t-tease"></i></span><span class="bi" id="isx-t-nexti"></span><span class="ar" aria-hidden="true">▶</span></button>
+      <button type="button" class="bigbtn next" id="isx-t-next"><span class="bt"><small id="isx-t-nextk">Next</small> <b id="isx-t-nextl"></b> <i id="isx-t-tease"></i></span><span class="bi" id="isx-t-nexti" aria-hidden="true"></span><span class="ar" aria-hidden="true">▶</span></button>
     </div>
     <div class="mapnote" id="isx-mapnote"></div>
     <nav class="tabs-bottom" id="isx-tabs" aria-label="Steps"></nav>
@@ -2505,6 +2505,7 @@ const RMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reduce = RMQ.matches; /* v2: followed live, see “v2: the seam” at the end of this script */
 const ISXP = window.ISXP || { tier: 'high', k: { dpr: 2, streams: 1, sim: 1, arm: 1, rings: 2, glow: true }, loop: l => l, sync() {}, on() {}, watch() {}, apply() {} };
 const EV = {}, GLAY = [];
+let selSoft = null, zoomAim = null;
 const on = (k, f) => { (EV[k] = EV[k] || []).push(f); };
 const emit = (k, d) => { (EV[k] || []).forEach(f => { try { f(d); } catch (e) { /* a listener never breaks the page */ } }); };
 function el(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
@@ -2812,7 +2813,7 @@ function blocColour(iso) {
 function capColor(f) {
   const iso = f.properties.iso, col = blocColour(iso);
   if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .66) : 'rgba(120,150,180,.04)'; }
-  if (iso && iso === selIso) return 'rgba(255,255,255,.55)';
+  if (iso && iso === selIso) return selSoft && selSoft() ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.55)'; /* v2: a footprint keeps its home country quiet, so the marks on it stay readable */
   if (iso && iso === hoverIso) return rgba(col || '#9fb4c8', .5);
   if (!col) return 'rgba(120,150,180,.06)';
   return rgba(col, iso === 'USA' ? .26 : .3);
@@ -2833,8 +2834,11 @@ function declutter() {
     /* v2: three zoom levels (far, mid, near) set how dense the labels are; the work below runs only while the view is changing */
     const pv = globe.pointOfView(), z = pv.altitude > 2.7 ? 'far' : pv.altitude < 1.2 ? 'near' : 'mid';
     if (z !== zLevel) { zLevel = z; ROOT.dataset.z = z; emit('zoom', z); }
-    const sig = [pv.lat.toFixed(1), pv.lng.toFixed(1), pv.altitude.toFixed(2), $('globe').querySelectorAll('.glab').length, window.innerWidth, window.innerHeight].join('|');
-    if (sig === declSig) { if (declHold <= 0) return; declHold--; } else { declSig = sig; declHold = 5; }
+    /* the signature follows where the labels actually are (the globe writes each position into the label's transform), so a slow frame cannot leave them unsorted */
+    let lh = 0; const labs = $('globe').querySelectorAll('.glab');
+    labs.forEach(e => { const t = e.style.transform + e.style.opacity; for (let i = 0; i < t.length; i++) lh = (lh * 31 + t.charCodeAt(i)) | 0; });
+    const sig = [pv.lat.toFixed(1), pv.lng.toFixed(1), pv.altitude.toFixed(2), labs.length, lh, window.innerWidth, window.innerHeight].join('|');
+    if (sig === declSig) { if (declHold <= 0) return; declHold--; } else { declSig = sig; declHold = 3; }
     const cap = z === 'far' ? 9 : 1e9; let shown = 0;
     const els = [...$('globe').querySelectorAll('.glab')].filter(e => e.style.opacity !== '0');
     els.sort((a, b) => +b.dataset.pri - +a.dataset.pri);
@@ -2846,6 +2850,7 @@ function declutter() {
       e.style.visibility = hit ? 'hidden' : 'visible';
       if (!hit) { kept.push(r); shown++; }
     });
+    emit('labels');
   }, 220);
 }
 function repaint() { if (globe) globe.polygonCapColor(capColor).polygonSideColor(sideColor).polygonStrokeColor(strokeColor).polygonAltitude(polyAlt); }
@@ -2896,6 +2901,7 @@ function initGlobe() {
     if ('shininess' in mat) mat.shininess = 4;
     declutter();
     const ctr = globe.controls(); ctr.enableZoom = false; ctr.autoRotateSpeed = .35; ctr.enableDamping = true;
+    ctr.addEventListener('start', () => { ctr.autoRotate = false; }); /* v2: the globe stops turning as soon as the reader takes hold of it */
     if (typeof globe.onGlobeReady === 'function') globe.onGlobeReady(globeReady);
     if (COARSE) { try { globe.renderer().domElement.style.touchAction = 'pan-y'; ctr.rotateSpeed = 1.15; } catch (e) { /* ignore */ } }
     try { globe.renderer().setPixelRatio(globeDpr()); } catch (e) { /* ignore */ }
@@ -4106,8 +4112,8 @@ function buildResbar() {
     const w = RESW[r.id] || ['', null], si = STEPS_D.findIndex(x => x.key === w[1]);
     const b = document.createElement('button'); b.type = 'button'; b.className = 'res panel'; b.style.setProperty('--rc', r.c); b.style.setProperty('--pc', r.c); b.dataset.si = si;
     const ic = si > 0 ? STEPS_D[si].ic : 'all', dir = r.dir === 'down' ? '<i class="dir dn" aria-hidden="true">▼</i>' : r.dir === 'up' ? '<i class="dir up" aria-hidden="true">▲</i>' : '';
-    b.innerHTML = `<span class="k"><span class="ri6">${svgIc(ic, 12)}</span>${esc(r.k)}</span><span class="v">${esc(r.v)}${dir}</span><span class="rd6">${esc(r.d || '')}</span><span class="rq" aria-hidden="true">?</span>`;
-    b.setAttribute('aria-label', `${r.k}: ${r.v}. ${r.what} Why it matters: ${w[0]}`);
+    b.innerHTML = `<span class="k"><span class="ri6">${svgIc(ic, 12)}</span>${esc(r.k)}</span> <span class="v">${esc(r.v)}${dir}</span> <span class="rd6">${esc(r.d || '')}</span><span class="rq" aria-hidden="true">?</span>`;
+    b.setAttribute('aria-label', `${r.k}: ${r.v}${r.d ? ' ' + r.d : ''}. ${r.what} Why it matters: ${w[0]}`);
     b.dataset.tip = `<b>${esc(r.k)}: ${esc(r.v)}</b><p><em>What it is.</em> ${esc(r.what)}</p><p><em>Why it matters.</em> ${esc(w[0])}</p><p class="ts">${esc(r.t)}${si > 0 ? ' · Click for step ' + STEPS_D[si].n + ', ' + esc(STEPS_D[si].t) : ''}</p>`;
     b.addEventListener('click', () => { if (si > 0) { stopPlay(); if (selIso) { selIso = null; renderCountryCard(); } setStep(si); } });
     host.appendChild(b);
@@ -4119,7 +4125,10 @@ function stageChip() {
   const c = $('vchip'); if (!c) return;
   if (view !== 'map' || !selIso) { c.hidden = true; return; }
   const k = CTY[selIso]; c.hidden = false;
-  c.innerHTML = `<span class="vk">Viewing</span>${FLAG[k.cc] ? `<img src="${FLAG[k.cc]}" alt="">` : ''}<b>${esc(k.name)}</b><button type="button" id="isx-vback">← Back to data overview</button>`;
+  /* on a phone the chip sits on the globe itself (foot of the globe box), so it never covers the step control or the text below */
+  const gb = ROOT.querySelector('#isx-scene-map .globebox'), sc = $('scene-map'); let ph = false; try { ph = matchMedia('(max-width: 760px)').matches; } catch (e) { /* ignore */ }
+  if (gb && sc) { if (ph) { if (c.parentNode !== gb) gb.appendChild(c); } else if (c.parentNode === gb) sc.parentNode.insertBefore(c, sc); }
+  c.innerHTML = `<span class="vk">Viewing</span>${FLAG[k.cc] ? `<img src="${FLAG[k.cc]}" alt="">` : ''}<b>${esc(k.name)}</b><button type="button" id="isx-vback">← Back<span class="vl"> to data overview</span></button>`;
   $('vback').addEventListener('click', () => { select(null); crisp($('frame'), 8); });
 }
 
@@ -4284,9 +4293,10 @@ $('zoom').addEventListener('click', e => {
   const b = e.target.closest('[data-z]'); if (!b || !globe) return;
   tipsAct('zoom');
   globe.controls().autoRotate = false;
-  const p = globe.pointOfView(), z = b.dataset.z;
+  const p = globe.pointOfView(), z = b.dataset.z, aim = zoomAim ? zoomAim(z, p) : null; /* v2: a module may say where zooming should head (a footprint heads for its seat) */
+  if (z === 'reset' && aim) { globe.pointOfView(aim, reduce ? 0 : 700); return; }
   if (z === 'reset') { const s = STEPS[step]; globe.pointOfView({ lat: s.pov.lat, lng: s.pov.lng, altitude: (1 + s.pov.altitude) * (window.innerWidth > 760 ? 1.05 : 1) - 1 }, reduce ? 0 : 700); return; }
-  globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: Math.max(.22, Math.min(4, p.altitude * (z === 'in' ? .7 : 1.43))) }, reduce ? 0 : 450);
+  globe.pointOfView({ lat: aim ? aim.lat : p.lat, lng: aim ? aim.lng : p.lng, altitude: Math.max(.22, Math.min(4, p.altitude * (z === 'in' ? .7 : 1.43))) }, reduce ? 0 : 450);
 });
 
 /* ---------- the imperial arm: relabelled relations, informal networks ---------- */
@@ -5013,15 +5023,17 @@ let fparts = [], fOn = false;
 function finParticles(act) {
   const svg = $('rmap'), g = svg && svg.querySelector('#isx-fpart'); if (!g) return;
   g.innerHTML = ''; fparts = [];
-  const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig'), N = 40;
+  const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig');
   idx.forEach(i => {
     const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh')) return;
-    const L = p.getTotalLength(), n = act ? Math.max(1, Math.round(3 * ISXP.k.sim)) : (ISXP.k.sim < .5 && i % 2 ? 0 : 1), pts = new Float32Array((N + 1) * 2);
+    const n = act ? Math.max(1, Math.round(3 * ISXP.k.sim)) : (ISXP.k.sim < .5 && i % 2 ? 0 : 1);
     if (!n) return;
-    for (let j = 0; j <= N; j++) { const q = p.getPointAtLength(L * j / N); pts[j * 2] = q.x; pts[j * 2 + 1] = q.y; }
-    for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); fparts.push({ c, pts, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }); }
+    const pts = finSample(p);
+    for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); const q = { c, pts, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }; fparts.push(q); finPlace(q, reduce ? .5 : q.o % 1); }
   });
+  ISXP.sync(); /* a particle is placed the moment it exists; the registry decides whether the loop runs */
 }
+function finSample(p) { const N = 40, L = p.getTotalLength(), pts = new Float32Array((N + 1) * 2); for (let j = 0; j <= N; j++) { const q = p.getPointAtLength(L * j / N); pts[j * 2] = q.x; pts[j * 2 + 1] = q.y; } return pts; }
 function finPlace(q, u) { const x = u * 40, j = Math.min(39, x | 0), t = x - j, P = q.pts; q.c.setAttribute('cx', (P[j * 2] + (P[j * 2 + 2] - P[j * 2]) * t).toFixed(1)); q.c.setAttribute('cy', (P[j * 2 + 1] + (P[j * 2 + 3] - P[j * 2 + 1]) * t).toFixed(1)); }
 function finStart() { if (fOn || reduce || !fparts.length) return; fOn = true; (function f(now) { if (!fOn) return; for (const q of fparts) finPlace(q, (q.o + now * q.sp) % 1); fRAF = requestAnimationFrame(f); })(performance.now()); }
 function finStop() { fOn = false; cancelAnimationFrame(fRAF); }
@@ -5081,7 +5093,7 @@ function drawDeal() {
   h += '<g id="isx-dpart"></g>';
   svg.innerHTML = h; $('anote').textContent = D.x;
   const g = svg.querySelector('#isx-dpart');
-  D.l.forEach(([, , , dash], i) => { if (dash) return; const p = svg.querySelector('#isx-dl' + i), L = p.getTotalLength(); for (let k = 0; k < 3; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 4); c.setAttribute('class', 'coin'); g.appendChild(c); fparts.push({ c, p, L, o: k / 3, sp: .0004 }); } });
+  D.l.forEach(([, , , dash], i) => { if (dash) return; const p = svg.querySelector('#isx-dl' + i), pts = finSample(p), n = Math.max(1, Math.round(3 * ISXP.k.sim)); for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 4); c.setAttribute('class', 'coin'); g.appendChild(c); const q = { c, pts, o: k / n, sp: .0004 }; fparts.push(q); finPlace(q, reduce ? .5 : q.o); } });
 }
 function wrap(s, n, max) { const w = String(s).split(' '), out = []; let l = ''; w.forEach(x => { if ((l + ' ' + x).trim().length > n) { out.push(l.trim()); l = x; } else l += ' ' + x; }); if (l.trim()) out.push(l.trim()); return out.slice(0, max || 2); }
 
@@ -6254,6 +6266,8 @@ window.ISX = {
   setView, setStep, stepBy, select, stopPlay, renderGlobe, repaint, renarrate: () => { narr6(); legend6(); }, recard: renderCountryCard, routeSync, introOpen, tipsOpen: () => { stSet(TKEY.globe, null, true); gtOpen(true); },
   util: { esc, rgba, fmtBn, makeLabel, gcMid, NAME, svgIc, stGet, stSet, crisp, copyText, COARSE, PHONE },
   globeLayer(fn) { GLAY.push(fn); },
+  relabel() { declSig = ''; },
+  softSelect(fn) { selSoft = fn; }, zoomAim(fn) { zoomAim = fn; },
   highlight(pred) { hlPred = pred || null; renderGlobe(false); },
   hashDetail: null, applyDetail: null, viewName: null,
   load(name) {
@@ -6265,7 +6279,7 @@ window.ISX = {
 /* every continuous loop is registered, so one place decides when it may run */
 ISXP.loop({ name: 'globe', still: true, start: globeWake, stop: globeWake });
 ISXP.loop({ name: 'arm', el: $('scene-arm'), want: () => view === 'arm' && armMode !== 'rev', start: () => pArm.start(), stop: () => pArm.stop() });
-ISXP.loop({ name: 'sim', el: $('scene-fin'), want: () => view === 'fin' && finMode === 'plumb', start: finStart, stop: finStop });
+ISXP.loop({ name: 'sim', el: $('scene-fin'), want: () => view === 'fin', start: finStart, stop: finStop });
 /* the tier changed (slow frames), or the reader switched reduced motion on or off: redraw what moves with the new budget */
 ISXP.on(() => {
   reduce = RMQ.matches;
