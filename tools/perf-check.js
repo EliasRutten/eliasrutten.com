@@ -8,7 +8,7 @@ const rate = +(process.argv[3] || 4);
   const b = await chromium.launch();
   const run = async (name, hash, prep) => {
     const c = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
-    await c.addInitScript(() => { try { ['isx-tips-globe', 'isx-tips-sim', 'isx-first', 'isx-insights', 'isx-intro'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-sim-mode', 'full'); } catch (e) {} });
+    await c.addInitScript(() => { try { ['isx-tips-globe', 'isx-tips-sim', 'isx-first', 'isx-insights', 'isx-intro', 'isx-tour'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-sim-mode', 'full'); } catch (e) {} });
     const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' }); await p.waitForTimeout(7000);
     if (prep) await prep(p);
     const cdp = await c.newCDPSession(p); await cdp.send('Emulation.setCPUThrottlingRate', { rate });

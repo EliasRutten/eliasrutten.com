@@ -2353,6 +2353,7 @@ button.res:hover { transform: none; box-shadow: none; }
 }
 </style>
 <link rel="stylesheet" href="/imperial-stack/v2/v2.css">
+<link rel="stylesheet" href="/imperial-stack/v2/sim.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2375,7 +2376,7 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-map">
       <div class="globebox"><div class="gskel" aria-hidden="true"><i></i><span>Loading the globe</span></div><div id="isx-globe" role="img" aria-label="3D globe of Pax Silica with flows between allies and to and from the United States"></div></div>
       <div class="zoom6" id="isx-zoom" role="group" aria-label="Zoom the globe"><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Reset view">⟲</button></div>
-      <div class="hint" id="isx-hint">Drag to turn the globe · click a country · ← → to step <button type="button" class="tipsre" data-tips="globe">How to use the globe</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
+      <div class="hint" id="isx-hint">Drag to turn the globe · click a country · ← → to step <button type="button" class="tipsre" data-tips="globe">Take the tour</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
       <div class="mapmodes panel" id="isx-mapmodes" role="group" aria-label="Map mode"></div>
     </div>
     <div class="scene" id="isx-scene-arm" hidden>
@@ -2434,6 +2435,7 @@ button.res:hover { transform: none; box-shadow: none; }
   </div>
 
   <div class="below">
+    <div class="finmore" id="isx-finmore"></div>
     <div class="row">
       <section class="box narr" id="isx-narr" aria-live="polite">
         <h3 id="isx-n-title"></h3>
@@ -3496,7 +3498,7 @@ function buildMapModes() {
     b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); }); host.appendChild(b);
     if (k === mapMode && m.grad) { host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${m.lo}</span><span>${m.hi}</span></div>`); }
   });
-  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">How to use the globe</button></div>');
+  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
 }
 /* phone: the arm as tap-open lists */
@@ -4744,7 +4746,7 @@ function plumbText() {
         <p>The circuit tab follows the money round the whole dollar system. This tab opens up its last steps, 08 to 10, where the state itself works the machinery.</p></div>
       <div class="expc"><h4>Why “Scott Bessent”</h4><p>Scott Bessent runs the Treasury, which holds many of these levers: debt issuance and buybacks, sanctions, swaps, currency action. Others are pulled elsewhere. The Fed sets rates and buys bills, Congress writes tax and stablecoin law, the Supreme Court struck down the emergency tariffs, the White House bargains over trade. <b>Each lever below says who pulls it.</b></p>
         <p>The name is a shorthand for a system in which debt management, trade and foreign policy have fused.</p></div>
-      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The tiles above it carry measured values, each with a date and a source (hover for it). Running a play, pulling a lever or clicking an actor lights the relations involved and the tiles that measure them. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
+      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The readings along the top carry measured values, each with a date and a source (hover for it). Running a play, pulling a lever or clicking an actor lights the relations involved and the readings that measure them. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
         <p>Some labels are this map’s reading, not the government’s. Michael Howell calls the bill strategy “Treasury QE”; the Treasury calls its buybacks “liquidity support”.</p></div>
       </div>
       <div class="expcol">
@@ -4864,25 +4866,26 @@ function playBarHTML() {
 function renderFin() {
   const host = $('fin'); if (!host) return;
   const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
+  ROOT.classList.toggle('fm-plumb', finMode === 'plumb');
+  const more = $('finmore'); if (more) more.innerHTML = '';
   if (finMode === 'plumb') {
+    /* v2 stage 2: one full-bleed stage (the relations map), with the readings, the card, the trays and the bar floating on it.
+       The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     TILES = buildHud();
-    host.innerHTML = head('The plumbing', 'Foreign central banks are stepping back and the AI build-out needs cheap money, so Washington runs the plumbing itself: at home, in households, abroad and in oil. Follow the story step by step, or open the full view to run a play, pull a lever and click anything.')
-      + simTipsHTML()
-      + `<section class="cock panel" id="isx-cock" aria-label="The simulator">`
-      + simBarHTML() + `<div class="sbody"><div class="sdash">`
-      + playBarHTML() + hudHTML()
-      + `<div class="mapstage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div><aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside></div>`
-      + `<div class="rkey">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div>`
-      + levBarHTML()
-      + `</div>` + simNarrHTML() + `</div>`
-      + `</section>`
-      + plumbText()
-      + actionsHTML()
-      + issueHTML();
+    host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The simulator: the plumbing">`
+      + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>The plumbing</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s2read">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
+      + simNarrHTML()
+      + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
+      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
+      + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
+      + `<div class="s2tray tr-lev" id="isx-s2tray-lev" hidden>${levBarHTML()}</div>`
+      + `<nav class="s2bar" id="isx-s2bar" aria-label="Guide: chapters and trays"></nav></div>`
+      + `</section>`;
+    if (more) { more.innerHTML = plumbText() + actionsHTML() + issueHTML(); wireActions(more); wireIssue(more); }
     drawRmap(); renderSide();
-    wireActions(host); wireIssue(host);
-    wireCockpit(host); wireSimTips();
-    { const fk = host.querySelector('.finhead .fk'); if (fk) fk.insertAdjacentHTML('beforeend', '<span class="phelpw"> · <button type="button" class="tipsre" id="isx-phelp" data-tips="sim">How to use</button></span>'); }
+    wireCockpit(host);
     simMount();
   } else {
     host.innerHTML = head('The capital stack', 'Cash flow no longer covers the build-out. Bonds in five currencies, new shares and off-balance-sheet vehicles fill the gap, financed in the end by insurers, annuities and pension funds: savings of people who never chose to fund the AI race.')
@@ -4971,7 +4974,7 @@ function styleRmap() {
 function placeDossier() {
   if (simOn()) { simDossier(); return; }
   const s = $('rside'), st = $('stage'), svg = $('rmap'); if (!s || !st || !svg || s.hidden) return;
-  if (window.innerWidth <= 900) { s.classList.remove('l', 'b'); s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
+  if (window.innerWidth <= 760) { s.classList.remove('l', 'b'); s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
   const sr = st.getBoundingClientRect(), vr = svg.getBoundingClientRect(), k = vr.width / (MAPW + 6), ox = vr.left - sr.left, oy = vr.top - sr.top;
   const w = s.offsetWidth, h = s.offsetHeight, m = 10, lit = [...nodesOf(activeEdges())].map(n => { const F = FN[n]; return [ox + (F[1] - NW / 2 + 3) * k, oy + (F[2] - NH / 2 + 3) * k, NW * k, NH * k]; });
   let cx = 0; lit.forEach(r => { cx += r[0] + r[2] / 2; }); cx = lit.length ? cx / lit.length : 0;
@@ -4991,9 +4994,9 @@ function renderSide(lev) {
   if (fplay != null) {
     const P = PLAYS[fplay], st = P.steps[fpstep];
     s.hidden = false; s.style.setProperty('--dc', P.c);
-    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play as a story</button>`;
+    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4><p>${fe(st[1])}</p><div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play in the guide</button>`;
     $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); });
-    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); } else { burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever below the map.</p>`, 4500); } });
+    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); } else { burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever.</p>`, 4500); } });
     placeDossier(); done(); return;
   }
   if (lev != null && flev.has(lev)) {
@@ -5100,7 +5103,7 @@ function wrap(s, n, max) { const w = String(s).split(' '), out = []; let l = '';
 function finNarr() {
   if (finMode === 'plumb') return { h: 'The plumbing', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
     x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Two more channels fund the build-out itself, new shares and new bonds, and are listed with their sources under the map. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
-    scale: 'The map is schematic: lines show relations, not amounts. The tiles above the map carry the measured values, with dates and sources.' };
+    scale: 'The map is schematic: lines show relations, not amounts. The readings on the map carry the measured values, with dates and sources.' };
   return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
     x: 'Goldman Sachs expects debt to fund about a third of hyperscaler capex in 2026. The rest of the gap is filled off balance sheet: special-purpose vehicles financed by private credit, anchored by firms such as Apollo, Blackstone and PIMCO, whose money comes in large part from insurers, annuities and pension funds. US life insurers alone held $85.2bn of AI-linked investments in mid-2026. The hyperscalers also borrow abroad in euros, sterling, Swiss francs, Canadian dollars and yen.',
     scale: 'The tower is drawn to scale; * = implied. Deal diagrams show who pays whom, in what order.' };
@@ -5643,7 +5646,7 @@ function tipsAct(k) {
   if (hint && COARSE) hint.firstChild.textContent = 'Swipe sideways to turn the globe · tap a country · use the step bar to step ';
   ROOT.addEventListener('click', e => {
     const b = e.target.closest('[data-tips]'); if (!b) return;
-    if (b.dataset.tips === 'globe') { stSet(TKEY.globe, null, true); if (view !== 'map') setView('map'); gtOpen(true); }
+    if (b.dataset.tips === 'globe') { stSet(TKEY.globe, null, true); if (view !== 'map') setView('map'); if (window.ISX && ISX.tour) ISX.tour.open(true); else gtOpen(true); } /* v2: the short tour (v2/tour.js) replaces the four globe tips; they remain the fallback */
     else if (b.dataset.tips === 'sim') simTipsShow();
   });
 })();
@@ -5877,13 +5880,13 @@ const SMAIN = {
   t: 'How the plumbing was built', c: '#ffd27a',
   lede: 'Foreign central banks stepped back from US debt just as the AI build-out needed cheap money. Follow what happened, step by step: what Washington did, and what followed, from the first problem to the whole machine.',
   ch: [
-    { t: 'Who buys the debt?', w: '2023 to Oct 2026', b: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]] },
-    { t: 'A data centre gets paid for', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'Long yields set the price of credit, and the AI build-out runs on credit.'], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
-    { t: 'The allies’ savings come back', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
-    { t: 'The consumer keeps it flowing', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
-    { t: 'Abroad: the dollar’s backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'The allies’ currencies and reserves have to hold', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 3, 'The surpluses that fund the loop belong to allies, so Washington bargains with them directly.'], [5, 0, 'When a friendly government runs short of dollars, the Treasury can lend them.'], [5, 1], [5, 2]] },
-    { t: 'Oil squeezes the loop', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 3, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.']] },
-    { t: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
+    { t: 'Who buys the debt?', s: 'Who buys?', w: '2023 to Oct 2026', b: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]] },
+    { t: 'A data centre gets paid for', s: 'Data centre', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'Long yields set the price of credit, and the AI build-out runs on credit.'], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
+    { t: 'The allies’ savings come back', s: 'Savings', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
+    { t: 'The consumer keeps it flowing', s: 'Consumer', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
+    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'The allies’ currencies and reserves have to hold', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 3, 'The surpluses that fund the loop belong to allies, so Washington bargains with them directly.'], [5, 0, 'When a friendly government runs short of dollars, the Treasury can lend them.'], [5, 1], [5, 2]] },
+    { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 3, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.']] },
+    { t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
   ],
 };
 /* the three choices, keyed by the step that what happened leads to. The other outcome uses facts already on this page. */
@@ -5915,7 +5918,7 @@ function sBeat(p, s, ch, why) {
   return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SFORK[k] ? k : null };
 }
 const SLINES = (() => {
-  const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, w: C.w, tri: C.tri })), beats: [] }];
+  const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri })), beats: [] }];
   SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why]) => L[0].beats.push(sBeat(p, s, ci, why))));
   PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, chs: [{ t: P.t, w: '', tri: i === 5 ? SMAIN.ch[4].tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
   L.forEach(l => {
@@ -5930,7 +5933,7 @@ const SNONE = { n: new Set(), e: new Set(), l: new Set() };
 const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
 
 /* ---------- state ---------- */
-const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), pick: false, wired: false };
+const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), tray: null, deep: false, wired: false };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
@@ -6007,23 +6010,46 @@ function drawOn(p, delay) {
 
 /* ---------- camera: frames what the story has introduced (phones: the step in hand) ---------- */
 const SFULL = [-3, -3, MAPW + 6, MAPH + 6];
-function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = simOn() ? (PHONE() ? '1.12' : '2.25') : ''; }
-function simCamTarget() {
-  if (!simOn()) return SFULL;
-  const L = sLine(), b = SIM.beat; if (b < 0 || (b >= L.beats.length && L.main)) return SFULL;
-  const phone = PHONE(), act = simActive(), R = SIM.R;
-  const set = phone && act ? enodes([...act]) : new Set([...R.n, ...R.tmp]); if (!set.size) return SFULL;
+/* v2 stage 2: the map fills the stage, so the camera frames what matters inside the part of the stage that is free:
+   right of the card, under the readings, above the bar and any pinned tray. In the guide it frames the step in hand
+   and the one before it (the rest of what is revealed stays on the map, partly out of view); otherwise the whole map.
+   Phones keep the old behaviour: the map is a block of its own and the camera frames the step. */
+function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = PHONE() ? (simOn() ? '1.12' : '') : ''; }
+function simBox(set) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
   set.forEach(n => { const F = FN[n]; x0 = Math.min(x0, F[1] - NW / 2); x1 = Math.max(x1, F[1] + NW / 2); y0 = Math.min(y0, F[2] - NH / 2); y1 = Math.max(y1, F[2] + NH / 2); });
-  const pad = phone ? 14 : 34; x0 -= pad; x1 += pad; y0 -= pad + 22; y1 += pad;
-  const svg = $('rmap'), ar = svg.clientWidth / Math.max(1, svg.clientHeight) || (MAPW + 6) / (MAPH + 6);
-  let w = Math.max(x1 - x0, phone ? 300 : 560), h = y1 - y0, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  if (w / h > ar) h = w / ar; else w = h * ar;
-  if (w >= SFULL[2] && h >= SFULL[3]) { const s = Math.max(SFULL[2] / ar, SFULL[3]); h = s; w = s * ar; return [SFULL[0] + SFULL[2] / 2 - w / 2, SFULL[1] + SFULL[3] / 2 - h / 2, w, h]; }
-  let x = cx - w / 2, y = cy - h / 2;
-  x = w <= SFULL[2] ? Math.max(SFULL[0], Math.min(x, SFULL[0] + SFULL[2] - w)) : SFULL[0] + SFULL[2] / 2 - w / 2;
-  y = h <= SFULL[3] ? Math.max(SFULL[1], Math.min(y, SFULL[1] + SFULL[3] - h)) : SFULL[1] + SFULL[3] / 2 - h / 2;
-  return [x, y, w, h];
+  return [x0, y0, x1, y1];
+}
+function simCamTarget() {
+  const svg = $('rmap'), cock = $('cock'); if (!svg || !cock) return SFULL;
+  const on = simOn(), L = sLine(), b = SIM.beat, phone = PHONE();
+  if (phone) {
+    if (!on || b < 0 || (b >= L.beats.length && L.main)) return SFULL;
+    const act = simActive(), R = SIM.R, set = act ? enodes([...act]) : new Set([...R.n, ...R.tmp]); if (!set.size) return SFULL;
+    let [x0, y0, x1, y1] = simBox(set); x0 -= 14; x1 += 14; y0 -= 36; y1 += 14;
+    const ar = svg.clientWidth / Math.max(1, svg.clientHeight) || (MAPW + 6) / (MAPH + 6);
+    let w = Math.max(x1 - x0, 300), h = y1 - y0; const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    if (w / h > ar) h = w / ar; else w = h * ar;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
+  const W = svg.clientWidth || 1, H = svg.clientHeight || 1, sr = svg.getBoundingClientRect();
+  const rel = (id, edge) => { const e = $(id); if (!e || e.hidden || !e.getClientRects().length) return null; const r = e.getBoundingClientRect(); return edge === 'b' ? r.bottom - sr.top : edge === 't' ? r.top - sr.top : edge === 'r' ? r.right - sr.left : r.left - sr.left; };
+  const card = $('snarr'), folded = card && card.classList.contains('folded');
+  const top = cock.querySelector('.s2top'), tb = top ? top.getBoundingClientRect().bottom - sr.top : 150;
+  const iT = Math.max(tb + 14, (rel('s2read', 't') || 0) + 50), bar = rel('s2bar', 't'), lev = on ? null : rel('s2tray-play', 't');
+  const iB = H - Math.min(bar != null ? bar : H - 80, lev != null ? lev : H) + 30;
+  cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB) + 'px');
+  const iL = on && !folded && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = 26;
+  let box, cap;
+  if (on && b >= 0 && b < L.beats.length) {
+    const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
+    const set = SIM.alt ? new Set([...enodes(SFORK[SIM.alt].out.e), ...enodes(B.e)]) : new Set([...enodes(B.e), ...(P ? enodes(P.e) : [])]);
+    box = simBox(set); box[0] -= 26; box[2] += 26; box[1] -= 44; box[3] += 26; cap = 1.3;
+  } else { box = [0, 0, MAPW, MAPH]; cap = 1.5; }
+  const aw = Math.max(200, W - iL - iR), ah = Math.max(160, H - iT - iB), bw = box[2] - box[0], bh = box[3] - box[1];
+  const k = Math.min(aw / bw, ah / bh, cap);
+  cock.dataset.z = k < .72 ? 'far' : k < 1.08 ? 'mid' : 'near';
+  return [box[0] - (iL + (aw - bw * k) / 2) / k, box[1] - (iT + (ah - bh * k) / 2) / k, W / k, H / k];
 }
 function simCam(anim) {
   const svg = $('rmap'); if (!svg) return;
@@ -6037,78 +6063,108 @@ function simCam(anim) {
 }
 
 /* ---------- the narrator ---------- */
-/* a quiet fine-line contour of the Treasury building (15th Street colonnade) beside the narrator text */
-const STSY = (() => { let d = 'M4 61H116M9 57H111M13 53H107M17 49H103'; for (let i = 0; i < 9; i++) { const x = 22 + i * 9.5; d += `M${x - 1.3} 49V25M${x + 1.3} 49V25M${x - 2.6} 25H${x + 2.6}`; } d += 'M17 23H103M17 19.5H103M21 19.5V11H99V19.5M27 11V19.5M93 11V19.5M21 15H99'; return `<svg viewBox="0 0 120 64" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`; })();
-const simBarHTML = () => `<div class="sbar"><div class="smode" role="group" aria-label="How to view the simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Story <small>recommended</small></button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div><span class="scount" id="isx-scount" aria-live="off"></span></div>`;
-const simNarrHTML = () => `<aside class="snarr" id="isx-snarr" aria-label="Story"><div class="sn-in" id="isx-sn-in">
-  <div class="sn-head"><span class="sn-mark">${STSY}</span><div class="sn-k"><span>Story</span><b id="isx-sn-line"></b></div><div class="sn-tools"><button type="button" class="sn-tb" id="isx-sn-pickb" aria-expanded="false" aria-controls="isx-sn-pick">Stories</button><button type="button" class="sn-tb sn-rst" id="isx-sn-rst" aria-label="Start this story again" data-tip="<b>Start again</b><p>Back to the beginning of this story.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4.5V9h4.5"/></svg></button></div></div>
-  <div class="sn-pick" id="isx-sn-pick" hidden></div>
-  <div class="sn-prog" id="isx-sn-prog"></div>
+/* v2 stage 2: the guide speaks through one floating card (a reveal of one or two sentences, the rest behind “Go deeper”),
+   a chapter bar along the bottom and trays for the levers, the plays and the readings. Full view is the same stage with
+   everything lit and the trays pinned open. Internally the guide is still mode 'story' (the stored setting keeps working). */
+const simBarHTML = () => `<div class="smode" role="group" aria-label="How to view the simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Guide</button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div>`;
+const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label="Guide"><button type="button" class="s2fold" id="isx-s2fold" aria-label="Fold the card" aria-expanded="true">–</button><div class="s2in" id="isx-sn-in">
   <div class="sn-det" id="isx-sn-det"></div>
-  <div class="sn-body" id="isx-sn-body" aria-live="polite"></div>
-  <div class="sn-nav" id="isx-sn-nav"></div>
+  <div class="s2body" id="isx-sn-body" aria-live="polite"></div>
+  <div class="s2nav" id="isx-sn-nav"></div>
 </div></aside>`;
 const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
 const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
 function simPickHTML() {
   const M = SLINES[0];
-  return `<div class="pk-h">Main story</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
-    + `<ol class="pk-chs">${M.chs.map((C, ci) => `<li><button type="button" class="pk-c" data-sl="0" data-sb="${M.first[ci]}"><span>${ci + 1}</span>${fe(C.t)}</button></li>`).join('')}</ol>`
-    + `<div class="pk-h">Follow one thread</div>` + SLINES.slice(1).map((L, i) => `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`).join('');
+  return `<div class="pk-h">The guide</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
+    + `<div class="pk-h">One mechanism at a time</div><div class="pk-ms">` + SLINES.slice(1).map((L, i) => `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`).join('') + `</div>`;
 }
-function simProgHTML() {
-  const L = sLine(), b = SIM.beat, B = sCur() || (b >= L.beats.length ? L.beats[L.beats.length - 1] : null), ci = B ? B.ch : -1;
-  const head = L.main
-    ? (ci >= 0 && b < L.beats.length ? `<div class="sn-ch"><span>Chapter ${ci + 1} of ${L.chs.length}</span><b>${fe(L.chs[ci].t)}</b><em>${fe(L.chs[ci].w)}</em></div>` : `<div class="sn-ch"><span>${b < 0 ? L.chs.length + ' chapters · ' + L.beats.length + ' steps' : 'All ' + L.beats.length + ' steps'}</span></div>`)
-    : `<div class="sn-ch"><span>${b >= L.beats.length ? 'All ' + L.beats.length + ' steps' : 'Thread · step ' + (b + 1) + ' of ' + L.beats.length}</span></div>`;
-  const seg = `<div class="sn-seg" aria-hidden="true" style="--lc:${L.main ? SMAIN.c : L.c}">${L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c); return `<span class="g${c === ci ? ' cur' : ''}" style="--n:${idx.length}">${idx.map(i => `<i data-sb="${i}" class="${i === b && !SIM.alt ? 'cur' : i < b || (i === b && SIM.alt) || b >= L.beats.length ? 'done' : ''}"></i>`).join('')}</span>`; }).join('')}</div>`;
-  return head + seg;
+/* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
+function simBar() {
+  const bar = $('s2bar'); if (!bar) return;
+  const L = sLine(), b = SIM.beat, n = L.beats.length, R = SIM.R || SALL, on = SIM.mode === 'story';
+  if (!on) { bar.innerHTML = ''; bar.hidden = true; return; }
+  bar.hidden = false;
+  const B = sCur() || (b >= n ? L.beats[n - 1] : null), ci = B ? B.ch : -1;
+  const chs = L.main
+    ? L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c), cur = c === ci && b < n, done = b >= n || (ci > c); return `<li><button type="button" class="s2ch${cur ? ' cur' : done ? ' done' : ''}" data-sb="${L.first[c]}"${cur ? ' aria-current="step"' : ''} data-tip="<b>${fe(C.t)}</b><p>${fe(C.w)} · ${idx.length} steps</p>"><span class="n">${String(c + 1).padStart(2, '0')}</span><b>${fe(C.s || C.t)}</b><span class="pp" aria-hidden="true">${idx.map(i => `<i class="${i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : ''}"></i>`).join('')}</span></button></li>`; }).join('')
+    : L.beats.map((X, i) => `<li><button type="button" class="s2ch st${i === b ? ' cur' : i < b || b >= n ? ' done' : ''}" data-sb="${i}"${i === b ? ' aria-current="step"' : ''} data-tip="<b>${fe(X.t)}</b>"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${fe(X.t)}</b></button></li>`).join('');
+  const nt = cock => cock ? cock.querySelectorAll('.tile:not(.gh)').length : 0, fresh = sCur() && sCur().lev.length && !SIM.alt;
+  bar.style.setProperty('--lc', L.main ? SMAIN.c : L.c);
+  bar.innerHTML = `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.t)}</b><i aria-hidden="true"></i></button>`
+    + `<button type="button" class="s2arr" data-sg="back" aria-label="Previous step"${b < 0 && !SIM.alt ? ' disabled' : ''}>${sArrL}</button>`
+    + `<ol class="s2chs${L.main ? '' : ' mech'}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
+    + `<button type="button" class="s2arr" data-sg="${b < 0 ? 'start' : 'next'}" aria-label="Next step"${b >= n ? ' disabled' : ''}>${sArrR}</button>`
+    + `<span class="s2sp"></span>`
+    + `<button type="button" class="s2tb" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s2read">Readings <b>${nt($('cock'))}</b></button>`
+    + `<button type="button" class="s2tb${fresh ? ' fresh' : ''}" data-tray="lev" aria-expanded="${SIM.tray === 'lev'}" aria-controls="isx-s2tray-lev">Levers <b>${R.l.size}</b></button>`;
 }
-/* problem → what was done → consequence, for the chapter in hand */
+/* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
+function simTrays() {
+  const cock = $('cock'); if (!cock) return;
+  const full = SIM.mode !== 'story', t = full ? (SIM.tray === 'read' ? 'read' : null) : SIM.tray;
+  const lv = $('s2tray-lev'), pl = $('s2tray-play'), pk = $('s2tray-pick');
+  if (lv) lv.hidden = !(full || t === 'lev'); if (pl) pl.hidden = !full; if (pk) pk.hidden = t !== 'pick';
+  if (t === 'pick') $('sn-pick').innerHTML = simPickHTML();
+  cock.classList.toggle('rd-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
+  cock.querySelectorAll('[data-tray]').forEach(x => x.setAttribute('aria-expanded', String(x.dataset.tray === t)));
+}
+function simTray(t) { SIM.tray = SIM.tray === t ? null : t; simTrays(); }
 function simTriHTML(B) {
   const L = sLine(), idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === B.ch);
   return `<div class="sn-tri" aria-label="This chapter: problem, what was done, consequence">${['p', 'd', 'c'].map(r => { const list = idx.filter(i => L.beats[i].r === r); const fb = (L.chs[B.ch].tri || {})[r]; return `<div class="r" style="--rc:${SROLE[r][1]}"><span>${SROLE[r][0]}</span><div>${!list.length && fb ? `<span class="c fb">${fe(fb)}</span>` : list.length ? list.map(i => i === SIM.beat ? `<b class="c cur" aria-current="step">${fe(L.beats[i].t)}</b>` : i < SIM.beat ? `<button type="button" class="c done" data-sb="${i}">${fe(L.beats[i].t)}</button>` : `<span class="c">${fe(L.beats[i].t)}</span>`).join('') : '<span class="c">none in this thread</span>'}</div></div>`; }).join('')}</div>`;
 }
 const sWord = n => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n] || String(n);
 const sChip = n => `<button type="button" class="sn-chip" data-sn="${n}" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</button>`;
+/* a reveal is one or two sentences: the first two of a text, and what is left of it for “Go deeper” */
+function sSplit(x) {
+  const s = String(x), cut = []; const re = /[.!?]\s+(?=[A-Z“‘$])/g; let m;
+  while ((m = re.exec(s))) cut.push(m.index + 1);
+  return cut.length < 2 ? [s, ''] : [s.slice(0, cut[1]), s.slice(cut[1]).trim()];
+}
+const sOne = x => !/[.!?]\s+(?=[A-Z“‘$])/.test(String(x));
+const sDeep = h => h ? `<details class="s2deep"${SIM.deep ? ' open' : ''}><summary>Go deeper</summary><div class="s2d">${h}</div></details>` : '';
 function simBodyHTML() {
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (b < 0) {
-    const lede = L.main ? SMAIN.lede : `One thread through the machine, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
+    const lede = L.main ? SMAIN.lede : `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length;
-    return `<div class="sn-intro"><div class="sn-tag" style="--rc:${L.c}"><i></i>${L.main ? L.chs.length + ' chapters · ' + n + ' steps' : n + ' steps'}</div><p class="sn-lede">${fe(lede)}</p>`
-      + (forks ? `<p class="sn-fact">At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. This follows what actually happened. The other option shows a different possible outcome.</p>` : '')
-      + (L.main ? `<ol class="sn-chs">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : '')
-      + `<div class="sn-cta"><button type="button" class="sn-go" data-sg="start">Start the ${L.main ? 'story' : 'thread'} ${sArrR}</button>${L.main ? '<span class="sn-rec">Recommended · about ten minutes</span>' : `<button type="button" class="sn-q2" data-sl="0" data-sb="-1">Back to the main story</button>`}</div>`
-      + `<button type="button" class="sn-skip" data-sm="full">Skip the story and open the full view</button></div>`;
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(lede)}</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button>${L.main ? '<button type="button" class="s2lnk sn-skip" data-sm="full">Open the full view</button>' : '<button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">Back to the guide</button>'}</div>`
+      + sDeep((L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : '')
+        + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : '')
+        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''));
   }
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
     const nxt = L.main ? null : SLINES[SIM.line % (SLINES.length - 1) + 1];
-    return `<div class="sn-intro fin"><div class="sn-tag" style="--rc:${L.c}"><i></i>${L.main ? 'Story complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Thread complete'}</h3>`
-      + (L.main ? `<p>${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.${SREST.length ? ` ${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the story; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:` : ''}</p>${rest ? `<ul class="sn-rest">${rest}</ul>` : ''}`
-        : `<p>${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.</p>`)
-      + `<p>Open the full view to run the plays, pull any lever and click anything.</p>`
-      + `<div class="sn-cta"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
-      + `<div class="sn-more">${L.main ? `<button type="button" data-sp="1">Follow one thread</button><button type="button" data-fm2="stack">The capital stack</button>` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next thread: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The main story</button>`}<button type="button" data-sg="restart">Start again</button></div></div>`;
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
+      + `<p class="s2p">${L.main ? `${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.` : `${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.`} Open the full view to run the plays, pull any lever and click anything.</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
+      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-fm2="stack">The capital stack</button>` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
+      + sDeep(L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : '');
   }
   if (SIM.alt) {
-    const F = SFORK[SIM.alt], O = F.out, tmp = [...SIM.R.tmp];
-    return `<article class="sn-beat alt" style="--rc:#ff8a5c"><div class="sn-tag"><i></i>Other outcome</div><div class="sn-pickd">Choice: ${fe(F.alt[0])}</div><h3>${fe(O.t)}</h3><p>${fe(O.x)}</p><p class="sn-note">${fe(O.n)}</p>${O.s ? `<div class="lsrc">${fe(O.s)}</div>` : ''}`
-      + (tmp.length ? `<div class="sn-new"><span>Lit on the map, later in the story</span>${tmp.map(n => `<span class="sn-chip ghost" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</span>`).join('')}</div>` : '') + `</article>`;
+    const F = SFORK[SIM.alt], O = F.out, tmp = [...SIM.R.tmp], [x1, x2] = sSplit(O.x);
+    return `<div class="s2k" style="--rc:#ff8a5c"><i></i>Other outcome<span>${fe(F.alt[0])}</span></div><h3>${fe(O.t)}</h3><p class="s2p">${fe(x1)}</p>`
+      + sDeep((x2 ? `<p>${fe(x2)}</p>` : '') + `<p class="sn-note">${fe(O.n)}</p>${O.s ? `<div class="lsrc">${fe(O.s)}</div>` : ''}`
+        + (tmp.length ? `<div class="sn-new"><span>Lit on the map, later in the guide</span>${tmp.map(k => `<span class="sn-chip ghost" style="--nc:${FN[k][5]}"><i aria-hidden="true"></i>${fe(FN[k][3])}</span>`).join('')}</div>` : ''));
   }
   const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
   const nw = [...enodes(B.e)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
-  let h = simTriHTML(B);
-  if (B.why && P) h += `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button><p>${fe(B.why)}</p></div>`;
-  h += `<article class="sn-beat" style="--rc:${R[1]}"><div class="sn-tag"><i></i>${R[0]}${B.w ? `<span>${fe(B.w)}</span>` : ''}</div><h3>${fe(B.t)}</h3><p>${fe(B.x)}</p>`
-    + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : '')
-    + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''} · pull to see what ${B.lev.length > 1 ? 'they move' : 'it moves'}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '')
-    + `</article>`;
+  const [x1, x2] = sSplit(B.x), lead = !!(B.why && P && sOne(B.x));
+  let h = `<div class="s2k" style="--rc:${R[1]}"><i></i>${R[0]}${B.w ? `<span>${fe(B.w)}</span>` : ''}</div><h3>${fe(B.t)}</h3>`
+    + (lead ? `<p class="s2why">${fe(B.why)}</p>` : '') + `<p class="s2p">${fe(x1)}</p>`
+    + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
   if (fk) {
     const F = SFORK[fk], seen = SIM.seen.has(fk);
     h += `<div class="sn-fork"><p class="sn-q"><span>Your choice</span>${fe(F.q)}</p><div class="sn-opts"><button type="button" class="sn-opt real" data-fk="real"><small>What happened</small><b>${fe(F.real[0])}</b><span>${fe(F.real[1])}</span></button><button type="button" class="sn-opt alt" data-fk="alt"><small>Other outcome${seen ? ' · seen' : ''}</small><b>${fe(F.alt[0])}</b><span>${fe(F.alt[1])}</span></button></div></div>`;
   }
+  h += sDeep((x2 ? `<p>${fe(x2)}</p>` : '')
+    + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${fe(B.why)}</p>` : ''}</div>` : '')
+    + simTriHTML(B)
+    + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : '')
+    + (fk ? `<p class="sn-note">One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : ''));
   return h;
 }
 function simNavHTML() {
@@ -6124,41 +6180,38 @@ function simNavHTML() {
 }
 function simNarr(anim) {
   const body = $('sn-body'); if (!body) return;
-  const L = sLine();
-  $('sn-line').textContent = L.t; $('sn-in').querySelector('.sn-k span').textContent = L.main ? 'Story' : 'Thread';
-  $('sn-prog').innerHTML = simProgHTML(); $('sn-prog').hidden = SIM.beat < 0;
-  const pk = $('sn-pick'); pk.hidden = !SIM.pick; if (SIM.pick) pk.innerHTML = simPickHTML(); $('sn-pickb').setAttribute('aria-expanded', String(SIM.pick));
   const put = () => {
     body.innerHTML = simBodyHTML(); $('sn-nav').innerHTML = simNavHTML(); $('sn-nav').hidden = SIM.beat < 0;
     if (anim) $('sn-in').scrollTop = 0; /* a new step starts at its top */
     [...body.children].forEach((c, i) => c.style.setProperty('--i', i));
+    const dp = body.querySelector('.s2deep'); if (dp) dp.addEventListener('toggle', () => { SIM.deep = dp.open; });
     body.classList.remove('out'); if (anim && !reduce) { body.classList.remove('in'); void body.offsetWidth; body.classList.add('in'); }
     const ph = $('sn-pill'); if (ph) { ph.hidden = !SIM.alt; if (SIM.alt) ph.textContent = 'Other outcome · ' + SFORK[SIM.alt].alt[0]; }
   };
   clearTimeout(SIM.nt);
   if (anim && !reduce && body.childElementCount) { body.classList.add('out'); SIM.nt = setTimeout(put, 150); } else put();
-  const sc = $('scount'), R = SIM.R; if (sc && R) sc.innerHTML = `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}`;
 }
-
 /* ---------- one place that applies the state ---------- */
 function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
-  cock.classList.toggle('st', on); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
-  const rs = $('rside'), home = on ? $('sn-det') : $('stage'); if (rs && home && rs.parentNode !== home) { rs.classList.remove('l', 'b'); home.appendChild(rs); }
+  const rs = $('rside'), home = on ? $('sn-det') : cock; if (rs && home && rs.parentNode !== home) { rs.classList.remove('l', 'b'); home.appendChild(rs); }
   simAspect();
   styleRmap(); renderSide();
   if (anim && prev && !reduce) simEnter(prev, R, fwd);
   SIM.shown = R;
   if (on) simNarr(anim);
+  simBar(); simTrays();
+  const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
   try { stSet(SKEY.pos, JSON.stringify({ l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
 }
 function simGo(line, beat, how) {
   const fwd = line === SIM.line && beat === SIM.beat + 1 && !SIM.alt;
-  SIM.line = line; SIM.beat = beat; SIM.alt = null; SIM.pick = false; clearSel();
+  SIM.line = line; SIM.beat = beat; SIM.alt = null; if (SIM.tray === 'pick') SIM.tray = null; clearSel();
   simApply(true, fwd);
   track('Story', { story: sLine().id, step: String(beat) });
   if (how === 'focus') simFocus();
@@ -6182,7 +6235,7 @@ function simChoose(k) {
 }
 function simSetMode(m) {
   if (SIM.mode === m) return;
-  SIM.mode = m; stSet(SKEY.mode, m); SIM.pick = false; track('Mode', { mode: m });
+  SIM.mode = m; stSet(SKEY.mode, m); SIM.tray = null; track('Mode', { mode: m });
   simApply(true);
   if (m === 'full') { const fr = $('cock'); if (fr && fr.getBoundingClientRect().top < 0) fr.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' }); }
 }
@@ -6195,16 +6248,20 @@ function simFocus() {
 function simDossier() {
   const s = $('rside'); if (!s || s.hidden || !SIM.R) return;
   s.querySelectorAll('.go').forEach(b => { if (!SIM.R.n.has(b.dataset.go) && !SIM.R.tmp.has(b.dataset.go)) { b.disabled = true; b.classList.add('later'); b.title = 'Later in the story'; } });
-  if (window.innerWidth < 1280) s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  const c = $('snarr'); if (c && c.classList.contains('folded')) { const f = $('s2fold'); if (f) f.click(); }   /* a dossier opens the card */
+  if (PHONE()) s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
 }
 function simMount() {
   const cock = $('cock'); if (!cock) return;
-  SIM.cam = null; SIM.shown = null; SIM.pick = false;
+  SIM.cam = null; SIM.shown = null; SIM.tray = null;
   const stage = $('stage'); if (stage && !$('sn-pill')) stage.insertAdjacentHTML('afterbegin', '<span class="sn-pill" id="isx-sn-pill" hidden></span>');
   const fx = $('rmap') && $('rmap').querySelector('#isx-fpart'); if (fx && !$('sfx')) fx.insertAdjacentHTML('afterend', '<g id="isx-sfx"></g>');
+  const focusIn = (host, q) => { const f = host && host.querySelector(q); if (f) f.focus({ preventScroll: true }); };
   cock.addEventListener('click', e => {
-    const t = e.target.closest('button, i[data-sb]'); if (!t || !cock.contains(t)) return;
+    const t = e.target.closest('button'); if (!t || !cock.contains(t)) return;
     const d = t.dataset;
+    if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
+    if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); return; }
     if (d.sm) { simSetMode(d.sm); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.sg === 'next') { simNext(); return; }
@@ -6212,15 +6269,19 @@ function simMount() {
     if (d.sg === 'start') { simGo(SIM.line, 0, 'focus'); return; }
     if (d.sg === 'restart') { simGo(SIM.line, -1, 'focus'); return; }
     if (d.sl != null) { simGo(+d.sl, +d.sb, 'focus'); return; }
-    if (d.sb != null && t.closest('#isx-snarr')) { simGo(SIM.line, +d.sb); return; }
-    if (d.sp) { SIM.pick = true; simNarr(false); const f = $('sn-pick').querySelector('button'); if (f) f.focus({ preventScroll: true }); return; }
+    if (d.sb != null && t.closest('#isx-snarr, #isx-s2bar')) { simGo(SIM.line, +d.sb); return; }
+    if (d.sp) { SIM.tray = 'pick'; simTrays(); focusIn($('sn-pick'), '.pk-l.on, button'); return; }
     if (d.sn) { pickNode(d.sn); return; }
-    if (d.slv != null) { const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }
+    if (d.slv != null) { if (SIM.tray !== 'lev') { SIM.tray = 'lev'; simTrays(); } const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }
     if (d.fm2) { finMode = d.fm2; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
-    if (t.id === 'isx-sn-pickb') { SIM.pick = !SIM.pick; simNarr(false); if (SIM.pick) { const f = $('sn-pick').querySelector('.pk-l.on') || $('sn-pick').querySelector('button'); if (f) f.focus({ preventScroll: true }); } return; }
-    if (t.id === 'isx-sn-rst') { simGo(SIM.line, -1, 'focus'); return; }
   });
-  cock.addEventListener('keydown', e => { if (e.key === 'Escape' && SIM.pick) { e.preventDefault(); SIM.pick = false; simNarr(false); $('sn-pickb').focus({ preventScroll: true }); } });
+  /* Esc: closes an open tray, then an open dossier, then leaves the guide for the full view */
+  cock.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
+    else if (fsel || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
+    else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '.smode [data-sm="full"]'); }
+  });
   simApply(false);
 }
 /* ← → move through the story while the simulator is in view */
@@ -6233,7 +6294,7 @@ document.addEventListener('keydown', ev => {
   else { const fk = sNextFork(); if (fk && !SIM.alt) simChoose('real'); else simNext(); }
 });
 let simRT = 0;
-window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (simOn()) { simAspect(); simCam(false); } }, 120); });
+window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); } }, 120); });
 /* a play in full view can be followed as a thread */
 ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.alt = null; clearSel(); simApply(true); });
 
@@ -6296,6 +6357,8 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/state.js"></script>
 <script defer src="/imperial-stack/v2/insight.js"></script>
 <script defer src="/imperial-stack/v2/own.js"></script>
+<script defer src="/imperial-stack/v2/chrome.js"></script>
+<script defer src="/imperial-stack/v2/tour.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

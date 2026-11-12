@@ -15,7 +15,7 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   const res = { states: {}, counts: {}, errors: [] };
   const ctxFor = async (w, h, mode, reduce = true) => {
     const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: reduce ? 'reduce' : 'no-preference' });
-    await c.addInitScript(m => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-intro-off', '1'); localStorage.setItem('isx-first', 'off'); localStorage.setItem('isx-insights', 'off'); if (m) localStorage.setItem('isx-sim-mode', m); } catch (e) {} }, mode);
+    await c.addInitScript(m => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-intro-off', '1'); localStorage.setItem('isx-first', 'off'); localStorage.setItem('isx-insights', 'off'); if (m) localStorage.setItem('isx-sim-mode', m); } catch (e) {} }, mode);
     return c;
   };
   const open = async (c, hash, tag) => {

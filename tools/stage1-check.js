@@ -8,7 +8,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   const b = await chromium.launch();
   const page = async (hash, ls = {}, opts = {}) => {
     const c = await b.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, deviceScaleFactor: 1, reducedMotion: opts.reduce ? 'reduce' : 'no-preference' });
-    await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tips-sim', 'off'); Object.keys(o).forEach(k => localStorage.setItem(k, o[k])); } catch (e) {} }, ls);
+    await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); Object.keys(o).forEach(k => localStorage.setItem(k, o[k])); } catch (e) {} }, ls);
     const p = await c.newPage(); p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 200)));
     await p.goto(base + hash, { waitUntil: 'load' });
     await p.waitForFunction(() => window.ISX && ISX.booted && ISX.globe && ISX.own && ISX.own.data, null, { timeout: 60000 });
