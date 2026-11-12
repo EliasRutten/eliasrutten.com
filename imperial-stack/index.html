@@ -3490,13 +3490,13 @@ function mmColour(iso) {
   return mixHex('#1b2a36', '#ffd27a', Math.min(1, Math.sqrt(v / 2100)));
 }
 function buildMapModes() {
-  const host = $('mapmodes'); host.innerHTML = '<div class="mh">Map mode</div>';
+  const host = $('mapmodes'); host.innerHTML = '<div class="mh"><span>Map mode</span><button type="button" class="instog mini" data-ins="toggle" hidden></button></div>';   /* the insights switch sits in the header: no extra line in a panel that is short of height */
   Object.entries(MM).forEach(([k, m]) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'mm'; b.style.setProperty('--mc', m.c); b.setAttribute('aria-pressed', String(k === mapMode));
     b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); }); host.appendChild(b);
     if (k === mapMode && m.grad) { host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${m.lo}</span><span>${m.hi}</span></div>`); }
   });
-  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">How to use the globe</button><button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>');
+  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">How to use the globe</button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
 }
 /* phone: the arm as tap-open lists */

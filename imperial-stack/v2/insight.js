@@ -140,7 +140,7 @@
     var st = X.steps[X.step], any = st && Object.keys(D.notes).some(function (iso) { return notesFor(iso, st.key).some(function (n) { return n.mark !== false; }); });
     var old = L.querySelector('.lr.nu'); if (old) old.remove();
     if (!any || X.sel.firm) return;
-    var r = document.createElement('div'); r.className = 'lr nu'; r.innerHTML = '<i class="arc care"></i><span>◇ Broken track: read with care (open the country)</span>';
+    var r = document.createElement('div'); r.className = 'lr nu'; r.title = 'A broken track or a ◇ marks a figure to read with care. Open the country for the note.'; r.innerHTML = '<i class="arc care"></i><span>◇ Read with care</span>';
     var lw = L.querySelector('.lw'); L.insertBefore(r, lw || null);
   });
   /* in the country card: the notes, with sources */
@@ -166,10 +166,10 @@
     var at = here(); setTimeout(function () { if (!cur && here() === at) show({ id: id, _at: at, care: true, k: 'Read with care · ' + X.data.CTY[sel.iso].name, t: n.s || n.t, src: n.src }); }, 900);
   });
 
-  /* ---------- the switch: beside “How to use the globe” (in the map-mode panel on desktop, under the globe on phones) ---------- */
+  /* ---------- the switch: in the header of the map-mode panel on desktop, beside “How to use the globe” under the globe on phones ---------- */
   function syncToggle() {
     var off = isOff();
-    root.querySelectorAll('[data-ins="toggle"]').forEach(function (t) { t.hidden = false; t.setAttribute('aria-pressed', String(!off)); t.textContent = off ? 'Insights are off' : 'Insights are on'; t.title = off ? 'Show short observations at key steps, countries and firms' : 'Stop showing short observations'; });
+    root.querySelectorAll('[data-ins="toggle"]').forEach(function (t) { t.hidden = false; t.setAttribute('aria-pressed', String(!off)); t.textContent = t.classList.contains('mini') ? (off ? 'Insights off' : 'Insights on') : (off ? 'Insights are off' : 'Insights are on'); t.title = off ? 'Show short observations at key steps, countries and firms' : 'Stop showing short observations'; });
   }
   root.addEventListener('click', function (e) {
     var t = e.target.closest('[data-ins="toggle"]'); if (!t) return;

@@ -47,8 +47,8 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   await p.evaluate(() => { const b = document.getElementById('isx-clear'); if (b && !b.hidden) b.click(); });
   const nm = await p.evaluate(() => document.querySelectorAll('#isx-mapmodes button[data-mm], #isx-mapmodes .mmb').length);
   res.counts.mapmodes = nm;
-  const mmSel = await p.evaluate(() => { const bs = [...document.querySelectorAll('#isx-mapmodes button')].filter(x => !x.classList.contains('mm-tog') && !x.classList.contains('lfull') && !x.hasAttribute('data-how')); return bs.length; });
-  for (let i = 0; i < mmSel; i++) { await p.evaluate(k => { const bs = [...document.querySelectorAll('#isx-mapmodes button')].filter(x => !x.classList.contains('mm-tog') && !x.classList.contains('lfull') && !x.hasAttribute('data-how')); bs[k].click(); }, i); await p.waitForTimeout(250); await snap(p, 'circuit/mode' + i, '#isx-mapmodes'); }
+  const mmSel = await p.evaluate(() => { const bs = [...document.querySelectorAll('#isx-mapmodes button')].filter(x => !x.classList.contains('mm-tog') && !x.classList.contains('lfull') && !x.hasAttribute('data-how') && !x.hasAttribute('data-ins')); return bs.length; });
+  for (let i = 0; i < mmSel; i++) { await p.evaluate(k => { const bs = [...document.querySelectorAll('#isx-mapmodes button')].filter(x => !x.classList.contains('mm-tog') && !x.classList.contains('lfull') && !x.hasAttribute('data-how') && !x.hasAttribute('data-ins')); bs[k].click(); }, i); await p.waitForTimeout(250); await snap(p, 'circuit/mode' + i, '#isx-mapmodes'); }
   await p.evaluate(() => document.getElementById('isx-waico').click()); await p.waitForTimeout(200); await snap(p, 'circuit/waico', '#isx-legend');
   await snap(p, 'page/method', '#isx-method, #isx-support, footer');
   await p.close();

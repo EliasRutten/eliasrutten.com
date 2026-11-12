@@ -46,6 +46,11 @@
 #isx-root .ins2 button:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
 #isx-root:not(.v-map) .ins2 { display: none; }
 #isx-root .hint .instog { margin-left: 0; }
+#isx-root .leg6 .lr.nu { margin-top: -3px; }   /* the added row costs as little height as it can: the panel is short of it */
+#isx-root .mapmodes .mh { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+#isx-root .mapmodes .mh .instog { appearance: none; border: 0; background: none; padding: 0; margin: 0; font: inherit; line-height: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink3); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(143, 163, 182, .35); text-underline-offset: 3px; }
+#isx-root .mapmodes .mh .instog[aria-pressed="true"] { color: #ffb547; text-decoration-color: rgba(255, 181, 71, .4); }
+#isx-root .mapmodes .mh .instog:hover { color: #fff; }
 @media (max-width: 760px) {
   #isx-root .ins2 { position: fixed; z-index: 61; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); width: auto; background: #091018; }
   #isx-root .ins2.first { width: auto; padding: 12px 44px 10px 14px; }
