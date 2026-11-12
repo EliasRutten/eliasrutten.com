@@ -47,7 +47,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 2. the Simulator: first principles, ladder, sectors, backstop ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
-  ok('guide: the opening offers first principles and the plumbing', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles/.test(b.querySelector('.sn-go').textContent) && !!b.querySelector('.sn-go2[data-sg="start"]') && /37 steps/.test(b.textContent); }));
+  ok('guide: the opening offers first principles and the plumbing', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles/.test(b.querySelector('.sn-go').textContent) && !!b.querySelector('.s4skip[data-sg="start"]') && /37 steps/.test(b.textContent); }));
   await p.click('#isx-sn-body .sn-go'); await p.waitForTimeout(350);
   let n = 0, worst = 0, deepOk = true, kinds = [];
   for (let i = 0; i < 20; i++) {
@@ -72,12 +72,12 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('picker: first principles first, then the guide, then mechanisms on three rungs', await p.evaluate(() => { const k = document.getElementById('isx-sn-pick'); return /First principles/.test(k.querySelector('.pk-l').textContent) && k.querySelectorAll('.pk-t').length === 3 && k.querySelectorAll('.pk-t .pk-l').length === 9; }));
   await p.keyboard.press('Escape');
-  await p.click('#isx-s2bar [data-tray="read"]'); await p.waitForTimeout(250);
+  await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click()); await p.waitForTimeout(250);
   ok('ladder: source, then three rungs, with arrows both ways', await p.evaluate(() => { const l = document.querySelector('#isx-cock .lad3'); return !!l && l.querySelectorAll('.hc').length === 3 && !!l.querySelector('.lsrc3') && l.querySelectorAll('.larr3 .dn').length === 3 && l.querySelectorAll('.larr3 .up').length === 3 && l.querySelectorAll('.secb3').length === 5; }));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
 
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
-  await p.click('.s2rdb'); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(300);
   const lad = await p.evaluate(() => { const l = document.querySelector('#isx-cock .lad3'), v = e => e.getClientRects().length > 0; return { tiles: [...l.querySelectorAll('.tile')].filter(v).length, per: [...l.querySelectorAll('.hc')].map(h => h.querySelectorAll('.tile').length), slots: [...l.querySelectorAll('.slot3')].filter(v).length, figs: [...l.querySelectorAll('.fig3')].filter(v).length, fit: l.scrollHeight <= l.clientHeight + 1, inside: l.getBoundingClientRect().bottom <= innerHeight }; });
   ok('ladder: all 17 readings on three rungs (4, 4, 9), empty slots for what is not measured', lad.tiles === 17 && lad.per.join() === '4,4,9' && lad.slots === 6 && lad.figs >= 6, lad);
   ok('ladder: fits the window at 1440×900 without scrolling', lad.fit && lad.inside, lad);

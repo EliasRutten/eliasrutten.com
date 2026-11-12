@@ -2355,6 +2355,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/v2.css">
 <link rel="stylesheet" href="/imperial-stack/v2/sim.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage3.css">
+<link rel="stylesheet" href="/imperial-stack/v2/stage4.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -4991,11 +4992,20 @@ function hudHTML() {
 
 /* ---------- plumbing text ---------- */
 const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
+/* v2 stage 4: the 17 readings as a slim rail on the stage's right edge, by rung; a reading opens its actor,
+   “The full ladder” opens the ladder with its arrows and empty slots. Same figures as the ladder (TILES). */
+function railHTML() {
+  const all = TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
+  const it = ({ T, c }) => { const g = T.g; return `<li><button type="button" class="s4ri" data-node="${T.n}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note || '')}</p><p class='ts'>${fe(g.src || '')} · click to find it on the map</p>"><span>${fe(T.k)}</span><b>${fe(String(g.v || '–').replace(/^~/, '≈'))}</b></button></li>`; };
+  return `<aside class="s4rail" id="isx-s4rail" aria-label="Readings: ${all.length} figures, from what Washington sets to what the economy shows"><div class="s4rh"><b>Readings</b><span>${all.length}</span></div>`
+    + TIERS.map(([k, t, sub, c]) => `<div class="s4rg" style="--zc:${c}"><div class="s4rt">${fe(t)}<small>${fe(sub)}</small></div><ul>${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(it).join('')}</ul></div>`).join('')
+    + `<button type="button" class="s4lad" data-tray="read" aria-controls="isx-s2read">The full ladder <span aria-hidden="true">↗</span></button></aside>`;
+}
 function levBarHTML() {
-  return `<div class="levbar" role="group" aria-label="Levers">${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
+  return `<div class="levbar" role="group" aria-label="Levers"><div class="s4pull"><b>Pull a lever</b><span>Its effects light up on the map. Pull again to release.</span></div>${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
 }
 function playBarHTML() {
-  return `<div class="pbar"><span class="pbl">Plays</span>${PLAYS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${P.steps.length} moves, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(PSH[i])}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
+  return `<div class="pbar"><span class="pbl s4pl"><b>Run a play</b><span>Washington’s moves, one by one</span></span>${PLAYS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${P.steps.length} moves, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(PSH[i])}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
 }
 function renderFin() {
   const host = $('fin'); if (!host) return;
@@ -5010,6 +5020,7 @@ function renderFin() {
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
       + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>The plumbing</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s2read">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
+      + railHTML()
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
       + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${TIERS.map(([k, t, , c]) => `<span class="k3"><i class="t3" style="background:${c}"></i>${fe(t)} reading</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
@@ -5043,6 +5054,7 @@ function pickNode(n) { const same = fsel === n && fplay == null && !flev.size; c
 function wireCockpit(host) {
   host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
   host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
+  host.querySelectorAll('.s4ri').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.node)));
   host.querySelectorAll('.tile').forEach(b => {
     b.addEventListener('click', () => pickNode(b.dataset.node));
     b.addEventListener('mouseenter', () => { fhover = b.dataset.node; styleRmap(); }); b.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
@@ -5097,6 +5109,7 @@ function styleRmap() {
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
   svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n)); g.classList.toggle('sel', n === fsel); });
   ROOT.querySelectorAll('.tile').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); });
+  ROOT.querySelectorAll('.s4ri').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); b.setAttribute('aria-current', String(b.dataset.node === fsel)); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
@@ -5790,9 +5803,9 @@ function tipsAct(k) {
 function simTipsHTML(force) {
   if (!force && tipsOff('sim')) return '';
   const T = [
-    ['Run a play', 'The plays along the top are policy sequences. Pick one and step through its moves with Next; each move lights the relations behind it.'],
-    ['Pull a lever', 'The levers under the map are Washington’s tools, each with who pulls it. Pull one or several to see what they move; Clear resets.'],
-    ['Read the dials', 'The tiles at the top are dated readings. ' + (COARSE ? 'Tap' : 'Click') + ' one to find its actor on the map.'],
+    ['Follow the guide', 'Press “Start the guide” on the opening card, or Guide in the bar at the bottom. Each step lights its part of the map; Next or ← → moves on.'],
+    ['Plays and levers', 'Also in the bar: plays run Washington’s moves one by one; levers are its tools, each with who pulls it. Pull one or several to see what they move.'],
+    ['Read the dials', 'The readings are dated figures: on the right edge, or under the map on a phone. ' + (COARSE ? 'Tap' : 'Click') + ' one to find its actor on the map; “The full ladder” shows how they connect.'],
     ['Open anything', (COARSE ? 'Tap' : 'Click') + ' an actor or a line for a dossier with figures and sources. The capital stack, in the switch at the top, follows the money deal by deal.'],
   ];
   return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
@@ -6105,7 +6118,7 @@ const SNONE = { n: new Set(), e: new Set(), l: new Set() };
 const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
 
 /* ---------- state ---------- */
-const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), tray: null, deep: false, wired: false };
+const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
@@ -6139,14 +6152,15 @@ function simStyle(act) {
   const on = simOn() && !!SIM.R, R = SIM.R, vis = n => !on || R.n.has(n) || R.tmp.has(n);
   const B = on && !SIM.alt ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
   const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...bN(P)].filter(n => bN(B).has(n)) : [];
-  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('gh', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n)); });
+  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('s4dim', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n)); });
   svg.querySelectorAll('.fe, .feh').forEach(p => {
     const i = +p.dataset.e, e = FE[i], show = !on || R.e.has(i) || (!!act && act.has(i) && vis(e[0]) && vis(e[1]));
     p.classList.toggle('gh', !show); p.classList.toggle('tr', on && trail.has(i));
   });
-  svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('gh', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
+  svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('s4dim', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
   const cock = $('cock'); if (!cock) return;
   cock.querySelectorAll('.tile').forEach(t => t.classList.toggle('gh', on && !R.n.has(t.dataset.node)));
+  cock.querySelectorAll('.s4ri').forEach(t => t.classList.toggle('s4later', on && !R.n.has(t.dataset.node)));
   cock.querySelectorAll('.hc').forEach(h => h.classList.toggle('gh', on && !h.querySelector('.tile:not(.gh)')));
   cock.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l; b.classList.toggle('gh', on && !R.l.has(i)); b.classList.toggle('fresh', !!B && B.lev.includes(i)); });
   cock.querySelectorAll('.lvg').forEach(g => g.classList.toggle('gh', on && !g.querySelector('.lv:not(.gh)')));
@@ -6208,10 +6222,11 @@ function simCamTarget() {
   const rel = (id, edge) => { const e = $(id); if (!e || e.hidden || !e.getClientRects().length) return null; const r = e.getBoundingClientRect(); return edge === 'b' ? r.bottom - sr.top : edge === 't' ? r.top - sr.top : edge === 'r' ? r.right - sr.left : r.left - sr.left; };
   const card = $('snarr'), folded = card && card.classList.contains('folded');
   const top = cock.querySelector('.s2top'), tb = top ? top.getBoundingClientRect().bottom - sr.top : 150;
-  const iT = Math.max(tb + 14, (rel('s2read', 't') || 0) + 50), bar = rel('s2bar', 't'), lev = on ? null : rel('s2tray-play', 't');
+  const iT = Math.max(tb + 14, (rel('s2read', 't') || 0) + 50), bar = rel('s2bar', 't'), tps = on ? [] : [rel('s2tray-play', 't'), rel('s2tray-lev', 't')].filter(v => v != null), lev = tps.length ? Math.min(...tps) : null;
   const iB = H - Math.min(bar != null ? bar : H - 80, lev != null ? lev : H) + 30;
   cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB) + 'px');
-  const iL = on && !folded && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = 26;
+  const open = cock.classList.contains('s4open'), rl = rel('s4rail', 'l');
+  const iL = on && !folded && !open && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = rl != null ? Math.max(26, W - rl + 22) : 26;
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
     const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
@@ -6257,31 +6272,48 @@ function simPickHTML() {
     + `<div class="pk-h">One mechanism at a time</div>` + STIER.map(([k, t, ids]) => `<div class="pk-t pk-${k}"><div class="pk-tk">${fe(t)}</div><div class="pk-ms">${ids.map(mech).join('')}</div></div>`).join('');
 }
 /* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
+const S4T = [['guide', 'Guide', 'Follow it step by step', '#ffd27a'], ['plays', 'Plays', 'Watch a move run', '#ffb547'], ['levers', 'Levers', 'Pull one yourself', '#44d7ec']];
+function simTabsHTML() {
+  const cur = SIM.mode === 'story' ? 'guide' : SIM.ftab;
+  return `<div class="s4tabs" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x, c]) => `<button type="button" class="s4tab" data-s4tab="${k}" style="--tc:${c}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
+}
+/* switch tabs: the guide is the story mode; Plays and Levers are the full map with one tray open */
+function simTab(t) {
+  if (t === 'guide') { if (SIM.mode !== 'story') simSetMode('story'); return; }
+  SIM.ftab = t;
+  if (SIM.mode !== 'full') { simSetMode('full'); return; }
+  simBar(); simTrays(); simCam(true);
+}
 function simBar() {
   const bar = $('s2bar'); if (!bar) return;
   const L = sLine(), b = SIM.beat, n = L.beats.length, R = SIM.R || SALL, on = SIM.mode === 'story';
-  if (!on) { bar.innerHTML = ''; bar.hidden = true; return; }
   bar.hidden = false;
+  if (!on) {
+    bar.style.setProperty('--lc', SIM.ftab === 'levers' ? '#44d7ec' : '#ffb547');
+    bar.innerHTML = simTabsHTML() + `<p class="s4hint">${SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.'}</p>`
+      + `<button type="button" class="s4back" data-s4tab="guide">Back to the guide ${sArrR}</button>`;
+    return;
+  }
   const B = sCur() || (b >= n ? L.beats[n - 1] : null), ci = B ? B.ch : -1;
   const chs = L.main
     ? L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c), cur = c === ci && b < n, done = b >= n || (ci > c); return `<li><button type="button" class="s2ch${cur ? ' cur' : done ? ' done' : ''}" data-sb="${L.first[c]}"${cur ? ' aria-current="step"' : ''} data-tip="<b>${fe(C.t)}</b><p>${fe(C.w)} · ${idx.length} steps</p>"><span class="n">${String(c + 1).padStart(2, '0')}</span><b>${fe(C.s || C.t)}</b><span class="pp" aria-hidden="true">${idx.map(i => `<i class="${i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : ''}"></i>`).join('')}</span></button></li>`; }).join('')
     : L.beats.map((X, i) => `<li><button type="button" class="s2ch st${i === b ? ' cur' : i < b || b >= n ? ' done' : ''}" data-sb="${i}"${i === b ? ' aria-current="step"' : ''} data-tip="<b>${fe(X.t)}</b>"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${fe(X.bs || X.t)}</b></button></li>`).join('');
   const nt = cock => cock ? cock.querySelectorAll('.tile:not(.gh)').length : 0, fresh = sCur() && sCur().lev.length && !SIM.alt;
   bar.style.setProperty('--lc', L.main ? SMAIN.c : L.c);
-  bar.innerHTML = `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : L.pre ? 'Start here' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.s || L.t)}</b><i aria-hidden="true"></i></button>`
+  bar.innerHTML = simTabsHTML() + `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : L.pre ? 'Start here' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.s || L.t)}</b><i aria-hidden="true"></i></button>`
     + `<button type="button" class="s2arr" data-sg="back" aria-label="Previous step"${b < 0 && !SIM.alt ? ' disabled' : ''}>${sArrL}</button>`
     + `<ol class="s2chs${L.main ? '' : ' mech'}${L.pre ? ' pre' : ''}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
     + `<button type="button" class="s2arr" data-sg="${b < 0 ? 'start' : 'next'}" aria-label="Next step"${b >= n ? ' disabled' : ''}>${sArrR}</button>`
     + `<span class="s2sp"></span>`
-    + `<button type="button" class="s2tb" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s2read">Readings <b>${nt($('cock'))}</b></button>`
-    + `<button type="button" class="s2tb${fresh ? ' fresh' : ''}" data-tray="lev" aria-expanded="${SIM.tray === 'lev'}" aria-controls="isx-s2tray-lev">Levers <b>${R.l.size}</b></button>`;
+    + `<button type="button" class="s2tb s4rdt" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s2read">Readings <b>${nt($('cock'))}</b></button>`
+    + `<button type="button" class="s2tb s4lvt${fresh ? ' fresh' : ''}" data-tray="lev" aria-expanded="${SIM.tray === 'lev'}" aria-controls="isx-s2tray-lev">Levers so far <b>${R.l.size}</b></button>`;
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
 function simTrays() {
   const cock = $('cock'); if (!cock) return;
   const full = SIM.mode !== 'story', t = full ? (SIM.tray === 'read' ? 'read' : null) : SIM.tray;
   const lv = $('s2tray-lev'), pl = $('s2tray-play'), pk = $('s2tray-pick');
-  if (lv) lv.hidden = !(full || t === 'lev'); if (pl) pl.hidden = !full; if (pk) pk.hidden = t !== 'pick';
+  if (lv) lv.hidden = !(full ? SIM.ftab === 'levers' : t === 'lev'); if (pl) pl.hidden = !(full && SIM.ftab === 'plays'); if (pk) pk.hidden = t !== 'pick';
   if (t === 'pick') $('sn-pick').innerHTML = simPickHTML();
   cock.classList.toggle('rd-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
   cock.querySelectorAll('[data-tray]').forEach(x => x.setAttribute('aria-expanded', String(x.dataset.tray === t)));
@@ -6307,7 +6339,7 @@ function simBodyHTML() {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(l1)}</p>`
-      + (L.main ? `<div class="s2acts s2two"><button type="button" class="sn-go" data-sl="${SPI}" data-sb="0"><span>First principles<small>${SLINES[SPI].beats.length} reveals, then the plumbing</small></span>${sArrR}</button><button type="button" class="sn-go2" data-sg="start"><span>Straight to the plumbing<small>${n} steps</small></span>${sArrR}</button></div><div class="s2acts"><button type="button" class="s2lnk sn-skip" data-sm="full">Open the full view</button></div>`
+      + (L.main ? `<div class="s4start"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button><button type="button" class="s2lnk sn-skip" data-s4tab="plays">Explore on my own ${sArrR}</button></div></div>`
         : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
       + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : '')
@@ -6377,7 +6409,7 @@ function simNarr(anim) {
 function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main && !SIM.alt); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   const rs = $('rside'), home = on ? $('sn-det') : cock; if (rs && home && rs.parentNode !== home) { rs.classList.remove('l', 'b'); home.appendChild(rs); }
@@ -6452,14 +6484,15 @@ function simMount() {
   SIM.cam = null; SIM.shown = null; SIM.tray = null;
   const stage = $('stage'); if (stage && !$('sn-pill')) stage.insertAdjacentHTML('afterbegin', '<span class="sn-pill" id="isx-sn-pill" hidden></span>');
   const fx = $('rmap') && $('rmap').querySelector('#isx-fpart'); if (fx && !$('sfx')) fx.insertAdjacentHTML('afterend', '<g id="isx-sfx"></g>');
-  const focusIn = (host, q) => { const f = host && host.querySelector(q); if (f) f.focus({ preventScroll: true }); };
+  const focusIn = (host, q) => { const f = host && host.querySelector(q), g = f && f.getClientRects().length ? f : cock.querySelector('.s4tab[aria-pressed="true"]'); if (g) g.focus({ preventScroll: true }); };
   cock.addEventListener('click', e => {
     const t = e.target.closest('button, .fzk'); if (!t || !cock.contains(t)) return;
     const d = t.dataset;
     if (d.sec != null) { const c0 = $('sec3'); simSector(d.sec, d.sec ? t : c0 && c0._from); return; }
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
     if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); return; }
-    if (d.sm) { simSetMode(d.sm); return; }
+    if (d.s4tab) { simTab(d.s4tab); return; }
+    if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.sg === 'next') { simNext(); return; }
     if (d.sg === 'back') { simBack(); return; }
@@ -6479,7 +6512,7 @@ function simMount() {
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
     if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
     else if (fsel || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
-    else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '.smode [data-sm="full"]'); }
+    else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '.s4tab[aria-pressed="true"]'); }
   });
   simApply(false);
 }

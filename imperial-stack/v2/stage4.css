@@ -1,0 +1,108 @@
+/* Imperial Stack v2, stage 4: the Simulator made easier to use.
+   One clear start, one map that the guide lights instead of empty outlines, one switch in the bar
+   (Guide · Plays · Levers), the readings as a rail on the right edge, levers that say what they do.
+   Data, actors, relations, levers, readings, plays and steps are unchanged. */
+
+/* ---------- one map: what the guide has not reached yet stays in place, dimmed ---------- */
+#isx-root #isx-cock.s2 .fn.s4dim { opacity: .24; pointer-events: none; transition: opacity .45s ease; }
+#isx-root #isx-cock.s2 .fn.s4dim .fnk3 { opacity: 0; }
+#isx-root #isx-cock.s2 .fzg.s4dim { opacity: .42; transition: opacity .45s ease; }
+#isx-root #isx-cock.s2 .fzg.s4dim .fzk { pointer-events: none; }
+#isx-root #isx-cock.s2.s4open .fn.s4dim { opacity: .3; }
+
+/* the Guide / Full view switch now lives in the bar; the counters gave way to the bar's own progress */
+#isx-root .s2 .s2top .smode { display: none; }
+#isx-root #isx-cock.s2 .scount { display: none !important; }
+
+/* ---------- the opening card: centred, one primary action ---------- */
+#isx-root #isx-cock.s2.s4open .s2card { left: 50%; top: 47%; bottom: auto; width: 500px; max-width: calc(100% - 36px); transform: translate(-50%, -50%); }
+#isx-root #isx-cock.s2.s4open .s2fold { display: none; }
+#isx-root #isx-cock.s2.s4open .s2card h3 { font-size: 30px; }
+#isx-root .s2 .s4start { display: flex; flex-direction: column; gap: 12px; margin: 16px 0 6px; }
+#isx-root #isx-cock.s2 .s2card .s4go { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 62px; margin: 0; padding: 10px 18px 10px 20px; border-radius: 13px; border: 1px solid #ffe2a6; background: linear-gradient(180deg, #ffd88a, #f1b84d); color: #1b1305; text-align: left; cursor: pointer; box-shadow: 0 0 0 5px rgba(255, 210, 122, .1), 0 14px 34px -14px rgba(255, 190, 90, .6); transition: filter .18s, box-shadow .18s; }
+#isx-root #isx-cock.s2 .s2card .s4go:hover { filter: brightness(1.06); box-shadow: 0 0 0 6px rgba(255, 210, 122, .16), 0 14px 34px -12px rgba(255, 190, 90, .7); }
+#isx-root #isx-cock.s2 .s2card .s4go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+#isx-root #isx-cock.s2 .s2card .s4go b { display: block; font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: .07em; text-transform: uppercase; line-height: 1.1; color: #1b1305; }
+#isx-root #isx-cock.s2 .s2card .s4go small { display: block; margin-top: 2px; font-family: var(--sans); font-size: 12.5px; letter-spacing: 0; text-transform: none; color: #4a3610; }
+#isx-root #isx-cock.s2 .s2card .s4go svg { flex: none; width: 22px; height: 22px; color: #1b1305; }
+#isx-root .s2 .s4or { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 4px; }
+#isx-root .s2 .s4or .s2lnk { display: inline-flex; align-items: center; gap: 4px; }
+#isx-root .s2 .s4or .s2lnk svg { width: 14px; height: 14px; }
+
+/* ---------- the bar: one switch, then what belongs to the open tab ---------- */
+#isx-root .s2 .s4tabs { flex: none; display: flex; align-items: stretch; gap: 2px; padding: 3px; border-radius: 14px; background: rgba(9, 15, 22, .94); border: 1px solid #253442; box-shadow: 0 0 24px -12px rgba(255, 210, 122, .35); }
+#isx-root .s2 .s2bar .s4tab { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1px; min-width: 76px; padding: 0 14px; border: 0; border-radius: 11px; background: none; color: var(--ink2); text-align: left; }
+#isx-root .s2 .s2bar .s4tab b { font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; }
+#isx-root .s2 .s2bar .s4tab small { display: none; font-family: var(--mono); font-size: 9.5px; letter-spacing: .02em; color: var(--ink3); white-space: nowrap; }
+#isx-root #isx-cock.s2.full .s2bar .s4tab small { display: block; }
+#isx-root .s2 .s2bar .s4tab:hover { color: #fff; background: rgba(255, 255, 255, .04); }
+#isx-root .s2 .s2bar .s4tab[aria-pressed="true"] { color: #fff; background: color-mix(in srgb, var(--tc) 17%, #0e1821); }
+#isx-root .s2 .s2bar .s4tab[aria-pressed="true"]::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 3px; height: 2px; border-radius: 2px; background: var(--tc); box-shadow: 0 0 9px var(--tc); }
+#isx-root .s2 .s2bar .s4tab[aria-pressed="true"] small { color: color-mix(in srgb, var(--tc) 70%, #c9d4de); }
+#isx-root .s2 .s4hint { flex: 1 1 auto; display: flex; align-items: center; margin: 0; padding: 0 18px; border-radius: 14px; background: rgba(9, 15, 22, .9); border: 1px solid #1c2833; font-size: 13.5px; line-height: 1.35; color: var(--ink2); }
+#isx-root .s2 .s2bar .s4back { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 14px; background: rgba(9, 15, 22, .94); border: 1px solid color-mix(in srgb, #ffd27a 45%, #253442); font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .07em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .s2 .s2bar .s4back:hover { border-color: #ffd27a; color: #fff; }
+#isx-root .s2 .s2bar .s4back svg { width: 16px; height: 16px; }
+
+/* tray headings that say what to do (the bar's hint says the rest) */
+#isx-root .s2 .s4pull, #isx-root .s2 .pbl.s4pl { flex: none; display: flex; align-items: center; padding-right: 12px; margin-right: 4px; border-right: 1px solid #1f2c38; }
+#isx-root .s2 .s4pull b, #isx-root .s2 .pbl.s4pl b { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+#isx-root .s2 .s4pull span, #isx-root .s2 .pbl.s4pl span { display: none; }
+#isx-root .s2 .levbar { align-items: stretch; }
+#isx-root #isx-cock.s2 .tr-play .pcnt { display: none; }
+#isx-root .s2.full .tr-lev { margin-right: 0; }
+#isx-root #isx-cock.s2 > .dossier { z-index: 8; }
+
+/* ---------- the readings rail ---------- */
+#isx-root #isx-cock.s2 .s4rail { position: absolute; z-index: 5; right: 18px; top: var(--it, 150px); bottom: calc(var(--ib, 150px) + 4px); width: 204px; display: flex; flex-direction: column; gap: 4px; padding: 10px 8px 8px; border-radius: 14px; background: rgba(8, 13, 19, .74); border: 1px solid #1c2833; backdrop-filter: blur(8px); overflow-y: auto; scrollbar-width: thin; }
+#isx-root .s2 .s4rh { display: flex; justify-content: space-between; align-items: baseline; padding: 0 6px 2px; }
+#isx-root .s2 .s4rh b { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #fff; }
+#isx-root .s2 .s4rh span { font-family: var(--mono); font-size: 11px; color: #ffd27a; }
+#isx-root .s2 .s4rt { display: flex; align-items: baseline; gap: 6px; margin: 4px 6px 1px; padding-top: 5px; border-top: 1px solid color-mix(in srgb, var(--zc) 28%, transparent); font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--zc); }
+#isx-root .s2 .s4rt small { font-size: 9px; letter-spacing: .02em; text-transform: none; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .s2 .s4rg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+#isx-root .s2 .s4ri { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; width: 100%; min-height: 23px; padding: 1px 6px; border: 0; border-radius: 6px; background: none; color: var(--ink); text-align: left; cursor: pointer; transition: opacity .3s, background .15s; }
+#isx-root .s2 .s4ri span { min-width: 0; font-family: var(--mono); font-size: 10px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .s2 .s4ri b { flex: none; font-family: var(--display); font-weight: 700; font-size: 14.5px; letter-spacing: .02em; color: var(--tc); white-space: nowrap; font-variant-numeric: tabular-nums; }
+#isx-root .s2 .s4ri:hover, #isx-root .s2 .s4ri:focus-visible { background: rgba(255, 255, 255, .055); outline: none; }
+#isx-root .s2 .s4ri:focus-visible { box-shadow: inset 0 0 0 1px #ffb547; }
+#isx-root .s2 .s4ri.s4later { opacity: .36; }
+#isx-root .s2 .s4ri.hot { background: color-mix(in srgb, var(--tc) 9%, transparent); }
+#isx-root .s2 .s4ri.on { background: color-mix(in srgb, var(--tc) 16%, transparent); box-shadow: inset 2px 0 0 var(--tc); }
+#isx-root .s2 .s4ri.hot span, #isx-root .s2 .s4ri.on span { color: #fff; }
+#isx-root .s2 .s4lad { flex: none; margin: 6px 4px 0; padding: 6px 8px; border-radius: 8px; border: 1px solid #253442; background: rgba(12, 19, 27, .9); color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+#isx-root .s2 .s4lad:hover, #isx-root .s2 .s4lad:focus-visible { border-color: #8fa3b6; color: #fff; }
+
+@media (min-width: 1180px) {
+  /* the rail carries the readings: the chips at the top and the extra buttons give way */
+  #isx-root #isx-cock.s2:not(.rd-open) .s2read .hud6 { display: none; }
+  #isx-root #isx-cock.s2 .s2rdb, #isx-root #isx-cock.s2 .s4rdt, #isx-root #isx-cock.s2 .s4lvt { display: none !important; }
+  #isx-root .s2 .s2read { right: 234px; }
+  #isx-root #isx-cock.s2.rd-open .s2read { right: 18px; }
+  #isx-root #isx-cock.s2 > .dossier { right: 234px; }
+  #isx-root .s2.st .tr-lev { margin-right: 234px; }
+  #isx-root #isx-cock.s2 .s2key { margin-right: 228px; }
+}
+@media (max-width: 1179px) {
+  #isx-root #isx-cock.s2 .s4rail { display: none; }
+  /* narrower screens: the bar shows the chapter in hand between the arrows */
+  #isx-root .s2 .s2chs:not(.mech) li:not(:has(.cur)) { display: none; }
+  #isx-root .s2 .s2chs:not(.mech):not(:has(.cur)) li:first-child { display: flex; }
+  #isx-root .s2 .s2chs:not(.mech) li { flex: 1 1 auto; }
+}
+#isx-root #isx-cock.s2 .s4lvt { display: none !important; }
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2.s4open .s2card { order: 2; }
+  #isx-root #isx-cock.s2.s4open .s2stage { order: 3; }
+  #isx-root .s2 .s2bar { flex-wrap: wrap; height: auto; row-gap: 4px; }
+  #isx-root .s2 .s2bar > * { min-height: 48px; }
+  #isx-root .s2 .s4tabs { width: 100%; flex: 1 1 100%; min-height: 42px !important; }
+  #isx-root .s2 .s2bar .s4tab { flex: 1; align-items: center; min-width: 0; padding: 0 6px; }
+  #isx-root .s2 .s2bar .s4tab small { display: none !important; }
+  #isx-root .s2 .s4hint, #isx-root .s2 .s2bar .s4back { display: none; }
+  #isx-root #isx-cock.s2.s4open .s2card { transform: none; width: auto; max-width: none; }
+  #isx-root .s2 .s4pull, #isx-root .s2 .pbl.s4pl { max-width: none; border-right: 0; padding: 0 0 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #isx-root #isx-cock.s2 .fn.s4dim, #isx-root #isx-cock.s2 .fzg.s4dim, #isx-root .s2 .s4ri, #isx-root #isx-cock.s2 .s2card .s4go { transition: none; }
+}
