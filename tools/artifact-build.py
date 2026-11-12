@@ -48,9 +48,13 @@ for m in re.findall(r'<script(?: defer)? src="/imperial-stack/(v2/[^"]+\.js)"></
     rep(tagtxt, pre + '<script>\n' + js + '</script>')
 assert not first, 'data files were not placed'
 
+# 7. links to the site: the artifact is not on the site, so the header's link home (it would be a dead link there) goes,
+#    and the About box links to the site by its full address
+rep('<a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span>', '<span class="er-ps">Pax Silica · </span>')
+rep('<a class="b b2" href="/">More work by Elias Rutten</a>', '<a class="b b2" href="https://eliasrutten.com/" target="_blank" rel="noopener">More work by Elias Rutten</a>')
+
 # checks: no remaining code or attribute reference to a file outside the page (comments and absolute URLs aside)
 left = sorted(set(re.findall(r'(?:src|href)="(/[^"]+)"', s)))
-left = [x for x in left if x != '/']   # the link back to the home page stays a link
 print('local references left:', left)
 assert not left, 'local file still referenced'
 assert not re.search(r'(?:TEX|src)\s*=\s*"/imperial-stack/vendor/', s), 'vendor path still referenced in code'

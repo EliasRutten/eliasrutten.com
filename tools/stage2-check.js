@@ -36,7 +36,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('layers tray: a map mode still switches', await p.evaluate(() => document.querySelectorAll('#isx-tray-layers .mm')[1].getAttribute('aria-pressed') === 'true'));
   await p.evaluate(() => document.querySelectorAll('#isx-tray-layers .mm')[0].click());
   await p.click('#isx-waico'); await p.waitForTimeout(200);
-  ok('layers tray: the WAICO switch still works', await p.evaluate(() => document.getElementById('isx-waico').getAttribute('aria-checked') === 'true'));
+  ok('layers tray: the WAICO switch still works (on by default, a click turns it off)', await p.evaluate(() => document.getElementById('isx-waico').getAttribute('aria-checked') === 'false'));
+  await p.click('#isx-waico'); await p.waitForTimeout(150);
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok('layers tray: Esc closes it and returns focus to the pill', await p.evaluate(() => document.getElementById('isx-tray-layers').hidden && document.activeElement && document.activeElement.id === 'isx-tp-layers'));
   ok('legend: a box of its own on the stage, outside the tray', await p.evaluate(() => { const l = document.querySelector('#isx-legbox #isx-leg6'); return !!l && l.getClientRects().length > 0 && l.querySelectorAll('.lr').length > 0; }));
@@ -83,7 +84,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
   ok('simulator: card, bar and seven chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .s2ch').length === 7 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
-  await p.click('.sn-go'); await p.waitForTimeout(300);
+  await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(300);
   let worst = 0, n = 0, deepOk = true;
   for (let i = 0; i < 60; i++) {
     const r = await p.evaluate(() => { const t = (document.querySelector('#isx-sn-body .s2p') || {}).textContent || ''; const s = t.split(/[.!?]\s+(?=[A-Z“‘$])/).length; return { s, deep: !!document.querySelector('#isx-sn-body .s2deep'), cnt: document.querySelector('.sn-cnt').textContent.replace(/\s+/g, '') }; });
@@ -109,11 +110,11 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: Readings shows every reading reached so far', await p.evaluate(() => { const c = document.getElementById('isx-cock'); const shown = [...c.querySelectorAll('.tile')].filter(x => x.getClientRects().length).length; return c.classList.contains('rd-open') && shown === c.querySelectorAll('.tile:not(.gh)').length && shown > 0; }));
   await p.click('#isx-s2bar [data-tray="read"]');
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
-  ok('guide: the picker lists the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 10));
-  await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[7].click()); await p.waitForTimeout(300);
+  ok('guide: the picker lists first principles, the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
+  await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
   ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .s2chs.mech .s2ch').length === 4 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
-  await p.click('.sn-go'); await p.waitForTimeout(250);
+  await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(250);
   ok('guide: a choice at the first key moment', await p.evaluate(() => document.querySelectorAll('#isx-sn-body .sn-opt').length === 2));
   await p.click('#isx-sn-body .sn-opt.alt'); await p.waitForTimeout(300);
   ok('guide: the other outcome is a reveal too, and leads back', await p.evaluate(() => /Other outcome/.test(document.querySelector('#isx-sn-body .s2k').textContent) && document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length <= 2 && /Back to what happened/.test(document.getElementById('isx-sn-nav').textContent)));

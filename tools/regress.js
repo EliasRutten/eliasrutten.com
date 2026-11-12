@@ -79,7 +79,7 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   c = await ctxFor(1440, 900, 'story');
   p = await open(c, '#simulator', 'sim-story');
   await snap(p, 'story/intro', '#isx-snarr');
-  await p.evaluate(() => { const g = document.querySelector('.sn-go'); if (g) g.click(); }); await p.waitForTimeout(400);
+  await p.evaluate(() => { const g = document.querySelector('#isx-sn-body [data-sg="start"]'); if (g) g.click(); }); await p.waitForTimeout(400);
   let steps = 0;
   for (let i = 0; i < 60; i++) {
     const cnt = await p.evaluate(() => { const e = document.querySelector('.sn-cnt'); return e ? e.textContent.replace(/\s+/g, '') : ''; });

@@ -1,0 +1,50 @@
+{
+  "status": "Structure only. No figure in these sheets has been researched or filled in yet; rows are placeholders.",
+  "asof": null,
+  "note": "Three sheets that the firm layer will carry. Each is one row per fact, with a date and a source, like data/ownership.json. A firm marked “not yet mapped” has a row and nothing in it.",
+  "firms": [
+    { "name": "ASML", "group": "Dutch cluster", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "ASM Intl", "group": "Dutch cluster", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Besi", "group": "Dutch cluster", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Nexperia", "group": "Dutch cluster", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "NXP", "group": "Dutch cluster", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "TSMC", "group": "Asia", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Samsung", "group": "Asia", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "SK Hynix", "group": "Asia", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Foxconn", "group": "Asia", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Tokyo Electron", "group": "Asia", "bloc": "Pax Silica", "status": "owners not yet mapped" },
+    { "name": "Nvidia", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Applied Materials", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Microsoft", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Amazon", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Alphabet", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Meta", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "SpaceX", "group": "United States", "bloc": "Pax Silica", "status": "ownership mapped" },
+    { "name": "Huawei", "group": "Outside Pax Silica", "bloc": "outside Pax Silica", "status": "not yet mapped" },
+    { "name": "SMIC", "group": "Outside Pax Silica", "bloc": "outside Pax Silica", "status": "not yet mapped" },
+    { "name": "Wingtech", "group": "Outside Pax Silica", "bloc": "outside Pax Silica", "status": "not yet mapped" }
+  ],
+  "sheets": [
+    {
+      "id": "ownership_overlaps",
+      "title": "Ownership overlaps",
+      "what": "Which owners hold more than one firm in the stack, and how much of each: the density the web shows, as a table.",
+      "columns": ["holder", "holder_type", "holder_seat_country", "firm", "share_pct", "share_basis", "as_of", "source", "source_url", "uncertain"],
+      "rows": []
+    },
+    {
+      "id": "concentration_by_nationality",
+      "title": "Concentration by nationality",
+      "what": "For each firm, how its shares divide by the country of the owner, and how its sites, revenue and staff divide by region. The country of a fund manager is not the country of the savers behind it; the sheet keeps the two apart.",
+      "columns": ["firm", "measure", "country_or_region", "share_pct", "basis", "as_of", "source", "source_url", "uncertain"],
+      "rows": []
+    },
+    {
+      "id": "revenue_profit_capex",
+      "title": "Revenue, profit and capital spending",
+      "what": "Later: one row per firm and fiscal year, in the reporting currency and in US dollars at the filing’s rate.",
+      "columns": ["firm", "fiscal_year", "revenue", "operating_profit", "net_profit", "capex", "currency", "usd_rate", "as_of", "source", "source_url", "uncertain"],
+      "rows": []
+    }
+  ]
+}

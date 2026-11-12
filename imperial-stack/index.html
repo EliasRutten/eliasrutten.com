@@ -2354,6 +2354,7 @@ button.res:hover { transform: none; box-shadow: none; }
 </style>
 <link rel="stylesheet" href="/imperial-stack/v2/v2.css">
 <link rel="stylesheet" href="/imperial-stack/v2/sim.css">
+<link rel="stylesheet" href="/imperial-stack/v2/stage3.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2367,7 +2368,7 @@ button.res:hover { transform: none; box-shadow: none; }
         <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">Scenarios</span><span class="sm">Scenarios</span></button>
         <button type="button" id="isx-v-crisis" class="soon" disabled title="Coming soon: what happens when the AI bubble pops"><span class="lg">Crisis simulation</span><span class="sm">Crisis</span><em>coming soon</em></button>
       </div>
-      <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="false"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
+      <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="true"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
       <div class="mswitch" id="isx-mswitch" role="group" aria-label="Arm view" hidden><button type="button" id="isx-m-machine" aria-pressed="true">Machine</button><button type="button" id="isx-m-rev" aria-pressed="false">Revenue map</button></div>
     </div>
     <div class="resbar" id="isx-resbar" aria-label="Key numbers"></div>
@@ -2395,18 +2396,22 @@ button.res:hover { transform: none; box-shadow: none; }
       </div></div>
     </div>
     <div class="scene" id="isx-scene-story" hidden>
-      <div class="story">
-        <div class="spick" id="isx-spick" role="group" aria-label="Scenario"></div>
-        <div class="sgrid">
-          <div class="ssteps" id="isx-ssteps"></div>
-          <div class="sstagewrap"><div class="sstage">
-            <svg id="isx-sstage" viewBox="0 0 1000 650" role="group" aria-label="The chain of the selected scenario, drawn on a map"></svg>
-            <div class="shud" id="isx-shud"><div class="k" id="isx-shud-k"></div><div class="t" id="isx-shud-t"></div></div>
-            <button type="button" class="stap prev" id="isx-stap-p" aria-label="Previous step"></button><button type="button" class="stap next" id="isx-stap-n" aria-label="Next step"></button>
-            <div class="schoke" id="isx-schoke" hidden>Chokepoint · sovereignty limited</div>
-            <div class="slay" id="isx-slay" aria-label="Layers of the stack used"></div>
-          </div></div>
+      <div class="story sc3" id="isx-sc3">
+        <p class="sc3lede" id="isx-sc-lede"><b>Scenarios</b> shows the exercise of power: geoeconomic coercion, switches turned on and off. The <button type="button" class="sc3lnk" id="isx-sc-tofin">Scott Bessent Simulator</button> shows the financial flows and how the dollar system was built.</p>
+        <button type="button" class="sc3pick" id="isx-sc-pick" aria-expanded="false" aria-controls="isx-sc-tray"></button>
+        <div class="sc3tray" id="isx-sc-tray" role="group" aria-label="Choose a scenario" hidden>
+          <div class="sc3th"><b>Fourteen scenarios</b><span id="isx-sc-seen"></span><button type="button" class="sc3x" id="isx-sc-x" aria-label="Close">×</button></div>
+          <div class="spick" id="isx-spick" role="group" aria-label="Scenario"></div>
         </div>
+        <aside class="sc3card" id="isx-sc-card" aria-label="Scenario, step by step"><div class="ssteps" id="isx-ssteps" aria-live="polite"></div></aside>
+        <div class="sstagewrap"><div class="sstage">
+          <svg id="isx-sstage" viewBox="0 0 1000 650" role="group" aria-label="The chain of the selected scenario, drawn on a map"></svg>
+          <div class="shud" id="isx-shud"><div class="k" id="isx-shud-k"></div><div class="t" id="isx-shud-t"></div></div>
+          <button type="button" class="stap prev" id="isx-stap-p" aria-label="Previous step"></button><button type="button" class="stap next" id="isx-stap-n" aria-label="Next step"></button>
+          <div class="schoke" id="isx-schoke" hidden>Chokepoint · sovereignty limited</div>
+          <div class="slay" id="isx-slay" aria-label="Layers of the stack used" hidden></div>
+        </div></div>
+        <nav class="sc3bar" id="isx-sc-bar" aria-label="Scenario steps"></nav>
       </div>
     </div>
 
@@ -2799,7 +2804,7 @@ function flowsFor(key) {
   return out;
 }
 
-let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = false, hoverIso = null, hlFlow = null, hlPred = null;
+let globe = null, view = 'map', step = 0, selIso = null, selFirm = null, showWaico = true, hoverIso = null, hlFlow = null, hlPred = null;
 const HUBS = new Set(['PLAT', 'NYC', 'FAB', 'DC', 'SLV', 'DEFHUB', 'R_EUR', 'R_CHN', 'R_APAC', 'R_AMER', 'R_MEA', 'MPM', ...DCS.map(d => d[0])]);
 function blocColour(iso) {
   const c = CTY[iso];
@@ -2814,7 +2819,7 @@ function blocColour(iso) {
 }
 function capColor(f) {
   const iso = f.properties.iso, col = blocColour(iso);
-  if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .66) : 'rgba(120,150,180,.04)'; }
+  if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .66) : mmNone(iso) ? 'rgba(150,166,182,.17)' : 'rgba(120,150,180,.04)'; }
   if (iso && iso === selIso) return selSoft && selSoft() ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.55)'; /* v2: a footprint keeps its home country quiet, so the marks on it stay readable */
   if (iso && iso === hoverIso) return rgba(col || '#9fb4c8', .5);
   if (!col) return 'rgba(120,150,180,.06)';
@@ -2822,7 +2827,7 @@ function capColor(f) {
 }
 function strokeColor(f) {
   const iso = f.properties.iso, col = blocColour(iso);
-  if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .95) : 'rgba(140,170,200,.15)'; }
+  if (mapMode !== 'bloc' && iso !== selIso && iso !== hoverIso) { const m = mmColour(iso); return m ? rgba(m, .95) : mmNone(iso) ? 'rgba(176,190,204,.5)' : 'rgba(140,170,200,.15)'; }
   if (iso && (iso === selIso || iso === hoverIso)) return '#ffffff';
   if (CTY[iso] && CTY[iso].ai) return '#ffd27a';
   return col ? rgba(col, .9) : 'rgba(140,170,200,.22)';
@@ -3388,11 +3393,11 @@ function renderStage(force) {
   });
   S.steps.forEach((st, i) => {
     const N = S.nodes[st.n], K = st.choke ? KIND.choke : KIND[N.kind], cur = i === ai, past = i < ai;
-    const g = el('g', { class: 'cnode2' + (cur ? ' cur' : past ? ' past' : ' fut'), style: `--kc:${K.c}`, tabindex: 0, role: 'button', 'aria-label': `Step ${i + 1}: ${st.title}` }, gc);
+    const g = el('g', { class: 'cnode2' + (cur ? ' cur' : past ? ' past' : ' fut'), style: `--kc:${K.c}`, tabindex: 0, role: 'button', 'aria-label': `Step ${String(i + 1).padStart(2, '0')}: ${st.title}` }, gc);
     el('circle', { cx: xs[i], cy: y, r: cur ? 17 : 14, class: 'cnb' }, g);
     iconUse(N.icon, xs[i], y, cur ? 18 : 15, g, i <= ai ? K.c : '#56687a');
     el('text', { x: xs[i], y: y + 32, class: 'cnum', 'text-anchor': 'middle' }, g).textContent = String(i + 1).padStart(2, '0');
-    const go = () => { const c = ROOT.querySelector(`.sstep[data-i="${i}"]`); if (c) c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); };
+    const go = () => storySet(i);
     g.addEventListener('click', go); g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
   });
   // heads-up text
@@ -3404,47 +3409,110 @@ function renderStage(force) {
   const stg = sSvg.parentNode; if (st && st.choke && !reduce && stg.dataset.last !== String(storyIdx) + ':' + ai) { stg.classList.remove('alarm'); void stg.offsetWidth; stg.classList.add('alarm'); }
   stg.dataset.last = String(storyIdx) + ':' + ai;
   ROOT.querySelectorAll('.sstep').forEach(c => c.classList.toggle('on', +c.dataset.i === ai));
+  storyCard();
+}
+/* v2 round 3: Scenarios on the stage. One map, one card, one bar. The card shows the step in hand (two sentences at most;
+   the rest of the text and the source sit behind “Read more”); Back, Next, ← → and the chain on the map move it.
+   A case closes with what the reader can now see, built from the case's own data. Scrolling no longer drives the map.
+   Cases followed to the end are remembered on this device (localStorage isx-scen-seen). */
+const SKEEN = 'isx-scen-seen';
+const scSeen = () => { try { const a = JSON.parse(stGet(SKEEN) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
+const scGroup = id => (SORDER.find(([, ids]) => ids.includes(id)) || [''])[0];
+const scOrder = () => SORDER.flatMap(([, ids]) => ids).map(id => STORIES.findIndex(x => x.id === id)).filter(i => i >= 0);
+const scCut = x => { const m = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(String(x)); if (!m) return [String(x), '']; const m2 = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(m[2]); return m2 ? [m[1] + ' ' + m2[1], m2[2]] : [String(x), '']; };
+let scLay = false, scMore = false;
+function scSee(S) {
+  const used = SLAY.filter(([k]) => Object.values(S.nodes).some(N => N.lay === k)).map(([, n]) => n), ch = S.steps.filter(x => x.choke);
+  const list = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  return `<p>This chain runs through ${used.length} of the stack’s ${SLAY.length} layers: ${esc(list(used))}.</p>`
+    + (ch.length ? `<p>It ${ch.length === 1 ? 'has one chokepoint' : 'has ' + ch.length + ' chokepoints'}, where one decision cuts the chain: ${ch.map(x => '“' + esc(x.title) + '”').join(', ')}.</p>` : '<p>No link in this chain was cut: every step ran as built.</p>');
 }
 function buildStorySteps() {
   const S = STORIES[storyIdx], host = $('ssteps'); host.innerHTML = '';
-  const intro = document.createElement('div'); intro.className = 'sintro';
-  intro.innerHTML = `<div class="sk">${esc(S.when)}</div><h3>${esc(S.h)}</h3><p>${esc(S.sum)}</p><div class="sdown">Scroll to follow the chain</div>`;
+  const nch = S.steps.filter(x => x.choke).length, [s1, s2] = scCut(S.sum);
+  const intro = document.createElement('div'); intro.className = 'sintro'; intro.dataset.i = -1;
+  intro.innerHTML = `<div class="sk">${esc(scGroup(S.id))} · ${esc(S.when)}</div><h3>${esc(S.h)}</h3><p>${esc(s1)}</p>${s2 ? `<details class="scmore"><summary>Read more</summary><p>${esc(s2)}</p></details>` : ''}<div class="scmeta"><span>${S.steps.length} steps</span><span>${nch} chokepoint${nch === 1 ? '' : 's'}</span></div><button type="button" class="scgo" data-sc="next">Follow the chain <span aria-hidden="true">→</span></button>`;
   host.appendChild(intro);
   S.steps.forEach((st, i) => {
     const a = document.createElement('article'); a.className = 'sstep' + (st.choke ? ' choke' : ''); a.dataset.i = i;
-    const col = st.choke ? KIND.choke.c : (LINK[st.link] || LINK.data).c;
+    const col = st.choke ? KIND.choke.c : (LINK[st.link] || LINK.data).c, [x1, x2] = scCut(st.text);
     a.style.setProperty('--kc', col);
-    a.innerHTML = `<div class="sno"><span>${String(i + 1).padStart(2, '0')}</span>${esc(st.date)}</div>${st.choke ? '<div class="schip">Chokepoint</div>' : ''}<h4></h4><p></p><div class="ssrc"></div>`;
-    a.querySelector('h4').textContent = st.title; a.querySelector('p').textContent = st.text;
+    a.innerHTML = `<div class="sno"><span>${String(i + 1).padStart(2, '0')} / ${String(S.steps.length).padStart(2, '0')}</span>${esc(st.date)}</div>${st.choke ? '<div class="schip">Chokepoint</div>' : ''}<h4></h4><p></p><details class="scmore"><summary>Read more</summary>${x2 ? '<p class="scx"></p>' : ''}<div class="ssrc"></div></details>`;
+    a.querySelector('h4').textContent = st.title; a.querySelector('p').textContent = x1; if (x2) a.querySelector('.scx').textContent = x2;
     a.querySelector('.ssrc').textContent = (st.ev === 'cap' ? 'Capability documented elsewhere · ' : 'Source: ') + st.src;
     host.appendChild(a);
   });
-  const end = document.createElement('div'); end.className = 'send';
-  const nx = (storyIdx + 1) % STORIES.length;
-  end.innerHTML = `<p>${esc(S.h)}: ${S.steps.length} steps, ${S.steps.filter(s => s.choke).length} chokepoint${S.steps.filter(s => s.choke).length === 1 ? '' : 's'}.</p>`;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'snext'; b.textContent = `Next scenario: ${STORIES[nx].t} →`;
-  b.addEventListener('click', () => pickStory(nx, true)); end.appendChild(b); host.appendChild(end);
+  const end = document.createElement('div'); end.className = 'send'; end.dataset.i = S.steps.length;
+  const ord = scOrder(), nx = ord[(ord.indexOf(storyIdx) + 1) % ord.length];
+  end.innerHTML = `<div class="sk">What you can now see</div><h3>${esc(S.t)}</h3>${scSee(S)}<div class="scdone" id="isx-sc-done"></div>`;
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'snext'; b.innerHTML = `Next: ${esc(STORIES[nx].t)} <span aria-hidden="true">→</span>`;
+  b.addEventListener('click', () => pickStory(nx, true)); end.appendChild(b);
+  const b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'sclnk'; b2.dataset.sc = 'pick'; b2.textContent = 'Choose another scenario'; end.appendChild(b2);
+  host.appendChild(end);
+  host.querySelectorAll('.scmore').forEach(d => { d.open = scMore; d.addEventListener('toggle', () => { scMore = d.open; }); });
+}
+/* the card shows one part at a time: the opening, the step in hand, or the close */
+function storyCard() {
+  const S = STORIES[storyIdx], n = S.steps.length, host = $('ssteps'); if (!host) return;
+  [...host.children].forEach(c => { const on = +c.dataset.i === storyStep; c.hidden = !on; if (on) { const d = c.querySelector('.scmore'); if (d) d.open = scMore; } });
+  if (storyStep >= n) {
+    let seen = scSeen(); if (!seen.includes(S.id)) { seen.push(S.id); try { stSet(SKEEN, JSON.stringify(seen)); } catch (e) { /* ignore */ } }
+    const d = $('sc-done'); if (d) d.innerHTML = `<i style="--p:${Math.round(seen.length / STORIES.length * 100)}%"></i><span><b>${seen.length}</b> of ${STORIES.length} scenarios followed${seen.length === STORIES.length ? ': the whole set' : ''}</span>`;
+  }
+  const bar = $('sc-bar'); if (!bar) return;
+  const ord = scOrder(), k = ord.indexOf(storyIdx) + 1;
+  bar.innerHTML = `<button type="button" class="scb scprev" data-sc="prev" aria-label="Previous step"${storyStep < 0 ? ' disabled' : ''}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>`
+    + `<div class="scprog" role="group" aria-label="Progress"><div class="scpt"><b>${storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : String(storyStep + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0')}</b><span>${esc(S.t)} · scenario ${k} of ${STORIES.length}</span></div><div class="scpp" aria-hidden="true">${S.steps.map((x, i) => `<i class="${i < storyStep || storyStep >= n ? 'done' : i === storyStep ? 'cur' : ''}${x.choke ? ' ck' : ''}"></i>`).join('')}</div></div>`
+    + `<button type="button" class="sctg" data-sc="lay" aria-pressed="${scLay}">Layers used</button>`
+    + `<button type="button" class="scb scnext" data-sc="next"${storyStep >= n ? ' disabled' : ''}><span>${storyStep < 0 ? 'Start' : storyStep === n - 1 ? 'What you can now see' : 'Next'}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>`;
+  const sl = $('slay'); if (sl) sl.hidden = !scLay;
+  const pk = $('sc-pick'); if (pk) pk.innerHTML = `<small>${esc(scGroup(S.id))}</small><b>${esc(S.t)}</b><em>${k} / ${STORIES.length}</em><i aria-hidden="true"></i>`;
 }
 function buildStoryPicker() {
   const host = $('spick'); host.innerHTML = '';
-  const G = Object.fromEntries(SORDER.map(([g, ids]) => [ids[0], g])), ORDER = SORDER.flatMap(([, ids]) => ids);
-  ORDER.map(id => STORIES.findIndex(s => s.id === id)).filter(i => i >= 0).forEach(i => { const s = STORIES[i]; if (G[s.id]) host.insertAdjacentHTML('beforeend', `<div class="sgl">${G[s.id]}</div>`); const b = document.createElement('button'); b.type = 'button'; b.className = 'spill'; b.innerHTML = `<span class="n">${esc(s.when)}</span><span class="t">${esc(s.t)}</span>`; if (i === storyIdx) b.setAttribute('aria-current', 'true'); b.addEventListener('click', () => pickStory(i, true)); host.appendChild(b); if (i === storyIdx && window.innerWidth <= 760) requestAnimationFrame(() => b.scrollIntoView({ inline: 'center', block: 'nearest' })); });
+  const seen = scSeen();
+  SORDER.forEach(([g, ids]) => {
+    const col = document.createElement('div'); col.className = 'scg'; col.innerHTML = `<div class="sgl">${esc(g)}</div>`;
+    ids.map(id => STORIES.findIndex(x => x.id === id)).filter(i => i >= 0).forEach(i => {
+      const x = STORIES[i], b = document.createElement('button'); b.type = 'button'; b.className = 'spill' + (seen.includes(x.id) ? ' seen' : '');
+      b.innerHTML = `<span class="t">${esc(x.t)}</span><span class="n">${esc(x.when)}</span><span class="pv">${esc(scCut(x.sum)[0].split(/(?<=[.!?])\s+(?=[A-Z“‘$])/)[0])}</span>${seen.includes(x.id) ? '<span class="sd" aria-label="followed">✓</span>' : ''}`;
+      if (i === storyIdx) b.setAttribute('aria-current', 'true');
+      b.addEventListener('click', () => { scTray(false); pickStory(i, true); });
+      col.appendChild(b);
+    });
+    host.appendChild(col);
+  });
+  const sn = $('sc-seen'); if (sn) sn.textContent = seen.length ? `${seen.length} of ${STORIES.length} followed` : 'Each one is a chain you can step through';
 }
-function storyGo(d) { const S = STORIES[storyIdx], n = Math.max(0, Math.min(S.steps.length - 1, storyStep + d)); const c = ROOT.querySelector(`.sstep[data-i="${n}"]`); if (c) c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+function scTray(on, focus) {
+  const t = $('sc-tray'), b = $('sc-pick'); if (!t || !b) return;
+  if (on == null) on = t.hidden;
+  t.hidden = !on; b.setAttribute('aria-expanded', String(on));
+  if (on) { buildStoryPicker(); if (focus) { const f = t.querySelector('.spill[aria-current="true"]') || t.querySelector('.spill'); if (f) f.focus({ preventScroll: true }); } }
+}
+function storySet(n) { const S = STORIES[storyIdx]; n = Math.max(-1, Math.min(S.steps.length, n)); if (n === storyStep) return; storyStep = n; renderStage(); emit('story', { id: S.id, step: n }); }
+function storyGo(d) { storySet(storyStep + d); }
 function pickStory(i, scroll) {
   storyIdx = i; storyStep = -1; buildStoryPicker(); buildStorySteps(); renderStage(true); narrate(); renderStoryCard(); renderLegend();
-  if (scroll) $('scene-story').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  if (scroll) { const r = $('frame').getBoundingClientRect(); if (r.top < -20 || r.top > window.innerHeight * .5) $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+  emit('story', { id: STORIES[i].id, step: -1 });
 }
-function storyScroll() {
-  if (view !== 'story') return;
-  const mob = window.innerWidth <= 760, line = window.innerHeight * (mob ? .78 : .55);
-  let a = -1; ROOT.querySelectorAll('.sstep').forEach(c => { if (c.getBoundingClientRect().top < line) a = +c.dataset.i; });
-  if (a !== storyStep) { storyStep = a; renderStage(); }
-}
-let sTick = false;
-const onStoryScroll = () => { if (sTick) return; sTick = true; requestAnimationFrame(() => { sTick = false; storyScroll(); }); };
-window.addEventListener('scroll', onStoryScroll, { passive: true });
-ROOT.addEventListener('scroll', onStoryScroll, { passive: true });
+(() => {
+  const sc = $('sc3'); if (!sc) return;
+  sc.addEventListener('click', e => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.id === 'isx-sc-pick') { scTray(null, e.detail === 0); return; }
+    if (t.id === 'isx-sc-x') { scTray(false); $('sc-pick').focus({ preventScroll: true }); return; }
+    if (t.id === 'isx-sc-tofin') { setView('fin'); return; }
+    const k = t.dataset.sc; if (!k) return;
+    if (k === 'next') { storyGo(1); const f = sc.querySelector('.sc3bar .scnext:not([disabled])') || sc.querySelector('.send .snext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
+    else if (k === 'prev') { storyGo(-1); const f = sc.querySelector('.sc3bar .scprev:not([disabled])') || sc.querySelector('.sc3bar .scnext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
+    else if (k === 'lay') { scLay = !scLay; storyCard(); const f = sc.querySelector('.sctg'); if (f) f.focus({ preventScroll: true }); }
+    else if (k === 'pick') scTray(true, true);
+  });
+  sc.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sc-tray').hidden) { e.preventDefault(); scTray(false); $('sc-pick').focus({ preventScroll: true }); } });
+  document.addEventListener('pointerdown', e => { const t = $('sc-tray'); if (t && !t.hidden && !e.target.closest('#isx-sc-tray, #isx-sc-pick')) scTray(false); }, true);
+})();
 function renderStoryCard() {
   resetCardParts();
   const S = STORIES[storyIdx];
@@ -3467,19 +3535,27 @@ let mapMode = 'bloc';
 const MM = {
   bloc: { name: 'Blocs', c: '#3f9bff' },
   ca: { name: 'Surplus, % of GDP', c: '#ffb547', lo: '−6%', hi: '+15%', grad: 'linear-gradient(90deg,#ff5a4e,#33404c,#ffb547)' },
-  ai: { name: 'Hardware exports, % of GDP', c: '#44d7ec', lo: '0%', hi: '50%', grad: 'linear-gradient(90deg,#1b2a36,#44d7ec)' },
+  ai: { name: 'Hardware exports', c: '#44d7ec', lo: '0%', hi: '50%', grad: 'linear-gradient(90deg,#1b2a36,#44d7ec)' },
   heq: { name: 'Holdings of US stocks', c: '#ffd27a', lo: '$0', hi: '$2tn', grad: 'linear-gradient(90deg,#1b2a36,#ffd27a)' },
 };
 const gdpOf = c => c && c.ca && c.ca[1] ? c.ca[0] / (c.ca[1] / 100) : null;
+/* v2 round 3: the hardware mode has two measures of the same customs data: the share of GDP (exposure) and US dollars (size).
+   Only 16 economies have a figure; the others on the map are drawn in a neutral tone and say so. Nothing is estimated. */
+let aiAbs = false;
+const aiBn = iso => iso === 'TWN' ? AIX_TWN : AIX[iso] ? AIX[iso][0] : null;
+const mmOnMap = iso => { const c = CTY[iso]; return !!(c && LL[iso] && (iso === 'USA' || c.pax || c.eu || c.endorse || c.waico || c.ca || c.heq != null)); };
+const mmNone = iso => mapMode !== 'bloc' && mmOnMap(iso) && mmValue(iso) == null;
 function mmValue(iso) {
   const c = CTY[iso]; if (!c) return null;
   if (mapMode === 'ca') return c.ca ? c.ca[1] : null;
-  if (mapMode === 'ai') { const g = gdpOf(c); if (!g) return null; if (iso === 'TWN') return AIX_TWN / g * 100; const a = AIX[iso]; return a ? a[0] / g * 100 : null; }
+  if (mapMode === 'ai') { if (aiAbs) return aiBn(iso); const g = gdpOf(c); if (!g) return null; if (iso === 'TWN') return AIX_TWN / g * 100; const a = AIX[iso]; return a ? a[0] / g * 100 : null; }
   if (mapMode === 'heq') return c.heq != null ? c.heq : null;
   return null;
 }
 function mmText(iso) {
-  const v = mmValue(iso); if (v == null || mapMode === 'bloc') return '';
+  const v = mmValue(iso); if (mapMode === 'bloc') return '';
+  if (v == null) return mmOnMap(iso) ? (mapMode === 'ai' ? (iso === 'USA' ? 'Hardware exports: not collected. In this loop the US is the buyer' : 'Hardware exports: no figure collected for this economy (not the same as zero)') : mapMode === 'ca' ? 'Current account: no figure collected' : 'Holdings of US stocks: not listed separately in the survey') : '';
+  if (mapMode === 'ai' && aiAbs) return `AI-hardware exports (gross), 2025: ${fmtBn(v)}${iso === 'TWN' ? '* (ICT and components)' : ''}`;
   if (mapMode === 'ca') return `Current account 2025: ${(v > 0 ? '+' : '') + v.toFixed(1)}% of GDP`;
   if (mapMode === 'ai') return `AI-hardware exports (gross): ${v.toFixed(v < 10 ? 1 : 0)}% of GDP${iso === 'TWN' ? '* (ICT and components)' : ''}`;
   return `Holdings of US stocks, June 2025: ${fmtBn(v)}`;
@@ -3488,15 +3564,19 @@ const mixHex = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice
 function mmColour(iso) {
   const v = mmValue(iso); if (v == null) return null;
   if (mapMode === 'ca') return v >= 0 ? mixHex('#33404c', '#ffb547', Math.min(1, v / 15)) : mixHex('#33404c', '#ff5a4e', Math.min(1, -v / 6));
-  if (mapMode === 'ai') return mixHex('#1b2a36', '#44d7ec', Math.min(1, v / 50));
+  if (mapMode === 'ai') return mixHex('#1b2a36', '#44d7ec', aiAbs ? Math.min(1, Math.sqrt(v / 470)) : Math.min(1, v / 50));
   return mixHex('#1b2a36', '#ffd27a', Math.min(1, Math.sqrt(v / 2100)));
 }
 function buildMapModes() {
   const host = $('mapmodes'); host.innerHTML = '<div class="mh"><span>Map mode</span><button type="button" class="instog mini" data-ins="toggle" hidden></button></div>';   /* the insights switch sits in the header: no extra line in a panel that is short of height */
   Object.entries(MM).forEach(([k, m]) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'mm'; b.style.setProperty('--mc', m.c); b.setAttribute('aria-pressed', String(k === mapMode));
-    b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); }); host.appendChild(b);
-    if (k === mapMode && m.grad) { host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${m.lo}</span><span>${m.hi}</span></div>`); }
+    b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); legend6(); }); host.appendChild(b);
+    if (k === mapMode && k === 'ai') { const sw = document.createElement('div'); sw.className = 'mmsub3'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Measure');
+      sw.innerHTML = `<button type="button" aria-pressed="${!aiAbs}" data-aim="rel">% of GDP</button><button type="button" aria-pressed="${aiAbs}" data-aim="abs">US$ bn</button>`;
+      sw.addEventListener('click', e => { const t = e.target.closest('[data-aim]'); if (!t) return; aiAbs = t.dataset.aim === 'abs'; buildMapModes(); repaint(); legend6(); const f = $('mapmodes').querySelector(`[data-aim="${t.dataset.aim}"]`); if (f) f.focus({ preventScroll: true }); }); host.appendChild(sw); }
+    if (k === mapMode && m.grad) { const lo = k === 'ai' && aiAbs ? '$0' : m.lo, hi = k === 'ai' && aiAbs ? '$470bn' : m.hi, nn = Object.keys(CTY).filter(i => mmOnMap(i) && mmValue(i) != null).length;
+      host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${lo}</span><span>${hi}</span></div><div class="mmnf3"><i aria-hidden="true"></i><span>${nn} economies have a figure. The others are neutral: not collected, which is not zero.</span></div>`); }
   });
   host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
@@ -4101,7 +4181,8 @@ function legend6() {
   if (s.key === 'inputs') rows = [[C.tools, '↑ Exports of chip-making tools to the world', 1], ['#d9e2ea', '↓ Imports from the world', 1]];
   else if (s.key === 'surplus') rows = surMode === 'ai' ? [[C.goods, 'AI-hardware exports, % of GDP (square-root scale)', 1]] : [[C.dollar, 'Current-account surplus', 1], [C.deficit, 'Current-account deficit', 1]];
   else { const seen = []; flowsFor(s.key).forEach(f => { if (!seen.includes(f.color)) seen.push(f.color); }); rows = seen.map(c => [c, LEG6[c] || 'Other flows']); }
-  const inner = rows.map(([c, t, b]) => `<div class="lr"><i class="${b ? 'bar' : 'arc'}" style="--lc:${c}"></i><span>${esc(t)}</span></div>`).join('')
+  const blocs = mapMode === 'bloc' ? `<div class="lr lb3"><i class="bar" style="--lc:#3f9bff"></i><span>Pax Silica and partners</span></div>` + (showWaico ? `<div class="lr lb3"><i class="bar" style="--lc:#ff5f7e"></i><span>WAICO, China’s bloc</span></div>` : '') : `<div class="lr lb3"><i class="bar" style="--lc:${MM[mapMode].c}"></i><span>${esc(MM[mapMode].name)}</span></div><div class="lr lb3"><i class="bar nf3"></i><span>No figure collected (not zero)</span></div>`;
+  const inner = rows.map(([c, t, b]) => `<div class="lr"><i class="${b ? 'bar' : 'arc'}" style="--lc:${c}"></i><span>${esc(t)}</span></div>`).join('') + blocs
     + `<div class="lw">${s.key === 'inputs' ? 'Column height ∝ value. Each column is a country’s trade with all other countries together, not with one partner.' : s.key === 'surplus' ? (surMode === 'ai' ? 'Bar height ∝ the square root of the value in its label.' : 'Bar height ∝ the value in its label.') : 'Arc width ∝ value within this step; thin, even arcs are schematic.'}</div>`;
   L.innerHTML = '<div class="mh">Legend</div>' + inner + '<button type="button" class="lfull" data-how>How we count →</button>';
   const M = $('t-legm'); if (M) { const open = M.querySelector('details') && M.querySelector('details').open; M.innerHTML = `<details${open ? ' open' : ''}><summary>Legend</summary><div class="leg6">${inner}</div></details>`; }
@@ -4717,6 +4798,10 @@ const PLAYS = [
     ['Both are priced by long yields', 'The Fed raised rates on 16 September and the 10-year touched 5.33% in October. On 2 November Oracle sold $10bn of shares and $10bn of notes at the same time.', E('FED>Y10', 'Y10>BND')],
   ] },
 ];
+/* v2 round 3: the backstop play runs from the standing window to the bargain (the Fed’s repo window, swaps for friends,
+   joint action for the yen, tariffs for investment). Same four steps, same text; only their order changed. */
+PLAYS[5].steps = [2, 0, 1, 3].map(i => PLAYS[5].steps[i]);
+PLAYS[5].lede = 'Since Bretton Woods ended in the early 1970s the world has saved and borrowed in a currency only the US can create. When dollars run short abroad, the fastest way to raise them is to sell Treasuries: the one sale Washington cannot afford. So it lends dollars, steadies currencies and bargains instead: four steps, from the Fed’s standing window to the tariff deals.';
 /* which relations each lever moves (levers are in the order of LEVERS) */
 const LEDGE = [
   E('TSY>MMF', 'TSY>BNK', 'TSY>STB', 'TSY>Y10'),
@@ -4853,7 +4938,56 @@ function tileHTML(T, c) {
   const g = T.g, mini = g.type === 'pct' || g.type === 'band' ? gaugeSVG(g).replace(/<text[^>]*>.*?<\/text>/g, '') : '';
   return `<button type="button" class="tile" data-node="${T.n}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="tk"><i>${fic(T.ic, 13)}</i>${fe(T.k)}</span><span class="tr"><span class="tv">${fe(g.v)}</span>${mini ? `<span class="tg">${mini}</span>` : ''}</span>${g.delta && !mini ? `<small>${fe(g.delta)}</small>` : ''}</button>`;
 }
-const hudHTML = () => `<div class="hud6" role="group" aria-label="Key variables, latest values">${TILES.map(([z, t, c, tiles]) => `<div class="hc hc-${z}" style="--zc:${c}"><h4>${fe(t)}</h4><div class="hct">${tiles.map(T => tileHTML(T, c)).join('')}</div></div>`).join('')}</div>`;
+/* v2 round 3: the 17 readings are shown as a ladder, from what Washington sets to what the economy shows, under the layer
+   that drives it all (surplus recycling and political choice). A figure the page already carries elsewhere is shown as a
+   quiet chip that opens its lever or actor; an indicator the page does not measure yet is an empty slot. Nothing is estimated.
+   Influence runs both ways; the arrows between the rungs say how. */
+const TIERS = [
+  ['up', 'Upstream', 'policy and rules', '#ffd27a', 'What Washington sets: the policy rate, the Fed’s balance sheet, what the Treasury issues, and who may hold it.'],
+  ['mid', 'Intermediate', 'markets and balance sheets', '#c9d4de', 'Where those settings land first: yields, volatility, and who ends up holding the debt.'],
+  ['down', 'Downstream', 'prices, investment, debt', '#3ee6b8', 'What the economy shows in the end: prices, asset values, what gets built, and who borrows.'],
+];
+const TIERK = { 'Fed funds target': 'up', 'Bank reserves': 'up', 'Bills share of debt': 'up', 'Tether’s Treasuries': 'up', '10-year yield': 'mid', 'Bond volatility': 'mid', 'Official Treasuries': 'mid', 'Dollar index': 'mid' };
+/* the actors that carry a reading, by rung: the map shows the ladder too (a short mark on the actor's right edge) */
+const NTIER = { FED: 'up', TSY: 'up', STB: 'up', Y10: 'mid', MOV: 'mid', OFF: 'mid', YEN: 'mid', CEN: 'mid', OIL: 'down', FUEL: 'down', SPX: 'down', ISS: 'down', BND: 'down', HYP: 'down', CON: 'down', SVR: 'down', MTG: 'down', INF: 'down' };
+const TORD = ['Fed funds target', 'Bank reserves', 'Bills share of debt', 'Tether’s Treasuries', '10-year yield', 'Bond volatility', 'Official Treasuries', 'Dollar index', 'Brent crude', 'US diesel', 'AI share of S&P 500', 'Shares sold, 12 months', 'Bonds sold, 12 months', 'Big Tech capex 2026', 'Consumer spending', 'Saving rate', '30-year mortgage'];
+const TSLOT = {
+  up: [{ k: 'Fed’s bill holdings', v: '$571bn', d: '28 Oct 2026', lv: 2, x: 'The composition of the Fed’s balance sheet: bills bought since December 2025. From the lever “The Fed buys bills”.' },
+    { k: 'Bank capital freed', v: '$219bn', d: 'from 1 Apr 2026', lv: 3, x: 'Regulatory capacity: the cut in Tier 1 requirements at the largest banks’ deposit-taking arms, by Governor Barr’s count. From the lever “Free up the big banks”.' },
+    { k: 'Average bill maturity', x: 'Not measured on this page yet. Circuit step 08 gives the average maturity of all marketable debt (about 71 months in mid-2026), not of bills.' }],
+  mid: [{ k: 'Financial hubs’ Treasuries', v: '+$245bn', d: 'year to Aug 2026', n: 'CEN', x: 'Private and custodial holders booked in seven financial centres. From the actor “Financial hubs”.' },
+    { k: 'Bill yields', x: 'Not measured on this page yet. The stablecoin lever cites a BIS estimate of the effect of inflows on 3-month bill yields.' },
+    { k: 'Dealer absorption', x: 'Not measured on this page yet: how much of each auction primary dealers are left holding.' },
+    { k: 'Deposit creation', x: 'Not measured on this page yet: the deposits banks create when they buy Treasuries or lend against them.' }],
+  down: [{ k: 'Inflation (PCE)', v: '+2.1%', d: 'Q3 2026, annual rate', n: 'INF', x: 'From the actor “Inflation”.' },
+    { k: 'Gross federal debt', v: '$40.25tn', d: 'Oct 2026', x: 'The fiscal debt stock. From Circuit step 08.' },
+    { k: 'Household debt', x: 'Not measured on this page yet: the stock of mortgages and consumer credit.' },
+    { k: 'What the investment is in', x: 'Not measured on this page yet: how real investment divides between the AI build-out and everything else.' }],
+};
+const SECT = { hh: ['Households', 'hh', 'What they own (homes, shares, deposits), what they owe (mortgages, consumer credit), and whether they save or borrow in a year.'],
+  nfc: ['Non-financial firms', 'ai', 'What they invest, how much of it their own cash flow covers, and what they raise in bonds, shares and leases. On this map the AI build-out stands for the sector.'],
+  fin: ['Financial sector', 'fin', 'Banks, dealers, funds and insurers. The sector’s own balance is small; what matters is the size of its balance sheet, because it issues the claims the other sectors hold.'],
+  gov: ['Government', 'state', 'The federal deficit and the debt that funds it. When the rest of the world runs a surplus with the US and the private sectors do not borrow, the government’s deficit is the mirror.'],
+  row: ['Rest of the world', 'abroad', 'Its surplus with the US is the US current-account deficit ($1.18tn in 2025), held as claims on the other four sectors.'] };
+const LOCK3 = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function slotHTML(S) {
+  const tip = `data-tip="<b>${fe(S.k)}${S.v ? ': ' + fe(S.v) : ''}</b><p>${fe(S.x)}</p>"`;
+  if (!S.v) return `<span class="slot3" tabindex="0" ${tip}><span class="sk3">${fe(S.k)}</span><em>not yet measured</em></span>`;
+  const body = `<span class="tv">${fe(S.v)}</span><span class="sk3">${fe(S.k)}</span><small>${fe(S.d)}</small>`;
+  return S.lv != null ? `<button type="button" class="fig3" data-slv="${S.lv}" ${tip}>${body}</button>` : S.n ? `<button type="button" class="fig3" data-sn="${S.n}" ${tip}>${body}</button>` : `<span class="fig3" tabindex="0" ${tip}>${body}</span>`;
+}
+function hudHTML() {
+  const all = TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
+  const R = id => (LIVE.resbar || []).find(r => r.id === id), ca = R('ca'), eq = R('eq');
+  const src = [ca, eq].filter(Boolean).map(r => `<span class="fig3" tabindex="0" data-tip="<b>${fe(r.k)}: ${fe(r.v)}</b><p>${fe(r.what || '')}</p><p class='ts'>${fe(r.t || '')}</p>"><span class="tv">${fe(r.v)}</span><span class="sk3">${fe(r.k)}</span><small>${fe(r.d || '')}</small></span>`).join('');
+  const arrow = (dn, up) => `<div class="larr3"><span class="dn"><i aria-hidden="true">↓</i>${fe(dn)}</span>${up ? `<span class="up"><i aria-hidden="true">↑</i>${fe(up)}</span>` : ''}</div>`;
+  const AR = { up: arrow('sets how much debt has to be placed, and with whom', 'asset prices and yields decide how willingly the world keeps lending (this map’s reading)'), mid: arrow('moves yields, bank balance sheets and who holds the debt', 'long yields and volatility steer what the Treasury issues and buys back'), down: arrow('prices credit, shares and mortgages', 'inflation moves the policy rate: the Fed hiked on 16 September 2026') };
+  return `<div class="hud6 lad3" role="group" aria-label="Readings, from source to consequence">`
+    + `<div class="lsrc3"><div class="lh3"><b>Source</b><span>surplus recycling and political choice</span></div><p>Who saves, who spends and who holds dollars is settled by wage, trade and currency policy, at home and abroad. Everything below works inside that.</p><div class="lrow3">${src}</div>`
+    + `<div class="lsec3" role="group" aria-label="The five sectors"><span class="lsk3">Five sectors, and their balances add up to zero</span>${Object.entries(SECT).map(([k, [t]]) => `<button type="button" class="secb3" data-sec="${k}" aria-label="${fe(t)}: sector balance sheet, coming soon">${LOCK3}${fe(t)}</button>`).join('')}</div></div>`
+    + TIERS.map(([k, t, sub, c, x]) => AR[k] + `<div class="hc hc-${k}" style="--zc:${c}" data-tip="<b>${fe(t)}</b><p>${fe(x)}</p>"><h4><b>${fe(t)}</b><span>${fe(sub)}</span></h4><div class="hct">${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(a => tileHTML(a.T, a.c)).join('')}${TSLOT[k].map(slotHTML).join('')}</div></div>`).join('')
+    + `</div>`;
+}
 
 /* ---------- plumbing text ---------- */
 const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
@@ -4878,7 +5012,7 @@ function renderFin() {
       + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s2read">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
-      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
+      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${TIERS.map(([k, t, , c]) => `<span class="k3"><i class="t3" style="background:${c}"></i>${fe(t)} reading</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
       + `<div class="s2tray tr-lev" id="isx-s2tray-lev" hidden>${levBarHTML()}</div>`
       + `<nav class="s2bar" id="isx-s2bar" aria-label="Guide: chapters and trays"></nav></div>`
@@ -4900,6 +5034,7 @@ function renderFin() {
   }
   host.querySelectorAll('.fsw [data-fm]').forEach(b => b.addEventListener('click', () => { if (finMode === b.dataset.fm) return; finMode = b.dataset.fm; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); }));
   finLoop();
+  emit('fin', finMode);
 }
 
 /* ---------- selection state ---------- */
@@ -4929,7 +5064,7 @@ function ePath(a, b, i) {
 function drawRmap() {
   const svg = $('rmap'); if (!svg) return;
   let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '</defs>';
-  h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" data-z="${Z[0]}" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
+  h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" data-z="${Z[0]}" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/>${(k => k ? `<g class="fzk" data-sec="${k}" role="button" tabindex="0" aria-label="${fe(Z[1])}: the balance sheet of this sector (${fe(SECT[k][0].toLowerCase())}), coming soon"><rect class="fzkh" x="${x + 4}" y="${y + 5}" width="${w - 8}" height="22" rx="7"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text><g class="fzl" transform="translate(${x + w - 24},${y + 9})"><rect x="1.5" y="5.5" width="9" height="6.5" rx="1.5"/><path d="M3.5 5.5V3.8a2.5 2.5 0 0 1 5 0v1.7"/></g></g>` : `<text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>`)(Object.keys(SECT).find(k => SECT[k][1] === Z[0]))}${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
   FE.forEach(([a, b, ty, lab], i) => {
     const d = ePath(a, b, i);
     h += `<path class="fe ${ty}" data-e="${i}" d="${d}" stroke="${FT[ty][0]}" marker-end="url(#isx-fa-${ty})"><title>${fe(lab)}</title></path>`;
@@ -4938,7 +5073,7 @@ function drawRmap() {
   h += '<g id="isx-fpart"></g>';
   Object.entries(FN).forEach(([k, [z, x, y, t, sub, c, , ic]]) => {
     const l = x - NW / 2, lm = z === 'state';
-    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}"> ${fe(sub)}</text></g>`;
+    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}"> ${fe(sub)}</text>${NTIER[k] ? `<rect class="fnk3 t-${NTIER[k]}" x="${l + NW - 5.5}" y="${y - NH / 2 + 9}" width="2.5" height="${NH - 18}" rx="1.25"><title>${fe(TIERS.find(T => T[0] === NTIER[k])[1])} reading</title></rect>` : ''}</g>`;
   });
   svg.innerHTML = h;
   svg.querySelectorAll('.fn').forEach(g => {
@@ -5290,7 +5425,7 @@ function narrate() {
   } else if (view === 'story') {
     const S = STORIES[storyIdx], nch = S.steps.filter(x => x.choke).length;
     h = S.h; x = S.sum; sc = '#ff3b5c'; fig = String(nch); cap = nch === 1 ? 'chokepoint, where a US switch limits sovereignty' : 'chokepoints, where a US switch limits sovereignty';
-    scale = 'Scroll through the steps above; red broken links mark a switch, sanction or refusal.';
+    scale = 'Step through the chain above; red broken links mark a switch, sanction or refusal.';
   } else if (view === 'arm') {
     const t = armFilter === 'all' ? { name: 'The imperial arm', x: 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from. Pick a relation in the tabs, hover a firm or a sector, or switch to the revenue map.' } : ATYPE[armFilter];
     h = t.name; x = t.x; sc = armFilter === 'all' ? '#e4ebf1' : ATYPE[armFilter].c;
@@ -5492,7 +5627,7 @@ function setView(v) {
   else if (v === 'arm' && armMode === 'rev') { selIso = null; renderGlobe(true); renderRevCard(); }
   else if (v === 'arm') { pArm.size(); renderArm(); pArm.start(); renderArmCard(); }
   else if (v === 'fin') { renderFin(); renderFinCard(); }
-  else if (v === 'story') { buildStoryPicker(); buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); requestAnimationFrame(storyScroll); }
+  else if (v === 'story') { buildStoryPicker(); buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
   buildTabs(); narrate(); renderLegend(); after5(); routeSync();
   emit('view', view); ISXP.sync();
@@ -5500,7 +5635,7 @@ function setView(v) {
 ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
 ['machine', 'rev'].forEach(m => $('m-' + m).addEventListener('click', () => { armMode = m; $('m-machine').setAttribute('aria-pressed', String(m === 'machine')); $('m-rev').setAttribute('aria-pressed', String(m === 'rev')); setView('arm'); }));
 $('clear').addEventListener('click', () => select(null));
-$('waico').addEventListener('click', () => { showWaico = !showWaico; $('waico').setAttribute('aria-checked', String(showWaico)); repaint(); renderLegend(); });
+$('waico').addEventListener('click', () => { showWaico = !showWaico; $('waico').setAttribute('aria-checked', String(showWaico)); repaint(); renderLegend(); legend6(); });
 window.addEventListener('resize', () => { if (view === 'arm') pArm.size(); if (view === 'chain') pCh.size(); });
 
 
@@ -5857,10 +5992,10 @@ const SMETA = [
     ['c', 'Q3 2026', 'Americans buy goods made abroad, so their spending is the world’s demand.', []],
     ['c', '', 'What the exporters earn and do not spend is saved, and comes back to US markets.', []],
     ['p', 'Sep 2026', 'Dearer fuel and tariffs at the till squeeze the spending the loop depends on.', [10]]],
-  [['d', 'Oct 2025', '', [11]],
+  [['d', 'Aug 2026', '', []],
+    ['d', 'Oct 2025', 'The window helps only those with Treasuries to pledge; for others, dollars are lent case by case, and who gets them is a political choice.', [11]],
     ['d', '31 Jul 2026', 'The yen slides to 40-year lows, and Japan is the largest foreign holder of Treasuries.', [12]],
-    ['d', 'Aug 2026', 'A backstop, so foreign central banks can borrow dollars against Treasuries instead of selling them.', []],
-    ['d', 'Jul to Nov 2025', 'Washington also bargains with the surplus countries directly.', [13]]],
+    ['d', 'Jul to Nov 2025', 'The surpluses themselves belong to allies, so Washington also bargains over where they go.', [13]]],
   [['p', '28 Feb 2026', '', []],
     ['d', 'Mar to May 2026', 'Dear oil threatens prices and the consumer, so Washington tries to add supply.', [6, 7, 8]],
     ['c', 'Sep 2026', 'Brent was still above $100 in September, and crude feeds the pump and the price index.', []],
@@ -5878,13 +6013,13 @@ const SMETA = [
 /* the main story: chapters of play steps [play, step, link override] in causal order */
 const SMAIN = {
   t: 'How the plumbing was built', c: '#ffd27a',
-  lede: 'Foreign central banks stepped back from US debt just as the AI build-out needed cheap money. Follow what happened, step by step: what Washington did, and what followed, from the first problem to the whole machine.',
+  lede: 'The US runs the deficit that absorbs the world’s surpluses, and those surpluses come back as claims on the US. For decades foreign central banks held them as Treasuries; now they are stepping back, just as the AI build-out needs cheap money. Start with the first principles, then follow what Washington did, step by step.',
   ch: [
     { t: 'Who buys the debt?', s: 'Who buys?', w: '2023 to Oct 2026', b: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]] },
     { t: 'A data centre gets paid for', s: 'Data centre', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'Long yields set the price of credit, and the AI build-out runs on credit.'], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
     { t: 'The allies’ savings come back', s: 'Savings', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
     { t: 'The consumer keeps it flowing', s: 'Consumer', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
-    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'The allies’ currencies and reserves have to hold', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 3, 'The surpluses that fund the loop belong to allies, so Washington bargains with them directly.'], [5, 0, 'When a friendly government runs short of dollars, the Treasury can lend them.'], [5, 1], [5, 2]] },
+    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 2], [5, 3]] },
     { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 3, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.']] },
     { t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
   ],
@@ -5903,7 +6038,7 @@ const SFORK = {
     out: { t: 'Volatility does the selling', e: E('TSY>CEN', 'BNK>CEN', 'MOV>CEN'),
       x: 'Funds that hold long bonds on borrowed cash are forced to sell when bond volatility spikes, and their selling pushes yields higher still. In March 2020 it took the Fed, as buyer of last resort, to stop it. Buying back long bonds is meant to keep that risk smaller; leaving the long end alone keeps more of it with leveraged funds.',
       n: 'Follows the March 2020 pattern described in “If it breaks”.', s: '' } },
-  '5-1': { q: 'The yen slides to 40-year lows. What does Washington do?',
+  '5-2': { q: 'The yen slides to 40-year lows. What does Washington do?',
     real: ['Intervene with Japan', 'buy yen together, the first joint action since 2011'],
     alt: ['Let the yen slide', 'and leave it to Tokyo'],
     out: { t: 'Japan sells Treasuries', e: E('YEN>OFF', 'OFF>TSY', 'TSY>Y10'),
@@ -5913,17 +6048,54 @@ const SFORK = {
 
 /* ---------- stories as data: beats, chapters and what each step has put on the map ---------- */
 const enodes = es => { const s = new Set(); es.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); return s; };
-function sBeat(p, s, ch, why) {
+const bN = B => { const s = enodes(B.e); (B.n || []).forEach(n => s.add(n)); return s; };   /* a beat's actors: those of its relations, plus any it names on its own */
+function sBeat(p, s, ch, why, ld) {
   const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s;
-  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SFORK[k] ? k : null };
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SFORK[k] ? k : null, ld: !!ld };
 }
+/* v2 round 3: first principles. Seven reveals that come before the plumbing: the accounting, the surplus side, why the
+   claims are taken in dollars, how the US accommodates them, how long this has been built, what it does to US markets,
+   and the rules that widen the channel. They are a line of their own (not play steps), so the guide keeps its 37 steps.
+   Every figure is one the page already carries; where a sentence states a direction of causation it says whose reading it is.
+   t = title, bs = short name in the bar, r = kind (SROLE), w = date label, x = the reveal (two sentences at most),
+   d = depth (paragraphs behind “Go deeper”), e = relations lit, lev = levers introduced. */
+Object.assign(SROLE, { i: ['Identity', '#e4ebf1'], m: ['Mechanism', '#44d7ec'], h: ['History', '#ffd27a'], a: ['Amplifier', '#d78bff'] });
+const SPRE = {
+  t: 'First principles: where the dollars come from', s: 'First principles', c: '#44d7ec',
+  lede: 'Before the plumbing, the ground it stands on. Why the US runs a deficit with the world, why the world’s savings come back as claims on the US, and why that has meant rising debt for half a century.',
+  b: [
+    { t: 'Every deficit is someone’s surplus', bs: 'The identity', r: 'i', w: '2025', e: E('CON>EXP'),
+      x: 'The world’s current accounts add up to zero: every deficit is another economy’s surplus. The US deficit was $1.18tn in 2025, the mirror of surpluses elsewhere.',
+      d: ['This is accounting, not theory. It says the two sides must match; it does not say which side moves first.', 'The same holds inside an economy. The balances of households, non-financial firms, the financial sector, the government and the rest of the world add up to zero: when one sector spends more than it earns, the others together earn more than they spend.', 'Which side drives the other is the question the next steps answer. That reading is Matthew Klein and Michael Pettis’s, and this map’s.'] },
+    { t: 'The surplus economies spend less than they earn', bs: 'Surplus side', r: 'm', w: '', e: E('EXP>OFF', 'CHP>SAV'),
+      x: 'In the surplus economies wages and household consumption lag behind output. What is produced and not bought at home is sold abroad, and the income from it is saved.',
+      d: ['The pattern is built into their growth models: state-guided exporters in Japan and Korea, Taiwan’s foundry economy, German and Dutch wage restraint (Circuit, step 06). China, too, holds household consumption down relative to what it produces.', 'An economy that spends less than it earns acquires claims on the rest of the world of exactly that size: reserves at its central bank, or foreign shares and bonds held by its pension funds and insurers. The surplus and the claims are one fact, seen from two sides.', 'The identity fixes the net amount only. The gross flows behind it are far larger and pass through financial centres, which is why the Circuit marks custody and fund centres.'] },
+    { t: 'The claims are taken in dollars', bs: 'Into dollars', r: 'm', w: 'Mid-2026', e: E('SAV>HYP', 'CEN>HYP', 'EXP>OFF'), n: ['TSY'],
+      x: 'The dollar is the reserve currency and US markets are deep and open, so a large share of those claims is taken in US assets. Foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
+      d: ['No other market takes savings on this scale: China’s bloc offers no open, deep market in which to park them (Circuit, step 06).', 'So the US deficit is structural. It is the counterpart of the rest of the world’s wish to hold dollar claims, and not chiefly the result of Americans consuming too much.', 'That direction of causation, from the capital account to the trade account, is Klein and Pettis’s reading and this map’s. The accounting itself is silent on it.'] },
+    { t: 'The US has to accommodate the inflow', bs: 'Debt, not jobs', r: 'm', w: 'Sep and Oct 2026', e: E('SVR>CON', 'MTG>CON', 'CGR>CON'),
+      x: 'A deficit with the world means the US spends more than it earns, by exactly what foreigners add to their US claims. If investment does not rise to match, saving has to fall: through lost output and jobs, or through more borrowing.',
+      d: ['Imports take the place of demand for home production. Left alone, that shows up as unemployment, which lowers income and with it saving. The other way is to replace the lost demand with borrowed spending: by households, or by the government.', 'For decades the US has chosen debt. The personal saving rate was 3.8% in September 2026, and gross federal debt passed $40tn in October.', 'That is why US liabilities (Treasuries, agency debt, bank deposits, and the shares foreigners buy) grow in step with foreign holdings: they are two sides of one balance sheet.'] },
+    { t: 'Built over half a century', bs: 'Since the 1970s', r: 'h', w: '1944 to 2026', e: E('EXP>OFF'), n: ['PET', 'TSY'],
+      x: 'None of this is sudden. Since Bretton Woods ended in the early 1970s the US has run the deficits that absorb others’ surpluses: first the oil exporters’ (the petrodollar), then East Asia’s and Germany’s, then China’s.',
+      d: ['From 1944 to the early 1970s it ran the other way: the US recycled its own surpluses to Europe and Japan through aid, loans and investment (Circuit, step 06).', 'The form of the return flow has changed too. Until about 2014 it came largely as central-bank reserves held in Treasuries; since then mostly as private purchases of shares. Foreigners held 47% of US federal debt in 2014 and 30% in 2025.'] },
+    { t: 'What it does to US markets', bs: 'In the markets', r: 'c', w: 'Oct 2026', e: E('HYP>SPX', 'SPX>TOP', 'TOP>HYP', 'TOP>CON'),
+      x: 'Abundant foreign money meets weak demand from wage earners, so it flows into financial assets more than into broad real investment. Yields are lower and asset prices higher than they would otherwise be, and finance grows.',
+      d: ['The richest tenth of households own 88% of household stocks and do more than 45% of consumer spending, so spending rides on asset prices.', 'Investment gathers where the valuations are: the AI build-out, with the state steering credit towards it (financialised industrial policy).', 'Lower than otherwise, not low: the 10-year yield averaged 5.14% in October 2026. That yields are lower than they would be without the inflow is this map’s reading, not a measurement.'] },
+    { t: 'Rules widen the channel', bs: 'The rules', r: 'a', w: 'Jul 2025 and Apr 2026', e: E('REG>BNK', 'TSY>BNK', 'CGR>STB', 'TSY>STB'), lev: [3, 4],
+      x: 'Washington also sets the rules for who can hold its debt. The leverage rule for the largest banks was eased from April 2026, and the GENIUS Act of July 2025 makes stablecoin issuers hold cash and short-term Treasuries.',
+      d: ['Both add buyers and so hold yields down. The bank channel does more: when a bank buys a Treasury, or lends against one in repo, it pays with a deposit it creates. Easing the rule therefore adds room to create money, which is closer to monetising the debt than to borrowing someone’s savings (this map’s reading).', 'A stablecoin adds a new buyer of bills only where the money behind it was not already in bills or money funds: most clearly when it comes from abroad.', 'These are amplifiers, not causes. They widen a channel dug by surplus recycling and by political choices, at home and abroad, about who saves and who spends.'] },
+  ],
+};
 const SLINES = (() => {
   const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri })), beats: [] }];
-  SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why]) => L[0].beats.push(sBeat(p, s, ci, why))));
-  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, chs: [{ t: P.t, w: '', tri: i === 5 ? SMAIN.ch[4].tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
+  SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why, ld]) => L[0].beats.push(sBeat(p, s, ci, why, ld))));
+  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? SMAIN.ch[4].tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
+  /* first principles: the last line in the list (so stored places in the guide and the mechanisms keep their numbers), shown first */
+  L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, why: '', lev: B.lev || [], fork: null, ld: false })) });
   L.forEach(l => {
     let n = new Set(), e = new Set(), v = new Set();
-    l.cum = l.beats.map(B => { n = new Set([...n, ...enodes(B.e)]); e = new Set([...e, ...B.e]); v = new Set([...v, ...B.lev]); return { n, e, l: v }; });
+    l.cum = l.beats.map(B => { n = new Set([...n, ...bN(B)]); e = new Set([...e, ...B.e]); v = new Set([...v, ...B.lev]); return { n, e, l: v }; });
     l.first = l.chs.map((c, ci) => l.beats.findIndex(B => B.ch === ci));
   });
   return L;
@@ -5966,7 +6138,7 @@ function simStyle(act) {
   const svg = $('rmap'); if (!svg) return;
   const on = simOn() && !!SIM.R, R = SIM.R, vis = n => !on || R.n.has(n) || R.tmp.has(n);
   const B = on && !SIM.alt ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
-  const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...enodes(P.e)].filter(n => enodes(B.e).has(n)) : [];
+  const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...bN(P)].filter(n => bN(B).has(n)) : [];
   svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('gh', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n)); });
   svg.querySelectorAll('.fe, .feh').forEach(p => {
     const i = +p.dataset.e, e = FE[i], show = !on || R.e.has(i) || (!!act && act.has(i) && vis(e[0]) && vis(e[1]));
@@ -6043,7 +6215,7 @@ function simCamTarget() {
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
     const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
-    const set = SIM.alt ? new Set([...enodes(SFORK[SIM.alt].out.e), ...enodes(B.e)]) : new Set([...enodes(B.e), ...(P ? enodes(P.e) : [])]);
+    const set = SIM.alt ? new Set([...enodes(SFORK[SIM.alt].out.e), ...bN(B)]) : new Set([...bN(B), ...(P ? bN(P) : [])]);
     box = simBox(set); box[0] -= 26; box[2] += 26; box[1] -= 44; box[3] += 26; cap = 1.3;
   } else { box = [0, 0, MAPW, MAPH]; cap = 1.5; }
   const aw = Math.max(200, W - iL - iR), ah = Math.max(160, H - iT - iB), bw = box[2] - box[0], bh = box[3] - box[1];
@@ -6074,10 +6246,15 @@ const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label
 </div></aside>`;
 const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
 const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
+const SPI = SLINES.findIndex(L => L.pre);
+/* the mechanisms, by where they sit: what Washington sets, the markets that carry it, the economy it lands in */
+const STIER = [['up', 'Upstream · the state and the rules', [0, 5]], ['mid', 'Intermediate · the markets that carry it', [1, 8, 2]], ['down', 'Downstream · where it lands', [4, 7, 6, 3]]];
 function simPickHTML() {
-  const M = SLINES[0];
-  return `<div class="pk-h">The guide</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
-    + `<div class="pk-h">One mechanism at a time</div><div class="pk-ms">` + SLINES.slice(1).map((L, i) => `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`).join('') + `</div>`;
+  const M = SLINES[0], Pp = SLINES[SPI];
+  const mech = i => { const L = SLINES[i + 1]; return `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`; };
+  return `<div class="pk-h">Start here</div><button type="button" class="pk-l pk-pre${SIM.line === SPI ? ' on' : ''}" data-sl="${SPI}" data-sb="-1" style="--pc:${Pp.c}"><i aria-hidden="true"></i><b>${fe(Pp.t)}</b><small>${Pp.beats.length} reveals · the source of it all</small></button>`
+    + `<div class="pk-h">The guide</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
+    + `<div class="pk-h">One mechanism at a time</div>` + STIER.map(([k, t, ids]) => `<div class="pk-t pk-${k}"><div class="pk-tk">${fe(t)}</div><div class="pk-ms">${ids.map(mech).join('')}</div></div>`).join('');
 }
 /* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
 function simBar() {
@@ -6088,12 +6265,12 @@ function simBar() {
   const B = sCur() || (b >= n ? L.beats[n - 1] : null), ci = B ? B.ch : -1;
   const chs = L.main
     ? L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c), cur = c === ci && b < n, done = b >= n || (ci > c); return `<li><button type="button" class="s2ch${cur ? ' cur' : done ? ' done' : ''}" data-sb="${L.first[c]}"${cur ? ' aria-current="step"' : ''} data-tip="<b>${fe(C.t)}</b><p>${fe(C.w)} · ${idx.length} steps</p>"><span class="n">${String(c + 1).padStart(2, '0')}</span><b>${fe(C.s || C.t)}</b><span class="pp" aria-hidden="true">${idx.map(i => `<i class="${i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : ''}"></i>`).join('')}</span></button></li>`; }).join('')
-    : L.beats.map((X, i) => `<li><button type="button" class="s2ch st${i === b ? ' cur' : i < b || b >= n ? ' done' : ''}" data-sb="${i}"${i === b ? ' aria-current="step"' : ''} data-tip="<b>${fe(X.t)}</b>"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${fe(X.t)}</b></button></li>`).join('');
+    : L.beats.map((X, i) => `<li><button type="button" class="s2ch st${i === b ? ' cur' : i < b || b >= n ? ' done' : ''}" data-sb="${i}"${i === b ? ' aria-current="step"' : ''} data-tip="<b>${fe(X.t)}</b>"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${fe(X.bs || X.t)}</b></button></li>`).join('');
   const nt = cock => cock ? cock.querySelectorAll('.tile:not(.gh)').length : 0, fresh = sCur() && sCur().lev.length && !SIM.alt;
   bar.style.setProperty('--lc', L.main ? SMAIN.c : L.c);
-  bar.innerHTML = `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.t)}</b><i aria-hidden="true"></i></button>`
+  bar.innerHTML = `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : L.pre ? 'Start here' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.s || L.t)}</b><i aria-hidden="true"></i></button>`
     + `<button type="button" class="s2arr" data-sg="back" aria-label="Previous step"${b < 0 && !SIM.alt ? ' disabled' : ''}>${sArrL}</button>`
-    + `<ol class="s2chs${L.main ? '' : ' mech'}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
+    + `<ol class="s2chs${L.main ? '' : ' mech'}${L.pre ? ' pre' : ''}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
     + `<button type="button" class="s2arr" data-sg="${b < 0 ? 'start' : 'next'}" aria-label="Next step"${b >= n ? ' disabled' : ''}>${sArrR}</button>`
     + `<span class="s2sp"></span>`
     + `<button type="button" class="s2tb" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s2read">Readings <b>${nt($('cock'))}</b></button>`
@@ -6117,27 +6294,32 @@ function simTriHTML(B) {
 const sWord = n => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n] || String(n);
 const sChip = n => `<button type="button" class="sn-chip" data-sn="${n}" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</button>`;
 /* a reveal is one or two sentences: the first two of a text, and what is left of it for “Go deeper” */
-function sSplit(x) {
-  const s = String(x), cut = []; const re = /[.!?]\s+(?=[A-Z“‘$])/g; let m;
+function sSplit(x, keep) {
+  const s = String(x), cut = [], k = keep || 2; const re = /[.!?]\s+(?=[A-Z“‘$])/g; let m;
   while ((m = re.exec(s))) cut.push(m.index + 1);
-  return cut.length < 2 ? [s, ''] : [s.slice(0, cut[1]), s.slice(cut[1]).trim()];
+  return cut.length < k ? [s, ''] : [s.slice(0, cut[k - 1]), s.slice(cut[k - 1]).trim()];
 }
 const sOne = x => !/[.!?]\s+(?=[A-Z“‘$])/.test(String(x));
 const sDeep = h => h ? `<details class="s2deep"${SIM.deep ? ' open' : ''}><summary>Go deeper</summary><div class="s2d">${h}</div></details>` : '';
 function simBodyHTML() {
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (b < 0) {
-    const lede = L.main ? SMAIN.lede : `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
-    const forks = L.beats.filter(B => B.fork).length;
-    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(lede)}</p>`
-      + `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button>${L.main ? '<button type="button" class="s2lnk sn-skip" data-sm="full">Open the full view</button>' : '<button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">Back to the guide</button>'}</div>`
-      + sDeep((L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : '')
+    const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
+    const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(l1)}</p>`
+      + (L.main ? `<div class="s2acts s2two"><button type="button" class="sn-go" data-sl="${SPI}" data-sb="0"><span>First principles<small>${SLINES[SPI].beats.length} reveals, then the plumbing</small></span>${sArrR}</button><button type="button" class="sn-go2" data-sg="start"><span>Straight to the plumbing<small>${n} steps</small></span>${sArrR}</button></div><div class="s2acts"><button type="button" class="s2lnk sn-skip" data-sm="full">Open the full view</button></div>`
+        : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
+      + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : '')
         + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''));
   }
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
-    const nxt = L.main ? null : SLINES[SIM.line % (SLINES.length - 1) + 1];
+    const nxt = L.main ? null : SLINES[SIM.line % 9 + 1];
+    if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
+      + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where that arrangement falters: the central banks that used to buy the debt are stepping back.</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">How the plumbing was built ${sArrR}</button></div>`
+      + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
       + `<p class="s2p">${L.main ? `${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.` : `${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.`} Open the full view to run the plays, pull any lever and click anything.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
@@ -6151,8 +6333,8 @@ function simBodyHTML() {
         + (tmp.length ? `<div class="sn-new"><span>Lit on the map, later in the guide</span>${tmp.map(k => `<span class="sn-chip ghost" style="--nc:${FN[k][5]}"><i aria-hidden="true"></i>${fe(FN[k][3])}</span>`).join('')}</div>` : ''));
   }
   const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
-  const nw = [...enodes(B.e)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
-  const [x1, x2] = sSplit(B.x), lead = !!(B.why && P && sOne(B.x));
+  const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
+  const lead = !!(B.why && P && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
   let h = `<div class="s2k" style="--rc:${R[1]}"><i></i>${R[0]}${B.w ? `<span>${fe(B.w)}</span>` : ''}</div><h3>${fe(B.t)}</h3>`
     + (lead ? `<p class="s2why">${fe(B.why)}</p>` : '') + `<p class="s2p">${fe(x1)}</p>`
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
@@ -6160,9 +6342,9 @@ function simBodyHTML() {
     const F = SFORK[fk], seen = SIM.seen.has(fk);
     h += `<div class="sn-fork"><p class="sn-q"><span>Your choice</span>${fe(F.q)}</p><div class="sn-opts"><button type="button" class="sn-opt real" data-fk="real"><small>What happened</small><b>${fe(F.real[0])}</b><span>${fe(F.real[1])}</span></button><button type="button" class="sn-opt alt" data-fk="alt"><small>Other outcome${seen ? ' · seen' : ''}</small><b>${fe(F.alt[0])}</b><span>${fe(F.alt[1])}</span></button></div></div>`;
   }
-  h += sDeep((x2 ? `<p>${fe(x2)}</p>` : '')
+  h += sDeep((x2 ? `<p>${fe(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${fe(t)}</p>`).join('') : '')
     + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${fe(B.why)}</p>` : ''}</div>` : '')
-    + simTriHTML(B)
+    + (L.pre ? '' : simTriHTML(B))
     + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : '')
     + (fk ? `<p class="sn-note">One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : ''));
   return h;
@@ -6175,7 +6357,7 @@ function simNavHTML() {
   if (b >= n) return back + cnt + '<span class="sn-sp"></span>';
   if (SIM.alt) return back + `<button type="button" class="sn-b sn-next" data-sg="next">Back to what happened ${sArrR}</button>`;
   if (sNextFork()) return back + cnt + `<span class="sn-hint">Choose above</span>`;
-  const nx = b === n - 1 ? (L.main ? 'See the whole machine' : 'Finish') : 'Next';
+  const nx = b === n - 1 ? (L.main ? 'See the whole machine' : L.pre ? 'On to the plumbing' : 'Finish') : 'Next';
   return back + cnt + `<button type="button" class="sn-b sn-next" data-sg="next" aria-label="${b === n - 1 ? nx : 'Next step: ' + fe(L.beats[b + 1].t)}">${nx} ${sArrR}</button>`;
 }
 function simNarr(anim) {
@@ -6251,6 +6433,20 @@ function simDossier() {
   const c = $('snarr'); if (c && c.classList.contains('folded')) { const f = $('s2fold'); if (f) f.click(); }   /* a dossier opens the card */
   if (PHONE()) s.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
 }
+/* v2 round 3: the five sectors open a locked card. The balance sheets come later; the door is here now. */
+function simSector(k, from) {
+  const cock = $('cock'); if (!cock) return;
+  let c = $('sec3'); const was = c && c.dataset.sec;
+  if (c) c.remove();
+  if (!k || !SECT[k] || was === k) { if (from && from.focus) from.focus({ preventScroll: true }); return; }
+  const [t, z, x] = SECT[k], zc = (FZ.find(Z => Z[0] === z) || [])[2] || '#e4ebf1';
+  cock.insertAdjacentHTML('beforeend', `<aside class="sec3" id="isx-sec3" data-sec="${k}" role="dialog" aria-label="${fe(t)}: sector balance sheet" style="--zc:${zc}"><button type="button" class="sx3" data-sec="" aria-label="Close">×</button>`
+    + `<div class="sk3h">${LOCK3}<span>Coming soon</span></div><h3>${fe(t)}</h3><p>${fe(x)}</p>`
+    + `<div class="s5" role="group" aria-label="The five sectors">${Object.entries(SECT).map(([q, [n]]) => `<button type="button" data-sec="${q}"${q === k ? ' aria-current="true"' : ''}>${fe(n)}</button>`).join('<i aria-hidden="true">+</i>')}<i aria-hidden="true">=</i><b>0</b></div>`
+    + `<p class="sn3">Not built yet: this sector’s balance sheet, and how it mirrors the other four. One sector can only run a surplus if the others together run a deficit of the same size.</p></aside>`);
+  c = $('sec3'); c._from = from || null;
+  const f = c.querySelector('.sx3'); if (f) f.focus({ preventScroll: true });
+}
 function simMount() {
   const cock = $('cock'); if (!cock) return;
   SIM.cam = null; SIM.shown = null; SIM.tray = null;
@@ -6258,8 +6454,9 @@ function simMount() {
   const fx = $('rmap') && $('rmap').querySelector('#isx-fpart'); if (fx && !$('sfx')) fx.insertAdjacentHTML('afterend', '<g id="isx-sfx"></g>');
   const focusIn = (host, q) => { const f = host && host.querySelector(q); if (f) f.focus({ preventScroll: true }); };
   cock.addEventListener('click', e => {
-    const t = e.target.closest('button'); if (!t || !cock.contains(t)) return;
+    const t = e.target.closest('button, .fzk'); if (!t || !cock.contains(t)) return;
     const d = t.dataset;
+    if (d.sec != null) { const c0 = $('sec3'); simSector(d.sec, d.sec ? t : c0 && c0._from); return; }
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
     if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); return; }
     if (d.sm) { simSetMode(d.sm); return; }
@@ -6277,7 +6474,9 @@ function simMount() {
   });
   /* Esc: closes an open tray, then an open dossier, then leaves the guide for the full view */
   cock.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.fzk')) { e.preventDefault(); const g = e.target.closest('.fzk'); simSector(g.dataset.sec, g); return; }
     if (e.key !== 'Escape' || e.defaultPrevented) return;
+    if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
     if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
     else if (fsel || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
     else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '.smode [data-sm="full"]'); }
@@ -6322,6 +6521,8 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
 window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
+  get finMode() { return finMode; }, get armMode() { return armMode; },
+  setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
   setView, setStep, stepBy, select, stopPlay, renderGlobe, repaint, renarrate: () => { narr6(); legend6(); }, recard: renderCountryCard, routeSync, introOpen, tipsOpen: () => { stSet(TKEY.globe, null, true); gtOpen(true); },
@@ -6358,6 +6559,8 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/insight.js"></script>
 <script defer src="/imperial-stack/v2/own.js"></script>
 <script defer src="/imperial-stack/v2/chrome.js"></script>
+<script defer src="/imperial-stack/v2/strip.js"></script>
+<script defer src="/imperial-stack/v2/web.js"></script>
 <script defer src="/imperial-stack/v2/tour.js"></script>
 
 
