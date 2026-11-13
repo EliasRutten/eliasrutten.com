@@ -73,18 +73,18 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('picker: first principles first, then the guide, then mechanisms on three rungs', await p.evaluate(() => { const k = document.getElementById('isx-sn-pick'); return /First principles/.test(k.querySelector('.pk-l').textContent) && k.querySelectorAll('.pk-t').length === 3 && k.querySelectorAll('.pk-t .pk-l').length === 9; }));
   await p.keyboard.press('Escape');
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click()); await p.waitForTimeout(250);
-  ok('ladder: source, then three rungs, with arrows both ways', await p.evaluate(() => { const l = document.querySelector('#isx-cock .lad3'); return !!l && l.querySelectorAll('.hc').length === 3 && !!l.querySelector('.lsrc3') && l.querySelectorAll('.larr3 .dn').length === 3 && l.querySelectorAll('.larr3 .up').length === 3 && l.querySelectorAll('.secb3').length === 5; }));
+  ok('ladder (guide): three rungs, 17 rows; the source layer and the arrows wait for the end of the guide', await p.evaluate(() => { const l = document.getElementById('isx-s5lad'); return !l.hidden && l.querySelectorAll('.s5g').length === 3 && l.querySelectorAll('.s5row').length === 17 && !l.querySelector('.lsrc3') && !l.querySelector('.larr3') && !!l.querySelector('.s5wait2'); }));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
 
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
   await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(300);
-  const lad = await p.evaluate(() => { const l = document.querySelector('#isx-cock .lad3'), v = e => e.getClientRects().length > 0; return { tiles: [...l.querySelectorAll('.tile')].filter(v).length, per: [...l.querySelectorAll('.hc')].map(h => h.querySelectorAll('.tile').length), slots: [...l.querySelectorAll('.slot3')].filter(v).length, figs: [...l.querySelectorAll('.fig3')].filter(v).length, fit: l.scrollHeight <= l.clientHeight + 1, inside: l.getBoundingClientRect().bottom <= innerHeight }; });
+  const lad = await p.evaluate(() => { const l = document.getElementById('isx-s5lad'), v = e => e.getClientRects().length > 0; return { tiles: [...l.querySelectorAll('.s5row')].filter(v).length, per: [...l.querySelectorAll('.s5g')].map(h => h.querySelectorAll('.s5row').length), slots: l.querySelectorAll('.slot3').length, figs: l.querySelectorAll('.fig3').length, src: !!l.querySelector('.lsrc3'), arrows: [l.querySelectorAll('.larr3 .dn').length, l.querySelectorAll('.larr3 .up').length], sectors: l.querySelectorAll('.secb3').length, fit: l.scrollHeight <= l.clientHeight + 1, inside: l.getBoundingClientRect().bottom <= innerHeight }; });
   ok('ladder: all 17 readings on three rungs (4, 4, 9), empty slots for what is not measured', lad.tiles === 17 && lad.per.join() === '4,4,9' && lad.slots === 6 && lad.figs >= 6, lad);
+  ok('ladder: the source layer, five sectors and arrows both ways are still there (one click away since stage 5)', lad.src && lad.arrows.join() === '3,3' && lad.sectors === 5, lad);
   ok('ladder: fits the window at 1440×900 without scrolling', lad.fit && lad.inside, lad);
-  await p.click('.lad3 .fig3[data-slv="3"]'); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('#isx-s5lad .fig3[data-slv="3"]').click()); await p.waitForTimeout(300);
   ok('ladder: a figure from a lever opens that lever', await p.evaluate(() => /Free up the big banks/i.test((document.getElementById('isx-rside') || {}).textContent || '')));
   await p.keyboard.press('Escape'); await p.waitForTimeout(150);
-  await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(200);
   ok('map: actors that carry a reading are marked by rung', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fnk3').length === 18 && document.querySelectorAll('#isx-rmap .fnk3.t-up').length === 3));
   ok('sectors: five zones carry a lock and are buttons', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fzk[role="button"]').length === 5));
   await p.evaluate(() => document.querySelector('#isx-rmap .fzk[data-sec="gov"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(250);

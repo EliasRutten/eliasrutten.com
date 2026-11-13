@@ -107,7 +107,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok('guide: then the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click()); await p.waitForTimeout(200);
-  ok('guide: Readings shows every reading reached so far', await p.evaluate(() => { const c = document.getElementById('isx-cock'); const shown = [...c.querySelectorAll('.tile')].filter(x => x.getClientRects().length).length; return c.classList.contains('rd-open') && shown === c.querySelectorAll('.tile:not(.gh)').length && shown > 0; }));
+  ok('guide: Readings opens the ladder: every reading reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-s5lad'), got = l.querySelectorAll('.s5row:not(.s5later)').length; return c.classList.contains('rd-open') && !l.hidden && l.querySelectorAll('.s5row').length === 17 && got === c.querySelectorAll('.tile:not(.gh)').length && got > 0 && got < 17; }));
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click());
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('guide: the picker lists first principles, the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
@@ -130,7 +130,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('full view: the Levers tab shows all 14 levers', await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length).length === 14 && document.getElementById('isx-s2tray-play').hidden));
   await p.evaluate(() => document.querySelector('[data-s4tab="plays"]').click()); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(200);
-  ok('full view: Readings opens all 17', await p.evaluate(() => [...document.querySelectorAll('#isx-cock .tile')].filter(x => x.getClientRects().length).length) === 17);
+  ok('full view: Readings opens all 17', await p.evaluate(() => [...document.querySelectorAll('#isx-s5lad .s5row:not(.s5later)')].filter(x => x.getClientRects().length).length) === 17);
   await p.evaluate(() => document.querySelector('.s2rdb').click());
   await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300);
   ok('full view: an actor opens a floating dossier, and its reading shows', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && [...document.querySelectorAll('#isx-cock .tile, #isx-cock .s4ri.on')].some(x => x.getClientRects().length); }));

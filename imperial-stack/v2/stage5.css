@@ -1,0 +1,176 @@
+/* Imperial Stack v2, stage 5: the Simulator, polished.
+   Nothing flickers (one pass per step), nothing is given away before the guide gets there, the full map is a real
+   choice on the opening card, the key readings stay on screen below 1180 px, and the full ladder shows less at once.
+   The stage 4 design stands. Data, actors, relations, levers, readings, plays and steps are unchanged. */
+
+/* ---------- one pass: an actor brightens or dims by one transition, both ways ----------
+   (the entrance classes that lit a newcomer fully and were taken off a second later are no longer set: see simEnter) */
+#isx-root #isx-cock.s2 .fn, #isx-root #isx-cock.s2 .fn.s4dim { transition: opacity .45s ease; }
+#isx-root #isx-cock.s2.full .fn { transition-duration: .25s; }
+
+/* ---------- nothing early: an actor the guide has not reached is a name, no value line ---------- */
+#isx-root #isx-cock.s2 .fn.s4dim .fns, #isx-root #isx-cock.s2 .fn.tmp .fns { opacity: 0; }
+#isx-root #isx-cock.s2 .fn.s4dim .fnr { stroke: rgba(143, 163, 182, .28); filter: none; }
+
+/* a reading the guide has not reached: its name, dimmed, and a dot where the value will be */
+#isx-root .s2 .s4ri.s4later { cursor: default; }
+#isx-root .s2 .s4ri.s4later b { color: var(--ink2); }
+#isx-root .s2 .s4ri.s4later:hover, #isx-root .s2 .s4ri.s4later:focus-visible { background: none; }
+/* the rail's way to the full ladder stays in reach when a tall tray shortens the rail */
+#isx-root .s2 .s4rail .s4lad { position: sticky; bottom: 0; z-index: 1; background: rgba(12, 19, 27, .98); }
+#isx-root .s2 .s4rail .s4lad::before, #isx-root .s2 .s4rail .s4lad::after { content: ""; position: absolute; left: -5px; right: -5px; pointer-events: none; }
+#isx-root .s2 .s4rail .s4lad::before { bottom: 100%; height: 10px; background: linear-gradient(180deg, transparent, rgba(8, 13, 19, .96)); }
+#isx-root .s2 .s4rail .s4lad::after { top: 100%; height: 10px; background: rgb(8, 13, 19); }
+#isx-root .dossier .s5more { margin: 8px 0 0; font-family: var(--mono); font-size: 10.5px; line-height: 1.4; color: var(--ink2); }
+
+/* ---------- the opening card: two real choices, one quiet link ---------- */
+#isx-root #isx-cock.s2.s4open .s2card { width: 600px; }
+#isx-root .s2 .s5two { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr); gap: 10px; align-items: stretch; }
+#isx-root #isx-cock.s2 .s2card .s5two > button { height: auto; align-self: stretch; }
+#isx-root #isx-cock.s2 .s2card .s5two .s4go { min-height: 72px; padding: 10px 14px 10px 18px; }
+#isx-root #isx-cock.s2 .s2card .s5full { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 72px; margin: 0; padding: 10px 12px 10px 16px; border-radius: 13px; border: 1px solid #6c7f91; background: rgba(255, 255, 255, .04); color: #fff; text-align: left; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05); transition: border-color .18s, background .18s; }
+#isx-root #isx-cock.s2 .s2card .s5full:hover { border-color: #e4ebf1; background: rgba(255, 255, 255, .09); }
+#isx-root #isx-cock.s2 .s2card .s5full:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
+#isx-root #isx-cock.s2 .s2card .s5full b { display: block; font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: .07em; text-transform: uppercase; line-height: 1.1; color: #fff; }
+#isx-root #isx-cock.s2 .s2card .s5full small { display: block; margin-top: 3px; font-family: var(--sans); font-size: 12px; line-height: 1.3; letter-spacing: 0; text-transform: none; color: #b6c3cf; }
+#isx-root #isx-cock.s2 .s2card .s5full svg { flex: none; width: 20px; height: 20px; color: #c9d4de; }
+#isx-root .s2 .s5two + .s4or { justify-content: flex-start; }
+
+/* ---------- the bar: Back to the guide says where the guide stands ---------- */
+#isx-root .s2 .s2bar .s4back > span { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; line-height: 1.1; white-space: nowrap; }
+#isx-root .s2 .s2bar .s4back small { font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .03em; text-transform: none; color: var(--ink2); }
+
+/* ---------- the strip of key readings (below 1180 px); from 1180 px the rail carries the readings ---------- */
+@media (min-width: 1180px) {
+  #isx-root #isx-cock.s2 .s2read .hud6 { display: none; }
+}
+@media (max-width: 1179px) {
+  /* five key readings are always on screen; a reading the step puts in play joins them, first in line */
+  #isx-root #isx-cock.s2:not(.rd-open) .s2read .s5strip .tile.s5key { display: inline-flex; }
+  #isx-root #isx-cock.s2 .s5strip .tile.hot, #isx-root #isx-cock.s2 .s5strip .tile.on { order: -1; }
+  #isx-root #isx-cock.s2 .s5strip .tile:not(.s5key).hot { animation: isx-s5in .3s ease backwards; }
+  #isx-root #isx-cock.s2.rd-open .s2read .hud6 { display: none; }
+  /* not reached yet: the name, dimmed, and a dot */
+  #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh { pointer-events: auto; cursor: default; border: 1px dashed rgba(143, 163, 182, .2); background: rgba(8, 13, 19, .45); }
+  #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh > * { opacity: 1; }
+  #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh .tv, #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh .tk { color: var(--ink3); }
+  #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh small, #isx-root #isx-cock.s2 .s5strip .tile.s5key.gh .tg { display: none; }
+  /* the full ladder opens from the end of the strip, in the guide and in the full view; the bar keeps its room for the steps */
+  #isx-root #isx-cock.s2 .s2read .s2rdb { display: inline-flex; flex: none; }
+  #isx-root #isx-cock.s2 .s2bar .s4rdt { display: none !important; }
+  /* full view: the switch drops its sub-labels so the line of instruction fits its box */
+  #isx-root #isx-cock.s2.full .s2bar .s4tab small { display: none; }
+  #isx-root .s2 .s2bar .s4hint { padding: 0 14px; font-size: 12.5px; line-height: 1.3; overflow: hidden; }
+}
+@media (min-width: 761px) and (max-width: 1179px) {
+  #isx-root .s2 .s2read { flex-wrap: nowrap; align-items: center; }
+  #isx-root #isx-cock.s2 .s2read .s5strip { flex: 0 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  #isx-root #isx-cock.s2 .s2read .s5strip::-webkit-scrollbar { display: none; }
+  #isx-root #isx-cock.s2 .s5strip .tile { height: 28px; padding: 0 9px; gap: 6px; }
+  #isx-root #isx-cock.s2 .s5strip .tile .tv { font-size: 15px; line-height: 28px; }
+  #isx-root #isx-cock.s2 .s5strip .tile .tk { font-size: 9px; line-height: 28px; }
+  #isx-root .s2 .s2rdb { height: 28px; }
+  /* compact: the date of a reading in play is in its tooltip, on its actor and in the full ladder */
+  #isx-root #isx-cock.s2 .s5strip .tile small { display: none; }
+  /* when more readings are in play than fit, the row scrolls and fades out at its right edge */
+  #isx-root #isx-cock.s2 .s2read .s5strip { padding-right: 22px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); }
+  /* the opening card sits under the strip, not on it */
+  #isx-root #isx-cock.s2.s4open .s2card { top: 232px; transform: translateX(-50%); }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  /* a narrow tablet: the switch takes its own row, as on a phone, so the chapter in hand has room between the arrows */
+  #isx-root .s2 .s2bar { flex-wrap: wrap; height: auto; row-gap: 6px; }
+  #isx-root .s2 .s2bar > * { min-height: 50px; }
+  #isx-root .s2 .s2bar .s4tabs { flex: 1 1 100%; min-height: 44px; }
+  #isx-root .s2 .s2bar .s4tab { flex: 1; align-items: center; }
+  #isx-root .s2 .s2bar .s4hint { flex: 1 1 0; min-width: 0; padding: 4px 14px; font-size: 12.5px; }
+  #isx-root #isx-cock.s2:not(.s4open) .s2card { bottom: 140px; max-height: calc(100% - 304px); }
+  #isx-root #isx-cock.s2 .s5lad { max-height: calc(100% - 318px); }
+}
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2 .s2read .s5strip::-webkit-scrollbar { display: none; }
+  #isx-root #isx-cock.s2 .s5strip .tile { height: 36px; padding: 0 10px; }
+  #isx-root #isx-cock.s2 .s5strip .tile .tk, #isx-root #isx-cock.s2 .s5strip .tile .tv { line-height: 36px; }
+}
+@keyframes isx-s5in { from { opacity: 0; } }
+
+/* ---------- the full ladder: a quiet list, the rest behind a click ---------- */
+#isx-root #isx-cock.s2 .s5lad { position: absolute; z-index: 8; top: 150px; right: 18px; width: min(940px, calc(100% - 36px)); max-height: calc(100% - 238px); overflow-y: auto; scrollbar-width: thin; padding: 14px 16px 12px; border-radius: 16px; background: rgba(8, 13, 19, .985); border: 1px solid #253442; box-shadow: 0 30px 70px -26px #000; color: var(--ink); animation: isx-tray2 .22s ease both; }
+#isx-root #isx-cock.s2 .s5lad[hidden] { display: none; }
+#isx-root .s5lad .s5h { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 6px; }
+#isx-root .s5lad .s5h h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1.1; letter-spacing: .06em; text-transform: uppercase; color: #fff; }
+#isx-root .s5lad .s5h p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--ink2); }
+#isx-root .s5lad .s5cl { flex: none; width: 34px; height: 34px; margin: -4px -6px 0 0; border: 0; border-radius: 50%; background: none; color: var(--ink2); font-size: 20px; line-height: 1; cursor: pointer; }
+#isx-root .s5lad .s5cl:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+#isx-root .s5lad .s5cl:focus-visible, #isx-root .s5lad .s5rb:focus-visible, #isx-root .s5lad .s5find:focus-visible, #isx-root .s5lad summary:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root .s5lad .s5cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 22px; align-items: start; }
+#isx-root .s5lad .s5g-up { grid-column: 1; grid-row: 1; }
+#isx-root .s5lad .s5g-mid { grid-column: 1; grid-row: 2; }
+#isx-root .s5lad .s5g-down { grid-column: 2; grid-row: 1 / span 2; }
+#isx-root .s5lad .s5g h4 { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 2px; padding: 7px 8px 0; border-top: 1px solid color-mix(in srgb, var(--zc) 32%, transparent); }
+#isx-root .s5lad .s5g h4 b { font-family: var(--display); font-weight: 600; font-size: 14.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--zc); }
+#isx-root .s5lad .s5g h4 span { font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .03em; color: var(--ink2); }
+#isx-root .s5lad .s5g ul { list-style: none; margin: 0; padding: 0; }
+#isx-root .s5lad .s5rb { display: grid; grid-template-columns: minmax(0, 1fr) auto 12px; grid-template-areas: "n v c" "m m c"; column-gap: 10px; row-gap: 0; align-items: baseline; width: 100%; margin: 0; padding: 3px 8px 4px; border: 0; border-radius: 8px; background: none; color: var(--ink); text-align: left; font: inherit; }
+#isx-root .s5lad button.s5rb { cursor: pointer; }
+#isx-root .s5lad .s5n { grid-area: n; min-width: 0; font-family: var(--sans); font-size: 13px; line-height: 1.3; color: #eef3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .s5lad .s5v { grid-area: v; font-family: var(--display); font-weight: 700; font-size: 15.5px; line-height: 1.2; letter-spacing: .02em; color: var(--tc); white-space: nowrap; font-variant-numeric: tabular-nums; }
+#isx-root .s5lad .s5m { grid-area: m; min-width: 0; font-size: 11.5px; line-height: 1.35; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .s5lad .s5c { grid-area: c; align-self: center; width: 7px; height: 7px; border-right: 1.5px solid var(--ink3); border-bottom: 1.5px solid var(--ink3); transform: rotate(45deg) translate(-2px, -2px); transition: transform .18s; }
+#isx-root .s5lad button.s5rb:hover { background: rgba(255, 255, 255, .05); }
+#isx-root .s5lad .s5rb[aria-expanded="true"] { background: color-mix(in srgb, var(--tc) 9%, transparent); }
+#isx-root .s5lad .s5rb[aria-expanded="true"] .s5m { white-space: normal; }
+#isx-root .s5lad .s5rb[aria-expanded="true"] .s5c { transform: rotate(-135deg) translate(-2px, -2px); }
+#isx-root .s5lad .s5later .s5n, #isx-root .s5lad .s5later .s5m { color: var(--ink3); }
+#isx-root .s5lad .s5later .s5v { color: var(--ink3); }
+#isx-root .s5lad .s5d { margin: 2px 8px 8px; padding: 8px 12px 10px; border-left: 2px solid var(--tc); border-radius: 0 8px 8px 0; background: rgba(255, 255, 255, .025); font-size: 12.5px; line-height: 1.45; color: #cfd9e2; }
+#isx-root .s5lad .s5d[hidden] { display: none; }
+#isx-root .s5lad .s5d p { margin: 0 0 6px; }
+#isx-root .s5lad .s5dk b { font-weight: 600; color: #fff; }
+#isx-root .s5lad .s5dk span { margin-left: 9px; font-family: var(--mono); font-size: 10.5px; color: var(--ink2); }
+#isx-root .s5lad .s5d .lsrc { margin-top: 0; font-size: 10.5px; color: var(--ink2); }
+#isx-root .s5lad .s5find { display: inline-flex; align-items: center; gap: 6px; height: 30px; margin-top: 8px; padding: 0 12px; border-radius: 8px; border: 1px solid #33475a; background: none; color: var(--ink); cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; }
+#isx-root .s5lad .s5find:hover { border-color: #8fa3b6; color: #fff; }
+#isx-root .s5lad .s5find svg { width: 14px; height: 14px; }
+/* what stood around the rungs: one click away */
+#isx-root .s5lad .s5x { margin: 2px 0 0; }
+#isx-root .s5lad .s5x > summary { display: flex; align-items: baseline; gap: 9px; min-height: 24px; padding: 3px 8px; border-radius: 8px; cursor: pointer; list-style: none; font-family: var(--mono); font-size: 10px; letter-spacing: .02em; line-height: 1.5; color: var(--ink2); white-space: nowrap; overflow: hidden; }
+#isx-root .s5lad .s5x > summary::-webkit-details-marker { display: none; }
+#isx-root .s5lad .s5x > summary span { flex: none; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+#isx-root .s5lad .s5x > summary::after { content: "+"; margin-left: auto; font-size: 13px; color: var(--ink2); }
+#isx-root .s5lad .s5x[open] > summary::after { content: "–"; }
+#isx-root .s5lad .s5x > summary:hover { background: rgba(255, 255, 255, .04); color: #fff; }
+#isx-root .s5lad .s5xs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 8px 6px; }
+#isx-root .s5lad .fig3, #isx-root .s5lad .slot3 { display: inline-flex; height: 28px; padding: 0 9px; }
+#isx-root .s5lad .fig3 .tv { font-size: 15px; line-height: 28px; }
+#isx-root .s5lad .fig3 .sk3, #isx-root .s5lad .slot3 .sk3 { line-height: 28px; }
+#isx-root .s5lad .slot3 em { color: var(--ink2); }
+#isx-root .s5lad .s5how { margin-top: 8px; padding-top: 6px; border-top: 1px solid #1c2833; }
+#isx-root .s5lad .s5how .lsrc3 { margin: 6px 0 8px; }
+#isx-root .s5lad .s5ar { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 2px 8px; }
+#isx-root .s5lad .s5ar > b { font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+#isx-root .s5lad .s5ar .larr3 { padding: 3px 0; }
+#isx-root .s5lad .s5ar .larr3 .up { color: var(--ink2); }
+#isx-root .s5lad .s5wait2 { margin: 10px 8px 0; padding-top: 8px; border-top: 1px solid #1c2833; font-size: 12px; line-height: 1.45; color: var(--ink2); }
+@media (min-width: 761px) and (max-width: 1240px) {
+  #isx-root #isx-cock.s2 .s5lad { top: 176px; max-height: calc(100% - 264px); }
+}
+@media (max-width: 900px) {
+  #isx-root .s5lad .s5cols { grid-template-columns: minmax(0, 1fr); }
+  #isx-root .s5lad .s5g-up, #isx-root .s5lad .s5g-mid, #isx-root .s5lad .s5g-down { grid-column: 1; grid-row: auto; }
+  #isx-root .s5lad .s5ar { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2.s4open .s2card { width: auto; }
+  #isx-root .s2 .s5two { grid-template-columns: minmax(0, 1fr); }
+  #isx-root #isx-cock.s2 .s2card .s5two .s4go, #isx-root #isx-cock.s2 .s2card .s5full { min-height: 62px; }
+  #isx-root #isx-cock.s2 .s5lad { position: static; order: 3; width: auto; max-height: none; overflow: visible; padding: 12px 10px 10px; }
+  #isx-root .s5lad .s5rb { padding: 7px 6px 8px; }
+  #isx-root .s5lad .s5m { white-space: normal; }
+  #isx-root .s5lad .s5find { height: 40px; }
+  #isx-root .s5lad .s5x > summary { min-height: 40px; align-items: center; flex-wrap: wrap; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #isx-root #isx-cock.s2 .fn, #isx-root #isx-cock.s2 .fn.s4dim, #isx-root #isx-cock.s2 .s2card .s5full, #isx-root .s5lad .s5c { transition: none; }
+  #isx-root #isx-cock.s2 .s5lad, #isx-root #isx-cock.s2 .s5strip .tile:not(.s5key).hot { animation: none; }
+}

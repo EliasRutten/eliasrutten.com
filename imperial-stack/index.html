@@ -2356,6 +2356,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/sim.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage3.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage4.css">
+<link rel="stylesheet" href="/imperial-stack/v2/stage5.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -4937,7 +4938,7 @@ function buildHud() {
 }
 function tileHTML(T, c) {
   const g = T.g, mini = g.type === 'pct' || g.type === 'band' ? gaugeSVG(g).replace(/<text[^>]*>.*?<\/text>/g, '') : '';
-  return `<button type="button" class="tile" data-node="${T.n}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="tk"><i>${fic(T.ic, 13)}</i>${fe(T.k)}</span><span class="tr"><span class="tv">${fe(g.v)}</span>${mini ? `<span class="tg">${mini}</span>` : ''}</span>${g.delta && !mini ? `<small>${fe(g.delta)}</small>` : ''}</button>`;
+  return `<button type="button" class="tile${TKEYS.includes(T.k) ? ' s5key' : ''}" data-node="${T.n}" data-rk="${TORD.indexOf(T.k)}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="tk"><i>${fic(T.ic, 13)}</i>${fe(T.k)}</span><span class="tr"><span class="tv">${fe(g.v)}</span>${mini ? `<span class="tg">${mini}</span>` : ''}</span>${g.delta && !mini ? `<small>${fe(g.delta)}</small>` : ''}</button>`;
 }
 /* v2 round 3: the 17 readings are shown as a ladder, from what Washington sets to what the economy shows, under the layer
    that drives it all (surplus recycling and political choice). A figure the page already carries elsewhere is shown as a
@@ -4977,17 +4978,67 @@ function slotHTML(S) {
   const body = `<span class="tv">${fe(S.v)}</span><span class="sk3">${fe(S.k)}</span><small>${fe(S.d)}</small>`;
   return S.lv != null ? `<button type="button" class="fig3" data-slv="${S.lv}" ${tip}>${body}</button>` : S.n ? `<button type="button" class="fig3" data-sn="${S.n}" ${tip}>${body}</button>` : `<span class="fig3" tabindex="0" ${tip}>${body}</span>`;
 }
+/* v2 stage 5: the readings have three faces, all drawn from TILES. The rail on the right edge (from 1180 px, stage 4);
+   a strip of key readings above the map (below 1180 px: the five in TKEYS, always on screen, plus whatever the step in hand
+   puts in play, which is what the stage 3 strip showed); and the full ladder, a quiet list that opens on demand.
+   A reading the guide has not reached keeps its name; its value, note and source stay out of the page until then (simGate). */
+const TKEYS = ['Fed funds target', 'Bills share of debt', '10-year yield', 'Bond volatility', 'Big Tech capex 2026'];
+/* one line of meaning per reading: what the figure measures, in the words the page already uses; no figures of its own */
+const TMEAN = {
+  'Fed funds target': 'The Fed’s policy rate: the price of overnight money.',
+  'Bank reserves': 'Cash the banks hold at the Fed.',
+  'Bills share of debt': 'Bills, due within a year, as a share of the Treasury’s marketable debt.',
+  'Tether’s Treasuries': 'The Treasury exposure of Tether, which issues a dollar token.',
+  '10-year yield': 'The benchmark price of long-term money.',
+  'Bond volatility': 'The MOVE index: how far Treasury yields are expected to swing.',
+  'Official Treasuries': 'Treasuries held by foreign central banks, finance ministries and sovereign funds.',
+  'Dollar index': 'The dollar against a basket of six major currencies.',
+  'Brent crude': 'The benchmark oil price, per barrel.',
+  'US diesel': 'The US price of a gallon of diesel.',
+  'AI share of S&P 500': 'The share of S&P 500 market value in JPMorgan’s basket of AI-related stocks.',
+  'Shares sold, 12 months': 'New shares sold by listed firms in the build-out.',
+  'Bonds sold, 12 months': 'Senior notes sold by the same firms.',
+  'Big Tech capex 2026': 'What Amazon, Alphabet, Microsoft and Meta plan to spend on data centres, chips, land and power.',
+  'Consumer spending': 'Consumer spending as a share of GDP.',
+  'Saving rate': 'Personal saving as a share of disposable income.',
+  '30-year mortgage': 'The average rate on a 30-year fixed mortgage.',
+};
+const tilesOrd = () => TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
 function hudHTML() {
-  const all = TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
-  const R = id => (LIVE.resbar || []).find(r => r.id === id), ca = R('ca'), eq = R('eq');
-  const src = [ca, eq].filter(Boolean).map(r => `<span class="fig3" tabindex="0" data-tip="<b>${fe(r.k)}: ${fe(r.v)}</b><p>${fe(r.what || '')}</p><p class='ts'>${fe(r.t || '')}</p>"><span class="tv">${fe(r.v)}</span><span class="sk3">${fe(r.k)}</span><small>${fe(r.d || '')}</small></span>`).join('');
-  const arrow = (dn, up) => `<div class="larr3"><span class="dn"><i aria-hidden="true">↓</i>${fe(dn)}</span>${up ? `<span class="up"><i aria-hidden="true">↑</i>${fe(up)}</span>` : ''}</div>`;
-  const AR = { up: arrow('sets how much debt has to be placed, and with whom', 'asset prices and yields decide how willingly the world keeps lending (this map’s reading)'), mid: arrow('moves yields, bank balance sheets and who holds the debt', 'long yields and volatility steer what the Treasury issues and buys back'), down: arrow('prices credit, shares and mortgages', 'inflation moves the policy rate: the Fed hiked on 16 September 2026') };
-  return `<div class="hud6 lad3" role="group" aria-label="Readings, from source to consequence">`
-    + `<div class="lsrc3"><div class="lh3"><b>Source</b><span>surplus recycling and political choice</span></div><p>Who saves, who spends and who holds dollars is settled by wage, trade and currency policy, at home and abroad. Everything below works inside that.</p><div class="lrow3">${src}</div>`
-    + `<div class="lsec3" role="group" aria-label="The five sectors"><span class="lsk3">Five sectors, and their balances add up to zero</span>${Object.entries(SECT).map(([k, [t]]) => `<button type="button" class="secb3" data-sec="${k}" aria-label="${fe(t)}: sector balance sheet, coming soon">${LOCK3}${fe(t)}</button>`).join('')}</div></div>`
-    + TIERS.map(([k, t, sub, c, x]) => AR[k] + `<div class="hc hc-${k}" style="--zc:${c}" data-tip="<b>${fe(t)}</b><p>${fe(x)}</p>"><h4><b>${fe(t)}</b><span>${fe(sub)}</span></h4><div class="hct">${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(a => tileHTML(a.T, a.c)).join('')}${TSLOT[k].map(slotHTML).join('')}</div></div>`).join('')
-    + `</div>`;
+  return `<div class="hud6 s5strip" id="isx-s5strip" role="group" aria-label="Key readings">${tilesOrd().map(a => tileHTML(a.T, a.c)).join('')}</div>`;
+}
+/* the full ladder. One row per reading: its name, its value and one line of meaning, by rung. The note, the date, the
+   source and the way to its actor open on a click, one row at a time. What stood around the rungs in stage 3 is all
+   still here, each behind one click: the figures from elsewhere on the page and the slots not yet measured (per rung),
+   and the layer the ladder starts from with the arrows between the rungs (at the foot). Drawn when it opens, from what
+   the guide has reached: an unreached row keeps its name and says “Later in the guide”. */
+function ladHTML() {
+  const on = simOn() && !!SIM.R, R = SIM.R, ok = n => !on || R.n.has(n), okL = i => !on || R.l.has(i);
+  const whole = !on || (!!sLine().main && SIM.beat >= sLine().beats.length);
+  const all = tilesOrd(), got = all.filter(a => ok(a.T.n)).length;
+  const row = ({ T, c }) => {
+    const g = T.g, i = TORD.indexOf(T.k);
+    if (!ok(T.n)) return `<li class="s5row s5later"><div class="s5rb"><span class="s5n">${fe(T.k)}</span><b class="s5v" aria-hidden="true">·</b><span class="s5m">Later in the guide</span></div></li>`;
+    return `<li class="s5row" style="--tc:${c}"><button type="button" class="s5rb" data-s5row="${i}" aria-expanded="false" aria-controls="isx-s5d-${i}"><span class="s5n">${fe(T.k)}</span><b class="s5v">${fe(String(g.v || '–').replace(/^~/, '≈'))}</b><span class="s5m">${fe(TMEAN[T.k] || '')}</span><i class="s5c" aria-hidden="true"></i></button>`
+      + `<div class="s5d" id="isx-s5d-${i}" hidden><p class="s5dk"><b>${fe(g.k)}</b>${g.delta ? `<span>${fe(g.delta)}</span>` : ''}</p>${g.note ? `<p>${fe(g.note)}</p>` : ''}<div class="lsrc">Source: ${fe(g.src || 'not stored')}</div><button type="button" class="s5find" data-s5find="${T.n}">Find ${fe(FN[T.n][3])} on the map ${sArrR}</button></div></li>`;
+  };
+  const slot = S => on && ((S.lv != null && !okL(S.lv)) || (S.n && !ok(S.n))) ? `<span class="slot3 s5wait"><span class="sk3">${fe(S.k)}</span><em>later in the guide</em></span>` : slotHTML(S);
+  const extra = k => { const S = TSLOT[k], nf = S.filter(x => x.v).length, ne = S.length - nf; return `<details class="s5x"><summary><span>Also on this rung</span>${nf ? `${nf} figure${nf > 1 ? 's' : ''} from elsewhere` : ''}${nf && ne ? ' · ' : ''}${ne ? `${ne} not yet measured` : ''}</summary><div class="s5xs">${S.map(slot).join('')}</div></details>`; };
+  const Rs = id => (LIVE.resbar || []).find(r => r.id === id);
+  const src = [Rs('ca'), Rs('eq')].filter(Boolean).map(r => `<span class="fig3" tabindex="0" data-tip="<b>${fe(r.k)}: ${fe(r.v)}</b><p>${fe(r.what || '')}</p><p class='ts'>${fe(r.t || '')}</p>"><span class="tv">${fe(r.v)}</span><span class="sk3">${fe(r.k)}</span><small>${fe(r.d || '')}</small></span>`).join('');
+  const arrow = (lab, dn, up) => `<div class="s5ar"><b>${lab}</b><div class="larr3"><span class="dn"><i aria-hidden="true">↓</i>${fe(dn)}</span><span class="up"><i aria-hidden="true">↑</i>${fe(up)}</span></div></div>`;
+  const how = whole
+    ? `<details class="s5x s5how"><summary><span>Where it starts, and how the rungs connect</span>the source layer, five sectors, three links</summary>`
+      + `<div class="lsrc3"><div class="lh3"><b>Source</b><span>surplus recycling and political choice</span></div><p>Who saves, who spends and who holds dollars is settled by wage, trade and currency policy, at home and abroad. Everything on the ladder works inside that.</p><div class="lrow3">${src}</div>`
+      + `<div class="lsec3" role="group" aria-label="The five sectors"><span class="lsk3">Five sectors, and their balances add up to zero</span>${Object.entries(SECT).map(([k, [t]]) => `<button type="button" class="secb3" data-sec="${k}" aria-label="${fe(t)}: sector balance sheet, coming soon">${LOCK3}${fe(t)}</button>`).join('')}</div></div>`
+      + arrow('Source to Upstream', 'sets how much debt has to be placed, and with whom', 'asset prices and yields decide how willingly the world keeps lending (this map’s reading)')
+      + arrow('Upstream to Intermediate', 'moves yields, bank balance sheets and who holds the debt', 'long yields and volatility steer what the Treasury issues and buys back')
+      + arrow('Intermediate to Downstream', 'prices credit, shares and mortgages', 'inflation moves the policy rate: the Fed hiked on 16 September 2026')
+      + `</details>`
+    : `<p class="s5wait2">Where the ladder starts and how its rungs connect opens when the guide is done, or in the full view.</p>`;
+  return `<div class="s5h"><div><h3>The full ladder</h3><p>${on && got < all.length ? `${got} of ${all.length} readings reached so far` : `${all.length} readings`}, from what Washington sets to what the economy shows. Select one for its note and source.</p></div><button type="button" class="s5cl" data-tray="read" aria-label="Close the full ladder">×</button></div>`
+    + `<div class="s5cols">${TIERS.map(([k, t, sub, c, x]) => `<section class="s5g s5g-${k}" style="--zc:${c}" aria-label="${fe(t)}: ${fe(sub)}"><h4 data-tip="<b>${fe(t)}</b><p>${fe(x)}</p>"><b>${fe(t)}</b><span>${fe(sub)}</span></h4><ul>${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(row).join('')}</ul>${extra(k)}</section>`).join('')}</div>`
+    + how;
 }
 
 /* ---------- plumbing text ---------- */
@@ -4996,10 +5047,10 @@ const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
    “The full ladder” opens the ladder with its arrows and empty slots. Same figures as the ladder (TILES). */
 function railHTML() {
   const all = TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
-  const it = ({ T, c }) => { const g = T.g; return `<li><button type="button" class="s4ri" data-node="${T.n}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note || '')}</p><p class='ts'>${fe(g.src || '')} · click to find it on the map</p>"><span>${fe(T.k)}</span><b>${fe(String(g.v || '–').replace(/^~/, '≈'))}</b></button></li>`; };
+  const it = ({ T, c }) => { const g = T.g; return `<li><button type="button" class="s4ri" data-node="${T.n}" data-rk="${TORD.indexOf(T.k)}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note || '')}</p><p class='ts'>${fe(g.src || '')} · click to find it on the map</p>"><span>${fe(T.k)}</span><b>${fe(String(g.v || '–').replace(/^~/, '≈'))}</b></button></li>`; };
   return `<aside class="s4rail" id="isx-s4rail" aria-label="Readings: ${all.length} figures, from what Washington sets to what the economy shows"><div class="s4rh"><b>Readings</b><span>${all.length}</span></div>`
     + TIERS.map(([k, t, sub, c]) => `<div class="s4rg" style="--zc:${c}"><div class="s4rt">${fe(t)}<small>${fe(sub)}</small></div><ul>${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(it).join('')}</ul></div>`).join('')
-    + `<button type="button" class="s4lad" data-tray="read" aria-controls="isx-s2read">The full ladder <span aria-hidden="true">↗</span></button></aside>`;
+    + `<button type="button" class="s4lad" data-tray="read" aria-controls="isx-s5lad">The full ladder <span aria-hidden="true">↗</span></button></aside>`;
 }
 function levBarHTML() {
   return `<div class="levbar" role="group" aria-label="Levers"><div class="s4pull"><b>Pull a lever</b><span>Its effects light up on the map. Pull again to release.</span></div>${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
@@ -5019,8 +5070,9 @@ function renderFin() {
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The simulator: the plumbing">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
       + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>The plumbing</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
-      + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s2read">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
+      + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s5lad">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
       + railHTML()
+      + `<aside class="s5lad" id="isx-s5lad" role="dialog" aria-label="The full ladder: all ${TILES.reduce((n, z) => n + z[3].length, 0)} readings" hidden></aside>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
       + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${TIERS.map(([k, t, , c]) => `<span class="k3"><i class="t3" style="background:${c}"></i>${fe(t)} reading</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
@@ -5050,15 +5102,12 @@ function renderFin() {
 
 /* ---------- selection state ---------- */
 function clearSel() { fsel = null; fplay = null; fpstep = 0; flev.clear(); }
-function pickNode(n) { const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
+function pickNode(n) { if (!simGot()(n)) return; /* stage 5: not before the guide gets there */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
 function wireCockpit(host) {
   host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
   host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
   host.querySelectorAll('.s4ri').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.node)));
-  host.querySelectorAll('.tile').forEach(b => {
-    b.addEventListener('click', () => pickNode(b.dataset.node));
-    b.addEventListener('mouseenter', () => { fhover = b.dataset.node; styleRmap(); }); b.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
-  });
+  host.querySelectorAll('.tile').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.node)));
   const clr = $('pclr'); if (clr) clr.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); });
 }
 
@@ -5091,10 +5140,19 @@ function drawRmap() {
   svg.querySelectorAll('.fn').forEach(g => {
     const n = g.dataset.n;
     g.addEventListener('click', () => pickNode(n)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickNode(n); } });
-    g.addEventListener('mouseenter', () => { fhover = n; styleRmap(); }); g.addEventListener('mouseleave', () => { fhover = null; styleRmap(); });
   });
+  /* v2 stage 5, the flicker. Hovering an actor used to restyle the whole map (mouseenter, mouseleave). In the guide the
+     camera moves at every step, so the map slides under a pointer that is resting on it: actors passed under the pointer,
+     the map lit up around each of them and went dark again. Now hovering lights an actor's relations only in the full
+     view, and only when the pointer itself has moved; in the guide the step in hand owns the lighting. */
+  if (!svg._hov) {
+    svg._hov = true; let px = -1, py = -1;
+    svg.addEventListener('pointermove', e => { if (e.pointerType === 'touch' || (e.clientX === px && e.clientY === py)) return; px = e.clientX; py = e.clientY; const g = e.target.closest && e.target.closest('.fn'); fHover(g ? g.dataset.n : null); });
+    svg.addEventListener('pointerleave', () => fHover(null));
+  }
   styleRmap();
 }
+function fHover(n) { if (simOn()) n = null; if (fhover === n) return; fhover = n; styleRmap(); }
 function activeEdges(all) {
   if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : PLAYS[fplay].steps[fpstep][2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
@@ -5106,10 +5164,11 @@ function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(F
 function styleRmap() {
   const svg = $('rmap'); if (!svg) return;
   const act = activeEdges(), nodes = nodesOf(act); fnodes = nodes;
+  const vis = simVis(), got = simGot();   /* stage 5: an actor or a reading the guide has not reached is never lit */
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
-  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n)); g.classList.toggle('sel', n === fsel); });
-  ROOT.querySelectorAll('.tile').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); });
-  ROOT.querySelectorAll('.s4ri').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); b.setAttribute('aria-current', String(b.dataset.node === fsel)); });
+  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); });
+  ROOT.querySelectorAll('.tile').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node) && got(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); });
+  ROOT.querySelectorAll('.s4ri').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node) && got(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); b.setAttribute('aria-current', String(b.dataset.node === fsel)); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
@@ -5155,11 +5214,12 @@ function renderSide(lev) {
   }
   if (flev.size) { const last = [...flev].pop(); renderSide(last); return; }
   if (fsel) {
-    const N = FN[fsel], ins = FE.map((e, i) => [e, i]).filter(([e]) => e[1] === fsel), outs = FE.map((e, i) => [e, i]).filter(([e]) => e[0] === fsel);
+    const sR = simOn() && SIM.R ? SIM.R : null, okE = ([, i]) => !sR || sR.e.has(i);   /* stage 5: in the guide, only the relations reached so far */
+    const N = FN[fsel], insA = FE.map((e, i) => [e, i]).filter(([e]) => e[1] === fsel), outsA = FE.map((e, i) => [e, i]).filter(([e]) => e[0] === fsel), ins = insA.filter(okE), outs = outsA.filter(okE), later = insA.length + outsA.length - ins.length - outs.length;
     const li = (arr, dir) => arr.map(([e]) => { const o = dir ? e[1] : e[0]; return `<li><i style="background:${FT[e[2]][0]}"></i><span><button type="button" class="go" data-go="${o}">${dir ? '→ ' : ''}${fe(FN[o][3])}${dir ? '' : ' →'}</button> ${fe(e[3])}</span></li>`; }).join('');
     const tl = TILES.flatMap(([, , c, ts]) => ts.map(T => [T, c])).filter(([T]) => T.n === fsel).map(([T]) => `<div class="dtile"><b>${fe(T.g.k)}: ${fe(T.g.v)}</b>${T.g.delta ? ` <em>${fe(T.g.delta)}</em>` : ''}<p>${fe(T.g.note)}</p><div class="lsrc">${fe(T.g.src)}</div></div>`).join('');
     s.hidden = false; s.style.setProperty('--dc', N[5]);
-    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><div class="nb">${fe(N[4])}</div><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>Gives</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>Gets</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}`;
+    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><div class="nb">${fe(N[4])}</div><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>Gives</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>Gets</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
     s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
     placeDossier(); done(); return;
   }
@@ -5805,7 +5865,7 @@ function simTipsHTML(force) {
   const T = [
     ['Follow the guide', 'Press “Start the guide” on the opening card, or Guide in the bar at the bottom. Each step lights its part of the map; Next or ← → moves on.'],
     ['Plays and levers', 'Also in the bar: plays run Washington’s moves one by one; levers are its tools, each with who pulls it. Pull one or several to see what they move.'],
-    ['Read the dials', 'The readings are dated figures: on the right edge, or under the map on a phone. ' + (COARSE ? 'Tap' : 'Click') + ' one to find its actor on the map; “The full ladder” shows how they connect.'],
+    ['Read the dials', 'The readings are dated figures: on the right edge, or as a strip of key readings on a smaller screen. ' + (COARSE ? 'Tap' : 'Click') + ' one to find its actor on the map; “The full ladder” shows how they connect.'],
     ['Open anything', (COARSE ? 'Tap' : 'Click') + ' an actor or a line for a dossier with figures and sources. The capital stack, in the switch at the top, follows the money deal by deal.'],
   ];
   return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
@@ -6125,6 +6185,9 @@ const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
   try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0)); } } catch (e) { /* ignore */ }
 })();
 const simOn = () => SIM.mode === 'story' && view === 'fin' && finMode === 'plumb' && !!$('snarr');
+/* stage 5: what the guide has put on the map. vis: shown (with the actors an other outcome borrows); got: reached by the guide itself. Outside the guide everything is. */
+const simVis = () => { const on = simOn() && !!SIM.R, R = SIM.R; return n => !on || R.n.has(n) || R.tmp.has(n); };
+const simGot = () => { const on = simOn() && !!SIM.R, R = SIM.R; return n => !on || R.n.has(n); };
 const sLine = () => SLINES[SIM.line];
 const sCur = () => { const L = sLine(); return SIM.beat >= 0 && SIM.beat < L.beats.length ? L.beats[SIM.beat] : null; };
 const sNextFork = () => { const L = sLine(), B = L.beats[SIM.beat + 1]; return SIM.beat >= 0 && B && B.fork ? B.fork : null; };
@@ -6149,33 +6212,53 @@ function simActive() {
 /* ---------- drawing what is revealed ---------- */
 function simStyle(act) {
   const svg = $('rmap'); if (!svg) return;
-  const on = simOn() && !!SIM.R, R = SIM.R, vis = n => !on || R.n.has(n) || R.tmp.has(n);
+  const on = simOn() && !!SIM.R, R = SIM.R, vis = simVis(), got = simGot();
   const B = on && !SIM.alt ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
   const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...bN(P)].filter(n => bN(B).has(n)) : [];
-  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('s4dim', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n)); });
+  svg.querySelectorAll('.fn').forEach(g => {
+    const n = g.dataset.n, k = got(n); g.classList.toggle('s4dim', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n));
+    /* stage 5: an actor the guide has not reached is a name only: no value line (stage5.css), no place in the tab order, nothing to read out */
+    const lab = FN[n][3] + ': ' + (k ? FN[n][4] : 'later in the guide'), ti = k ? '0' : '-1';
+    if (g.getAttribute('aria-label') !== lab) g.setAttribute('aria-label', lab); if (g.getAttribute('tabindex') !== ti) g.setAttribute('tabindex', ti);
+  });
+  /* stage 5: a relation shows once the guide has reached it, and not before. Selecting an actor or pulling a lever
+     used to light relations between actors already on the map that the guide had not come to yet. */
   svg.querySelectorAll('.fe, .feh').forEach(p => {
-    const i = +p.dataset.e, e = FE[i], show = !on || R.e.has(i) || (!!act && act.has(i) && vis(e[0]) && vis(e[1]));
+    const i = +p.dataset.e, show = !on || R.e.has(i);
     p.classList.toggle('gh', !show); p.classList.toggle('tr', on && trail.has(i));
   });
   svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('s4dim', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
   const cock = $('cock'); if (!cock) return;
-  cock.querySelectorAll('.tile').forEach(t => t.classList.toggle('gh', on && !R.n.has(t.dataset.node)));
-  cock.querySelectorAll('.s4ri').forEach(t => t.classList.toggle('s4later', on && !R.n.has(t.dataset.node)));
-  cock.querySelectorAll('.hc').forEach(h => h.classList.toggle('gh', on && !h.querySelector('.tile:not(.gh)')));
+  simGate(cock, got);
   cock.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l; b.classList.toggle('gh', on && !R.l.has(i)); b.classList.toggle('fresh', !!B && B.lev.includes(i)); });
   cock.querySelectorAll('.lvg').forEach(g => g.classList.toggle('gh', on && !g.querySelector('.lv:not(.gh)')));
 }
-/* entrances: new actors rise in from left to right, new relations draw themselves, readings count up */
+/* stage 5: a reading the guide has not reached keeps its name, dimmed, in the rail and in the strip; its value is
+   replaced by a dot, and its note, source and colour stay out of the page until the guide reaches its actor. */
+function simGate(cock, got) {
+  cock.querySelectorAll('.s4ri, .tile').forEach(el => {
+    const tile = el.classList.contains('tile'), ok = got(el.dataset.node), v = el.querySelector(tile ? '.tv' : 'b');
+    if (el._v == null) { el._v = v ? v.textContent : ''; el._tip = el.dataset.tip || ''; el._nm = (el.querySelector(tile ? '.tk' : 'span') || el).textContent; }
+    if (el._ok === ok) return; el._ok = ok;
+    if (v) { cancelAnimationFrame(v._r); v.textContent = ok ? el._v : '·'; }
+    el.dataset.tip = ok ? el._tip : `<b>${fe(el._nm)}</b><p>Later in the guide.</p>`;
+    el.classList.toggle(tile ? 'gh' : 's4later', !ok);
+    if (ok) el.removeAttribute('aria-disabled'); else el.setAttribute('aria-disabled', 'true');
+  });
+}
+/* entrances. v2 stage 5: every entrance runs from nothing to the element's own resting look, in one pass, and leaves
+   nothing to undo. Actors are on the map from the start (dimmed, stage 4), so they simply brighten: a CSS transition.
+   New relations draw themselves, or fade up to their own opacity; a reading's value counts up as it arrives.
+   Before, a helper class (nw, efade) animated each newcomer to full opacity and was taken off a second or so later:
+   whatever rests dimmed lit up and then went dark, and an actor that was already on the map vanished before it rose in. */
 function simEnter(prev, R, fwd) {
   const svg = $('rmap'), cock = $('cock'); if (!svg || !cock) return;
-  const had = new Set([...prev.n, ...prev.tmp]), now = [...R.n, ...R.tmp].filter(n => !had.has(n)).sort((a, b) => FN[a][1] - FN[b][1] || FN[a][2] - FN[b][2]);
-  const many = now.length > 8, gap = many ? 28 : 75;
-  now.forEach((n, k) => { const g = svg.querySelector(`.fn[data-n="${n}"]`); if (!g) return; g.style.setProperty('--d', Math.min(720, k * gap) + 'ms'); g.classList.remove('nw'); void g.getBBox(); g.classList.add('nw'); setTimeout(() => g.classList.remove('nw'), 1500); });
-  const base = now.length ? Math.min(420, 160 + now.length * (many ? 10 : 40)) : 0;
+  const had = new Set([...prev.n, ...prev.tmp]), now = [...R.n, ...R.tmp].filter(n => !had.has(n));
+  const many = now.length > 8, base = now.length ? Math.min(420, 160 + now.length * (many ? 10 : 40)) : 0;
   let k = 0;
   [...R.e].filter(i => !prev.e.has(i)).sort((a, b) => FN[FE[a][0]][1] - FN[FE[b][0]][1]).forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (p) drawOn(p, base + Math.min(600, k++ * (many ? 12 : 60))); });
-  cock.querySelectorAll('.tile').forEach((t, j) => { if (R.n.has(t.dataset.node) && !prev.n.has(t.dataset.node)) { t.style.setProperty('--d', Math.min(500, j * 40) + 'ms'); t.classList.add('nw'); setTimeout(() => t.classList.remove('nw'), 1300); const v = t.querySelector('.tv'); if (v) setTimeout(() => countUp(v), Math.min(500, j * 40)); } });
-  cock.querySelectorAll('.lv').forEach((b, j) => { const i = +b.dataset.l; if (R.l.has(i) && !prev.l.has(i)) { b.style.setProperty('--d', (many ? Math.min(400, j * 25) : 380) + 'ms'); b.classList.add('nw'); setTimeout(() => b.classList.remove('nw'), 1600); } });
+  cock.querySelectorAll('.tile, .s4ri').forEach(t => { if (R.n.has(t.dataset.node) && !prev.n.has(t.dataset.node) && t.getClientRects().length) countUp(t.querySelector(t.classList.contains('tile') ? '.tv' : 'b')); });
+  cock.querySelectorAll('.lv').forEach((b, j) => { const i = +b.dataset.l; if (R.l.has(i) && !prev.l.has(i) && b.animate) b.animate([{ opacity: 0, transform: 'translateY(12px)' }, {}], { duration: 700, delay: many ? Math.min(400, j * 25) : 380, easing: 'cubic-bezier(.2, .75, .25, 1)', fill: 'backwards' }); });
   /* the hinge: where this step picks up from the last one */
   if (fwd) {
     const fx = svg.querySelector('#isx-sfx'); if (fx) {
@@ -6186,12 +6269,13 @@ function simEnter(prev, R, fwd) {
   }
 }
 function drawOn(p, delay) {
-  if (p.classList.contains('rule') || p.classList.contains('sig')) { p.style.setProperty('--d', delay + 'ms'); p.classList.add('efade'); setTimeout(() => p.classList.remove('efade'), delay + 800); return; }
+  clearTimeout(p._dt);   /* a relation drawn again before its first draw has finished is not cut short by the first one's clean-up */
+  if (p.classList.contains('rule') || p.classList.contains('sig')) { if (p.animate) p.animate([{ opacity: 0 }, {}], { duration: 700, delay, easing: 'ease', fill: 'backwards' }); return; }
   const L = p.getTotalLength(), mk = p.getAttribute('marker-end');
   p.removeAttribute('marker-end'); p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
   void p.getBBox();
   p.style.transition = `stroke-dashoffset .8s cubic-bezier(.45,.05,.25,1) ${delay}ms, opacity .25s, stroke-width .25s`; p.style.strokeDashoffset = '0';
-  setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); }, delay + 850);
+  p._dt = setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); }, delay + 850);
 }
 
 /* ---------- camera: frames what the story has introduced (phones: the step in hand) ---------- */
@@ -6291,7 +6375,7 @@ function simBar() {
   if (!on) {
     bar.style.setProperty('--lc', SIM.ftab === 'levers' ? '#44d7ec' : '#ffb547');
     bar.innerHTML = simTabsHTML() + `<p class="s4hint">${SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.'}</p>`
-      + `<button type="button" class="s4back" data-s4tab="guide">Back to the guide ${sArrR}</button>`;
+      + `<button type="button" class="s4back" data-s4tab="guide"><span>Back to the guide${b >= 0 ? `<small>${b >= n ? (L.main ? 'the whole machine' : 'the last card') : 'step ' + (b + 1) + ' of ' + n}</small>` : ''}</span>${sArrR}</button>`;
     return;
   }
   const B = sCur() || (b >= n ? L.beats[n - 1] : null), ci = B ? B.ch : -1;
@@ -6305,7 +6389,7 @@ function simBar() {
     + `<ol class="s2chs${L.main ? '' : ' mech'}${L.pre ? ' pre' : ''}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
     + `<button type="button" class="s2arr" data-sg="${b < 0 ? 'start' : 'next'}" aria-label="Next step"${b >= n ? ' disabled' : ''}>${sArrR}</button>`
     + `<span class="s2sp"></span>`
-    + `<button type="button" class="s2tb s4rdt" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s2read">Readings <b>${nt($('cock'))}</b></button>`
+    + `<button type="button" class="s2tb s4rdt" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s5lad">Readings <b>${nt($('cock'))}</b></button>`
     + `<button type="button" class="s2tb s4lvt${fresh ? ' fresh' : ''}" data-tray="lev" aria-expanded="${SIM.tray === 'lev'}" aria-controls="isx-s2tray-lev">Levers so far <b>${R.l.size}</b></button>`;
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
@@ -6315,6 +6399,7 @@ function simTrays() {
   const lv = $('s2tray-lev'), pl = $('s2tray-play'), pk = $('s2tray-pick');
   if (lv) lv.hidden = !(full ? SIM.ftab === 'levers' : t === 'lev'); if (pl) pl.hidden = !(full && SIM.ftab === 'plays'); if (pk) pk.hidden = t !== 'pick';
   if (t === 'pick') $('sn-pick').innerHTML = simPickHTML();
+  const lad = $('s5lad'); if (lad) { if (t === 'read') lad.innerHTML = ladHTML(); else if (!lad.hidden) lad.innerHTML = ''; lad.hidden = t !== 'read'; }
   cock.classList.toggle('rd-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
   cock.querySelectorAll('[data-tray]').forEach(x => x.setAttribute('aria-expanded', String(x.dataset.tray === t)));
 }
@@ -6339,7 +6424,7 @@ function simBodyHTML() {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(l1)}</p>`
-      + (L.main ? `<div class="s4start"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button><button type="button" class="s2lnk sn-skip" data-s4tab="plays">Explore on my own ${sArrR}</button></div></div>`
+      + (L.main ? `<div class="s4start"><div class="s5two"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><button type="button" class="s5full" data-sm="full"><span><b>Explore the full map</b><small>Everything lit · run a play, pull a lever</small></span>${sArrR}</button></div><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button></div></div>`
         : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
       + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : '')
@@ -6409,6 +6494,7 @@ function simNarr(anim) {
 function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
+  fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
   cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main && !SIM.alt); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
@@ -6450,6 +6536,7 @@ function simChoose(k) {
 function simSetMode(m) {
   if (SIM.mode === m) return;
   SIM.mode = m; stSet(SKEY.mode, m); SIM.tray = null; track('Mode', { mode: m });
+  if (m === 'story') clearSel();   /* stage 5: back in the guide, the step it was left on is lit, not a lever or a play from the full view */
   simApply(true);
   if (m === 'full') { const fr = $('cock'); if (fr && fr.getBoundingClientRect().top < 0) fr.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' }); }
 }
@@ -6490,9 +6577,12 @@ function simMount() {
     const d = t.dataset;
     if (d.sec != null) { const c0 = $('sec3'); simSector(d.sec, d.sec ? t : c0 && c0._from); return; }
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
-    if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); return; }
+    if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); else if (SIM.tray === 'read' && e.detail === 0) focusIn($('s5lad'), '.s5cl'); return; }
+    if (d.s5row != null) { const lad = $('s5lad'), was = t.getAttribute('aria-expanded') === 'true', tog = (x, o) => { x.setAttribute('aria-expanded', String(o)); const dd = document.getElementById(x.getAttribute('aria-controls')); if (dd) dd.hidden = !o; }; lad.querySelectorAll('.s5rb[aria-expanded="true"]').forEach(x => tog(x, false)); if (!was) tog(t, true); return; }
+    if (d.s5find) { SIM.tray = null; simTrays(); pickNode(d.s5find); return; }
+    if (t.closest('#isx-s5lad') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
     if (d.s4tab) { simTab(d.s4tab); return; }
-    if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); return; }
+    if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '.s4tab[aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.sg === 'next') { simNext(); return; }
     if (d.sg === 'back') { simBack(); return; }
@@ -6555,6 +6645,8 @@ window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; },
+  /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
+  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, alt: SIM.alt, lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), readings: tilesOrd().map(a => ({ k: a.T.k, node: a.T.n, key: TKEYS.includes(a.T.k) })) }; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
