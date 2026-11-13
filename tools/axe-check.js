@@ -7,6 +7,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
 (async () => {
   const b = await chromium.launch(); let total = 0;
   const run = async (name, hash, ls, w, h, prep) => {
+    if (process.env.ONLY && !new RegExp(process.env.ONLY).test(name)) return;   /* ONLY=<regex> reruns a group of states */
     const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
     await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); Object.keys(o).forEach(k => { if (k === '__pos') sessionStorage.setItem('isx-sim-pos', o[k]); else localStorage.setItem(k, o[k]); }); } catch (e) {} }, ls);
     const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' });
@@ -85,6 +86,12 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('stage 5, phone: the opening card', '#simulator', sim(-1), 390, 844);
   await run('stage 5, phone: step 10 with the strip', '#simulator', sim(9), 390, 844);
   await run('stage 5, phone: the ladder in the guide, a row open', '#simulator', sim(9), 390, 844, async p => { await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(300); await p.evaluate(() => document.querySelector('#isx-s5lad button.s5rb').click()); await p.waitForTimeout(200); });
+  /* B1: the bar in three tabs, the Circuit's closing ring */
+  await run('B1: the Circuit’s ring', '#circuit/ring', seen, 1440, 900);
+  await run('B1: the ring as a list at 1024', '#circuit/ring', seen, 1024, 768);
+  await run('B1, phone: the ring as a list under the card', '#circuit/ring', seen, 390, 844);
+  await run('B1, phone: the Circuit’s bar', '#circuit/05', seen, 390, 844);
+  await run('B1 at 900: the Simulator’s bar in one row', '#simulator', sim(21), 900, 700);
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

@@ -12,6 +12,7 @@
   X.hashDetail = function () {
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
+    if (X.ring) return '/ring';                            /* B1: the Circuit's closing ring */
     if (X.step > 0 || sel.iso) d += '/' + String(X.step).padStart(2, '0');
     if (sel.firm) d += '/firm=' + slug(sel.firm.name);
     else if (sel.iso) d += '/c=' + sel.iso.toLowerCase();
@@ -20,6 +21,8 @@
   X.applyDetail = function (hash) {
     if (X.view !== 'map') return;
     var parts = String(hash || '').replace(/^#\/?/, '').split('/').slice(1), st = null, firm = null, iso = null;
+    if (parts[0] === 'ring') { if (!X.ring) X.setRing(true); return; }
+    if (X.ring && parts.length) X.setRing(false);
     parts.forEach(function (p) {
       if (/^\d{1,2}$/.test(p)) st = +p;
       else if (p.indexOf('firm=') === 0) firm = X.firmBySlug(p.slice(5));
@@ -35,6 +38,7 @@
   X.viewName = function () {
     if (X.view !== 'map') return '';
     var s = X.steps[X.step], sel = X.sel, bits = [];
+    if (X.ring) return 'the ring';
     if (X.step > 0) bits.push('step ' + s.n + ', ' + s.t.toLowerCase());
     if (sel.firm) bits.push(sel.firm.name); else if (sel.iso && X.data.CTY[sel.iso]) bits.push(X.data.CTY[sel.iso].name);
     return bits.join(' · ');

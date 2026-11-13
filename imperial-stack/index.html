@@ -2989,7 +2989,7 @@ function renderGlobe(move) {
   if (reduce) rings.length = 0; else if (ISXP.k.rings < 2) { for (let i = rings.length - 1; i >= 0; i--) if (rings[i].color !== '#ffffff') rings.splice(i, 1); }
   const G = { step: s, arcs, rings, points, html, sel: { iso: selIso, firm: selFirm }, rev: revMode };
   GLAY.forEach(fn => { try { fn(G); } catch (e) { /* a layer never breaks the globe */ } });
-  globe.arcsData(arcs).ringsData(rings).pointsData(points).htmlElementsData(html);
+  globe.arcsData(arcs).ringsData(rings).pointsData(points).htmlElementsData(ringOn ? [] : html);   /* B1-2: no labels behind the ring */
   declSig = '';
   repaint();
   if (move) {
@@ -4116,8 +4116,9 @@ function tabs5(tab) {
 }
 function centreTab() { const host = $('tabs'), t = host.querySelector('.tb[aria-current="true"]'); if (t && host.scrollWidth > host.clientWidth) { const hr = host.getBoundingClientRect(), tr = t.getBoundingClientRect(); host.scrollTo({ left: host.scrollLeft + tr.left - hr.left - host.clientWidth / 2 + tr.width / 2, behavior: reduce ? 'auto' : 'smooth' }); } }
 function stepBy(d) {
+  if (ringOn) { if (d > 0) { celebrate(); stopPlay(); setStep(1); } else ringSet(false); return; }   /* B1-2: on the ring, Next starts again (the loop is closed: the old wrap) and Back returns to step 10 */
   let n = step + d;
-  if (n > STEPS.length - 1) { if (circMode === 'dollar') { celebrate(); n = 1; } else n = 0; }
+  if (n > STEPS.length - 1) { if (circMode === 'dollar') { ringSet(true); return; } n = 0; }   /* B1-2: after step 10 the loop closes in the ring */
   if (n < 0) n = 0;
   if (n !== step) { stopPlay(); setStep(n); }
 }
@@ -4168,6 +4169,7 @@ function narr6() {
   tr.classList.remove('in'); void tr.offsetWidth; tr.classList.add('in');
   $('n-cap').innerHTML = richText(val(s.cap) || '');
   deep6(s); mstepSync();
+  tr.classList.toggle('ringc', ringOn); if (ringOn) ringCard();
 }
 function deep6(s) {
   const host = $('deep'); if (!host) return;
@@ -5506,25 +5508,130 @@ function buildTabs() {
 function circBar() {
   const host = $('tabs'); if (!RT || !host) return;
   const n = STEPS.length - 1, s = STEPS[step], last = step === n, pv = step > 0 ? STEPS[step - 1] : null, nx = last ? STEPS[1] : STEPS[step + 1];
-  const nm = t => t.n === '00' ? 'Overview' : t.n + ' ' + t.t, stt = i => i === step ? 'cur' : VIS.has(i) ? 'done' : '';
-  const segs = [{ label: 'Start', colour: C.dollar, current: step === 0, lab: true, grow: 1.7, marks: [
+  const R = ringOn, loop = circMode === 'dollar', nm = t => t.n === '00' ? 'Overview' : t.n + ' ' + t.t, stt = i => i === step && !R ? 'cur' : VIS.has(i) ? 'done' : '';
+  const segs = [{ label: 'Start', colour: C.dollar, current: step === 0 && !R, lab: true, marks: [
     { kind: 'icon', icon: timer ? '❚❚' : '▶', id: 'isx-play', target: 'play', title: timer ? 'Pause' : 'Play the loop', state: timer ? 'on' : '' },
     { kind: 'step', n: '00', t: 'Overview', state: stt(0), target: '0', title: 'Overview' }] }];
   let cur = null;
   STEPS.forEach((t, i) => {
     if (t.act == null) return;
     if (t.act !== cur) { cur = t.act; segs.push({ label: ROMAN[t.act] + ' · ' + A5[t.act], short: ROMAN[t.act], colour: ACOL[t.act], current: false, lab: true, marks: [] }); }
-    const S = segs[segs.length - 1]; if (i === step) S.current = true;
+    const S = segs[segs.length - 1]; if (i === step && !R) S.current = true;
     S.marks.push({ kind: 'step', n: t.n, t: t.t, state: stt(i), target: String(i), title: t.n + ' · ' + t.t, sub: t.h });
   });
-  segs.forEach(S => { if (S.grow == null) S.grow = S.marks.reduce((a, m) => a + Math.max(6, String(m.t).length) / 7, 0); });   /* room by the length of the names */
+  if (loop) segs.push({ label: 'Close', colour: '#ffd27a', current: R, lab: true, marks: [{ kind: 'step', n: '↻', t: 'Ring', state: R ? 'cur' : '', target: 'ring', title: 'The ring', sub: 'The loop in one picture, after step 10' }] });
+  segs.forEach(S => { S.grow = Math.max(S.marks.reduce((a, m) => a + (m.kind === 'icon' ? 30 : Math.max(6, String(m.t).length) * 6.5 + 10), 0), S.label.length * 6.9 + 12) / 60; });   /* room by the length of the names */
   RT.render(host, { id: 'circuit', label: 'The dollar loop: steps', stage: $('scene-map'),
-    back: { enabled: !!pv, label: pv ? 'Back: ' + nm(pv) : 'Back' },
-    next: { kind: 'go', kicker: step === 0 ? 'Start the loop' : last ? 'Close the loop' : 'Next', title: nm(nx), pkicker: step === 0 ? 'Start' : last ? 'Close' : 'Next', ptitle: 'Step ' + nx.n },
+    back: R ? { enabled: true, label: 'Back: ' + nm(s) } : { enabled: !!pv, label: pv ? 'Back: ' + nm(pv) : 'Back' },
+    next: R ? { kind: 'go', kicker: 'The loop', title: 'Start again', pkicker: 'Start', ptitle: 'Again' } : last && loop ? { kind: 'go', kicker: 'Close the loop', title: '↻ The ring', pkicker: 'Close', ptitle: 'The ring' } : { kind: 'go', kicker: step === 0 ? 'Start the loop' : last ? 'Close the loop' : 'Next', title: nm(nx), pkicker: step === 0 ? 'Start' : last ? 'Close' : 'Next', ptitle: 'Step ' + nx.n },
     line: null, segs,
-    ph: { label: s.act != null ? 'Act ' + ROMAN[s.act] + ' · ' + A5[s.act] : 'The dollar loop', count: s.n + ' / ' + String(n).padStart(2, '0'), colour: s.c, marks: STEPS.slice(1).map((t, k) => ({ kind: 'step', state: stt(k + 1), target: String(k + 1), title: t.n + ' · ' + t.t, colour: t.c })) },
+    ph: { label: R ? '↻ The ring' : s.act != null ? 'Act ' + ROMAN[s.act] + ' · ' + A5[s.act] : 'The dollar loop', count: R ? 'closing' : s.n + ' / ' + String(n).padStart(2, '0'), colour: R ? '#ffd27a' : s.c, marks: STEPS.slice(1).map((t, k) => ({ kind: 'step', state: stt(k + 1), target: String(k + 1), title: t.n + ' · ' + t.t, colour: t.c })).concat(loop ? [{ kind: 'end', state: R ? 'cur' : '', target: 'ring', title: 'The ring', colour: '#ffd27a' }] : []) },
   });
 }
+/* ================= B1-2: the Circuit's closing ring =================
+   A state after step 10 of the dollar loop: the loop in one picture. Seven stations on a ring light in turn; rents enter
+   at capex as where it starts, borrowing as the second input. Every figure is read, when the ring is drawn, from the
+   step that carries it (STEPS_D, RENT_TOT), so the ring cannot drift from the steps; each keeps its own period and
+   measure, and nothing is summed. A station opens its step. Wide screens get the ring (an SVG over the dimmed globe);
+   narrower ones the same nine boxes as a list. The step underneath stays step 10 (ringOn is a flag, not an eleventh step). */
+let ringOn = false, ringRT = 0;
+const ringTxt = i => { const out = [], add = v => { if (v == null) return; if (typeof v === 'function') { try { add(v()); } catch (e) { /* ignore */ } } else if (Array.isArray(v)) v.forEach(add); else if (typeof v === 'object') Object.values(v).forEach(add); else out.push(String(v)); }; const s = STEPS_D[i]; ['h', 'x', 'sum', 'fig', 'cap', 'deep', 'note'].forEach(k => add(s[k])); return out.join(' \n ').replace(/\{\{[^|}]*\|([^}]*)\}\}/g, '$1').replace(/<[^>]+>/g, ''); };
+const ringGet = (i, re) => { const m = re.exec(ringTxt(i)); if (!m) { console.error('ring: figure not found in step ' + i, String(re)); return '–'; } return m[1]; };
+/* stations: s = the step it opens; v = its figure, read from that step; d = the measure and its date (short, for the ring); dl = in full */
+const RING = [
+  { t: 'Capex', s: 2, v: () => val(STEPS_D[2].fig), d: '2026 guidance · Amazon, Alphabet, Microsoft, Meta', dl: '2026 guidance of Amazon, Alphabet, Microsoft and Meta' },
+  { t: 'Hardware orders', s: 2, v: () => ringGet(2, /(\$[\d.,]+bn a year)/), d: 'US imports of computers and parts · Q2 2026 annual rate*', dl: 'US imports of computers, peripherals and parts, second quarter of 2026, annual rate*' },
+  { t: 'Producers’ surpluses', s: 6, v: () => ringGet(6, /([\d.]+% of GDP) in 2025/), d: () => 'Taiwan, 2025 · Korea ' + ringGet(6, /January–August 2026 \((\$[\d.,]+bn)\)/) + ', Jan–Aug 2026', dl: () => 'Taiwan’s current-account surplus, 2025; Korea ' + ringGet(6, /January–August 2026 \((\$[\d.,]+bn)\)/) + ', January to August 2026' },
+  { t: 'The mirror', s: 6, v: () => val(STEPS_D[6].fig), d: 'US current-account deficit, 2025', dl: 'US current-account deficit, 2025' },
+  { t: 'Recycling', tl: 'Recycling into US assets', s: 7, v: () => ringGet(7, /(\$[\d.,]+tn) of US securities/), d: () => 'US securities bought, 12 mo to Aug 2026 · ' + ringGet(7, /(\$[\d.,]+tn) of it shares/) + ' shares', dl: () => 'US securities bought by foreigners, 12 months to August 2026; ' + ringGet(7, /(\$[\d.,]+tn) of it shares/) + ' of it shares' },
+  { t: 'Valuations', s: 9, v: () => ringGet(9, /make up (\d+%) of the S&P 500/), d: 'of the S&P 500 in 41 AI stocks, Oct 2026', dl: 'of the S&P 500 in 41 AI-related stocks, October 2026' },
+  { t: 'Next round', s: 10, v: () => '↻', d: () => STEPS_D[10].h + ': back to capex', dl: () => STEPS_D[10].h + ': the arc returns to capex' },
+];
+const RINGIN = [
+  { t: 'Rents', k: 'where it starts', s: 1, c: '#ff5d8f', v: () => '≈' + fmtBn(RENT_TOT), d: 'foreign revenue of US platforms, latest fiscal year', dl: 'foreign revenue of US platform, cloud, AI and payment firms, latest fiscal year (regional split partly estimated)' },
+  { t: 'Borrowing', k: 'second input', s: 10, c: '#9aa4ff', v: () => '≈' + val(STEPS_D[10].fig), d: 'bonds sold by four platforms, 2026 to 7 Jul', dl: 'bonds sold by Amazon, Alphabet, Meta and Oracle, 2026 to 7 July' },
+];
+const ringWrap = (t, n) => { const out = ['']; String(t).split(' ').forEach(x => { if ((out[out.length - 1] + ' ' + x).trim().length > n) out.push(x); else out[out.length - 1] = (out[out.length - 1] + ' ' + x).trim(); }); return out; };
+const ringBW = F => Math.min(214, Math.floor((.3905 * F.w - 9.56) / 1.3905));
+function ringSVG(W, H, F) {
+  /* the boxes narrow with the room, so that neighbours on the ring never touch */
+  const bw = ringBW(F), bh = 98, n = RING.length, g = Math.max(14, Math.min(46, (F.w - 3 * bw) / 2)), wrap = Math.floor((bw - 24) / 5.6);
+  const ry = Math.max(150, Math.min(275, (F.h - bh - 34 - 8) / 1.901)), rx = Math.max(ry, Math.min(350, (F.w - bw) / 2 - 2));
+  const cx = F.x + F.w / 2, cy = F.y + (F.h - (1.901 * ry + bh + 34)) / 2 + ry + bh / 2 + 34;
+  const P = a => [cx + rx * Math.cos(a), cy + rx * 0 + ry * Math.sin(a)], ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const inBox = (p, c) => Math.abs(p[0] - c[0]) < bw / 2 + 7 && Math.abs(p[1] - c[1]) < bh / 2 + 7;
+  const st = (Q, x, y, col, i, kick, input) => { const v = val(Q.v);
+    return `<g class="rg-st${input ? ' in' : ''}" style="--i:${i};--rc:${col}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" role="button" tabindex="0" data-rs="${Q.s}"><rect class="rg-b" width="${bw}" height="${bh}" rx="12"/>`
+      + `<text class="rg-n" x="13" y="17">${esc(kick)}</text><text class="rg-t" x="13" y="35">${esc(Q.t)}</text><text class="rg-v" x="13" y="61">${esc(v)}</text>`
+      + ringWrap(val(Q.d), wrap).slice(0, 2).map((l, k) => `<text class="rg-d" x="13" y="${77 + k * 12}">${esc(l)}</text>`).join('') + `</g>`; };
+  let h = `<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" width="${W.toFixed(0)}" height="${H.toFixed(0)}" role="group" aria-label="The ring: seven stations of the dollar loop and its two inputs, each with its own figure"><defs>`
+    + `<filter id="isx-rgl" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`
+    + [['a', '#ffd27a']].concat(RINGIN.map((Q, j) => ['i' + j, Q.c])).map(([k, c]) => `<marker id="isx-rg${k}" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + `</defs>`;
+  for (let i = 0; i < n; i++) {
+    let a0 = ang(i), a1 = ang(i + 1); const c0 = P(ang(i)), c1 = P(ang(i + 1));
+    while (a0 < a1 && inBox(P(a0), c0)) a0 += .01; while (a1 > a0 && inBox(P(a1), c1)) a1 -= .01;
+    const p0 = P(a0), p1 = P(a1);
+    h += `<path class="rg-arc" style="--i:${i}" d="M${p0[0].toFixed(1)},${p0[1].toFixed(1)} A${rx.toFixed(1)},${ry.toFixed(1)} 0 0 1 ${p1[0].toFixed(1)},${p1[1].toFixed(1)}" marker-end="url(#isx-rga)"/>`;
+  }
+  const c0 = P(ang(0));
+  RINGIN.forEach((Q, j) => {
+    const x = j ? c0[0] + bw / 2 + g : c0[0] - bw / 2 - g - bw, y = c0[1] - bh / 2 - 34, ex = j ? c0[0] + bw / 2 + 4 : c0[0] - bw / 2 - 4, sx = j ? x : x + bw, my = y + bh / 2 + 12;
+    h += `<path class="rg-in" d="M${sx.toFixed(1)},${my.toFixed(1)} C${((sx + ex) / 2).toFixed(1)},${my.toFixed(1)} ${((sx + ex) / 2).toFixed(1)},${(c0[1] + 10).toFixed(1)} ${ex.toFixed(1)},${(c0[1] + 10).toFixed(1)}" stroke="${Q.c}"${j ? ' stroke-dasharray="5 4"' : ''} marker-end="url(#isx-rgi${j})"/>`;
+    h += st(Q, x, y, Q.c, 0, 'STEP ' + String(Q.s).padStart(2, '0') + ' · ' + Q.k.toUpperCase(), true);
+  });
+  RING.forEach((Q, i) => { const p = P(ang(i)); h += st(Q, p[0] - bw / 2, p[1] - bh / 2, '#ffd27a', i, 'STEP ' + String(Q.s).padStart(2, '0') + (i === n - 1 ? ' · BACK TO CAPEX' : ''), false); });
+  h += `<text class="rg-c1" x="${cx.toFixed(1)}" y="${(cy - 10).toFixed(1)}" text-anchor="middle">THE LOOP</text><text class="rg-c2" x="${cx.toFixed(1)}" y="${(cy + 12).toFixed(1)}" text-anchor="middle">Each figure keeps its own period and measure.</text><text class="rg-c2" x="${cx.toFixed(1)}" y="${(cy + 27).toFixed(1)}" text-anchor="middle">They are not meant to add up.</text>`;
+  return h + '</svg>';
+}
+function ringListHTML() {
+  const li = (Q, col, kick) => `<li style="--rc:${col}"><button type="button" data-rs="${Q.s}"><small>${esc(kick)}</small><b>${esc(Q.tl || Q.t)}</b><strong>${esc(val(Q.v))}</strong><span>${esc(val(Q.dl))}</span></button></li>`;
+  return `<ul class="rl-in">${RINGIN.map(Q => li(Q, Q.c, 'Step ' + String(Q.s).padStart(2, '0') + ' · ' + Q.k)).join('')}</ul><ol class="rl-st">${RING.map((Q, i) => li(Q, '#ffd27a', 'Step ' + String(Q.s).padStart(2, '0') + (i === RING.length - 1 ? ' · back to capex' : ''))).join('')}</ol><p>Each figure keeps its own period and measure. They are not meant to add up.</p>`;
+}
+function ringDraw(keep) {
+  const sc = $('scene-map'), cmd = $('cmd'); if (!sc || !cmd) return;
+  let host = $('ring'), list = $('ringl');
+  if (!host) { sc.insertAdjacentHTML('beforeend', '<div class="ring5b" id="isx-ring" hidden></div>'); host = $('ring'); host.addEventListener('click', ringClick); host.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const g = e.target.closest('[data-rs]'); if (g) { e.preventDefault(); ringClick(e); } } }); }
+  if (!list) { cmd.insertAdjacentHTML('beforeend', '<div class="ringl" id="isx-ringl" role="group" aria-label="The ring: seven stations of the dollar loop and its two inputs" hidden></div>'); list = $('ringl'); list.addEventListener('click', ringClick); }
+  host.hidden = list.hidden = !ringOn;
+  if (!ringOn) { host.innerHTML = ''; list.innerHTML = ''; host.classList.remove('go'); return; }
+  list.innerHTML = ringListHTML();
+  const r = sc.getBoundingClientRect(), cr = cmd.getBoundingClientRect(), hud = ROOT.querySelector('.hud-top'), bar = $('tabs');
+  const top = Math.max(18, (hud ? hud.getBoundingClientRect().bottom : r.top) - r.top + 12), bot = Math.min(r.height - 12, (bar && bar.getClientRects().length ? bar.getBoundingClientRect().top : r.bottom - 80) - r.top - 14);
+  const rb = $('resbar'), rbr = rb && rb.getClientRects().length ? rb.getBoundingClientRect().right : 0;
+  const left = Math.max(20, Math.max(cr.right, rbr) - r.left + 24), F = { x: left, y: top, w: r.width - 20 - left, h: bot - top };
+  /* a redraw (the window or the layout around the ring changed size) keeps the stations lit; only opening the ring lights them in turn */
+  if (!keep) host.classList.remove('go');
+  const asList = window.innerWidth <= 760 || ringBW(F) < 176 || F.h < 440;   /* too little room for the ring: the same boxes as a list */
+  ROOT.classList.toggle('ring-ls', asList);
+  host.innerHTML = asList ? '' : ringSVG(r.width, r.height, F);
+  void host.offsetWidth; host.classList.toggle('still', !!reduce); host.classList.add('go');
+  if (!host._ro && 'ResizeObserver' in window) { host._ro = new ResizeObserver(() => { clearTimeout(ringRT); ringRT = setTimeout(() => { if (ringOn) ringDraw(true); }, 140); }); [sc, cmd, rb].forEach(e => { if (e) host._ro.observe(e); }); }
+}
+function ringClick(e) { const g = e.target.closest('[data-rs]'); if (!g) return; stopPlay(); setStep(+g.dataset.rs); const nx = RT && RT.next('circuit'); if (nx && e.detail === 0) nx.focus({ preventScroll: true }); }
+/* the card on the ring: step 10's own two sentences, a way on into the Simulator's guide, and a way round again */
+function ringCard() {
+  const T = ringTxt(10), a = (/High valuations and cheap capital close the loop\./.exec(T) || /High valuations and cheap \w+ close the loop/.exec(T) || ['High valuations and cheap capital close the loop.'])[0].replace(/\.?$/, '.'), b = (/As long as the loop turns[^.]*\./.exec(T) || [''])[0];
+  $('tournarr').style.setProperty('--sc', '#ffd27a'); $('cmd').style.setProperty('--sc', '#ffd27a');
+  $('t-k').innerHTML = `<span class="ki" style="color:#ffd27a">${svgIc(STEPS_D[10].ic || 'all', 15)}</span><span>The dollar loop · closing</span><span class="ks">after step 10</span>`;
+  $('t-h').textContent = 'The ring';
+  $('t-p').textContent = (a + ' ' + b).trim();
+  $('t-x').innerHTML = `<div class="rgacts"><button type="button" class="rggo" data-ring="sim">Follow the money in the Simulator <span aria-hidden="true">→</span></button><button type="button" class="rglnk" data-ring="again">Start again</button></div><p class="rgfine">Select a station to open its step. * Source under review.</p>`;
+}
+function ringOff() { if (!ringOn) return; ringOn = false; ROOT.classList.remove('ring-on', 'ring-ls'); ringDraw(); try { if (globe) globe.controls().autoRotateSpeed = .35; } catch (e) { /* ignore */ } emit('ring', false); }
+function ringSet(on) {
+  on = !!on && circMode === 'dollar' && view === 'map';
+  if (!on) { if (!ringOn) return; ringOff(); buildTabs(); narr6(); renderGlobe(false); routeSync(); return; }
+  if (ringOn) return;
+  stopPlay();
+  if (selIso) select(null);
+  if (step !== STEPS.length - 1) setStep(STEPS.length - 1);
+  ringOn = true; ROOT.classList.add('ring-on');
+  buildTabs(); narr6(); ringDraw(); renderGlobe(false); routeSync(); emit('ring', true);
+  try { if (globe) { const c = globe.controls(); c.autoRotateSpeed = .12; c.autoRotate = !reduce; } } catch (e) { /* ignore */ }   /* a slow spin behind the ring; the globe's loop is owned by the registry */
+  if (isxBooted) track('Ring', {});
+}
+$('cmd').addEventListener('click', e => { const b = e.target.closest('[data-ring]'); if (!b) return; if (b.dataset.ring === 'again') { stopPlay(); setStep(1); const nx = RT && RT.next('circuit'); if (nx && e.detail === 0) nx.focus({ preventScroll: true }); } else { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); finMode = 'plumb'; setView('fin'); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); } });
+window.addEventListener('resize', () => { clearTimeout(ringRT); ringRT = setTimeout(() => { if (ringOn) ringDraw(true); }, 140); });
 function playSync() { if (RT && view === 'map') { circBar(); return; } const pb = document.getElementById('isx-play'); if (pb) pb.querySelector('.t').textContent = timer ? 'Pause' : 'Play'; }
 function narrate() {
   const nb = $('narr'); let h, x, sc = '', fig = '', cap = '', scale = '';
@@ -5560,15 +5667,16 @@ function narrate() {
   nb.style.setProperty('--sc', sc);
   $('n-title').textContent = h; $('n-text').textContent = x; $('n-scale').textContent = scale; $('n-fig').textContent = fig; $('n-cap').textContent = cap;
 }
-function setStep(i) { tipsAct('step'); if (isxBooted) track('Step', { step: String(i) }); step = i; hlFlow = null; buildTabs(); narrate(); renderGlobe(true); if (!selIso && view === 'map') renderCountryCard(); requestAnimationFrame(centreTab); after5(); routeSync(); emit('step', step); }
+function setStep(i) { tipsAct('step'); if (isxBooted) track('Step', { step: String(i) }); if (ringOn) ringOff(); step = i; hlFlow = null; buildTabs(); narrate(); renderGlobe(true); if (!selIso && view === 'map') renderCountryCard(); requestAnimationFrame(centreTab); after5(); routeSync(); emit('step', step); }
 function stopPlay() { const was = timer; clearInterval(timer); timer = null; if (was) playSync(); }
 function play() {
   if (timer) { stopPlay(); return; }
   setStep(step >= STEPS.length - 1 ? 1 : step + 1);
-  timer = setInterval(() => setStep(step >= STEPS.length - 1 ? (ROOT.classList.contains('tour') ? 0 : 1) : step + 1), 7500);
+  timer = setInterval(() => { if (step < STEPS.length - 1) setStep(step + 1); else if (ROOT.classList.contains('tour') || circMode !== 'dollar') setStep(ROOT.classList.contains('tour') ? 0 : 1); else ringSet(true); }, 7500);   /* B1-2: Play ends on the ring */
   playSync();
 }
 function select(iso, firm) {
+  if (iso && ringOn) { ringOff(); buildTabs(); narr6(); }   /* B1-2: a country or a firm opens on the map, not behind the ring */
   if (iso) { tipsAct('select'); track('Country', { country: iso }); }
   selIso = iso; selFirm = firm || null;
   ROOT.querySelectorAll('.firm').forEach(f => f.classList.toggle('sel', !!firm && f.dataset.name === firm.name));
@@ -5730,6 +5838,7 @@ const SRC = {
 /* views */
 function setView(v) {
   if (v === 'chain') v = 'story';
+  if (ringOn && v !== 'map') ringOff();
   view = v; hlFlow = null; ['map', 'arm', 'chain', 'story', 'fin'].forEach(k => ROOT.classList.toggle('v-' + k, k === v)); $('resbar').hidden = v !== 'map'; $('mapmodes').hidden = v !== 'map';
   const globeOn = v === 'map' || (v === 'arm' && armMode === 'rev');
   ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).setAttribute('aria-pressed', String(k === v)));
@@ -6687,7 +6796,7 @@ document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.
 /* B1: Back, Next, the marks, ← → and the swipe of all three tabs arrive here from the bar (v2/route.js) */
 if (RT) {
   RT.on(ev => {
-    if (ev.id === 'circuit') { if (view !== 'map') return; if (ev.target != null) { if (ev.target === 'play') play(); else { stopPlay(); setStep(+ev.target); } } else stepBy(ev.nav === 'next' ? 1 : -1); }
+    if (ev.id === 'circuit') { if (view !== 'map') return; if (ev.target != null) { if (ev.target === 'play') play(); else if (ev.target === 'ring') ringSet(true); else { stopPlay(); setStep(+ev.target); } } else stepBy(ev.nav === 'next' ? 1 : -1); }
     else if (ev.id === 'scenarios') { if (view !== 'story') return; if (ev.target != null) storySet(+ev.target); else storyGo(ev.nav === 'next' ? 1 : -1); }
     else if (ev.id === 'sim') simNav(ev);
   });
@@ -6710,7 +6819,7 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
 window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP, route: RT,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
-  get finMode() { return finMode; }, get armMode() { return armMode; },
+  get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, alt: SIM.alt, lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), readings: tilesOrd().map(a => ({ k: a.T.k, node: a.T.n, key: TKEYS.includes(a.T.k) })) }; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },

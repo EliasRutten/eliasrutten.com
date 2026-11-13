@@ -37,6 +37,8 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   const CSEL = '#isx-tournarr, #isx-narr, #isx-card, #isx-tabs, #isx-resbar, #isx-legend, #isx-mapnote';
   for (let i = 0; i <= 10; i++) { await snap(p, 'circuit/step' + i, CSEL); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); }
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); await snap(p, 'circuit/wrap', '#isx-tournarr');
+  /* B1-2: after step 10 the loop closes in the ring (circuit/wrap is now the ring's card); one more → starts again at step 1, where the walk went on before */
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(500);
   /* country, by clicking a table row; firm, through the firms panel */
   await p.evaluate(() => { const r = [...document.querySelectorAll('#isx-c-table .cell[role="button"], #isx-c-table .catab .c')][0]; if (r) r.click(); });
   await p.waitForTimeout(400); await snap(p, 'circuit/country', '#isx-card, #isx-vchip');

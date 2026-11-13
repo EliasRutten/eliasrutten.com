@@ -76,7 +76,7 @@
 #isx-root .rt-host .rt .rt-here.cut { transition: none; }
 #isx-root .rt-host .rt .rt-note { align-self: center; margin: 0; padding: 0 12px; font-size: 13.5px; line-height: 1.35; color: var(--ink2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 /* steps by name (the Circuit has only eleven) */
-#isx-root .rt-host .rt .rt-s.lab { grid-template-rows: 19px 1fr; }
+#isx-root .rt-host .rt .rt-s.lab { grid-template-rows: 19px 1fr; padding: 0 4px; }
 #isx-root .rt-host .rt .rt-s.lab .rt-sl { padding-bottom: 1px; }
 #isx-root .rt-host .rt .rt-s.lab .rt-ms { gap: 0; padding-top: 0; align-items: stretch; }
 #isx-root .rt-host .rt .rt-st { flex: 1 1 0; min-width: 0; display: grid; align-content: center; justify-items: center; gap: 2px; padding: 0 3px 6px; color: var(--ink2); }
@@ -140,7 +140,15 @@
   #isx-root .rt-host .rt .rt-swb small { display: none; }
   #isx-root .rt-host .rt .rt-s:not(.cur):not(.lab):not(.wide) .rt-sl { visibility: hidden; }   /* the marks still say where you are; the name shows on hover */
 }
-@media (max-width: 1439px) { #isx-root .rt-host .rt .rt-nx { width: 196px; } }
+@media (max-width: 1519px) { #isx-root .rt-host .rt .rt-nx { width: 196px; } }
+/* below 1440 px the Circuit names the steps of the act in hand only; the other acts keep their numbers */
+@media (max-width: 1439px) {
+  #isx-root .rt-host .rt .rt-s.lab:not(.cur) .rt-st:not(.rt-ic) b { display: none; }
+  #isx-root .rt-host .rt .rt-s.lab:not(.cur) .rt-st small { font-size: 11px; }
+  #isx-root .rt-host .rt .rt-s.lab:not(.cur) { flex-grow: calc(var(--w) * .45); }
+  #isx-root .rt-host .rt .rt-s:not(.cur) .rt-sl .lg { display: none; }
+  #isx-root .rt-host .rt .rt-s:not(.cur) .rt-sl .sm { display: inline; }
+}
 @media (max-width: 1179px) {
   #isx-root .rt-host .rt .rt-nx { width: 164px; padding: 0 10px 0 13px; }
   #isx-root .rt-host .rt .rt-nx b { font-size: 14px; }
@@ -149,11 +157,6 @@
   #isx-root .rt-host .rt .rt-swb { padding: 0 10px; } #isx-root .rt-host .rt .rt-swb b { font-size: 13px; letter-spacing: .08em; }
   #isx-root .rt-host .rt .rt-tg { padding: 0 11px; font-size: 12px; }
   #isx-root .rt-host .rt .dock6 .dk { width: 38px; }
-  #isx-root .rt-host .rt .rt-s.lab:not(.cur) .rt-st:not(.rt-ic) b { display: none; }
-  #isx-root .rt-host .rt .rt-s.lab:not(.cur) .rt-st small { font-size: 11px; }
-  #isx-root .rt-host .rt .rt-s.lab:not(.cur) { flex-grow: calc(var(--w) * .45); }
-  #isx-root .rt-host .rt .rt-s:not(.cur) .rt-sl .lg { display: none; }
-  #isx-root .rt-host .rt .rt-s:not(.cur) .rt-sl .sm { display: inline; }
 }
 /* 761 to 1000 px: one row still; the fixed parts give way so the chapter in hand keeps its room */
 #isx-root .rt-host .rt.cp .rt-nx { width: 136px; padding: 0 8px 0 11px; gap: 4px; }
@@ -204,3 +207,57 @@
 #isx-root .s2 .s2k em { font-style: normal; color: var(--ink2); letter-spacing: .08em; }
 #isx-root .s2 .s2k em::before { content: "· "; }
 #isx-root .s2 .s2k .sn-cnt { min-width: 0; font-size: 10.5px; color: #8193a2; font-variant-numeric: tabular-nums; }
+
+/* ---------- 2. the Circuit's closing ring ---------- */
+#isx-root.ring-on .globebox { opacity: .3; pointer-events: none; transition: opacity .6s ease; }
+#isx-root.ring-on .glab, #isx-root.ring-on #isx-hint, #isx-root.ring-on #isx-mapnote, #isx-root.ring-on #isx-edge, #isx-root.ring-on #isx-zoom, #isx-root.ring-on #isx-insight, #isx-root.ring-on #isx-vchip { visibility: hidden; }
+#isx-root .ring5b { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+#isx-root .ring5b[hidden] { display: none; }
+#isx-root .ring5b svg { position: absolute; left: 0; top: 0; display: block; overflow: visible; }
+#isx-root .ring5b .rg-st { pointer-events: auto; cursor: pointer; opacity: .3; transition: opacity .6s ease; transition-delay: calc(var(--i) * .7s); outline: none; }
+#isx-root .ring5b .rg-st.in { opacity: 1; transition: none; }
+#isx-root .ring5b.go .rg-st { opacity: 1; }
+#isx-root .ring5b .rg-b { fill: #070c12; stroke: var(--rc); stroke-opacity: .55; transition: stroke-opacity .2s; }
+#isx-root .ring5b .rg-st:hover .rg-b { stroke-opacity: 1; }
+#isx-root .ring5b .rg-st:focus-visible .rg-b { stroke: #fff; stroke-opacity: 1; stroke-width: 2; }
+#isx-root .ring5b .rg-n { font: 9px var(--mono); letter-spacing: .14em; fill: #8193a2; }
+#isx-root .ring5b .rg-t { font: 600 13px var(--display); letter-spacing: .08em; text-transform: uppercase; fill: var(--rc); }
+#isx-root .ring5b .rg-v { font: 700 22px var(--display); fill: #fff; }
+#isx-root .ring5b .rg-d { font: 9.5px var(--mono); letter-spacing: .03em; fill: #9aabba; }
+#isx-root .ring5b .rg-arc { fill: none; stroke: #3a4a57; stroke-width: 2; transition: stroke .5s ease; transition-delay: calc(var(--i) * .7s + .35s); }
+#isx-root .ring5b.go .rg-arc { stroke: #ffd27a; filter: url(#isx-rgl); }
+#isx-root .ring5b .rg-in { fill: none; stroke-width: 2; opacity: .9; }
+#isx-root .ring5b .rg-c1 { font: 600 22px var(--display); letter-spacing: .22em; fill: #ffd27a; }
+#isx-root .ring5b .rg-c2 { font: 10.5px var(--mono); fill: #9aabba; }
+#isx-root .ring5b.still .rg-st, #isx-root .ring5b.still .rg-arc { transition: none; }
+/* the card on the ring */
+#isx-root .tournarr.ringc .tfig, #isx-root .tournarr.ringc .tnav, #isx-root .tournarr.ringc .tmeta, #isx-root .tournarr.ringc .legm { display: none; }
+#isx-root .tournarr .rgacts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 12px; }
+#isx-root .tournarr .rggo { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid rgba(255, 210, 122, .6); background: linear-gradient(180deg, rgba(255, 210, 122, .16), rgba(255, 210, 122, .05)); font: 600 14.5px var(--display); letter-spacing: .09em; text-transform: uppercase; color: #ffd27a; cursor: pointer; }
+#isx-root .tournarr .rggo:hover { border-color: #ffd27a; color: #fff; }
+#isx-root .tournarr .rglnk { background: none; border: 0; padding: 4px 2px; font: inherit; font-size: 13px; color: var(--ink2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+#isx-root .tournarr .rglnk:hover { color: #fff; }
+#isx-root .tournarr .rgfine { display: block; margin: 10px 0 0; font-family: var(--sans); font-size: 12px; line-height: 1.4; color: #8193a2; }
+/* the same nine boxes as a list: beside the card on small laptops and tablets, under it on phones */
+#isx-root .ringl[hidden] { display: none; }
+#isx-root .ringl { display: none; }
+#isx-root .ringl ul, #isx-root .ringl ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+#isx-root .ringl .rl-in { grid-template-columns: 1fr 1fr; margin-bottom: 8px; }
+#isx-root .ringl .rl-st { position: relative; padding-left: 16px; border-left: 2px solid rgba(255, 210, 122, .6); border-bottom: 2px solid rgba(255, 210, 122, .6); border-radius: 0 0 0 14px; padding-bottom: 10px; }
+#isx-root .ringl li button { width: 100%; display: grid; gap: 2px; padding: 9px 11px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--rc) 55%, transparent); background: #070c12; color: var(--ink); text-align: left; font: inherit; cursor: pointer; }
+#isx-root .ringl li button:hover { border-color: var(--rc); }
+#isx-root .ringl li small { font: 9px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8193a2; }
+#isx-root .ringl li b { font: 600 13px var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--rc); }
+#isx-root .ringl li strong { font: 700 20px var(--display); }
+#isx-root .ringl li span { font: 10.5px/1.35 var(--mono); color: var(--ink2); }
+#isx-root .ringl > p { margin: 10px 0 0; font: 11px/1.4 var(--mono); color: var(--ink2); text-align: center; }
+#isx-root.ring-ls .ringl { display: block; }
+@media (min-width: 761px) {
+  #isx-root.ring-ls .cmd6 .ringl { position: absolute; left: calc(100% + 20px); bottom: 0; width: min(620px, calc(100vw - clamp(340px, 31vw, 440px) - 92px)); max-height: calc(100vh - 230px); overflow-y: auto; scrollbar-width: thin; }
+  #isx-root.ring-ls .cmd6 .ringl .rl-st { grid-template-columns: 1fr 1fr; padding-left: 12px; }
+  #isx-root.ring-ls .cmd6 .ringl li button { padding: 6px 10px 7px; gap: 1px; } #isx-root.ring-ls .cmd6 .ringl li strong { font-size: 16px; line-height: 1.1; } #isx-root.ring-ls .cmd6 .ringl li span { font-size: 9.5px; }
+  #isx-root.ring-ls .cmd6 .ringl ul, #isx-root.ring-ls .cmd6 .ringl ol { gap: 6px; } #isx-root.ring-ls .cmd6 .ringl > p { margin-top: 6px; font-size: 10px; }
+  #isx-root.ring-on.ring-ls .resbar { visibility: hidden; }   /* the list needs the room; the same figures are in it */
+}
+@media (max-width: 760px) { #isx-root .cmd6 .ringl { grid-column: 1 / -1; margin-top: 4px; } }
+@media (prefers-reduced-motion: reduce) { #isx-root .ring5b .rg-st, #isx-root .ring5b .rg-arc, #isx-root.ring-on .globebox { transition: none; } }
