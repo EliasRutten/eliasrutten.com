@@ -2357,6 +2357,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/stage3.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage4.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage5.css">
+<link rel="stylesheet" href="/imperial-stack/v2/b1.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2400,7 +2401,6 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-story" hidden>
       <div class="story sc3" id="isx-sc3">
         <p class="sc3lede" id="isx-sc-lede"><b>Scenarios</b> shows the exercise of power: geoeconomic coercion, switches turned on and off. The <button type="button" class="sc3lnk" id="isx-sc-tofin">Scott Bessent Simulator</button> shows the financial flows and how the dollar system was built.</p>
-        <button type="button" class="sc3pick" id="isx-sc-pick" aria-expanded="false" aria-controls="isx-sc-tray"></button>
         <div class="sc3tray" id="isx-sc-tray" role="group" aria-label="Choose a scenario" hidden>
           <div class="sc3th"><b>Fourteen scenarios</b><span id="isx-sc-seen"></span><button type="button" class="sc3x" id="isx-sc-x" aria-label="Close">×</button></div>
           <div class="spick" id="isx-spick" role="group" aria-label="Scenario"></div>
@@ -2492,6 +2492,7 @@ button.res:hover { transform: none; box-shadow: none; }
 </div></div>
 
 <script src="/imperial-stack/v2/perf.js"></script>
+<script src="/imperial-stack/v2/route.js"></script>
 <script async src="/imperial-stack/vendor/globe.gl-2.41.4.min.js" onload="window.__isxGlib='ok';window.dispatchEvent(new Event('isx-glib'))" onerror="window.__isxGlib='err';window.dispatchEvent(new Event('isx-glib'))"></script>
 <script>
 (() => {
@@ -2851,7 +2852,7 @@ function declutter() {
     const cap = z === 'far' ? 9 : 1e9; let shown = 0;
     const els = [...$('globe').querySelectorAll('.glab')].filter(e => e.style.opacity !== '0');
     els.sort((a, b) => +b.dataset.pri - +a.dataset.pri);
-    const kept = [...ROOT.querySelectorAll('.hud-top > *, #isx-tabs .tb, #isx-hint, #isx-mapnote, #isx-resbar .res, #isx-mapmodes, #isx-tournarr, #isx-insight, #isx-vchip')].map(e => e.getBoundingClientRect()).filter(r => r.width);
+    const kept = [...ROOT.querySelectorAll('.hud-top > *, #isx-tabs .tb, #isx-tabs .rt, #isx-hint, #isx-mapnote, #isx-resbar .res, #isx-mapmodes, #isx-tournarr, #isx-insight, #isx-vchip')].map(e => e.getBoundingClientRect()).filter(r => r.width);
     const box = $('globe').getBoundingClientRect();
     els.forEach(e => {
       const r = e.getBoundingClientRect(); if (!r.width) return;
@@ -3419,6 +3420,8 @@ function renderStage(force) {
    Cases followed to the end are remembered on this device (localStorage isx-scen-seen). */
 const SKEEN = 'isx-scen-seen';
 const scSeen = () => { try { const a = JSON.parse(stGet(SKEEN) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
+/* B1: one colour per group of scenarios, for the route in the bar */
+const SGCOL = { 'Kill chains': '#ff5f7e', 'Pointed inward': '#ffb547', 'Switches and sanctions': '#44d7ec', 'Money': '#ffd27a', 'The tech squeeze': '#9aa4ff' };
 const scGroup = id => (SORDER.find(([, ids]) => ids.includes(id)) || [''])[0];
 const scOrder = () => SORDER.flatMap(([, ids]) => ids).map(id => STORIES.findIndex(x => x.id === id)).filter(i => i >= 0);
 const scCut = x => { const m = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(String(x)); if (!m) return [String(x), '']; const m2 = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(m[2]); return m2 ? [m[1] + ' ' + m2[1], m2[2]] : [String(x), '']; };
@@ -3463,12 +3466,22 @@ function storyCard() {
   }
   const bar = $('sc-bar'); if (!bar) return;
   const ord = scOrder(), k = ord.indexOf(storyIdx) + 1;
-  bar.innerHTML = `<button type="button" class="scb scprev" data-sc="prev" aria-label="Previous step"${storyStep < 0 ? ' disabled' : ''}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>`
-    + `<div class="scprog" role="group" aria-label="Progress"><div class="scpt"><b>${storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : String(storyStep + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0')}</b><span>${esc(S.t)} · scenario ${k} of ${STORIES.length}</span></div><div class="scpp" aria-hidden="true">${S.steps.map((x, i) => `<i class="${i < storyStep || storyStep >= n ? 'done' : i === storyStep ? 'cur' : ''}${x.choke ? ' ck' : ''}"></i>`).join('')}</div></div>`
-    + `<button type="button" class="sctg" data-sc="lay" aria-pressed="${scLay}">Layers used</button>`
-    + `<button type="button" class="scb scnext" data-sc="next"${storyStep >= n ? ' disabled' : ''}><span>${storyStep < 0 ? 'Start' : storyStep === n - 1 ? 'What you can now see' : 'Next'}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>`;
+  /* B1: the shared bar. The scenario is what you follow (the picker opens from the bar); steps are marks, chokepoints red diamonds */
+  if (RT) {
+    const P2 = v => String(v).padStart(2, '0'), cur = storyStep >= 0 && storyStep < n ? S.steps[storyStep] : null, gc = SGCOL[scGroup(S.id)] || '#e4ebf1';
+    const stt = i => i === storyStep ? 'cur' : i < storyStep || storyStep >= n ? 'done' : '';
+    const marks = S.steps.map((x, i) => ({ kind: x.choke ? 'fork' : 'step', colour: x.choke ? KIND.choke.c : null, state: stt(i), target: String(i), title: P2(i + 1) + ' · ' + x.title + (x.choke ? ' · chokepoint' : '') }));
+    marks.push({ kind: 'end', state: storyStep >= n ? 'cur' : '', target: String(n), title: 'What you can now see' });
+    const tray = $('sc-tray');
+    RT.render(bar, { id: 'scenarios', label: 'Scenario: steps', stage: $('sc3'),
+      back: { enabled: storyStep >= 0, label: storyStep > 0 ? 'Back: ' + S.steps[Math.min(storyStep, n) - 1].title : 'Back' },
+      next: { kind: 'go', enabled: storyStep < n, kicker: storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : 'Next', title: storyStep < 0 ? '01 ' + S.steps[0].title : storyStep >= n ? S.t : storyStep === n - 1 ? 'What you can now see' : P2(storyStep + 2) + ' ' + S.steps[storyStep + 1].title, ptitle: storyStep >= n ? 'Done' : storyStep === n - 1 ? 'The close' : 'Step ' + P2(storyStep + 2) },
+      line: { kicker: scGroup(S.id) + ' · ' + k + ' / ' + STORIES.length, title: S.t, attrs: { id: 'isx-sc-pick', 'aria-expanded': String(!!tray && !tray.hidden), 'aria-controls': 'isx-sc-tray' } },
+      segs: [{ label: storyStep < 0 ? 'Start' : storyStep >= n ? 'What you can now see' : P2(storyStep + 1) + ' ' + cur.title, colour: gc, current: true, wide: true, grow: 1, marks }],
+      ph: { label: S.t, count: storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : P2(storyStep + 1) + ' / ' + P2(n), colour: gc, marks },
+      controls: `<button type="button" class="rt-tg" data-sc="lay" aria-pressed="${scLay}">Layers used</button>` });
+  }
   const sl = $('slay'); if (sl) sl.hidden = !scLay;
-  const pk = $('sc-pick'); if (pk) pk.innerHTML = `<small>${esc(scGroup(S.id))}</small><b>${esc(S.t)}</b><em>${k} / ${STORIES.length}</em><i aria-hidden="true"></i>`;
 }
 function buildStoryPicker() {
   const host = $('spick'); host.innerHTML = '';
@@ -3487,9 +3500,9 @@ function buildStoryPicker() {
   const sn = $('sc-seen'); if (sn) sn.textContent = seen.length ? `${seen.length} of ${STORIES.length} followed` : 'Each one is a chain you can step through';
 }
 function scTray(on, focus) {
-  const t = $('sc-tray'), b = $('sc-pick'); if (!t || !b) return;
+  const t = $('sc-tray'), b = $('sc-pick'); if (!t) return;
   if (on == null) on = t.hidden;
-  t.hidden = !on; b.setAttribute('aria-expanded', String(on));
+  t.hidden = !on; if (b) b.setAttribute('aria-expanded', String(on));
   if (on) { buildStoryPicker(); if (focus) { const f = t.querySelector('.spill[aria-current="true"]') || t.querySelector('.spill'); if (f) f.focus({ preventScroll: true }); } }
 }
 function storySet(n) { const S = STORIES[storyIdx]; n = Math.max(-1, Math.min(S.steps.length, n)); if (n === storyStep) return; storyStep = n; renderStage(); emit('story', { id: S.id, step: n }); }
@@ -3504,15 +3517,15 @@ function pickStory(i, scroll) {
   sc.addEventListener('click', e => {
     const t = e.target.closest('button'); if (!t) return;
     if (t.id === 'isx-sc-pick') { scTray(null, e.detail === 0); return; }
-    if (t.id === 'isx-sc-x') { scTray(false); $('sc-pick').focus({ preventScroll: true }); return; }
+    if (t.id === 'isx-sc-x') { scTray(false); const pb = $('sc-pick'); if (pb) pb.focus({ preventScroll: true }); return; }
     if (t.id === 'isx-sc-tofin') { setView('fin'); return; }
     const k = t.dataset.sc; if (!k) return;
-    if (k === 'next') { storyGo(1); const f = sc.querySelector('.sc3bar .scnext:not([disabled])') || sc.querySelector('.send .snext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
-    else if (k === 'prev') { storyGo(-1); const f = sc.querySelector('.sc3bar .scprev:not([disabled])') || sc.querySelector('.sc3bar .scnext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
-    else if (k === 'lay') { scLay = !scLay; storyCard(); const f = sc.querySelector('.sctg'); if (f) f.focus({ preventScroll: true }); }
+    if (k === 'next') { storyGo(1); const f = sc.querySelector('.sc3bar .rt-nx:not(.off)') || sc.querySelector('.send .snext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
+    else if (k === 'prev') { storyGo(-1); const f = sc.querySelector('.sc3bar .rt-bk:not(.off)') || sc.querySelector('.sc3bar .rt-nx'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
+    else if (k === 'lay') { scLay = !scLay; storyCard(); const f = sc.querySelector('.rt-tg'); if (f) f.focus({ preventScroll: true }); }
     else if (k === 'pick') scTray(true, true);
   });
-  sc.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sc-tray').hidden) { e.preventDefault(); scTray(false); $('sc-pick').focus({ preventScroll: true }); } });
+  sc.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sc-tray').hidden) { e.preventDefault(); scTray(false); const pb = $('sc-pick'); if (pb) pb.focus({ preventScroll: true }); } });
   document.addEventListener('pointerdown', e => { const t = $('sc-tray'); if (t && !t.hidden && !e.target.closest('#isx-sc-tray, #isx-sc-pick')) scTray(false); }, true);
 })();
 function renderStoryCard() {
@@ -4026,7 +4039,7 @@ function burst(cx, cy) {
   }
 }
 function celebrate() {
-  loops6++; const nb = $('t-next').getBoundingClientRect(); burst(nb.left + nb.width / 2, nb.top + nb.height / 2);
+  loops6++; const nb = ((RT && RT.next('circuit')) || $('t-next')).getBoundingClientRect(); burst(nb.left + nb.width / 2, nb.top + nb.height / 2);
   toast6(`<div class="tk6">Loop closed ✓${loops6 > 1 ? ' · ' + loops6 + '×' : ''}</div><b>You followed the dollar around the world.</b><p>This map is free and independent. The essays behind it are on Substack.</p><div class="ta6"><a href="${SUBSTACK}" target="_blank" rel="noopener">Read the essays</a><a href="${BMC6}" target="_blank" rel="noopener" class="bm">☕ Support this map</a></div>`, 9000);
 }
 
@@ -5060,6 +5073,7 @@ function playBarHTML() {
 }
 function renderFin() {
   const host = $('fin'); if (!host) return;
+  if (RT) RT.release();   /* B1: the dock leaves the bar before the stage is rebuilt */
   const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
   ROOT.classList.toggle('fm-plumb', finMode === 'plumb');
   const more = $('finmore'); if (more) more.innerHTML = '';
@@ -5464,8 +5478,15 @@ $('mglos').innerHTML = Object.values(DEFS).sort((a, b) => a[0].localeCompare(b[0
 /* ================= shared ================= */
 let timer = null;
 function resetCardParts() { ['c-firm', 'c-stats', 'c-table', 'c-links', 'c-steps', 'c-firms', 'c-note'].forEach(i => { $(i).innerHTML = ''; }); $('clear').hidden = true; }
+/* B1: the bar. The Circuit, the Simulator's guide and Scenarios are walked through one component (v2/route.js): Back, Next,
+   what you follow, the route, the tab's own controls, the dock. Each tab hands it a model from the function that already
+   drew its bar: buildTabs() here, simBar() and storyCard(). The Arm and the capital stack keep their plain tabs. */
+const RT = window.ISXR || null;
 function buildTabs() {
-  const host = $('tabs'); host.innerHTML = '';
+  const host = $('tabs');
+  if (RT && view === 'map') { circBar(); return; }
+  if (RT) { RT.drop(host); if (!(view === 'story' || (view === 'fin' && finMode === 'plumb'))) RT.release(); }
+  host.innerHTML = '';
   const tab = (n, t, col, cur, fn, extra) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tb' + (extra ? ' ' + extra : ''); b.style.setProperty('--sc', col); b.innerHTML = `<span class="n">${n}</span><span class="t">${esc(t)}</span>`; if (cur) b.setAttribute('aria-current', 'true'); b.addEventListener('click', fn); host.appendChild(b); return b; };
   if (view === 'map') {
     const pb = tab('▶', timer ? 'Pause' : 'Play', C.dollar, false, play, 'play'); pb.id = 'isx-play';
@@ -5481,6 +5502,30 @@ function buildTabs() {
     CH.chains.forEach((c, i) => tab(c.id, c.t, CHC[c.kind], i === chainIdx, () => { chainIdx = i; buildTabs(); renderChain(); narrate(); renderChainCard(); }, i === 5 ? 'gap' : ''));
   }
 }
+/* the Circuit's route: Play and the overview, then the five acts with their steps by name (there are only eleven) */
+function circBar() {
+  const host = $('tabs'); if (!RT || !host) return;
+  const n = STEPS.length - 1, s = STEPS[step], last = step === n, pv = step > 0 ? STEPS[step - 1] : null, nx = last ? STEPS[1] : STEPS[step + 1];
+  const nm = t => t.n === '00' ? 'Overview' : t.n + ' ' + t.t, stt = i => i === step ? 'cur' : VIS.has(i) ? 'done' : '';
+  const segs = [{ label: 'Start', colour: C.dollar, current: step === 0, lab: true, grow: 1.7, marks: [
+    { kind: 'icon', icon: timer ? '❚❚' : '▶', id: 'isx-play', target: 'play', title: timer ? 'Pause' : 'Play the loop', state: timer ? 'on' : '' },
+    { kind: 'step', n: '00', t: 'Overview', state: stt(0), target: '0', title: 'Overview' }] }];
+  let cur = null;
+  STEPS.forEach((t, i) => {
+    if (t.act == null) return;
+    if (t.act !== cur) { cur = t.act; segs.push({ label: ROMAN[t.act] + ' · ' + A5[t.act], short: ROMAN[t.act], colour: ACOL[t.act], current: false, lab: true, marks: [] }); }
+    const S = segs[segs.length - 1]; if (i === step) S.current = true;
+    S.marks.push({ kind: 'step', n: t.n, t: t.t, state: stt(i), target: String(i), title: t.n + ' · ' + t.t, sub: t.h });
+  });
+  segs.forEach(S => { if (S.grow == null) S.grow = S.marks.reduce((a, m) => a + Math.max(6, String(m.t).length) / 7, 0); });   /* room by the length of the names */
+  RT.render(host, { id: 'circuit', label: 'The dollar loop: steps', stage: $('scene-map'),
+    back: { enabled: !!pv, label: pv ? 'Back: ' + nm(pv) : 'Back' },
+    next: { kind: 'go', kicker: step === 0 ? 'Start the loop' : last ? 'Close the loop' : 'Next', title: nm(nx), pkicker: step === 0 ? 'Start' : last ? 'Close' : 'Next', ptitle: 'Step ' + nx.n },
+    line: null, segs,
+    ph: { label: s.act != null ? 'Act ' + ROMAN[s.act] + ' · ' + A5[s.act] : 'The dollar loop', count: s.n + ' / ' + String(n).padStart(2, '0'), colour: s.c, marks: STEPS.slice(1).map((t, k) => ({ kind: 'step', state: stt(k + 1), target: String(k + 1), title: t.n + ' · ' + t.t, colour: t.c })) },
+  });
+}
+function playSync() { if (RT && view === 'map') { circBar(); return; } const pb = document.getElementById('isx-play'); if (pb) pb.querySelector('.t').textContent = timer ? 'Pause' : 'Play'; }
 function narrate() {
   const nb = $('narr'); let h, x, sc = '', fig = '', cap = '', scale = '';
   if (view === 'map') {
@@ -5516,12 +5561,12 @@ function narrate() {
   $('n-title').textContent = h; $('n-text').textContent = x; $('n-scale').textContent = scale; $('n-fig').textContent = fig; $('n-cap').textContent = cap;
 }
 function setStep(i) { tipsAct('step'); if (isxBooted) track('Step', { step: String(i) }); step = i; hlFlow = null; buildTabs(); narrate(); renderGlobe(true); if (!selIso && view === 'map') renderCountryCard(); requestAnimationFrame(centreTab); after5(); routeSync(); emit('step', step); }
-function stopPlay() { clearInterval(timer); timer = null; const pb = document.getElementById('isx-play'); if (pb) pb.querySelector('.t').textContent = 'Play'; }
+function stopPlay() { const was = timer; clearInterval(timer); timer = null; if (was) playSync(); }
 function play() {
   if (timer) { stopPlay(); return; }
   setStep(step >= STEPS.length - 1 ? 1 : step + 1);
   timer = setInterval(() => setStep(step >= STEPS.length - 1 ? (ROOT.classList.contains('tour') ? 0 : 1) : step + 1), 7500);
-  const pb = document.getElementById('isx-play'); if (pb) pb.querySelector('.t').textContent = 'Pause';
+  playSync();
 }
 function select(iso, firm) {
   if (iso) { tipsAct('select'); track('Country', { country: iso }); }
@@ -5770,7 +5815,7 @@ function gTips() {
   return [
     { k: 'drag', h: 'Turn the globe', p: COARSE ? 'Swipe sideways across the globe to turn it. Swipe up or down to scroll the page as usual.' : 'Drag the globe to turn it. It stops spinning as soon as you take hold.' },
     { k: 'select', h: COARSE ? 'Tap a country' : 'Click a country', p: 'The globe turns to it and its card opens under the map, with its figures for this step. ' + (COARSE ? 'Tap it again' : 'Click it again') + ' to go back.' },
-    { k: 'step', h: 'Step through the loop', p: PHONE() ? 'The arrows under the globe take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: PHONE() ? '#isx-mstep' : '#isx-tabs' },
+    { k: 'step', h: 'Step through the loop', p: PHONE() ? 'Back and Next in the bar at the bottom take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: '#isx-tabs' },
     { k: 'zoom', h: 'Zoom', p: (COARSE ? '+ and −' : '+ and − (or the + and − keys)') + ' zoom in and out; ⟲ brings back the view for this step.', t: '#isx-zoom' },
   ];
 }
@@ -6178,7 +6223,7 @@ const SNONE = { n: new Set(), e: new Set(), l: new Set() };
 const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
 
 /* ---------- state ---------- */
-const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
@@ -6343,7 +6388,6 @@ const simBarHTML = () => `<div class="smode" role="group" aria-label="How to vie
 const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label="Guide"><button type="button" class="s2fold" id="isx-s2fold" aria-label="Fold the card" aria-expanded="true">–</button><div class="s2in" id="isx-sn-in">
   <div class="sn-det" id="isx-sn-det"></div>
   <div class="s2body" id="isx-sn-body" aria-live="polite"></div>
-  <div class="s2nav" id="isx-sn-nav"></div>
 </div></aside>`;
 const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
 const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
@@ -6358,10 +6402,12 @@ function simPickHTML() {
     + `<div class="pk-h">One mechanism at a time</div>` + STIER.map(([k, t, ids]) => `<div class="pk-t pk-${k}"><div class="pk-tk">${fe(t)}</div><div class="pk-ms">${ids.map(mech).join('')}</div></div>`).join('');
 }
 /* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
-const S4T = [['guide', 'Guide', 'Follow it step by step', '#ffd27a'], ['plays', 'Plays', 'Watch a move run', '#ffb547'], ['levers', 'Levers', 'Pull one yourself', '#44d7ec']];
+const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Plays', 'watch a move', '#ffb547'], ['levers', 'Levers', 'pull one', '#44d7ec']];
+/* B1: the seven chapters in their own colours, for the route */
+const SCHC = ['#ffd27a', '#ff5d8f', '#ffb547', '#3ee6b8', '#9aa4ff', '#b7f36b', '#ff5a4e'];
 function simTabsHTML() {
   const cur = SIM.mode === 'story' ? 'guide' : SIM.ftab;
-  return `<div class="s4tabs" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x, c]) => `<button type="button" class="s4tab" data-s4tab="${k}" style="--tc:${c}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
+  return `<div class="rt-sw" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
 }
 /* switch tabs: the guide is the story mode; Plays and Levers are the full map with one tray open */
 function simTab(t) {
@@ -6370,29 +6416,55 @@ function simTab(t) {
   if (SIM.mode !== 'full') { simSetMode('full'); return; }
   simBar(); simTrays(); simCam(true);
 }
+/* B1: the bar is the shared one (v2/route.js). The guide's route is one line, first principles and then the seven
+   chapters, although the data stays two lines; a mechanism shows its own steps. In Plays and Levers the Next segment
+   leads back to the guide, to the step it was left on. */
 function simBar() {
-  const bar = $('s2bar'); if (!bar) return;
-  const L = sLine(), b = SIM.beat, n = L.beats.length, R = SIM.R || SALL, on = SIM.mode === 'story';
-  bar.hidden = false;
+  const host = $('s2bar'); if (!host || !RT) return;
+  const L = sLine(), b = SIM.beat, n = L.beats.length, on = SIM.mode === 'story', stage = $('cock');
+  host.hidden = false;
   if (!on) {
-    bar.style.setProperty('--lc', SIM.ftab === 'levers' ? '#44d7ec' : '#ffb547');
-    bar.innerHTML = simTabsHTML() + `<p class="s4hint">${SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.'}</p>`
-      + `<button type="button" class="s4back" data-s4tab="guide"><span>Back to the guide${b >= 0 ? `<small>${b >= n ? (L.main ? 'the whole machine' : 'the last card') : 'step ' + (b + 1) + ' of ' + n}</small>` : ''}</span>${sArrR}</button>`;
+    RT.render(host, { id: 'sim', label: 'Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
+      next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
+      line: null, segs: [], controls: simTabsHTML(),
+      note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
     return;
   }
-  const B = sCur() || (b >= n ? L.beats[n - 1] : null), ci = B ? B.ch : -1;
-  const chs = L.main
-    ? L.chs.map((C, c) => { const idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === c), cur = c === ci && b < n, done = b >= n || (ci > c); return `<li><button type="button" class="s2ch${cur ? ' cur' : done ? ' done' : ''}" data-sb="${L.first[c]}"${cur ? ' aria-current="step"' : ''} data-tip="<b>${fe(C.t)}</b><p>${fe(C.w)} · ${idx.length} steps</p>"><span class="n">${String(c + 1).padStart(2, '0')}</span><b>${fe(C.s || C.t)}</b><span class="pp" aria-hidden="true">${idx.map(i => `<i class="${i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : ''}"></i>`).join('')}</span></button></li>`; }).join('')
-    : L.beats.map((X, i) => `<li><button type="button" class="s2ch st${i === b ? ' cur' : i < b || b >= n ? ' done' : ''}" data-sb="${i}"${i === b ? ' aria-current="step"' : ''} data-tip="<b>${fe(X.t)}</b>"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${fe(X.bs || X.t)}</b></button></li>`).join('');
-  const nt = cock => cock ? cock.querySelectorAll('.tile:not(.gh)').length : 0, fresh = sCur() && sCur().lev.length && !SIM.alt;
-  bar.style.setProperty('--lc', L.main ? SMAIN.c : L.c);
-  bar.innerHTML = simTabsHTML() + `<button type="button" class="s2pickb" id="isx-sn-pickb" data-tray="pick" aria-expanded="${SIM.tray === 'pick'}" aria-controls="isx-s2tray-pick"><small>${L.main ? 'Guide' : L.pre ? 'Start here' : 'Mechanism'}</small><b>${fe(L.main ? 'The plumbing' : L.s || L.t)}</b><i aria-hidden="true"></i></button>`
-    + `<button type="button" class="s2arr" data-sg="back" aria-label="Previous step"${b < 0 && !SIM.alt ? ' disabled' : ''}>${sArrL}</button>`
-    + `<ol class="s2chs${L.main ? '' : ' mech'}${L.pre ? ' pre' : ''}" aria-label="${L.main ? 'Chapters' : 'Steps'}">${chs}</ol>`
-    + `<button type="button" class="s2arr" data-sg="${b < 0 ? 'start' : 'next'}" aria-label="Next step"${b >= n ? ' disabled' : ''}>${sArrR}</button>`
-    + `<span class="s2sp"></span>`
-    + `<button type="button" class="s2tb s4rdt" data-tray="read" aria-expanded="${SIM.tray === 'read'}" aria-controls="isx-s5lad">Readings <b>${nt($('cock'))}</b></button>`
-    + `<button type="button" class="s2tb s4lvt${fresh ? ' fresh' : ''}" data-tray="lev" aria-expanded="${SIM.tray === 'lev'}" aria-controls="isx-s2tray-lev">Levers so far <b>${R.l.size}</b></button>`;
+  const guide = !!(L.main || L.pre), P = SLINES[SPI], G = SLINES[0];
+  const stt = (l, i) => SIM.line === l ? (i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : '') : SIM.vis.has(l + ':' + i) ? 'done' : '';
+  let segs;
+  if (guide) {
+    segs = [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.map((B, i) => ({ kind: 'step', state: stt(SPI, i), target: SPI + ':' + i, title: B.t })) }]
+      .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.map(i => ({ kind: 'step', state: stt(0, i), target: '0:' + i, title: (i + 1) + ' · ' + G.beats[i].t })) }; }));
+    segs.push({ label: '', colour: SMAIN.c, current: !!L.main && b >= n, grow: 2, cls: 'end', marks: [{ kind: 'end', state: L.main && b >= n ? 'cur' : '', target: '0:' + G.beats.length, title: 'The whole machine' }] });
+  } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.map((B, i) => ({ kind: 'step', state: stt(SIM.line, i), target: SIM.line + ':' + i, title: (i + 1) + ' · ' + B.t })).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
+  let nx;
+  if (SIM.alt) nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
+  else if (b < 0) nx = L.main ? { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' } : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
+  else if (b >= n) nx = L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % 9 + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
+  else if (sNextFork()) nx = { kind: 'hold', kicker: 'Your choice', title: 'Choose on the card', ptitle: 'Choose' };
+  else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : 'Mechanism complete', ptitle: 'Next' };
+  else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
+  const cs = segs.find(s => s.current);
+  RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : 'Mechanism: steps', stage,
+    back: { enabled: b >= 0 || !!SIM.alt, label: SIM.alt ? 'Back to the choice' : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? 'Back: ' + L.beats[b - 1].t : 'Back' },
+    next: nx,
+    line: { kicker: guide ? 'Guide' : 'Mechanism', title: guide ? 'The plumbing' : PSH[L.play] || L.t, attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
+    segs, controls: simTabsHTML(),
+    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The plumbing' : L.t) : guide ? 'The whole machine' : L.t, count: b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
+}
+/* Back, Next, the marks, ← → and the swipe all come through here */
+function simNav(ev) {
+  if (view !== 'fin' || finMode !== 'plumb' || !$('cock')) return;
+  if (ev.target != null) { const [l, i] = String(ev.target).split(':').map(Number); if (SLINES[l]) simGo(l, i); return; }
+  if (SIM.mode !== 'story') { if (ev.nav === 'next' && ev.how === 'click') simTab('guide'); return; }
+  const L = sLine(), b = SIM.beat, n = L.beats.length;
+  if (ev.nav === 'back') { if (b >= 0 || SIM.alt) simBack(); return; }
+  if (SIM.alt) { simNext(); return; }
+  if (b < 0) { simGo(L.main ? SPI : SIM.line, 0, 'focus'); return; }
+  if (b >= n) { if (L.pre) simGo(0, 0, 'focus'); else if (!L.main) simGo(SIM.line % 9 + 1, -1, 'focus'); return; }
+  if (sNextFork()) { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }   /* a choice is made on the card, never by Next */
+  simNext();
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
 function simTrays() {
@@ -6454,7 +6526,7 @@ function simBodyHTML() {
   const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
   const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
   const lead = !!(B.why && P && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
-  let h = `<div class="s2k" style="--rc:${R[1]}"><i></i>${R[0]}${B.w ? `<span>${fe(B.w)}</span>` : ''}</div><h3>${fe(B.t)}</h3>`
+  let h = `<div class="s2k" style="--rc:${R[1]}"><i></i>${R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div><h3>${fe(B.t)}</h3>`
     + (lead ? `<p class="s2why">${fe(B.why)}</p>` : '') + `<p class="s2p">${fe(x1)}</p>`
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
   if (fk) {
@@ -6468,21 +6540,10 @@ function simBodyHTML() {
     + (fk ? `<p class="sn-note">One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : ''));
   return h;
 }
-function simNavHTML() {
-  const L = sLine(), b = SIM.beat, n = L.beats.length;
-  if (b < 0) return '';
-  const cnt = `<span class="sn-cnt"><b>${String(Math.min(b, n - 1) + 1).padStart(2, '0')}</b> / ${String(n).padStart(2, '0')}</span>`;
-  const back = `<button type="button" class="sn-b sn-back" data-sg="back" aria-label="${SIM.alt ? 'Back to the choice' : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : 'Previous step: ' + fe(L.beats[b - 1].t)}">${sArrL}</button>`;
-  if (b >= n) return back + cnt + '<span class="sn-sp"></span>';
-  if (SIM.alt) return back + `<button type="button" class="sn-b sn-next" data-sg="next">Back to what happened ${sArrR}</button>`;
-  if (sNextFork()) return back + cnt + `<span class="sn-hint">Choose above</span>`;
-  const nx = b === n - 1 ? (L.main ? 'See the whole machine' : L.pre ? 'On to the plumbing' : 'Finish') : 'Next';
-  return back + cnt + `<button type="button" class="sn-b sn-next" data-sg="next" aria-label="${b === n - 1 ? nx : 'Next step: ' + fe(L.beats[b + 1].t)}">${nx} ${sArrR}</button>`;
-}
 function simNarr(anim) {
   const body = $('sn-body'); if (!body) return;
   const put = () => {
-    body.innerHTML = simBodyHTML(); $('sn-nav').innerHTML = simNavHTML(); $('sn-nav').hidden = SIM.beat < 0;
+    body.innerHTML = simBodyHTML();
     if (anim) $('sn-in').scrollTop = 0; /* a new step starts at its top */
     [...body.children].forEach((c, i) => c.style.setProperty('--i', i));
     const dp = body.querySelector('.s2deep'); if (dp) dp.addEventListener('toggle', () => { SIM.deep = dp.open; });
@@ -6500,6 +6561,7 @@ function simApply(anim, fwd) {
   cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main && !SIM.alt); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
+  if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
   const rs = $('rside'), home = on ? $('sn-det') : cock; if (rs && home && rs.parentNode !== home) { rs.classList.remove('l', 'b'); home.appendChild(rs); }
   simAspect();
   styleRmap(); renderSide();
@@ -6545,7 +6607,7 @@ function simSetMode(m) {
 /* keep keyboard focus on the control that moves the story */
 function simFocus() {
   const ae = document.activeElement; if (!ae || !ae.closest || !ae.closest('#isx-snarr')) return;
-  setTimeout(() => { const t = ROOT.querySelector('#isx-sn-nav .sn-next') || ROOT.querySelector('#isx-sn-body .sn-opt.real') || ROOT.querySelector('#isx-sn-body .sn-go') || ROOT.querySelector('#isx-sn-nav .sn-back'); if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170);
+  setTimeout(() => { const nx = RT && RT.next('sim'), t = (nx && nx.getAttribute('aria-disabled') !== 'true' && nx.getClientRects().length ? nx : null) || ROOT.querySelector('#isx-sn-body .sn-opt') || ROOT.querySelector('#isx-sn-body .sn-go') || nx; if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170);
 }
 /* the node dossier and lever card sit in the narrator column in story mode */
 function simDossier() {
@@ -6573,7 +6635,7 @@ function simMount() {
   SIM.cam = null; SIM.shown = null; SIM.tray = null;
   const stage = $('stage'); if (stage && !$('sn-pill')) stage.insertAdjacentHTML('afterbegin', '<span class="sn-pill" id="isx-sn-pill" hidden></span>');
   const fx = $('rmap') && $('rmap').querySelector('#isx-fpart'); if (fx && !$('sfx')) fx.insertAdjacentHTML('afterend', '<g id="isx-sfx"></g>');
-  const focusIn = (host, q) => { const f = host && host.querySelector(q), g = f && f.getClientRects().length ? f : cock.querySelector('.s4tab[aria-pressed="true"]'); if (g) g.focus({ preventScroll: true }); };
+  const focusIn = (host, q) => { const f = host && host.querySelector(q), g = f && f.getClientRects().length ? f : cock.querySelector('[data-s4tab][aria-pressed="true"]'); if (g) g.focus({ preventScroll: true }); };
   cock.addEventListener('click', e => {
     const t = e.target.closest('button, .fzk'); if (!t || !cock.contains(t)) return;
     const d = t.dataset;
@@ -6584,7 +6646,7 @@ function simMount() {
     if (d.s5find) { SIM.tray = null; simTrays(); pickNode(d.s5find); return; }
     if (t.closest('#isx-s5lad') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
     if (d.s4tab) { simTab(d.s4tab); return; }
-    if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '.s4tab[aria-pressed="true"]'); return; }
+    if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.sg === 'next') { simNext(); return; }
     if (d.sg === 'back') { simBack(); return; }
@@ -6594,7 +6656,7 @@ function simMount() {
     if (d.sb != null && t.closest('#isx-snarr, #isx-s2bar')) { simGo(SIM.line, +d.sb); return; }
     if (d.sp) { SIM.tray = 'pick'; simTrays(); focusIn($('sn-pick'), '.pk-l.on, button'); return; }
     if (d.sn) { pickNode(d.sn); return; }
-    if (d.slv != null) { if (SIM.tray !== 'lev') { SIM.tray = 'lev'; simTrays(); } const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }
+    if (d.slv != null) { const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }   /* B1: the lever's card opens; the “Levers so far” tray is gone */
     if (d.fm2) { finMode = d.fm2; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
   });
   /* Esc: closes an open tray, then an open dossier, then leaves the guide for the full view */
@@ -6604,19 +6666,12 @@ function simMount() {
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
     if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
     else if (fsel || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
-    else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '.s4tab[aria-pressed="true"]'); }
+    else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
   });
+  if (RT) { RT.swipe($('snarr'), 'sim'); RT.swipe($('stage'), 'sim'); }
   simApply(false);
 }
-/* ← → move through the story while the simulator is in view */
-document.addEventListener('keydown', ev => {
-  if (!simOn() || ev.defaultPrevented || ev.ctrlKey || ev.metaKey || ev.altKey || (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft')) return;
-  const t = ev.target; if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"], .mapscroll')) return;
-  const r = $('cock').getBoundingClientRect(); if (r.bottom < 80 || r.top > window.innerHeight - 80) return;
-  ev.preventDefault();
-  if (ev.key === 'ArrowLeft') simBack();
-  else { const fk = sNextFork(); if (fk && !SIM.alt) simChoose('real'); else simNext(); }
-});
+/* B1: ← → and the swipe come from v2/route.js, through simNav() */
 let simRT = 0;
 window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); } }, 120); });
 /* a play in full view can be followed as a thread */
@@ -6628,7 +6683,16 @@ $('t-more').addEventListener('click', () => crisp($('narr')));
 $('t-fold').addEventListener('click', () => { const t = $('tournarr'); t.classList.toggle('folded'); $('t-fold').textContent = t.classList.contains('folded') ? '+' : '–'; });
 $('t-p').addEventListener('click', () => $('tournarr').classList.toggle('open'));
 $('stap-p').addEventListener('click', () => storyGo(-1)); $('stap-n').addEventListener('click', () => storyGo(1));
-document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } else if (view === 'story' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); storyGo(ev.key === 'ArrowRight' ? 1 : -1); } });
+document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (!RT && view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } else if (!RT && view === 'story' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); storyGo(ev.key === 'ArrowRight' ? 1 : -1); } });
+/* B1: Back, Next, the marks, ← → and the swipe of all three tabs arrive here from the bar (v2/route.js) */
+if (RT) {
+  RT.on(ev => {
+    if (ev.id === 'circuit') { if (view !== 'map') return; if (ev.target != null) { if (ev.target === 'play') play(); else { stopPlay(); setStep(+ev.target); } } else stepBy(ev.nav === 'next' ? 1 : -1); }
+    else if (ev.id === 'scenarios') { if (view !== 'story') return; if (ev.target != null) storySet(+ev.target); else storyGo(ev.nav === 'next' ? 1 : -1); }
+    else if (ev.id === 'sim') simNav(ev);
+  });
+  RT.swipe($('tournarr'), 'circuit'); RT.swipe($('sc-card'), 'scenarios');
+}
 if (location.hash === '#tour') ROOT.classList.add('tour');
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
 const R0 = routeOf(location.hash); if (R0) applyModes(R0);
@@ -6644,7 +6708,7 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
    One interface for the v2 modules (/imperial-stack/v2/*.js). They read state through it, call the setters above, listen to events
    (view, step, select, card, narr, globe, zoom, motion) and add layers to the globe. They never reach into this script. */
 window.ISX = {
-  version: '2.0', root: ROOT, $, on, emit, perf: ISXP,
+  version: '2.0', root: ROOT, $, on, emit, perf: ISXP, route: RT,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; },
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */

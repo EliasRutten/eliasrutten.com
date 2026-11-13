@@ -1,5 +1,5 @@
 /* The Imperial Stack v2 · tour.js
-   A short first-visit tour of the Circuit: four notes, each beside the thing it names (the card, the step bar, the
+   A short first-visit tour of the Circuit: four notes, each beside the thing it names (the card, the bar, the
    firms, the controls). It never blocks the map: no overlay, the page stays usable, and stepping or clicking anything
    leaves the tour where it is. It starts once, after the first moment has settled and only if the reader has not
    started on their own; Skip, Esc, × or the last button end it for good. “Take the tour” (Layers, and under the globe
@@ -15,7 +15,7 @@
     var coarse = U.COARSE, ph = phone();
     return [
       { t: '#isx-tournarr', side: 'right', h: 'The dollar loop', p: 'This card follows a dollar round the loop, one step at a time. “Go deeper” opens the full text and its sources.' },
-      { t: ph ? '#isx-mstep' : '#isx-tabs', side: 'top', h: 'Ten steps', p: ph ? 'The arrows take you through the ten steps, from rents to the loop closing.' : 'Move with Next, with this bar, or with ← → on your keyboard. Play runs the loop for you.' },
+      { t: '#isx-tabs', side: 'top', h: 'Ten steps', p: ph ? 'Back and Next in this bar take you through the ten steps, from rents to the loop closing. A swipe on the card does the same.' : 'Back and Next sit at the left end of this bar; the steps follow, act by act. ← → on your keyboard work too, and Play runs the loop for you.' },
       { t: '#isx-tp-firms', side: 'bottom', h: 'Firms', p: 'Seventeen firms have a footprint: who owns them and where they build. Open one from here.' },
       { t: '#isx-tp-layers', also: ph ? [] : ['#isx-zoom', '#isx-legbox'], side: 'bottom', h: 'The globe', p: (coarse ? 'Swipe to turn it, tap a country for its figures.' : 'Drag to turn it, click a country for its figures.') + ' Layers sets what the colours show' + (ph ? '.' : '; zoom and the legend sit bottom right.') }
     ];
@@ -96,7 +96,7 @@
     var had = box.contains(document.activeElement);
     box.classList.remove('in');
     var el = box; setTimeout(function () { if (!live) el.hidden = true; }, X.reduce ? 0 : 260);
-    if (had) { var z = $('t-next'); if (z && z.getClientRects().length) z.focus({ preventScroll: true }); else { var p = $('tp-layers'); if (p) p.focus({ preventScroll: true }); } }
+    if (had) { var z = (X.route && X.route.next('circuit')) || $('t-next'); if (z && z.getClientRects().length) z.focus({ preventScroll: true }); else { var p = $('tp-layers'); if (p) p.focus({ preventScroll: true }); } }
   }
   X.tour = { open: open, close: close, get on() { return live; }, get at() { return at; } };
   window.addEventListener('resize', function () { if (live) render(false); });

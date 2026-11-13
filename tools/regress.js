@@ -80,12 +80,17 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   p = await open(c, '#simulator', 'sim-story');
   await snap(p, 'story/intro', '#isx-snarr');
   await p.evaluate(() => { const g = document.querySelector('#isx-sn-body [data-sg="start"]'); if (g) g.click(); }); await p.waitForTimeout(400);
-  let steps = 0;
-  for (let i = 0; i < 60; i++) {
-    const cnt = await p.evaluate(() => { const e = document.querySelector('.sn-cnt'); return e ? e.textContent.replace(/\s+/g, '') : ''; });
-    await snap(p, 'story/' + String(i).padStart(2, '0'), '#isx-snarr');
-    if (/^(\d+)\/\1$/.test(cnt)) { steps = +cnt.split('/')[0]; break; }
-    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(260);
+  /* B1: a step keeps its key (story/00 is step 1) whatever comes between two steps. → never chooses: at a choice the walk
+     records the card (story/ask-N), takes what happened on the card and goes on. */
+  let steps = 0, last = '';
+  for (let i = 0; i < 120; i++) {
+    const st = await p.evaluate(() => { const e = document.querySelector('.sn-cnt'), o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'), nx = document.querySelector('#isx-s2bar .rt-nx'); return { cnt: e ? e.textContent.replace(/\s+/g, '') : '', opt: !!o, hold: !!nx && nx.classList.contains('hold') }; });
+    if (st.cnt && st.cnt !== last) { last = st.cnt; await snap(p, 'story/' + String(+st.cnt.split('/')[0] - 1).padStart(2, '0'), '#isx-snarr'); }
+    else if (!st.cnt) await snap(p, 'story/ask-' + (last.split('/')[0] || '0'), '#isx-snarr');
+    if (/^(\d+)\/\1$/.test(st.cnt)) { steps = +st.cnt.split('/')[0]; break; }
+    if (st.hold && st.opt) await p.evaluate(() => document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]').click());
+    else await p.keyboard.press('ArrowRight');
+    await p.waitForTimeout(260);
   }
   res.counts['story-steps'] = steps;
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
@@ -108,7 +113,7 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
     c = await ctxFor(w, h, 'story', reduce);
     for (const hash of ['#circuit', '#arm', '#simulator', '#scenarios']) {
       p = await open(c, hash, tag + hash);
-      if (hash === '#circuit') for (let i = 0; i < 3; i++) { await p.evaluate(() => { const n = document.getElementById('isx-ms-next'); if (n && n.getClientRects().length) n.click(); else document.getElementById('isx-t-next').click(); }); await p.waitForTimeout(500); }
+      if (hash === '#circuit') for (let i = 0; i < 3; i++) { await p.evaluate(() => { const n = document.querySelector('#isx-tabs .rt-nx') || document.getElementById('isx-ms-next'); if (n && n.getClientRects().length) n.click(); else document.getElementById('isx-t-next').click(); }); await p.waitForTimeout(500); }
       res.counts[tag + hash + '-overflow'] = await p.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
       await p.close();
     }

@@ -87,6 +87,8 @@ const AUDITOR = () => {
   const js = (p, f, a) => p.evaluate(f, a);
   const click = (p, sel, n = 0) => p.evaluate(([s, i]) => { const e = document.querySelectorAll(s)[i]; if (e) e.click(); return !!e; }, [sel, n]);
   const where = p => p.evaluate(() => { const S = ISX.sim; return { mode: S.mode, line: S.line, beat: S.beat, steps: S.lines[S.line].steps.length }; });
+  /* B1: → never chooses. One move forward: take what happened where the card asks for a choice, otherwise press → */
+  const fwd = async p => { const picked = await p.evaluate(() => { const o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'); if (o) { o.click(); return true; } return false; }); if (!picked) await p.keyboard.press('ArrowRight'); };
 
   /* ================= 1. flicker ================= */
   for (const rest of [false, true]) {
@@ -105,12 +107,12 @@ const AUDITOR = () => {
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
     ok(`flicker (${tag}): the guide is at step 1 of 37`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 37; }));
-    for (let i = 2; i <= 37; i++) await step('guide step ' + i, key('ArrowRight'), 2100);
+    for (let i = 2; i <= 37; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
     ok(`flicker (${tag}): stepped through all 37`, (await where(p)).beat === 36);
     await step('guide: closing card', key('ArrowRight'), 2300);
     await step('guide: one step back', key('ArrowLeft'), 2100);
-    await step('guide: jump to chapter 3', () => click(p, '#isx-s2bar .s2ch', 2), 2400);
-    await step('guide: jump to chapter 6', () => click(p, '#isx-s2bar .s2ch', 5), 2400);
+    await step('guide: jump to chapter 3', () => click(p, '#isx-s2bar .rt-s .rt-sl', 3), 2400);
+    await step('guide: jump to chapter 6', () => click(p, '#isx-s2bar .rt-s .rt-sl', 6), 2400);
     await step('guide: select an actor', () => js(p, () => document.querySelector('#isx-rmap .fn:not(.s4dim)').dispatchEvent(new MouseEvent('click', { bubbles: true }))), 1200);
     await step('guide: release it', key('Escape'), 1200);
     await step('→ Plays', () => click(p, '[data-s4tab="plays"]'), 2400);
@@ -144,8 +146,8 @@ const AUDITOR = () => {
   { /* stepping faster than the entrances run ends in the same state as arriving there directly */
     const snap = () => [...document.querySelectorAll('#isx-rmap .fn, #isx-rmap .fe, #isx-rmap .fzg, .s4ri, .lv')].map(e => [...e.classList].sort().join('.') + '|' + (e.classList.contains('fe') ? (e.getAttribute('style') || '').replace(/\s/g, '') + '|' + (e.getAttribute('marker-end') ? 'm' : '') : '') + '|' + (e.classList.contains('s4ri') ? e.querySelector('b').textContent : '')).join('\n');
     const p = await page({}, { motion: true, pos: '{"l":0,"b":0}' });
-    for (let i = 0; i < 20; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(140); }
-    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(120); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(3200);
+    for (let i = 0; i < 40 && (await where(p)).beat < 20; i++) { await fwd(p); await p.waitForTimeout(140); }
+    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(120); await fwd(p); await p.waitForTimeout(160); if ((await where(p)).beat < 20) await fwd(p); await p.waitForTimeout(3200);
     const at = await where(p), fast = await js(p, snap); await p.context().close();
     const q = await page({}, { motion: true, pos: JSON.stringify({ l: 0, b: at.beat }) }); const direct = await js(q, snap); await q.context().close();
     const fa = fast.split('\n'), da = direct.split('\n'), diff = fa.map((x, i) => x === da[i] ? null : [x, da[i]]).filter(Boolean);
@@ -161,7 +163,8 @@ const AUDITOR = () => {
     for (let i = 0; i < 7; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
     let seenSteps = 0;
-    for (let i = 0; i < 37; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
+    for (let i = 0; i < 37; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
+    await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
     ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 37 steps audited`, rows.length === 46 && seenSteps === 37, { rows: rows.length, seenSteps });
     ok(`no early reveal (${w} px): no actor lit, value line, relation, reading value, colour or tooltip before its step`, leaks.length === 0, leaks.slice(0, 10));
@@ -217,16 +220,16 @@ const AUDITOR = () => {
     ok('opening card: “Start the guide” and “Explore the full map” are two buttons side by side, the same height', card.both && card.sameRow && card.fullAfter && card.w >= 200 && card.h >= 56 && card.text === 'Explore the full map', card);
     ok('opening card: the guide is the gold one, the full map is outlined; “Skip to the plumbing” is the one quiet link', card.gold && card.fullPlain && card.border === '1px' && card.skip && card.links === 1 && !card.own, card);
     await p.focus('#isx-sn-body .s5full'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
-    const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('.s4back'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
-    ok('opening card: “Explore the full map” opens the full view (34 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 34 && full.back && /s4tab/.test(full.focus), full);
-    await click(p, '.s4back'); await p.waitForTimeout(600);
+    const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
+    ok('opening card: “Explore the full map” opens the full view (34 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 34 && full.back && /rt-swb/.test(full.focus), full);
+    await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     ok('back to the guide: one click, and the opening card is back', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body .s4go')));
     await click(p, '#isx-sn-body .s4skip'); await p.waitForTimeout(300);
-    for (let i = 0; i < 11; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(160); }
+    for (let i = 0; i < 30 && (await where(p)).beat < 11; i++) { await fwd(p); await p.waitForTimeout(160); }
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(500); await click(p, '#isx-cock .pchip', 2); await p.waitForTimeout(300); await click(p, '#isx-pn'); await p.waitForTimeout(300);
-    const lab = await js(p, () => document.querySelector('.s4back').textContent.replace(/\s+/g, ' ').trim());
+    const lab = await js(p, () => document.querySelector('#isx-s2bar .rt-nx.ret').textContent.replace(/\s+/g, ' ').trim());
     await click(p, '[data-s4tab="levers"]'); await p.waitForTimeout(400); await click(p, '#isx-s2tray-lev .lv', 3); await p.waitForTimeout(300);
-    await click(p, '.s4back'); await p.waitForTimeout(600);
+    await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
     ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 37), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*37$/.test((res.cnt || '').trim()) && /step 12 of 37/.test(lab) && res.sel === 0, { res, lab });
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();

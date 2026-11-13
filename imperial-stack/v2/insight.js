@@ -73,7 +73,7 @@
     var had = box.contains(document.activeElement);
     box.classList.remove('in');
     setTimeout(function () { if (!cur) box.hidden = true; }, X.reduce ? 0 : 320);
-    if (had) { var z = X.$('t-next'); if (z && z.getClientRects().length) z.focus({ preventScroll: true }); }
+    if (had) { var z = (X.route && X.route.next('circuit')) || X.$('t-next'); if (z && z.getClientRects().length) z.focus({ preventScroll: true }); }
   }
 
   /* ---------- the first moment ---------- */

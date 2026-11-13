@@ -58,13 +58,14 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   }
   ok('first principles: seven reveals, each at most two sentences, with depth and actors lit', n === 7 && worst <= 2 && deepOk, { n, worst, deepOk });
   ok('first principles: identity first, then mechanism, history, consequence, amplifier', kinds.join(' ') === 'Identity Mechanism Mechanism Mechanism History Consequence Amplifier', kinds);
-  ok('first principles: the bar names the reveals', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .s2chs.pre .s2ch').length === 7 && /Start here/.test(document.getElementById('isx-sn-pickb').textContent)));
+  /* B1: first principles is the first segment of the guide's one route */
+  ok('first principles: the first segment of the route, seven marks, the one in hand', await p.evaluate(() => { const s = document.querySelectorAll('#isx-s2bar .rt-s')[0]; return s.querySelectorAll('.rt-m').length === 7 && s.classList.contains('cur') && /First principles/i.test(s.textContent) && /Guide/.test(document.getElementById('isx-sn-pickb').textContent); }));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350);
   ok('first principles: the close hands over to the guide', await p.evaluate(() => /Now the plumbing/.test(document.getElementById('isx-sn-body').textContent) && !!document.querySelector('#isx-sn-body .sn-go[data-sl="0"][data-sb="0"]')));
   await p.click('#isx-sn-body .sn-go'); await p.waitForTimeout(350);
   ok('guide: it starts at step 1 of 37', await p.evaluate(() => /^01\/37$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /Central banks step back/i.test(document.querySelector('#isx-sn-body h3').textContent)));
   /* the backstop chapter: window, swaps, yen, pledges, with a historical lead-in */
-  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .s2ch')[4].click()); await p.waitForTimeout(350);
+  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[5].querySelector('.rt-sl').click()); await p.waitForTimeout(350);
   const bk = [];
   for (let i = 0; i < 4; i++) { bk.push(await p.evaluate(() => ({ h: document.querySelector('#isx-sn-body h3').textContent, why: (document.querySelector('#isx-sn-body .s2why') || {}).textContent || '', s: document.querySelector('#isx-sn-body .s2p').textContent, fork: !!document.querySelector('#isx-sn-body .sn-fork') }))); if (bk[i].fork) await p.click('#isx-sn-body .sn-opt.real'); else await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
   ok('backstop: the Fed’s window, swaps, the yen, then the pledges', /repo window/i.test(bk[0].h) && /Swaps/i.test(bk[1].h) && /yen/i.test(bk[2].h) && /Tariffs/i.test(bk[3].h), bk.map(x => x.h));
@@ -72,7 +73,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('picker: first principles first, then the guide, then mechanisms on three rungs', await p.evaluate(() => { const k = document.getElementById('isx-sn-pick'); return /First principles/.test(k.querySelector('.pk-l').textContent) && k.querySelectorAll('.pk-t').length === 3 && k.querySelectorAll('.pk-t .pk-l').length === 9; }));
   await p.keyboard.press('Escape');
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click()); await p.waitForTimeout(250);
+  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click()); await p.waitForTimeout(250);
   ok('ladder (guide): three rungs, 17 rows; the source layer and the arrows wait for the end of the guide', await p.evaluate(() => { const l = document.getElementById('isx-s5lad'); return !l.hidden && l.querySelectorAll('.s5g').length === 3 && l.querySelectorAll('.s5row').length === 17 && !l.querySelector('.lsrc3') && !l.querySelector('.larr3') && !!l.querySelector('.s5wait2'); }));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
 
@@ -98,7 +99,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 3. Scenarios ---------- */
   p = await page('#scenarios');
-  ok('scenarios: one stage no longer than the window, with the sentence, picker, card and bar', await p.evaluate(() => { const f = document.getElementById('isx-frame').getBoundingClientRect(); return f.height <= innerHeight && /exercise of power/.test(document.getElementById('isx-sc-lede').textContent) && /financial flows/.test(document.getElementById('isx-sc-lede').textContent) && !!document.querySelector('#isx-sc-card .sintro:not([hidden])') && document.querySelectorAll('#isx-sc-bar button').length === 3; }));
+  ok('scenarios: one stage no longer than the window, with the sentence, picker, card and bar', await p.evaluate(() => { const f = document.getElementById('isx-frame').getBoundingClientRect(); return f.height <= innerHeight && /exercise of power/.test(document.getElementById('isx-sc-lede').textContent) && /financial flows/.test(document.getElementById('isx-sc-lede').textContent) && !!document.querySelector('#isx-sc-card .sintro:not([hidden])') && !!document.querySelector('#isx-sc-bar .rt-bk') && !!document.querySelector('#isx-sc-bar .rt-nx') && !!document.querySelector('#isx-sc-bar #isx-sc-pick') && !!document.querySelector('#isx-sc-bar #isx-dock'); }));
   ok('scenarios: the map sits beside the card, not under it', await p.evaluate(() => { const c = document.getElementById('isx-sc-card').getBoundingClientRect(), s = document.querySelector('.sc3 .sstage').getBoundingClientRect(); return s.left >= c.right && s.height > 400; }));
   await p.click('#isx-sc-pick'); await p.waitForTimeout(250);
   ok('picker: fourteen cases in five groups, each with a preview', await p.evaluate(() => { const t = document.getElementById('isx-sc-tray'); return !t.hidden && t.querySelectorAll('.spill').length === 14 && t.querySelectorAll('.scg').length === 5 && [...t.querySelectorAll('.spill .pv')].every(x => x.textContent.length > 20); }));

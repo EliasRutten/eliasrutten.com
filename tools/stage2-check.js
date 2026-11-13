@@ -44,7 +44,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-legtog'); await p.waitForTimeout(150);
   ok('legend: folds, and the fold is remembered', await p.evaluate(() => document.getElementById('isx-legbox').classList.contains('shut') && localStorage.getItem('isx-leg') === 'shut'));
   await p.click('#isx-legtog');
-  ok('card: one progress display only, Back and Next beside each other', await p.evaluate(() => { const pp = document.getElementById('isx-t-pips'), a = document.getElementById('isx-t-prev').getBoundingClientRect(), n = document.getElementById('isx-t-next').getBoundingClientRect(); return getComputedStyle(pp).display === 'none' && Math.abs(a.top - n.top) < 2 && a.width < 70 && n.width > 250; }));
+  /* B1: Back and Next left the card for the bar (v2/route.js); the old buttons stay in the DOM, hidden, for one release */
+  ok('card: one progress display only; Back and Next beside each other in the bar', await p.evaluate(() => { const pp = document.getElementById('isx-t-pips'), a = document.querySelector('#isx-tabs .rt-bk').getBoundingClientRect(), n = document.querySelector('#isx-tabs .rt-nx').getBoundingClientRect(); return getComputedStyle(pp).display === 'none' && Math.abs(a.top - n.top) < 2 && Math.abs(a.right - n.left) < 2 && a.width < 70 && n.width > 150 && !document.getElementById('isx-t-next').getClientRects().length; }));
   ok('stage: nothing covers the right half of the globe but the legend and zoom', await p.evaluate(() => { const fr = document.getElementById('isx-frame').getBoundingClientRect(); const els = document.elementsFromPoint(fr.left + fr.width * .78, fr.top + fr.height * .42); return !els.some(e => e.closest && e.closest('.mapmodes, .tray2, .resbar')); }));
   ok('no page errors (circuit)', p._errs.length === 0, p._errs); await p.context().close();
 
@@ -82,42 +83,44 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
   const geo = await p.evaluate(() => { const c = document.getElementById('isx-cock').getBoundingClientRect(), s = document.getElementById('isx-rmap').getBoundingClientRect(), f = document.getElementById('isx-frame').getBoundingClientRect(); return { cock: [c.width, c.height], svg: [s.width, s.height], frame: [f.width, f.height], vh: innerHeight }; });
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
-  ok('simulator: card, bar and seven chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .s2ch').length === 7 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
+  ok('simulator: card, bar with first principles and seven chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 8 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(300);
-  let worst = 0, n = 0, deepOk = true;
-  for (let i = 0; i < 60; i++) {
-    const r = await p.evaluate(() => { const t = (document.querySelector('#isx-sn-body .s2p') || {}).textContent || ''; const s = t.split(/[.!?]\s+(?=[A-Z“‘$])/).length; return { s, deep: !!document.querySelector('#isx-sn-body .s2deep'), cnt: document.querySelector('.sn-cnt').textContent.replace(/\s+/g, '') }; });
-    worst = Math.max(worst, r.s); n++; if (!r.deep) deepOk = false;
+  /* B1: → never chooses. At a choice the walk takes what happened on the card, then goes on with → */
+  let worst = 0, n = 0, deepOk = true; const cnts = new Set();
+  for (let i = 0; i < 90; i++) {
+    const r = await p.evaluate(() => { const t = (document.querySelector('#isx-sn-body .s2p') || {}).textContent || ''; const s = t.split(/[.!?]\s+(?=[A-Z“‘$])/).length; const c = document.querySelector('.sn-cnt'); return { s, deep: !!document.querySelector('#isx-sn-body .s2deep'), cnt: c ? c.textContent.replace(/\s+/g, '') : '', held: (document.querySelector('#isx-s2bar .rt-nx') || {}).className || '' }; });
+    if (r.cnt && !cnts.has(r.cnt)) { cnts.add(r.cnt); worst = Math.max(worst, r.s); n++; if (!r.deep) deepOk = false; }
     if (/^(\d+)\/\1$/.test(r.cnt)) break;
-    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(120);
+    if (/hold/.test(r.held)) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(80); await p.evaluate(() => { const o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'); if (o) o.click(); }); }
+    else await p.keyboard.press('ArrowRight');
+    await p.waitForTimeout(120);
   }
-  ok('guide: all 37 steps are reachable with →', n === 37, n);
+  ok('guide: all 37 steps are reachable with →, choosing on the card at each choice', n === 37, n);
   ok('guide: every reveal is at most two sentences, with the rest behind “Go deeper”', worst <= 2 && deepOk, { worst, deepOk });
-  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .s2ch')[6].classList.contains('cur')));
-  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .s2ch')[2].click()); await p.waitForTimeout(300);
-  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .s2ch')[2].classList.contains('cur') && /^13\/37$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="lev"]').click()); await p.waitForTimeout(200);
-  ok('guide: the Levers tray opens above the bar with the levers reached so far', await p.evaluate(() => { const t = document.getElementById('isx-s2tray-lev'); const shown = [...t.querySelectorAll('.lv')].filter(x => x.getClientRects().length).length; return !t.hidden && shown > 0 && shown < 14 && document.querySelector('#isx-s2bar [data-tray="lev"]').getAttribute('aria-expanded') === 'true'; }));
-  await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length)[0].click()); await p.waitForTimeout(300);
-  ok('guide: a lever opens its dossier in the card', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever pulled/.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none'; }));
-  await p.evaluate(() => { const v = [...document.querySelectorAll('#isx-s2tray-lev .lv')].find(x => x.getClientRects().length); if (v) v.focus(); });
+  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[7].classList.contains('cur')));
+  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
+  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/37$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
+  /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
+  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:1"]').click()); await p.waitForTimeout(300);
+  ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
+  await p.evaluate(() => document.querySelector('#isx-sn-body .sn-chip.lv2').click()); await p.waitForTimeout(300);
+  ok('guide: a lever opens its dossier in the card, without a tray', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever pulled/.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none' && document.getElementById('isx-s2tray-lev').hidden; }));
+  await p.evaluate(() => document.getElementById('isx-dx').focus());
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
-  ok('guide: Esc closes the tray first', await p.evaluate(() => document.getElementById('isx-s2tray-lev').hidden));
-  await p.keyboard.press('Escape'); await p.waitForTimeout(200);
-  ok('guide: then the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click()); await p.waitForTimeout(200);
+  ok('guide: Esc closes the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));
+  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click()); await p.waitForTimeout(200);
   ok('guide: Readings opens the ladder: every reading reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-s5lad'), got = l.querySelectorAll('.s5row:not(.s5later)').length; return c.classList.contains('rd-open') && !l.hidden && l.querySelectorAll('.s5row').length === 17 && got === c.querySelectorAll('.tile:not(.gh)').length && got > 0 && got < 17; }));
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-tray="read"]').click());
+  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click());
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('guide: the picker lists first principles, the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
   await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
-  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .s2chs.mech .s2ch').length === 4 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
+  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 4 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(250);
   ok('guide: a choice at the first key moment', await p.evaluate(() => document.querySelectorAll('#isx-sn-body .sn-opt').length === 2));
   await p.click('#isx-sn-body .sn-opt.alt'); await p.waitForTimeout(300);
-  ok('guide: the other outcome is a reveal too, and leads back', await p.evaluate(() => /Other outcome/.test(document.querySelector('#isx-sn-body .s2k').textContent) && document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length <= 2 && /Back to what happened/.test(document.getElementById('isx-sn-nav').textContent)));
+  ok('guide: the other outcome is a reveal too, and leads back', await p.evaluate(() => /Other outcome/.test(document.querySelector('#isx-sn-body .s2k').textContent) && document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length <= 2 && /Back to\s*What happened/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
