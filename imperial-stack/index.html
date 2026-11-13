@@ -6307,8 +6307,10 @@ function simCamTarget() {
   const card = $('snarr'), folded = card && card.classList.contains('folded');
   const top = cock.querySelector('.s2top'), tb = top ? top.getBoundingClientRect().bottom - sr.top : 150;
   const iT = Math.max(tb + 14, (rel('s2read', 't') || 0) + 50), bar = rel('s2bar', 't'), tps = on ? [] : [rel('s2tray-play', 't'), rel('s2tray-lev', 't')].filter(v => v != null), lev = tps.length ? Math.min(...tps) : null;
-  const iB = H - Math.min(bar != null ? bar : H - 80, lev != null ? lev : H) + 30;
-  cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB) + 'px');
+  const iB0 = H - Math.min(bar != null ? bar : H - 80, lev != null ? lev : H) + 30;
+  cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB0) + 'px');
+  /* stage 5: in the full view the map also clears the legend, which wraps to two rows on narrower screens (the rail keeps its own bottom, --ib) */
+  const kt = on ? null : rel('s2low', 't'), iB = kt != null ? Math.max(iB0, H - kt + 10) : iB0;
   const open = cock.classList.contains('s4open'), rl = rel('s4rail', 'l');
   const iL = on && !folded && !open && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = rl != null ? Math.max(26, W - rl + 22) : 26;
   let box, cap;

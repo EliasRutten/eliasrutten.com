@@ -45,7 +45,8 @@
   #isx-root #isx-cock.s2 .s2read .hud6 { display: none; }
 }
 @media (max-width: 1179px) {
-  /* five key readings are always on screen; a reading the step puts in play joins them, first in line */
+  /* five key readings are always on screen; a reading the step puts in play joins them, first in line
+     (on a phone at the left; on a tablet next to the Readings button, see below) */
   #isx-root #isx-cock.s2:not(.rd-open) .s2read .s5strip .tile.s5key { display: inline-flex; }
   #isx-root #isx-cock.s2 .s5strip .tile.hot, #isx-root #isx-cock.s2 .s5strip .tile.on { order: -1; }
   #isx-root #isx-cock.s2 .s5strip .tile:not(.s5key).hot { animation: isx-s5in .3s ease backwards; }
@@ -64,7 +65,9 @@
 }
 @media (min-width: 761px) and (max-width: 1179px) {
   #isx-root .s2 .s2read { flex-wrap: nowrap; align-items: center; }
-  #isx-root #isx-cock.s2 .s2read .s5strip { flex: 0 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  /* the row runs from the Readings button leftwards: what is in play sits next to the button, the key readings follow,
+     and anything that does not fit (or lies under a tall card) is at the far left */
+  #isx-root #isx-cock.s2 .s2read .s5strip { flex: 0 1 auto; min-width: 0; flex-direction: row-reverse; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
   #isx-root #isx-cock.s2 .s2read .s5strip::-webkit-scrollbar { display: none; }
   #isx-root #isx-cock.s2 .s5strip .tile { height: 28px; padding: 0 9px; gap: 6px; }
   #isx-root #isx-cock.s2 .s5strip .tile .tv { font-size: 15px; line-height: 28px; }
@@ -72,8 +75,8 @@
   #isx-root .s2 .s2rdb { height: 28px; }
   /* compact: the date of a reading in play is in its tooltip, on its actor and in the full ladder */
   #isx-root #isx-cock.s2 .s5strip .tile small { display: none; }
-  /* when more readings are in play than fit, the row scrolls and fades out at its right edge */
-  #isx-root #isx-cock.s2 .s2read .s5strip { padding-right: 22px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); }
+  /* when more readings are in play than fit, the row scrolls and fades out at its left edge */
+  #isx-root #isx-cock.s2 .s2read .s5strip { padding-left: 22px; -webkit-mask-image: linear-gradient(270deg, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(270deg, #000 calc(100% - 22px), transparent); }
   /* the opening card sits under the strip, not on it */
   #isx-root #isx-cock.s2.s4open .s2card { top: 232px; transform: translateX(-50%); }
 }
