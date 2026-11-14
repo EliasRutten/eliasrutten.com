@@ -33,3 +33,145 @@
 #isx-root .cb-shows { margin: 8px 0 4px; padding: 9px 11px; border-radius: 9px; background: rgba(255, 210, 122, .06); border: 1px solid rgba(255, 210, 122, .2); }
 #isx-root .cb-shows b { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #ffd27a; font-weight: 500; }
 #isx-root .cb-shows p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: #dbe4ec; }
+
+/* ---------- 4. doors ---------- */
+#isx-root .cb-door { display: flex; align-items: center; gap: 8px; width: 100%; margin: 9px 0 2px; padding: 8px 11px; border-radius: 10px; cursor: pointer; text-align: left; font: inherit; color: #ffe2a6;
+  background: linear-gradient(180deg, rgba(255, 210, 122, .11), rgba(255, 210, 122, .04)); border: 1px solid rgba(255, 210, 122, .42); transition: background var(--mo-t, .4s) var(--mo, ease), border-color var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .cb-door span { font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+#isx-root .cb-door small { font-size: 11.5px; color: var(--ink2); margin-left: auto; }
+#isx-root .cb-door i { font-style: normal; font-size: 15px; color: #ffd27a; }
+#isx-root .cb-door:hover { background: rgba(255, 210, 122, .16); border-color: #ffd27a; }
+#isx-root .cb-door:focus-visible, #isx-root .vw button:focus-visible, #isx-root .vw a:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .cb-warn { margin: 4px 0 6px; padding: 6px 9px; border-radius: 7px; font-size: 12px; line-height: 1.4; color: #ffd9c7; background: rgba(255, 138, 92, .09); border: 1px solid rgba(255, 138, 92, .35); }
+
+/* ---------- 5. the deeper views: a sheet of dark glass over the stage, above the bottom bar ---------- */
+#isx-root .vw { position: absolute; z-index: 60; inset: 10px 10px 92px 10px; display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; color: #dbe4ec;
+  background: linear-gradient(180deg, rgba(10, 17, 25, .992), rgba(6, 11, 17, .996)); border: 1px solid rgba(255, 210, 122, .28); box-shadow: 0 24px 70px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .05);
+  opacity: 0; transform: scale(.985); transition: opacity var(--mo-t, .4s) var(--mo, ease), transform var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .vw.in { opacity: 1; transform: none; }
+#isx-root .vw[hidden] { display: none; }
+#isx-root .vw .pk { font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .vw-h { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px 12px; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+#isx-root .vw-h > div { flex: 1; min-width: 0; }
+#isx-root .vw-h h3 { margin: 2px 0 0; font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+#isx-root .vw-h p { margin: 2px 0 0; font-size: 13px; color: var(--ink2); }
+#isx-root .vw-zoom, #isx-root .vw-go { font: inherit; cursor: pointer; border-radius: 999px; padding: 8px 16px; color: #1a1206; background: #ffd27a; border: 1px solid #ffd27a; font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+#isx-root .vw-go { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 8px 0 2px; background: rgba(255, 210, 122, .1); color: #ffe2a6; border-color: rgba(255, 210, 122, .45); white-space: normal; text-align: left; border-radius: 12px; }
+#isx-root .vw-go small { font-family: var(--sans, inherit); font-weight: 400; font-size: 11.5px; letter-spacing: 0; text-transform: none; color: var(--ink2); }
+#isx-root .vw-x1 { width: 34px; height: 34px; flex: none; border-radius: 50%; cursor: pointer; font-size: 19px; line-height: 1; color: var(--ink2); background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .14); }
+#isx-root .vw-x1:hover { color: #fff; border-color: #ffd27a; }
+#isx-root .vw-b { flex: 1; min-height: 0; overflow: auto; padding: 14px 18px 18px; outline: none; }
+#isx-root .vw-b p { margin: 0; font-size: 13px; line-height: 1.5; }
+#isx-root .vw-x { margin-top: 8px !important; color: #c3cfda; font-size: 12.5px !important; }
+#isx-root .vw-who { margin-top: 7px !important; font-size: 12px !important; color: var(--ink2); }
+#isx-root .vw-who span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-right: 6px; }
+#isx-root .vw-foot { margin-top: 12px !important; font-size: 12px !important; color: var(--ink3); }
+#isx-root .vw-p, #isx-root .vw-rd, #isx-root .vw-reveal, #isx-root .vw-sav, #isx-root .vw-test, #isx-root .vw-link { border-radius: 13px; padding: 12px 14px; background: rgba(255, 255, 255, .025); border: 1px solid rgba(255, 255, 255, .08); }
+#isx-root .vw-p h4, #isx-root .vw-rd h4, #isx-root .vw-desks h4 { margin: 2px 0 6px; font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+#isx-root .vw .hl { border-color: #ffd27a; box-shadow: 0 0 0 1px rgba(255, 210, 122, .5), 0 0 22px rgba(255, 210, 122, .16); }
+#isx-root .vw-fig { padding: 7px 0; border-top: 1px solid rgba(255, 255, 255, .06); }
+#isx-root .vw-fig:first-of-type { border-top: 0; }
+#isx-root .vw-fig .fk { display: block; font-size: 12px; color: var(--ink2); line-height: 1.35; }
+#isx-root .vw-fig b { font-family: var(--mono); font-size: 19px; font-weight: 500; color: #fff; margin-right: 8px; }
+#isx-root .vw-fig em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--ink3); }
+#isx-root .vw-fig.slot b { color: var(--ink3); }
+#isx-root .vw-fig p { font-size: 12px !important; color: var(--ink2); }
+#isx-root .vw-rd { margin-top: 10px; border-style: dashed; border-color: rgba(125, 143, 160, .55); background: rgba(125, 143, 160, .06); }
+#isx-root .vw-rd .pk { color: #9fb2c4; }
+#isx-root .vw-rd.house { border-color: rgba(255, 210, 122, .45); background: rgba(255, 210, 122, .05); }
+#isx-root .vw-rd.house .pk { color: #ffd27a; }
+/* the money loop */
+#isx-root .vw-reveal p:first-child { font-size: 15px; line-height: 1.5; color: #fff; }
+#isx-root .vw-sav { margin-top: 10px; border-color: rgba(255, 181, 71, .3); }
+#isx-root .vw-savh p { margin-top: 3px; font-size: 12.5px; color: var(--ink2); }
+#isx-root .vw-kids { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+#isx-root .vw-kid { font: inherit; cursor: pointer; text-align: left; padding: 8px 13px; border-radius: 12px; color: #fff; background: rgba(255, 181, 71, .08); border: 1px solid rgba(255, 181, 71, .4); display: flex; flex-direction: column; gap: 1px; min-width: 150px; }
+#isx-root .vw-kid b { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+#isx-root .vw-kid span { font-family: var(--mono); font-size: 10.5px; color: var(--ink2); }
+#isx-root .vw-kid.sm { min-width: 0; padding: 6px 11px; background: rgba(255, 255, 255, .03); border-color: rgba(255, 255, 255, .16); }
+#isx-root .vw-kid.sm b { font-size: 12.5px; }
+#isx-root .vw-kid[aria-expanded="true"] { border-color: #ffb547; background: rgba(255, 181, 71, .16); }
+#isx-root .vw-kidx { margin-top: 9px; padding: 10px 12px; border-radius: 10px; background: rgba(0, 0, 0, .25); border: 1px solid rgba(255, 181, 71, .25); }
+#isx-root .vw-kidx h5 { margin: 0 0 4px; font-family: var(--display); font-size: 14px; letter-spacing: .05em; text-transform: uppercase; color: #ffb547; }
+#isx-root .vw-kidx p + p { margin-top: 5px; }
+#isx-root .vw-pipes { display: grid; gap: 7px; margin-top: 11px; }
+#isx-root .vw-pipe { display: grid; grid-template-columns: 74px auto 1fr; align-items: center; gap: 10px; font-size: 12.5px; }
+#isx-root .vw-pipe i { height: 7px; border-radius: 4px; background: #ffd27a; box-shadow: 0 0 8px rgba(255, 210, 122, .5); }
+#isx-root .vw-pipe.thin i { height: 0; background: none; box-shadow: none; border-top: 1.5px dotted #ffb547; }
+#isx-root .vw-pipe b { font-family: var(--display); font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; color: #fff; }
+#isx-root .vw-pipe span { color: var(--ink2); }
+#isx-root .vw-spine { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }
+#isx-root .vw-spine > li { position: relative; border-radius: 13px; padding: 11px 12px; background: rgba(255, 255, 255, .025); border: 1px solid rgba(255, 255, 255, .08); border-top: 2px solid #ffd27a; }
+#isx-root .vw-spine > li:not(:last-child)::after { content: "→"; position: absolute; right: -9px; top: 12px; color: #ffd27a; font-size: 13px; z-index: 1; }
+#isx-root .vw-spine .sn { display: flex; gap: 8px; align-items: baseline; margin-bottom: 4px; }
+#isx-root .vw-spine .sn span { font-family: var(--mono); font-size: 11px; color: #ffd27a; }
+#isx-root .vw-spine .sn b { font-family: var(--display); font-weight: 600; font-size: 14px; line-height: 1.2; letter-spacing: .03em; text-transform: uppercase; color: #fff; }
+#isx-root .vw-spine .vw-fig b { font-size: 16px; }
+#isx-root .vw-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em; color: var(--ink3); }
+#isx-root .vw-meta .wr { color: #9fd9c4; text-transform: uppercase; }
+/* the bond screen */
+#isx-root .vw-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#isx-root .vw-tiles .vw-fig { border: 1px solid rgba(255, 210, 122, .3); border-radius: 13px; padding: 11px 14px; background: rgba(255, 210, 122, .05); }
+#isx-root .vw-tiles .vw-fig b { font-size: 26px; }
+#isx-root .vw-halves { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1fr); gap: 10px; margin-top: 10px; align-items: stretch; }
+#isx-root .vw-p.pub { border-top: 2px solid #ffd27a; } #isx-root .vw-p.prv { border-top: 2px solid #9aa4ff; }
+#isx-root .vw-link { border-style: dashed; border-color: rgba(125, 143, 160, .6); display: flex; flex-direction: column; justify-content: center; }
+#isx-root .vw-link .ll span { display: block; font-family: var(--display); font-weight: 600; font-size: 16px; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+#isx-root .vw-link .ll em { display: block; font-style: normal; font-size: 12px; color: #ffd27a; margin: 2px 0 7px; }
+#isx-root .vw-test { margin-top: 10px; }
+#isx-root .vw-test ul { list-style: none; margin: 7px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+#isx-root .vw-test li { padding: 8px 10px; border-radius: 9px; background: rgba(0, 0, 0, .22); border-left: 2px solid #8fa3b6; }
+#isx-root .vw-test li.for { border-left-color: #3ee6b8; } #isx-root .vw-test li.ag { border-left-color: #ff8a5c; }
+#isx-root .vw-test li b { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #fff; font-weight: 500; }
+#isx-root .vw-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+#isx-root .vw-p.ccy { margin-top: 10px; border-top: 2px solid #44d7ec; }
+#isx-root .vw-curve { width: 100%; max-width: 300px; display: block; margin: 2px 0 4px; }
+#isx-root .vw-curve .ax { stroke: #2c3e50; } #isx-root .vw-curve .ln { fill: none; stroke: #ffd27a; stroke-width: 2; }
+#isx-root .vw-curve circle { fill: #0b131c; stroke: #ffd27a; stroke-width: 1.6; }
+#isx-root .vw-curve .v { fill: #fff; font-family: var(--mono); font-size: 9px; } #isx-root .vw-curve .k { fill: #8fa3b6; font-family: var(--mono); font-size: 8px; }
+#isx-root .vw-ccy { margin-top: 9px; display: grid; gap: 1px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .08); }
+#isx-root .vw-ccy .ch, #isx-root .vw-ccy .cr { display: grid; grid-template-columns: minmax(110px, .7fr) minmax(120px, .7fr) minmax(0, 2.4fr); gap: 12px; padding: 7px 11px; background: rgba(255, 255, 255, .025); align-items: baseline; }
+#isx-root .vw-ccy .ch { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); background: rgba(0, 0, 0, .25); }
+#isx-root .vw-ccy .cr b { font-family: var(--mono); font-weight: 500; font-size: 14px; color: #fff; }
+#isx-root .vw-ccy .cr span:first-child b { font-family: var(--display); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+#isx-root .vw-ccy .cr em { font-style: normal; font-size: 11.5px; color: var(--ink2); margin-left: 8px; line-height: 1.4; }
+#isx-root .vw-ccy .slot b { color: var(--ink3); }
+/* the two desks */
+#isx-root .vw-desks { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 0; border-radius: 16px; border: 1px solid rgba(255, 210, 122, .35); background: rgba(255, 210, 122, .035); }
+#isx-root .vw-desks .dk { padding: 14px 16px; }
+#isx-root .vw-desks .dline { display: flex; flex-direction: column; justify-content: center; max-width: 170px; padding: 10px 14px; text-align: center; font-size: 12px; color: var(--ink2); border-left: 2px dotted #7d8fa0; }
+#isx-root .vw-desks .dline .pk { color: #b9c6d2; margin-bottom: 3px; }
+#isx-root .vw-p.ops { margin-top: 10px; }
+#isx-root .vw-ops { list-style: none; margin: 7px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }
+#isx-root .vw-ops li { padding: 8px 10px; border-radius: 9px; background: rgba(0, 0, 0, .22); }
+#isx-root .vw-lev { font: inherit; cursor: pointer; display: block; width: 100%; text-align: left; padding: 0 0 5px; background: none; border: 0; border-bottom: 1px solid rgba(255, 210, 122, .3); color: #ffe2a6; margin-bottom: 5px; }
+#isx-root .vw-lev b { display: block; font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+#isx-root .vw-lev span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .vw-lev:hover b { color: #fff; }
+#isx-root .vw-ops p { font-size: 12px !important; }
+#isx-root .vw-rds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+#isx-root .vw-house { margin: 8px 0 0; padding: 0 0 0 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 22px; }
+#isx-root .vw-house li { font-family: var(--mono); font-size: 11px; color: #ffd27a; }
+#isx-root .vw-house li b { display: block; font-family: var(--sans, inherit); font-size: 13px; font-weight: 600; color: #fff; }
+#isx-root .vw-house li span { display: block; font-family: var(--sans, inherit); font-size: 12px; color: var(--ink2); line-height: 1.4; }
+#isx-root .vw-sub { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 7px 13px; border-radius: 999px; background: #ff6719; color: #1a0d05; font-weight: 600; font-size: 13px; text-decoration: none; }
+#isx-root .vw-sub em { font-style: normal; font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; background: rgba(26, 13, 5, .18); }
+#isx-root .vw-sub:hover { background: #ff7d3a; }
+@media (max-width: 1180px) {
+  #isx-root .vw-spine { grid-template-columns: repeat(2, minmax(0, 1fr)); } #isx-root .vw-spine > li::after { display: none; }
+  #isx-root .vw-ops { grid-template-columns: repeat(2, minmax(0, 1fr)); } #isx-root .vw-house { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #isx-root .vw-halves { grid-template-columns: 1fr 1fr; } #isx-root .vw-link { grid-column: 1 / -1; order: 3; }
+}
+@media (max-width: 760px) {
+  #isx-root .vw { position: fixed; inset: 0; border-radius: 0; z-index: 400; }
+  #isx-root .vw-h { flex-wrap: wrap; padding: 12px 14px 10px; } #isx-root .vw-h h3 { font-size: 20px; } #isx-root .vw-zoom { order: 3; width: 100%; white-space: normal; }
+  #isx-root .vw-b { padding: 12px 14px 22px; }
+  #isx-root .vw-spine, #isx-root .vw-tiles, #isx-root .vw-halves, #isx-root .vw-test ul, #isx-root .vw-grid2, #isx-root .vw-ops, #isx-root .vw-rds, #isx-root .vw-house { grid-template-columns: 1fr; }
+  #isx-root .vw-desks { grid-template-columns: 1fr; } #isx-root .vw-desks .dline { max-width: none; border-left: 0; border-top: 2px dotted #7d8fa0; border-bottom: 2px dotted #7d8fa0; }
+  #isx-root .vw-ccy .ch { display: none; } #isx-root .vw-ccy .cr { grid-template-columns: 1fr 1fr; } #isx-root .vw-ccy .cr span:last-child { grid-column: 1 / -1; }
+  #isx-root .vw-ccy .cr em { margin-left: 0; display: block; }
+  #isx-root .vw-pipe { grid-template-columns: 40px 1fr; } #isx-root .vw-pipe span { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .vw { transition: none; transform: none; } }
+/* while a view is open the trays and the legend under it rest */
+#isx-root .vw-on .s2tray, #isx-root .vw-on .s2key, #isx-root .vw-on .b1play, #isx-root .vw-on .b1ind { visibility: hidden; }
