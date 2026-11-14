@@ -8,6 +8,93 @@
    6. the tab “The imperial machinery” and the line about clicking an actor.
    Scoped under #isx-root and loaded after b1.css. */
 
+
+/* ---------- 1. one motion curve ---------- */
+#isx-root { --mo: cubic-bezier(.2, .8, .2, 1); --mo-t: .4s; }
+/* the two lit bubbles: the top strip's and the bottom bar's slide with the same curve and time */
+#isx-root.strip-on .st-ind { transition: transform var(--mo-t) var(--mo), width var(--mo-t) var(--mo), opacity .25s ease, box-shadow .4s ease, background .4s ease; }
+#isx-root.strip-on .st-ind.cut { transition: none; }
+/* a step arriving: the cards of the three tabs come in on the same curve */
+#isx-root .cmd6 .tournarr.in > * { animation-duration: .38s; animation-timing-function: var(--mo); }
+#isx-root .sn-body.in > *, #isx-root .s2 .s2body.in > * { animation-duration: .38s; animation-timing-function: var(--mo); }
+/* the first-visit tour's note moves beside the next control on it too */
+#isx-root .tour2 { transition: opacity .26s ease, transform .26s ease, left var(--mo-t) var(--mo), top var(--mo-t) var(--mo); }
+@media (prefers-reduced-motion: reduce) { #isx-root.strip-on .st-ind, #isx-root .tour2 { transition: none; } }
+/* (section 1, continued) the Scenarios card arrives on the one curve too */
+#isx-root .sc3 .sintro, #isx-root .sc3 .send, #isx-root .sc3 .sstep { animation-timing-function: var(--mo); }
+
+/* ---------- 3. the bottom bar: the top strip's material, a lit bubble, flow marks ---------- */
+/* one rounded bar of dark glass, as the strip at the top: a soft gradient, a hairline edge, a light from above */
+#isx-root .rt-host .rt { border-radius: 999px; padding: 4px; border: 1px solid #22313f; background: linear-gradient(180deg, rgba(17, 27, 38, .9), rgba(7, 12, 18, .94));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), inset 0 -1px 0 rgba(0, 0, 0, .5), 0 14px 34px -20px rgba(0, 0, 0, .95); }
+/* no backdrop blur here, unlike the strip: the bar lies over the moving map, where a blur is redrawn with every frame, and at 90% opacity it added nothing to see */
+/* parts are divided by short hairlines that fade out at both ends, never by full-height rules */
+#isx-root .rt-host .rt > * + * { border-left: 1px solid transparent; border-image: linear-gradient(180deg, transparent 18%, #2c3d4d 34%, #2c3d4d 66%, transparent 82%) 1; }
+#isx-root .rt-host .rt > .rt-nx, #isx-root .rt-host .rt > .rt-nx + * { border-left: 0; border-image: none; }
+#isx-root .rt-host .rt button:focus-visible, #isx-root .rt-host .rt a:focus-visible { border-radius: 999px; }
+/* Back: a round button at the bar's left end */
+#isx-root .rt-host .rt .rt-bk { width: 46px; border-radius: 999px; }
+#isx-root .rt-host .rt .rt-bk:hover { background: rgba(255, 255, 255, .05); }
+/* Next: the lit pill, in the grammar of the open tab at the top (gold: what is in focus) */
+#isx-root .rt-host .rt .rt-nx { margin: 0 6px 0 0; border-radius: 999px; padding: 0 14px 0 20px; color: #ffe2a6;
+  background: radial-gradient(120% 150% at 50% 118%, rgba(255, 210, 122, .4) 0%, rgba(255, 210, 122, .11) 52%, transparent 78%), rgba(255, 255, 255, .04);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #ffd27a 48%, #22313f), inset 0 -2px 0 -0.5px #ffd27a, 0 0 26px -8px #ffd27a; transition: box-shadow .25s ease, background .25s ease, color .2s; }
+#isx-root .rt-host .rt .rt-nx:hover { color: #fff; background: radial-gradient(120% 150% at 50% 118%, rgba(255, 210, 122, .52) 0%, rgba(255, 210, 122, .16) 52%, transparent 78%), rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px color-mix(in srgb, #ffd27a 70%, #22313f), inset 0 -2px 0 -0.5px #ffd27a, 0 0 30px -6px #ffd27a; }
+#isx-root .rt-host .rt .rt-nx b { text-shadow: 0 0 16px rgba(255, 210, 122, .45); }
+#isx-root .rt-host .rt .rt-nx.hold, #isx-root .rt-host .rt .rt-nx.off { background: rgba(255, 255, 255, .025); box-shadow: inset 0 0 0 1px #22313f; color: #8193a2; }
+#isx-root .rt-host .rt .rt-nx.hold b, #isx-root .rt-host .rt .rt-nx.off b { text-shadow: none; }
+#isx-root .rt-host .rt .rt-nx.br { color: #ffb39a; background: radial-gradient(120% 150% at 50% 118%, rgba(255, 138, 92, .42) 0%, rgba(255, 138, 92, .11) 52%, transparent 78%), rgba(255, 255, 255, .04); box-shadow: inset 0 0 0 1px color-mix(in srgb, #ff8a5c 48%, #22313f), inset 0 -2px 0 -0.5px #ff8a5c, 0 0 26px -8px #ff8a5c; }
+#isx-root .rt-host .rt .rt-nx.br b { text-shadow: 0 0 16px rgba(255, 138, 92, .45); }
+/* the route: the bubble lies under the marks, the flow marks over them */
+#isx-root .rt-host .rt .rt-segs { position: relative; z-index: 1; }
+#isx-root .rt-host .rt .rt-here { left: 0; top: 0; bottom: auto; width: 20px; height: 14px; border-radius: 999px; --hc: #ffd27a;
+  background: radial-gradient(120% 150% at 50% 118%, color-mix(in srgb, var(--hc) 42%, transparent) 0%, color-mix(in srgb, var(--hc) 12%, transparent) 52%, transparent 78%), rgba(255, 255, 255, .04);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hc) 48%, #22313f), inset 0 -2px 0 -0.5px var(--hc), 0 0 22px -8px var(--hc);
+  transition: transform var(--mo-t) var(--mo), width var(--mo-t) var(--mo), height var(--mo-t) var(--mo), opacity .25s ease, box-shadow .4s ease, background .4s ease; }
+#isx-root .rt-host .rt .rt-here.cut { transition: none; }
+#isx-root .rt-host .rt.cp .rt-here, #isx-root .rt-host .rt.ph .rt-here { bottom: auto; }
+#isx-root .rt-host .rt .rt-flow { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+#isx-root .rt-host .rt .rt-flow i { position: absolute; left: 0; width: 8px; height: 2px; border-radius: 2px; background: var(--hc, #ffd27a); box-shadow: 0 0 8px var(--hc, #ffd27a); opacity: 0; }
+/* the step in hand no longer needs its own glow: the bubble carries it */
+#isx-root .rt-host .rt .rt-m.c::before, #isx-root .rt-host .rt .rt-l.c::before { box-shadow: none; }
+#isx-root .rt-host .rt .rt-s.lab { grid-template-rows: 16px 1fr; }
+#isx-root .rt-host .rt .rt-st { padding: 3px 3px 5px; border-radius: 999px; }
+#isx-root .rt-host .rt .rt-flow i { width: 9px; }
+#isx-root .rt-host .rt .rt-st.c b { text-shadow: 0 0 14px color-mix(in srgb, var(--sc) 60%, transparent); }
+/* the tab's own switch: the open one framed, as the views in the top strip */
+#isx-root .rt-host .rt .rt-ctl { align-items: center; padding: 0 4px; gap: 2px; }
+#isx-root .rt-host .rt .rt-sw { align-self: stretch; align-items: center; gap: 2px; }
+#isx-root .rt-host .rt .rt-swb, #isx-root .rt-host .rt .rt-tg { height: 36px; border-radius: 999px; }
+#isx-root .rt-host .rt .rt-swb + .rt-swb { border-left: 0; }
+#isx-root .rt-host .rt .rt-swb[aria-pressed="true"], #isx-root .rt-host .rt .rt-tg[aria-pressed="true"] { background: rgba(255, 255, 255, .045); box-shadow: inset 0 0 0 1px color-mix(in srgb, #ffd27a 42%, #22313f); }
+#isx-root .rt-host .rt .rt-line { border-radius: 999px; }
+/* the dock: round segments; the thesis keeps its Substack orange, as a lit pill */
+#isx-root .rt-host .rt .dock6 { align-items: center; padding-left: 5px; gap: 2px; }
+#isx-root .rt-host .rt .dock6 .dk { height: 40px; border-radius: 999px; }
+#isx-root .rt-host .rt .dock6 .dk:not(.dk-fs) { width: 42px; }
+#isx-root .rt-host .rt .dock6 .dk ~ .dk { border-left: 0; }
+#isx-root .rt-host .rt .dock6 .dk-th { box-shadow: 0 0 18px -6px #FF6719; }
+#isx-root .rt-host .rt .dock6 .dk-fs { height: 40px; border-radius: 999px; }
+@media (min-width: 1440px) { #isx-root .rt-host .rt:not([data-id="circuit"]) .dock6 .dk-fs { padding: 0 15px 0 12px; } }
+#isx-root .rt-host .rt .dock6 .dk-sh:has(+ .shpop:last-child) { border-radius: 999px; width: 42px; padding-right: 0; margin-right: 3px; }
+@media (max-width: 1279px) { #isx-root .rt-host .rt .dock6 .dk:not(.dk-fs) { width: 38px; } }
+#isx-root .rt-host .rt.cp .dock6 .dk:not(.dk-fs) { width: 36px; }
+/* phones: the bar's three parts keep their own boxes; the ends are round and the material is the same */
+#isx-root .rt-host .rt.ph { padding: 0; border: 0; background: none; box-shadow: none; border-radius: 0; }
+#isx-root .rt-host .rt.ph > * + * { border-image: none; }
+#isx-root .rt-host .rt.ph .rt-bk { border-radius: 999px 0 0 999px; border: 1px solid #22313f; border-right: 0; background: linear-gradient(180deg, rgba(17, 27, 38, .98), rgba(7, 12, 18, .98)); }
+#isx-root .rt-host .rt.ph .rt-route { border: 1px solid #22313f; border-left-color: rgba(255, 255, 255, .07); border-right: 0; background: linear-gradient(180deg, rgba(17, 27, 38, .98), rgba(7, 12, 18, .98)); }
+#isx-root .rt-host .rt.ph .rt-nx { margin: 0; border-radius: 0 999px 999px 0; border: 0; padding: 0 12px 0 14px;
+  background: radial-gradient(120% 150% at 50% 118%, rgba(255, 210, 122, .4) 0%, rgba(255, 210, 122, .11) 52%, transparent 78%), linear-gradient(180deg, rgb(24, 30, 36), rgb(11, 15, 20)); }
+#isx-root .rt-host .rt.ph .rt-nx.hold, #isx-root .rt-host .rt.ph .rt-nx.off { background: linear-gradient(180deg, rgba(17, 27, 38, .98), rgba(7, 12, 18, .98)); box-shadow: inset 0 0 0 1px #22313f; }
+#isx-root .rt-host .rt.ph .rt-nx.br { background: radial-gradient(120% 150% at 50% 118%, rgba(255, 138, 92, .42) 0%, rgba(255, 138, 92, .11) 52%, transparent 78%), linear-gradient(180deg, rgb(26, 24, 26), rgb(12, 13, 17)); }
+#isx-root .rt-host .rt.ph .rt-ctl { border-radius: 999px; border: 1px solid #22313f; background: linear-gradient(180deg, rgba(17, 27, 38, .98), rgba(7, 12, 18, .98)); padding: 0; gap: 0; align-items: stretch; }
+/* on a phone every control in that row keeps the row's full height (44 px to touch) */
+#isx-root .rt-host .rt.ph .rt-sw { align-items: stretch; gap: 0; }
+#isx-root .rt-host .rt.ph .rt-swb, #isx-root .rt-host .rt.ph .rt-tg { height: auto; }
+#isx-root .rt-host .rt.ph .rt-line { padding-left: 16px; }
+@media (prefers-reduced-motion: reduce) { #isx-root .rt-host .rt .rt-here { transition: none; } #isx-root .rt-host .rt .rt-flow { display: none; } }
+
 /* ---------- 6. the names and the line about clicking an actor or a line ---------- */
 #isx-root .s2 .ifx-click { display: flex; align-items: flex-start; gap: 8px; margin: 10px 4px 2px; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink2); }
 #isx-root .s2 .ifx-click svg { flex: none; margin-top: 2px; color: #ffd27a; }

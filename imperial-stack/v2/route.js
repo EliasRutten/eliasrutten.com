@@ -3,7 +3,9 @@
    Left to right: Back · Next · what you follow · the route · the tab's own controls · the dock. One connected,
    rounded bar in the grammar of the top strip (v2/strip.js): segments parted by hairlines, never by gaps.
    The route: acts or chapters as segments in their own colour, steps as marks, decisions as diamonds, and one lit
-   marker that slides under the step in hand (it cuts under reduced motion and on first paint).
+   bubble that slides to the step in hand, as the top strip's slides to the open tab (it cuts under reduced motion and
+   on first paint). When the step moves forward, three small lit marks run from the old step to the new one, the way
+   money travels along the route; they move only then, and never backwards (interface fixes, 14 Nov 2026).
    Back and Next are the same two elements for as long as a bar lives, so they never move and never lose focus.
    The dock (thesis, support, share, full screen) is the page's own element, moved into the bar and back out again;
    it is never rebuilt, so its ids, links and the share popover keep working.
@@ -64,11 +66,11 @@
     bar.innerHTML = '<button type="button" class="rt-bk" data-rt="back">' + AL + '</button>'
       + '<button type="button" class="rt-nx" data-rt="next"><span><small></small><b></b></span>' + AR + '</button>'
       + '<button type="button" class="rt-line" hidden><small></small><b></b></button>'
-      + '<div class="rt-route"><div class="rt-segs"></div><i class="rt-here" aria-hidden="true"></i></div>'
+      + '<div class="rt-route"><i class="rt-here" aria-hidden="true"></i><div class="rt-segs"></div><i class="rt-flow" aria-hidden="true"></i></div>'
       + '<div class="rt-ctl" hidden></div>';
     host.appendChild(bar);
     R.bk = bar.querySelector('.rt-bk'); R.nx = bar.querySelector('.rt-nx'); R.line = bar.querySelector('.rt-line');
-    R.route = bar.querySelector('.rt-route'); R.segs = bar.querySelector('.rt-segs'); R.here = bar.querySelector('.rt-here'); R.ctlEl = bar.querySelector('.rt-ctl');
+    R.route = bar.querySelector('.rt-route'); R.segs = bar.querySelector('.rt-segs'); R.here = bar.querySelector('.rt-here'); R.flow = bar.querySelector('.rt-flow'); R.ctlEl = bar.querySelector('.rt-ctl');
     bar.addEventListener('click', function (e) {
       var t = e.target.closest('[data-rt]'); if (!t || !bar.contains(t) || !R.model) return;
       var k = t.dataset.rt, id = R.model.id;
@@ -123,18 +125,45 @@
     if (!ph && M.dock !== false) adopt(bar); else release();
     place(R, R.first || R.mode !== mode); R.first = false; R.mode = mode;
   }
-  /* the lit marker: under the mark in hand */
+  /* the lit bubble: round the mark in hand. A step by name gets a bubble its own size; a small mark a capsule round it. */
+  var MO = 'cubic-bezier(.2, .8, .2, 1)', MOT = 400;   /* the one motion curve and time (interface.css: --mo, --mo-t) */
   function place(R, cut) {
     if (!R) { live.forEach(function (x) { if (x.host.isConnected && x.model) place(x, cut); }); return; }
     var here = R.here, m = R.segs.querySelector('.c');
-    if (!m || !m.getClientRects().length) { here.style.opacity = '0'; return; }
-    var rr = R.route.getBoundingClientRect(), mr = m.getBoundingClientRect(), wide = m.classList.contains('rt-st');
-    var x = mr.left - rr.left + (wide ? 6 : -2), w = mr.width + (wide ? -12 : 4);
+    if (!m || !m.getClientRects().length) { here.style.opacity = '0'; R.at = null; return; }
+    var rr = R.route.getBoundingClientRect(), mr = m.getBoundingClientRect(), wide = m.classList.contains('rt-st'), cs = getComputedStyle(m);
+    var w = wide ? mr.width - 2 : Math.max(20, mr.width + 10), h = wide ? mr.height - 3 : 14;
+    var x = wide ? mr.left - rr.left + 1 : mr.left - rr.left + mr.width / 2 - w / 2, y = wide ? mr.top - rr.top : mr.top - rr.top + 2.5 - h / 2;
+    var hue = (m.classList.contains('rt-f') ? cs.getPropertyValue('--fk') : m.classList.contains('rt-l') ? '#ff8a5c' : m.classList.contains('rt-x') ? '#ff5a4e' : cs.getPropertyValue('--sc')).trim() || '#ffd27a';
+    var to = { x: x + w / 2, y: wide ? y + h - 1 : y + h / 2, t: m.getAttribute('data-rt-t'), key: R.model.id + '|' + (m.getAttribute('data-rt-t') || 'n' + [].indexOf.call(R.segs.querySelectorAll('.rt-st, .rt-m, .rt-f, .rt-l, .rt-x'), m)) }, from = R.at;
     if (cut || still()) here.classList.add('cut');
+    here.style.setProperty('--hc', hue);
     here.style.opacity = '1';
-    here.style.width = Math.max(6, w).toFixed(1) + 'px';
-    here.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
+    here.style.width = w.toFixed(1) + 'px'; here.style.height = h.toFixed(1) + 'px';
+    here.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
     if (cut || still()) { void here.offsetWidth; if (!still()) here.classList.remove('cut'); }
+    else if (from && from.key !== to.key) {
+      /* where the step left behind stands now: the chapter in hand is given more room, so the marks shift when the chapter changes */
+      var fx = from.x, om = from.t != null ? [].filter.call(R.segs.querySelectorAll('.rt-st, .rt-m, .rt-f, .rt-l, .rt-x'), function (e) { return e.getAttribute('data-rt-t') === from.t; })[0] : null;
+      if (om && om.getClientRects().length) { var or = om.getBoundingClientRect(); fx = or.left - rr.left + or.width / 2; }
+      if (to.x - fx > 3) flow(R, { x: fx }, to, hue);
+    }
+    R.at = to;
+  }
+  /* the flow marks: three small lit dashes from the step left behind to the step in hand, each a little after the last,
+     on the same curve as the bubble. They are made when the step moves forward and removed when they arrive: nothing loops. */
+  function flow(R, a, b, hue) {
+    if (!R.flow || !R.flow.animate || document.hidden) return;
+    for (var k = 0; k < 3; k++) {
+      var d = document.createElement('i'); d.style.setProperty('--hc', hue); d.style.top = (b.y - 1).toFixed(1) + 'px';
+      R.flow.appendChild(d);
+      var an = d.animate([
+        { transform: 'translateX(' + (a.x - 4).toFixed(1) + 'px)', opacity: 0 },
+        { opacity: .95, offset: .2 }, { opacity: .95, offset: .7 },
+        { transform: 'translateX(' + (b.x - 4).toFixed(1) + 'px)', opacity: 0 }
+      ], { duration: MOT, delay: 60 + k * 70, easing: MO, fill: 'both' });
+      an.onfinish = an.oncancel = (function (el) { return function () { if (el.parentNode) el.parentNode.removeChild(el); }; })(d);
+    }
   }
   /* a tab without a bar (the Arm, the capital stack) hands the host back */
   function drop(host) {
