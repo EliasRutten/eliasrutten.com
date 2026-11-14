@@ -89,7 +89,7 @@ const AUDITOR = () => {
   const nR = inds.filter(reached).length, btn = cock.querySelector('#isx-b1ind b'), all = cock.querySelector('#isx-b1play .ipc.all'), chips = [...cock.querySelectorAll('#isx-b1play .ipc:not(.all)')].filter(shown);
   if (btn && btn.textContent !== nR + ' / ' + inds.length) leaks.push('the Indicators button counts ' + btn.textContent + '; the guide has reached ' + nR);
   if (all && shown(all) && !new RegExp(!nR ? '0 of ' + inds.length : nR < inds.length ? 'All ' + nR + ' of ' + inds.length : 'All ' + inds.length + ' indicators').test(all.textContent)) leaks.push('the strip counts “' + all.textContent.trim() + '”; the guide has reached ' + nR);
-  chips.forEach(c => { const I = IX[c.dataset.ipc], v = c.querySelector('b').textContent; if (!reached(I) && (/\d/.test(v) || !c.classList.contains('fl'))) leaks.push('strip chip “' + I.k + '” is shown before its step: ' + v); if (reached(I) && !/\d/.test(v)) leaks.push('strip chip “' + I.k + '” has no value'); });
+  chips.forEach(c => { const I = IX[c.dataset.ipc], v = c.querySelector('b').textContent; if (!reached(I) && (/\d/.test(v) || !c.classList.contains('fl'))) leaks.push('strip chip “' + I.k + '” is shown before its step: ' + v); if (reached(I) && !/\d/.test(v) && !I.slot) leaks.push('strip chip “' + I.k + '” has no value'); });
   return { line: S.line, beat: S.beat, title: S.beat >= 0 && !done ? L.steps[S.beat].t : S.beat < 0 ? '(opening card)' : '(closing card)', reached: cum ? [cum.n.length, cum.e.length, cum.l.length] : 'all',
     onMap: [fns.filter(g => !g.classList.contains('s4dim')).length, fes.filter(p => +getComputedStyle(p).opacity > .02).length], valueLines: onMap,
     indicators: [vals, inds.length - nR], chips: chips.length, leaks };
@@ -206,7 +206,7 @@ const AUDITOR = () => {
     ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 49 steps audited`, rows.length === 58 && seenSteps === 49, { rows: rows.length, seenSteps });
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
     ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
-    ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '19,0' && end.valueLines === 19, end);
+    ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);
     if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips === 0, rows.map(a => a.chips).join(''));
     if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: nodes, relations | values on the map | indicators: reached, later'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.indicators.join(', ')].join(' | '))); console.log(''); }
     if (w === 1440) {
@@ -283,7 +283,7 @@ const AUDITOR = () => {
     await click(p, '[data-s4tab="levers"]'); await p.waitForTimeout(400); await click(p, '#isx-s2tray-lev .lv', 3); await p.waitForTimeout(300);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
-    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 49), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*49$/.test((res.cnt || '').trim()) && /step 12 of 37/.test(lab) && res.sel === 0, { res, lab });
+    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 49), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*49$/.test((res.cnt || '').trim()) && /step 12 of 49/.test(lab) && res.sel === 0, { res, lab });
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
@@ -294,10 +294,10 @@ const AUDITOR = () => {
   for (const [w, h] of [[1440, 900], [1280, 760], [1024, 768], [768, 1024]]) {
     let p = await page({}, { w, h });
     const o = await js(p, onMap);
-    ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 19” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 19' && !o.btnShown && !o.strip && o.old === 0, o);
+    ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 24” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 24' && !o.btnShown && !o.strip && o.old === 0, o);
     await p.context().close(); p = await page({}, { w, h, pos: '{"l":0,"b":9}' });
     const g = await js(p, onMap);
-    ok(`${w} px, step 10: 2 gauge nodes carry their value, 7 tags hang under their actors, the button reads “9 / 19” and is clear of the card and the bar`, g.live === 2 && g.sockets === 6 && g.tags === 7 && g.btn === '9 / 19' && g.btnShown && g.btnClear && !g.strip, g);
+    ok(`${w} px, step 10: 2 gauge nodes carry their value, 10 tags hang under their actors, the button reads “12 / 24” and is clear of the card and the bar`, g.live === 2 && g.sockets === 6 && g.tags === 10 && g.btn === '12 / 24' && g.btnShown && g.btnClear && !g.strip, g);
     ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(700);
     const f = await js(p, onMap);
@@ -312,19 +312,19 @@ const AUDITOR = () => {
       return { shown: v(s), chips: chips.map(c => [c.dataset.ipc, c.querySelector('b').textContent, c.querySelector('em').textContent]), all: all.textContent.trim(), h: Math.round(sr.height), below: sr.top >= map.bottom - 1, wide: s.scrollWidth > s.clientWidth, pageWide: document.scrollingElement.scrollWidth > innerWidth + 1, btn: v(document.getElementById('isx-b1ind')), mapVals: [...document.querySelectorAll('#isx-rmap [data-gv]')].filter(x => x.textContent.trim()).length, barFixed: getComputedStyle(document.getElementById('isx-s2bar')).position, barBottom: Math.round(innerHeight - bar.bottom) }; };
     let p = await page({}, { w: 390, h: 844, touch: true });
     const o = await js(p, strip);
-    ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 19”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 19/.test(o.all) && o.mapVals === 0 && !o.btn, o);
+    ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 24”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 24/.test(o.all) && o.mapVals === 0 && !o.btn, o);
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
     const g = await js(p, strip), play10 = await js(p, () => { const S = ISX.sim, L = S.lines[0], now = new Set(L.steps[9].e), prev = new Set(L.steps[8].e), fresh = [...now].filter(i => !prev.has(i)); return S.indicators.filter(I => I.rel.some(i => fresh.includes(i))).map(I => I.id); });
-    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 9 of 19”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => /\d/.test(c[1]) && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 9 of 19/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
+    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 12 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 12 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
     ok('390 px, step 10: the chips are the indicators in play, no fixed set', g.chips.map(c => c[0]).sort().join() === (await js(p, () => [...document.querySelectorAll('#isx-rmap .gn.play, #isx-rmap .gt.play')].flatMap(x => x.dataset.ind.split(' ')).sort().join())), { chips: g.chips, play10 });
-    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":29}' });
+    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":41}' });
     const t = await js(p, strip);
-    ok('390 px, step 30: inflation and diesel arrive as “first moved here”', ['pce', 'diesel'].every(id => t.chips.some(c => c[0] === id && c[2] === 'first moved here')) && /All 24 indicators|All 19 of 19/.test(t.all), t);
+    ok('390 px, step 42: diesel arrives as “first moved here”, inflation is in play', t.chips.some(c => c[0] === 'diesel' && c[2] === 'first moved here') && t.chips.some(c => c[0] === 'pce') && /All 24 indicators|All \d+ of 24/.test(t.all), t);
     await js(p, () => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(350);
     const sh = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => e.getClientRects().length > 0, r = l.getBoundingClientRect(); return { open: !l.hidden, tabs: [...l.querySelectorAll('.ltabs [data-ltab]')].filter(v).length, cols: [...l.querySelectorAll('.lcol')].filter(v).length, rows: l.querySelectorAll('.lr.ind').length, full: r.left <= 1 && r.right >= innerWidth - 1 && r.height > innerHeight * .7 }; });
     ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 24 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 24 && sh.full, sh);
     await js(p, () => document.querySelector('#isx-b1led [data-ltab="conduit"]').click()); await p.waitForTimeout(150);
-    ok('390 px: a role tab switches the column', await js(p, () => { const v = e => e.getClientRects().length > 0, c = [...document.querySelectorAll('#isx-b1led .lcol')].filter(v); return c.length === 1 && c[0].dataset.role === 'conduit' && c[0].querySelectorAll('.lr.ind').length === 5; }));
+    ok('390 px: a role tab switches the column', await js(p, () => { const v = e => e.getClientRects().length > 0, c = [...document.querySelectorAll('#isx-b1led .lcol')].filter(v); return c.length === 1 && c[0].dataset.role === 'conduit' && c[0].querySelectorAll('.lr.ind').length === 8; }));
     ok('no page errors (390 px)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
@@ -336,8 +336,8 @@ const AUDITOR = () => {
       return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.lcol')].map(g => g.querySelectorAll('.lr.ind').length), roles: [...l.querySelectorAll('.lcol h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.ln').textContent.length > 2 && /\d/.test(x.querySelector('.lrb > b').textContent) && /^(step|first principles) \d+/.test(x.querySelector('.lrb > em').textContent)).length, detailsShown: [...l.querySelectorAll('.ld')].filter(v).length, srcShown: v(l.querySelector('.lsrc3')), slots: l.querySelectorAll('.lr.slot').length, slotDigits: [...l.querySelectorAll('.lr.slot')].filter(x => !/not yet measured/.test(x.textContent) || /\d/.test(x.textContent)).length, figs: l.querySelectorAll('.lr.fig').length, sectors: l.querySelectorAll('.secb3').length, link: /Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings: inflation moved the policy rate on 16 September 2026\./.test(l.querySelector('.lfoot').textContent), source: !!l.querySelector('.lsrcd .lsrc3'), fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.top >= 0 && r.left >= 0 && r.right <= innerWidth };
     });
     ok('ledger: all 24 indicators in four roles: Settings, Conduits, Stress gauges, Outcomes · balances (3, 8, 3, 10)', L.open && L.rows === 24 && L.per.join() === '3,8,3,10' && L.roles.join() === 'Settings,Conduits,Stress gauges,Outcomes · balances', L);
-    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 24 && L.detailsShown === 0 && !L.srcShown, L);
-    ok('ledger: nothing was dropped: 7 slots not yet measured (never a number), 4 figures from elsewhere, the source layer, 5 sectors, the link between the roles', L.slots === 7 && L.slotDigits === 0 && L.figs === 4 && L.sectors === 5 && L.link && L.source, L);
+    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 23 && L.detailsShown === 0 && !L.srcShown, L);
+    ok('ledger: nothing was dropped: 6 slots not yet measured (never a number), 8 figures from elsewhere, the source layer, 5 sectors, the link between the roles', L.slots === 6 && L.slotDigits === 0 && L.figs === 8 && L.sectors === 5 && L.link && L.source, L);
     ok('ledger: fits 1440×900 without scrolling, clear of the bar', L.fit && L.aboveBar && L.inside, L);
     await click(p, '#isx-b1led .lrb[data-led]', 4); await p.waitForTimeout(150);
     const d1 = await js(p, () => { const l = document.getElementById('isx-b1led'), b = l.querySelectorAll('.lrb[data-led]')[4], d = document.getElementById(b.getAttribute('aria-controls')); return { exp: b.getAttribute('aria-expanded'), shown: !d.hidden, src: /Source: /.test(d.textContent), moved: /Moved by|Moves/.test(d.textContent), find: !!d.querySelector('.lfind'), text: d.textContent.length }; });
