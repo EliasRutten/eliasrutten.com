@@ -2435,7 +2435,7 @@ button.res:hover { transform: none; box-shadow: none; }
       <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map" data-tip="<b>Support this free map</b><p>It is free and has no ads. A coffee keeps it going.</p>"><span class="cup" aria-hidden="true">☕</span></a>
       <button type="button" class="dk dk-sh" id="isx-share" aria-label="Share this view" aria-expanded="false" aria-controls="isx-sharepop" data-tip="<b>Share this view</b><p>Copy a link that opens the map exactly as you see it now, or post it.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v6.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
       <div class="shpop" id="isx-sharepop" role="group" aria-label="Share this view"><div class="shk">Share this view</div><div class="shn" id="isx-sh-name"></div><button type="button" class="shi" id="isx-sh-copy" data-sx=""><span class="sl">Copy link</span><span class="sx" aria-hidden="true"></span></button><a class="shi" id="isx-sh-x" href="https://x.com/intent/tweet" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Post on X</span><span class="sx" aria-hidden="true">↗</span></a><a class="shi" id="isx-sh-li" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Share on LinkedIn<small>The text is copied, to paste into your post</small></span><span class="sx" aria-hidden="true">↗</span></a><div class="shu" id="isx-sh-url"></div><span class="dl" id="isx-sh-live" role="status" aria-live="polite"></span></div>
-      <button type="button" class="dk dk-fs" id="isx-fs" aria-label="Full screen" data-tip="<b>Full screen</b>"><span class="dl">Full screen</span><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button type="button" class="dk dk-fs" id="isx-fs"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="fs-in" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fs-out" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span class="fsl">Full screen</span></button>
     </div>
   </section>
 
@@ -4389,10 +4389,22 @@ $('fs').addEventListener('click', () => {
 });
 ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
   const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
-  ROOT.classList.toggle('fs', on); $('fs').setAttribute('aria-label', on ? 'Leave full screen' : 'Full screen'); $('fs').querySelector('span').textContent = on ? 'Exit full screen' : 'Full screen';
+  ROOT.classList.toggle('fs', on); $('fs').querySelector('.fsl').textContent = on ? 'Exit full screen' : 'Full screen';   /* the button's name is the label it shows */
   if (globe) globe.controls().enableZoom = on;
   requestAnimationFrame(fit6);
 }));
+/* interface fixes: “Full screen” is a labelled control in every tab. On a map that zooms (the Circuit's globe) it stands
+   beside the zoom buttons; in a tab without one, and while the ring covers the globe, it is the last segment of the bar
+   (the dock). It is one element, moved, never rebuilt, so its id, its handler and the focus stay. */
+function fsPlace() {
+  const b = $('fs'), z = $('zoom'), d = $('dock'); if (!b || !z || !d) return;
+  const onMap = FSOK && view === 'map' && !ringOn && !ROOT.classList.contains('no-gl'), home = onMap ? z : d;
+  if (b.parentNode !== home) { const had = document.activeElement === b; if (onMap) z.insertBefore(b, z.firstChild); else d.appendChild(b); if (had) b.focus({ preventScroll: true }); if (RT && isxBooted) RT.place(true); }
+  z.setAttribute('aria-label', onMap ? 'Full screen and zoom' : 'Zoom the globe');
+  d.setAttribute('aria-label', onMap || !FSOK ? 'Thesis, support and share' : 'Thesis, support, share and full screen');
+  ROOT.classList.toggle('fs-map', onMap);
+}
+on('view', fsPlace); on('ring', fsPlace);
 $('zoom').addEventListener('click', e => {
   const b = e.target.closest('[data-z]'); if (!b || !globe) return;
   tipsAct('zoom');
@@ -5740,7 +5752,7 @@ function ringCard() {
   $('t-p').textContent = (a + ' ' + b).trim();
   $('t-x').innerHTML = `<div class="rgacts"><button type="button" class="rggo" data-ring="sim">Follow the money in the Simulator <span aria-hidden="true">→</span></button><button type="button" class="rglnk" data-ring="again">Start again</button></div><p class="rgfine">Select a station to open its step. * Source under review.</p>`;
 }
-function ringOff() { if (!ringOn) return; ringOn = false; ROOT.classList.remove('ring-on', 'ring-ls'); ringDraw(); try { if (globe) globe.controls().autoRotateSpeed = .35; } catch (e) { /* ignore */ } emit('ring', false); }
+function ringOff() { if (!ringOn) return; ringOn = false; ROOT.classList.remove('ring-on', 'ring-ls'); fsPlace(); ringDraw(); try { if (globe) globe.controls().autoRotateSpeed = .35; } catch (e) { /* ignore */ } emit('ring', false); }
 function ringSet(on) {
   on = !!on && circMode === 'dollar' && view === 'map';
   if (!on) { if (!ringOn) return; ringOff(); buildTabs(); narr6(); renderGlobe(false); routeSync(); return; }
@@ -5748,7 +5760,7 @@ function ringSet(on) {
   stopPlay();
   if (selIso) select(null);
   if (step !== STEPS.length - 1) setStep(STEPS.length - 1);
-  ringOn = true; ROOT.classList.add('ring-on');
+  ringOn = true; ROOT.classList.add('ring-on'); fsPlace();
   buildTabs(); narr6(); ringDraw(); renderGlobe(false); routeSync(); emit('ring', true);
   try { if (globe) { const c = globe.controls(); c.autoRotateSpeed = .12; c.autoRotate = !reduce; } } catch (e) { /* ignore */ }   /* a slow spin behind the ring; the globe's loop is owned by the registry */
   if (isxBooted) track('Ring', {});
@@ -5979,7 +5991,7 @@ function setView(v) {
   else if (v === 'fin') { renderFin(); renderFinCard(); }
   else if (v === 'story') { buildStoryPicker(); buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
-  buildTabs(); narrate(); renderLegend(); after5(); routeSync();
+  fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync();
   emit('view', view); ISXP.sync();
 }
 ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
@@ -6016,7 +6028,7 @@ function hasWebGL() {
 }
 function globeReady() { const gb = ROOT.querySelector('.globebox'); if (gb) gb.classList.add('gl-ready'); }
 function globeFallback(why) {
-  const host = $('globe'); globe = null; ROOT.classList.add('no-gl');
+  const host = $('globe'); globe = null; ROOT.classList.add('no-gl'); fsPlace();
   host.innerHTML = `<div class="nogl6"><img src="/assets/img/globe-1000.webp" alt="" width="1000" height="1000" decoding="async"><p><b>${why}</b> Everything else works: the step cards and tables under the map, the Arm, the Machinery and the Scenarios.</p></div>`;
   globeReady();
 }
@@ -7137,6 +7149,7 @@ ISXP.on(() => {
   ISXP.sync(); emit('motion', reduce);
 });
 setTimeout(() => ISXP.watch(), 3000);
+fsPlace();
 isxBooted = true; routeMute = false; ISXP.sync();
 })();
 </script>

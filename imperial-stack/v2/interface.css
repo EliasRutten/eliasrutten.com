@@ -23,6 +23,36 @@
 /* (section 1, continued) the Scenarios card arrives on the one curve too */
 #isx-root .sc3 .sintro, #isx-root .sc3 .send, #isx-root .sc3 .sstep { animation-timing-function: var(--mo); }
 
+/* ---------- 2. “Full screen”, a labelled control ---------- */
+#isx-root #isx-fs .fs-out, #isx-root.fs #isx-fs .fs-in { display: none; }
+#isx-root.fs #isx-fs .fs-out { display: inline; }
+#isx-root #isx-fs .fsl { white-space: nowrap; }
+/* (a) beside the zoom buttons, on the Circuit's globe */
+#isx-root .zoom6 .dk-fs { display: inline-flex; align-items: center; gap: 7px; width: auto; height: 30px; padding: 0 11px 0 9px; border-radius: 8px; font: 600 12.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+#isx-root .zoom6 .dk-fs svg { flex: none; width: 14px; height: 14px; color: #ffd27a; }
+#isx-root .zoom6 .dk-fs:hover { color: #fff; }
+#isx-root .zoom6 .dk-fs[hidden] { display: none; }
+@media (pointer: coarse) { #isx-root .zoom6 .dk-fs { width: auto; height: 44px; padding: 0 14px 0 12px; border-radius: 12px; font-size: 13.5px; } #isx-root .zoom6 .dk-fs svg { width: 16px; height: 16px; } }
+/* (b) the last segment of the bar, in the Simulator and Scenarios (and in the Circuit while the ring covers the globe) */
+#isx-root .rt-host .rt .dock6 .dk-fs { width: auto; display: inline-flex; align-items: center; gap: 8px; padding: 0 17px 0 14px; font: 600 13px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); border-radius: 0 999px 999px 0; }
+#isx-root .rt-host .rt .dock6 .dk-fs:hover { color: #fff; }
+#isx-root .rt-host .rt .dock6 .dk-fs svg { flex: none; }
+/* where the bar is short of room the label stands under the icon: below 1440 px, and in the Circuit's bar (eleven steps by name) on the ring */
+#isx-root .rt-host .rt[data-id="circuit"] .dock6 .dk-fs { flex-direction: column; justify-content: center; gap: 5px; padding: 0 10px 0 8px; font: 9px/1 var(--mono); letter-spacing: .08em; }
+@media (max-width: 1439px) {
+  #isx-root .rt-host .rt .dock6 .dk-fs { flex-direction: column; justify-content: center; gap: 5px; padding: 0 10px 0 8px; font: 9px/1 var(--mono); letter-spacing: .08em; }
+}
+/* with the button on the map, Share is the bar's last segment */
+#isx-root .rt-host .rt .dock6 .dk-sh:has(+ .shpop:last-child) { border-radius: 0 999px 999px 0; width: 50px; padding-right: 5px; }
+/* (c) the dock on its own (the Arm, the capital stack, phones): a labelled pill */
+#isx-root :not(.rt) > .dock6 .dk-fs { width: auto; gap: 7px; padding: 0 13px 0 11px; font: 600 12.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; }
+#isx-root :not(.rt) > .dock6 .dk-fs svg { flex: none; }
+/* tabs without the shared bar (the Arm, the capital stack): the row of plain tabs stops before the dock, which is wider now
+   that “Full screen” carries its label; where the tabs do not all fit, the row scrolls sideways instead of running under it */
+@media (min-width: 761px) {
+  #isx-root.v-arm .tabs-bottom:not(.rt-host), #isx-root.v-fin:not(.fm-plumb) .tabs-bottom:not(.rt-host) { right: 292px; justify-content: safe flex-end; }
+}
+
 /* ---------- 3. the bottom bar: the top strip's material, a lit bubble, flow marks ---------- */
 /* one rounded bar of dark glass, as the strip at the top: a soft gradient, a hairline edge, a light from above */
 #isx-root .rt-host .rt { border-radius: 999px; padding: 4px; border: 1px solid #22313f; background: linear-gradient(180deg, rgba(17, 27, 38, .9), rgba(7, 12, 18, .94));

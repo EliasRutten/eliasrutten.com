@@ -17,7 +17,7 @@
       { t: '#isx-tournarr', side: 'right', h: 'The dollar loop', p: 'This card follows a dollar round the loop, one step at a time. “Go deeper” opens the full text and its sources.' },
       { t: '#isx-tabs', side: 'top', h: 'Ten steps', p: ph ? 'Back and Next in this bar take you through the ten steps, from rents to the loop closing. A swipe on the card does the same.' : 'Back and Next sit at the left end of this bar; the steps follow, act by act. ← → on your keyboard work too, and Play runs the loop for you.' },
       { t: '#isx-tp-firms', side: 'bottom', h: 'Firms', p: 'Seventeen firms have a footprint: who owns them and where they build. Open one from here.' },
-      { t: '#isx-tp-layers', also: ph ? [] : ['#isx-zoom', '#isx-legbox'], side: 'bottom', h: 'The globe', p: (coarse ? 'Swipe to turn it, tap a country for its figures.' : 'Drag to turn it, click a country for its figures.') + ' Layers sets what the colours show' + (ph ? '.' : '; zoom and the legend sit bottom right.') }
+      { t: '#isx-tp-layers', also: ph ? [] : ['#isx-zoom', '#isx-legbox'], side: 'bottom', h: 'The globe', p: (coarse ? 'Swipe to turn it, tap a country for its figures.' : 'Drag to turn it, click a country for its figures.') + ' Layers sets what the colours show' + (ph ? '.' : '; full screen, zoom and the legend sit bottom right.') }
     ];
   }
 
