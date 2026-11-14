@@ -125,6 +125,86 @@
 #isx-root .rt-host .rt.ph .rt-line { padding-left: 16px; }
 @media (prefers-reduced-motion: reduce) { #isx-root .rt-host .rt .rt-here { transition: none; } #isx-root .rt-host .rt .rt-flow { display: none; } }
 
+/* ---------- 4. the Circuit's closing ring: depth, an arc that draws round, a marker that travels ---------- */
+/* the map steps further back (.3 before): still readable as the globe, no longer competing with the figures */
+#isx-root.ring-on .globebox { opacity: .2; }
+#isx-root .ring5b { --rt: .65s; }   /* one station every .65 s: the arc draws for .45 s, the station lights as it arrives */
+#isx-root .ring5b .rg-vg { pointer-events: none; }
+#isx-root .ring5b .rg-track { fill: none; stroke: rgba(255, 255, 255, .09); stroke-width: 1; }
+/* stations: a soft halo, a box with a light from above, a lamp that comes on */
+#isx-root .ring5b .rg-st { opacity: .32; transition: opacity .35s ease; transition-delay: calc(var(--i) * var(--rt)); }
+#isx-root .ring5b .rg-st.in { opacity: 1; transition: none; }
+#isx-root .ring5b.go .rg-st { opacity: 1; }
+#isx-root .ring5b .rg-gl { opacity: 0; pointer-events: none; transition: opacity .6s ease; transition-delay: calc(var(--i) * var(--rt)); }
+#isx-root .ring5b.go .rg-gl, #isx-root .ring5b .rg-st.in .rg-gl { opacity: 1; }
+#isx-root .ring5b .rg-st.in .rg-gl { transition: none; }
+#isx-root .ring5b .rg-b { fill: url(#isx-rgbx); stroke: var(--rc); stroke-opacity: .5; stroke-width: 1; transition: stroke-opacity .3s ease; }
+#isx-root .ring5b.go .rg-b { stroke-opacity: .78; transition-delay: calc(var(--i) * var(--rt)); }
+#isx-root .ring5b .rg-st:hover .rg-b { stroke-opacity: 1; transition-delay: 0s; }
+#isx-root .ring5b .rg-hl { fill: none; stroke: rgba(255, 255, 255, .16); stroke-width: 1; stroke-linecap: round; pointer-events: none; }
+#isx-root .ring5b .rg-lp { fill: var(--rc); opacity: .35; transition: opacity .3s ease; transition-delay: calc(var(--i) * var(--rt)); }
+#isx-root .ring5b .rg-lh { fill: var(--rc); opacity: 0; transition: opacity .5s ease; transition-delay: calc(var(--i) * var(--rt)); }
+#isx-root .ring5b.go .rg-lp, #isx-root .ring5b .rg-st.in .rg-lp { opacity: 1; }
+#isx-root .ring5b.go .rg-lh, #isx-root .ring5b .rg-st.in .rg-lh { opacity: .22; }
+#isx-root .ring5b .rg-v { fill: #fff; }
+/* arcs: a dim rail; over it the lit line, which draws round to the next station on the one motion curve */
+#isx-root .ring5b .rg-arc0 { fill: none; stroke: #2c3a46; stroke-width: 1.5; }
+#isx-root .ring5b .rg-arc { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; filter: none; transition: stroke-dashoffset .45s var(--mo); transition-delay: calc(var(--i) * var(--rt) + .2s); }
+#isx-root .ring5b .rg-arcg { fill: none; stroke: #ffd27a; stroke-opacity: .14; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; transition: stroke-dashoffset .45s var(--mo); transition-delay: calc(var(--i) * var(--rt) + .2s); }
+#isx-root .ring5b.go .rg-arc, #isx-root .ring5b.go .rg-arcg { stroke-dashoffset: 0; filter: none; }
+#isx-root .ring5b .rg-ah { opacity: 0; transition: opacity .2s ease; transition-delay: calc(var(--i) * var(--rt) + .6s); }
+#isx-root .ring5b.go .rg-ah, #isx-root .ring5b .rg-ah.in { opacity: 1; }
+#isx-root .ring5b .rg-ah.in { transition: none; }
+#isx-root .ring5b .rg-in { fill: none; stroke-width: 2; opacity: .9; }
+#isx-root .ring5b .rg-in[data-dash] { stroke-dasharray: .045 .035; }
+#isx-root .ring5b .rg-c1 { text-shadow: 0 0 22px rgba(255, 210, 122, .45); }
+/* the travelling marker: one short lit dash goes round the loop, arc after arc (1.5 s each); rents and borrowing flow in as
+   the last arc returns to capex. It runs only while the host carries .fl (the loop registry sets and clears it). */
+#isx-root .ring5b .rg-fl { fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: .12 3; stroke-dashoffset: .12; opacity: 0; pointer-events: none; }
+#isx-root .ring5b .rg-flg { stroke: var(--fc, #ffd27a); stroke-width: 13; stroke-opacity: .36; }
+/* while the marker travels the lit arcs step back a little, so the marker is what the eye follows */
+#isx-root .ring5b .rg-arc, #isx-root .ring5b .rg-in { transition-property: stroke-dashoffset, opacity; }
+#isx-root .ring5b.fl .rg-arc { opacity: .62; transition: opacity .8s ease; }
+#isx-root .ring5b.fl .rg-in { opacity: .6; transition: opacity .8s ease; }
+#isx-root .ring5b.fl .rg-fl { animation: isx-rgfl 10.5s linear infinite; animation-delay: calc(var(--i) * 1.5s); }
+@keyframes isx-rgfl { 0% { stroke-dashoffset: .12; opacity: 0; } .8% { opacity: 1; } 13.2% { opacity: 1; } 14.2857% { stroke-dashoffset: -1; opacity: 0; } 100% { stroke-dashoffset: -1; opacity: 0; } }
+#isx-root .ring5b.still .rg-st, #isx-root .ring5b.still .rg-gl, #isx-root .ring5b.still .rg-b, #isx-root .ring5b.still .rg-lp, #isx-root .ring5b.still .rg-lh, #isx-root .ring5b.still .rg-arc, #isx-root .ring5b.still .rg-arcg, #isx-root .ring5b.still .rg-ah { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  #isx-root .ring5b .rg-st, #isx-root .ring5b .rg-gl, #isx-root .ring5b .rg-b, #isx-root .ring5b .rg-lp, #isx-root .ring5b .rg-lh, #isx-root .ring5b .rg-arc, #isx-root .ring5b .rg-arcg, #isx-root .ring5b .rg-ah { transition: none; }
+  #isx-root .ring5b .rg-fl { animation: none !important; }
+}
+/* the ring as a list: the same material as the boxes on the ring */
+#isx-root .ringl li button { background: linear-gradient(180deg, #121d28, #0a121a 55%, #070c12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); }
+
+/* ---------- 5. three doors at the end of the ring ---------- */
+#isx-root .tournarr .rgk { margin: 14px 0 7px; font: 9.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: #8fa3b6; }
+#isx-root .tournarr .rgdw { container-type: inline-size; }
+#isx-root .tournarr .rgdoors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+#isx-root .tournarr .rgdoor { position: relative; display: grid; grid-template-rows: auto 1fr auto; align-content: start; gap: 6px; min-height: 132px; padding: 13px 11px 9px; border-radius: 16px 16px 8px 8px; text-decoration: none; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--dc) 34%, #22313f);
+  background: radial-gradient(130% 62% at 50% -6%, color-mix(in srgb, var(--dc) 22%, transparent) 0%, color-mix(in srgb, var(--dc) 6%, transparent) 55%, transparent 80%), linear-gradient(180deg, #101a24, #080e15);
+  box-shadow: inset 0 2px 0 -0.5px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9); transition: border-color .25s ease, box-shadow .25s ease, background .25s ease, transform var(--mo-t) var(--mo); }
+#isx-root .tournarr .rgdoor b { font: 600 14px/1.12 var(--display); letter-spacing: .07em; text-transform: uppercase; color: var(--dc); text-wrap: balance; }
+#isx-root .tournarr .rgdoor span { font: 12px/1.38 var(--sans); color: #b4c2ce; text-wrap: pretty; }
+#isx-root .tournarr .rgdoor i { justify-self: end; font: 14px/1 var(--sans); font-style: normal; color: var(--dc); opacity: .8; transition: transform var(--mo-t) var(--mo), opacity .2s; }
+#isx-root .tournarr .rgdoor:hover, #isx-root .tournarr .rgdoor:focus-visible { border-color: color-mix(in srgb, var(--dc) 70%, #22313f); box-shadow: inset 0 2px 0 -0.5px var(--dc), 0 0 26px -10px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9); }
+#isx-root .tournarr .rgdoor:hover span, #isx-root .tournarr .rgdoor:focus-visible span { color: #e4ebf1; }
+#isx-root .tournarr .rgdoor:hover i, #isx-root .tournarr .rgdoor:focus-visible i { transform: translateX(3px); opacity: 1; }
+#isx-root .tournarr .rgdoor:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .tournarr .rgacts { margin-top: 10px; }
+#isx-root .tournarr .rgfine { margin-top: 4px; }
+/* a narrow card (small laptops, tablets, phones): the three doors as three rows of the same size */
+@container (max-width: 345px) {
+  #isx-root .tournarr .rgdoors { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  #isx-root .tournarr .rgdoor { grid-template-rows: auto auto; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; row-gap: 3px; min-height: 0; padding: 10px 12px 10px; border-radius: 12px; box-shadow: inset 2px 0 0 -0.5px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9);
+    background: radial-gradient(60% 130% at -4% 50%, color-mix(in srgb, var(--dc) 20%, transparent) 0%, transparent 75%), linear-gradient(180deg, #101a24, #080e15); }
+  #isx-root .tournarr .rgdoor span { grid-column: 1; }
+  #isx-root .tournarr .rgdoor i { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  #isx-root .tournarr .rgdoor:hover, #isx-root .tournarr .rgdoor:focus-visible { box-shadow: inset 2px 0 0 -0.5px var(--dc), 0 0 26px -10px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9); }
+}
+@supports not (container-type: inline-size) { #isx-root .tournarr .rgdoors { grid-template-columns: minmax(0, 1fr); } #isx-root .tournarr .rgdoor { min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { #isx-root .tournarr .rgdoor, #isx-root .tournarr .rgdoor i { transition: none; } }
+
 /* ---------- 6. the names and the line about clicking an actor or a line ---------- */
 #isx-root .s2 .ifx-click { display: flex; align-items: flex-start; gap: 8px; margin: 10px 4px 2px; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink2); }
 #isx-root .s2 .ifx-click svg { flex: none; margin-top: 2px; color: #ffd27a; }
