@@ -1,0 +1,25 @@
+/* The Imperial Stack v2 · fix.css (fix round, 14 Nov 2026)
+   1. The door as a secondary control: a small tab on the element on the map, and a quiet row under the figures in its dossier.
+   2. The bond screen's second level: one wide panel with the curve and three lanes on one time axis.
+   3. The zoom as a motion (the sheet grows out of the element that opened it).
+   Everything is scoped under #isx-root and linked after content.css. */
+
+/* ---------- 1. the door tab on the map ---------- */
+#isx-root .s2 .vdoor { cursor: pointer; outline: none; transition: opacity var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .s2 .vdoor rect { fill: #0b141c; stroke: #ffd27a; stroke-opacity: .55; stroke-width: 1; transition: fill .2s, stroke-opacity .2s; }
+#isx-root .s2 .vdoor text { font: 600 7.2px var(--mono); letter-spacing: .1em; fill: #ffd27a; pointer-events: none; }
+#isx-root .s2 .vdoor:hover rect { fill: #2a2312; stroke-opacity: 1; }
+#isx-root .s2 .vdoor:focus-visible rect { stroke-opacity: 1; stroke-width: 2; }
+#isx-root .s2 .vdoor.off { opacity: 0; pointer-events: none; }
+#isx-root .s2[data-z="far"] .vdoor text { display: none; }
+#isx-root .s2[data-z="far"] .vdoor rect { width: 14px; }
+
+/* ---------- 1b. the door in a dossier: a quiet row under the figures ---------- */
+#isx-root .cb-door.sm { margin: 8px 0 4px; padding: 6px 2px 6px 0; border: 0; border-top: 1px solid rgba(255, 210, 122, .22); border-radius: 0; background: none; gap: 6px; }
+#isx-root .cb-door.sm span { font-family: var(--mono); font-weight: 500; font-size: 10px; letter-spacing: .12em; color: #ffd27a; }
+#isx-root .cb-door.sm small { font-size: 11.5px; }
+#isx-root .cb-door.sm i { font-size: 13px; }
+#isx-root .cb-door.sm:hover { background: rgba(255, 210, 122, .06); }
+#isx-root .dtile .dslope { margin-top: 7px; padding-top: 6px; border-top: 1px dashed rgba(255, 255, 255, .1); font-size: 12px; color: var(--ink2); }
+#isx-root .dtile .dslope b { font-family: var(--mono); font-weight: 500; color: #fff; }
+#isx-root .dtile .dslope em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--ink3); }
