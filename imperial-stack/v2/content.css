@@ -1,0 +1,16 @@
+/* The Imperial Stack v2 · content.css (content build, 14 Nov 2026)
+   Styles for what the content build added: the savers' market lines, notes on whose reading a step is, sources under a step,
+   the deeper views (“Inside the machinery”), the history rail on a crisis card, the Simulator's tour and the “coming soon” locks.
+   Everything is scoped under #isx-root and linked after interface.css. */
+
+/* ---------- 1. lines ---------- */
+#isx-root .s2 .fe.thick { stroke-width: 2.6; opacity: .5; }
+#isx-root .s2 .fe.thick.on { stroke-width: 3.6; opacity: 1; }
+#isx-root .s2 .fe.thin { stroke-width: 1; stroke-dasharray: 1.5 4; }
+#isx-root .s2 .fe.thin.on { stroke-width: 1.6; }
+
+/* ---------- 2. whose reading, and sources, on a card ---------- */
+#isx-root .cb-nt { margin-top: 7px; padding-left: 9px; border-left: 2px solid rgba(255, 210, 122, .45); font-size: 12px; line-height: 1.45; color: var(--ink2); }
+#isx-root .cb-who { margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: var(--ink2); }
+#isx-root .cb-who span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-right: 6px; }
+#isx-root .cb-src { margin-top: 9px; }
