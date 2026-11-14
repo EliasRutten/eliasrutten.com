@@ -2361,16 +2361,17 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/stage4.css">
 <link rel="stylesheet" href="/imperial-stack/v2/stage5.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b1.css">
+<link rel="stylesheet" href="/imperial-stack/v2/interface.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
-  <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, its financing and scenarios">
+  <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, the imperial machinery and scenarios">
     <div class="hud-top">
       <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
-        <button type="button" id="isx-v-fin" aria-pressed="false"><span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span></button>
+        <button type="button" id="isx-v-fin" aria-pressed="false"><span class="lg">The imperial machinery</span><span class="sm">Machinery</span></button>
         <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">Scenarios</span><span class="sm">Scenarios</span></button>
         <button type="button" id="isx-v-crisis" class="soon" disabled title="Coming soon: what happens when the AI bubble pops"><span class="lg">Crisis simulation</span><span class="sm">Crisis</span><em>coming soon</em></button>
       </div>
@@ -3955,7 +3956,7 @@ const STEP6 = {
       ['Debt replaces cash flow', 'Amazon, Alphabet, Meta and Oracle sold about $194bn of bonds in 2026 to 7 July, 79% more than in all of 2025. Meta sold $37.5bn of new stock and convertible preferred in October after negative free cash flow.'],
       ['Off the balance sheet', '{{spv|Special-purpose vehicles}} financed by {{privcredit|private credit}}, insurers and pension funds build or buy the data centres and chips; the platforms lease them: Meta’s Hyperion, Google’s TPU vehicle for Anthropic.'],
       ['Where it lands', 'A handful of campuses, most planned to draw a {{gw|gigawatt}} or more, turn the money into orders for the next round of chips: back to step 02.'],
-      ['Why it matters for the dollar', 'As long as the loop turns, demand for US assets props up the dollar and the stack grows. If valuations fall, every step runs in reverse. The Scott Bessent Simulator tab shows who pays.'],
+      ['Why it matters for the dollar', 'As long as the loop turns, demand for US assets props up the dollar and the stack grows. If valuations fall, every step runs in reverse. The Scott Bessent Simulator, in the tab “The imperial machinery”, shows who pays.'],
       ['Where it leads', 'Three outcomes. A K-shaped economy at home, where asset owners pull away from wage earners. Debt rising worldwide, as surpluses are recycled into borrowing elsewhere: the Klein and Pettis dynamic. And a magnifier for the next crisis, which will reshape the dollar system and global capitalism again, as every crisis since 1944 has.'],
     ], essay: ['grandma'], defs: ['spv', 'privcredit', 'gw'] },
 };
@@ -4541,7 +4542,7 @@ const bn0 = x => '≈$' + Math.round(x) + 'bn';
 const bn1 = x => '$' + x.toFixed(1) + 'bn';
 
 
-FINM[0][2] = 'The plumbing'; FINM[1][2] = 'The capital stack';
+FINM[0][2] = 'Scott Bessent Simulator'; FINM[1][2] = 'The capital stack';
 LEVERS[1].fx[0][1] = 'Operations in 10- to 30-year bonds doubled to at least $4bn on 19 August; up to $6bn per operation was announced on 9 September, three times the standard $2bn';
 LEVERS[1].fx.push(['+', 'On 4 November the Treasury said it expects to buy back up to $70bn across the curve for liquidity support']);
 LEVERS[1].src += ' Reuters (4 Nov 2026).';
@@ -4926,7 +4927,7 @@ function wireIssue(host) {
   apply();
 }
 /* ================= v.1.4: the cockpit: HUD, map, plays, lever bar, dossier ================= */
-let fsel = null, fplay = null, fpstep = 0, flev = new Set(), fhover = null, fdeal = 0, ftower = null, fRAF = null, fnodes = new Set();
+let fsel = null, fedge = null, fplay = null, fpstep = 0, flev = new Set(), fhover = null, fdeal = 0, ftower = null, fRAF = null, fnodes = new Set();
 
 /* HUD tiles, grouped by zone. Existing gauges come from livedata.json; the rest carry their own date and source. */
 const GX = {
@@ -5177,15 +5178,15 @@ function playBarHTML() {
 function renderFin() {
   const host = $('fin'); if (!host) return;
   if (RT) RT.release();   /* B1: the dock leaves the bar before the stage is rebuilt */
-  const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">Scott Bessent Simulator · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
+  const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">The imperial machinery · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
   ROOT.classList.toggle('fm-plumb', finMode === 'plumb');
   const more = $('finmore'); if (more) more.innerHTML = '';
   if (finMode === 'plumb') {
     /* v2 stage 2: one full-bleed stage (the relations map), with the readings, the card, the trays and the bar floating on it.
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
-    host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The simulator: the plumbing">`
+    host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>The plumbing</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">The imperial machinery · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>Scott Bessent Simulator</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
       + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
@@ -5217,10 +5218,14 @@ function renderFin() {
 }
 
 /* ---------- selection state ---------- */
-function clearSel() { fsel = null; fplay = null; fpstep = 0; flev.clear(); }
+function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); }
 function pickNode(n) { if (!simGot()(n)) return; /* stage 5: not before the guide gets there */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
+/* interface fixes: a line opens too. The tips and the opening card say “click any actor or line for what it does and its
+   sources”; until now a line only showed a hover note. Its card names the two actors, what passes between them and, where a
+   gauge sits on the line, that gauge with its date and source. In the guide a line opens once the guide has reached it. */
+function pickEdge(i) { if (simOn() && SIM.R && !SIM.R.e.has(i)) return; const same = fedge === i && !fsel && fplay == null && !flev.size; clearSel(); fedge = same ? null : i; styleRmap(); renderSide(); const dx = $('dx'); if (dx && fedge != null) dx.focus({ preventScroll: true }); /* a line cannot hold the focus itself: Esc then closes its card */ }
 function wireCockpit(host) {
-  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
+  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; fedge = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
   host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
   const clr = $('pclr'); if (clr) clr.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); });
 }
@@ -5257,6 +5262,8 @@ function drawRmap() {
   });
   /* a tag opens the actor it hangs under */
   svg.querySelectorAll('.gt').forEach(g => { const n = g.dataset.n; g.addEventListener('click', () => pickNode(n)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickNode(n); } }); });
+  /* a line opens its own card (the wide, invisible stroke over each line takes the click) */
+  svg.querySelectorAll('.feh').forEach(p => p.addEventListener('click', () => pickEdge(+p.dataset.e)));
   /* v2 stage 5, the flicker. Hovering an actor used to restyle the whole map (mouseenter, mouseleave). In the guide the
      camera moves at every step, so the map slides under a pointer that is resting on it: actors passed under the pointer,
      the map lit up around each of them and went dark again. Now hovering lights an actor's relations only in the full
@@ -5273,6 +5280,7 @@ function activeEdges(all) {
   if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : PLAYS[fplay].steps[fpstep][2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
+  if (fedge != null) return new Set([fedge]);
   if (!all) { const se = simActive(); if (se) return se; } /* v.1.12: in story mode the step in hand is lit */
   return null;
 }
@@ -5285,7 +5293,7 @@ function styleRmap() {
   svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-  const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
+  const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel || fedge != null;
   if (cnt) cnt.innerHTML = flev.size ? `<b>${flev.size}</b> of ${LEVERS.length} levers pulled · ` + (act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : '') : act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : `${FE.length} relations · ${Object.keys(FN).length} actors`;
   if (cl) cl.hidden = !any;
   simStyle(act); finParticles(act);
@@ -5335,6 +5343,17 @@ function renderSide(lev) {
     const ist = indStates(null), gz = isG(fsel), tl = IND.filter(I => I.n === fsel && ist[I.id].reached).map(I => `<div class="dtile" style="--rc:${ROLE[I.role][3]}"><span class="dr">${fe(ROLE[I.role][0])}${indWhen(I) ? ' · first moved · ' + fe(indWhen(I)) : ''}</span><b>${fe(I.g.k || I.k)}: ${fe(indVal(I))}</b>${I.g.delta ? ` <em>${fe(I.g.delta)}</em>` : ''}<p>${fe(TMEAN[I.k] || '')} ${fe(I.g.note || '')}</p><div class="lsrc">${fe(I.g.src || 'link not stored')}</div></div>`).join('');
     s.hidden = false; s.style.setProperty('--dc', N[5]);
     s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>${gz ? 'Moves' : 'Gives'}</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>${gz ? 'Moved by' : 'Gets'}</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
+    s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
+    placeDossier(); done(); return;
+  }
+  if (fedge != null) {
+    const e = FE[fedge], T = FT[e[2]], ist = indStates(null), ends = [e[0], e[1]];
+    /* the gauges that sit on this line: a price or rate node at either end, once the guide has reached it */
+    const tl = IND.filter(I => !I.tag && ends.includes(I.n) && ist[I.id].reached).map(I => `<div class="dtile" style="--rc:${ROLE[I.role][3]}"><span class="dr">${fe(ROLE[I.role][0])}${indWhen(I) ? ' · first moved · ' + fe(indWhen(I)) : ''}</span><b>${fe(I.g.k || I.k)}: ${fe(indVal(I))}</b>${I.g.delta ? ` <em>${fe(I.g.delta)}</em>` : ''}<p>${fe(TMEAN[I.k] || '')} ${fe(I.g.note || '')}</p><div class="lsrc">${fe(I.g.src || 'link not stored')}</div></div>`).join('');
+    s.hidden = false; s.style.setProperty('--dc', T[0]);
+    s.innerHTML = `${X}<div class="pk" style="color:${T[0]}"><i class="rl-sw" style="background:${T[0]}"></i> Relation · ${fe(T[1])}</div><h4>${fe(FN[e[0]][3])} → ${fe(FN[e[1]][3])}</h4><p>${fe(e[3])}</p>${tl}`
+      + `<h5>Between</h5><ul class="nrel">${ends.map((k, j) => `<li><i style="background:${FN[k][5]}"></i><span><button type="button" class="go" data-go="${k}">${fe(FN[k][3])}</button> ${j ? 'receives' : 'gives'}</span></li>`).join('')}</ul>`
+      + (tl ? '' : `<div class="lsrc">Source for this line: link not stored. The two actors’ cards carry their dated figures.</div>`);
     s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
     placeDossier(); done(); return;
   }
@@ -5424,7 +5443,7 @@ function drawDeal() {
 function wrap(s, n, max) { const w = String(s).split(' '), out = []; let l = ''; w.forEach(x => { if ((l + ' ' + x).trim().length > n) { out.push(l.trim()); l = x; } else l += ' ' + x; }); if (l.trim()) out.push(l.trim()); return out.slice(0, max || 2); }
 
 function finNarr() {
-  if (finMode === 'plumb') return { h: 'The plumbing', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
+  if (finMode === 'plumb') return { h: 'Scott Bessent Simulator', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
     x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Two more channels fund the build-out itself, new shares and new bonds, and are listed with their sources under the map. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
     scale: 'The map is schematic: lines show relations, not amounts. The indicators on the map carry the measured values, with dates and sources.' };
   return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
@@ -5456,7 +5475,7 @@ function gaugeSVG(g) {
   return '';
 }
 
-const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', 'The plumbing', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
+const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', '<span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span>', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
 
 /* ================= v.1.5–1.7: the entry screen =================
    Headline, subtitle, one card (lede, three beats, how to read the map), Enter buttons top right and below; an overlay inside #isx-root, shown on every fresh load, skipped for deep links,
@@ -5484,7 +5503,7 @@ const INTRO_HTML = `
         <h3>How to read the map</h3>
         <div class="in-ways">
           <p><b>Follow the loop.</b> Press <em>Play</em> or use the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
-          <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the Scott Bessent Simulator and 14 Scenarios. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
+          <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the imperial Machinery (with the Scott Bessent Simulator) and 14 Scenarios. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
         </div>
       </div>
     </div>
@@ -5998,7 +6017,7 @@ function hasWebGL() {
 function globeReady() { const gb = ROOT.querySelector('.globebox'); if (gb) gb.classList.add('gl-ready'); }
 function globeFallback(why) {
   const host = $('globe'); globe = null; ROOT.classList.add('no-gl');
-  host.innerHTML = `<div class="nogl6"><img src="/assets/img/globe-1000.webp" alt="" width="1000" height="1000" decoding="async"><p><b>${why}</b> Everything else works: the step cards and tables under the map, the Arm, the Simulator and the Scenarios.</p></div>`;
+  host.innerHTML = `<div class="nogl6"><img src="/assets/img/globe-1000.webp" alt="" width="1000" height="1000" decoding="async"><p><b>${why}</b> Everything else works: the step cards and tables under the map, the Arm, the Machinery and the Scenarios.</p></div>`;
   globeReady();
 }
 function bootGlobe() {
@@ -6118,15 +6137,17 @@ function tipsAct(k) {
 })();
 
 /* ---------- the simulator tips: one card above the cockpit ---------- */
+/* interface fixes: one line, the same in the first tip and on the guide's opening card */
+function sClickLine() { return (COARSE ? 'Tap' : 'Click') + ' any actor or line for what it does and its sources.'; }
 function simTipsHTML(force) {
   if (!force && tipsOff('sim')) return '';
   const T = [
+    ['Open anything', sClickLine()],
     ['Follow the guide', 'Press “Start the guide” on the opening card, or Guide in the bar at the bottom. Each step lights its part of the map; Next or ← → moves on.'],
     ['Plays and levers', 'Also in the bar: plays run Washington’s moves one by one; levers are its tools, each with who pulls it. Pull one or several to see what they move.'],
     ['Read the indicators', 'Prices and rates sit on the wires as gauges; settings and outcomes hang under the actor they belong to. Every figure is dated. ' + (COARSE ? 'Tap' : 'Hover over') + ' one for what moves it and what it moves; “Indicators” lists all nineteen by role.'],
-    ['Open anything', (COARSE ? 'Tap' : 'Click') + ' an actor or a line for a dossier with figures and sources. The capital stack, in the switch at the top, follows the money deal by deal.'],
   ];
-  return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
+  return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced. The capital stack, in the switch at the top, follows the money deal by deal.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
 }
 function wireSimTips() {
   const el = $('stips'); if (!el || el.dataset.w) return; el.dataset.w = '1';
@@ -6225,10 +6246,10 @@ const SHARE_BASE = (() => { const c = document.querySelector('link[rel="canonica
 const SH_TXT = {
   circuit: 'The Imperial Stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe. An interactive by Elias Rutten.',
   arm: 'The Imperial Stack, the arm: how the US state and its tech firms are tied together, and how much of their revenue comes from abroad. An interactive by Elias Rutten.',
-  simulator: 'The Imperial Stack, the Scott Bessent simulator: how Washington keeps money cheap for the AI build-out, one lever at a time. An interactive by Elias Rutten.',
+  simulator: 'The Imperial Stack, the imperial machinery: in the Scott Bessent Simulator, how Washington keeps money cheap for the AI build-out, one lever at a time. An interactive by Elias Rutten.',
   scenarios: 'The Imperial Stack, scenarios: fourteen cases of how US tech and the dollar give Washington leverage. An interactive by Elias Rutten.',
 };
-const SH_NAME = { circuit: 'The circuit', arm: 'The imperial arm', revenue: 'The imperial arm · revenue map', simulator: 'Scott Bessent Simulator', 'capital-stack': 'Simulator · capital stack', scenarios: 'Scenarios' };
+const SH_NAME = { circuit: 'The circuit', arm: 'The imperial arm', revenue: 'The imperial arm · revenue map', simulator: 'The imperial machinery · Scott Bessent Simulator', 'capital-stack': 'The imperial machinery · capital stack', scenarios: 'Scenarios' };
 function shareData() {
   const slug = slugNow(), k = slug === 'revenue' ? 'arm' : slug === 'capital-stack' ? 'simulator' : slug;
   let more = ''; try { more = window.ISX && ISX.viewName ? ISX.viewName() || '' : ''; } catch (e) { /* ignore */ }
@@ -6676,7 +6697,7 @@ function simCam(anim) {
 /* v2 stage 2: the guide speaks through one floating card (a reveal of one or two sentences, the rest behind “The mechanism”),
    a chapter bar along the bottom and trays for the levers, the plays and the readings. Full view is the same stage with
    everything lit and the trays pinned open. Internally the guide is still mode 'story' (the stored setting keeps working). */
-const simBarHTML = () => `<div class="smode" role="group" aria-label="How to view the simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Guide</button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div>`;
+const simBarHTML = () => `<div class="smode" role="group" aria-label="How to view the Scott Bessent Simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Guide</button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div>`;
 const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label="Guide"><button type="button" class="s2fold" id="isx-s2fold" aria-label="Fold the card" aria-expanded="true">–</button><div class="s2in" id="isx-sn-in">
   <div class="sn-det" id="isx-sn-det"></div>
   <div class="s2body" id="isx-sn-body" aria-live="polite"></div>
@@ -6701,7 +6722,7 @@ const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Plays', '
 const SCHC = ['#ffd27a', '#ff5d8f', '#ffb547', '#3ee6b8', '#9aa4ff', '#b7f36b', '#ff5a4e'];
 function simTabsHTML() {
   const cur = SIM.mode === 'story' ? 'guide' : SIM.ftab;
-  return `<div class="rt-sw" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div><button type="button" class="rt-more" data-s4more aria-expanded="false" aria-controls="isx-b1more" aria-label="More: indicators, share and support"><span aria-hidden="true">⋯</span></button>`;
+  return `<div class="rt-sw" role="group" aria-label="How to explore the Scott Bessent Simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div><button type="button" class="rt-more" data-s4more aria-expanded="false" aria-controls="isx-b1more" aria-label="More: indicators, share and support"><span aria-hidden="true">⋯</span></button>`;
 }
 /* switch tabs: the guide is the story mode; Plays and Levers are the full map with one tray open */
 function simTab(t) {
@@ -6718,7 +6739,7 @@ function simBar() {
   const L = sLine(), b = SIM.beat, n = L.beats.length, on = SIM.mode === 'story', stage = $('cock');
   host.hidden = false;
   if (!on) {
-    RT.render(host, { id: 'sim', label: 'Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
+    RT.render(host, { id: 'sim', label: 'Scott Bessent Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
       next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : SIM.ph === 'ask' ? 'your call after step ' + (b + 1) : SIM.ph ? 'the other path after step ' + (b + 1) : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
       line: null, segs: [], controls: simTabsHTML(),
       note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
@@ -6841,7 +6862,7 @@ function simBodyHTML() {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(l1)}</p>`
-      + (L.main ? `<div class="s4start"><div class="s5two"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><button type="button" class="s5full" data-sm="full"><span><b>Explore the full map</b><small>Everything lit · run a play, pull a lever</small></span>${sArrR}</button></div><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button></div></div>`
+      + (L.main ? `<div class="s4start"><div class="s5two"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><button type="button" class="s5full" data-sm="full"><span><b>Explore the full map</b><small>Everything lit · run a play, pull a lever</small></span>${sArrR}</button></div><p class="ifx-click"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l12.5 6.2-5.6 1.9-2.1 5.9z"/><path d="M13 12l5.5 5.5"/></svg>${sClickLine()}</p><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button></div></div>`
         : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
       + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you sit in Bessent’s chair and choose before you see what happened. Either way, you can walk the other path.</p>` : '')
@@ -7037,7 +7058,7 @@ function simMount() {
     if (e.key !== 'Escape' || e.defaultPrevented) return;
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
     if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
-    else if (fsel || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
+    else if (fsel || fedge != null || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
     else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
   });
   if (RT) { RT.swipe($('snarr'), 'sim'); RT.swipe($('stage'), 'sim'); }

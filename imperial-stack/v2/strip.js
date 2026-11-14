@@ -1,7 +1,7 @@
 /* The Imperial Stack v2 · strip.js
    One control strip across the top. The four tabs become connected segments of one rounded bar; what belongs to the
    open tab sits in the same bar, after a hairline: Firms and Layers on the Circuit, Machine and Revenue map on the Arm,
-   The plumbing and The capital stack in the Simulator. A lit marker slides under the open tab (it cuts under reduced
+   Scott Bessent Simulator and The capital stack in “The imperial machinery”. A lit marker slides under the open tab (it cuts under reduced
    motion). Colour follows the page's language: gold for what is in focus and for dollars, cyan for structure,
    white for rules, purple for ownership.
    Nothing is rebuilt: the tab buttons, the pills and the Arm switch are the page's own elements, moved into the bar,
@@ -25,8 +25,8 @@
 
   /* the Simulator's two views, in the bar (the switch on the stage stays for phones and for the capital stack's own header) */
   var fin = document.createElement('div');
-  fin.className = 'st-fin'; fin.id = 'isx-st-fin'; fin.hidden = true; fin.setAttribute('role', 'group'); fin.setAttribute('aria-label', 'Simulator view');
-  fin.innerHTML = '<button type="button" data-stfin="plumb" aria-pressed="true">The plumbing</button><button type="button" data-stfin="stack" aria-pressed="false">The capital stack</button>';
+  fin.className = 'st-fin'; fin.id = 'isx-st-fin'; fin.hidden = true; fin.setAttribute('role', 'group'); fin.setAttribute('aria-label', 'The imperial machinery: view');
+  fin.innerHTML = '<button type="button" data-stfin="plumb" aria-pressed="true" aria-label="Scott Bessent Simulator"><span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span></button><button type="button" data-stfin="stack" aria-pressed="false">The capital stack</button>';
   ctx.appendChild(fin);
   fin.addEventListener('click', function (e) { var b = e.target.closest('[data-stfin]'); if (b && X.setFin) X.setFin(b.dataset.stfin); });
 

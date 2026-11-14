@@ -1,0 +1,22 @@
+/* The Imperial Stack v2 · interface.css (round “interface fixes”, 14 Nov 2026)
+   What Elias found in the first build of the guide engine, fixed:
+   1. one motion curve for every marker, bubble and step;
+   2. “Full screen” as a labelled control: beside the zoom buttons on the Circuit's globe, in the bar elsewhere;
+   3. the bottom bar in the material of the top strip, with a lit bubble that slides and flow marks when the step moves on;
+   4. the Circuit's closing ring: depth, an arc that draws round to each station, a marker that travels the loop;
+   5. three doors at the end of the ring;
+   6. the tab “The imperial machinery” and the line about clicking an actor.
+   Scoped under #isx-root and loaded after b1.css. */
+
+/* ---------- 6. the names and the line about clicking an actor or a line ---------- */
+#isx-root .s2 .ifx-click { display: flex; align-items: flex-start; gap: 8px; margin: 10px 4px 2px; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink2); }
+#isx-root .s2 .ifx-click svg { flex: none; margin-top: 2px; color: #ffd27a; }
+/* the Simulator's two views in the top strip: the interactive by its full name where there is room */
+#isx-root.strip-on .st-fin .sm { display: none; }
+@media (max-width: 1519px) { #isx-root.strip-on .st-fin .lg { display: none; } #isx-root.strip-on .st-fin .sm { display: inline; } }
+/* the same switch on the stage (phones and small laptops): the short name where the long one would wrap */
+#isx-root .fsw .sm { display: none; }
+@media (max-width: 760px) { #isx-root .fsw .lg { display: none; } #isx-root .fsw .sm { display: inline; } }
+/* a line opens its card on a click, as an actor does */
+#isx-root .feh { cursor: pointer; }
+#isx-root .dossier .pk .rl-sw { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 2px; }
