@@ -148,7 +148,7 @@
     box.dataset.v = cur; box.dataset.l = String(lvl);
     box.innerHTML = '<header class="vw-h"><div><div class="pk">Inside the machinery' + (cur === 'bond' ? ' · level ' + lvl + ' of 2' : '') + '</div><h3 id="isx-vw-t">' + e(W.t) + '</h3><p>' + e(W.s) + '</p></div>'
       + (cur === 'bond' ? '<button type="button" class="vw-zoom" data-vlvl="' + (lvl === 1 ? 2 : 1) + '">' + (lvl === 1 ? 'Zoom in: curve, volatility, currencies' : 'Zoom out: the main figures') + '</button>' : '')
-      + '<button type="button" class="vw-x1" data-vclose aria-label="Close this view">×</button></header><div class="vw-b" tabindex="-1">' + W.html() + '</div>';
+      + '<button type="button" class="vw-x1" data-vclose aria-label="Close this view">×</button></header><div class="vw-b" tabindex="0" role="group" aria-labelledby="isx-vw-t">' + W.html() + '</div>';
     if (focusRel) { var t = box.querySelector('[data-rel="' + focusRel + '"], [data-rd="' + focusRel + '"]'); if (t) { t.classList.add('hl'); setTimeout(function () { t.scrollIntoView({ block: 'nearest', behavior: X.reduce ? 'auto' : 'smooth' }); }, 60); } }
   }
   function open(id, o) {

@@ -199,3 +199,4 @@
 #isx-root .s2card .dprec .lsrc, #isx-root .s2card .s2p + .lsrc { margin-top: 2px; }
 #isx-root .s2card .dprec .dcav { margin-top: 3px; }
 #isx-root .s2card .dprec { margin-top: 8px; padding-top: 8px; padding-bottom: 8px; }
+#isx-root .vw-b:focus-visible { outline: 2px solid rgba(255, 210, 122, .6); outline-offset: -3px; }
