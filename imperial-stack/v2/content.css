@@ -14,3 +14,22 @@
 #isx-root .cb-who { margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: var(--ink2); }
 #isx-root .cb-who span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-right: 6px; }
 #isx-root .cb-src { margin-top: 9px; }
+
+/* ---------- 3. the crisis card: how it was built, and what it shows (the yen card) ---------- */
+#isx-root .cb-rail { margin: 10px 0 2px; border-top: 1px solid rgba(255, 255, 255, .08); padding-top: 8px; }
+#isx-root .cb-rail summary { cursor: pointer; list-style: none; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #ffd27a; display: flex; align-items: baseline; gap: 8px; }
+#isx-root .cb-rail summary::-webkit-details-marker { display: none; }
+#isx-root .cb-rail summary::before { content: "+"; width: 10px; color: var(--ink3); }
+#isx-root .cb-rail[open] summary::before { content: "–"; }
+#isx-root .cb-rail summary em { font-style: normal; color: var(--ink3); letter-spacing: .06em; }
+#isx-root .cb-rail summary:focus-visible { outline: 2px solid #ffd27a; outline-offset: 3px; border-radius: 4px; }
+#isx-root .cb-rail ol { list-style: none; margin: 9px 0 0; padding: 0 0 0 14px; border-left: 1px solid rgba(255, 210, 122, .32); }
+#isx-root .cb-rail li { position: relative; padding: 0 0 9px; }
+#isx-root .cb-rail li::before { content: ""; position: absolute; left: -17.5px; top: 5px; width: 6px; height: 6px; border-radius: 50%; background: #ffd27a; box-shadow: 0 0 6px rgba(255, 210, 122, .6); }
+#isx-root .cb-rail .rd { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; color: var(--ink3); text-transform: uppercase; }
+#isx-root .cb-rail b { display: block; font-size: 13px; color: #fff; font-weight: 600; margin-top: 1px; }
+#isx-root .cb-rail p { margin: 2px 0 0; font-size: 12.5px; line-height: 1.45; color: #cfd9e2; }
+#isx-root .cb-rail .lsrc { margin-top: 2px; }
+#isx-root .cb-shows { margin: 8px 0 4px; padding: 9px 11px; border-radius: 9px; background: rgba(255, 210, 122, .06); border: 1px solid rgba(255, 210, 122, .2); }
+#isx-root .cb-shows b { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #ffd27a; font-weight: 500; }
+#isx-root .cb-shows p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: #dbe4ec; }
