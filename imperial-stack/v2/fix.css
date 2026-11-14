@@ -104,3 +104,9 @@
 /* ---------- 3. the zoom as a motion: views.js animates the sheet (clip-path from the element that opened it) ---------- */
 #isx-root .vw { opacity: 1; transform: none; transition: none; }
 #isx-root .vw:not(.in) { opacity: 0; }
+
+/* ---------- 4. the map's thesis on the guide's opening card ---------- */
+#isx-root .s2thesis { margin: 10px 0 4px; padding: 8px 11px 9px; border-left: 2px solid #ffd27a; border-radius: 0 9px 9px 0; background: rgba(255, 210, 122, .05); }
+#isx-root .s2thesis span { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .13em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .s2thesis p { margin: 3px 0 0; font-size: 13px; line-height: 1.5; color: #dbe4ec; }
+#isx-root .s2thesis i { font-style: italic; }
