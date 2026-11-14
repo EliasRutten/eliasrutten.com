@@ -67,7 +67,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   /* the backstop chapter: window, swaps, yen, pledges, with a historical lead-in */
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[5].querySelector('.rt-sl').click()); await p.waitForTimeout(350);
   const bk = [];
-  for (let i = 0; i < 4; i++) { bk.push(await p.evaluate(() => ({ h: document.querySelector('#isx-sn-body h3').textContent, why: (document.querySelector('#isx-sn-body .s2why') || {}).textContent || '', s: document.querySelector('#isx-sn-body .s2p').textContent, fork: !!document.querySelector('#isx-sn-body .sn-fork') }))); if (bk[i].fork) await p.click('#isx-sn-body .sn-opt.real'); else await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
+  /* B1-4: the yen decision is its own card between “Swaps for friends” and the joint action; the walk takes what happened */
+  for (let i = 0; i < 4; i++) { bk.push(await p.evaluate(() => ({ h: document.querySelector('#isx-sn-body h3').textContent, why: (document.querySelector('#isx-sn-body .s2why') || {}).textContent || '', s: document.querySelector('#isx-sn-body .s2p').textContent, fork: /your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent) }))); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); if (await p.evaluate(() => !!document.querySelector('#isx-sn-body .dopts'))) { await p.click('#isx-sn-body [data-fk="real"]'); await p.waitForTimeout(250); } }
   ok('backstop: the Fed’s window, swaps, the yen, then the pledges', /repo window/i.test(bk[0].h) && /Swaps/i.test(bk[1].h) && /yen/i.test(bk[2].h) && /Tariffs/i.test(bk[3].h), bk.map(x => x.h));
   ok('backstop: opens with a historical lead-in, still two sentences on the card', /1970s/.test(bk[0].why) && sent(bk[0].why) + sent(bk[0].s) <= 2 && bk[1].fork, { why: bk[0].why.slice(0, 60), s: sent(bk[0].s), fork: bk[1].fork });
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);

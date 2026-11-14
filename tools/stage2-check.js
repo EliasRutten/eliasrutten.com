@@ -97,7 +97,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     await p.waitForTimeout(120);
   }
   ok('guide: all 37 steps are reachable with →, choosing on the card at each choice', n === 37, n);
-  ok('guide: every reveal is at most two sentences, with the rest behind “Go deeper”', worst <= 2 && deepOk, { worst, deepOk });
+  ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
   ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[7].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
   ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/37$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
@@ -119,9 +119,16 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 4 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(250);
-  ok('guide: a choice at the first key moment', await p.evaluate(() => document.querySelectorAll('#isx-sn-body .sn-opt').length === 2));
-  await p.click('#isx-sn-body .sn-opt.alt'); await p.waitForTimeout(300);
-  ok('guide: the other outcome is a reveal too, and leads back', await p.evaluate(() => /Other outcome/.test(document.querySelector('#isx-sn-body .s2k').textContent) && document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length <= 2 && /Back to\s*What happened/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
+  /* B1-4: a decision is its own card between two steps; the other path is a chain of reveals that ends on a crisis card */
+  ok('guide: the step before a decision says so on Next', await p.evaluate(() => /Next · your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
+  ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at Treasury/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
+  await p.click('#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(300);
+  const chain = [];
+  for (let i = 0; i < 6; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
+  ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 4 && chain.slice(0, 3).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[3].k) && /Back to\s*What happened/i.test(chain[3].nx), chain);
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
+  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^02\/37$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Keep selling long bonds/.test(b.querySelector('.dyou').textContent) && /Washington sold more bills\./.test(b.querySelector('.dyou').textContent); }));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();

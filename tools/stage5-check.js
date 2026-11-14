@@ -132,6 +132,20 @@ const AUDITOR = () => {
     ok(`flicker (${tag}): the guide is at step 1 of 37`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 37; }));
     for (let i = 2; i <= 37; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
     ok(`flicker (${tag}): stepped through all 37`, (await where(p)).beat === 36);
+    /* B1-4: each decision's other path, link by link, to its crisis card and back to what happened */
+    let links = 0;
+    for (const D of await js(p, () => ISX.sim.decisions)) {
+      await step('decision before step ' + (D.at + 1) + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:0:${D.at - 1}"]`), 2100);
+      await step('decision before step ' + (D.at + 1) + ': the other path', () => click(p, '#isx-sn-body [data-fk="alt"]'), 2100); links++;
+      for (let i = 1; i < D.chain.length; i++) { await step('chain before step ' + (D.at + 1) + ': link ' + (i + 1), key('ArrowRight'), 2100); links++; }
+      await step('chain before step ' + (D.at + 1) + ': the crisis card', key('ArrowRight'), 2100);
+      await step('chain before step ' + (D.at + 1) + ': one link back', key('ArrowLeft'), 2100);
+      await step('chain before step ' + (D.at + 1) + ': the crisis card again', key('ArrowRight'), 2100);
+      await step('chain before step ' + (D.at + 1) + ': back to what happened', key('ArrowRight'), 2100);
+      ok(`flicker (${tag}): the other path before step ${D.at + 1} ends on what happened`, await js(p, at => { const S = ISX.sim; return S.beat === at && !S.ph; }, D.at));
+    }
+    ok(`flicker (${tag}): 3 decisions, ${links} chain links walked`, links === 10, links);
+    await step('guide: jump to the last step', () => click(p, '#isx-s2bar [data-rt-t="0:36"]'), 2400);
     await step('guide: closing card', key('ArrowRight'), 2300);
     await step('guide: one step back', key('ArrowLeft'), 2100);
     await step('guide: jump to chapter 3', () => click(p, '#isx-s2bar .rt-s .rt-sl', 3), 2400);
@@ -148,7 +162,7 @@ const AUDITOR = () => {
     await step('→ Levers', () => click(p, '[data-s4tab="levers"]'), 2000);
     for (let i = 0; i < 14; i++) { await step('lever ' + (i + 1) + ' pulled', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); await step('lever ' + (i + 1) + ' released', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); }
     await step('→ back to the guide', () => click(p, '[data-s4tab="guide"]'), 2400);
-    ok(`flicker (${tag}): ${total.steps} steps (7 first principles, 37 guide, ${moves} play moves, 14 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
+    ok(`flicker (${tag}): ${total.steps} steps (7 first principles, 37 guide, 3 decisions with their 10 chain links, ${moves} play moves, 14 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
     ok(`flicker (${tag}): no page errors`, p._errs.length === 0, p._errs);
     await p.context().close();
   }
@@ -235,7 +249,7 @@ const AUDITOR = () => {
       await click(q, '#isx-b1ind'); await q.waitForTimeout(300);
       const lad = await js(q, () => { const S = ISX.sim, E = new Set(S.lines[0].steps[11].e), l = document.getElementById('isx-b1led'), later = [...l.querySelectorAll('.lr.ind.later')]; return { open: !l.hidden, later: later.length, should: S.indicators.filter(I => !I.rel.some(i => E.has(i))).length, digits: later.filter(x => x.querySelector('b').textContent !== '·' || !/Later in the guide/.test(x.textContent) || /\d/.test(x.textContent.replace(x.querySelector('.ln').textContent, ''))).length, details: later.filter(x => x.querySelector('.ld, button')).length, how: !!l.querySelector('.lsrc3'), tips: [...l.querySelectorAll('.lr.ind:not(.later) .b1tip li.later')].length, figsLater: l.querySelectorAll('.lr.later:not(.ind)').length }; });
       ok('no early reveal: the role ledger, opened at step 12, keeps unreached rows to a name and “Later in the guide”; the source layer waits', lad.open && lad.later === lad.should && lad.later > 0 && lad.digits === 0 && lad.details === 0 && !lad.how, lad);
-      /* an other outcome borrows actors from later in the guide: they are named, not valued */
+      /* an other path borrows actors and gauges from later in the guide: they are named, not valued (tools/b1-check.js walks every chain) */
       await q.keyboard.press('Escape');
       const fork = await js(q, async () => {
         const S = ISX.sim, wait = ms => new Promise(r => setTimeout(r, ms)), i = S.lines[0].steps.findIndex((s, j) => j > 11 && false);
@@ -243,9 +257,9 @@ const AUDITOR = () => {
         const T = ISX.sim; if (!T.alt) return { alt: null };
         const cum = new Set(T.lines[0].steps[T.beat].n), tmp = [...document.querySelectorAll('#isx-rmap .fn.tmp')];
         const E = new Set(T.lines[0].steps[T.beat].e), late = T.indicators.filter(I => !I.rel.some(i => E.has(i)));
-        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => g.textContent.trim() !== (g.querySelector('.fnt') || { textContent: g.textContent.trim() }).textContent.trim() && [...g.querySelectorAll('[data-gv], [data-gl], [data-gt]')].some(x => x.textContent.trim())).length, rail: late.filter(I => [...document.querySelectorAll(`#isx-rmap [data-gv="${I.id}"]`)].some(x => x.textContent.trim())).length };
+        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => g.textContent.trim() !== (g.querySelector('.fnt') || { textContent: g.textContent.trim() }).textContent.trim() && [...g.querySelectorAll('[data-gv], [data-gt]')].some(x => x.textContent.trim())).length, rail: late.filter(I => [...document.querySelectorAll(`#isx-rmap [data-gv="${I.id}"]`)].some(x => x.textContent.trim())).length };
       });
-      ok('no early reveal: in an other outcome, borrowed actors and gauges show a name only and their indicators stay hidden', !!fork.alt && fork.valued === 0 && fork.rail === 0, fork);
+      ok('no early reveal: on an other path, borrowed actors and gauges show a name only and their indicators stay hidden', !!fork.alt && fork.valued === 0 && fork.rail === 0, fork);
       ok('no page errors (reveal)', q._errs.length === 0, q._errs); await q.context().close();
     } else { ok(`no page errors (reveal, ${w} px)`, p._errs.length === 0, p._errs); await p.context().close(); }
   }

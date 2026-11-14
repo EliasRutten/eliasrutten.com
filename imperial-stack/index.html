@@ -343,6 +343,9 @@
 #isx-root .cock.st .fn.dim { opacity: .5; }
 #isx-root .fn.tmp .fnr { stroke: #ff8a5c; stroke-dasharray: 4 3; }
 #isx-root .cock.alt .fe.on { filter: drop-shadow(0 0 3px rgba(255, 138, 92, .7)); }
+/* B1-4: the arrowheads of a chain's relations (here, not in b1.css: a marker is found by its id in this document) */
+#isx-root .s2 .fe.ch { marker-end: url(#isx-fa-ch); }
+#isx-root .s2 .fe.off { marker-end: none; }
 #isx-root .sn-pill { position: absolute; left: 12px; top: 10px; z-index: 2; padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(255, 138, 92, .6); background: rgba(9, 15, 22, .92);
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #ff8a5c; pointer-events: none; }
 #isx-root .sn-pill[hidden] { display: none; }
@@ -5036,10 +5039,13 @@ const LOCK3 = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" strok
 /* ---------- what each indicator looks like now ---------- */
 function indStates(act) {
   const on = simOn() && !!SIM.R, R = SIM.R, L = sLine(), b = SIM.beat, n = L.beats.length, re = on ? R.re : SALL.e;
-  const prev = on && !SIM.alt && b >= 0 && b < n ? (b > 0 ? L.cum[b - 1].e : SNONE.e) : null, altE = on && SIM.alt ? new Set(SFORK[SIM.alt].out.e) : null, out = {};
+  const prev = on && !SIM.ph && b >= 0 && b < n ? (b > 0 ? L.cum[b - 1].e : SNONE.e) : null, chain = on && sInChain(), FL = on ? R.fl : {}, SUS = on ? R.sus : {}, out = {};
   IND.forEach(I => {
     const lit = L.main && I.at && I.at.main != null, reached = !on || (lit ? b + 1 >= I.at.main : I.rel.some(i => re.has(i)));
-    out[I.id] = { reached, play: !!act && reached && I.rel.some(i => act.has(i)), isNew: !!prev && reached && (lit ? b + 1 === I.at.main : !I.rel.some(i => prev.has(i))), bor: !reached && !!altE && I.rel.some(i => altE.has(i)), fl: '' };
+    const fl = chain && FL[I.id] ? FL[I.id] : '', sus = SUS[I.id] && !reached ? SUS[I.id] : null;
+    /* borrowed: a chain reaches it before its own step. A tag is drawn only if the chain presses on it; a gauge node also when the chain passes through it */
+    out[I.id] = { reached, play: !!act && reached && I.rel.some(i => act.has(i)), isNew: !!prev && reached && (lit ? b + 1 === I.at.main : !I.rel.some(i => prev.has(i))),
+      bor: !reached && chain && (!!fl || (!I.tag && R.tmp.has(I.n))), fl, sus: sus ? sus[0] : '', susNote: sus ? sus[1] : '' };
   });
   return out;
 }
@@ -5075,7 +5081,7 @@ function gaugeNode(k) {
   if (T) {
     h += `<line class="gdiv" x1="${x + 6}" y1="${tp + 8}" x2="${x + 6}" y2="${tp + GH - 8}"/>`
       + `<text class="gname" x="${l + 16}" y="${tp + 15}">${fe(I.s || I.k)}</text><text class="gval sm" data-gv="${I.id}" x="${l + 16}" y="${tp + 34}"></text>`
-      + `<text class="gname" x="${x + 14}" y="${tp + 15}">${fe(T.s || T.k)}</text><text class="gval sm" data-gv="${T.id}" x="${x + 14}" y="${tp + 34}"></text><text class="gnote" x="${x + 14}" y="${tp + 33}"></text>`;
+      + `<text class="gname g2" x="${x + 14}" y="${tp + 15}">${fe(T.s || T.k)}</text><text class="gval sm" data-gv="${T.id}" x="${x + 14}" y="${tp + 34}"></text><text class="gnote" x="${x - 10}" y="${tp + 27}"></text>`;
   } else if (I.role === 'stress') {
     h += `<g class="gdial">${dialSVG(l + 25, tp + 25, 14)}</g><text class="gname" x="${l + 47}" y="${tp + 12.5}">${fe(I.k)}</text><text class="gval md" data-gv="${I.id}" x="${l + 47}" y="${tp + 29.5}"></text><text class="gline gdef" data-gl="${I.id}" x="${l + 11}" y="${tp + 40.5}"></text>`;
   } else {
@@ -5083,7 +5089,8 @@ function gaugeNode(k) {
     h += `<text class="gname" x="${l + pad}" y="${tp + 13.5}">${fe(I.k)}</text><text class="gval" data-gv="${I.id}" x="${l + pad}" y="${tp + 31}"></text><text class="gtrend" data-gt="${I.id}" x="${l + pad + 58}" y="${tp + 29.5}"></text><text class="gline ${I.def ? 'gdef' : 'gsub'}" data-gl="${I.id}" x="${l + pad}" y="${tp + 40.5}"></text>`
       + (I.fill ? `<rect class="gft" x="${l + gw - 46}" y="${tp + 24}" width="36" height="4" rx="2"/><rect class="gfv" data-gf="${I.id}" data-w="36" x="${l + gw - 46}" y="${tp + 24}" width="0" height="4" rx="2"/>` : '');
   }
-  return h + `<text class="gnew" x="${l + gw - 10}" y="${tp + 13.5}" text-anchor="end">NEW</text><text class="garr" x="${l + gw - 12}" y="${tp + 31}" text-anchor="end"></text></g></g>`;
+  /* a twin has no room beside its values: “NEW” sits above the capsule and the pressure arrow after the first name */
+  return h + `<text class="gnew" x="${l + gw - 10}" y="${T ? tp - 4 : tp + 13.5}" text-anchor="end">NEW</text><text class="garr" x="${T ? l + 44 : l + gw - 12}" y="${T ? tp + 16.5 : tp + 31}" text-anchor="${T ? 'start' : 'end'}"></text></g></g>`;
 }
 /* a tag: hangs under the plate of the actor it belongs to (two share the width under the Fed) */
 function tagNode(I) {
@@ -5100,14 +5107,17 @@ function indApply(st) {
   const put = (el, t) => { if (el && el._t !== t) { cancelAnimationFrame(el._r); el.textContent = t; el._t = t; } };
   const attr = (el, k, v) => { if (el && el.getAttribute(k) !== v) el.setAttribute(k, v); };
   svg.querySelectorAll('.gn').forEach(g => {
-    const ids = g.dataset.ind.split(' '), I = INDX[ids[0]], S = st[I.id], c = g.classList, show = S.reached && !S.sus;
-    c.toggle('sock', !S.reached && !S.bor && !S.sus); c.toggle('bor', S.bor); c.toggle('play', S.play); c.toggle('new', S.isNew); c.toggle('sus', !!S.sus); c.toggle('flare', !!S.fl || ids.some(id => st[id].fl));
-    ids.forEach(id => { const J = INDX[id]; put(g.querySelector(`[data-gv="${id}"]`), S.sus && id === ids[0] ? '?' : show ? indVal(J, true) : ''); put(g.querySelector(`[data-gl="${id}"]`), show || (S.sus && J.def) ? J.def || J.sub || '' : ''); put(g.querySelector(`[data-gt="${id}"]`), show && J.tr && !S.fl ? J.tr : '');
-      const f = g.querySelector(`[data-gf="${id}"]`); if (f) attr(f, 'width', show ? Math.max(1.5, +f.dataset.w * parseFloat(J.g.v) / 100).toFixed(1) : '0'); });
-    put(g.querySelector('.gnote'), S.sus ? 'at 40-year lows' : S.bor ? 'pressure only' : '');
-    put(g.querySelector('.garr'), ids.map(id => st[id].fl).filter(Boolean)[0] || (S.sus ? S.sus : ''));
+    const ids = g.dataset.ind.split(' '), I = INDX[ids[0]], S = st[I.id], c = g.classList, show = S.reached && !S.sus, arr = ids.map(id => st[id].fl || st[id].sus).filter(Boolean)[0] || '';
+    c.toggle('sock', !S.reached && !S.bor && !S.sus); c.toggle('bor', S.bor); c.toggle('play', S.play); c.toggle('new', S.isNew); c.toggle('sus', !!S.sus); c.toggle('flare', ids.some(id => st[id].fl));
+    ids.forEach(id => { const J = INDX[id], T = st[id], sh = T.reached && !T.sus;
+      put(g.querySelector(`[data-gv="${id}"]`), T.sus ? '?' : sh ? indVal(J, true) : ''); put(g.querySelector(`[data-gl="${id}"]`), sh ? J.def || J.sub || '' : T.sus ? T.susNote : T.bor ? 'pressure only' : ''); put(g.querySelector(`[data-gt="${id}"]`), sh && J.tr && !T.fl ? J.tr : '');
+      const f = g.querySelector(`[data-gf="${id}"]`); if (f) attr(f, 'width', sh ? Math.max(1.5, +f.dataset.w * parseFloat(J.g.v) / 100).toFixed(1) : '0'); });
+    put(g.querySelector('.gnote'), S.sus ? S.susNote : S.bor ? 'pressure only' : '');
+    put(g.querySelector('.garr'), arr);
     const nd = g.querySelector('.gneedle'); if (nd) { const cx = +nd.dataset.cx, cy = +nd.dataset.cy, r = +nd.dataset.r, a = Math.PI * (1 - (I.g.p || 0) / 100); attr(nd, 'x2', (show ? cx + r * Math.cos(a) : cx).toFixed(1)); attr(nd, 'y2', (show ? cy - r * Math.sin(a) : cy).toFixed(1)); }
-    attr(g, 'aria-label', S.reached ? ids.map(id => INDX[id].k + ': ' + indVal(INDX[id]) + (INDX[id].g.delta ? ', ' + INDX[id].g.delta : '')).join('; ') + '. ' + ROLE[I.role][0] : FN[g.dataset.n][3] + ': later in the guide');
+    const prs = arr ? (arr === '▲' ? 'pressure up' : 'pressure down') : '';
+    attr(g, 'aria-label', S.reached ? ids.map(id => INDX[id].k + ': ' + indVal(INDX[id]) + (INDX[id].g.delta ? ', ' + INDX[id].g.delta : '')).join('; ') + '. ' + ROLE[I.role][0] + (prs ? '. In this chain: ' + prs : '')
+      : S.sus ? FN[g.dataset.n][3] + ': ' + S.susNote + ', the subject of your call' : S.bor ? FN[g.dataset.n][3] + ': ' + (prs || 'in this chain') + '; its value comes later in the guide' : FN[g.dataset.n][3] + ': later in the guide');
     const tip = S.reached ? ids.map(id => indTip(INDX[id])).join('') : ''; if (g.dataset.tip !== tip) { if (tip) g.dataset.tip = tip; else delete g.dataset.tip; }
   });
   svg.querySelectorAll('.gt').forEach(g => {
@@ -5115,7 +5125,8 @@ function indApply(st) {
     c.toggle('gh', !shown); c.toggle('bor', S.bor || (!S.reached && !!S.fl)); c.toggle('play', S.play); c.toggle('new', S.isNew); c.toggle('flare', !!S.fl);
     put(g.querySelector('[data-gv]'), S.reached ? indVal(I, true) : ''); put(g.querySelector('.garr'), S.fl || '');
     const f = g.querySelector('[data-gf]'); if (f) attr(f, 'width', S.reached ? Math.max(1, +f.dataset.w * parseFloat(I.g.v) / 100).toFixed(1) : '0');
-    attr(g, 'tabindex', S.reached ? '0' : '-1'); attr(g, 'aria-label', S.reached ? I.k + ': ' + indVal(I) + (I.g.delta ? ', ' + I.g.delta : '') + '. ' + ROLE[I.role][0] + ', ' + FN[I.n][3] : I.k + ': later in the guide');
+    const prs = S.fl ? (S.fl === '▲' ? 'pressure up' : 'pressure down') : '';
+    attr(g, 'tabindex', S.reached ? '0' : '-1'); attr(g, 'aria-label', S.reached ? I.k + ': ' + indVal(I) + (I.g.delta ? ', ' + I.g.delta : '') + '. ' + ROLE[I.role][0] + ', ' + FN[I.n][3] + (prs ? '. In this chain: ' + prs : '') : S.bor ? I.k + ': ' + prs + '; its value comes later in the guide' : I.k + ': later in the guide');
     const tip = S.reached ? indTip(I) : ''; if (g.dataset.tip !== tip) { if (tip) g.dataset.tip = tip; else delete g.dataset.tip; }
   });
   const got = IND.filter(I => st[I.id].reached).length, bb = $('b1ind');
@@ -5125,7 +5136,7 @@ function indApply(st) {
 /* phones: the indicators the step in hand moves, then the way to all of them. Nothing else on a phone repeats values. */
 function inplayHTML(st, got) {
   const chips = IND.filter(I => st[I.id].play || st[I.id].fl || st[I.id].sus).map(I => { const S = st[I.id], fl = S.fl || (S.sus ? S.sus : '');
-    return `<button type="button" class="ipc${fl ? ' fl' : ''}${S.isNew ? ' new' : ''}" data-sn="${I.n}" data-ipc="${I.id}" style="--rc:${ROLE[I.role][3]}"><small>${fe(I.k)}</small><b>${S.reached && !S.sus ? fe(indVal(I)) : '·'}${fl ? `<i aria-hidden="true">${fl}</i>` : ''}</b><em>${fl ? 'pressure' : S.isNew ? 'first moved here' : fe(ROLE[I.role][0].toLowerCase())}</em></button>`; }).join('');
+    return `<button type="button" class="ipc${fl ? ' fl' : ''}${S.isNew ? ' new' : ''}" data-sn="${I.n}" data-ipc="${I.id}" style="--rc:${ROLE[I.role][3]}"><small>${fe(I.k)}</small><b>${S.sus ? '?' : S.reached ? fe(indVal(I)) : '·'}${fl ? `<i aria-hidden="true">${fl}</i>` : ''}</b><em>${S.sus ? fe(S.susNote) : fl ? 'pressure' : S.isNew ? 'first moved here' : fe(ROLE[I.role][0].toLowerCase())}</em></button>`; }).join('');
   return chips + `<button type="button" class="ipc all" data-tray="read" aria-controls="isx-b1led">${!got ? 'Indicators · 0 of ' + IND.length : got < IND.length ? 'All ' + got + ' of ' + IND.length : 'All ' + IND.length + ' indicators'} <span aria-hidden="true">›</span></button>`;
 }
 /* the role ledger (replaces “The full ladder”): four columns by role, one line per indicator, then the figures the page
@@ -5229,7 +5240,7 @@ function ePath(a, b, i) {
 }
 function drawRmap() {
   const svg = $('rmap'); if (!svg) return;
-  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '</defs>';
+  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '<marker id="isx-fa-ch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="#ff8a5c"/></marker></defs>';
   h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" data-z="${Z[0]}" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/>${(k => k ? `<g class="fzk" data-sec="${k}" role="button" tabindex="0" aria-label="${fe(Z[1])}: the balance sheet of this sector (${fe(SECT[k][0].toLowerCase())}), coming soon"><rect class="fzkh" x="${x + 4}" y="${y + 5}" width="${w - 8}" height="22" rx="7"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text><g class="fzl" transform="translate(${x + w - 24},${y + 9})"><rect x="1.5" y="5.5" width="9" height="6.5" rx="1.5"/><path d="M3.5 5.5V3.8a2.5 2.5 0 0 1 5 0v1.7"/></g></g>` : `<text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>`)(Object.keys(SECT).find(k => SECT[k][1] === Z[0]))}${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
   FE.forEach(([a, b, ty, lab], i) => {
     const d = ePath(a, b, i);
@@ -5340,11 +5351,11 @@ function finParticles(act) {
   g.innerHTML = ''; fparts = [];
   const idx = act ? [...act] : FE.map((e, i) => i).filter(i => FE[i][2] !== 'sig');
   idx.forEach(i => {
-    const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh')) return;
+    const p = svg.querySelector(`.fe[data-e="${i}"]`); if (!p || p.classList.contains('gh') || p.classList.contains('off')) return;   /* nothing flows along a relation that was not used */
     const n = act ? Math.max(1, Math.round(3 * ISXP.k.sim)) : (ISXP.k.sim < .5 && i % 2 ? 0 : 1);
     if (!n) return;
     const pts = finSample(p);
-    for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); const q = { c, pts, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }; fparts.push(q); finPlace(q, reduce ? .5 : q.o % 1); }
+    for (let k = 0; k < n; k++) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', act ? 3.2 : 2); c.setAttribute('fill', p.classList.contains('ch') ? '#ff8a5c' : FT[FE[i][2]][0]); if (!act) c.setAttribute('opacity', '.5'); g.appendChild(c); const q = { c, pts, o: k / n + Math.random() * .1, sp: act ? .00045 : .00018 }; fparts.push(q); finPlace(q, reduce ? .5 : q.o % 1); }
   });
   ISXP.sync(); /* a particle is placed the moment it exists; the registry decides whether the loop runs */
 }
@@ -5687,7 +5698,12 @@ function ringDraw(keep) {
   const top = Math.max(18, (hud ? hud.getBoundingClientRect().bottom : r.top) - r.top + 12), bot = Math.min(r.height - 12, (bar && bar.getClientRects().length ? bar.getBoundingClientRect().top : r.bottom - 80) - r.top - 14);
   const rb = $('resbar'), rbr = rb && rb.getClientRects().length ? rb.getBoundingClientRect().right : 0;
   const left = Math.max(20, Math.max(cr.right, rbr) - r.left + 24), F = { x: left, y: top, w: r.width - 20 - left, h: bot - top };
-  /* a redraw (the window or the layout around the ring changed size) keeps the stations lit; only opening the ring lights them in turn */
+  /* a redraw (the window or the layout around the ring changed size) keeps the stations lit; only opening the ring lights them in turn.
+     If nothing around the ring has changed size there is nothing to redraw: the observer also reports once when it starts, and a
+     redraw then would cut the lighting short. */
+  const sig = [r.width, r.height, F.x, F.y, F.w, F.h].map(Math.round).join();
+  if (keep && host._sig === sig && host.firstChild) return;
+  host._sig = sig;
   if (!keep) host.classList.remove('go');
   const asList = window.innerWidth <= 760 || ringBW(F) < 176 || F.h < 440;   /* too little room for the ring: the same boxes as a list */
   ROOT.classList.toggle('ring-ls', asList);
@@ -6361,19 +6377,82 @@ const SFORK = {
       n: 'The selling mechanism is this map’s reading.', s: 'Reuters via StreetInsider (2 Aug 2026); Al Jazeera (3 Aug 2026)' } },
 };
 
+/* B1-4. A decision is its own card between two steps, keyed (like SFORK) by the step that what happened leads to.
+   The visitor sits in Bessent's chair and chooses before seeing what happened. The other path plays as a chain reaction:
+   each link is a relation already on the map (e), or one Washington did not use (off); fl says which way a link presses
+   on an indicator, and never changes its value. The chain ends on a crisis card with a sourced precedent.
+   SFORK stays the source of the options' text for one release (spec S1 §6.2). */
+const SJ1 = 'https://eliasrutten.substack.com/p/japans-economic-miracle-is-also-its', SJ2 = 'https://eliasrutten.substack.com/p/will-japan-cause-a-global-debt-crisis';
+const SDEC = {
+  '0-1': { when: '2023', nt: 'Funding the deficit', ord: ['alt', 'real'], sus: {},
+    q: 'Central banks are no longer buying. How do you fund the deficit?',
+    ctx: { x: 'Foreign official holders cut $164bn of Treasuries in the year to August 2026. Gross federal debt passed $40tn in October.', more: [], s: 'Official holdings: TIC major foreign holders (the Official Treasuries indicator). Gross federal debt: $40.25tn in October 2026, from the Circuit, step 08.', links: [] },
+    after: { real: 'So did Washington.', alt: 'Washington sold more bills.' },
+    chain: [
+      { t: 'Every long bond needs a buyer', e: E('OFF>TSY'), off: [], fl: { off: '▼' }, n: '',
+        x: 'With central banks stepping back, every extra long bond needs a private buyer. Official holders cut $164bn of Treasuries in the year to August 2026.' },
+      { t: 'The long end asks more', e: E('TSY>Y10'), off: [], fl: { y10: '▲' }, n: 'This map’s reading.',
+        x: 'The more long bonds the market has to absorb, the higher the yield it tends to ask.' },
+      { t: 'Credit reprices', e: E('Y10>BND', 'Y10>PCR', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' }, n: '',
+        x: 'That yield prices credit across this map: corporate bonds, the loans behind data centres, mortgages.' }],
+    crisis: { t: 'The long end takes the strain',
+      x: 'How fast the long end can move when buyers hesitate showed in April 2025: after the tariff announcement of 2 April, the 10-year yield jumped about half a point in a week, the biggest weekly rise since 2001.',
+      s: [['Bloomberg, 11 Apr 2025', '']],
+      prec: [{ k: 'September 2022 · measured', x: 'A fiscal statement sent long gilt yields up so fast that leveraged pension funds were forced to sell; when the Bank of England stepped in on 28 September, 30-year yields fell by more than a percentage point that day.',
+        s: [['Bank of England, letter to the Treasury Committee, Oct 2022', 'https://committees.parliament.uk/publications/30136/documents/174584/default'], ['Bank of England Quarterly Bulletin 2023, “Financial stability buy/sell tools: a gilt market case study”', 'https://www.bankofengland.co.uk/quarterly-bulletin/2023/2023/financial-stability-buy-sell-tools-a-gilt-market-case-study']] }],
+      who: 'The chain is this map’s reading; the 2025 and 2022 moves are measured.', links: [] } },
+  '0-4': { when: 'August 2026', nt: 'Long yields climb', ord: ['real', 'alt'], sus: {},
+    q: 'Long yields are climbing, and funds hold more long bonds on borrowed cash. What do you do?',
+    ctx: { x: 'The 30-year yield hit 5.34% on 18 August, a 19-year high.', more: [], s: 'Reuters, 20 Aug 2026 (from the 10-year yield’s note).', links: [] },
+    after: { real: 'So did Washington.', alt: 'Washington bought back long bonds.' },
+    chain: [
+      { t: 'Volatility rises', e: [], off: E('TSY>MOV'), fl: { move: '▲' }, n: '',
+        x: 'Without buybacks, more of the long end stays with funds that hold it on borrowed cash. When bond volatility spikes, those funds are forced to sell.' },
+      { t: 'Leveraged funds sell', e: E('MOV>CEN'), off: [], fl: { move: '▲' }, n: '',
+        x: 'Their selling pushes yields higher still.' },
+      { t: 'Repo pulls back', e: E('BNK>CEN', 'TSY>CEN'), off: [], fl: {}, n: 'This map’s reading.',
+        x: 'Their positions rest on repo from the dealers; when it is cut, the selling feeds on itself.' }],
+    crisis: { t: 'Volatility does the selling',
+      x: 'In March 2020 it took the Fed, as buyer of last resort, to stop it.', s: [],
+      prec: [{ k: 'March 2020 · measured', x: 'Large hedge funds’ gross Treasury exposures fell by $426bn in March 2020, most of it in funds likely trading the cash-futures basis.',
+        s: [['Banegas, Monin and Petrasek, “Sizing hedge funds’ Treasury market activities and holdings”, FEDS Notes, 6 Oct 2021', 'https://www.federalreserve.gov/econres/notes/feds-notes/sizing-hedge-funds-treasury-market-activities-and-holdings-20211006.htm']],
+        cav: 'How far the basis trade caused the stress, rather than suffered it, is debated.', cs: [['OFR working paper, “Hedge Funds and the Treasury Cash-Futures Disconnect”, 2021', 'https://www.financialresearch.gov/working-papers/2021/04/01/hedge-funds-and-the-treasury-cash-futures-disconnect/']] }],
+      who: 'The chain is this map’s reading; the March 2020 figure is measured.', links: [] } },
+  '5-2': { when: 'July 2026', nt: 'The yen slides', ord: ['alt', 'real'], sus: { yen: ['▼', 'at 40-year lows'] },
+    q: 'The yen slides to 40-year lows, and Japan is the largest foreign holder of Treasuries. What do you do?',
+    ctx: { x: 'Japan held $1.14tn of Treasuries at the end of May 2026. In April and May Tokyo spent about ¥10tn (≈$63.6bn) on its own to lift the yen from 160 to 155.', more: [],
+      s: 'Reuters via StreetInsider (2 Aug 2026); Elias Rutten, “Will Japan cause a global debt crisis? (Part 2 of 2)”, 13 May 2026.', links: [['Japan, part 1', SJ1], ['Japan, part 2', SJ2]] },
+    after: { real: 'So did Washington.', alt: 'Washington intervened.' },
+    chain: [
+      { t: 'Tokyo defends alone', e: [], off: E('TSY>YEN'), fl: { yen: '▼' }, n: 'Elias Rutten, 13 May 2026.',
+        x: 'Washington stays out, and the yen slides further. Tokyo has done this before: in April and May 2026 it spent about ¥10tn to lift the yen from 160 to 155.' },
+      { t: 'Japan sells Treasuries', e: E('YEN>OFF'), off: [], fl: { yen: '▼', off: '▼' }, n: 'This map’s reading.',
+        x: 'A central bank defends a falling currency by selling dollar assets and buying its own. Japan, the largest foreign holder, had $1.14tn of Treasuries at the end of May 2026.' },
+      { t: 'On top of the official selling', e: E('OFF>TSY'), off: [], fl: { off: '▼' }, n: '',
+        x: 'Its sales would come on top of the $164bn that official holders cut in the year to August 2026. Someone else has to buy them.' },
+      { t: 'Long yields carry it', e: E('TSY>Y10', 'Y10>BND', 'Y10>PCR', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲', bnd: '▲' }, n: '',
+        x: 'Long yields, and the cost of credit for the build-out, would carry it. The 30-year mortgage moves with the 10-year.' }],
+    crisis: { t: 'A disorderly yen',
+      x: 'Elias Rutten sets out two ways it breaks. Either the yen falls through 160 and Japanese and US yields rise together, or Tokyo defends the line, the yen jumps and the yen-funded carry trade unwinds.', s: [],
+      prec: [{ k: 'August 2024 · measured', x: 'When the yen jumped in early August 2024, yen-funded carry trades were forced to unwind. The Nikkei fell 12.4% on 5 August, its worst day since 1987.',
+        s: [['BIS Bulletin 90, “The market turbulence and carry trade unwind of August 2024”, 27 Aug 2024', 'https://www.bis.org/publ/bisbull90.htm'], ['Elias Rutten, Japan part 2 (13 May 2026), for the Nikkei figure', SJ2]] }],
+      who: 'The two ways it breaks are Elias Rutten’s reading, after Quinn Thompson. The 2024 unwind is measured.', links: [['Japan, part 2', SJ2]] } },
+};
+Object.keys(SDEC).forEach(k => { const D = SDEC[k]; D.real = SFORK[k].real; D.alt = SFORK[k].alt; });
+
 /* ---------- stories as data: beats, chapters and what each step has put on the map ---------- */
 const enodes = es => { const s = new Set(); es.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); return s; };
 const bN = B => { const s = enodes(B.e); (B.n || []).forEach(n => s.add(n)); return s; };   /* a beat's actors: those of its relations, plus any it names on its own */
 function sBeat(p, s, ch, why, ld) {
   const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s;
-  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SFORK[k] ? k : null, ld: !!ld };
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld };
 }
 /* v2 round 3: first principles. Seven reveals that come before the plumbing: the accounting, the surplus side, why the
    claims are taken in dollars, how the US accommodates them, how long this has been built, what it does to US markets,
    and the rules that widen the channel. They are a line of their own (not play steps), so the guide keeps its 37 steps.
    Every figure is one the page already carries; where a sentence states a direction of causation it says whose reading it is.
    t = title, bs = short name in the bar, r = kind (SROLE), w = date label, x = the reveal (two sentences at most),
-   d = depth (paragraphs behind “Go deeper”), e = relations lit, lev = levers introduced. */
+   d = depth (paragraphs behind “The mechanism”), e = relations lit, lev = levers introduced. */
 Object.assign(SROLE, { i: ['Identity', '#e4ebf1'], m: ['Mechanism', '#44d7ec'], h: ['History', '#ffd27a'], a: ['Amplifier', '#d78bff'] });
 const SPRE = {
   t: 'First principles: where the dollars come from', s: 'First principles', c: '#44d7ec',
@@ -6420,11 +6499,15 @@ const SNONE = { n: new Set(), e: new Set(), l: new Set() };
 const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
 
 /* ---------- state ---------- */
-const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', seen: new Set(), vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+/* B1-4: ph is where a decision stands (null: a step; 'ask': the decision card; 'chain': link c of the other path; 'crisis': its end).
+   While ph is set, beat stays on the step before the decision. pick: the visitor's latest call per decision; seenAlt: other paths walked. */
+const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
-  try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0)); } } catch (e) { /* ignore */ }
+  try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0));
+    const nb = SLINES[p.l].beats[SIM.beat + 1], dk = SIM.beat >= 0 && nb ? nb.fork : null;   /* a stored decision or chain position (old values carry no ph and load as before) */
+    if (dk && ['ask', 'chain', 'crisis'].includes(p.ph)) { SIM.ph = p.ph; SIM.c = Math.max(0, Math.min(SDEC[dk].chain.length - 1, +p.c || 0)); if (p.ph !== 'ask') SIM.seenAlt.add(dk); } } } catch (e) { /* ignore */ }
 })();
 const simOn = () => SIM.mode === 'story' && view === 'fin' && finMode === 'plumb' && !!$('snarr');
 /* stage 5: what the guide has put on the map. vis: shown (with the actors an other outcome borrows); got: reached by the guide itself. Outside the guide everything is. */
@@ -6433,19 +6516,32 @@ const simGot = () => { const on = simOn() && !!SIM.R, R = SIM.R; return n => !on
 const sLine = () => SLINES[SIM.line];
 const sCur = () => { const L = sLine(); return SIM.beat >= 0 && SIM.beat < L.beats.length ? L.beats[SIM.beat] : null; };
 const sNextFork = () => { const L = sLine(), B = L.beats[SIM.beat + 1]; return SIM.beat >= 0 && B && B.fork ? B.fork : null; };
+const sDecK = () => SIM.ph ? sNextFork() : null;   /* the decision in hand */
+const sInChain = () => !!sDecK() && SIM.ph !== 'ask';
+const sLinks = () => { const k = sDecK(); return k && SIM.ph !== 'ask' ? SDEC[k].chain.slice(0, SIM.ph === 'crisis' ? SDEC[k].chain.length : SIM.c + 1) : []; };   /* the chain so far */
+const sChE = C => [...C.e, ...C.off];
 /* what is on the map now */
 function simReveal() {
-  if (SIM.mode !== 'story') return Object.assign({ tmp: new Set(), ne: SALL.e.size, re: SALL.e }, SALL);
+  const X = { tmp: new Set(), ch: new Set(), off: new Set(), fl: {}, sus: {} };   /* ch, off: the chain's relations; fl: pressure per indicator; sus: the decision's subject */
+  if (SIM.mode !== 'story') return Object.assign(X, { ne: SALL.e.size, re: SALL.e }, SALL);
   const L = sLine(), b = SIM.beat;
-  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign({ tmp: new Set(), ne: F.e.size, re: F.e }, F); }
-  const base = b >= 0 ? L.cum[b] : SNONE, R = { n: base.n, e: new Set(base.e), l: base.l, tmp: new Set(), ne: base.e.size, re: base.e };   /* re: the relations the guide itself has reached (an other path adds to e, never to re) */
-  if (SIM.alt) { const O = SFORK[SIM.alt].out; O.e.forEach(i => R.e.add(i)); enodes(O.e).forEach(n => { if (!R.n.has(n)) R.tmp.add(n); }); }
+  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign(X, { ne: F.e.size, re: F.e }, F); }
+  const base = b >= 0 ? L.cum[b] : SNONE, R = Object.assign(X, { n: base.n, e: new Set(base.e), l: base.l, ne: base.e.size, re: base.e });   /* re: the relations the guide itself has reached (an other path adds to e, never to re) */
+  const k = sDecK();
+  if (k && SIM.ph === 'ask') { R.sus = SDEC[k].sus; Object.keys(R.sus).forEach(id => { const n = INDX[id].n; if (!R.n.has(n)) R.tmp.add(n); }); }
+  else if (k) {
+    sLinks().forEach(C => { C.e.forEach(i => { R.ch.add(i); R.e.add(i); }); C.off.forEach(i => { R.off.add(i); R.e.add(i); }); Object.assign(R.fl, C.fl); });
+    enodes([...R.ch, ...R.off]).forEach(n => { if (!R.n.has(n)) R.tmp.add(n); });
+    Object.keys(SDEC[k].sus).forEach(id => { const n = INDX[id].n; if (!R.n.has(n)) R.tmp.add(n); });
+  }
   return R;
 }
 /* the relations lit for the story (activeEdges() asks this when nothing is selected) */
 function simActive() {
   if (!simOn()) return null;
-  if (SIM.alt) return new Set(SFORK[SIM.alt].out.e);
+  const k = sDecK();
+  if (k && SIM.ph === 'crisis') return new Set(SDEC[k].chain.flatMap(sChE));   /* the crisis card shows the whole chain */
+  if (k && SIM.ph === 'chain') return new Set(sChE(SDEC[k].chain[SIM.c]));
   const B = sCur(); if (B) return new Set(B.e);
   if (SIM.beat >= sLine().beats.length && sLine().main && SREST.length) return new Set(SREST);
   return null;
@@ -6455,7 +6551,7 @@ function simActive() {
 function simStyle(act) {
   const svg = $('rmap'); if (!svg) return;
   const on = simOn() && !!SIM.R, R = SIM.R, vis = simVis(), got = simGot();
-  const B = on && !SIM.alt ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
+  const B = on && !sInChain() ? sCur() : null, P = B && SIM.beat > 0 ? sLine().beats[SIM.beat - 1] : null;
   const trail = new Set(P ? P.e.filter(i => !B.e.includes(i)) : []), hinge = P ? [...bN(P)].filter(n => bN(B).has(n)) : [];
   svg.querySelectorAll('.fn').forEach(g => {
     const n = g.dataset.n, k = got(n); g.classList.toggle('s4dim', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n));
@@ -6468,7 +6564,16 @@ function simStyle(act) {
   svg.querySelectorAll('.fe, .feh').forEach(p => {
     const i = +p.dataset.e, show = !on || R.e.has(i);
     p.classList.toggle('gh', !show); p.classList.toggle('tr', on && trail.has(i));
+    p.classList.toggle('ch', on && R.ch.has(i)); p.classList.toggle('off', on && R.off.has(i));   /* B1-4: a chain's relations, and the ones Washington did not use */
   });
+  if (on) R.off.forEach(i => {   /* a small cross at the middle of a relation that was not used; made once, shown by state */
+    if (svg.querySelector(`.fx[data-x="${i}"]`)) return;
+    const p = svg.querySelector(`.fe[data-e="${i}"]`), at = svg.querySelector('#isx-fpart'); if (!p || !at) return;
+    const m = p.getPointAtLength(p.getTotalLength() / 2), g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'fx gh'); g.setAttribute('data-x', i); g.setAttribute('aria-hidden', 'true'); g.setAttribute('transform', `translate(${m.x.toFixed(1)},${m.y.toFixed(1)})`);
+    g.innerHTML = '<circle r="7"/><path d="M-3,-3L3,3M3,-3L-3,3"/>'; at.parentNode.insertBefore(g, at);
+  });
+  svg.querySelectorAll('.fx').forEach(x => x.classList.toggle('gh', !(on && R.off.has(+x.dataset.x))));
   svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('s4dim', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
   const cock = $('cock'); if (!cock) return;
   indApply(indStates(act));
@@ -6499,7 +6604,7 @@ function simEnter(prev, R, fwd) {
 }
 function drawOn(p, delay) {
   clearTimeout(p._dt);   /* a relation drawn again before its first draw has finished is not cut short by the first one's clean-up */
-  if (p.classList.contains('rule') || p.classList.contains('sig')) { if (p.animate) p.animate([{ opacity: 0 }, {}], { duration: 700, delay, easing: 'ease', fill: 'backwards' }); return; }
+  if (p.classList.contains('rule') || p.classList.contains('sig') || p.classList.contains('ch') || p.classList.contains('off')) { if (p.animate) p.animate([{ opacity: 0 }, {}], { duration: 700, delay, easing: 'ease', fill: 'backwards' }); return; }
   const L = p.getTotalLength(), mk = p.getAttribute('marker-end');
   p.removeAttribute('marker-end'); p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
   void p.getBBox();
@@ -6546,7 +6651,9 @@ function simCamTarget() {
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
     const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
-    const set = SIM.alt ? new Set([...enodes(SFORK[SIM.alt].out.e), ...bN(B)]) : new Set([...bN(B), ...(P ? bN(P) : [])]);
+    /* B1-4: a chain frames its links so far and the decision's subject; a decision card keeps the step before it */
+    const dk = sDecK(), subj = dk ? Object.keys(SDEC[dk].sus).map(id => INDX[id].n) : [];
+    const set = dk && SIM.ph !== 'ask' ? new Set([...enodes(sLinks().flatMap(sChE)), ...subj, 'TSY']) : new Set([...bN(B), ...(P ? bN(P) : []), ...subj]);
     box = simBox(set); box[0] -= 26; box[2] += 26; box[1] -= 44; box[3] += 26; cap = 1.3;
   } else { box = [0, 0, MAPW, MAPH]; cap = 1.5; }
   const aw = Math.max(200, W - iL - iR), ah = Math.max(160, H - iT - iB), bw = box[2] - box[0], bh = box[3] - box[1];
@@ -6566,7 +6673,7 @@ function simCam(anim) {
 }
 
 /* ---------- the narrator ---------- */
-/* v2 stage 2: the guide speaks through one floating card (a reveal of one or two sentences, the rest behind “Go deeper”),
+/* v2 stage 2: the guide speaks through one floating card (a reveal of one or two sentences, the rest behind “The mechanism”),
    a chapter bar along the bottom and trays for the levers, the plays and the readings. Full view is the same stage with
    everything lit and the trays pinned open. Internally the guide is still mode 'story' (the stored setting keeps working). */
 const simBarHTML = () => `<div class="smode" role="group" aria-label="How to view the simulator"><button type="button" data-sm="story" aria-pressed="${SIM.mode === 'story'}">Guide</button><button type="button" data-sm="full" aria-pressed="${SIM.mode === 'full'}">Full view</button></div>`;
@@ -6612,45 +6719,62 @@ function simBar() {
   host.hidden = false;
   if (!on) {
     RT.render(host, { id: 'sim', label: 'Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
-      next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
+      next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : SIM.ph === 'ask' ? 'your call after step ' + (b + 1) : SIM.ph ? 'the other path after step ' + (b + 1) : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
       line: null, segs: [], controls: simTabsHTML(),
       note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
     return;
   }
   const guide = !!(L.main || L.pre), P = SLINES[SPI], G = SLINES[0];
-  const stt = (l, i) => SIM.line === l ? (i === b && !SIM.alt ? 'cur' : i < b || b >= n || (i === b && SIM.alt) ? 'done' : '') : SIM.vis.has(l + ':' + i) ? 'done' : '';
+  const stt = (l, i) => SIM.line === l ? (i === b && !SIM.ph ? 'cur' : i < b || b >= n || (i === b && SIM.ph) ? 'done' : '') : SIM.vis.has(l + ':' + i) ? 'done' : '';
+  /* B1-4: a decision is a diamond before the step it leads to: hollow, gold once called, orange once the other path has been walked.
+     While its chain plays, the diamond grows a branch: one mark per link and a ring for the crisis card. */
+  const dk = SIM.ph ? sNextFork() : null;
+  const mk = (l, i) => { const B = SLINES[l].beats[i], k = B.fork, out = [];
+    if (k && i > 0) { const D = SDEC[k], here = SIM.line === l && dk === k && b === i - 1;
+      out.push({ kind: 'fork', state: here && SIM.ph === 'ask' ? 'cur' : SIM.seenAlt.has(k) ? 'alt' : SIM.pick[k] ? 'seen' : '', target: 'd:' + l + ':' + (i - 1), title: 'Your call · ' + D.nt, sub: SIM.pick[k] ? 'You chose: ' + D[SIM.pick[k]][0] : D.q });
+      if (here && SIM.ph !== 'ask') { D.chain.forEach((C, j) => out.push({ kind: 'link', state: SIM.ph === 'crisis' || j < SIM.c ? 'done' : j === SIM.c ? 'cur' : '', target: 'c:' + l + ':' + (i - 1) + ':' + j, title: 'Other path · ' + (j + 1) + ' · ' + C.t })); out.push({ kind: 'crisis', state: SIM.ph === 'crisis' ? 'cur' : '', target: 'x:' + l + ':' + (i - 1), title: 'Where it leads · ' + D.crisis.t }); } }
+    out.push({ kind: 'step', state: stt(l, i), target: l + ':' + i, title: (SLINES[l].pre ? '' : (i + 1) + ' · ') + B.t });
+    return out; };
   let segs;
   if (guide) {
-    segs = [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.map((B, i) => ({ kind: 'step', state: stt(SPI, i), target: SPI + ':' + i, title: B.t })) }]
-      .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.map(i => ({ kind: 'step', state: stt(0, i), target: '0:' + i, title: (i + 1) + ' · ' + G.beats[i].t })) }; }));
+    segs = [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }]
+      .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.flatMap(i => mk(0, i)) }; }));
     segs.push({ label: '', colour: SMAIN.c, current: !!L.main && b >= n, grow: 2, cls: 'end', marks: [{ kind: 'end', state: L.main && b >= n ? 'cur' : '', target: '0:' + G.beats.length, title: 'The whole machine' }] });
-  } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.map((B, i) => ({ kind: 'step', state: stt(SIM.line, i), target: SIM.line + ':' + i, title: (i + 1) + ' · ' + B.t })).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
+  } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
   let nx;
-  if (SIM.alt) nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
+  const DD = dk ? SDEC[dk] : null;
+  if (SIM.ph === 'ask') nx = { kind: 'hold', kicker: 'Your call', title: 'Choose on the card', ptitle: 'Choose' };
+  else if (SIM.ph === 'chain') nx = { kind: 'branch', kicker: 'Next in the chain', title: SIM.c < DD.chain.length - 1 ? DD.chain[SIM.c + 1].t : DD.crisis.t, pkicker: 'Chain', ptitle: 'Next' };
+  else if (SIM.ph === 'crisis') nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
   else if (b < 0) nx = L.main ? { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' } : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
   else if (b >= n) nx = L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % 9 + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
-  else if (sNextFork()) nx = { kind: 'hold', kicker: 'Your choice', title: 'Choose on the card', ptitle: 'Choose' };
+  else if (sNextFork()) nx = { kicker: 'Next · your call', title: SDEC[sNextFork()].nt, pkicker: 'Next', ptitle: 'Your call' };
   else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : 'Mechanism complete', ptitle: 'Next' };
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
   const cs = segs.find(s => s.current);
   RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : 'Mechanism: steps', stage,
-    back: { enabled: b >= 0 || !!SIM.alt, label: SIM.alt ? 'Back to the choice' : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? 'Back: ' + L.beats[b - 1].t : 'Back' },
+    back: { enabled: b >= 0, label: SIM.ph === 'ask' ? 'Back: ' + L.beats[b].t : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
     next: nx,
     line: { kicker: guide ? 'Guide' : 'Mechanism', title: guide ? 'The plumbing' : PSH[L.play] || L.t, attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
     segs, controls: simTabsHTML(),
-    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The plumbing' : L.t) : guide ? 'The whole machine' : L.t, count: b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
+    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The plumbing' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
 }
 /* Back, Next, the marks, ← → and the swipe all come through here */
 function simNav(ev) {
   if (view !== 'fin' || finMode !== 'plumb' || !$('cock')) return;
-  if (ev.target != null) { const [l, i] = String(ev.target).split(':').map(Number); if (SLINES[l]) simGo(l, i); return; }
+  if (ev.target != null) {
+    const t = String(ev.target).split(':');
+    if (t[0] === 'd' || t[0] === 'c' || t[0] === 'x') { if (SLINES[+t[1]]) simPhase(+t[1], +t[2], t[0] === 'd' ? 'ask' : t[0] === 'c' ? 'chain' : 'crisis', +t[3] || 0); return; }
+    if (SLINES[+t[0]]) simGo(+t[0], +t[1]); return;
+  }
   if (SIM.mode !== 'story') { if (ev.nav === 'next' && ev.how === 'click') simTab('guide'); return; }
   const L = sLine(), b = SIM.beat, n = L.beats.length;
-  if (ev.nav === 'back') { if (b >= 0 || SIM.alt) simBack(); return; }
-  if (SIM.alt) { simNext(); return; }
+  if (ev.nav === 'back') { if (b >= 0) simBack(); return; }
+  /* a choice is made on the card, never by Next, → or a swipe: they move focus to the first option */
+  if (SIM.ph === 'ask') { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
+  if (SIM.ph) { simNext(); return; }
   if (b < 0) { simGo(L.main ? SPI : SIM.line, 0, 'focus'); return; }
   if (b >= n) { if (L.pre) simGo(0, 0, 'focus'); else if (!L.main) simGo(SIM.line % 9 + 1, -1, 'focus'); return; }
-  if (sNextFork()) { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }   /* a choice is made on the card, never by Next */
   simNext();
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
@@ -6672,14 +6796,45 @@ function simTriHTML(B) {
 }
 const sWord = n => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][n] || String(n);
 const sChip = n => `<button type="button" class="sn-chip" data-sn="${n}" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</button>`;
-/* a reveal is one or two sentences: the first two of a text, and what is left of it for “Go deeper” */
+/* a reveal is one or two sentences: the first two of a text, and what is left of it for “The mechanism” */
 function sSplit(x, keep) {
   const s = String(x), cut = [], k = keep || 2; const re = /[.!?]\s+(?=[A-Z“‘$])/g; let m;
   while ((m = re.exec(s))) cut.push(m.index + 1);
   return cut.length < k ? [s, ''] : [s.slice(0, cut[k - 1]), s.slice(cut[k - 1]).trim()];
 }
 const sOne = x => !/[.!?]\s+(?=[A-Z“‘$])/.test(String(x));
-const sDeep = h => h ? `<details class="s2deep"${SIM.deep ? ' open' : ''}><summary>Go deeper</summary><div class="s2d">${h}</div></details>` : '';
+/* B1-4: “Go deeper” is “The mechanism” (other labels by card). Whether it starts open is settled after the card is drawn (simNarr):
+   the visitor's own choice this session, else open only where the window is tall and the opened card still fits; shut on phones. */
+const sDeep = (h, lab) => h ? `<details class="s2deep"><summary>${lab || 'The mechanism'}</summary><div class="s2d">${h}</div></details>` : '';
+const sSub = `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2.5 1.5h11v1.6h-11zM2.5 4.4h11V6h-11zM2.5 7.3h11v7.2L8 11.4l-5.5 3.1z"/></svg>`;
+const sLinksHTML = ls => ls.length ? `<div class="dlk">${ls.map(([t, u]) => `<a class="dss" href="${u}" target="_blank" rel="noopener">${sSub}${fe(t)}</a>`).join('')}</div>` : '';
+const sSrcHTML = ss => ss.length ? `<div class="lsrc">${ss.map(([t, u]) => u ? `<a href="${u}" target="_blank" rel="noopener">${fe(t)}</a>` : fe(t) + ' (link not stored)').join(' · ')}</div>` : '';
+/* the decision card: the question, the situation (one sentence, with more behind one click), two options in a fixed order.
+   Neither outcome is on the card. */
+function sAskHTML(k) {
+  const D = SDEC[k], was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', more = D.ctx.more.length || D.ctx.s || D.ctx.links.length;
+  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at Treasury.</h3><p class="s2p dq">${fe(D.q)}</p>`
+    + `<div class="dctx"><b>The situation</b><p>${fe(D.ctx.x)}</p>`
+    + (more ? `<button type="button" class="dmore" data-dctx aria-expanded="${open}" aria-controls="isx-dctx">More context</button><div class="dmo" id="isx-dctx"${open ? '' : ' hidden'}>${D.ctx.more.map(t => `<p>${fe(t)}</p>`).join('')}${D.ctx.s ? `<div class="lsrc">${fe(D.ctx.s)}</div>` : ''}${sLinksHTML(D.ctx.links)}</div>` : '') + `</div>`
+    + `<div class="dopts" role="group" aria-label="Your call">${D.ord.map((o, i) => `<button type="button" class="sn-opt dopt${was === o ? ' was' : ''}" data-fk="${o}"><span class="dl" aria-hidden="true">${'AB'[i]}</span><b>${fe(D[o][0])}</b><span>${fe(D[o][1])}</span>${was === o ? '<em>your earlier call</em>' : ''}</button>`).join('')}</div>`
+    + `<p class="dfine">What happened opens after you choose; the other path stays open too.</p>`
+    + `<div class="s2deep lock"><span class="dlock" role="button" tabindex="0" aria-disabled="true">The mechanism <em>after you choose</em></span></div>`;
+}
+function sChainHTML(k) {
+  const D = SDEC[k], C = D.chain[SIM.c], n = D.chain.length;
+  return `<div class="s2k kch" style="--rc:#ff8a5c"><i></i>Other path<em>${fe(D.alt[0])}</em><span class="sn-cnt">link ${SIM.c + 1} / ${n}</span></div><h3>${fe(C.t)}</h3><p class="s2p">${fe(C.x)}</p>`
+    + (Object.keys(C.fl).length ? `<div class="sn-new dpr"><span>Pressure</span>${Object.entries(C.fl).map(([id, a]) => `<span class="sn-chip dfl" style="--nc:${ROLE[INDX[id].role][3]}"><i aria-hidden="true"></i>${fe(INDX[id].k)} <b>${a}</b><span class="vh">${a === '▲' ? 'up' : 'down'}</span></span>`).join('')}</div>` : '')
+    + (C.n ? `<p class="sn-note">${fe(C.n)}</p>` : '')
+    + sDeep(`<p>Each link in this chain is a relation already on the map. Arrows show the direction of pressure; the values on the gauges stay the measured ones.</p>`
+      + `<ul class="sn-rest">${sChE(C).map(i => `<li><i style="background:${C.off.includes(i) ? '#8fa3b6' : '#ff8a5c'}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${C.off.includes(i) ? 'Not used on this path: ' : ''}${fe(FE[i][3])}</span></li>`).join('')}</ul>`);
+}
+function sCrisisHTML(k) {
+  const D = SDEC[k], K = D.crisis;
+  return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${fe(K.x)}</p>${sSrcHTML(K.s)}`
+    + K.prec.map(P => `<div class="dprec"><b>${fe(P.k)}</b><p>${fe(P.x)}</p>${sSrcHTML(P.s)}${P.cav ? `<p class="dcav">${fe(P.cav)}</p>${sSrcHTML(P.cs)}` : ''}</div>`).join('')
+    + `<p class="dwho">${fe(K.who)}</p>`
+    + `<div class="s2acts dacts"><button type="button" class="sn-go" data-dgo="real">Back to what happened ${sArrR}</button>${sLinksHTML(K.links)}</div>`;
+}
 function simBodyHTML() {
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (b < 0) {
@@ -6689,8 +6844,8 @@ function simBodyHTML() {
       + (L.main ? `<div class="s4start"><div class="s5two"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 13 minutes</small></span>${sArrR}</button><button type="button" class="s5full" data-sm="full"><span><b>Explore the full map</b><small>Everything lit · run a play, pull a lever</small></span>${sArrR}</button></div><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button></div></div>`
         : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
       + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About ten minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
-        + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you choose what Washington does next. One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : '')
-        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''));
+        + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you sit in Bessent’s chair and choose before you see what happened. Either way, you can walk the other path.</p>` : '')
+        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''), L.main || L.pre ? 'How the guide works' : 'The mechanism');
   }
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
@@ -6703,29 +6858,24 @@ function simBodyHTML() {
       + `<p class="s2p">${L.main ? `${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.` : `${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.`} Open the full view to run the plays, pull any lever and click anything.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
       + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-fm2="stack">The capital stack</button>` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
-      + sDeep(L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : '');
+      + sDeep(L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : '', 'Not in the guide');
   }
-  if (SIM.alt) {
-    const F = SFORK[SIM.alt], O = F.out, tmp = [...SIM.R.tmp], [x1, x2] = sSplit(O.x);
-    return `<div class="s2k" style="--rc:#ff8a5c"><i></i>Other outcome<span>${fe(F.alt[0])}</span></div><h3>${fe(O.t)}</h3><p class="s2p">${fe(x1)}</p>`
-      + sDeep((x2 ? `<p>${fe(x2)}</p>` : '') + `<p class="sn-note">${fe(O.n)}</p>${O.s ? `<div class="lsrc">${fe(O.s)}</div>` : ''}`
-        + (tmp.length ? `<div class="sn-new"><span>Lit on the map, later in the guide</span>${tmp.map(k => `<span class="sn-chip ghost" style="--nc:${FN[k][5]}"><i aria-hidden="true"></i>${fe(FN[k][3])}</span>`).join('')}</div>` : ''));
-  }
+  const dk = sDecK();
+  if (dk) return SIM.ph === 'ask' ? sAskHTML(dk) : SIM.ph === 'chain' ? sChainHTML(dk) : sCrisisHTML(dk);
   const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
-  const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]), fk = sNextFork();
+  const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]);
+  /* the step a decision leads to: once the visitor has made a call, the card says what happened and how the call compares */
+  const wk = B.fork && SIM.pick[B.fork] ? B.fork : null, WD = wk ? SDEC[wk] : null;
   const lead = !!(B.why && P && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
-  let h = `<div class="s2k" style="--rc:${R[1]}"><i></i>${R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div><h3>${fe(B.t)}</h3>`
+  let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : R[1]}"><i></i>${WD ? 'What happened' : R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
+    + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + `<h3>${fe(B.t)}</h3>`
     + (lead ? `<p class="s2why">${fe(B.why)}</p>` : '') + `<p class="s2p">${fe(x1)}</p>`
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
-  if (fk) {
-    const F = SFORK[fk], seen = SIM.seen.has(fk);
-    h += `<div class="sn-fork"><p class="sn-q"><span>Your choice</span>${fe(F.q)}</p><div class="sn-opts"><button type="button" class="sn-opt real" data-fk="real"><small>What happened</small><b>${fe(F.real[0])}</b><span>${fe(F.real[1])}</span></button><button type="button" class="sn-opt alt" data-fk="alt"><small>Other outcome${seen ? ' · seen' : ''}</small><b>${fe(F.alt[0])}</b><span>${fe(F.alt[1])}</span></button></div></div>`;
-  }
+  if (WD && !SIM.seenAlt.has(wk)) h += `<p class="dfine"><button type="button" class="s2lnk" data-dgo="alt">See the other path</button></p>`;
   h += sDeep((x2 ? `<p>${fe(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${fe(t)}</p>`).join('') : '')
     + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${fe(B.why)}</p>` : ''}</div>` : '')
     + (L.pre ? '' : simTriHTML(B))
-    + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : '')
-    + (fk ? `<p class="sn-note">One option follows what happened; the other shows a different outcome. Neither is a recommendation.</p>` : ''));
+    + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : ''));
   return h;
 }
 function simNarr(anim) {
@@ -6734,9 +6884,17 @@ function simNarr(anim) {
     body.innerHTML = simBodyHTML();
     if (anim) $('sn-in').scrollTop = 0; /* a new step starts at its top */
     [...body.children].forEach((c, i) => c.style.setProperty('--i', i));
-    const dp = body.querySelector('.s2deep'); if (dp) dp.addEventListener('toggle', () => { SIM.deep = dp.open; });
+    /* “The mechanism”: follow the visitor's own toggle this session; otherwise open where the window is tall and the opened card still fits; shut on phones */
+    const dp = body.querySelector('details.s2deep'), box = $('sn-in');
+    if (dp) {
+      const pref = stGet('isx-mech', true), ph = PHONE();
+      if (!ph && pref === 'open') dp.open = true;
+      else if (!ph && !pref && innerHeight >= 940) { dp.open = true; if (box && box.scrollHeight > box.clientHeight + 1) dp.open = false; }
+      dp._auto = dp.open;
+      dp.addEventListener('toggle', () => { if (dp._auto === dp.open) { dp._auto = null; return; } dp._auto = null; SIM.deep = dp.open; if (!PHONE()) stSet('isx-mech', dp.open ? 'open' : 'shut', true); });
+    }
     body.classList.remove('out'); if (anim && !reduce) { body.classList.remove('in'); void body.offsetWidth; body.classList.add('in'); }
-    const ph = $('sn-pill'); if (ph) { ph.hidden = !SIM.alt; if (SIM.alt) ph.textContent = 'Other outcome · ' + SFORK[SIM.alt].alt[0]; }
+    const ph = $('sn-pill'), ck = sInChain() ? sDecK() : null; if (ph) { ph.hidden = !ck; if (ck) ph.textContent = 'Other path · ' + SDEC[ck].alt[0]; }
   };
   clearTimeout(SIM.nt);
   if (anim && !reduce && body.childElementCount) { body.classList.add('out'); SIM.nt = setTimeout(put, 150); } else put();
@@ -6746,7 +6904,7 @@ function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main && !SIM.alt); cock.classList.toggle('alt', on && !!SIM.alt); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
@@ -6759,31 +6917,50 @@ function simApply(anim, fwd) {
   simBar(); simTrays();
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
-  try { stSet(SKEY.pos, JSON.stringify({ l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
+  try { stSet(SKEY.pos, JSON.stringify(SIM.ph ? { l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c } : { l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
 }
 function simGo(line, beat, how) {
-  const fwd = line === SIM.line && beat === SIM.beat + 1 && !SIM.alt;
-  SIM.line = line; SIM.beat = beat; SIM.alt = null; if (SIM.tray === 'pick') SIM.tray = null; clearSel();
+  const fwd = line === SIM.line && beat === SIM.beat + 1 && SIM.ph !== 'chain';
+  SIM.line = line; SIM.beat = beat; SIM.ph = null; SIM.c = 0; if (SIM.tray === 'pick') SIM.tray = null; clearSel();
   simApply(true, fwd);
   track('Story', { story: sLine().id, step: String(beat) });
   if (how === 'focus') simFocus();
 }
+/* B1-4: a decision card, a link of its chain or its crisis card. The step before the decision stays the place in the guide. */
+function simPhase(line, beat, ph, c) {
+  const L = SLINES[line], B = L && L.beats[beat + 1], k = beat >= 0 && B ? B.fork : null; if (!k) { simGo(line, beat); return; }
+  const fwd = line === SIM.line && beat === SIM.beat && (ph === 'ask' ? !SIM.ph : ph === 'chain' ? (SIM.ph === 'ask' && !c) || (SIM.ph === 'chain' && c === SIM.c + 1) : SIM.ph === 'chain');
+  SIM.line = line; SIM.beat = beat; SIM.ph = ph; SIM.c = ph === 'chain' ? Math.max(0, Math.min(SDEC[k].chain.length - 1, c || 0)) : 0;
+  if (ph !== 'ask') SIM.seenAlt.add(k);
+  if (SIM.tray === 'pick') SIM.tray = null; clearSel();
+  simApply(true, fwd);
+  track('Story', { story: sLine().id, step: beat + ':' + ph + (ph === 'chain' ? SIM.c : '') });
+  simFocus();
+}
 function simNext() {
-  const L = sLine(), n = L.beats.length;
-  if (SIM.alt) { const b = SIM.beat; SIM.alt = null; simGo(SIM.line, b + 1, 'focus'); return; }
+  const L = sLine(), n = L.beats.length, k = sDecK();
+  if (SIM.ph === 'ask') return;   /* held: the choice is made on the card */
+  if (SIM.ph === 'chain') { if (SIM.c < SDEC[k].chain.length - 1) simPhase(SIM.line, SIM.beat, 'chain', SIM.c + 1); else simPhase(SIM.line, SIM.beat, 'crisis'); return; }
+  if (SIM.ph === 'crisis') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }   /* back to what happened */
   if (SIM.beat >= n) return;
+  if (sNextFork()) { simPhase(SIM.line, SIM.beat, 'ask'); return; }
   simGo(SIM.line, SIM.beat + 1, 'focus');
 }
 function simBack() {
-  if (SIM.alt) { SIM.alt = null; clearSel(); simApply(true); simFocus(); return; }
+  const k = sDecK();
+  if (SIM.ph === 'crisis') { simPhase(SIM.line, SIM.beat, 'chain', SDEC[k].chain.length - 1); return; }
+  if (SIM.ph === 'chain') { if (SIM.c > 0) simPhase(SIM.line, SIM.beat, 'chain', SIM.c - 1); else simPhase(SIM.line, SIM.beat, 'ask'); return; }
+  if (SIM.ph === 'ask') { simGo(SIM.line, SIM.beat, 'focus'); return; }
   if (SIM.beat < 0) return;
+  const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask'); return; }   /* the step a decision leads to goes back to the decision */
   simGo(SIM.line, SIM.beat - 1, 'focus');
 }
 function simChoose(k) {
-  const fk = sNextFork(); if (!fk) return;
+  const fk = SIM.ph === 'ask' ? sDecK() : null; if (!fk || (k !== 'real' && k !== 'alt')) return;
+  SIM.pick[fk] = k;   /* the latest call is “your call”: the card it leads to says how it compares with what Washington did */
   track('Choice', { fork: fk, pick: k });
   if (k === 'real') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }
-  SIM.seen.add(fk); SIM.alt = fk; clearSel(); simApply(true); simFocus();
+  simPhase(SIM.line, SIM.beat, 'chain', 0);
 }
 function simSetMode(m) {
   if (SIM.mode === m) return;
@@ -6839,6 +7016,9 @@ function simMount() {
     if (d.s4tab) { simTab(d.s4tab); return; }
     if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
+    if (d.dgo === 'real') { simNext(); return; }   /* the crisis card's one button */
+    if (d.dgo === 'alt') { const B = sCur(); if (B && B.fork && SIM.beat > 0) simPhase(SIM.line, SIM.beat - 1, 'chain', 0); return; }   /* “See the other path” */
+    if (d.dctx != null) { const o = t.getAttribute('aria-expanded') !== 'true', m = $('dctx'); t.setAttribute('aria-expanded', String(o)); if (m) m.hidden = !o; stSet('isx-ctx', o ? 'open' : 'shut', true); return; }
     if (d.sg === 'next') { simNext(); return; }
     if (d.sg === 'back') { simBack(); return; }
     if (d.sg === 'start') { simGo(SIM.line, 0, 'focus'); return; }
@@ -6866,7 +7046,7 @@ function simMount() {
 let simRT = 0;
 window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); } }, 120); });
 /* a play in full view can be followed as a thread */
-ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.alt = null; clearSel(); simApply(true); });
+ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.ph = null; clearSel(); simApply(true); });
 
 initIntro(); buildResbar(); buildMapModes(); bootGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
@@ -6903,7 +7083,8 @@ window.ISX = {
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
-  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, alt: SIM.alt, lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
+  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
+    decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
