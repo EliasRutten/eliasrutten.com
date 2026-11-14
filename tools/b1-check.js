@@ -11,14 +11,14 @@ let fails = 0;
 const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && !cond ? '  → ' + JSON.stringify(extra).slice(0, 700) : '')); };
 
 /* the first step of every indicator, first principles and guide (spec S1 §4.6) */
-const FIRST = { ffr: [null, 5], res: [null, 3], bills: [7, 2], y10: [null, 5], mtg: [4, 22], yen: [null, 26], dxy: [null, 26], brent: [null, 28], move: [null, 5], off: [2, 1], teth: [7, 2], capex: [null, 7], bnd: [null, 9], ai: [6, 15], shr: [null, 16], con: [1, 18], save: [4, 23], pce: [null, 30], diesel: [null, 30] };
+const FIRST = { ffr: [null, 7], res: [null, 4], bills: [7, 2], y10: [null, 7], mtg: [4, 30], yen: [null, 35], dxy: [null, 35], brent: [null, 39], move: [null, 7], off: [2, 1], stb: [7, 2], basis: [null, 8], repo: [null, 4], haircut: [null, 4], rrp: [null, 3], tga: [null, 3], capex: [null, 15], bnd: [null, 16], ai: [3, 22], shr: [null, 24], con: [1, 26], save: [4, 31], pce: [null, 41], diesel: [null, 42] };   /* content build: recomputed for the 49 steps */
 const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]];
 
 (async () => {
   const b = await chromium.launch();
   const page = async (hash, opts = {}) => {
     const c = await b.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, deviceScaleFactor: 1, reducedMotion: opts.motion ? 'no-preference' : 'reduce', hasTouch: !!opts.touch, isMobile: !!opts.touch });
-    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, opts.ls || {}), pos = opts.pos || null;
+    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-stack': 'open', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, opts.ls || {}), pos = opts.pos || null;
     await c.addInitScript(o => { try { if (!sessionStorage.getItem('__seeded')) { Object.keys(o.set).forEach(k => localStorage.setItem(k, o.set[k])); if (o.pos) sessionStorage.setItem('isx-sim-pos', o.pos); sessionStorage.setItem('__seeded', '1'); } } catch (e) {} }, { set, pos });
     const p = await c.newPage(); p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 200)));
     await p.goto(base + hash, { waitUntil: 'load' });
@@ -82,7 +82,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const first = { pre: {}, main: {} };
       const rows = await walk(p, s => { if (s.ph) return; const k = s.pre ? 'pre' : s.main ? 'main' : null; if (!k) return; Object.keys(s.vals).forEach(id => { if (s.vals[id] && s.vals[id] !== '?' && first[k][id] == null) first[k][id] = s.beat + 1; }); });
       const n = { reveals: rows.filter(r => /^reveal/.test(r.tag)).length, steps: rows.filter(r => /^step/.test(r.tag)).length, asks: rows.filter(r => /^decision/.test(r.tag)).length, links: rows.filter(r => /^link/.test(r.tag)).length, crises: rows.filter(r => /^crisis/.test(r.tag)).length };
-      ok(`walk (${w} px): 7 reveals, 37 steps, 3 decision cards, 10 chain links and 3 crisis cards`, n.reveals === 7 && n.steps === 37 && n.asks === 3 && n.links === 10 && n.crises === 3, n);
+      ok(`walk (${w} px): 7 reveals, 49 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 7 && n.steps === 49 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
       if (want(2)) {
         const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);
         ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.length} cards (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });
@@ -96,7 +96,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       if (want(8) && w === 1440) {
         const S = await js(p, () => ISX.sim.indicators.map(I => ({ id: I.id, role: I.role, first: I.first })));
         const roles = ['set', 'conduit', 'stress', 'outcome'].map(r => S.filter(I => I.role === r).length);
-        ok('indicators: 19, in four roles: 3 settings, 5 conduits, 1 stress gauge, 10 outcomes', S.length === 19 && roles.join() === '3,5,1,10', roles);
+        ok('indicators: 24, in four roles: 3 settings, 8 conduits, 3 stress gauges, 10 outcomes', S.length === 24 && roles.join() === '3,8,3,10', roles);
         const bad = S.filter(I => { const e = FIRST[I.id]; return !e || (I.first.pre || null) !== e[0] || (I.first.main || null) !== e[1]; }).map(I => [I.id, I.first]);
         ok('indicators: the first step of each, as the page computes it, is the one in the spec (§4.6)', bad.length === 0, bad);
         const shown = Object.keys(FIRST).filter(id => (first.pre[id] || null) !== FIRST[id][0] || (first.main[id] || null) !== FIRST[id][1]).map(id => [id, first.pre[id] || null, first.main[id] || null, FIRST[id]]);
@@ -139,12 +139,12 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 10 && s2.beat === 9, [s1.beat, s2.beat]);
     await swipe('#isx-b1play', -120); await q.waitForTimeout(300);
     ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 9);
-    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 40 && (await state(q)).beat < 24; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
+    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 33; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
     await right(q, 350); await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q);
-    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 24, [d0.ph, d1.ph, d1.beat]);
+    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 33, [d0.ph, d1.ph, d1.beat]);
     await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const d2 = await state(q);
-    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 24, [d2.ph, d2.beat]);
+    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 33, [d2.ph, d2.beat]);
     ok('swipe: no page errors', q._errs.length === 0, q._errs); await q.context().close();
   }
 
@@ -152,7 +152,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   if (want(5) || want(6)) {
     const p = await page('#simulator', { pos: '{"l":0,"b":0}' });
     const DEC = await js(p, () => ISX.sim.decisions.map(D => Object.assign({}, D, { step: ISX.sim.lines[0].steps[D.at].t })));
-    ok('decisions: three, before steps 2, 5 and 26; 10 chain links in all', DEC.length === 3 && DEC.map(D => D.at + 1).join() === '2,5,26' && DEC.reduce((a, D) => a + D.chain.length, 0) === 10, DEC.map(D => [D.at + 1, D.chain.length]));
+    ok('decisions: seven, before steps 2, 4, 5, 7, 12, 35 and 40; 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '2,4,5,7,12,35,40' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
     for (const D of DEC) {
       const tag = 'decision before step ' + (D.at + 1);
       await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), '0:' + (D.at - 1)); await p.waitForTimeout(350);
@@ -164,7 +164,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
           if (lock) { lock.click(); lock.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); }
           return { h3: b.querySelector('h3').textContent, n: b.querySelectorAll('.sn-opt').length, letters: [...b.querySelectorAll('.sn-opt .dl')].map(x => x.textContent).join(''), order: [...b.querySelectorAll('.sn-opt')].map(x => x.dataset.fk).join(), labels: /What happened|Other outcome|Other path/.test(opts.textContent), kick: /What happened|Other/.test(b.querySelector('.s2k').textContent), leak, group: opts.getAttribute('role') === 'group' && opts.getAttribute('aria-label') === 'Your call',
             mech: !!b.querySelector('details.s2deep, .s2d'), lock: !!lock && lock.getAttribute('aria-disabled') === 'true' && /after you choose/.test(lock.textContent), ctx: !!b.querySelector('.dctx') && b.querySelector('.dctx p').textContent.length > 20, more: (b.querySelector('.dmore') || { getAttribute: () => null }).getAttribute('aria-expanded'), nx: document.querySelector('#isx-s2bar .rt-nx').textContent, ch: document.querySelectorAll('#isx-rmap .fe.ch, #isx-rmap .fe.off, #isx-rmap .gn.flare, #isx-rmap .gt.flare, #isx-rmap .gn.bor').length }; }, D);
-        ok(`${tag}: “You’re at Treasury.”, two options A and B in the spec’s order (${D.ord.join(', ')}), in a group labelled “Your call”`, /You’re at Treasury\./.test(card.h3) && card.n === 2 && card.letters === 'AB' && card.order === D.ord.join() && card.group, card);
+        ok(`${tag}: “You’re at …”, two options A and B in the spec’s order (${D.ord.join(', ')}), in a group labelled “Your call”`, /You’re at [^.]+\./.test(card.h3) && card.n === 2 && card.letters === 'AB' && card.order === D.ord.join() && card.group, card);
         ok(`${tag}: neither option is labelled, and neither outcome is on the card, in the bar’s Next or on the map`, !card.labels && !card.kick && card.leak.length === 0 && !card.nx.includes(D.step) && card.ch === 0, card);
         ok(`${tag}: “The mechanism” is locked (“after you choose”) and cannot open; the situation is on the card, with more behind one click`, !card.mech && card.lock && card.ctx && card.more === 'false', card);
         await click(p, '#isx-sn-body .dmore'); await p.waitForTimeout(150);
@@ -204,7 +204,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     const p = await page('#simulator', { ls: { 'isx-sim-mode': 'full' } });
     const r = await js(p, () => { const pl = [...document.querySelectorAll('#isx-rmap .fn:not(.gn)')]; return { n: pl.length, more: pl.filter(g => g.textContent.trim() !== g.querySelector('.fnt').textContent.trim()).map(g => g.textContent.trim()), digits: pl.map(g => g.textContent.trim()).filter(t => /\d/.test(t)) }; });
     /* one actor has a number in its name: the top tenth of households, “Top 10%” */
-    ok('actors: 26 plates, each its name and nothing else; no digit on any plate (“Top 10%” is a name)', r.n === 26 && r.more.length === 0 && r.digits.join() === 'Top 10%', r);
+    ok('actors: 29 plates, each its name and nothing else; no digit on any plate (“Top 10%” is a name)', r.n === 29 && r.more.length === 0 && r.digits.join() === 'Top 10%', r);
     await p.context().close();
   }
 
@@ -241,6 +241,8 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
         if (led && !led.hidden) { const l = led.getBoundingClientRect(); r.led = l.top >= 0 && l.bottom <= bar.top + 1 && led.scrollHeight <= led.clientHeight + 1; }
         return r; });
       const all = r => Object.values(r).every(Boolean);
+      /* content build: the chains and crisis cards carry more text and sources. At 1440×900 every card still fits; at 1280×760 a chain link or a crisis card may scroll inside itself (the S1 rule), never the page */
+      const soft = r => Object.entries(r).every(([k, v]) => v || k === 'inner');
       const p = await page('#simulator', { w, h, pos: '{"l":0,"b":21}' });
       let r = await fit(p); ok(`one screen (${w}×${h}): a step`, all(r), r);
       await click(p, '#isx-b1ind'); await p.waitForTimeout(350);
@@ -250,7 +252,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
         await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), 'd:0:' + (at - 1)); await p.waitForTimeout(450);
         r = await fit(p); ok(`one screen (${w}×${h}): the decision before step ${at + 1}`, all(r), r);
         await click(p, '#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(450);
-        for (let i = 0; i < 8; i++) { const s = await state(p); r = await fit(p); ok(`one screen (${w}×${h}): ${s.ph === 'crisis' ? 'the crisis card' : 'chain link ' + (s.c + 1)} before step ${at + 1}`, all(r), r); if (s.ph === 'crisis') break; await right(p, 420); }
+        for (let i = 0; i < 8; i++) { const s = await state(p); r = await fit(p); ok(`one screen (${w}×${h}): ${s.ph === 'crisis' ? 'the crisis card' : 'chain link ' + (s.c + 1)} before step ${at + 1}`, all(r) || (h < 800 && soft(r)), r); if (s.ph === 'crisis') break; await right(p, 420); }
       }
       ok(`one screen (${w}×${h}): no page errors`, p._errs.length === 0, p._errs); await p.context().close();
       const q = await page('#circuit/ring', { w, h, wait: 2500 });

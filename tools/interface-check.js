@@ -18,7 +18,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
   const b = await chromium.launch();
   const page = async (hash, opts = {}) => {
     const c = await b.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, deviceScaleFactor: 1, reducedMotion: opts.motion ? 'no-preference' : 'reduce', hasTouch: !!opts.touch, isMobile: !!opts.touch });
-    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, opts.ls || {}), pos = opts.pos || null;
+    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-stack': 'open', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, opts.ls || {}), pos = opts.pos || null;
     await c.addInitScript(o => { try { if (!sessionStorage.getItem('__seeded')) { Object.keys(o.set).forEach(k => localStorage.setItem(k, o.set[k])); if (o.pos) sessionStorage.setItem('isx-sim-pos', o.pos); sessionStorage.setItem('__seeded', '1'); } } catch (e) {} }, { set, pos });
     const p = await c.newPage(); p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 200)));
     await p.goto(base + (opts.q || '') + hash, { waitUntil: 'load' });
@@ -84,7 +84,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
 
   /* ================= 2. three doors at the end of the ring ================= */
   if (want(2)) {
-    const DOORS = [['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#arm', 'The imperial arm', 'See the internal organisational structure of American capital', 'arm'], ['#scenarios', 'Scenarios', 'How Washington leverages the stack internationally', 'story']];
+    const DOORS = [['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#arm', 'The imperial arm', 'See the internal structure of dominant American capital', 'arm'], ['#scenarios', 'Scenarios', 'How Washington leverages the stack internationally', 'story']];
     for (const [w, h, touch] of [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]]) {
       const p = await page('#circuit/ring', { w, h, touch, wait: 2200 });
       const r = await js(p, () => { const d = [...document.querySelectorAll('#isx-tournarr a.rgdoor')], bar = document.getElementById('isx-tabs').getBoundingClientRect(), card = document.getElementById('isx-tournarr').getBoundingClientRect(), rb = document.getElementById('isx-resbar'), rbr = rb && rb.getClientRects().length && getComputedStyle(rb).visibility !== 'hidden' ? rb.getBoundingClientRect() : null;
@@ -245,8 +245,11 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
     p = await page('#simulator', { ls: { 'isx-sim-mode': 'full' } });
     /* “How to use the simulator” has had no button on the page since the Simulator moved onto the stage; the card is opened here the way its button did */
     await js(p, () => { const h = document.createElement('button'); h.setAttribute('data-tips', 'sim'); h.hidden = true; document.getElementById('isx-cock').appendChild(h); h.click(); h.remove(); }); await p.waitForTimeout(500);
-    r = await js(p, () => { const t = document.querySelectorAll('#isx-stips .sgrid6 li'); return { n: t.length, first: t[0] ? t[0].querySelector('p').textContent.trim() : null, head: t[0] ? t[0].querySelector('b').textContent : null, lede: (document.querySelector('#isx-stips .slede') || {}).textContent || '' }; });
-    ok('tutorial: the first of the four tips is the line; the pointer to the capital stack moved to the lede', r.n === 4 && LINE.test(r.first || '') && /capital stack/.test(r.lede), r);
+    /* content build: the card “How to use the simulator” is gone; the same control now starts the Simulator's tour, which keeps the line */
+    r = await js(p, async () => { const x = document.getElementById('isx-simtour'), out = { on: !!(window.ISX && ISX.simtour && ISX.simtour.on), card: !!document.getElementById('isx-stips'), texts: [] };
+      for (let i = 0; i < 8 && ISX.simtour.on; i++) { out.texts.push(x.querySelector('p').textContent); if (i < 7 && /Next/.test(x.querySelector('.tgo').textContent)) x.querySelector('.tgo').click(); else break; await new Promise(q => setTimeout(q, 80)); }
+      ISX.simtour.close(); return out; });
+    ok('tutorial: the old tips control starts the tour, and one of its notes is the line; the tips card is gone', r.on && !r.card && r.texts.some(t => /^(Click|Tap) any actor or line for what it does and its sources\./.test(t)), r);
     /* the promise holds: an actor opens a card, and so does a line */
     await js(p, () => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400);
     const actor = await js(p, () => { const d = document.querySelector('#isx-cock .dossier:not([hidden])'); return d ? { h: d.querySelector('h4').textContent, p: d.querySelector('p').textContent.length, src: d.querySelectorAll('.lsrc').length } : null; });

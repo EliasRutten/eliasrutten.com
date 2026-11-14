@@ -3922,7 +3922,7 @@ const STEP6 = {
       ['The flow', '{{netpurch|Net purchases}} of long-term US securities: $1.88tn in the 12 months to August 2026, of which $1.01tn equities and fund shares.'],
       ['Central banks step back', '{{official|Foreign official}} holdings of Treasuries fell $164bn in that year, to $3.76tn. Official buyers put $165bn into US shares instead.'],
       ['Booked here, owned elsewhere', '27% of foreign-held US shares sit in fund domiciles (Cayman Islands, Ireland, Luxembourg); another 16% in the UK, Switzerland and Belgium, where custodians hold for clients abroad. {{tic|TIC}} records where securities are held, not who owns them.'],
-      ['Partly American money', 'The Fed believes the main owners of Cayman funds are US residents, so part of the “foreign” money is US money going round.'],
+      ['Partly American money', 'The Fed believes the main owners of Cayman funds are US residents, so part of the “foreign” money is US money going round. The same Cayman funds are the leveraged buyers the Scott Bessent Simulator follows in its chapter “Bonds get yippy”.'],
       ['Where the Treasuries hide', 'Treasuries booked in seven financial centres rose $245bn in a year while official holdings fell $164bn. Two things sit behind that. Custodians, Euroclear in Belgium and banks in London above all, hold Treasuries for clients abroad, including central banks: analysts such as Brad Setser read part of Belgium’s holdings as Chinese reserves, so some official selling is relabelling. And hedge funds in the Cayman Islands and elsewhere buy Treasuries with borrowed money in the basis trade: the leveraged demand the state leans on in step 08.'],
       ['On the map', 'Amber arcs: owners mostly local. Grey arcs: fund and custody centres, owners mostly elsewhere. The table gives the likely owners; * = attribution uncertain.'],
     ], defs: ['netpurch', 'official', 'funddom', 'custodial', 'tic'] },
@@ -4702,7 +4702,7 @@ const FN = {
   GOV: N('abroad', 'abroad', 3, 'flag', 'Partner govts', 'JP · KR · AR · UAE', '#44d7ec', 'Governments Washington bargains with: Japan ($550bn investment pledge), South Korea ($350bn), Argentina ($20bn swap framework) and the UAE (swap talks, May 2026).'),
   SAV: N('abroad', 'abroad', 4, 'stack', 'Allied savers', 'pension funds', '#ffb547', 'The pension funds, sovereign funds, insurers and households of the allied economies, whose savings come back to US markets. They buy shares and bonds in the market, not from the firms. US shares booked in Japan: $1,169bn; Norway: $826bn; Korea: $592bn; the Netherlands: $461bn (June 2025; US Treasury portfolio-holdings survey, April 2026).'),
   YEN: N('abroad', 'abroad', 5, 'yen', 'Yen', '155.20 on 31 Jul', '#44d7ec', 'The yen slid to 40-year lows before the joint US–Japan action of 31 July 2026 lifted it to 155.20. Japan, the largest foreign holder of Treasuries, would have to sell some if the slide became disorderly.'),
-  DUA: N('abroad', 'abroad', 6, 'usd', 'Dollar users abroad', 'tokens, no yield', '#d78bff', 'Households and firms in weak-currency economies who hold dollar tokens instead of their own money, as in Turkey, Argentina, Nigeria, Lebanon and Cambodia. They hold dollars without a US bank, and the tokens pay them nothing. Stablecoins bypass the domestic banking system, so the local central bank sees and controls less; the issuer keeps the yield on the bills behind the tokens, because the GENIUS Act bars paying interest to holders. In Turkey, stablecoin purchases were about 4.3% of GDP in 2023–24 (Danielsson and Macrae, SUERF Policy Brief 1440, 7 May 2026). The page calls the process hierarchical dollarisation and the people it extracts from the foreign monetary underclass: both are Elias Rutten’s terms.'),
+  DUA: N('abroad', 'abroad', 6, 'usd', 'Dollar users', 'abroad · tokens, no yield', '#d78bff', 'Dollar users abroad: households and firms in weak-currency economies who hold dollar tokens instead of their own money, as in Turkey, Argentina, Nigeria, Lebanon and Cambodia. They hold dollars without a US bank, and the tokens pay them nothing. Stablecoins bypass the domestic banking system, so the local central bank sees and controls less; the issuer keeps the yield on the bills behind the tokens, because the GENIUS Act bars paying interest to holders. In Turkey, stablecoin purchases were about 4.3% of GDP in 2023–24 (Danielsson and Macrae, SUERF Policy Brief 1440, 7 May 2026). The page calls the process hierarchical dollarisation and the people it extracts from the foreign monetary underclass: both are Elias Rutten’s terms.'),
   /* the state */
   CGR: N('state', 'state', 2, 'cap', 'Congress', 'tax law · GENIUS', '#e4ebf1', 'Writes the law behind the plumbing: the GENIUS Act (July 2025), which makes stablecoin issuers hold cash and short-term Treasuries, and the 2025 tax law behind the larger 2026 refunds.'),
   WH: N('state', 'state', 3, 'wh', 'White House', 'tariffs · deals', '#e4ebf1', 'Sets tariffs and export controls, bargains over trade (the investment pledges from Japan and South Korea) and takes state stakes in strategic firms.'),
@@ -5137,7 +5137,7 @@ const IND = (() => {
     I('ffr', 'Fed funds target', 'set', 'FED', G('Fed funds'), { s: 'Fed funds', rel: E('INF>FED', 'FED>Y10') }),
     I('res', 'Bank reserves', 'set', 'FED', G('Bank reserves'), { s: 'Reserves', rel: E('FED>BNK') }),
     I('bills', 'Bills share of debt', 'set', 'TSY', G('Bills'), { s: 'Bills share', rel: E('TSY>MMF', 'TSY>STB'), band: 'guide 15–20%' }),
-    I('y10', '10-year yield', 'conduit', 'Y10', G('10-year'), { def: 'interest on 10-year US debt', sub: 'Oct 2026 average' }),
+    I('y10', '10-year yield', 'conduit', 'Y10', Object.assign({}, G('10-year'), { delta: 'Oct 2026 average' }), { def: 'interest on 10-year US debt', sub: 'Oct 2026 average' }),
     I('mtg', '30-year mortgage', 'conduit', 'MTG', GX.mtg, { sub: 'week to 29 Oct', tr: '▼' }),
     I('yen', 'Yen', 'conduit', 'YEN', GX.yen, { sub: 'per $ · 30 Oct' }),
     I('dxy', 'Dollar index', 'conduit', 'YEN', GX.dxy, { s: 'Dollar', sub: '5 Nov' }),
@@ -5221,11 +5221,10 @@ function dialSVG(cx, cy, r) {
   const arc = (p0, p1, col) => { const [x0, y0] = pt(p0, r), [x1, y1] = pt(p1, r); return `<path d="M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}" fill="none" stroke="${col}" stroke-width="3.2"/>`; };
   return arc(0, 50, '#2c4152') + arc(50.5, 90, '#6d5a3a') + arc(90.5, 100, '#7a3a33') + `<line class="gneedle" data-cx="${cx}" data-cy="${cy}" data-r="${r - 2}" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy}"/><circle class="ghub" cx="${cx}" cy="${cy}" r="2"/>`;
 }
-const FNS = { DUA: 'Dollar users' };   /* content build: a plate's short name where the full one does not fit (the dossier carries the full name) */
 /* an actor: a plate with its name. No figure, no descriptor: the indicators carry the numbers */
 function plateNode(k) {
   const [z, x, y, t, , c, , ic] = FN[k], l = x - NW / 2;
-  return `<g class="fn pl${z === 'state' ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - PH / 2}" width="${NW}" height="${PH}" rx="8"/><g class="fni" transform="translate(${l + 9},${(y - 8.2).toFixed(1)}) scale(.68)">${FIC[ic]}</g><text class="fnt" x="${l + 32}" y="${(y + 4.4).toFixed(1)}">${fe(FNS[k] || t)}</text></g>`;
+  return `<g class="fn pl${z === 'state' ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - PH / 2}" width="${NW}" height="${PH}" rx="8"/><g class="fni" transform="translate(${l + 9},${(y - 8.2).toFixed(1)}) scale(.68)">${FIC[ic]}</g><text class="fnt" x="${l + 32}" y="${(y + 4.4).toFixed(1)}">${fe(t)}</text></g>`;
 }
 /* a gauge is a picture with its reading as the label (spec S1 §8); its drawing is hidden from assistive technology.
    a gauge node, in its node's own cell: a capsule with ports (conduit), a dial (stress gauge) or a squared ledger (outcome).
@@ -6584,10 +6583,10 @@ const SMAIN = {
    9-4 tariffs or the bond market · 5-3 the yen · 6-1 oil. */
 const SJ1 = EP + 'japans-economic-miracle-is-also-its', SJ2 = EP + 'will-japan-cause-a-global-debt-crisis';
 const DSRC = {
-  ks: ['Kashyap and Stein, “Safeguarding the Treasury Market”, F&D, Mar 2026', 'https://www.imf.org/-/media/files/publications/fandd/article/2026/03/kashyap.pdf'],
-  boe: ['Bank of England Quarterly Bulletin 2023, “Financial stability buy/sell tools: a gilt market case study”', 'https://www.bankofengland.co.uk/quarterly-bulletin/2023/2023/financial-stability-buy-sell-tools-a-gilt-market-case-study'],
-  s19: ['Anbil, Anderson and Senyuz, “What Happened in Money Markets in September 2019?”, FEDS Notes, 27 Feb 2020', 'https://www.federalreserve.gov/econres/notes/feds-notes/what-happened-in-money-markets-in-september-2019-20200227.html'],
-  bis90: ['BIS Bulletin 90, “The market turbulence and carry trade unwind of August 2024”, 27 Aug 2024', 'https://www.bis.org/publ/bisbull90.htm'],
+  ks: ['Kashyap and Stein, F&D (Mar 2026)', 'https://www.imf.org/-/media/files/publications/fandd/article/2026/03/kashyap.pdf'],
+  boe: ['Bank of England, Quarterly Bulletin (2023)', 'https://www.bankofengland.co.uk/quarterly-bulletin/2023/2023/financial-stability-buy-sell-tools-a-gilt-market-case-study'],
+  s19: ['Anbil, Anderson and Senyuz, FEDS Notes (27 Feb 2020)', 'https://www.federalreserve.gov/econres/notes/feds-notes/what-happened-in-money-markets-in-september-2019-20200227.html'],
+  bis90: ['BIS Bulletin 90 (27 Aug 2024)', 'https://www.bis.org/publ/bisbull90.htm'],
 };
 const SDEC = {
   '0-1': { when: '2023', nt: 'Funding the deficit', ord: ['alt', 'real'], sus: {},
@@ -6653,7 +6652,7 @@ const SDEC = {
     crisis: { t: 'Dealers hit the wall',
       x: 'With dealers’ balance sheets full, a shock leaves nobody to take the bonds, and the rule ends up bent in the crisis itself.', s: [],
       prec: [{ k: 'April 2020 · measured', x: 'With dealers’ balance sheets full, the Fed temporarily excluded Treasuries and reserves from the leverage ratio while buying Treasuries on a vast scale.',
-        s: [['Barth and Kahn, “Hedge Funds and the Treasury Cash-Futures Disconnect”, OFR Working Paper 21-01, Apr 2021', 'https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/events/2021/fsc-2021/kahn-paper.pdf'], DSRC.ks] }],
+        s: [['Barth and Kahn, OFR Working Paper 21-01 (Apr 2021)', 'https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/events/2021/fsc-2021/kahn-paper.pdf'], DSRC.ks] }],
       who: 'The chain is this map’s reading; the 2020 exemption is measured. What happened carries its own risk: a thinner capital buffer at the banks, the reason Governors Barr and Cook dissented.', links: [] } },
   '0-6': { when: 'August 2026', nt: 'Long yields climb', ord: ['real', 'alt'], sus: {},
     q: 'Long yields are climbing, and funds hold more long bonds on borrowed cash. What do you do?',
@@ -6675,10 +6674,10 @@ const SDEC = {
         x: 'Leaving the long end alone does not keep the state out; it brings it in later and larger, through the Fed’s repo backstop, bill purchases and looser bank rules. In Elias Rutten’s reading that is the house printing: duration out, money in (The house always prints, 18 Sep 2026).' }],
     crisis: { t: 'Volatility does the selling',
       x: 'Leave the long end to funds that hold it on borrowed cash, and their funding becomes the weak point: a volatility spike forces sales that no private buyer absorbs. In March 2020 it took the Fed, as buyer of last resort, about $1.6tn of Treasuries in a few weeks to stop it.',
-      s: [DSRC.ks, ['Federal Reserve, “Federal Reserve announces extensive new measures to support the economy”, 23 Mar 2020', 'https://www.federalreserve.gov/newsevents/pressreleases/monetary20200323b.htm']],
+      s: [DSRC.ks, ['Federal Reserve (23 Mar 2020)', 'https://www.federalreserve.gov/newsevents/pressreleases/monetary20200323b.htm']],
       prec: [{ k: 'March 2020 · measured', x: 'Large hedge funds’ gross Treasury exposures fell by $426bn in March 2020, most of it in funds likely trading the cash-futures basis.',
-        s: [['Banegas, Monin and Petrasek, “Sizing hedge funds’ Treasury market activities and holdings”, FEDS Notes, 6 Oct 2021', 'https://www.federalreserve.gov/econres/notes/feds-notes/sizing-hedge-funds-treasury-market-activities-and-holdings-20211006.htm']],
-        cav: 'How far the basis trade caused the stress, rather than suffered it, is debated.', cs: [['OFR working paper, “Hedge Funds and the Treasury Cash-Futures Disconnect”, 2021', 'https://www.financialresearch.gov/working-papers/2021/04/01/hedge-funds-and-the-treasury-cash-futures-disconnect/']] }],
+        s: [['Banegas, Monin and Petrasek, FEDS Notes (6 Oct 2021)', 'https://www.federalreserve.gov/econres/notes/feds-notes/sizing-hedge-funds-treasury-market-activities-and-holdings-20211006.htm']],
+        cav: 'How far the basis trade caused the stress, rather than suffered it, is debated.', cs: [['OFR working paper (2021)', 'https://www.financialresearch.gov/working-papers/2021/04/01/hedge-funds-and-the-treasury-cash-futures-disconnect/']] }],
       who: 'The chain is this map’s reading; “the house always prints” is Elias Rutten’s reading (18 Sep 2026); the March 2020 figures are measured.', links: [EL.house] } },
   '9-4': { when: '2 April 2025', nt: 'Tariffs or the bond market', seat: 'the White House', ord: ['alt', 'real'], sus: {},
     q: 'The bond market is selling Treasuries as the tariffs land. What do you do?',
@@ -6730,7 +6729,7 @@ const SDEC = {
         ['2026', 'A client again', 'Tokyo spent ¥11.7tn alone in April and May while Washington offered “constant and robust” coordination and asked for higher Japanese rates, whose cost falls on Japan.', 'Ministry of Finance (7 Aug 2026); Reuters (20 May 2026); Rutten, Current Japanese financial dynamics (13 May 2026)', 'measured; the cost on Japan is Rutten’s reading']],
       shows: 'Decades of suppressed household returns made Japan the dollar system’s largest saver and the world’s cheapest lender: distorted trade on one side, fast money on the other. In Rutten’s reading that makes Japan a client of the system, and the map’s reading adds the lever: the same savings are steered from Washington, through a $550bn pledge whose projects a US-led committee picks, with higher tariffs if Japan does not pay within 45 days.',
       prec: [{ k: '5 August 2024 · measured', x: 'A Bank of Japan rate rise on 31 July and weak US payrolls two days later sent the yen up and forced yen-funded carry trades to unwind. The Nikkei fell 12.4% on 5 August, its worst day since 1987, and markets steadied within days.',
-        s: [DSRC.bis90, ['Elias Rutten, Current Japanese financial dynamics (13 May 2026), for the Nikkei figure', SJ2]] }],
+        s: [DSRC.bis90, ['Rutten (13 May 2026), for the Nikkei figure', SJ2]] }],
       who: 'The two ways it could break are Elias Rutten’s reading (Current Japanese financial dynamics, 13 May 2026), after Quinn Thompson; whether the carry trade is unwinding now is not measured on this page. The history follows Rutten (Japanese economic history, 11 May 2026), with figures checked against the IMF, TIC and Japan’s Ministry of Finance; the August 2024 unwind is measured.', links: [['Japan, part 1', SJ1], ['Japan, part 2', SJ2]] } },
   '6-1': { when: 'March 2026', nt: 'Oil', seat: 'the White House', ord: ['real', 'alt'], sus: {},
     q: 'Oil is near $118 and the strait is shut. What do you do?',
@@ -6751,7 +6750,7 @@ const SDEC = {
     crisis: { t: 'The war reaches the bond market',
       x: 'An oil shock left to the market reaches the bond market through inflation and the Fed, and the share market through long yields.', s: [],
       prec: [{ k: '2022 · measured', x: 'After Russia’s invasion of Ukraine, energy prices soared and the Fed tightened faster than at any time since the 1980s; US IPOs raised $7.7bn, the least in Renaissance Capital’s 30-plus years of records. Washington’s answer then was the largest stock release in US history, 180 million barrels from 31 March 2022.',
-        s: [['Renaissance Capital, 2022 US IPO Market Review, 3 Jan 2023', 'https://renaissancecapital.com/IPO-Center/News/96381/Renaissance-Capitals-2022-US-IPO-Market-Review'], ['EY via CFO Dive, Dec 2022', ''], ['White House, 31 Mar 2022', 'https://www.whitehouse.gov/briefing-room/speeches-remarks/2022/03/31/remarks-by-president-biden-on-actions-to-lower-gas-prices-at-the-pump-for-american-families/']] }],
+        s: [['Renaissance Capital (3 Jan 2023)', 'https://renaissancecapital.com/IPO-Center/News/96381/Renaissance-Capitals-2022-US-IPO-Market-Review'], ['EY via CFO Dive, Dec 2022', ''], ['White House, 31 Mar 2022', 'https://www.whitehouse.gov/briefing-room/speeches-remarks/2022/03/31/remarks-by-president-biden-on-actions-to-lower-gas-prices-at-the-pump-for-american-families/']] }],
       who: 'The chain and the sentence above are this map’s reading; the 2022 figures are measured. That headlines did much of the work in 2026 is Elias Rutten’s reading (10 Nov 2026).', links: [EL.oil] } },
 };
 
@@ -6920,11 +6919,11 @@ function simEnter(prev, R, fwd) {
 function drawOn(p, delay) {
   clearTimeout(p._dt);   /* a relation drawn again before its first draw has finished is not cut short by the first one's clean-up */
   if (p.classList.contains('rule') || p.classList.contains('sig') || p.classList.contains('ch') || p.classList.contains('off')) { if (p.animate) p.animate([{ opacity: 0 }, {}], { duration: 700, delay, easing: 'ease', fill: 'backwards' }); return; }
-  const L = p.getTotalLength(), mk = p.getAttribute('marker-end');
+  const L = p.getTotalLength(), mk = p._mk || p.getAttribute('marker-end'); p._mk = mk;   /* content build: remembered, so a second draw that starts before the first has ended still gives the arrowhead back */
   p.removeAttribute('marker-end'); p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
   void p.getBBox();
   p.style.transition = `stroke-dashoffset .8s cubic-bezier(.45,.05,.25,1) ${delay}ms, opacity .25s, stroke-width .25s`; p.style.strokeDashoffset = '0';
-  p._dt = setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); }, delay + 850);
+  p._dt = setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); p._mk = null; }, delay + 850);
 }
 
 /* ---------- camera: frames what the story has introduced (phones: the step in hand) ---------- */
@@ -7149,10 +7148,9 @@ function sChainHTML(k) {
 function sCrisisHTML(k) {
   const D = SDEC[k], K = D.crisis;
   return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${fe(K.x)}</p>${sSrcHTML(K.s)}`
-    + (K.built ? `<details class="cb-rail"${PHONE() || innerHeight >= 900 ? ' open' : ''}><summary>How it was built <em>${K.built.length} dated steps</em></summary><ol>${K.built.map(([d, t, x, s, w]) => `<li><span class="rd">${fe(d)}</span><b>${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)} · ${fe(w)}</div></li>`).join('')}</ol></details>` : '')
-    + (K.shows ? `<div class="cb-shows"><b>What it shows</b><p>${fe(K.shows)}</p></div>` : '')
+    + (K.built ? `<details class="cb-rail"${PHONE() ? ' open' : ''}><summary>How it was built <em>${K.built.length} dated steps, what they show, whose reading</em></summary><ol>${K.built.map(([d, t, x, s, w]) => `<li><span class="rd">${fe(d)}</span><b>${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)} · ${fe(w)}</div></li>`).join('')}</ol>${K.shows ? `<div class="cb-shows"><b>What it shows</b><p>${fe(K.shows)}</p></div>` : ''}<p class="dwho">${fe(K.who)}</p></details>` : '')
     + K.prec.map(P => `<div class="dprec"><b>${fe(P.k)}</b><p>${fe(P.x)}</p>${sSrcHTML(P.s)}${P.cav ? `<p class="dcav">${fe(P.cav)}</p>${sSrcHTML(P.cs)}` : ''}</div>`).join('')
-    + `<p class="dwho">${fe(K.who)}</p>`
+    + (K.built ? '' : `<p class="dwho">${fe(K.who)}</p>`)
     + `<div class="s2acts dacts"><button type="button" class="sn-go" data-dgo="real">Back to what happened ${sArrR}</button>${sLinksHTML(K.links)}</div>`;
 }
 function simBodyHTML() {
@@ -7406,7 +7404,7 @@ window.ISX = {
   get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
-    decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
+    decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
   /* content build: a view can start a play or pull a lever on the map behind it */
   simPlay(i) { if (!PLAYS[i] || !$('cock')) return; SIM.ftab = 'plays'; if (SIM.mode !== 'full') simSetMode('full'); clearSel(); fplay = i; fpstep = 0; simBar(); simTrays(); styleRmap(); renderSide(); },

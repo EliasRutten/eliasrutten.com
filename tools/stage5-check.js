@@ -57,7 +57,7 @@ const AUDITOR = () => {
     if (!gz && g.textContent.trim() !== g.querySelector('.fnt').textContent.trim()) leaks.push('actor ' + n + ' carries more than its name: ' + g.textContent.trim());
     if (gz) g.dataset.ind.split(' ').forEach((id, k) => {
       const I = IX[id], v = txt(g, `[data-gv="${id}"]`), where = 'gauge “' + I.k + '”';
-      if (reached(I)) { vals++; if (!/\d/.test(v)) leaks.push(where + ' has been reached but shows no value'); else onMap++; if (!k && g.classList.contains('sock')) leaks.push(where + ' has been reached but is still a socket'); return; }
+      if (reached(I)) { vals++; if (!/\d/.test(v) && !(I.slot && v === '–')) leaks.push(where + ' has been reached but shows no value');   /* content build: the repo haircut is an empty slot by design */ else onMap++; if (!k && g.classList.contains('sock')) leaks.push(where + ' has been reached but is still a socket'); return; }
       if (v) leaks.push(where + ' shows a value: ' + v);
       if (txt(g, `[data-gl="${id}"], [data-gt="${id}"]`)) leaks.push(where + ' shows its line or trend');
       const f = g.querySelector(`[data-gf="${id}"]`); if (f && +f.getAttribute('width') > 0) leaks.push(where + ' shows its fill');
@@ -77,7 +77,7 @@ const AUDITOR = () => {
   if (E) fes.forEach(p => { const i = +p.dataset.e; if (!E.has(i) && +getComputedStyle(p).opacity > .02) leaks.push('relation ' + i + ' (' + S.relations[i].join('→') + ') is visible'); });
   cock.querySelectorAll('#isx-rmap .gt').forEach(g => {
     const I = IX[g.dataset.ind], v = txt(g, '[data-gv]'), where = 'tag “' + I.k + '”', drawn = getComputedStyle(g).display !== 'none';
-    if (reached(I)) { vals++; if (!/\d/.test(v)) leaks.push(where + ' has been reached but shows no value'); else if (!drawn) leaks.push(where + ' has been reached but is not drawn'); else onMap++; return; }
+    if (reached(I)) { vals++; if (!/\d/.test(v) && !(I.slot && v === '–')) leaks.push(where + ' has been reached but shows no value');   /* content build: the repo haircut is an empty slot by design */ else if (!drawn) leaks.push(where + ' has been reached but is not drawn'); else onMap++; return; }
     if (v) leaks.push(where + ' shows a value: ' + v);
     if (drawn && !g.classList.contains('bor')) leaks.push(where + ' is drawn');
     if (g.classList.contains('play') || g.classList.contains('new')) leaks.push(where + ' is lit');
@@ -99,7 +99,7 @@ const AUDITOR = () => {
   const b = await chromium.launch();
   const page = async (ls = {}, opts = {}) => {
     const c = await b.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, deviceScaleFactor: 1, reducedMotion: opts.motion ? 'no-preference' : 'reduce', hasTouch: !!opts.touch, isMobile: !!opts.touch });
-    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, ls), pos = opts.pos || null;
+    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-stack': 'open', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off', 'isx-sim-mode': 'story' }, ls), pos = opts.pos || null;
     await c.addInitScript(o => { try { if (!sessionStorage.getItem('__seeded')) { Object.keys(o.set).forEach(k => localStorage.setItem(k, o.set[k])); if (o.pos) sessionStorage.setItem('isx-sim-pos', o.pos); sessionStorage.setItem('__seeded', '1'); } } catch (e) {} }, { set, pos });
     const p = await c.newPage(); p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 200)));
     await p.goto(base + '#simulator', { waitUntil: 'load' });
@@ -129,9 +129,9 @@ const AUDITOR = () => {
     for (let i = 2; i <= 7; i++) await step('first principles ' + i, key('ArrowRight'), 2100);
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
-    ok(`flicker (${tag}): the guide is at step 1 of 37`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 37; }));
-    for (let i = 2; i <= 37; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
-    ok(`flicker (${tag}): stepped through all 37`, (await where(p)).beat === 36);
+    ok(`flicker (${tag}): the guide is at step 1 of 49`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 49; }));
+    for (let i = 2; i <= 49; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
+    ok(`flicker (${tag}): stepped through all 49`, (await where(p)).beat === 48);
     /* B1-4: each decision's other path, link by link, to its crisis card and back to what happened */
     let links = 0;
     for (const D of await js(p, () => ISX.sim.decisions)) {
@@ -144,7 +144,7 @@ const AUDITOR = () => {
       await step('chain before step ' + (D.at + 1) + ': back to what happened', key('ArrowRight'), 2100);
       ok(`flicker (${tag}): the other path before step ${D.at + 1} ends on what happened`, await js(p, at => { const S = ISX.sim; return S.beat === at && !S.ph; }, D.at));
     }
-    ok(`flicker (${tag}): 3 decisions, ${links} chain links walked`, links === 10, links);
+    ok(`flicker (${tag}): 7 decisions, ${links} chain links walked`, links === 37, links);
     await step('guide: jump to the last step', () => click(p, '#isx-s2bar [data-rt-t="0:36"]'), 2400);
     await step('guide: closing card', key('ArrowRight'), 2300);
     await step('guide: one step back', key('ArrowLeft'), 2100);
@@ -162,7 +162,7 @@ const AUDITOR = () => {
     await step('→ Levers', () => click(p, '[data-s4tab="levers"]'), 2000);
     for (let i = 0; i < 14; i++) { await step('lever ' + (i + 1) + ' pulled', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); await step('lever ' + (i + 1) + ' released', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); }
     await step('→ back to the guide', () => click(p, '[data-s4tab="guide"]'), 2400);
-    ok(`flicker (${tag}): ${total.steps} steps (7 first principles, 37 guide, 3 decisions with their 10 chain links, ${moves} play moves, 14 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
+    ok(`flicker (${tag}): ${total.steps} steps (7 first principles, 49 guide, 7 decisions with their 37 chain links, ${moves} play moves, 17 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
     ok(`flicker (${tag}): no page errors`, p._errs.length === 0, p._errs);
     await p.context().close();
   }
@@ -200,13 +200,13 @@ const AUDITOR = () => {
     for (let i = 0; i < 7; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
     let seenSteps = 0;
-    for (let i = 0; i < 37; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
+    for (let i = 0; i < 49; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
-    ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 37 steps audited`, rows.length === 46 && seenSteps === 37, { rows: rows.length, seenSteps });
+    ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 49 steps audited`, rows.length === 58 && seenSteps === 49, { rows: rows.length, seenSteps });
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
-    ok(`no early reveal (${w} px): the opening card shows 34 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,19', rows[0]);
-    ok(`no early reveal (${w} px): at the end of the guide everything is shown (34 nodes, 59 relations, 19 indicators with their values)`, end.onMap.join() === '34,59' && end.indicators.join() === '19,0' && end.valueLines === 19, end);
+    ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
+    ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '19,0' && end.valueLines === 19, end);
     if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips === 0, rows.map(a => a.chips).join(''));
     if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: nodes, relations | values on the map | indicators: reached, later'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.indicators.join(', ')].join(' | '))); console.log(''); }
     if (w === 1440) {
@@ -273,7 +273,7 @@ const AUDITOR = () => {
     ok('opening card: the guide is the gold one, the full map is outlined; “Skip to the plumbing” is the one quiet link', card.gold && card.fullPlain && card.border === '1px' && card.skip && card.links === 1 && !card.own, card);
     await p.focus('#isx-sn-body .s5full'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
     const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
-    ok('opening card: “Explore the full map” opens the full view (34 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 34 && full.back && /rt-swb/.test(full.focus), full);
+    ok('opening card: “Explore the full map” opens the full view (37 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && /rt-swb/.test(full.focus), full);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     ok('back to the guide: one click, and the opening card is back', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body .s4go')));
     await click(p, '#isx-sn-body .s4skip'); await p.waitForTimeout(300);
@@ -283,7 +283,7 @@ const AUDITOR = () => {
     await click(p, '[data-s4tab="levers"]'); await p.waitForTimeout(400); await click(p, '#isx-s2tray-lev .lv', 3); await p.waitForTimeout(300);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
-    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 37), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*37$/.test((res.cnt || '').trim()) && /step 12 of 37/.test(lab) && res.sel === 0, { res, lab });
+    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 49), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*49$/.test((res.cnt || '').trim()) && /step 12 of 37/.test(lab) && res.sel === 0, { res, lab });
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
@@ -301,10 +301,10 @@ const AUDITOR = () => {
     ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(700);
     const f = await js(p, onMap);
-    ok(`${w} px, full view: all 8 gauge nodes and 10 tags with their values; “19 / 19”`, f.live === 8 && f.tags === 10 && f.btn === '19 / 19' && f.btnClear, f);
+    ok(`${w} px, full view: all 8 gauge nodes and 15 tags with their values; “24 / 24”`, f.live === 8 && f.tags === 15 && f.btn === '24 / 24' && f.btnClear, f);
     await click(p, '#isx-b1ind'); await p.waitForTimeout(300);
     const l = await js(p, onMap);
-    ok(`${w} px: the Indicators button opens the role ledger with 19 rows`, l.led && l.rows === 19 && await js(p, () => { const r = document.getElementById('isx-b1led').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 && r.top >= 0 && r.bottom <= innerHeight + 1; }), l);
+    ok(`${w} px: the Indicators button opens the role ledger with 24 rows`, l.led && l.rows === 24 && await js(p, () => { const r = document.getElementById('isx-b1led').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 && r.top >= 0 && r.bottom <= innerHeight + 1; }), l);
     ok(`no page errors (${w} px)`, p._errs.length === 0, p._errs); await p.context().close();
   }
   { /* phones: the strip under the map carries only what the step moves, then the way to all of them */
@@ -319,10 +319,10 @@ const AUDITOR = () => {
     ok('390 px, step 10: the chips are the indicators in play, no fixed set', g.chips.map(c => c[0]).sort().join() === (await js(p, () => [...document.querySelectorAll('#isx-rmap .gn.play, #isx-rmap .gt.play')].flatMap(x => x.dataset.ind.split(' ')).sort().join())), { chips: g.chips, play10 });
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":29}' });
     const t = await js(p, strip);
-    ok('390 px, step 30: inflation and diesel arrive as “first moved here”', ['pce', 'diesel'].every(id => t.chips.some(c => c[0] === id && c[2] === 'first moved here')) && /All 19 indicators|All 19 of 19/.test(t.all), t);
+    ok('390 px, step 30: inflation and diesel arrive as “first moved here”', ['pce', 'diesel'].every(id => t.chips.some(c => c[0] === id && c[2] === 'first moved here')) && /All 24 indicators|All 19 of 19/.test(t.all), t);
     await js(p, () => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(350);
     const sh = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => e.getClientRects().length > 0, r = l.getBoundingClientRect(); return { open: !l.hidden, tabs: [...l.querySelectorAll('.ltabs [data-ltab]')].filter(v).length, cols: [...l.querySelectorAll('.lcol')].filter(v).length, rows: l.querySelectorAll('.lr.ind').length, full: r.left <= 1 && r.right >= innerWidth - 1 && r.height > innerHeight * .7 }; });
-    ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 19 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 19 && sh.full, sh);
+    ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 24 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 24 && sh.full, sh);
     await js(p, () => document.querySelector('#isx-b1led [data-ltab="conduit"]').click()); await p.waitForTimeout(150);
     ok('390 px: a role tab switches the column', await js(p, () => { const v = e => e.getClientRects().length > 0, c = [...document.querySelectorAll('#isx-b1led .lcol')].filter(v); return c.length === 1 && c[0].dataset.role === 'conduit' && c[0].querySelectorAll('.lr.ind').length === 5; }));
     ok('no page errors (390 px)', p._errs.length === 0, p._errs); await p.context().close();
@@ -335,8 +335,8 @@ const AUDITOR = () => {
     const L = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => !!e && e.getClientRects().length > 0 && (!e.checkVisibility || e.checkVisibility()), rows = [...l.querySelectorAll('.lr.ind')], bar = document.getElementById('isx-s2bar').getBoundingClientRect(), r = l.getBoundingClientRect();
       return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.lcol')].map(g => g.querySelectorAll('.lr.ind').length), roles: [...l.querySelectorAll('.lcol h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.ln').textContent.length > 2 && /\d/.test(x.querySelector('.lrb > b').textContent) && /^(step|first principles) \d+/.test(x.querySelector('.lrb > em').textContent)).length, detailsShown: [...l.querySelectorAll('.ld')].filter(v).length, srcShown: v(l.querySelector('.lsrc3')), slots: l.querySelectorAll('.lr.slot').length, slotDigits: [...l.querySelectorAll('.lr.slot')].filter(x => !/not yet measured/.test(x.textContent) || /\d/.test(x.textContent)).length, figs: l.querySelectorAll('.lr.fig').length, sectors: l.querySelectorAll('.secb3').length, link: /Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings: inflation moved the policy rate on 16 September 2026\./.test(l.querySelector('.lfoot').textContent), source: !!l.querySelector('.lsrcd .lsrc3'), fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.top >= 0 && r.left >= 0 && r.right <= innerWidth };
     });
-    ok('ledger: all 19 indicators in four roles: Settings, Conduits, Stress gauges, Outcomes · balances (3, 5, 1, 10)', L.open && L.rows === 19 && L.per.join() === '3,5,1,10' && L.roles.join() === 'Settings,Conduits,Stress gauges,Outcomes · balances', L);
-    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 19 && L.detailsShown === 0 && !L.srcShown, L);
+    ok('ledger: all 24 indicators in four roles: Settings, Conduits, Stress gauges, Outcomes · balances (3, 8, 3, 10)', L.open && L.rows === 24 && L.per.join() === '3,8,3,10' && L.roles.join() === 'Settings,Conduits,Stress gauges,Outcomes · balances', L);
+    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 24 && L.detailsShown === 0 && !L.srcShown, L);
     ok('ledger: nothing was dropped: 7 slots not yet measured (never a number), 4 figures from elsewhere, the source layer, 5 sectors, the link between the roles', L.slots === 7 && L.slotDigits === 0 && L.figs === 4 && L.sectors === 5 && L.link && L.source, L);
     ok('ledger: fits 1440×900 without scrolling, clear of the bar', L.fit && L.aboveBar && L.inside, L);
     await click(p, '#isx-b1led .lrb[data-led]', 4); await p.waitForTimeout(150);
@@ -358,7 +358,7 @@ const AUDITOR = () => {
   {
     const p = await page({ 'isx-sim-mode': 'full' });
     const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.indicators.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length, c.querySelectorAll('#isx-rmap .fn.pl').length, c.querySelectorAll('#isx-rmap .fn.gn').length, c.querySelectorAll('#isx-rmap .gt').length]; });
-    ok('counts: 26 actors + 8 gauge nodes (34 nodes), 59 relations, 14 levers, 19 indicators (10 of them tags), 9 plays, 37 guide steps', n.join() === '34,59,14,19,9,37,26,8,10', n); await p.context().close();
+    ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 11 plays, 49 guide steps', n.join() === '37,75,17,24,11,49,29,8,15', n); await p.context().close();
   }
 
   await b.close();

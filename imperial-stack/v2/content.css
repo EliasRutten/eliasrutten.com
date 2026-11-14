@@ -195,3 +195,7 @@
 #isx-root .simtour { z-index: 70; }
 @media (max-width: 760px) { #isx-root .simtour { position: fixed; left: 10px !important; right: 10px; top: auto !important; bottom: 12px; width: auto; z-index: 410; } }
 #isx-root.v-fin .tour2.simtour:not([hidden]) { display: block; }
+/* the crisis cards carry more sources since the content build: a little less air between a text and its source line */
+#isx-root .s2card .dprec .lsrc, #isx-root .s2card .s2p + .lsrc { margin-top: 2px; }
+#isx-root .s2card .dprec .dcav { margin-top: 3px; }
+#isx-root .s2card .dprec { margin-top: 8px; padding-top: 8px; padding-bottom: 8px; }

@@ -8,7 +8,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   const b = await chromium.launch();
   const page = async (hash, ls = {}, opts = {}) => {
     const c = await b.newContext({ viewport: { width: opts.w || 1440, height: opts.h || 900 }, deviceScaleFactor: 1, reducedMotion: opts.reduce === false ? 'no-preference' : 'reduce', hasTouch: !!opts.touch, isMobile: !!opts.touch });
-    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off' }, ls);
+    const set = Object.assign({ 'isx-tips-globe': 'off', 'isx-tips-sim': 'off', 'isx-stack': 'open', 'isx-first': 'off', 'isx-insights': 'off', 'isx-tour': 'off' }, ls);
     await c.addInitScript(([o, ss]) => { try { if (!sessionStorage.getItem('__seeded')) { Object.keys(o).forEach(k => { if (o[k] === null) localStorage.removeItem(k); else localStorage.setItem(k, o[k]); }); Object.keys(ss).forEach(k => sessionStorage.setItem(k, ss[k])); sessionStorage.setItem('__seeded', '1'); } } catch (e) {} }, [set, opts.ss || {}]);
     const p = await c.newPage(); p._errs = []; p.on('pageerror', e => p._errs.push(String(e).slice(0, 200)));
     await p.goto(base + hash, { waitUntil: 'load' });
@@ -83,7 +83,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
   const geo = await p.evaluate(() => { const c = document.getElementById('isx-cock').getBoundingClientRect(), s = document.getElementById('isx-rmap').getBoundingClientRect(), f = document.getElementById('isx-frame').getBoundingClientRect(); return { cock: [c.width, c.height], svg: [s.width, s.height], frame: [f.width, f.height], vh: innerHeight }; });
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
-  ok('simulator: card, bar with first principles and seven chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 8 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
+  ok('simulator: card, bar with first principles and eight chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 9 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(300);
   /* B1: → never chooses. At a choice the walk takes what happened on the card, then goes on with → */
@@ -96,11 +96,11 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     else await p.keyboard.press('ArrowRight');
     await p.waitForTimeout(120);
   }
-  ok('guide: all 37 steps are reachable with →, choosing on the card at each choice', n === 37, n);
+  ok('guide: all 49 steps are reachable with →, choosing on the card at each choice', n === 49, n);
   ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
-  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[7].classList.contains('cur')));
+  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[8].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
-  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/37$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
+  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^14\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
   /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:1"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
@@ -111,12 +111,12 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: Esc closes the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));
   /* B1-3: readings became indicators; the ladder became the role ledger, opened by the Indicators button on the stage */
   await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(200);
-  ok('guide: Indicators opens the role ledger: every indicator reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-b1led'), got = l.querySelectorAll('.lr.ind:not(.later)').length, n = +document.querySelector('#isx-b1ind b').textContent.split('/')[0]; return c.classList.contains('led-open') && !l.hidden && l.querySelectorAll('.lr.ind').length === 19 && got === n && got > 0 && got < 19 && [...l.querySelectorAll('.lr.ind.later')].every(x => !/\d/.test(x.querySelector('b').textContent)); }));
+  ok('guide: Indicators opens the role ledger: every indicator reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-b1led'), got = l.querySelectorAll('.lr.ind:not(.later)').length, n = +document.querySelector('#isx-b1ind b').textContent.split('/')[0]; return c.classList.contains('led-open') && !l.hidden && l.querySelectorAll('.lr.ind').length === 24 && got === n && got > 0 && got < 24 && [...l.querySelectorAll('.lr.ind.later')].every(x => !/\d/.test(x.querySelector('b').textContent)); }));
   await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
-  ok('guide: the picker lists first principles, the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
+  ok('guide: the picker lists first principles, the guide and eleven mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 13));
   await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
-  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 4 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
+  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 7 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(250);
   /* B1-4: a decision is its own card between two steps; the other path is a chain of reveals that ends on a crisis card */
@@ -125,10 +125,10 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at Treasury/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
   await p.click('#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(300);
   const chain = [];
-  for (let i = 0; i < 6; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
-  ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 4 && chain.slice(0, 3).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[3].k) && /Back to\s*What happened/i.test(chain[3].nx), chain);
+  for (let i = 0; i < 9; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
+  ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 7 && chain.slice(0, 6).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[6].k) && /Back to\s*What happened/i.test(chain[6].nx), chain);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^02\/37$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Keep selling long bonds/.test(b.querySelector('.dyou').textContent) && /Washington sold more bills\./.test(b.querySelector('.dyou').textContent); }));
+  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^02\/49$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Keep selling long bonds/.test(b.querySelector('.dyou').textContent) && /Washington sold more bills\./.test(b.querySelector('.dyou').textContent); }));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
@@ -136,12 +136,12 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   /* ---------- 4. the Simulator: full view, parity ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
   const par = await p.evaluate(() => { const c = document.getElementById('isx-cock'), v = s => [...c.querySelectorAll(s)].filter(x => x.getClientRects().length && !x.classList.contains('gh')).length; return { actors: v('#isx-rmap .fn'), relations: c.querySelectorAll('#isx-rmap .fe:not(.gh)').length, levers: v('.lv'), plays: v('.pchip'), card: v('.s2card'), bar: v('.s2bar') }; });
-  ok('full view: every node (26 actors, 8 gauge nodes), relation and play is on the stage; no card; the bar holds the switch', par.actors === 34 && par.relations === 59 && par.plays === 9 && par.card === 0 && par.bar === 1, par);
+  ok('full view: every node (29 actors, 8 gauge nodes), relation and play is on the stage; no card; the bar holds the switch', par.actors === 37 && par.relations === 75 && par.plays === 11 && par.card === 0 && par.bar === 1, par);
   await p.evaluate(() => document.querySelector('[data-s4tab="levers"]').click()); await p.waitForTimeout(300);
-  ok('full view: the Levers tab shows all 14 levers', await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length).length === 14 && document.getElementById('isx-s2tray-play').hidden));
+  ok('full view: the Levers tab shows all 17 levers', await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length).length === 17 && document.getElementById('isx-s2tray-play').hidden));
   await p.evaluate(() => document.querySelector('[data-s4tab="plays"]').click()); await p.waitForTimeout(300);
   await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(200);
-  ok('full view: Indicators opens all 19', await p.evaluate(() => [...document.querySelectorAll('#isx-b1led .lr.ind:not(.later)')].filter(x => x.getClientRects().length).length) === 19);
+  ok('full view: Indicators opens all 24', await p.evaluate(() => [...document.querySelectorAll('#isx-b1led .lr.ind:not(.later)')].filter(x => x.getClientRects().length).length) === 24);
   await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300);
   ok('full view: an actor opens a floating dossier, and its indicator shows in it', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && /Bills, share of marketable debt: 22\.2%/.test((d.querySelector('.dtile') || {}).textContent || '') && /Setting/.test(d.querySelector('.dtile .dr').textContent); }));
