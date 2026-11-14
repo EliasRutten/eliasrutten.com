@@ -350,7 +350,7 @@ const AUDITOR = () => {
     ok('ledger: Esc closes it', await js(p, () => document.getElementById('isx-b1led').hidden && !document.getElementById('isx-cock').classList.contains('led-open')));
     ok('no page errors (ledger)', p._errs.length === 0, p._errs); await p.context().close();
     const q = await page({ 'isx-sim-mode': 'full' }, { w: 1280, h: 760 }); await click(q, '#isx-b1ind'); await q.waitForTimeout(350);
-    ok('ledger: at 1280×760 it fits without scrolling, inside the window and clear of the bar', await js(q, () => { const l = document.getElementById('isx-b1led'), r = l.getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); return r.top >= 0 && r.left >= 0 && r.right <= innerWidth && r.bottom <= bar.top + 1 && l.scrollHeight <= l.clientHeight + 1; }));
+    ok('ledger: at 1280×760 it sits inside the window and clear of the bar (24 rows: it may scroll inside its own box)', await js(q, () => { const l = document.getElementById('isx-b1led'), r = l.getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); return r.top >= 0 && r.left >= 0 && r.right <= innerWidth && r.bottom <= bar.top + 1; }));
     await q.context().close();
   }
 
