@@ -26,7 +26,7 @@
   /* the Simulator's two views, in the bar (the switch on the stage stays for phones and for the capital stack's own header) */
   var fin = document.createElement('div');
   fin.className = 'st-fin'; fin.id = 'isx-st-fin'; fin.hidden = true; fin.setAttribute('role', 'group'); fin.setAttribute('aria-label', 'The imperial machinery: view');
-  fin.innerHTML = '<button type="button" data-stfin="plumb" aria-pressed="true" aria-label="Scott Bessent Simulator"><span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span></button><button type="button" data-stfin="stack" aria-pressed="false">The capital stack</button>';
+  fin.innerHTML = '<button type="button" data-stfin="plumb" aria-pressed="true" aria-label="Scott Bessent Simulator"><span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span></button>' + (X.stackOpen ? '<button type="button" data-stfin="stack" aria-pressed="false">The capital stack</button>' : '<button type="button" class="soon" aria-disabled="true" title="Coming soon: who funds the build-out, deal by deal">The capital stack <em>coming soon</em></button>');   /* content build: locked, like “The other stack” */
   ctx.appendChild(fin);
   fin.addEventListener('click', function (e) { var b = e.target.closest('[data-stfin]'); if (b && X.setFin) X.setFin(b.dataset.stfin); });
 

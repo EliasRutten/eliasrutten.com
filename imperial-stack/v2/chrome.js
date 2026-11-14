@@ -42,6 +42,7 @@
     TF.innerHTML = '<div class="t2h"><b>Firms</b><span>' + names.length + ' footprints</span><button type="button" class="t2x" data-tray="close" aria-label="Close">×</button></div>'
       + '<p class="t2p">Pick a firm to see who owns it and where it builds, on the globe.</p>'
       + '<button type="button" class="t2web" data-tray="web"><i aria-hidden="true"></i><span><b>The ownership web</b><small>all ' + names.length + ' firms, their owners and sites at once</small></span><em aria-hidden="true">→</em></button>'
+      + '<div class="t2soon" role="note"><b>Profits and the dollar</b><small>the Firms profitability view</small><em>coming soon</em></div>'   /* content build: parked, shown as coming soon (Elias, 14 Nov 2026) */
       + GROUPS.map(function (g) { var l = names.filter(function (n) { return groupOf(OWN.firms[n]) === g[0]; }); return l.length ? '<div class="t2g"><div class="t2k">' + g[1] + '</div><div class="t2fs">' + l.map(chip).join('') + '</div></div>' : ''; }).join('')
       + '<div class="t2key"><span><i class="ownk seat"></i>Seat</span><span><i class="ownk site r-fab"></i>Sites</span><span><i class="ownk holder"></i>Owners</span></div>'
       + '<button type="button" class="t2all" data-tray="allfirms">All ' + F.length + ' firms in the stack <span aria-hidden="true">↓</span></button>';

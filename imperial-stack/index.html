@@ -3723,6 +3723,10 @@ $('sup-link').addEventListener('click', e => { e.preventDefault(); $('support').
 
 /* ================= v7: Financing the AI Manhattan Project ================= */
 let finMode = 'plumb';
+/* content build: the capital stack is kept whole (tower, four deals, lists, sources) and locked as “coming soon”, like “The other stack”.
+   Nothing in it is refreshed. The test switch localStorage['isx-stack'] = 'open' shows it, for the checks and for the day it is unlocked. */
+const STACK_OPEN = (() => { try { return localStorage.getItem('isx-stack') === 'open'; } catch (e) { return false; } })();
+const fmOK = k => k !== 'stack' || STACK_OPEN;
 const FINM = [['plumb', '01', 'The state’s plumbing', '#ffd27a'], ['stack', '02', 'The capital stack', '#ffb547']];
 const LEVERS = [
   { ic: '▤', t: 'Fund the deficit with bills', d: 'Since 2023, kept by Bessent', c: '#ffd27a',
@@ -5337,10 +5341,10 @@ function renderFin() {
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">The imperial machinery · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>Scott Bessent Simulator</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">The imperial machinery · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
-      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
+      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
       + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${RORD.map(r => `<span class="k3"><i class="t3" style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
@@ -5634,7 +5638,7 @@ function gaugeSVG(g) {
   return '';
 }
 
-const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', '<span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span>', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
+const finSwitch = () => `<div class="fsw" role="tablist" aria-label="Switch view">${[['plumb', '<span class="lg">Scott Bessent Simulator</span><span class="sm">Simulator</span>', 'what Washington did, and who funds whom'], ['stack', 'The capital stack', 'where the money comes from, deal by deal']].map(([k, t, x]) => fmOK(k) ? `<button type="button" role="tab" data-fm="${k}" aria-selected="${finMode === k}"><b>${t}</b><small>${x}</small></button>` : `<button type="button" role="tab" class="soon" data-fm-soon aria-selected="false" aria-disabled="true" title="Coming soon: who funds the build-out, deal by deal"><b>${t}</b><small><em>coming soon</em></small></button>`).join('')}</div>`;
 
 /* ================= v.1.5–1.7: the entry screen =================
    Headline, subtitle, one card (lede, three beats, how to read the map), Enter buttons top right and below; an overlay inside #isx-root, shown on every fresh load, skipped for deep links,
@@ -5775,7 +5779,7 @@ function buildTabs() {
   } else if (view === 'arm') {
     AF.forEach(k => tab(k === 'all' ? '●' : '—', k === 'all' ? 'Whole machine' : ATAB[k], k === 'all' ? '#e4ebf1' : ATYPE[k].c, k === armFilter, () => { armFilter = k; buildTabs(); renderArm(); narrate(); renderArmCard(); }));
   } else if (view === 'fin') {
-    FINM.forEach(([k, n, t, c]) => tab(n, t, c, k === finMode, () => { finMode = k; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
+    FINM.filter(([k]) => fmOK(k)).forEach(([k, n, t, c]) => tab(n, t, c, k === finMode, () => { finMode = k; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
   } else if (view === 'story') {
   } else {
     CH.chains.forEach((c, i) => tab(c.id, c.t, CHC[c.kind], i === chainIdx, () => { chainIdx = i; buildTabs(); renderChain(); narrate(); renderChainCard(); }, i === 5 ? 'gap' : ''));
@@ -5916,7 +5920,7 @@ function ringClick(e) { const g = e.target.closest('[data-rs]'); if (!g) return;
    A door is a real link (#simulator, #arm, #scenarios), in its tab's own hue from the top strip. */
 const RDOORS = [
   { h: 'simulator', c: '#ffd27a', t: 'The imperial machinery', s: 'Follow the money in the Scott Bessent Simulator' },
-  { h: 'arm', c: '#44d7ec', t: 'The imperial arm', s: 'See the internal organisational structure of American capital' },
+  { h: 'arm', c: '#44d7ec', t: 'The imperial arm', s: 'See the internal structure of dominant American capital' },
   { h: 'scenarios', c: '#e4ebf1', t: 'Scenarios', s: 'How Washington leverages the stack internationally' },
 ];
 function ringCard() {
@@ -6338,32 +6342,8 @@ function tipsAct(k) {
 /* ---------- the simulator tips: one card above the cockpit ---------- */
 /* interface fixes: one line, the same in the first tip and on the guide's opening card */
 function sClickLine() { return (COARSE ? 'Tap' : 'Click') + ' any actor or line for what it does and its sources.'; }
-function simTipsHTML(force) {
-  if (!force && tipsOff('sim')) return '';
-  const T = [
-    ['Open anything', sClickLine()],
-    ['Follow the guide', 'Press “Start the guide” on the opening card, or Guide in the bar at the bottom. Each step lights its part of the map; Next or ← → moves on.'],
-    ['Plays and levers', 'Also in the bar: plays run Washington’s moves one by one; levers are its tools, each with who pulls it. Pull one or several to see what they move.'],
-    ['Read the indicators', 'Prices and rates sit on the wires as gauges; settings and outcomes hang under the actor they belong to. Every figure is dated. ' + (COARSE ? 'Tap' : 'Hover over') + ' one for what moves it and what it moves; “Indicators” lists all nineteen by role.'],
-  ];
-  return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced. The capital stack, in the switch at the top, follows the money deal by deal.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
-}
-function wireSimTips() {
-  const el = $('stips'); if (!el || el.dataset.w) return; el.dataset.w = '1';
-  el.addEventListener('click', e => {
-    const b = e.target.closest('[data-sa]'); if (!b) return;
-    const a = b.dataset.sa;
-    if (a === 'skip') stSet(TKEY.sim, 'skip', true); else stSet(TKEY.sim, 'off');
-    track('Tips', { set: 'simulator', how: a });
-    el.classList.add('out'); setTimeout(() => el.remove(), reduce ? 0 : 380);
-    const h = $('phelp'); if (h) h.focus({ preventScroll: true });
-  });
-}
-function simTipsShow() {
-  stSet(TKEY.sim, null, true);
-  if (!$('stips')) { const c = $('cock'); if (!c) return; c.insertAdjacentHTML('beforebegin', simTipsHTML(true)); wireSimTips(); }
-  const el = $('stips'); el.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
-  const b = el.querySelector('.cgo'); if (b) b.focus({ preventScroll: true });
+/* content build: the card “How to use the simulator” is gone; the first-visit tour (v2/simtour.js) replaces it and keeps its one line */
+function simTipsShow() { if (window.ISX && ISX.simtour) ISX.simtour.open(true); 
 }
 
 
@@ -6396,7 +6376,7 @@ function slugNow() { return slugOf(view, view === 'arm' ? armMode : finMode); }
 function hashFor() { let d = ''; try { d = window.ISX && ISX.hashDetail ? ISX.hashDetail() || '' : ''; } catch (e) { /* ignore */ } return slugNow() + d; }
 function applyModes(r) {
   if (r[0] === 'arm') { armMode = r[1]; $('m-machine').setAttribute('aria-pressed', String(armMode === 'machine')); $('m-rev').setAttribute('aria-pressed', String(armMode === 'rev')); }
-  if (r[0] === 'fin') finMode = r[1];
+  if (r[0] === 'fin') finMode = fmOK(r[1]) ? r[1] : 'plumb';   /* #capital-stack opens the Simulator while the stack is locked */
 }
 function routeSync() {
   if (routeMute) return;
@@ -7197,7 +7177,7 @@ function simBodyHTML() {
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
       + `<p class="s2p">${L.main ? `${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.` : `${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.`} Open the full view to run the plays, pull any lever and click anything.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
-      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-fm2="stack">The capital stack</button>` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
+      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
       + sDeep(L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : '', 'Not in the guide');
   }
   const dk = sDecK();
@@ -7370,7 +7350,7 @@ function simMount() {
     if (d.sp) { SIM.tray = 'pick'; simTrays(); focusIn($('sn-pick'), '.pk-l.on, button'); return; }
     if (d.sn) { pickNode(d.sn); return; }
     if (d.slv != null) { const lv = cock.querySelector(`.lv[data-l="${d.slv}"]`); if (lv) lv.click(); return; }   /* B1: the lever's card opens; the “Levers so far” tray is gone */
-    if (d.fm2) { finMode = d.fm2; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
+    if (d.fm2 && fmOK(d.fm2)) { finMode = d.fm2; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
   });
   /* Esc: closes an open tray, then an open dossier, then leaves the guide for the full view */
   cock.addEventListener('keydown', e => {
@@ -7431,7 +7411,8 @@ window.ISX = {
   /* content build: a view can start a play or pull a lever on the map behind it */
   simPlay(i) { if (!PLAYS[i] || !$('cock')) return; SIM.ftab = 'plays'; if (SIM.mode !== 'full') simSetMode('full'); clearSel(); fplay = i; fpstep = 0; simBar(); simTrays(); styleRmap(); renderSide(); },
   simLever(i) { if (!LEVERS[i] || !$('cock')) return; SIM.ftab = 'levers'; if (SIM.mode !== 'full') simSetMode('full'); simBar(); simTrays(); const lv = $('cock').querySelector(`.lv[data-l="${i}"]`); if (lv && !flev.has(i)) lv.click(); },
-  setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
+  get stackOpen() { return STACK_OPEN; },
+  setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k) || !fmOK(k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
   setView, setStep, stepBy, select, stopPlay, renderGlobe, repaint, renarrate: () => { narr6(); legend6(); }, recard: renderCountryCard, routeSync, introOpen, tipsOpen: () => { stSet(TKEY.globe, null, true); gtOpen(true); },
@@ -7478,6 +7459,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/web.js"></script>
 <script defer src="/imperial-stack/v2/views.js"></script>
 <script defer src="/imperial-stack/v2/tour.js"></script>
+<script defer src="/imperial-stack/v2/simtour.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

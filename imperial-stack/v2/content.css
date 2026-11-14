@@ -175,3 +175,23 @@
 @media (prefers-reduced-motion: reduce) { #isx-root .vw { transition: none; transform: none; } }
 /* while a view is open the trays and the legend under it rest */
 #isx-root .vw-on .s2tray, #isx-root .vw-on .s2key, #isx-root .vw-on .b1play, #isx-root .vw-on .b1ind { visibility: hidden; }
+
+/* ---------- 6. the Simulator's tour button, and the locks ---------- */
+#isx-root .cb-tourb { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; padding: 4px 12px 4px 5px; border-radius: 999px; cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .16); vertical-align: middle; }
+#isx-root .cb-tourb span { display: inline-grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; font-size: 11px; color: #1a1206; background: #ffd27a; }
+#isx-root .cb-tourb:hover, #isx-root .cb-tourb.tour-on { color: #fff; border-color: #ffd27a; }
+#isx-root .cb-tourb:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .simtour .tw[hidden] { display: none; }
+#isx-root .fsw button.soon, #isx-root .st-fin button.soon { cursor: default; color: var(--ink3); border: 1px dashed #2b3a49; background: transparent; }
+#isx-root .fsw button.soon:hover, #isx-root .st-fin button.soon:hover { color: var(--ink3); border-color: #2b3a49; background: transparent; box-shadow: none; }
+#isx-root .fsw button.soon em, #isx-root .st-fin button.soon em { font-style: normal; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #ffb547; border: 1px solid rgba(255, 181, 71, .5); border-radius: 999px; padding: 1px 7px; margin-left: 6px; white-space: nowrap; }
+#isx-root .fsw button.soon small em { margin-left: 0; }
+#isx-root .cb-soon { display: inline-flex; align-items: center; gap: 6px; cursor: default; color: var(--ink3) !important; border-style: dashed !important; }
+@media (max-width: 760px) { #isx-root .cb-tourb { margin-left: 8px; padding: 3px 9px 3px 4px; font-size: 11px; } }
+#isx-root .tray2 .t2soon { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin: 8px 0 2px; padding: 8px 11px; border-radius: 10px; border: 1px dashed #2b3a49; color: var(--ink3); }
+#isx-root .tray2 .t2soon b { font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .tray2 .t2soon small { font-size: 12px; }
+#isx-root .tray2 .t2soon em { margin-left: auto; font-style: normal; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #ffb547; border: 1px solid rgba(255, 181, 71, .5); border-radius: 999px; padding: 1px 7px; }
+#isx-root .simtour { z-index: 70; }
+@media (max-width: 760px) { #isx-root .simtour { position: fixed; left: 10px !important; right: 10px; top: auto !important; bottom: 12px; width: auto; z-index: 410; } }
+#isx-root.v-fin .tour2.simtour:not([hidden]) { display: block; }
