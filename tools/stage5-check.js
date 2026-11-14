@@ -198,7 +198,7 @@ const AUDITOR = () => {
     await take();
     await click(p, '#isx-sn-body .s4go'); await p.waitForTimeout(350);
     for (let i = 0; i < 7; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
-    await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
+    await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
     let seenSteps = 0;
     for (let i = 0; i < 37; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */

@@ -87,7 +87,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* 6. loops and reduced motion */
   p = await page('#simulator', { 'isx-first': 'off', 'isx-sim-mode': 'full' });
-  ok('loops: three registered', await p.evaluate(() => ISXP.loops().join(',') === 'globe,arm,sim'), await p.evaluate(() => ISXP.loops()));
+  ok('loops: four registered (the ring’s travelling marker since the interface fixes)', await p.evaluate(() => ISXP.loops().join(',') === 'globe,arm,sim,ring'), await p.evaluate(() => ISXP.loops()));
   const moving = async () => { const a = await p.evaluate(() => [...document.querySelectorAll('#isx-fpart circle')].slice(0, 3).map(c => c.getAttribute('cx'))); await p.waitForTimeout(400); const b2 = await p.evaluate(() => [...document.querySelectorAll('#isx-fpart circle')].slice(0, 3).map(c => c.getAttribute('cx'))); return a.join() !== b2.join(); };
   await p.evaluate(() => document.getElementById('isx-scene-fin').scrollIntoView()); await p.waitForTimeout(600);
   ok('loops: simulator particles move while on screen', await moving());

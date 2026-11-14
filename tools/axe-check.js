@@ -66,7 +66,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('scenarios: the close', '#scenarios', seen, 1440, 900, async p => { for (let i = 0; i < 9; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(120); } });
   await run('scenarios: picker open', '#scenarios', seen, 1440, 900, click('#isx-sc-pick'));
   await run('ownership web', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
-  await run('ownership web: a firm', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); await p.evaluate(() => document.querySelector('#isx-web3 .wnode[data-id="f:TSMC"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300); });
+  await run('ownership web: a firm', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForSelector('#isx-web3 .wnode[data-id="f:TSMC"]', { state: 'attached', timeout: 20000 }); await p.waitForTimeout(300); await p.evaluate(() => document.querySelector('#isx-web3 .wnode[data-id="f:TSMC"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300); });   /* waits for the web itself: on a slow machine 900 ms was not always enough */
   await run('phone: scenarios, a step', '#scenarios', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-sc-bar .rt-nx').click()); await p.waitForTimeout(300); });
   await run('phone: scenarios, picker', '#scenarios', seen, 390, 844, click('#isx-sc-pick'));
   await run('phone: ownership web', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
@@ -108,6 +108,16 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('B1-4, phone: a decision card', '#simulator', sim(24), 390, 844, ask);
   await run('B1-4, phone: a chain link and the strip', '#simulator', sim(24), 390, 844, chainTo(1));
   await run('B1-4, phone: a crisis card', '#simulator', sim(0), 390, 844, chainTo(3));
+  /* interface fixes: “Full screen” beside the zoom buttons and in the bar, the ring with its three doors, a line's card, the Arm's dock */
+  await run('interface: the Circuit, “Full screen” beside zoom', '#circuit/03', seen, 1440, 900);
+  await run('interface: the ring with the three doors', '#circuit/ring', seen, 1280, 760);
+  await run('interface, phone: the ring’s card with the doors as rows', '#circuit/ring', seen, 390, 844);
+  await run('interface: the Simulator’s bar with “Full screen”', '#simulator', sim(5), 1440, 900);
+  await run('interface: a line’s card in the full view', '#simulator', full, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .feh[data-e="1"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
+  await run('interface: a line’s card in the guide', '#simulator', sim(11), 1440, 900, async p => { await p.evaluate(() => { const S = ISX.sim, i = S.lines[S.line].steps[S.beat].e[0]; document.querySelector(`#isx-rmap .feh[data-e="${i}"]`).dispatchEvent(new MouseEvent('click', { bubbles: true })); }); await p.waitForTimeout(400); });
+  await run('interface: Scenarios, the bar with “Full screen”', '#scenarios', seen, 1024, 768);
+  await run('interface: the Arm, the dock with “Full screen”', '#arm', seen, 1280, 760);
+  await run('interface, phone: the Arm’s dock', '#arm', seen, 390, 844);
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

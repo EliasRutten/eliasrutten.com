@@ -1,15 +1,17 @@
 /* Frame-time comparison under CPU throttling. Headless Chromium draws WebGL in software, so the
    absolute numbers are far below a real device; only the comparison between two builds means something.
-   Usage: node tools/perf-check.js <baseUrl> [rate=4] */
+   Usage: node tools/perf-check.js <baseUrl> [rate=4]
+   Interface fixes (14 Nov 2026): two states for the Circuit's ring, once it has lit: on the device's own tier (in headless
+   Chromium that is the low tier, where the lit arrows stay still) and with ?tier=high (the marker travels the loop). */
 const { chromium } = require('playwright');
 const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
 const rate = +(process.argv[3] || 4);
 (async () => {
   const b = await chromium.launch();
-  const run = async (name, hash, prep) => {
+  const run = async (name, hash, prep, q) => {
     const c = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
     await c.addInitScript(() => { try { ['isx-tips-globe', 'isx-tips-sim', 'isx-first', 'isx-insights', 'isx-intro', 'isx-tour'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-sim-mode', 'full'); } catch (e) {} });
-    const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' }); await p.waitForTimeout(7000);
+    const p = await c.newPage(); await p.goto(base + (q || '') + hash, { waitUntil: 'load' }); await p.waitForTimeout(7000);
     if (prep) await prep(p);
     const cdp = await c.newCDPSession(p); await cdp.send('Emulation.setCPUThrottlingRate', { rate });
     await p.waitForTimeout(1500);
@@ -18,6 +20,9 @@ const rate = +(process.argv[3] || 4);
   };
   await run('circuit, overview', '#circuit');
   await run('circuit, step 02 (flows)', '#circuit', async p => { await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(3000); });
+  const ring = async p => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(9000); };   /* Next from step 10 opens the ring; wait until it has lit */
+  await run('circuit, the ring (own tier)', '#circuit/10', ring);
+  await run('circuit, the ring (tier high)', '#circuit/10', ring, '?tier=high');
   await run('simulator, full view', '#simulator', async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-fin'); if (e) e.scrollIntoView({ block: 'center' }); }); await p.waitForTimeout(1500); });
   await run('arm', '#arm', async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-arm'); if (e) e.scrollIntoView({ block: 'center' }); }); await p.waitForTimeout(1500); });
   await b.close();

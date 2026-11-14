@@ -36,8 +36,10 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   let p = await open(c, '#circuit', 'circuit');
   const CSEL = '#isx-tournarr, #isx-narr, #isx-card, #isx-tabs, #isx-resbar, #isx-legend, #isx-mapnote';
   for (let i = 0; i <= 10; i++) { await snap(p, 'circuit/step' + i, CSEL); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); }
+  /* interface fixes: the ring itself is in the net (its card with the three doors, and the bar while it is open) */
+  await p.waitForTimeout(300); await snap(p, 'circuit/ring', '#isx-tournarr, #isx-tabs'); await count(p, 'ring-stations', '#isx-ring .rg-st'); await count(p, 'ring-doors', '#isx-tournarr a.rgdoor');
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); await snap(p, 'circuit/wrap', '#isx-tournarr');
-  /* B1-2: after step 10 the loop closes in the ring (circuit/wrap is now the ring's card); one more → starts again at step 1, where the walk went on before */
+  /* B1-2: after step 10 the loop closes in the ring; one more → starts again at step 1 (circuit/wrap is that card), where the walk went on before */
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(500);
   /* country, by clicking a table row; firm, through the firms panel */
   await p.evaluate(() => { const r = [...document.querySelectorAll('#isx-c-table .cell[role="button"], #isx-c-table .catab .c')][0]; if (r) r.click(); });

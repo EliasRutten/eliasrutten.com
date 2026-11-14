@@ -67,7 +67,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const r = await js(p, id => { const h = document.getElementById(id), v = e => !!e && e.getClientRects().length > 0, x = e => e.getBoundingClientRect().left, d = document.getElementById('isx-dock');
         const bars = [...document.querySelectorAll('.rt-host .rt')].filter(v), bk = h.querySelector('.rt-bk'), nx = h.querySelector('.rt-nx'), rt = h.querySelector('.rt-route');
         return { bars: bars.length, mine: h.querySelectorAll('.rt').length, parts: [bk, nx, rt, d].every(v), order: v(bk) && v(nx) && v(rt) && v(d) && x(bk) < x(nx) && x(nx) < x(rt) && x(rt) < x(d), inBar: h.contains(d), docks: document.querySelectorAll('#isx-dock').length,
-          links: [d.querySelector('a.dk-th') && d.querySelector('a.dk-th').href, d.querySelector('a.dk-bmc') && d.querySelector('a.dk-bmc').href], ids: ['isx-share', 'isx-sharepop', 'isx-fs'].map(i => document.querySelectorAll('#' + i).length === 1 && d.contains(document.getElementById(i))) }; }, host);
+          links: [d.querySelector('a.dk-th') && d.querySelector('a.dk-th').href, d.querySelector('a.dk-bmc') && d.querySelector('a.dk-bmc').href], ids: ['isx-share', 'isx-sharepop', 'isx-fs'].map(i => document.querySelectorAll('#' + i).length === 1 && (d.contains(document.getElementById(i)) || (i === 'isx-fs' && document.getElementById('isx-zoom').contains(document.getElementById(i))))) }; }, host);   /* interface fixes: in the Circuit “Full screen” stands beside the zoom buttons (tools/interface-check.js, section 1) */
       ok(`bar (${name}): one bar on screen, in this tab’s own host`, r.bars === 1 && r.mine === 1, r);
       ok(`bar (${name}): Back, Next, the route and the dock, in that order, in one bar`, r.parts && r.order && r.inBar, r);
       ok(`bar (${name}): the dock is the page’s own (one #isx-dock, its links and ids unchanged)`, r.docks === 1 && r.links[0] === 'https://eliasrutten.substack.com/subscribe' && r.links[1] === 'https://www.buymeacoffee.com/ruttenelias' && r.ids.every(Boolean), r);
@@ -254,7 +254,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       }
       ok(`one screen (${w}×${h}): no page errors`, p._errs.length === 0, p._errs); await p.context().close();
       const q = await page('#circuit/ring', { w, h, wait: 2500 });
-      r = await js(q, () => { const v = e => !!e && e.getClientRects().length > 0, bar = document.getElementById('isx-tabs').getBoundingClientRect(), ring = document.getElementById('isx-ring'), st = [...document.querySelectorAll('#isx-ring .rg-st')].map(g => g.getBoundingClientRect());
+      r = await js(q, () => { const v = e => !!e && e.getClientRects().length > 0, bar = document.getElementById('isx-tabs').getBoundingClientRect(), ring = document.getElementById('isx-ring'), st = [...document.querySelectorAll('#isx-ring .rg-st .rg-b')].map(g => g.getBoundingClientRect());   /* interface fixes: the box itself; its soft halo may reach past it */
         return { ring: v(ring) && st.length === 9, bar: bar.bottom <= innerHeight + 1, inside: st.every(q => q.top >= 0 && q.bottom <= bar.top + 1 && q.left >= 0 && q.right <= innerWidth), page: scrollY === 0, frame: document.getElementById('isx-scene-map').getBoundingClientRect().bottom <= innerHeight + 1 }; });
       ok(`one screen (${w}×${h}): the Circuit’s ring, every station above the bar`, Object.values(r).every(Boolean), r);
       await q.context().close();
