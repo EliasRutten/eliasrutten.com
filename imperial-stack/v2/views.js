@@ -13,7 +13,7 @@
   'use strict';
   var X = window.ISX; if (!X) return;
   var U = X.util, root = X.root, $ = X.$, e = U.esc, F = X.fig || { shares: '≈$199bn', bonds: '≈$282bn' };
-  var box = null, cur = null, lvl = 1, from = null;
+  var box = null, cur = null, lvl = 1, from = null, fromO = null;
   var EP = 'https://eliasrutten.substack.com/p/';
   var SUB = '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M2.5 1.5h11v1.6h-11zM2.5 4.4h11V6h-11zM2.5 7.3h11v7.2L8 11.4l-5.5 3.1z"/></svg>';
 
@@ -298,26 +298,60 @@
     if (cur === 'bond' && lvl === 2) bxWire();
     if (focusRel) { var t = box.querySelector('[data-rel="' + focusRel + '"], [data-rd="' + focusRel + '"]'); if (t) { t.classList.add('hl'); setTimeout(function () { t.scrollIntoView({ block: 'nearest', behavior: X.reduce ? 'auto' : 'smooth' }); }, 60); } }
   }
+  /* fix round, stage 3: the zoom is a motion. A view grows out of the element that opened it (a gauge or plate on the map,
+     or the door that was pressed) and shrinks back into it when it closes: one continuous space. Level 1 to level 2 grows out
+     of the main figures; level 2 to level 1 settles back. Reduced motion: a quick fade instead. */
+  var anim = null, MO = 'cubic-bezier(.2, .8, .2, 1)';
+  function ease() { try { var v = getComputedStyle(root).getPropertyValue('--mo').trim(); return v || MO; } catch (x) { return MO; } }
+  function originRect(o) {
+    var el = null;
+    if (o && o.origin) { el = root.querySelector('#isx-rmap .fn[data-n="' + o.origin + '"]'); if (el && el.classList.contains('s4dim')) el = null; }
+    if (!el && o && o.from && o.from.isConnected) el = o.from;
+    var r = el && el.getBoundingClientRect(); return r && r.width > 2 && r.height > 2 ? r : null;
+  }
+  function inset(r, b) { return 'inset(' + Math.max(0, r.top - b.top).toFixed(1) + 'px ' + Math.max(0, b.right - r.right).toFixed(1) + 'px ' + Math.max(0, b.bottom - r.bottom).toFixed(1) + 'px ' + Math.max(0, r.left - b.left).toFixed(1) + 'px round 14px)'; }
+  function grow(el, r, back, done) {
+    if (anim) { try { anim.cancel(); } catch (x) { /* ignore */ } anim = null; }
+    if (!el.animate) { if (done) done(); return; }
+    var fr;
+    if (X.reduce || !r) fr = [{ opacity: back ? 1 : 0 }, { opacity: back ? 0 : 1 }];
+    else { var b = el.getBoundingClientRect(), a = inset(r, b), z = 'inset(0px 0px 0px 0px round 18px)'; fr = back ? [{ clipPath: z, opacity: 1 }, { clipPath: a, opacity: .35 }] : [{ clipPath: a, opacity: .35 }, { clipPath: z, opacity: 1 }]; }
+    /* a zoom has to be seen: slower to start than the house curve (--mo), which is for small moves */
+    anim = el.animate(fr, { duration: X.reduce || !r ? 140 : (back ? 420 : 640), easing: X.reduce || !r ? 'linear' : back ? 'cubic-bezier(.55, 0, .45, 1)' : 'cubic-bezier(.5, 0, .15, 1)', fill: 'both' });
+    el.dataset.mo = back ? 'out' : 'in';
+    anim.onfinish = function () { anim = null; delete el.dataset.mo; if (done) done(); try { el.getAnimations().forEach(function (a) { a.cancel(); }); } catch (x) { /* ignore */ } };
+  }
+  function levelMotion(to, r0) {
+    var b = box && box.querySelector('.vw-b'); if (!b || !b.animate) return;
+    if (X.reduce) { b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 140 }); return; }
+    var bb = b.getBoundingClientRect();
+    if (to === 2 && r0) b.animate([{ clipPath: inset(r0, bb), opacity: .4 }, { clipPath: 'inset(0px 0px 0px 0px round 0px)', opacity: 1 }], { duration: 560, easing: 'cubic-bezier(.5, 0, .15, 1)' });
+    else b.animate([{ transform: 'scale(1.035)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 420, easing: ease() });
+  }
   function open(id, o) {
     o = o || {}; var host = $('cock'); if (!V[id] || !host) return false;
     if (!box || !host.contains(box)) { box = document.createElement('section'); box.className = 'vw'; box.id = 'isx-vw'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'false'); host.appendChild(box); wire(); }
-    if (!cur) from = o.from || document.activeElement;
+    var was = !!cur;
+    if (!cur) { from = o.from || document.activeElement; fromO = o; }
     cur = id;
     /* a relation that lives at level 2 opens level 2; the house card lives in the desks */
     lvl = id === 'bond' && (o.level === 2 || o.rel === 'BND>CUR') ? 2 : 1;
     box.hidden = false; draw(o.rel);
     host.classList.add('vw-on');
-    requestAnimationFrame(function () { if (box) box.classList.add('in'); });
+    box.classList.add('in');
+    if (!was) grow(box, originRect(o), false);
     var c = box.querySelector('.vw-x1'); if (c) c.focus({ preventScroll: true });
     if (X.emit) X.emit('views', id);
     return true;
   }
   function close() {
     if (!cur || !box) return;
-    cur = null; box.classList.remove('in'); box.hidden = true; box.innerHTML = '';
+    cur = null; var b = box, r = originRect(fromO);
+    var fin = function () { if (cur) return; b.classList.remove('in'); b.hidden = true; b.innerHTML = ''; };
+    grow(b, r, true, fin);
     var host = $('cock'); if (host) host.classList.remove('vw-on');
     if (from && from.isConnected && from.focus) from.focus({ preventScroll: true });
-    from = null; if (X.emit) X.emit('views', null);
+    from = null; fromO = null; if (X.emit) X.emit('views', null);
   }
   function wire() {
     box.addEventListener('click', function (ev) {
@@ -327,7 +361,7 @@
       if (d.lane) { bxLane(d.lane); return; }
       if (d.bxt != null) { bx.table = !bx.table; draw(); var tg = box.querySelector('.bx-tg'); if (tg) tg.focus({ preventScroll: true }); return; }
       if (d.bxj) { bxSet(d.bxj === 'latest' ? N() : BP.m.indexOf(d.bxj)); return; }
-      if (d.vlvl) { lvl = +d.vlvl; draw(); var z = box.querySelector('.vw-zoom'); if (z) z.focus({ preventScroll: true }); box.querySelector('.vw-b').scrollTop = 0; return; }
+      if (d.vlvl) { var t1 = box.querySelector('.vw-tiles'), r0 = t1 && t1.getBoundingClientRect(); lvl = +d.vlvl; draw(); levelMotion(lvl, r0); var z = box.querySelector('.vw-zoom'); if (z) z.focus({ preventScroll: true }); box.querySelector('.vw-b').scrollTop = 0; return; }
       if (d.vw) { cur = d.vw; lvl = 1; draw(d.vr); var c = box.querySelector('.vw-x1'); if (c) c.focus({ preventScroll: true }); return; }
       if (d.kid != null) {
         var k = KIDS[+d.kid], out = box.querySelector('.vw-kidx'), was = b.getAttribute('aria-expanded') === 'true';
@@ -344,5 +378,5 @@
   }
   X.views = { open: open, close: close, get on() { return cur; }, get level() { return lvl; }, ids: Object.keys(V) };
   X.on('view', function () { if (cur) close(); });
-  X.on('fin', function () { if (cur) { cur = null; box = null; from = null; } });   /* the stage was rebuilt: the sheet went with it */
+  X.on('fin', function () { if (cur) { cur = null; box = null; from = null; fromO = null; } if (anim) { try { anim.cancel(); } catch (x) { /* ignore */ } anim = null; } });   /* the stage was rebuilt: the sheet went with it */
 })();

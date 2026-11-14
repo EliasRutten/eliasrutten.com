@@ -100,3 +100,7 @@
   #isx-root .bx-ln .sl { font-size: 10.5px; }
   #isx-root .bx-ln .ln { stroke-width: 2.2; }
 }
+
+/* ---------- 3. the zoom as a motion: views.js animates the sheet (clip-path from the element that opened it) ---------- */
+#isx-root .vw { opacity: 1; transform: none; transition: none; }
+#isx-root .vw:not(.in) { opacity: 0; }
