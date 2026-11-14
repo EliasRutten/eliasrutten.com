@@ -6884,12 +6884,13 @@ function simNarr(anim) {
     body.innerHTML = simBodyHTML();
     if (anim) $('sn-in').scrollTop = 0; /* a new step starts at its top */
     [...body.children].forEach((c, i) => c.style.setProperty('--i', i));
-    /* “The mechanism”: follow the visitor's own toggle this session; otherwise open where the window is tall and the opened card still fits; shut on phones */
+    /* “The mechanism”: follow the visitor's own toggle this session; otherwise open where the window is tall (and wide enough that the
+       opened card leaves the map in view) and the opened card still fits; shut on phones */
     const dp = body.querySelector('details.s2deep'), box = $('sn-in');
     if (dp) {
       const pref = stGet('isx-mech', true), ph = PHONE();
       if (!ph && pref === 'open') dp.open = true;
-      else if (!ph && !pref && innerHeight >= 940) { dp.open = true; if (box && box.scrollHeight > box.clientHeight + 1) dp.open = false; }
+      else if (!ph && !pref && innerHeight >= 940 && innerWidth >= 1180) { dp.open = true; if (box && box.scrollHeight > box.clientHeight + 1) dp.open = false; }
       dp._auto = dp.open;
       dp.addEventListener('toggle', () => { if (dp._auto === dp.open) { dp._auto = null; return; } dp._auto = null; SIM.deep = dp.open; if (!PHONE()) stSet('isx-mech', dp.open ? 'open' : 'shut', true); });
     }
