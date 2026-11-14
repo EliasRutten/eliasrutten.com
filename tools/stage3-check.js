@@ -73,20 +73,21 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('picker: first principles first, then the guide, then mechanisms on three rungs', await p.evaluate(() => { const k = document.getElementById('isx-sn-pick'); return /First principles/.test(k.querySelector('.pk-l').textContent) && k.querySelectorAll('.pk-t').length === 3 && k.querySelectorAll('.pk-t .pk-l').length === 9; }));
   await p.keyboard.press('Escape');
-  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click()); await p.waitForTimeout(250);
-  ok('ladder (guide): three rungs, 17 rows; the source layer and the arrows wait for the end of the guide', await p.evaluate(() => { const l = document.getElementById('isx-s5lad'); return !l.hidden && l.querySelectorAll('.s5g').length === 3 && l.querySelectorAll('.s5row').length === 17 && !l.querySelector('.lsrc3') && !l.querySelector('.larr3') && !!l.querySelector('.s5wait2'); }));
+  /* B1-3: the ladder's three rungs became the role ledger's four roles */
+  await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(250);
+  ok('ledger (guide): four roles, 19 rows; the source layer and the dated link wait for the guide', await p.evaluate(() => { const l = document.getElementById('isx-b1led'); return !l.hidden && l.querySelectorAll('.lcol').length === 4 && l.querySelectorAll('.lr.ind').length === 19 && !l.querySelector('.lsrc3') && !!l.querySelector('.lwait') && !/16 September/.test(l.querySelector('.lfoot').textContent); }));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
 
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
-  await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(300);
-  const lad = await p.evaluate(() => { const l = document.getElementById('isx-s5lad'), v = e => e.getClientRects().length > 0; return { tiles: [...l.querySelectorAll('.s5row')].filter(v).length, per: [...l.querySelectorAll('.s5g')].map(h => h.querySelectorAll('.s5row').length), slots: l.querySelectorAll('.slot3').length, figs: l.querySelectorAll('.fig3').length, src: !!l.querySelector('.lsrc3'), arrows: [l.querySelectorAll('.larr3 .dn').length, l.querySelectorAll('.larr3 .up').length], sectors: l.querySelectorAll('.secb3').length, fit: l.scrollHeight <= l.clientHeight + 1, inside: l.getBoundingClientRect().bottom <= innerHeight }; });
-  ok('ladder: all 17 readings on three rungs (4, 4, 9), empty slots for what is not measured', lad.tiles === 17 && lad.per.join() === '4,4,9' && lad.slots === 6 && lad.figs >= 6, lad);
-  ok('ladder: the source layer, five sectors and arrows both ways are still there (one click away since stage 5)', lad.src && lad.arrows.join() === '3,3' && lad.sectors === 5, lad);
-  ok('ladder: fits the window at 1440×900 without scrolling', lad.fit && lad.inside, lad);
-  await p.evaluate(() => document.querySelector('#isx-s5lad .fig3[data-slv="3"]').click()); await p.waitForTimeout(300);
-  ok('ladder: a figure from a lever opens that lever', await p.evaluate(() => /Free up the big banks/i.test((document.getElementById('isx-rside') || {}).textContent || '')));
+  await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(300);
+  const lad = await p.evaluate(() => { const l = document.getElementById('isx-b1led'); return { rows: [...l.querySelectorAll('.lr.ind')].filter(e => e.getClientRects().length > 0).length, per: [...l.querySelectorAll('.lcol')].map(h => h.querySelectorAll('.lr.ind').length), slots: l.querySelectorAll('.lr.slot').length, haircuts: [...l.querySelectorAll('.lcol[data-role="stress"] .lr.slot')].some(x => /Basis-trade haircuts/.test(x.textContent) && /not yet measured/.test(x.textContent)), figs: l.querySelectorAll('.lr.fig').length, src: !!l.querySelector('.lsrcd .lsrc3'), link: /Settings move the conduits/.test(l.querySelector('.lfoot').textContent) && /16 September 2026/.test(l.querySelector('.lfoot').textContent), sectors: l.querySelectorAll('.secb3').length, fit: l.scrollHeight <= l.clientHeight + 1, inside: l.getBoundingClientRect().bottom <= innerHeight }; });
+  ok('ledger: all 19 indicators in four roles (3 settings, 5 conduits, 1 stress gauge, 10 outcomes), empty slots for what is not measured', lad.rows === 19 && lad.per.join() === '3,5,1,10' && lad.slots === 7 && lad.haircuts && lad.figs === 4, lad);
+  ok('ledger: the source layer, five sectors and the link between the roles are still there (one click away)', lad.src && lad.link && lad.sectors === 5, lad);
+  ok('ledger: fits the window at 1440×900 without scrolling', lad.fit && lad.inside, lad);
+  await p.evaluate(() => document.querySelector('#isx-b1led .lr.fig [data-slv="3"]').click()); await p.waitForTimeout(300);
+  ok('ledger: a figure from a lever opens that lever', await p.evaluate(() => /Free up the big banks/i.test((document.getElementById('isx-rside') || {}).textContent || '')));
   await p.keyboard.press('Escape'); await p.waitForTimeout(150);
-  ok('map: actors that carry a reading are marked by rung', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fnk3').length === 18 && document.querySelectorAll('#isx-rmap .fnk3.t-up').length === 3));
+  ok('map: actors are plates with a name only; prices and rates are gauge nodes; the other indicators hang as tags', await p.evaluate(() => { const pl = [...document.querySelectorAll('#isx-rmap .fn.pl')], S = ISX.sim; return pl.length === 26 && pl.every(g => g.textContent.trim() === g.querySelector('.fnt').textContent.trim() && !g.querySelector('.fns')) && document.querySelectorAll('#isx-rmap .fn.gn').length === 8 && document.querySelectorAll('#isx-rmap .gt').length === 10 && S.gauges.join() === 'Y10,MOV,YEN,OIL,MTG,INF,FUEL,SVR'; }));
   ok('sectors: five zones carry a lock and are buttons', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fzk[role="button"]').length === 5));
   await p.evaluate(() => document.querySelector('#isx-rmap .fzk[data-sec="gov"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(250);
   ok('sectors: a sector opens a locked “Coming soon” card', await p.evaluate(() => { const c = document.getElementById('isx-sec3'); return !!c && /Coming soon/i.test(c.textContent) && /Government/.test(c.querySelector('h3').textContent) && c.querySelectorAll('.s5 button').length === 5; }));
@@ -94,7 +95,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('sectors: the card moves between the five', await p.evaluate(() => /Rest of the world/.test(document.querySelector('#isx-sec3 h3').textContent)));
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok('sectors: Esc closes the card', await p.evaluate(() => !document.getElementById('isx-sec3')));
-  ok('parity: 34 actors, 59 relations, 14 levers, 9 plays, 17 readings', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fn').length === 34 && document.querySelectorAll('#isx-rmap .fe').length === 59 && document.querySelectorAll('#isx-cock .lv').length === 14 && document.querySelectorAll('#isx-cock .pchip').length === 9 && document.querySelectorAll('#isx-cock .tile').length === 17));
+  ok('parity: 34 nodes (26 actors, 8 gauge nodes), 59 relations, 14 levers, 9 plays, 19 indicators', await p.evaluate(() => document.querySelectorAll('#isx-rmap .fn').length === 34 && document.querySelectorAll('#isx-rmap .fe').length === 59 && document.querySelectorAll('#isx-cock .lv').length === 14 && document.querySelectorAll('#isx-cock .pchip').length === 9 && ISX.sim.indicators.length === 19));
   ok('no page errors (full view)', p._errs.length === 0, p._errs); await p.context().close();
 
   /* ---------- 3. Scenarios ---------- */

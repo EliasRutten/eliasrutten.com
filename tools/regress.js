@@ -65,7 +65,7 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
 
   /* ---------- Simulator, full view ---------- */
   p = await open(c, '#simulator', 'sim-full');
-  await count(p, 'sim-actors', '#isx-rmap .fn'); await count(p, 'sim-relations', '#isx-rmap .fe'); await count(p, 'sim-levers', '#isx-fin .lv'); await count(p, 'sim-tiles', '#isx-fin .tile'); await count(p, 'sim-plays', '#isx-fin .pchip');
+  await count(p, 'sim-actors', '#isx-rmap .fn'); await count(p, 'sim-relations', '#isx-rmap .fe'); await count(p, 'sim-levers', '#isx-fin .lv'); /* B1-3: readings became indicators (19), and eight of the 34 nodes are gauge nodes */ res.counts['sim-indicators'] = await p.evaluate(() => ISX.sim.indicators.length); await count(p, 'sim-gauges', '#isx-rmap .fn.gn'); await count(p, 'sim-tags', '#isx-rmap .gt'); await count(p, 'sim-plays', '#isx-fin .pchip');
   await snap(p, 'sim/full', '#isx-fin');
   const np = res.counts['sim-plays'];
   for (let i = 0; i < np; i++) { await p.evaluate(k => document.querySelectorAll('#isx-fin .pchip')[k].click(), i); await p.waitForTimeout(300); await snap(p, 'sim/play' + i, '#isx-fin .dossier, #isx-fin .pbar'); }

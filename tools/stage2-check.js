@@ -109,9 +109,10 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.evaluate(() => document.getElementById('isx-dx').focus());
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok('guide: Esc closes the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));
-  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click()); await p.waitForTimeout(200);
-  ok('guide: Readings opens the ladder: every reading reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-s5lad'), got = l.querySelectorAll('.s5row:not(.s5later)').length; return c.classList.contains('rd-open') && !l.hidden && l.querySelectorAll('.s5row').length === 17 && got === c.querySelectorAll('.tile:not(.gh)').length && got > 0 && got < 17; }));
-  await p.evaluate(() => document.querySelector('#isx-cock .s2rdb').click());
+  /* B1-3: readings became indicators; the ladder became the role ledger, opened by the Indicators button on the stage */
+  await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(200);
+  ok('guide: Indicators opens the role ledger: every indicator reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-b1led'), got = l.querySelectorAll('.lr.ind:not(.later)').length, n = +document.querySelector('#isx-b1ind b').textContent.split('/')[0]; return c.classList.contains('led-open') && !l.hidden && l.querySelectorAll('.lr.ind').length === 19 && got === n && got > 0 && got < 19 && [...l.querySelectorAll('.lr.ind.later')].every(x => !/\d/.test(x.querySelector('b').textContent)); }));
+  await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
   ok('guide: the picker lists first principles, the guide and nine mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
   await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
@@ -128,15 +129,15 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   /* ---------- 4. the Simulator: full view, parity ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
   const par = await p.evaluate(() => { const c = document.getElementById('isx-cock'), v = s => [...c.querySelectorAll(s)].filter(x => x.getClientRects().length && !x.classList.contains('gh')).length; return { actors: v('#isx-rmap .fn'), relations: c.querySelectorAll('#isx-rmap .fe:not(.gh)').length, levers: v('.lv'), plays: v('.pchip'), card: v('.s2card'), bar: v('.s2bar') }; });
-  ok('full view: every actor, relation and play is on the stage; no card; the bar holds the switch', par.actors === 34 && par.relations === 59 && par.plays === 9 && par.card === 0 && par.bar === 1, par);
+  ok('full view: every node (26 actors, 8 gauge nodes), relation and play is on the stage; no card; the bar holds the switch', par.actors === 34 && par.relations === 59 && par.plays === 9 && par.card === 0 && par.bar === 1, par);
   await p.evaluate(() => document.querySelector('[data-s4tab="levers"]').click()); await p.waitForTimeout(300);
   ok('full view: the Levers tab shows all 14 levers', await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length).length === 14 && document.getElementById('isx-s2tray-play').hidden));
   await p.evaluate(() => document.querySelector('[data-s4tab="plays"]').click()); await p.waitForTimeout(300);
-  await p.evaluate(() => document.querySelector('.s2rdb').click()); await p.waitForTimeout(200);
-  ok('full view: Readings opens all 17', await p.evaluate(() => [...document.querySelectorAll('#isx-s5lad .s5row:not(.s5later)')].filter(x => x.getClientRects().length).length) === 17);
-  await p.evaluate(() => document.querySelector('.s2rdb').click());
+  await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(200);
+  ok('full view: Indicators opens all 19', await p.evaluate(() => [...document.querySelectorAll('#isx-b1led .lr.ind:not(.later)')].filter(x => x.getClientRects().length).length) === 19);
+  await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300);
-  ok('full view: an actor opens a floating dossier, and its reading shows', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && [...document.querySelectorAll('#isx-cock .tile, #isx-cock .s4ri.on')].some(x => x.getClientRects().length); }));
+  ok('full view: an actor opens a floating dossier, and its indicator shows in it', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && /Bills, share of marketable debt: 22\.2%/.test((d.querySelector('.dtile') || {}).textContent || '') && /Setting/.test(d.querySelector('.dtile .dr').textContent); }));
   await p.evaluate(() => document.querySelector('#isx-cock .dossier .dx').click());
   await p.evaluate(() => document.querySelectorAll('#isx-cock .pchip')[0].click()); await p.waitForTimeout(300);
   ok('full view: a play runs in the dossier', await p.evaluate(() => /Play ·/.test(document.querySelector('#isx-cock > .dossier').textContent) && !!document.getElementById('isx-pn')));

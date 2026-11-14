@@ -1,12 +1,13 @@
 /* Stage 5 checks for the Simulator: nothing flickers, nothing is shown before the guide reaches it, the opening card
-   offers the full map as a real choice, the key readings stay on screen below 1180 px, the full ladder shows less at once.
+   offers the full map as a real choice, the indicators sit on the map at every width (B1-3: gauge nodes and tags; an in-play strip on phones), the role ledger
+   shows one line per indicator.
    Usage: node tools/stage5-check.js [baseUrl] [--audit]   — needs `python3 -m http.server 8731` at the repo root.
    --audit prints, for every step of first principles and of the guide, what the step has reached and what is on screen.
    Exits 1 on a failed check.
 
    Flicker. Every step of first principles and of the guide (37), a step back, chapter jumps, every move of the nine plays and
    the fourteen levers on and off are run with motion on, once with the pointer parked off the map and once resting on it.
-   A MutationObserver records every class change on actors, relations, zones, readings, levers and plays; the computed
+   A MutationObserver records every class change on actors, gauge nodes, tags, relations, zones, levers and plays; the computed
    opacity of each is sampled every frame. A step fails if an element gains and loses the same class within it, or if its
    opacity turns round (up then down, or down then up). The card's own text swap (.s2body out / in) is not in scope. */
 const { chromium } = require('playwright');
@@ -17,8 +18,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
 /* in the page: the recorder */
 const RECORDER = () => {
-  const cock = document.getElementById('isx-cock'), SCOPE = '#isx-rmap .fn, #isx-rmap .fe, #isx-rmap .feh, #isx-rmap .fzg, .s4ri, .tile, .lv, .pchip';
-  const key = el => { const d = el.dataset || {}, c = el.classList; return c.contains('fn') ? 'actor ' + d.n : c.contains('fe') ? 'relation ' + d.e : c.contains('feh') ? 'relation-hit ' + d.e : c.contains('fzg') ? 'zone ' + d.z : c.contains('s4ri') ? 'rail ' + d.rk : c.contains('tile') ? 'strip ' + d.rk : c.contains('lv') ? 'lever ' + d.l : c.contains('pchip') ? 'play ' + d.p : '?'; };
+  const cock = document.getElementById('isx-cock'), SCOPE = '#isx-rmap .fn, #isx-rmap .gt, #isx-rmap .fe, #isx-rmap .feh, #isx-rmap .fzg, .lv, .pchip';
+  const key = el => { const d = el.dataset || {}, c = el.classList; return c.contains('fn') ? 'actor ' + d.n : c.contains('fe') ? 'relation ' + d.e : c.contains('feh') ? 'relation-hit ' + d.e : c.contains('fzg') ? 'zone ' + d.z : c.contains('gt') ? 'tag ' + d.ind : c.contains('lv') ? 'lever ' + d.l : c.contains('pchip') ? 'play ' + d.p : '?'; };
   const P = window.__s5 = { log: [], op: new Map(), on: false, t0: 0 };
   new MutationObserver(ms => {
     if (!P.on) return; const t = Math.round(performance.now() - P.t0), per = new Map();
@@ -26,7 +27,7 @@ const RECORDER = () => {
     per.forEach((olds, el) => { olds.push(el.getAttribute('class') || ''); for (let i = 0; i < olds.length - 1; i++) { const o = new Set(olds[i].split(/\s+/).filter(Boolean)), n = new Set(olds[i + 1].split(/\s+/).filter(Boolean)); [...n].filter(c => !o.has(c)).forEach(c => P.log.push([key(el), c, '+', t])); [...o].filter(c => !n.has(c)).forEach(c => P.log.push([key(el), c, '-', t])); } });
   }).observe(cock, { subtree: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true });
   const samp = () => {
-    if (P.on) { const t = Math.round(performance.now() - P.t0); cock.querySelectorAll('#isx-rmap .fn, #isx-rmap .fe, #isx-rmap .fzg, .s4ri, .tile').forEach(el => { if (!el.ownerSVGElement && !el.getClientRects().length) return; const o = +getComputedStyle(el).opacity, k = key(el); let a = P.op.get(k); if (!a) P.op.set(k, a = []); if (!a.length || Math.abs(a[a.length - 1][1] - o) > .004) a.push([t, +o.toFixed(3)]); }); }
+    if (P.on) { const t = Math.round(performance.now() - P.t0); cock.querySelectorAll('#isx-rmap .fn, #isx-rmap .gt, #isx-rmap .fe, #isx-rmap .fzg').forEach(el => { if (!el.ownerSVGElement && !el.getClientRects().length) return; const o = +getComputedStyle(el).opacity, k = key(el); let a = P.op.get(k); if (!a) P.op.set(k, a = []); if (!a.length || Math.abs(a[a.length - 1][1] - o) > .004) a.push([t, +o.toFixed(3)]); }); }
     requestAnimationFrame(samp);
   };
   requestAnimationFrame(samp);
@@ -46,30 +47,52 @@ const AUDITOR = () => {
   const done = S.beat >= L.steps.length, cum = !story || (done && L.main) ? null : S.beat < 0 ? { n: [], e: [], l: [] } : L.steps[Math.min(S.beat, L.steps.length - 1)];
   const N = cum ? new Set(cum.n) : null, E = cum ? new Set(cum.e) : null, leaks = [], shown = e => e.getClientRects().length > 0;
   const fns = [...cock.querySelectorAll('#isx-rmap .fn')], fes = [...cock.querySelectorAll('#isx-rmap .fe')];
+  /* B1-3. An indicator is reached at the first step whose relations touch it, or at the step its data names (spec S1 §4.6) */
+  const inds = S.indicators, IX = Object.fromEntries(inds.map(I => [I.id, I]));
+  const reached = I => !cum || (L.main && I.at && I.at.main != null ? S.beat + 1 >= I.at.main : I.rel.some(i => E.has(i)));
+  const txt = (g, sel) => [...g.querySelectorAll(sel)].map(x => x.textContent.trim()).join('');
+  let vals = 0, onMap = 0;
   fns.forEach(g => {
-    const n = g.dataset.n, t = g.querySelector('.fnt').textContent; if (!N || N.has(n) || g.classList.contains('tmp')) return;
+    const n = g.dataset.n, gz = g.classList.contains('gn'), lab = g.getAttribute('aria-label') || '';
+    if (!gz && g.textContent.trim() !== g.querySelector('.fnt').textContent.trim()) leaks.push('actor ' + n + ' carries more than its name: ' + g.textContent.trim());
+    if (gz) g.dataset.ind.split(' ').forEach((id, k) => {
+      const I = IX[id], v = txt(g, `[data-gv="${id}"]`), where = 'gauge “' + I.k + '”';
+      if (reached(I)) { vals++; if (!/\d/.test(v)) leaks.push(where + ' has been reached but shows no value'); else onMap++; if (!k && g.classList.contains('sock')) leaks.push(where + ' has been reached but is still a socket'); return; }
+      if (v) leaks.push(where + ' shows a value: ' + v);
+      if (txt(g, `[data-gl="${id}"], [data-gt="${id}"]`)) leaks.push(where + ' shows its line or trend');
+      const f = g.querySelector(`[data-gf="${id}"]`); if (f && +f.getAttribute('width') > 0) leaks.push(where + ' shows its fill');
+      if (k) return;
+      if (!g.classList.contains('sock') && !g.classList.contains('bor') && !g.classList.contains('sus')) leaks.push(where + ' is not a socket');
+      if (g.classList.contains('play') || g.classList.contains('new')) leaks.push(where + ' is lit');
+      if (g.dataset.tip) leaks.push(where + ' has a breakdown');
+      const nd = g.querySelector('.gneedle'); if (nd && (Math.abs(nd.getAttribute('x2') - nd.getAttribute('x1')) > .2 || Math.abs(nd.getAttribute('y2') - nd.getAttribute('y1')) > .2)) leaks.push(where + ' shows its needle');
+      if (!/: later in the guide$/.test(lab)) leaks.push(where + ' is read out: ' + lab);
+    });
+    if (!N || N.has(n) || g.classList.contains('tmp')) return;
     if (!g.classList.contains('s4dim')) leaks.push('actor ' + n + ' is not dimmed');
     if (g.classList.contains('lit') || g.classList.contains('sel')) leaks.push('actor ' + n + ' is lit');
-    const s = g.querySelector('.fns'); if (s && getComputedStyle(s).display !== 'none' && +getComputedStyle(s).opacity > .02) leaks.push('actor ' + n + ' shows its value line: ' + s.textContent);
-    if (g.getAttribute('aria-label') !== t + ': later in the guide') leaks.push('actor ' + n + ' is read out: ' + g.getAttribute('aria-label'));
+    if (gz ? !/: later in the guide$/.test(lab) : lab !== g.querySelector('.fnt').textContent + ': later in the guide') leaks.push('actor ' + n + ' is read out: ' + lab);
     if (g.getAttribute('tabindex') !== '-1') leaks.push('actor ' + n + ' can be tabbed to');
   });
   if (E) fes.forEach(p => { const i = +p.dataset.e; if (!E.has(i) && +getComputedStyle(p).opacity > .02) leaks.push('relation ' + i + ' (' + S.relations[i].join('→') + ') is visible'); });
-  const rd = [...cock.querySelectorAll('.s4ri, .tile')].filter(shown); let vals = 0, dots = 0;
-  rd.forEach(el => {
-    const R = S.readings[+el.dataset.rk], tile = el.classList.contains('tile'), v = el.querySelector(tile ? '.tv' : 'b').textContent.trim(), where = (tile ? 'strip' : 'rail') + ' “' + R.k + '”';
-    if (N && !N.has(R.node)) {
-      dots++;
-      if (/\d/.test(v) || v !== '·') leaks.push(where + ' shows a value: ' + v);
-      if (/\d/.test((el.innerText || '').replace(R.k, '').replace(R.k.toUpperCase(), ''))) leaks.push(where + ' shows a figure: ' + el.innerText);
-      if (el.dataset.tip !== '<b>' + R.k.replace(/&/g, '&amp;') + '</b><p>Later in the guide.</p>') leaks.push(where + ' has a tooltip with its note');
-      if (el.classList.contains('hot') || el.classList.contains('on')) leaks.push(where + ' is lit');
-      if (el.getAttribute('aria-disabled') !== 'true') leaks.push(where + ' is not marked as unavailable');
-    } else { vals++; if (!/\d/.test(v)) leaks.push(where + ' has been reached but shows no value'); }
+  cock.querySelectorAll('#isx-rmap .gt').forEach(g => {
+    const I = IX[g.dataset.ind], v = txt(g, '[data-gv]'), where = 'tag “' + I.k + '”', drawn = getComputedStyle(g).display !== 'none';
+    if (reached(I)) { vals++; if (!/\d/.test(v)) leaks.push(where + ' has been reached but shows no value'); else if (!drawn) leaks.push(where + ' has been reached but is not drawn'); else onMap++; return; }
+    if (v) leaks.push(where + ' shows a value: ' + v);
+    if (drawn && !g.classList.contains('bor')) leaks.push(where + ' is drawn');
+    if (g.classList.contains('play') || g.classList.contains('new')) leaks.push(where + ' is lit');
+    if (g.dataset.tip) leaks.push(where + ' has a breakdown');
+    if (g.getAttribute('tabindex') !== '-1') leaks.push(where + ' can be tabbed to');
+    if (g.getAttribute('aria-label') !== I.k + ': later in the guide') leaks.push(where + ' is read out: ' + g.getAttribute('aria-label'));
   });
+  /* the Indicators button and, on phones, the in-play strip */
+  const nR = inds.filter(reached).length, btn = cock.querySelector('#isx-b1ind b'), all = cock.querySelector('#isx-b1play .ipc.all'), chips = [...cock.querySelectorAll('#isx-b1play .ipc:not(.all)')].filter(shown);
+  if (btn && btn.textContent !== nR + ' / ' + inds.length) leaks.push('the Indicators button counts ' + btn.textContent + '; the guide has reached ' + nR);
+  if (all && shown(all) && !new RegExp(!nR ? '0 of ' + inds.length : nR < inds.length ? 'All ' + nR + ' of ' + inds.length : 'All ' + inds.length + ' indicators').test(all.textContent)) leaks.push('the strip counts “' + all.textContent.trim() + '”; the guide has reached ' + nR);
+  chips.forEach(c => { const I = IX[c.dataset.ipc], v = c.querySelector('b').textContent; if (!reached(I) && (/\d/.test(v) || !c.classList.contains('fl'))) leaks.push('strip chip “' + I.k + '” is shown before its step: ' + v); if (reached(I) && !/\d/.test(v)) leaks.push('strip chip “' + I.k + '” has no value'); });
   return { line: S.line, beat: S.beat, title: S.beat >= 0 && !done ? L.steps[S.beat].t : S.beat < 0 ? '(opening card)' : '(closing card)', reached: cum ? [cum.n.length, cum.e.length, cum.l.length] : 'all',
-    onMap: [fns.filter(g => !g.classList.contains('s4dim')).length, fes.filter(p => +getComputedStyle(p).opacity > .02).length], valueLines: fns.filter(g => { const s = g.querySelector('.fns'); return s && getComputedStyle(s).display !== 'none' && +getComputedStyle(s).opacity > .02; }).length,
-    readings: [vals, dots], leaks };
+    onMap: [fns.filter(g => !g.classList.contains('s4dim')).length, fes.filter(p => +getComputedStyle(p).opacity > .02).length], valueLines: onMap,
+    indicators: [vals, inds.length - nR], chips: chips.length, leaks };
 };
 
 (async () => {
@@ -134,7 +157,7 @@ const AUDITOR = () => {
     const box = await js(p, () => { const r = document.querySelector('#isx-rmap .fn.lit').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
     await js(p, () => __s5.start()); await p.mouse.move(box[0] - 30, box[1] - 30); await p.mouse.move(box[0], box[1], { steps: 4 }); await p.waitForTimeout(500);
     const g = await js(p, () => __s5.stop());
-    ok('hover: in the guide, moving the pointer over an actor changes nothing on the map or in the readings', g.changes === 0, g);
+    ok('hover: in the guide, moving the pointer over an actor changes nothing on the map or on the indicators', g.changes === 0, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(1600);
     const box2 = await js(p, () => { const r = document.querySelector('#isx-rmap .fn[data-n="TSY"]').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
     await p.mouse.move(box2[0] - 40, box2[1]); await p.mouse.move(box2[0], box2[1], { steps: 4 }); await p.waitForTimeout(300);
@@ -144,7 +167,7 @@ const AUDITOR = () => {
     await p.context().close();
   }
   { /* stepping faster than the entrances run ends in the same state as arriving there directly */
-    const snap = () => [...document.querySelectorAll('#isx-rmap .fn, #isx-rmap .fe, #isx-rmap .fzg, .s4ri, .lv')].map(e => [...e.classList].sort().join('.') + '|' + (e.classList.contains('fe') ? (e.getAttribute('style') || '').replace(/\s/g, '') + '|' + (e.getAttribute('marker-end') ? 'm' : '') : '') + '|' + (e.classList.contains('s4ri') ? e.querySelector('b').textContent : '')).join('\n');
+    const snap = () => [...document.querySelectorAll('#isx-rmap .fn, #isx-rmap .gt, #isx-rmap .fe, #isx-rmap .fzg, .lv')].map(e => [...e.classList].sort().join('.') + '|' + (e.classList.contains('fe') ? (e.getAttribute('style') || '').replace(/\s/g, '') + '|' + (e.getAttribute('marker-end') ? 'm' : '') : '') + '|' + (e.matches('.gn, .gt') ? [...e.querySelectorAll('[data-gv]')].map(x => x.textContent).join('/') : '')).join('\n');
     const p = await page({}, { motion: true, pos: '{"l":0,"b":0}' });
     for (let i = 0; i < 40 && (await where(p)).beat < 20; i++) { await fwd(p); await p.waitForTimeout(140); }
     await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(120); await fwd(p); await p.waitForTimeout(160); if ((await where(p)).beat < 20) await fwd(p); await p.waitForTimeout(3200);
@@ -155,8 +178,8 @@ const AUDITOR = () => {
   }
 
   /* ================= 2. nothing is shown before the guide reaches it ================= */
-  for (const [w, h] of [[1440, 900], [1024, 768]]) {
-    const p = await page({}, { w, h }), rows = [], leaks = [];
+  for (const [w, h, touch] of [[1440, 900, false], [1024, 768, false], [390, 844, true]]) {
+    const p = await page({}, { w, h, touch }), rows = [], leaks = [];
     const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
     await take();
     await click(p, '#isx-sn-body .s4go'); await p.waitForTimeout(350);
@@ -167,10 +190,11 @@ const AUDITOR = () => {
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
     ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 37 steps audited`, rows.length === 46 && seenSteps === 37, { rows: rows.length, seenSteps });
-    ok(`no early reveal (${w} px): no actor lit, value line, relation, reading value, colour or tooltip before its step`, leaks.length === 0, leaks.slice(0, 10));
-    ok(`no early reveal (${w} px): the opening card shows 34 dimmed names, no relation, no reading value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].readings[0] === 0 && rows[0].readings[1] >= 5, rows[0]);
-    ok(`no early reveal (${w} px): at the end of the guide everything is shown (34 actors, 59 relations)`, end.onMap.join() === '34,59' && end.readings[1] === 0, end);
-    if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: actors, relations | value lines | readings: with value, as a dot'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.readings.join(', ')].join(' | '))); console.log(''); }
+    ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
+    ok(`no early reveal (${w} px): the opening card shows 34 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,19', rows[0]);
+    ok(`no early reveal (${w} px): at the end of the guide everything is shown (34 nodes, 59 relations, 19 indicators with their values)`, end.onMap.join() === '34,59' && end.indicators.join() === '19,0' && end.valueLines === 19, end);
+    if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips === 0, rows.map(a => a.chips).join(''));
+    if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: nodes, relations | values on the map | indicators: reached, later'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.indicators.join(', ')].join(' | '))); console.log(''); }
     if (w === 1440) {
       /* acting on the map must not get ahead of the guide either: at step 12, select every actor reached so far */
       await p.context().close(); const q = await page({}, { w, h, pos: '{"l":0,"b":11}' });
@@ -191,13 +215,26 @@ const AUDITOR = () => {
         const S = ISX.sim, cum = new Set(S.lines[0].steps[11].n), wait = ms => new Promise(r => setTimeout(r, ms)), side = () => { const s = document.getElementById('isx-rside'); return !!s && !s.hidden; };
         const g = [...document.querySelectorAll('#isx-rmap .fn')].find(x => !cum.has(x.dataset.n)); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); await wait(80); const a = side();
         g.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await wait(80); const k = side();
-        const r = [...document.querySelectorAll('.s4ri')].find(x => !cum.has(S.readings[+x.dataset.rk].node)); r.click(); await wait(80); const c = side();
-        return { a, k, c };
+        const sk = document.querySelector('#isx-rmap .fn.gn.sock'); sk.dispatchEvent(new MouseEvent('click', { bubbles: true })); await wait(80); const c = side();
+        sk.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await wait(80); const c2 = side();
+        const E = new Set(S.lines[0].steps[11].e), late = S.indicators.filter(I => I.tag && !I.rel.some(i => E.has(i))).map(I => document.querySelector(`#isx-rmap .gt[data-ind="${I.id}"]`));
+        return { a, k, c, c2, tags: late.length, tagsOut: late.filter(x => getComputedStyle(x).display === 'none' && x.getAttribute('tabindex') === '-1').length };
       });
-      ok('no early reveal: an actor or a reading the guide has not reached cannot be opened (click, Enter, rail)', !dead.a && !dead.k && !dead.c, dead);
-      await click(q, '.s4lad'); await q.waitForTimeout(300);
-      const lad = await js(q, () => { const S = ISX.sim, cum = new Set(S.lines[0].steps[11].n), l = document.getElementById('isx-s5lad'), later = [...l.querySelectorAll('.s5later')]; return { open: !l.hidden, later: later.length, should: S.readings.filter(r => !cum.has(r.node)).length, digits: later.filter(x => /\d/.test(x.querySelector('.s5v').textContent) || !/Later in the guide/.test(x.textContent)).length, details: later.filter(x => x.querySelector('.s5d, button')).length, how: !!l.querySelector('.s5how'), slots: [...l.querySelectorAll('.s5wait')].length }; });
-      ok('no early reveal: the full ladder, opened at step 12, keeps unreached rows to a name and “Later in the guide”', lad.open && lad.later === lad.should && lad.later > 0 && lad.digits === 0 && lad.details === 0 && !lad.how, lad);
+      ok('no early reveal: an actor or a gauge the guide has not reached cannot be opened (click, Enter); tags not yet reached are not drawn and not in the tab order', !dead.a && !dead.k && !dead.c && !dead.c2 && dead.tags > 0 && dead.tags === dead.tagsOut, dead);
+      const dos = await js(q, async () => {
+        const S = ISX.sim, cum = S.lines[0].steps[11], E = new Set(cum.e), out = [], wait = ms => new Promise(r => setTimeout(r, ms));
+        for (const n of cum.n) {
+          const g = document.querySelector(`#isx-rmap .fn[data-n="${n}"]`); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); await wait(60);
+          const got = document.querySelectorAll('#isx-rside .dtile, #isx-cock > .dossier .dtile').length, should = S.indicators.filter(I => I.node === n && I.rel.some(i => E.has(i))).length;
+          if (got !== should) out.push({ n, got, should });
+          g.dispatchEvent(new MouseEvent('click', { bubbles: true })); await wait(40);
+        }
+        return out;
+      });
+      ok('no early reveal: an actor’s dossier at step 12 carries only the indicators the guide has reached', dos.length === 0, dos);
+      await click(q, '#isx-b1ind'); await q.waitForTimeout(300);
+      const lad = await js(q, () => { const S = ISX.sim, E = new Set(S.lines[0].steps[11].e), l = document.getElementById('isx-b1led'), later = [...l.querySelectorAll('.lr.ind.later')]; return { open: !l.hidden, later: later.length, should: S.indicators.filter(I => !I.rel.some(i => E.has(i))).length, digits: later.filter(x => x.querySelector('b').textContent !== '·' || !/Later in the guide/.test(x.textContent) || /\d/.test(x.textContent.replace(x.querySelector('.ln').textContent, ''))).length, details: later.filter(x => x.querySelector('.ld, button')).length, how: !!l.querySelector('.lsrc3'), tips: [...l.querySelectorAll('.lr.ind:not(.later) .b1tip li.later')].length, figsLater: l.querySelectorAll('.lr.later:not(.ind)').length }; });
+      ok('no early reveal: the role ledger, opened at step 12, keeps unreached rows to a name and “Later in the guide”; the source layer waits', lad.open && lad.later === lad.should && lad.later > 0 && lad.digits === 0 && lad.details === 0 && !lad.how, lad);
       /* an other outcome borrows actors from later in the guide: they are named, not valued */
       await q.keyboard.press('Escape');
       const fork = await js(q, async () => {
@@ -205,9 +242,10 @@ const AUDITOR = () => {
         for (let k = 0; k < 30; k++) { const o = [...document.querySelectorAll('#isx-sn-body [data-fk]')].find(x => x.dataset.fk !== 'real'); if (o) { o.click(); await wait(250); break; } document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(120); }
         const T = ISX.sim; if (!T.alt) return { alt: null };
         const cum = new Set(T.lines[0].steps[T.beat].n), tmp = [...document.querySelectorAll('#isx-rmap .fn.tmp')];
-        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => +getComputedStyle(g.querySelector('.fns')).opacity > .02).length, rail: [...document.querySelectorAll('.s4ri')].filter(x => !cum.has(T.readings[+x.dataset.rk].node) && (x.querySelector('b').textContent !== '·' || x.classList.contains('hot'))).length };
+        const E = new Set(T.lines[0].steps[T.beat].e), late = T.indicators.filter(I => !I.rel.some(i => E.has(i)));
+        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => g.textContent.trim() !== (g.querySelector('.fnt') || { textContent: g.textContent.trim() }).textContent.trim() && [...g.querySelectorAll('[data-gv], [data-gl], [data-gt]')].some(x => x.textContent.trim())).length, rail: late.filter(I => [...document.querySelectorAll(`#isx-rmap [data-gv="${I.id}"]`)].some(x => x.textContent.trim())).length };
       });
-      ok('no early reveal: in an other outcome, borrowed actors show a name only and their readings stay hidden', !!fork.alt && fork.valued === 0 && fork.rail === 0, fork);
+      ok('no early reveal: in an other outcome, borrowed actors and gauges show a name only and their indicators stay hidden', !!fork.alt && fork.valued === 0 && fork.rail === 0, fork);
       ok('no page errors (reveal)', q._errs.length === 0, q._errs); await q.context().close();
     } else { ok(`no page errors (reveal, ${w} px)`, p._errs.length === 0, p._errs); await p.context().close(); }
   }
@@ -235,64 +273,78 @@ const AUDITOR = () => {
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
-  /* ================= 4. the readings: rail from 1180 px, strip of key readings below ================= */
-  {
-    const p = await page({}, { pos: '{"l":0,"b":9}' });
-    const big = await js(p, () => ({ rail: [...document.querySelectorAll('.s4ri')].filter(e => e.getClientRects().length).length, strip: [...document.querySelectorAll('.s5strip .tile')].filter(e => e.getClientRects().length).length, counts: [document.querySelectorAll('.s4ri').length, document.querySelectorAll('#isx-cock .tile').length] }));
-    ok('1440 px: the rail carries all 17 readings; the strip stays away', big.rail === 17 && big.strip === 0 && big.counts.join() === '17,17', big); await p.context().close();
-  }
-  for (const [w, h, touch] of [[1024, 768, false], [768, 1024, false], [390, 844, true]]) {
-    const strip = () => { const s = document.querySelector('.s5strip'), sr = s.getBoundingClientRect(), tiles = [...s.querySelectorAll('.tile')].filter(e => e.getClientRects().length), keys = tiles.filter(e => e.classList.contains('s5key')), S = ISX.sim;
-      const byX = tiles.slice().sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left), first = innerWidth > 760 ? byX[byX.length - 1] : byX[0], card = document.querySelector('#isx-snarr'), cr = card && card.getClientRects().length ? card.getBoundingClientRect() : null, hit = [...document.querySelectorAll('#isx-rmap .fn.lit, #isx-rmap .fn.hg')].filter(g => { const r = g.getBoundingClientRect(); return r.top < sr.bottom - 1 && r.bottom > sr.top + 1 && r.left < sr.right && r.right > sr.left; }).length;
-      return { shown: tiles.length, keys: keys.length, names: keys.map(e => S.readings[+e.dataset.rk].k), dots: keys.filter(e => e.querySelector('.tv').textContent === '·').length, hot: tiles.filter(e => e.classList.contains('hot')).length, firstHot: !!first && (first.classList.contains('hot') || !tiles.some(e => e.classList.contains('hot'))), hotClear: tiles.filter(e => e.classList.contains('hot')).every(e => { const r = e.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 && !(cr && innerWidth > 760 && r.left < cr.right && r.right > cr.left && r.top < cr.bottom && r.bottom > cr.top); }), h: Math.round(sr.height), inView: sr.top >= 0 && sr.left >= 0 && sr.left < innerWidth && keys[0].getBoundingClientRect().left < innerWidth, rail: [...document.querySelectorAll('.s4ri')].filter(e => e.getClientRects().length).length, hit, lad: [...document.querySelectorAll('.s2rdb')].filter(e => e.getClientRects().length).length, scrollY: (c => c.getBoundingClientRect().bottom > innerHeight + 1 || c.scrollHeight > c.clientHeight + 1)(document.getElementById('isx-cock')) };
-    };
-    let p = await page({}, { w, h, touch });
-    const o = await js(p, strip);
-    ok(`${w} px, opening card: the five key readings are on screen, each a name and a dot; no rail`, o.keys === 5 && o.shown === 5 && o.dots === 5 && o.rail === 0 && o.h <= 44 && o.names.join('|') === 'Fed funds target|Bills share of debt|10-year yield|Bond volatility|Big Tech capex 2026', o);
-    await p.context().close(); p = await page({}, { w, h, touch, pos: '{"l":0,"b":9}' });
-    const g = await js(p, strip);
-    ok(`${w} px, step 10: key readings stay (those reached with their value), the reading in play comes first, the strip is one slim row`, g.keys === 5 && g.hot >= 1 && g.firstHot && g.hotClear && g.dots === 0 && g.h <= 44 && g.inView && g.lad === 1, g);
-    ok(`${w} px, step 10: the strip covers none of the actors in play`, g.hit === 0, g);
-    if (w > 760) ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
+  /* ================= 4. the indicators: on the map at every width; an in-play strip on phones ================= */
+  const onMap = () => { const v = e => e.getClientRects().length > 0, c = document.getElementById('isx-cock'), b = c.querySelector('#isx-b1ind'), led = document.getElementById('isx-b1led'), sr = document.getElementById('isx-b1play'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), br = b.getBoundingClientRect(), card = document.getElementById('isx-snarr');
+    const hits = (a, r) => !!r && a.left < r.right && a.right > r.left && a.top < r.bottom && a.bottom > r.top, cr = card && v(card) ? card.getBoundingClientRect() : null;
+    return { live: c.querySelectorAll('#isx-rmap .fn.gn:not(.sock)').length, sockets: c.querySelectorAll('#isx-rmap .fn.gn.sock').length, tags: [...c.querySelectorAll('#isx-rmap .gt')].filter(v).length, btn: b.querySelector('b').textContent, btnShown: v(b), btnClear: !v(b) || (br.right <= innerWidth && br.top >= 0 && br.bottom <= bar.top && !hits(br, cr)), strip: v(sr), old: c.querySelectorAll('.s4ri, .tile, .s5strip, #isx-s5lad, .s2rdb, .s4lad').length, led: !led.hidden && v(led), rows: led.querySelectorAll('.lr.ind').length, scrollY: (c => c.getBoundingClientRect().bottom > innerHeight + 1 || c.scrollHeight > c.clientHeight + 1)(c) }; };
+  for (const [w, h] of [[1440, 900], [1280, 760], [1024, 768], [768, 1024]]) {
+    let p = await page({}, { w, h });
+    const o = await js(p, onMap);
+    ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 19” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 19' && !o.btnShown && !o.strip && o.old === 0, o);
+    await p.context().close(); p = await page({}, { w, h, pos: '{"l":0,"b":9}' });
+    const g = await js(p, onMap);
+    ok(`${w} px, step 10: 2 gauge nodes carry their value, 7 tags hang under their actors, the button reads “9 / 19” and is clear of the card and the bar`, g.live === 2 && g.sockets === 6 && g.tags === 7 && g.btn === '9 / 19' && g.btnShown && g.btnClear && !g.strip, g);
+    ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(700);
-    const f = await js(p, strip);
-    ok(`${w} px, full view: the five key readings with their values`, f.keys === 5 && f.dots === 0 && f.h <= 44 && f.lad === 1, f);
-    await click(p, '.s2rdb'); await p.waitForTimeout(300);
-    ok(`${w} px: the button at the end of the strip opens the full ladder with 17 rows`, await js(p, () => { const l = document.getElementById('isx-s5lad'); return !l.hidden && l.getClientRects().length > 0 && l.querySelectorAll('.s5row').length === 17; }));
+    const f = await js(p, onMap);
+    ok(`${w} px, full view: all 8 gauge nodes and 10 tags with their values; “19 / 19”`, f.live === 8 && f.tags === 10 && f.btn === '19 / 19' && f.btnClear, f);
+    await click(p, '#isx-b1ind'); await p.waitForTimeout(300);
+    const l = await js(p, onMap);
+    ok(`${w} px: the Indicators button opens the role ledger with 19 rows`, l.led && l.rows === 19 && await js(p, () => { const r = document.getElementById('isx-b1led').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 && r.top >= 0 && r.bottom <= innerHeight + 1; }), l);
     ok(`no page errors (${w} px)`, p._errs.length === 0, p._errs); await p.context().close();
   }
+  { /* phones: the strip under the map carries only what the step moves, then the way to all of them */
+    const strip = () => { const v = e => e.getClientRects().length > 0, s = document.getElementById('isx-b1play'), sr = s.getBoundingClientRect(), S = ISX.sim, chips = [...s.querySelectorAll('.ipc:not(.all)')], all = s.querySelector('.ipc.all'), map = document.getElementById('isx-rmap').getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect();
+      return { shown: v(s), chips: chips.map(c => [c.dataset.ipc, c.querySelector('b').textContent, c.querySelector('em').textContent]), all: all.textContent.trim(), h: Math.round(sr.height), below: sr.top >= map.bottom - 1, wide: s.scrollWidth > s.clientWidth, pageWide: document.scrollingElement.scrollWidth > innerWidth + 1, btn: v(document.getElementById('isx-b1ind')), mapVals: [...document.querySelectorAll('#isx-rmap [data-gv]')].filter(x => x.textContent.trim()).length, barFixed: getComputedStyle(document.getElementById('isx-s2bar')).position, barBottom: Math.round(innerHeight - bar.bottom) }; };
+    let p = await page({}, { w: 390, h: 844, touch: true });
+    const o = await js(p, strip);
+    ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 19”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 19/.test(o.all) && o.mapVals === 0 && !o.btn, o);
+    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
+    const g = await js(p, strip), play10 = await js(p, () => { const S = ISX.sim, L = S.lines[0], now = new Set(L.steps[9].e), prev = new Set(L.steps[8].e), fresh = [...now].filter(i => !prev.has(i)); return S.indicators.filter(I => I.rel.some(i => fresh.includes(i))).map(I => I.id); });
+    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 9 of 19”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => /\d/.test(c[1]) && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 9 of 19/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
+    ok('390 px, step 10: the chips are the indicators in play, no fixed set', g.chips.map(c => c[0]).sort().join() === (await js(p, () => [...document.querySelectorAll('#isx-rmap .gn.play, #isx-rmap .gt.play')].flatMap(x => x.dataset.ind.split(' ')).sort().join())), { chips: g.chips, play10 });
+    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":29}' });
+    const t = await js(p, strip);
+    ok('390 px, step 30: inflation and diesel arrive as “first moved here”', ['pce', 'diesel'].every(id => t.chips.some(c => c[0] === id && c[2] === 'first moved here')) && /All 19 indicators|All 19 of 19/.test(t.all), t);
+    await js(p, () => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(350);
+    const sh = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => e.getClientRects().length > 0, r = l.getBoundingClientRect(); return { open: !l.hidden, tabs: [...l.querySelectorAll('.ltabs [data-ltab]')].filter(v).length, cols: [...l.querySelectorAll('.lcol')].filter(v).length, rows: l.querySelectorAll('.lr.ind').length, full: r.left <= 1 && r.right >= innerWidth - 1 && r.height > innerHeight * .7 }; });
+    ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 19 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 19 && sh.full, sh);
+    await js(p, () => document.querySelector('#isx-b1led [data-ltab="conduit"]').click()); await p.waitForTimeout(150);
+    ok('390 px: a role tab switches the column', await js(p, () => { const v = e => e.getClientRects().length > 0, c = [...document.querySelectorAll('#isx-b1led .lcol')].filter(v); return c.length === 1 && c[0].dataset.role === 'conduit' && c[0].querySelectorAll('.lr.ind').length === 5; }));
+    ok('no page errors (390 px)', p._errs.length === 0, p._errs); await p.context().close();
+  }
 
-  /* ================= 5. the full ladder ================= */
+  /* ================= 5. the role ledger ================= */
   {
     const p = await page({ 'isx-sim-mode': 'full' });
-    await click(p, '.s4lad'); await p.waitForTimeout(350);
-    const L = await js(p, () => { const l = document.getElementById('isx-s5lad'), v = e => e.getClientRects().length > 0 && (!e.checkVisibility || e.checkVisibility()), rows = [...l.querySelectorAll('.s5row')], bar = document.getElementById('isx-s2bar').getBoundingClientRect(), r = l.getBoundingClientRect();
-      return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.s5g')].map(g => g.querySelectorAll('.s5row').length), rungs: [...l.querySelectorAll('.s5g h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.s5n').textContent && /\d/.test(x.querySelector('.s5v').textContent) && x.querySelector('.s5m').textContent.length > 12).length, oneLine: rows.filter(x => x.querySelector('.s5m').getBoundingClientRect().height < 20).length,
-        detailsShown: [...l.querySelectorAll('.s5d')].filter(v).length, srcShown: [...l.querySelectorAll('.lsrc')].filter(v).length, slotsShown: [...l.querySelectorAll('.slot3, .fig3')].filter(v).length, slots: l.querySelectorAll('.slot3').length, figs: l.querySelectorAll('.fig3').length, sectors: l.querySelectorAll('.secb3').length, arrows: [l.querySelectorAll('.larr3 .dn').length, l.querySelectorAll('.larr3 .up').length], source: !!l.querySelector('.lsrc3'),
-        fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.bottom <= innerHeight }; });
-    ok('ladder: all 17 readings, grouped Upstream / Intermediate / Downstream (4, 4, 9)', L.open && L.rows === 17 && L.per.join() === '4,4,9' && L.rungs.join() === 'Upstream,Intermediate,Downstream', L);
-    ok('ladder: each row shows a name, a value and one line of meaning; notes, sources, slots and figures are closed', L.three === 17 && L.oneLine === 17 && L.detailsShown === 0 && L.srcShown === 0 && L.slotsShown === 0, L);
-    ok('ladder: nothing was dropped: 6 slots not yet measured, the figures from elsewhere, the source layer, 5 sectors, arrows both ways', L.slots === 6 && L.figs >= 6 && L.sectors === 5 && L.arrows.join() === '3,3' && L.source, L);
-    ok('ladder: fits 1440×900 without scrolling, clear of the bar', L.fit && L.aboveBar && L.inside, L);
-    await click(p, '#isx-s5lad .s5rb', 4); await p.waitForTimeout(150);
-    const d1 = await js(p, () => { const l = document.getElementById('isx-s5lad'), b = l.querySelectorAll('.s5rb')[4], d = document.getElementById(b.getAttribute('aria-controls')); return { exp: b.getAttribute('aria-expanded'), shown: !d.hidden, src: /Source: \S/.test(d.textContent), find: !!d.querySelector('.s5find'), text: d.textContent.length }; });
-    await click(p, '#isx-s5lad .s5rb', 9); await p.waitForTimeout(150);
-    const d2 = await js(p, () => [...document.querySelectorAll('#isx-s5lad .s5rb[aria-expanded="true"]')].length);
-    ok('ladder: a click on a row opens its note, source and the way to its actor; one row open at a time', d1.exp === 'true' && d1.shown && d1.src && d1.find && d1.text > 60 && d2 === 1, { d1, d2 });
-    await js(p, () => document.querySelector('#isx-s5lad .s5rb[aria-expanded="true"]').parentNode.querySelector('.s5find').click()); await p.waitForTimeout(350);
-    ok('ladder: “Find … on the map” closes the ladder and selects the actor', await js(p, () => document.getElementById('isx-s5lad').hidden && !!document.querySelector('#isx-rmap .fn.sel') && !document.getElementById('isx-rside').hidden));
-    await p.keyboard.press('Escape'); await click(p, '.s4lad'); await p.waitForTimeout(250); await p.keyboard.press('Escape'); await p.waitForTimeout(200);
-    ok('ladder: Esc closes it', await js(p, () => document.getElementById('isx-s5lad').hidden && !document.getElementById('isx-cock').classList.contains('rd-open')));
-    ok('no page errors (ladder)', p._errs.length === 0, p._errs); await p.context().close();
-    const q = await page({ 'isx-sim-mode': 'full' }, { w: 1280, h: 760 }); await click(q, '.s4lad'); await q.waitForTimeout(350);
-    ok('ladder: at 1280×760 it stays inside the window and clear of the bar', await js(q, () => { const r = document.getElementById('isx-s5lad').getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); const c = document.getElementById('isx-cock'); return r.bottom <= bar.top + 1 && r.top >= 0 && c.getBoundingClientRect().bottom <= innerHeight + 1; })); await q.context().close();
+    await click(p, '#isx-b1ind'); await p.waitForTimeout(350);
+    const L = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => !!e && e.getClientRects().length > 0 && (!e.checkVisibility || e.checkVisibility()), rows = [...l.querySelectorAll('.lr.ind')], bar = document.getElementById('isx-s2bar').getBoundingClientRect(), r = l.getBoundingClientRect();
+      return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.lcol')].map(g => g.querySelectorAll('.lr.ind').length), roles: [...l.querySelectorAll('.lcol h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.ln').textContent.length > 2 && /\d/.test(x.querySelector('.lrb > b').textContent) && /^(step|first principles) \d+/.test(x.querySelector('.lrb > em').textContent)).length, detailsShown: [...l.querySelectorAll('.ld')].filter(v).length, srcShown: v(l.querySelector('.lsrc3')), slots: l.querySelectorAll('.lr.slot').length, slotDigits: [...l.querySelectorAll('.lr.slot')].filter(x => !/not yet measured/.test(x.textContent) || /\d/.test(x.textContent)).length, figs: l.querySelectorAll('.lr.fig').length, sectors: l.querySelectorAll('.secb3').length, link: /Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings: inflation moved the policy rate on 16 September 2026\./.test(l.querySelector('.lfoot').textContent), source: !!l.querySelector('.lsrcd .lsrc3'), fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.top >= 0 && r.left >= 0 && r.right <= innerWidth };
+    });
+    ok('ledger: all 19 indicators in four roles: Settings, Conduits, Stress gauges, Outcomes · balances (3, 5, 1, 10)', L.open && L.rows === 19 && L.per.join() === '3,5,1,10' && L.roles.join() === 'Settings,Conduits,Stress gauges,Outcomes · balances', L);
+    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 19 && L.detailsShown === 0 && !L.srcShown, L);
+    ok('ledger: nothing was dropped: 7 slots not yet measured (never a number), 4 figures from elsewhere, the source layer, 5 sectors, the link between the roles', L.slots === 7 && L.slotDigits === 0 && L.figs === 4 && L.sectors === 5 && L.link && L.source, L);
+    ok('ledger: fits 1440×900 without scrolling, clear of the bar', L.fit && L.aboveBar && L.inside, L);
+    await click(p, '#isx-b1led .lrb[data-led]', 4); await p.waitForTimeout(150);
+    const d1 = await js(p, () => { const l = document.getElementById('isx-b1led'), b = l.querySelectorAll('.lrb[data-led]')[4], d = document.getElementById(b.getAttribute('aria-controls')); return { exp: b.getAttribute('aria-expanded'), shown: !d.hidden, src: /Source: /.test(d.textContent), moved: /Moved by|Moves/.test(d.textContent), find: !!d.querySelector('.lfind'), text: d.textContent.length }; });
+    await click(p, '#isx-b1led .lrb[data-led]', 9); await p.waitForTimeout(150);
+    const d2 = await js(p, () => [...document.querySelectorAll('#isx-b1led .lrb[aria-expanded="true"]')].length);
+    ok('ledger: a click on a row opens its breakdown (what moves it, what it moves, the source) and the way to it on the map; one row open at a time', d1.exp === 'true' && d1.shown && d1.src && d1.moved && d1.find && d1.text > 60 && d2 === 1, { d1, d2 });
+    await js(p, () => document.querySelector('#isx-b1led .lrb[aria-expanded="true"]').parentNode.querySelector('.lfind').click()); await p.waitForTimeout(350);
+    ok('ledger: “Find it on the map” closes the ledger and selects the node', await js(p, () => document.getElementById('isx-b1led').hidden && !!document.querySelector('#isx-rmap .fn.sel') && !document.getElementById('isx-rside').hidden));
+    await p.keyboard.press('Escape'); await click(p, '#isx-b1ind'); await p.waitForTimeout(250); await p.keyboard.press('Escape'); await p.waitForTimeout(200);
+    ok('ledger: Esc closes it', await js(p, () => document.getElementById('isx-b1led').hidden && !document.getElementById('isx-cock').classList.contains('led-open')));
+    ok('no page errors (ledger)', p._errs.length === 0, p._errs); await p.context().close();
+    const q = await page({ 'isx-sim-mode': 'full' }, { w: 1280, h: 760 }); await click(q, '#isx-b1ind'); await q.waitForTimeout(350);
+    ok('ledger: at 1280×760 it fits without scrolling, inside the window and clear of the bar', await js(q, () => { const l = document.getElementById('isx-b1led'), r = l.getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); return r.top >= 0 && r.left >= 0 && r.right <= innerWidth && r.bottom <= bar.top + 1 && l.scrollHeight <= l.clientHeight + 1; }));
+    await q.context().close();
   }
 
   /* ================= 6. counts ================= */
   {
     const p = await page({ 'isx-sim-mode': 'full' });
-    const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.readings.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length]; });
-    ok('counts: 34 actors, 59 relations, 14 levers, 17 readings, 9 plays, 37 guide steps', n.join() === '34,59,14,17,9,37', n); await p.context().close();
+    const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.indicators.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length, c.querySelectorAll('#isx-rmap .fn.pl').length, c.querySelectorAll('#isx-rmap .fn.gn').length, c.querySelectorAll('#isx-rmap .gt').length]; });
+    ok('counts: 26 actors + 8 gauge nodes (34 nodes), 59 relations, 14 levers, 19 indicators (10 of them tags), 9 plays, 37 guide steps', n.join() === '34,59,14,19,9,37,26,8,10', n); await p.context().close();
   }
 
   await b.close();

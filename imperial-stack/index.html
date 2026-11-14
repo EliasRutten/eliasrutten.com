@@ -4600,8 +4600,8 @@ const FZ = [
   ['hh', 'Households', '#3ee6b8', 848, 160, 1, 4, 0],
   ['energy', 'Energy and prices', '#b7f36b', 1022, 160, 1, 6, 0],
 ];
-const MAPW = 1182, MAPH = cyOf(6) + NH / 2 + 10;
-const zoneRect = ([, , , x, w, r0, r1, foot]) => { const y = cyOf(r0) - 50, b = cyOf(r1) + NH / 2 + (foot ? 20 : 9); return [x, y, w, b - y]; };
+const MAPW = 1182, MAPH = cyOf(6) + NH / 2 + 17;   /* B1-3: room for the tags under the last row */
+const zoneRect = ([, , , x, w, r0, r1, foot]) => { const y = cyOf(r0) - 50, b = cyOf(r1) + NH / 2 + (foot ? 27 : 16); return [x, y, w, b - y]; };
 
 /* icons: 24 x 24, stroke only */
 const FIC = {
@@ -4679,15 +4679,15 @@ const FN = {
   /* households */
   CON: N('hh', 'hh', 1, 'bag', 'All consumers', '67.6% of GDP', '#3ee6b8', 'American households as a whole: consumer spending was 67.6% of GDP in Q3 2026 (FRED). They buy goods, not chips: what they buy is made abroad, and that is how American demand keeps the exporters, and through them the chip supply chain, busy.'),
   TOP: N('hh', 'hh', 2, 'ppl', 'Top 10%', 'own 88% of stocks', '#3ee6b8', 'The richest tenth of US households own 88% of household stocks and do more than 45% of consumer spending.'),
-  MTG: N('hh', 'hh', 3, 'house', 'Mortgages', '30-yr 7.24%', '#3ee6b8', 'The 30-year fixed mortgage rate averaged 7.24% in the week to 29 October 2026, down from 7.32% a week earlier (Freddie Mac). Long yields reach households here.'),
+  MTG: N('hh', 'hh', 3, 'house', '30-year mortgage', '30-yr 7.24%', '#3ee6b8', 'The 30-year fixed mortgage rate averaged 7.24% in the week to 29 October 2026, down from 7.32% a week earlier (Freddie Mac). Long yields reach households here.'),
   SVR: N('hh', 'hh', 4, 'jar', 'Saving rate', '3.8% of income', '#3ee6b8', 'The personal saving rate was 3.8% in September 2026. Income rose 0.2% on the month and spending 0.5% (BEA, 29 October 2026).'),
   /* energy and prices */
-  FUEL: N('energy', 'energy', 1, 'pump', 'Diesel, petrol', 'diesel $6.53/gal', '#b7f36b', 'US diesel cost $6.53 a gallon on 22 September 2026, up 77% in a year (AAA, EIA data): a tax on household spending and on every truck that delivers it.'),
+  FUEL: N('energy', 'energy', 1, 'pump', 'US diesel', 'diesel $6.53/gal', '#b7f36b', 'US diesel cost $6.53 a gallon on 22 September 2026, up 77% in a year (AAA, EIA data): a tax on household spending and on every truck that delivers it.'),
   OIL: N('energy', 'energy', 2, 'barrel', 'Brent crude', '≈$97 on 5 Nov', '#b7f36b', 'The benchmark oil price: about $80 on 2 March, a peak near $118 in late March, about $104.5 on 25 September and about $97 on 5 November after a near-9% fall on 4 November, as traders weighed a diplomatic end to the war (Trading Economics).'),
   HOR: N('energy', 'energy', 3, 'narrows', 'Hormuz strait', 'shut since 28 Feb', '#b7f36b', 'The narrow passage for about a fifth of world oil supply. The war with Iran closed it from 28 February 2026.'),
   PET: N('energy', 'energy', 4, 'derrick', 'Oil exporters', 'Gulf, Russia, Iran', '#b7f36b', 'Producers whose revenue has long been recycled into US assets, the petrodollar loop. Russian oil already at sea was made saleable by a US waiver from 12 March 2026.'),
   ENG: N('energy', 'energy', 5, 'bolt', 'Energy policy', 'stocks · waivers', '#b7f36b', 'Emergency stock releases (400 million barrels agreed through the IEA in March 2026, 172 million of them American), the waiver on Russian oil at sea (12 March, extended 18 May) and Navy escorts for tankers.'),
-  INF: N('energy', 'energy', 6, 'tag', 'Inflation', 'PCE +2.1% (Q3)', '#ff8a5c', 'The PCE price index rose at a 2.1% annual rate in the third quarter of 2026, down from 5% in the second; 2.5% excluding food and energy (BEA, 29 October 2026).'),
+  INF: N('energy', 'energy', 6, 'tag', 'Inflation (PCE)', 'PCE +2.1% (Q3)', '#ff8a5c', 'The PCE price index rose at a 2.1% annual rate in the third quarter of 2026, down from 5% in the second; 2.5% excluding food and energy (BEA, 29 October 2026).'),
 };
 const FT = { debt: ['#ffd27a', 'Treasuries and bills'], cash: ['#ffb547', 'Money and credit'], eq: ['#d78bff', 'Shares and stakes'], rule: ['#e4ebf1', 'Rules and policy'], goods: ['#44d7ec', 'Goods and orders'], sell: ['#ff5a4e', 'Selling'], sig: ['#7d8fa0', 'Moves a signal'] };
 /* relations: from, to, type, label. An edge is named FROM>TO. */
@@ -4848,7 +4848,7 @@ function plumbText() {
         <p>The circuit tab follows the money round the whole dollar system. This tab opens up its last steps, 08 to 10, where the state itself works the machinery.</p></div>
       <div class="expc"><h4>Why “Scott Bessent”</h4><p>Scott Bessent runs the Treasury, which holds many of these levers: debt issuance and buybacks, sanctions, swaps, currency action. Others are pulled elsewhere. The Fed sets rates and buys bills, Congress writes tax and stablecoin law, the Supreme Court struck down the emergency tariffs, the White House bargains over trade. <b>Each lever below says who pulls it.</b></p>
         <p>The name is a shorthand for a system in which debt management, trade and foreign policy have fused.</p></div>
-      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The readings along the top carry measured values, each with a date and a source (hover for it). Running a play, pulling a lever or clicking an actor lights the relations involved and the readings that measure them. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
+      <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The indicators on the map carry measured values, each with a date and a source (hover for it): prices and rates sit on the wires as gauges, settings and outcomes hang under the actor they belong to. Running a play, pulling a lever or clicking an actor lights the relations involved and the indicators they move. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
         <p>Some labels are this map’s reading, not the government’s. Michael Howell calls the bill strategy “Treasury QE”; the Treasury calls its buybacks “liquidity support”.</p></div>
       </div>
       <div class="expcol">
@@ -4934,71 +4934,27 @@ const GX = {
   shr: { k: 'Shares sold, 12 months', v: bn0(ISUM.s), delta: 'to 8 Nov 2026', note: `New shares sold by listed firms in the build-out, ${ISUM.ns} sales in the list below. Gross proceeds, except Oracle’s at-the-market sales (net). ${bn1(ISUM.p)} of it, Meta’s forward sale, is paid only at settlement. Up to $40bn of Alphabet at-the-market capacity is not counted.`, src: 'Company filings, listed in “Shares and bonds sold” below' },
   bnd: { k: 'Bonds sold, 12 months', v: bn0(ISUM.b), delta: 'to 8 Nov 2026', note: `Senior notes sold by the same firms, ${ISUM.nb} sales in the list below, at the dollar value the filings give. Excludes Amazon’s $17.5bn term loan and private credit.`, src: 'Company filings, listed in “Shares and bonds sold” below' },
   dsl: { k: 'US diesel price', v: '$6.53/gal', delta: '22 Sep, +77% in a year', note: 'Up 77% on a year earlier', src: 'AAA, EIA data (22 Sep 2026)' },
+  /* B1-3: two indicators from figures the page already carries (the lever “Intervene with Japan” and the actor Inflation) */
+  yen: { k: 'Yen per US dollar', v: '155.20', delta: '31 Jul 2026', note: 'The yen rose as much as 1.4% to 155.20 after touching 40-year lows, on the first joint US–Japan intervention since 2011', src: 'Reuters via StreetInsider (2 Aug 2026); Al Jazeera (3 Aug 2026)' },
+  pce: { k: 'PCE price index', v: '+2.1%', delta: 'Q3 2026, annual rate', note: 'Down from 5% in the second quarter; 2.5% excluding food and energy', src: 'BEA (29 Oct 2026)' },
 };
-let TILES = [];
-function buildHud() {
-  const G = k => (LIVE.gauges || []).find(g => g.k.indexOf(k) === 0) || { k, v: '', note: '', src: '' };
-  const R = id => (LIVE.resbar || []).find(r => r.id === id) || { k: id, v: '', t: '', what: '' };
-  const cap = R('capex'), ai = R('ai');
-  const capg = { k: cap.k, v: cap.v.replace('~', '≈'), delta: cap.d, note: cap.what, src: cap.t }, aig = { k: ai.k, v: ai.v, delta: ai.d, note: ai.what, src: ai.t };
-  const T = (n, ic, k, g) => ({ n, ic, k, g });
-  return [
-    ['abroad', 'Abroad', '#44d7ec', [T('OFF', 'vault', 'Official Treasuries', G('Foreign official')), T('YEN', 'usd', 'Dollar index', GX.dxy)]],
-    ['state', 'The state', '#ffd27a', [T('FED', 'fed', 'Fed funds target', G('Fed funds')), T('FED', 'bank', 'Bank reserves', G('Bank reserves')), T('TSY', 'tsy', 'Bills share of debt', G('Bills'))]],
-    ['fin', 'Financial sector', '#ffb547', [T('Y10', 'chart', '10-year yield', G('10-year')), T('MOV', 'pulse', 'Bond volatility', G('Bond volatility')), T('STB', 'coin', 'Tether’s Treasuries', GX.tether)]],
-    ['ai', 'AI build-out', '#ff5d8f', [T('HYP', 'rack', 'Big Tech capex 2026', capg), T('SPX', 'bars', 'AI share of S&P 500', aig), T('ISS', 'issue', 'Shares sold, 12 months', GX.shr), T('BND', 'bond', 'Bonds sold, 12 months', GX.bnd)]],
-    ['hh', 'Households', '#3ee6b8', [T('CON', 'bag', 'Consumer spending', G('Consumer spending')), T('SVR', 'jar', 'Saving rate', GX.save), T('MTG', 'house', '30-year mortgage', GX.mtg)]],
-    ['energy', 'Energy and prices', '#b7f36b', [T('OIL', 'barrel', 'Brent crude', Object.assign({}, G('Brent'), { delta: '5 Nov 2026' })), T('FUEL', 'pump', 'US diesel', GX.dsl)]],
-  ];
-}
-function tileHTML(T, c) {
-  const g = T.g, mini = g.type === 'pct' || g.type === 'band' ? gaugeSVG(g).replace(/<text[^>]*>.*?<\/text>/g, '') : '';
-  return `<button type="button" class="tile${TKEYS.includes(T.k) ? ' s5key' : ''}" data-node="${T.n}" data-rk="${TORD.indexOf(T.k)}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note)}</p><p class='ts'>${fe(g.src)} · click to find it on the map</p>"><span class="tk"><i>${fic(T.ic, 13)}</i>${fe(T.k)}</span><span class="tr"><span class="tv">${fe(g.v)}</span>${mini ? `<span class="tg">${mini}</span>` : ''}</span>${g.delta && !mini ? `<small>${fe(g.delta)}</small>` : ''}</button>`;
-}
-/* v2 round 3: the 17 readings are shown as a ladder, from what Washington sets to what the economy shows, under the layer
-   that drives it all (surplus recycling and political choice). A figure the page already carries elsewhere is shown as a
-   quiet chip that opens its lever or actor; an indicator the page does not measure yet is an empty slot. Nothing is estimated.
-   Influence runs both ways; the arrows between the rungs say how. */
-const TIERS = [
-  ['up', 'Upstream', 'policy and rules', '#ffd27a', 'What Washington sets: the policy rate, the Fed’s balance sheet, what the Treasury issues, and who may hold it.'],
-  ['mid', 'Intermediate', 'markets and balance sheets', '#c9d4de', 'Where those settings land first: yields, volatility, and who ends up holding the debt.'],
-  ['down', 'Downstream', 'prices, investment, debt', '#3ee6b8', 'What the economy shows in the end: prices, asset values, what gets built, and who borrows.'],
-];
-const TIERK = { 'Fed funds target': 'up', 'Bank reserves': 'up', 'Bills share of debt': 'up', 'Tether’s Treasuries': 'up', '10-year yield': 'mid', 'Bond volatility': 'mid', 'Official Treasuries': 'mid', 'Dollar index': 'mid' };
-/* the actors that carry a reading, by rung: the map shows the ladder too (a short mark on the actor's right edge) */
-const NTIER = { FED: 'up', TSY: 'up', STB: 'up', Y10: 'mid', MOV: 'mid', OFF: 'mid', YEN: 'mid', CEN: 'mid', OIL: 'down', FUEL: 'down', SPX: 'down', ISS: 'down', BND: 'down', HYP: 'down', CON: 'down', SVR: 'down', MTG: 'down', INF: 'down' };
-const TORD = ['Fed funds target', 'Bank reserves', 'Bills share of debt', 'Tether’s Treasuries', '10-year yield', 'Bond volatility', 'Official Treasuries', 'Dollar index', 'Brent crude', 'US diesel', 'AI share of S&P 500', 'Shares sold, 12 months', 'Bonds sold, 12 months', 'Big Tech capex 2026', 'Consumer spending', 'Saving rate', '30-year mortgage'];
-const TSLOT = {
-  up: [{ k: 'Fed’s bill holdings', v: '$571bn', d: '28 Oct 2026', lv: 2, x: 'The composition of the Fed’s balance sheet: bills bought since December 2025. From the lever “The Fed buys bills”.' },
-    { k: 'Bank capital freed', v: '$219bn', d: 'from 1 Apr 2026', lv: 3, x: 'Regulatory capacity: the cut in Tier 1 requirements at the largest banks’ deposit-taking arms, by Governor Barr’s count. From the lever “Free up the big banks”.' },
-    { k: 'Average bill maturity', x: 'Not measured on this page yet. Circuit step 08 gives the average maturity of all marketable debt (about 71 months in mid-2026), not of bills.' }],
-  mid: [{ k: 'Financial hubs’ Treasuries', v: '+$245bn', d: 'year to Aug 2026', n: 'CEN', x: 'Private and custodial holders booked in seven financial centres. From the actor “Financial hubs”.' },
-    { k: 'Bill yields', x: 'Not measured on this page yet. The stablecoin lever cites a BIS estimate of the effect of inflows on 3-month bill yields.' },
-    { k: 'Dealer absorption', x: 'Not measured on this page yet: how much of each auction primary dealers are left holding.' },
-    { k: 'Deposit creation', x: 'Not measured on this page yet: the deposits banks create when they buy Treasuries or lend against them.' }],
-  down: [{ k: 'Inflation (PCE)', v: '+2.1%', d: 'Q3 2026, annual rate', n: 'INF', x: 'From the actor “Inflation”.' },
-    { k: 'Gross federal debt', v: '$40.25tn', d: 'Oct 2026', x: 'The fiscal debt stock. From Circuit step 08.' },
-    { k: 'Household debt', x: 'Not measured on this page yet: the stock of mortgages and consumer credit.' },
-    { k: 'What the investment is in', x: 'Not measured on this page yet: how real investment divides between the AI build-out and everything else.' }],
-};
-const SECT = { hh: ['Households', 'hh', 'What they own (homes, shares, deposits), what they owe (mortgages, consumer credit), and whether they save or borrow in a year.'],
-  nfc: ['Non-financial firms', 'ai', 'What they invest, how much of it their own cash flow covers, and what they raise in bonds, shares and leases. On this map the AI build-out stands for the sector.'],
-  fin: ['Financial sector', 'fin', 'Banks, dealers, funds and insurers. The sector’s own balance is small; what matters is the size of its balance sheet, because it issues the claims the other sectors hold.'],
-  gov: ['Government', 'state', 'The federal deficit and the debt that funds it. When the rest of the world runs a surplus with the US and the private sectors do not borrow, the government’s deficit is the mirror.'],
-  row: ['Rest of the world', 'abroad', 'Its surplus with the US is the US current-account deficit ($1.18tn in 2025), held as claims on the other four sectors.'] };
-const LOCK3 = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-function slotHTML(S) {
-  const tip = `data-tip="<b>${fe(S.k)}${S.v ? ': ' + fe(S.v) : ''}</b><p>${fe(S.x)}</p>"`;
-  if (!S.v) return `<span class="slot3" tabindex="0" ${tip}><span class="sk3">${fe(S.k)}</span><em>not yet measured</em></span>`;
-  const body = `<span class="tv">${fe(S.v)}</span><span class="sk3">${fe(S.k)}</span><small>${fe(S.d)}</small>`;
-  return S.lv != null ? `<button type="button" class="fig3" data-slv="${S.lv}" ${tip}>${body}</button>` : S.n ? `<button type="button" class="fig3" data-sn="${S.n}" ${tip}>${body}</button>` : `<span class="fig3" tabindex="0" ${tip}>${body}</span>`;
-}
-/* v2 stage 5: the readings have three faces, all drawn from TILES. The rail on the right edge (from 1180 px, stage 4);
-   a strip of key readings above the map (below 1180 px: the five in TKEYS, always on screen, plus whatever the step in hand
-   puts in play, which is what the stage 3 strip showed); and the full ladder, a quiet list that opens on demand.
-   A reading the guide has not reached keeps its name; its value, note and source stay out of the page until then (simGate). */
-const TKEYS = ['Fed funds target', 'Bills share of debt', '10-year yield', 'Bond volatility', 'Big Tech capex 2026'];
-/* one line of meaning per reading: what the figure measures, in the words the page already uses; no figures of its own */
+/* ================= B1-3: indicators (were “readings”) =================
+   Nineteen dated figures, each with a role: a setting (what Washington sets), a conduit (a price the plumbing passes
+   through), a stress gauge (says when a conduit can snap) or an outcome/balance (what the economy shows, who holds what).
+   The rule on the map: an actor decides, holds or trades; a price or a rate is a gauge. So eight nodes are gauge nodes
+   on the wires, with all their relations unchanged, and the other eleven indicators hang as tags under the actor they
+   belong to. Actors carry names only. There is no rail, strip or ladder any more: the map carries the figures, one role
+   ledger opens on demand, and phones get a strip of the indicators the step in hand moves.
+   An indicator appears at the first step whose lit relations touch it (IND[i].first, computed once from the lines; a
+   literal `at` overrides it). Until then a gauge is an empty socket and a tag is not drawn; nothing of its value, date,
+   note or source is in the page. Every look is a function of the state (indStates), never of what it looked like before. */
+const PH = 30, GH = 44, GWD = n => n === 'MOV' ? 150 : NW;
+const ROLE = { set: ['Setting', 'Settings', 'what Washington sets', '#ffd27a'], conduit: ['Conduit', 'Conduits', 'prices it passes through', '#8fd8ff'], stress: ['Stress gauge', 'Stress gauges', 'when a conduit can snap', '#ff8a5c'], outcome: ['Outcome · balance', 'Outcomes · balances', 'what the economy shows', '#3ee6b8'] };
+const RORD = ['set', 'conduit', 'stress', 'outcome'];
+/* the eight gauge nodes and the indicator(s) each carries (the yen shares its capsule with the dollar index) */
+const GNODE = { Y10: ['y10'], MOV: ['move'], YEN: ['yen', 'dxy'], OIL: ['brent'], MTG: ['mtg'], INF: ['pce'], FUEL: ['diesel'], SVR: ['save'] };
+const isG = n => !!GNODE[n], hhOf = n => (isG(n) ? GH : PH) / 2, hwOf = n => GWD(n) / 2;
+/* one line of meaning per indicator: what the figure measures, in the words the page already uses; no figures of its own */
 const TMEAN = {
   'Fed funds target': 'The Fed’s policy rate: the price of overnight money.',
   'Bank reserves': 'Cash the banks hold at the Fed.',
@@ -5008,8 +4964,10 @@ const TMEAN = {
   'Bond volatility': 'The MOVE index: how far Treasury yields are expected to swing.',
   'Official Treasuries': 'Treasuries held by foreign central banks, finance ministries and sovereign funds.',
   'Dollar index': 'The dollar against a basket of six major currencies.',
+  'Yen': 'Yen per dollar: a higher number is a weaker yen.',
   'Brent crude': 'The benchmark oil price, per barrel.',
   'US diesel': 'The US price of a gallon of diesel.',
+  'Inflation (PCE)': 'The Fed’s preferred price index, as an annual rate.',
   'AI share of S&P 500': 'The share of S&P 500 market value in JPMorgan’s basket of AI-related stocks.',
   'Shares sold, 12 months': 'New shares sold by listed firms in the build-out.',
   'Bonds sold, 12 months': 'Senior notes sold by the same firms.',
@@ -5018,55 +4976,187 @@ const TMEAN = {
   'Saving rate': 'Personal saving as a share of disposable income.',
   '30-year mortgage': 'The average rate on a 30-year fixed mortgage.',
 };
-const tilesOrd = () => TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
-function hudHTML() {
-  return `<div class="hud6 s5strip" id="isx-s5strip" role="group" aria-label="Key readings">${tilesOrd().map(a => tileHTML(a.T, a.c)).join('')}</div>`;
+/* id, name, role, node, the figure (LIVE.gauges, LIVE.resbar or GX). s = short name on a tag or in a twin gauge; rel = the
+   relations that move it or that it moves (a gauge node: all of its own); def/sub = the one line inside a gauge;
+   tr = the latest move, only where the page states it; fill = a share of a whole. */
+const IND = (() => {
+  const G = k => (LIVE.gauges || []).find(g => g.k.indexOf(k) === 0) || { k, v: '', note: '', src: '' };
+  const Rb = id => (LIVE.resbar || []).find(r => r.id === id) || { k: id, v: '', t: '', what: '' };
+  const cap = Rb('capex'), ai = Rb('ai');
+  const capg = { k: cap.k, v: cap.v.replace('~', '≈'), delta: cap.d, note: cap.what, src: cap.t }, aig = { k: ai.k, v: ai.v, delta: ai.d, note: ai.what, src: ai.t };
+  const all = n => FE.map((e, i) => e[0] === n || e[1] === n ? i : -1).filter(i => i >= 0);
+  const I = (id, k, role, n, g, o) => Object.assign({ id, k, role, n, g, tag: !isG(n), rel: all(n) }, o);
+  return [
+    I('ffr', 'Fed funds target', 'set', 'FED', G('Fed funds'), { s: 'Fed funds', rel: E('INF>FED', 'FED>Y10') }),
+    I('res', 'Bank reserves', 'set', 'FED', G('Bank reserves'), { s: 'Reserves', rel: E('FED>BNK') }),
+    I('bills', 'Bills share of debt', 'set', 'TSY', G('Bills'), { s: 'Bills share', rel: E('TSY>MMF', 'TSY>STB'), band: 'guide 15–20%' }),
+    I('y10', '10-year yield', 'conduit', 'Y10', G('10-year'), { def: 'interest on 10-year US debt', sub: 'Oct 2026 average' }),
+    I('mtg', '30-year mortgage', 'conduit', 'MTG', GX.mtg, { sub: 'week to 29 Oct', tr: '▼' }),
+    I('yen', 'Yen', 'conduit', 'YEN', GX.yen, { sub: 'per $ · 31 Jul' }),
+    I('dxy', 'Dollar index', 'conduit', 'YEN', GX.dxy, { s: 'Dollar', sub: '5 Nov' }),
+    I('brent', 'Brent crude', 'conduit', 'OIL', Object.assign({}, G('Brent'), { delta: '5 Nov 2026' }), { sub: 'per barrel · 5 Nov', tr: '▼' }),
+    I('move', 'Bond volatility', 'stress', 'MOV', G('Bond volatility'), { def: 'expected swing in Treasury yields', sub: 'MOVE · Oct 2026', band: '92nd–94th percentile' }),
+    I('off', 'Official Treasuries', 'outcome', 'OFF', G('Foreign official'), { s: 'Treasuries', rel: E('OFF>TSY', 'EXP>OFF', 'YEN>OFF', 'FED>OFF') }),
+    I('teth', 'Tether’s Treasuries', 'outcome', 'STB', GX.tether, { s: 'Treasuries', rel: E('TSY>STB', 'CGR>STB') }),
+    I('capex', 'Big Tech capex 2026', 'outcome', 'HYP', capg, { s: 'Capex 2026', rel: E('ISS>HYP', 'BND>HYP', 'PCR>HYP', 'HYP>CHP') }),
+    I('bnd', 'Bonds sold, 12 months', 'outcome', 'BND', GX.bnd, { s: 'Sold · 12 mo' }),
+    I('ai', 'AI share of S&P 500', 'outcome', 'SPX', aig, { s: 'Of S&P 500', fill: 1 }),
+    I('shr', 'Shares sold, 12 months', 'outcome', 'ISS', GX.shr, { s: 'Sold · 12 mo' }),
+    I('con', 'Consumer spending', 'outcome', 'CON', G('Consumer spending'), { s: 'Of GDP', fill: 1 }),
+    I('save', 'Saving rate', 'outcome', 'SVR', GX.save, { sub: 'of income · Sep', fill: 1 }),
+    I('pce', 'Inflation (PCE)', 'outcome', 'INF', GX.pce, { sub: 'Q3 2026 · annual rate' }),
+    I('diesel', 'US diesel', 'outcome', 'FUEL', GX.dsl, { sub: 'a gallon · 22 Sep' }),
+  ];
+})();
+const INDX = {}; IND.forEach(I => { INDX[I.id] = I; });
+const tagsOf = n => IND.filter(I => I.tag && I.n === n);
+/* the value as shown: on the map (short) or in a list */
+const indVal = (I, onMap) => { const v = String(I.g.v || '–').replace(/^~/, '≈'); return I.id === 'diesel' && onMap ? v.replace('/gal', '') : I.id === 'move' && onMap ? 'MOVE ' + v : v; };
+/* figures the page carries elsewhere, and what it does not measure yet: empty slots, never an estimate. By role. */
+const LSLOT = {
+  set: [{ k: 'Fed’s bill holdings', v: '$571bn', d: '28 Oct 2026', lv: 2, x: 'The composition of the Fed’s balance sheet: bills bought since December 2025. From the lever “The Fed buys bills”.' },
+    { k: 'Bank capital freed', v: '$219bn', d: 'from 1 Apr 2026', lv: 3, x: 'Regulatory capacity: the cut in Tier 1 requirements at the largest banks’ deposit-taking arms, by Governor Barr’s count. From the lever “Free up the big banks”.' },
+    { k: 'Average bill maturity', x: 'Not measured on this page yet. Circuit step 08 gives the average maturity of all marketable debt (about 71 months in mid-2026), not of bills.' }],
+  conduit: [{ k: 'Bill yields', x: 'Not measured on this page yet. The stablecoin lever cites a BIS estimate of the effect of inflows on 3-month bill yields.' }],
+  stress: [{ k: 'Basis-trade haircuts', x: 'Not measured on this page yet: the margin a leveraged fund has to post on Treasuries it finances in repo.' },
+    { k: 'Dealer absorption', x: 'Not measured on this page yet: how much of each auction primary dealers are left holding.' }],
+  outcome: [{ k: 'Financial hubs’ Treasuries', v: '+$245bn', d: 'year to Aug 2026', n: 'CEN', x: 'Private and custodial holders booked in seven financial centres. From the actor “Financial hubs”.' },
+    { k: 'Gross federal debt', v: '$40.25tn', d: 'Oct 2026', x: 'The fiscal debt stock. From Circuit step 08.' },
+    { k: 'Deposit creation', x: 'Not measured on this page yet: the deposits banks create when they buy Treasuries or lend against them.' },
+    { k: 'Household debt', x: 'Not measured on this page yet: the stock of mortgages and consumer credit.' },
+    { k: 'What the investment is in', x: 'Not measured on this page yet: how real investment divides between the AI build-out and everything else.' }],
+};
+const SECT = { hh: ['Households', 'hh', 'What they own (homes, shares, deposits), what they owe (mortgages, consumer credit), and whether they save or borrow in a year.'],
+  nfc: ['Non-financial firms', 'ai', 'What they invest, how much of it their own cash flow covers, and what they raise in bonds, shares and leases. On this map the AI build-out stands for the sector.'],
+  fin: ['Financial sector', 'fin', 'Banks, dealers, funds and insurers. The sector’s own balance is small; what matters is the size of its balance sheet, because it issues the claims the other sectors hold.'],
+  gov: ['Government', 'state', 'The federal deficit and the debt that funds it. When the rest of the world runs a surplus with the US and the private sectors do not borrow, the government’s deficit is the mirror.'],
+  row: ['Rest of the world', 'abroad', 'Its surplus with the US is the US current-account deficit ($1.18tn in 2025), held as claims on the other four sectors.'] };
+const LOCK3 = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+
+/* ---------- what each indicator looks like now ---------- */
+function indStates(act) {
+  const on = simOn() && !!SIM.R, R = SIM.R, L = sLine(), b = SIM.beat, n = L.beats.length, re = on ? R.re : SALL.e;
+  const prev = on && !SIM.alt && b >= 0 && b < n ? (b > 0 ? L.cum[b - 1].e : SNONE.e) : null, altE = on && SIM.alt ? new Set(SFORK[SIM.alt].out.e) : null, out = {};
+  IND.forEach(I => {
+    const lit = L.main && I.at && I.at.main != null, reached = !on || (lit ? b + 1 >= I.at.main : I.rel.some(i => re.has(i)));
+    out[I.id] = { reached, play: !!act && reached && I.rel.some(i => act.has(i)), isNew: !!prev && reached && (lit ? b + 1 === I.at.main : !I.rel.some(i => prev.has(i))), bor: !reached && !!altE && I.rel.some(i => altE.has(i)), fl: '' };
+  });
+  return out;
 }
-/* the full ladder. One row per reading: its name, its value and one line of meaning, by rung. The note, the date, the
-   source and the way to its actor open on a click, one row at a time. What stood around the rungs in stage 3 is all
-   still here, each behind one click: the figures from elsewhere on the page and the slots not yet measured (per rung),
-   and the layer the ladder starts from with the arrows between the rungs (at the foot). Drawn when it opens, from what
-   the guide has reached: an unreached row keeps its name and says “Later in the guide”. */
-function ladHTML() {
-  const on = simOn() && !!SIM.R, R = SIM.R, ok = n => !on || R.n.has(n), okL = i => !on || R.l.has(i);
-  const whole = !on || (!!sLine().main && SIM.beat >= sLine().beats.length);
-  const all = tilesOrd(), got = all.filter(a => ok(a.T.n)).length;
-  const row = ({ T, c }) => {
-    const g = T.g, i = TORD.indexOf(T.k);
-    if (!ok(T.n)) return `<li class="s5row s5later"><div class="s5rb"><span class="s5n">${fe(T.k)}</span><b class="s5v" aria-hidden="true">·</b><span class="s5m">Later in the guide</span></div></li>`;
-    return `<li class="s5row" style="--tc:${c}"><button type="button" class="s5rb" data-s5row="${i}" aria-expanded="false" aria-controls="isx-s5d-${i}"><span class="s5n">${fe(T.k)}</span><b class="s5v">${fe(String(g.v || '–').replace(/^~/, '≈'))}</b><span class="s5m">${fe(TMEAN[T.k] || '')}</span><i class="s5c" aria-hidden="true"></i></button>`
-      + `<div class="s5d" id="isx-s5d-${i}" hidden><p class="s5dk"><b>${fe(g.k)}</b>${g.delta ? `<span>${fe(g.delta)}</span>` : ''}</p>${g.note ? `<p>${fe(g.note)}</p>` : ''}<div class="lsrc">Source: ${fe(g.src || 'not stored')}</div><button type="button" class="s5find" data-s5find="${T.n}">Find ${fe(FN[T.n][3])} on the map ${sArrR}</button></div></li>`;
-  };
-  const slot = S => on && ((S.lv != null && !okL(S.lv)) || (S.n && !ok(S.n))) ? `<span class="slot3 s5wait"><span class="sk3">${fe(S.k)}</span><em>later in the guide</em></span>` : slotHTML(S);
-  const extra = k => { const S = TSLOT[k], nf = S.filter(x => x.v).length, ne = S.length - nf; return `<details class="s5x"><summary><span>Also on this rung</span>${nf ? `${nf} figure${nf > 1 ? 's' : ''} from elsewhere` : ''}${nf && ne ? ' · ' : ''}${ne ? `${ne} not yet measured` : ''}</summary><div class="s5xs">${S.map(slot).join('')}</div></details>`; };
+const indWhen = I => { const f = I.first || {}, L = sLine(), pre = simOn() && L.pre; return pre && f.pre ? 'first principles ' + f.pre : f.main ? 'step ' + f.main : f.pre ? 'first principles ' + f.pre : ''; };
+/* the breakdown: role, value, what it measures, what moves it and what it moves (the relations the guide has reached), source */
+function indTip(I) {
+  const on = simOn() && !!SIM.R, re = on ? SIM.R.re : SALL.e, n = I.n, g = I.g, rc = ROLE[I.role][3];
+  const ins = I.rel.filter(i => FE[i][1] === n), outs = I.rel.filter(i => FE[i][0] === n), wh = indWhen(I);
+  const li = (arr, to) => { const ok = arr.filter(i => re.has(i)), later = arr.length - ok.length; return ok.map(i => `<li>${fe(FN[FE[i][to ? 1 : 0]][3])} <span>${fe(FE[i][3])}</span></li>`).join('') + (later ? `<li class="later">${later} more later in the guide</li>` : ''); };
+  return `<div class="b1tip"><div class="th" style="color:${rc}">${fe(ROLE[I.role][0])}${wh ? `<span>first moved · ${fe(wh)}</span>` : ''}</div><div class="tt"><span>${fe(g.k || I.k)}</span> <b>${fe(indVal(I))}</b></div>`
+    + `<p>${fe(TMEAN[I.k] || '')}${g.delta ? ' <em>' + fe(g.delta) + '.</em>' : ''}${I.band ? ' <em>' + fe(I.band.replace(/^./, c => c.toUpperCase())) + '.</em>' : ''}</p>${g.note ? `<p>${fe(g.note)}.</p>` : ''}`
+    + (ins.length ? `<div class="sec">Moved by</div><ul>${li(ins, 0)}</ul>` : '') + (outs.length ? `<div class="sec">Moves</div><ul>${li(outs, 1)}</ul>` : '')
+    + `<div class="src">Source: ${fe(g.src || 'link not stored')}</div></div>`;
+}
+/* the stress dial: the page's own percentile scale (calm below 50, elevated 50 to 90, stressed above 90) */
+function dialSVG(cx, cy, r) {
+  const a = p => Math.PI * (1 - p / 100), pt = (p, rr) => [cx + rr * Math.cos(a(p)), cy - rr * Math.sin(a(p))];
+  const arc = (p0, p1, col) => { const [x0, y0] = pt(p0, r), [x1, y1] = pt(p1, r); return `<path d="M${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}" fill="none" stroke="${col}" stroke-width="3.2"/>`; };
+  return arc(0, 50, '#2c4152') + arc(50.5, 90, '#6d5a3a') + arc(90.5, 100, '#7a3a33') + `<line class="gneedle" data-cx="${cx}" data-cy="${cy}" data-r="${r - 2}" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy}"/><circle class="ghub" cx="${cx}" cy="${cy}" r="2"/>`;
+}
+/* an actor: a plate with its name. No figure, no descriptor: the indicators carry the numbers */
+function plateNode(k) {
+  const [z, x, y, t, , c, , ic] = FN[k], l = x - NW / 2;
+  return `<g class="fn pl${z === 'state' ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - PH / 2}" width="${NW}" height="${PH}" rx="8"/><g class="fni" transform="translate(${l + 9},${(y - 8.2).toFixed(1)}) scale(.68)">${FIC[ic]}</g><text class="fnt" x="${l + 32}" y="${(y + 4.4).toFixed(1)}">${fe(t)}</text></g>`;
+}
+/* a gauge is a picture with its reading as the label (spec S1 §8); its drawing is hidden from assistive technology.
+   a gauge node, in its node's own cell: a capsule with ports (conduit), a dial (stress gauge) or a squared ledger (outcome).
+   Values, dates, the needle and the fill are written by indApply() once the guide has reached the indicator. */
+function gaugeNode(k) {
+  const [, x, y, t] = FN[k], ids = GNODE[k], I = INDX[ids[0]], T = ids[1] ? INDX[ids[1]] : null, rc = ROLE[I.role][3], gw = GWD(k), l = x - gw / 2, tp = y - GH / 2;
+  let h = `<g class="fn gn r-${I.role}${T ? ' tw' : ''}" data-n="${k}" data-ind="${ids.join(' ')}" tabindex="0" role="img" aria-roledescription="gauge" aria-label="${fe(t)}" style="--nc:${rc};--rc:${rc}"><g class="gin" aria-hidden="true"><rect class="fnr gb" x="${l}" y="${tp}" width="${gw}" height="${GH}" rx="${I.role === 'outcome' ? 7 : 22}"/>`;
+  if (I.role === 'conduit') h += `<circle class="gport" cx="${l}" cy="${y}" r="2.6"/><circle class="gport" cx="${l + gw}" cy="${y}" r="2.6"/>`;
+  if (T) {
+    h += `<line class="gdiv" x1="${x + 6}" y1="${tp + 8}" x2="${x + 6}" y2="${tp + GH - 8}"/>`
+      + `<text class="gname" x="${l + 16}" y="${tp + 15}">${fe(I.s || I.k)}</text><text class="gval sm" data-gv="${I.id}" x="${l + 16}" y="${tp + 34}"></text>`
+      + `<text class="gname" x="${x + 14}" y="${tp + 15}">${fe(T.s || T.k)}</text><text class="gval sm" data-gv="${T.id}" x="${x + 14}" y="${tp + 34}"></text><text class="gnote" x="${x + 14}" y="${tp + 33}"></text>`;
+  } else if (I.role === 'stress') {
+    h += `<g class="gdial">${dialSVG(l + 25, tp + 25, 14)}</g><text class="gname" x="${l + 47}" y="${tp + 12.5}">${fe(I.k)}</text><text class="gval md" data-gv="${I.id}" x="${l + 47}" y="${tp + 29.5}"></text><text class="gline gdef" data-gl="${I.id}" x="${l + 11}" y="${tp + 40.5}"></text>`;
+  } else {
+    const pad = I.role === 'outcome' ? 10 : 16;
+    h += `<text class="gname" x="${l + pad}" y="${tp + 13.5}">${fe(I.k)}</text><text class="gval" data-gv="${I.id}" x="${l + pad}" y="${tp + 31}"></text><text class="gtrend" data-gt="${I.id}" x="${l + pad + 58}" y="${tp + 29.5}"></text><text class="gline ${I.def ? 'gdef' : 'gsub'}" data-gl="${I.id}" x="${l + pad}" y="${tp + 40.5}"></text>`
+      + (I.fill ? `<rect class="gft" x="${l + gw - 46}" y="${tp + 24}" width="36" height="4" rx="2"/><rect class="gfv" data-gf="${I.id}" data-w="36" x="${l + gw - 46}" y="${tp + 24}" width="0" height="4" rx="2"/>` : '');
+  }
+  return h + `<text class="gnew" x="${l + gw - 10}" y="${tp + 13.5}" text-anchor="end">NEW</text><text class="garr" x="${l + gw - 12}" y="${tp + 31}" text-anchor="end"></text></g></g>`;
+}
+/* a tag: hangs under the plate of the actor it belongs to (two share the width under the Fed) */
+function tagNode(I) {
+  const [, x, y] = FN[I.n], sib = tagsOf(I.n), i = sib.indexOf(I), solo = sib.length === 1, w = solo ? NW : (NW - 4) / 2, gx = x - NW / 2 + i * (w + 4), ty = y + PH / 2 + 2;
+  return `<g class="gt r-${I.role}${solo ? '' : ' duo'}" data-ind="${I.id}" data-n="${I.n}" tabindex="-1" role="img" aria-roledescription="indicator" aria-label="${fe(I.k)}" style="--rc:${ROLE[I.role][3]}"><g class="gin" aria-hidden="true"><rect class="gtb" x="${gx}" y="${ty}" width="${w}" height="17" rx="4"/><rect class="gtm" x="${gx + 4}" y="${ty + 4}" width="3" height="9" rx="1"/>`
+    + (solo ? `<text class="gtk" x="${gx + 12}" y="${(ty + 11.8).toFixed(1)}">${fe(I.s)}</text><text class="gtv" data-gv="${I.id}" x="${gx + w - 6}" y="${(ty + 12.6).toFixed(1)}" text-anchor="end"></text>` : `<text class="gtv" data-gv="${I.id}" x="${gx + 12}" y="${(ty + 12.6).toFixed(1)}"></text>`)
+    + (I.fill ? `<rect class="gfv" data-gf="${I.id}" data-w="${w - 16}" x="${gx + 12}" y="${(ty + 14.6).toFixed(1)}" width="0" height="1.2" rx=".6"/>` : '')
+    + `<text class="garr" x="${gx + w - 5}" y="${ty + 13}" text-anchor="end"></text></g></g>`;
+}
+/* write the state onto the map, the Indicators button and the phone strip. Text that belongs to an indicator the guide has
+   not reached is not in the page at all. */
+function indApply(st) {
+  const svg = $('rmap'), cock = $('cock'); if (!svg || !cock) return;
+  const put = (el, t) => { if (el && el._t !== t) { cancelAnimationFrame(el._r); el.textContent = t; el._t = t; } };
+  const attr = (el, k, v) => { if (el && el.getAttribute(k) !== v) el.setAttribute(k, v); };
+  svg.querySelectorAll('.gn').forEach(g => {
+    const ids = g.dataset.ind.split(' '), I = INDX[ids[0]], S = st[I.id], c = g.classList, show = S.reached && !S.sus;
+    c.toggle('sock', !S.reached && !S.bor && !S.sus); c.toggle('bor', S.bor); c.toggle('play', S.play); c.toggle('new', S.isNew); c.toggle('sus', !!S.sus); c.toggle('flare', !!S.fl || ids.some(id => st[id].fl));
+    ids.forEach(id => { const J = INDX[id]; put(g.querySelector(`[data-gv="${id}"]`), S.sus && id === ids[0] ? '?' : show ? indVal(J, true) : ''); put(g.querySelector(`[data-gl="${id}"]`), show || (S.sus && J.def) ? J.def || J.sub || '' : ''); put(g.querySelector(`[data-gt="${id}"]`), show && J.tr && !S.fl ? J.tr : '');
+      const f = g.querySelector(`[data-gf="${id}"]`); if (f) attr(f, 'width', show ? Math.max(1.5, +f.dataset.w * parseFloat(J.g.v) / 100).toFixed(1) : '0'); });
+    put(g.querySelector('.gnote'), S.sus ? 'at 40-year lows' : S.bor ? 'pressure only' : '');
+    put(g.querySelector('.garr'), ids.map(id => st[id].fl).filter(Boolean)[0] || (S.sus ? S.sus : ''));
+    const nd = g.querySelector('.gneedle'); if (nd) { const cx = +nd.dataset.cx, cy = +nd.dataset.cy, r = +nd.dataset.r, a = Math.PI * (1 - (I.g.p || 0) / 100); attr(nd, 'x2', (show ? cx + r * Math.cos(a) : cx).toFixed(1)); attr(nd, 'y2', (show ? cy - r * Math.sin(a) : cy).toFixed(1)); }
+    attr(g, 'aria-label', S.reached ? ids.map(id => INDX[id].k + ': ' + indVal(INDX[id]) + (INDX[id].g.delta ? ', ' + INDX[id].g.delta : '')).join('; ') + '. ' + ROLE[I.role][0] : FN[g.dataset.n][3] + ': later in the guide');
+    const tip = S.reached ? ids.map(id => indTip(INDX[id])).join('') : ''; if (g.dataset.tip !== tip) { if (tip) g.dataset.tip = tip; else delete g.dataset.tip; }
+  });
+  svg.querySelectorAll('.gt').forEach(g => {
+    const I = INDX[g.dataset.ind], S = st[I.id], c = g.classList, shown = S.reached || S.bor || !!S.fl;
+    c.toggle('gh', !shown); c.toggle('bor', S.bor || (!S.reached && !!S.fl)); c.toggle('play', S.play); c.toggle('new', S.isNew); c.toggle('flare', !!S.fl);
+    put(g.querySelector('[data-gv]'), S.reached ? indVal(I, true) : ''); put(g.querySelector('.garr'), S.fl || '');
+    const f = g.querySelector('[data-gf]'); if (f) attr(f, 'width', S.reached ? Math.max(1, +f.dataset.w * parseFloat(I.g.v) / 100).toFixed(1) : '0');
+    attr(g, 'tabindex', S.reached ? '0' : '-1'); attr(g, 'aria-label', S.reached ? I.k + ': ' + indVal(I) + (I.g.delta ? ', ' + I.g.delta : '') + '. ' + ROLE[I.role][0] + ', ' + FN[I.n][3] : I.k + ': later in the guide');
+    const tip = S.reached ? indTip(I) : ''; if (g.dataset.tip !== tip) { if (tip) g.dataset.tip = tip; else delete g.dataset.tip; }
+  });
+  const got = IND.filter(I => st[I.id].reached).length, bb = $('b1ind');
+  if (bb) { const t = got + ' / ' + IND.length, b = bb.querySelector('b'); if (b.textContent !== t) b.textContent = t; }
+  const strip = $('b1play'); if (strip) { const h = inplayHTML(st, got); if (strip._h !== h) { strip._h = h; strip.innerHTML = h; } }
+}
+/* phones: the indicators the step in hand moves, then the way to all of them. Nothing else on a phone repeats values. */
+function inplayHTML(st, got) {
+  const chips = IND.filter(I => st[I.id].play || st[I.id].fl || st[I.id].sus).map(I => { const S = st[I.id], fl = S.fl || (S.sus ? S.sus : '');
+    return `<button type="button" class="ipc${fl ? ' fl' : ''}${S.isNew ? ' new' : ''}" data-sn="${I.n}" data-ipc="${I.id}" style="--rc:${ROLE[I.role][3]}"><small>${fe(I.k)}</small><b>${S.reached && !S.sus ? fe(indVal(I)) : '·'}${fl ? `<i aria-hidden="true">${fl}</i>` : ''}</b><em>${fl ? 'pressure' : S.isNew ? 'first moved here' : fe(ROLE[I.role][0].toLowerCase())}</em></button>`; }).join('');
+  return chips + `<button type="button" class="ipc all" data-tray="read" aria-controls="isx-b1led">${!got ? 'Indicators · 0 of ' + IND.length : got < IND.length ? 'All ' + got + ' of ' + IND.length : 'All ' + IND.length + ' indicators'} <span aria-hidden="true">›</span></button>`;
+}
+/* the role ledger (replaces “The full ladder”): four columns by role, one line per indicator, then the figures the page
+   carries elsewhere and the slots it does not measure yet. A row opens its breakdown and the way to it on the map.
+   Drawn when it opens, from what the guide has reached. */
+function ledgerHTML() {
+  const on = simOn() && !!SIM.R, R = SIM.R, L = sLine(), st = indStates(null), got = IND.filter(I => st[I.id].reached).length;
+  const whole = !on || (!!L.main && SIM.beat >= L.beats.length), okL = i => !on || R.l.has(i), okN = n => !on || R.n.has(n);
+  const row = I => { const S = st[I.id];
+    if (!S.reached) return `<li class="lr ind later"><div class="lrb"><span class="ln">${fe(I.k)}</span><em>Later in the guide</em><b aria-hidden="true">·</b></div></li>`;
+    return `<li class="lr ind"><button type="button" class="lrb" data-led="${I.id}" aria-expanded="false" aria-controls="isx-led-${I.id}"><span class="ln">${fe(I.k)}</span><em>${fe(indWhen(I))}${S.isNew ? ' · new' : ''}</em><b>${fe(indVal(I))}</b></button><div class="ld" id="isx-led-${I.id}" hidden>${indTip(I)}<button type="button" class="lfind" data-s5find="${I.n}">Find it on the map ${sArrR}</button></div></li>`; };
+  const slot = S => { const tip = `data-tip="<b>${fe(S.k)}${S.v ? ': ' + fe(S.v) : ''}</b><p>${fe(S.x)}</p>"`;
+    if (!S.v) return `<li class="lr slot"><span class="lrb" tabindex="0" ${tip}><span class="ln">${fe(S.k)}</span><em>not yet measured</em></span></li>`;
+    if (on && ((S.lv != null && !okL(S.lv)) || (S.n && !okN(S.n)))) return `<li class="lr later"><div class="lrb"><span class="ln">${fe(S.k)}</span><em>Later in the guide</em><b aria-hidden="true">·</b></div></li>`;
+    const body = `<span class="ln">${fe(S.k)}</span><em>${fe(S.d)}</em><b>${fe(S.v)}</b>`;
+    return `<li class="lr fig">${S.lv != null ? `<button type="button" class="lrb" data-slv="${S.lv}" ${tip}>${body}</button>` : S.n ? `<button type="button" class="lrb" data-sn="${S.n}" ${tip}>${body}</button>` : `<span class="lrb" tabindex="0" ${tip}>${body}</span>`}</li>`; };
   const Rs = id => (LIVE.resbar || []).find(r => r.id === id);
   const src = [Rs('ca'), Rs('eq')].filter(Boolean).map(r => `<span class="fig3" tabindex="0" data-tip="<b>${fe(r.k)}: ${fe(r.v)}</b><p>${fe(r.what || '')}</p><p class='ts'>${fe(r.t || '')}</p>"><span class="tv">${fe(r.v)}</span><span class="sk3">${fe(r.k)}</span><small>${fe(r.d || '')}</small></span>`).join('');
-  const arrow = (lab, dn, up) => `<div class="s5ar"><b>${lab}</b><div class="larr3"><span class="dn"><i aria-hidden="true">↓</i>${fe(dn)}</span><span class="up"><i aria-hidden="true">↑</i>${fe(up)}</span></div></div>`;
-  const how = whole
-    ? `<details class="s5x s5how"><summary><span>Where it starts, and how the rungs connect</span>the source layer, five sectors, three links</summary>`
-      + `<div class="lsrc3"><div class="lh3"><b>Source</b><span>surplus recycling and political choice</span></div><p>Who saves, who spends and who holds dollars is settled by wage, trade and currency policy, at home and abroad. Everything on the ladder works inside that.</p><div class="lrow3">${src}</div>`
-      + `<div class="lsec3" role="group" aria-label="The five sectors"><span class="lsk3">Five sectors, and their balances add up to zero</span>${Object.entries(SECT).map(([k, [t]]) => `<button type="button" class="secb3" data-sec="${k}" aria-label="${fe(t)}: sector balance sheet, coming soon">${LOCK3}${fe(t)}</button>`).join('')}</div></div>`
-      + arrow('Source to Upstream', 'sets how much debt has to be placed, and with whom', 'asset prices and yields decide how willingly the world keeps lending (this map’s reading)')
-      + arrow('Upstream to Intermediate', 'moves yields, bank balance sheets and who holds the debt', 'long yields and volatility steer what the Treasury issues and buys back')
-      + arrow('Intermediate to Downstream', 'prices credit, shares and mortgages', 'inflation moves the policy rate: the Fed hiked on 16 September 2026')
-      + `</details>`
-    : `<p class="s5wait2">Where the ladder starts and how its rungs connect opens when the guide is done, or in the full view.</p>`;
-  return `<div class="s5h"><div><h3>The full ladder</h3><p>${on && got < all.length ? `${got} of ${all.length} readings reached so far` : `${all.length} readings`}, from what Washington sets to what the economy shows. Select one for its note and source.</p></div><button type="button" class="s5cl" data-tray="read" aria-label="Close the full ladder">×</button></div>`
-    + `<div class="s5cols">${TIERS.map(([k, t, sub, c, x]) => `<section class="s5g s5g-${k}" style="--zc:${c}" aria-label="${fe(t)}: ${fe(sub)}"><h4 data-tip="<b>${fe(t)}</b><p>${fe(x)}</p>"><b>${fe(t)}</b><span>${fe(sub)}</span></h4><ul>${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(row).join('')}</ul>${extra(k)}</section>`).join('')}</div>`
-    + how;
+  const tab = SIM.ltab || 'set';
+  return `<div class="lh"><div><h3>Indicators</h3><p>${on && got < IND.length ? `${got} of ${IND.length} reached so far` : `${IND.length} indicators`}, by role. Select one for its breakdown and source.</p></div><button type="button" class="lcl" data-tray="read" aria-label="Close the indicators">×</button></div>`
+    + `<div class="ltabs" role="group" aria-label="Role">${RORD.map(r => `<button type="button" data-ltab="${r}" style="--rc:${ROLE[r][3]}" aria-pressed="${r === tab}">${fe(ROLE[r][1])}</button>`).join('')}</div>`
+    + `<div class="lcols" data-tab="${tab}">${RORD.map(r => `<section class="lcol" data-role="${r}" style="--rc:${ROLE[r][3]}" aria-label="${fe(ROLE[r][1])}: ${fe(ROLE[r][2])}"><h4><b>${fe(ROLE[r][1])}</b><span>${fe(ROLE[r][2])}</span></h4><ul>${IND.filter(I => I.role === r).map(row).join('')}${LSLOT[r].map(slot).join('')}</ul></section>`).join('')}</div>`
+    + `<p class="lfoot">Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings${okL(5) ? ': inflation moved the policy rate on 16 September 2026' : ''}.</p>`
+    + (whole ? `<details class="lsrcd"><summary><span>Where it starts</span>the source layer and the five sectors</summary>`
+      + `<div class="lsrc3"><div class="lh3"><b>Source</b><span>surplus recycling and political choice</span></div><p>Who saves, who spends and who holds dollars is settled by wage, trade and currency policy, at home and abroad. Every indicator works inside that.</p><div class="lrow3">${src}</div>`
+      + `<div class="lsec3" role="group" aria-label="The five sectors"><span class="lsk3">Five sectors, and their balances add up to zero</span>${Object.entries(SECT).map(([k, [t]]) => `<button type="button" class="secb3" data-sec="${k}" aria-label="${fe(t)}: sector balance sheet, coming soon">${LOCK3}${fe(t)}</button>`).join('')}</div></div></details>`
+      : `<p class="lwait">Where it starts (the source layer and the five sectors) opens when the guide is done, or in the full view.</p>`);
 }
 
 /* ---------- plumbing text ---------- */
 const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
-/* v2 stage 4: the 17 readings as a slim rail on the stage's right edge, by rung; a reading opens its actor,
-   “The full ladder” opens the ladder with its arrows and empty slots. Same figures as the ladder (TILES). */
-function railHTML() {
-  const all = TILES.flatMap(([z, t, c, tiles]) => tiles.map(T => ({ T, c }))).sort((a, b) => TORD.indexOf(a.T.k) - TORD.indexOf(b.T.k));
-  const it = ({ T, c }) => { const g = T.g; return `<li><button type="button" class="s4ri" data-node="${T.n}" data-rk="${TORD.indexOf(T.k)}" style="--tc:${c}" data-tip="<b>${fe(g.k)}: ${fe(g.v)}</b><p>${fe(g.note || '')}</p><p class='ts'>${fe(g.src || '')} · click to find it on the map</p>"><span>${fe(T.k)}</span><b>${fe(String(g.v || '–').replace(/^~/, '≈'))}</b></button></li>`; };
-  return `<aside class="s4rail" id="isx-s4rail" aria-label="Readings: ${all.length} figures, from what Washington sets to what the economy shows"><div class="s4rh"><b>Readings</b><span>${all.length}</span></div>`
-    + TIERS.map(([k, t, sub, c]) => `<div class="s4rg" style="--zc:${c}"><div class="s4rt">${fe(t)}<small>${fe(sub)}</small></div><ul>${all.filter(a => (TIERK[a.T.k] || 'down') === k).map(it).join('')}</ul></div>`).join('')
-    + `<button type="button" class="s4lad" data-tray="read" aria-controls="isx-s5lad">The full ladder <span aria-hidden="true">↗</span></button></aside>`;
-}
 function levBarHTML() {
   return `<div class="levbar" role="group" aria-label="Levers"><div class="s4pull"><b>Pull a lever</b><span>Its effects light up on the map. Pull again to release.</span></div>${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
 }
@@ -5082,16 +5172,15 @@ function renderFin() {
   if (finMode === 'plumb') {
     /* v2 stage 2: one full-bleed stage (the relations map), with the readings, the card, the trays and the bar floating on it.
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
-    TILES = buildHud();
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The simulator: the plumbing">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
       + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>The plumbing</h2>${simBarHTML()}</div></div><div class="s2sw">${finSwitch()}</div></header>`
-      + `<div class="s2read" id="isx-s2read">${hudHTML()}<button type="button" class="s2rdb" data-tray="read" aria-expanded="false" aria-controls="isx-s5lad">Readings <b>${TILES.reduce((n, z) => n + z[3].length, 0)}</b></button><span class="scount" id="isx-scount" aria-live="off"></span></div>`
-      + railHTML()
-      + `<aside class="s5lad" id="isx-s5lad" role="dialog" aria-label="The full ladder: all ${TILES.reduce((n, z) => n + z[3].length, 0)} readings" hidden></aside>`
+      + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
+      + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
+      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
-      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${TIERS.map(([k, t, , c]) => `<span class="k3"><i class="t3" style="background:${c}"></i>${fe(t)} reading</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
+      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${RORD.map(r => `<span class="k3"><i class="t3" style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
       + `<div class="s2tray tr-lev" id="isx-s2tray-lev" hidden>${levBarHTML()}</div>`
       + `<nav class="s2bar" id="isx-s2bar" aria-label="Guide: chapters and trays"></nav></div>`
@@ -5122,20 +5211,20 @@ function pickNode(n) { if (!simGot()(n)) return; /* stage 5: not before the guid
 function wireCockpit(host) {
   host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
   host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
-  host.querySelectorAll('.s4ri').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.node)));
-  host.querySelectorAll('.tile').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.node)));
   const clr = $('pclr'); if (clr) clr.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); });
 }
 
 /* ---------- the map ---------- */
 function ePath(a, b, i) {
-  const A = FN[a], B = FN[b], hw = NW / 2, hh = NH / 2, ax = A[1], ay = A[2], bx = B[1], by = B[2];
+  /* B1-3: nodes differ in size (plates, gauges, the wider MOVE dial), so a wire attaches at each node's own edge; where it
+     meets a node from below, it stops under that node's tags */
+  const A = FN[a], B = FN[b], ax = A[1], ay = A[2], bx = B[1], by = B[2], lo = n => tagsOf(n).length ? PH / 2 + 19 : hhOf(n);
   if (Math.abs(ax - bx) < 4) {
     const dy = by - ay, s = Math.sign(dy);
-    if (Math.abs(dy) <= PITCH + 1) { const o = FE.some(e => e[0] === b && e[1] === a) ? (a < b ? -10 : 10) : 0; return `M${ax + o},${ay + s * hh} L${bx + o},${by - s * (hh + 3)}`; }
-    const k = 24 + (i % 3) * 5; return `M${ax + hw},${ay} C${ax + hw + k},${ay} ${bx + hw + k},${by} ${bx + hw + 3},${by}`;
+    if (Math.abs(dy) <= PITCH + 1) { const o = FE.some(e => e[0] === b && e[1] === a) ? (a < b ? -10 : 10) : 0; return `M${ax + o},${ay + s * (s > 0 ? lo(a) : hhOf(a))} L${bx + o},${by - s * ((s < 0 ? lo(b) : hhOf(b)) + 3)}`; }
+    const k = 24 + (i % 3) * 5, m = Math.max(hwOf(a), hwOf(b)); return `M${ax + hwOf(a)},${ay} C${ax + m + k},${ay} ${bx + m + k},${by} ${bx + hwOf(b) + 3},${by}`;
   }
-  const r = bx > ax, sx = ax + (r ? hw : -hw), ex = bx + (r ? -hw - 3 : hw + 3), dx = ex - sx;
+  const r = bx > ax, sx = ax + (r ? hwOf(a) : -hwOf(a)), ex = bx + (r ? -hwOf(b) - 3 : hwOf(b) + 3), dx = ex - sx;
   return `M${sx},${ay} C${sx + dx * .5},${ay} ${ex - dx * .5},${by} ${ex},${by}`;
 }
 function drawRmap() {
@@ -5148,15 +5237,15 @@ function drawRmap() {
     h += `<path class="feh" data-e="${i}" d="${d}" data-tip="<b>${fe(FN[a][3])} → ${fe(FN[b][3])}</b><p>${fe(lab)}</p>"/>`;
   });
   h += '<g id="isx-fpart"></g>';
-  Object.entries(FN).forEach(([k, [z, x, y, t, sub, c, , ic]]) => {
-    const l = x - NW / 2, lm = z === 'state';
-    h += `<g class="fn${lm ? ' lm' : ''}" data-n="${k}" tabindex="0" role="button" aria-label="${fe(t)}: ${fe(sub)}" style="--nc:${c}"><rect class="fnr" x="${l}" y="${y - NH / 2}" width="${NW}" height="${NH}" rx="9"/>${lm ? `<g class="wm" transform="translate(${x + NW / 2 - 54},${y - 24}) scale(2)">${FIC[ic]}</g>` : ''}<circle class="fnm" cx="${l + 22}" cy="${y}" r="14.5"/><g class="fni" transform="translate(${l + 13},${y - 9}) scale(.75)">${FIC[ic]}</g><text class="fnt" x="${l + 43}" y="${y - 3}">${fe(t)}</text><text class="fns" x="${l + 43}" y="${y + 12}"> ${fe(sub)}</text>${NTIER[k] ? `<rect class="fnk3 t-${NTIER[k]}" x="${l + NW - 5.5}" y="${y - NH / 2 + 9}" width="2.5" height="${NH - 18}" rx="1.25"><title>${fe(TIERS.find(T => T[0] === NTIER[k])[1])} reading</title></rect>` : ''}</g>`;
-  });
+  Object.keys(FN).forEach(k => { h += isG(k) ? gaugeNode(k) : plateNode(k); });
+  h += '<g id="isx-gtags">' + IND.filter(I => I.tag).map(tagNode).join('') + '</g>';
   svg.innerHTML = h;
   svg.querySelectorAll('.fn').forEach(g => {
     const n = g.dataset.n;
     g.addEventListener('click', () => pickNode(n)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickNode(n); } });
   });
+  /* a tag opens the actor it hangs under */
+  svg.querySelectorAll('.gt').forEach(g => { const n = g.dataset.n; g.addEventListener('click', () => pickNode(n)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickNode(n); } }); });
   /* v2 stage 5, the flicker. Hovering an actor used to restyle the whole map (mouseenter, mouseleave). In the guide the
      camera moves at every step, so the map slides under a pointer that is resting on it: actors passed under the pointer,
      the map lit up around each of them and went dark again. Now hovering lights an actor's relations only in the full
@@ -5180,11 +5269,9 @@ function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(F
 function styleRmap() {
   const svg = $('rmap'); if (!svg) return;
   const act = activeEdges(), nodes = nodesOf(act); fnodes = nodes;
-  const vis = simVis(), got = simGot();   /* stage 5: an actor or a reading the guide has not reached is never lit */
+  const vis = simVis();   /* stage 5: an actor the guide has not reached is never lit */
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
   svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); });
-  ROOT.querySelectorAll('.tile').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node) && got(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); });
-  ROOT.querySelectorAll('.s4ri').forEach(b => { b.classList.toggle('hot', !!act && nodes.has(b.dataset.node) && got(b.dataset.node)); b.classList.toggle('on', b.dataset.node === fsel); b.setAttribute('aria-current', String(b.dataset.node === fsel)); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel;
@@ -5233,9 +5320,10 @@ function renderSide(lev) {
     const sR = simOn() && SIM.R ? SIM.R : null, okE = ([, i]) => !sR || sR.e.has(i);   /* stage 5: in the guide, only the relations reached so far */
     const N = FN[fsel], insA = FE.map((e, i) => [e, i]).filter(([e]) => e[1] === fsel), outsA = FE.map((e, i) => [e, i]).filter(([e]) => e[0] === fsel), ins = insA.filter(okE), outs = outsA.filter(okE), later = insA.length + outsA.length - ins.length - outs.length;
     const li = (arr, dir) => arr.map(([e]) => { const o = dir ? e[1] : e[0]; return `<li><i style="background:${FT[e[2]][0]}"></i><span><button type="button" class="go" data-go="${o}">${dir ? '→ ' : ''}${fe(FN[o][3])}${dir ? '' : ' →'}</button> ${fe(e[3])}</span></li>`; }).join('');
-    const tl = TILES.flatMap(([, , c, ts]) => ts.map(T => [T, c])).filter(([T]) => T.n === fsel).map(([T]) => `<div class="dtile"><b>${fe(T.g.k)}: ${fe(T.g.v)}</b>${T.g.delta ? ` <em>${fe(T.g.delta)}</em>` : ''}<p>${fe(T.g.note)}</p><div class="lsrc">${fe(T.g.src)}</div></div>`).join('');
+    /* B1-3: the indicators this actor or gauge carries, once the guide has reached them */
+    const ist = indStates(null), gz = isG(fsel), tl = IND.filter(I => I.n === fsel && ist[I.id].reached).map(I => `<div class="dtile" style="--rc:${ROLE[I.role][3]}"><span class="dr">${fe(ROLE[I.role][0])}${indWhen(I) ? ' · first moved · ' + fe(indWhen(I)) : ''}</span><b>${fe(I.g.k || I.k)}: ${fe(indVal(I))}</b>${I.g.delta ? ` <em>${fe(I.g.delta)}</em>` : ''}<p>${fe(TMEAN[I.k] || '')} ${fe(I.g.note || '')}</p><div class="lsrc">${fe(I.g.src || 'link not stored')}</div></div>`).join('');
     s.hidden = false; s.style.setProperty('--dc', N[5]);
-    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><div class="nb">${fe(N[4])}</div><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>Gives</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>Gets</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
+    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><p>${fe(N[6])}</p>${tl}${outs.length ? `<h5>${gz ? 'Moves' : 'Gives'}</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>${gz ? 'Moved by' : 'Gets'}</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
     s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
     placeDossier(); done(); return;
   }
@@ -5327,7 +5415,7 @@ function wrap(s, n, max) { const w = String(s).split(' '), out = []; let l = '';
 function finNarr() {
   if (finMode === 'plumb') return { h: 'The plumbing', c: '#ffd27a', fig: '$906bn', cap: 'net bill issuance in the 12 months to June 2026, against $19bn a year earlier',
     x: 'This tab expands steps 08 to 10 of the circuit. Foreign official holders cut their Treasuries by $164bn in the year to August 2026, so Washington manufactures demand for its own debt: bills for money funds and banks, a looser leverage rule, Fed bill purchases, stablecoins built on bills, and buybacks that take long bonds out of the market. Michael Howell calls it “Treasury QE”. Two more channels fund the build-out itself, new shares and new bonds, and are listed with their sources under the map. Three more layers sit around that core. Households: consumer spending is 67.6% of GDP, and it keeps the world’s exporters busy and their surpluses flowing. Abroad: swap lines, joint action for the yen and tariff deals with investment pledges keep the surplus countries on side. Commodities: the Iran war and the Hormuz closure put oil near $118 in March and above $100 in September, feeding prices, the Fed’s September hike and long yields. The market still pushes back: in October the 10-year yield touched 5.33%. Each lever, with its sources and who pulls it, is listed under “The levers in detail” below the map.',
-    scale: 'The map is schematic: lines show relations, not amounts. The readings on the map carry the measured values, with dates and sources.' };
+    scale: 'The map is schematic: lines show relations, not amounts. The indicators on the map carry the measured values, with dates and sources.' };
   return { h: 'The capital stack', c: '#ffb547', fig: '$194bn', cap: 'bonds sold by Amazon, Alphabet, Meta and Oracle in 2026 to 7 July, up 79% on all of 2025',
     x: 'Goldman Sachs expects debt to fund about a third of hyperscaler capex in 2026. The rest of the gap is filled off balance sheet: special-purpose vehicles financed by private credit, anchored by firms such as Apollo, Blackstone and PIMCO, whose money comes in large part from insurers, annuities and pension funds. US life insurers alone held $85.2bn of AI-linked investments in mid-2026. The hyperscalers also borrow abroad in euros, sterling, Swiss francs, Canadian dollars and yen.',
     scale: 'The tower is drawn to scale; * = implied. Deal diagrams show who pays whom, in what order.' };
@@ -6019,7 +6107,7 @@ function simTipsHTML(force) {
   const T = [
     ['Follow the guide', 'Press “Start the guide” on the opening card, or Guide in the bar at the bottom. Each step lights its part of the map; Next or ← → moves on.'],
     ['Plays and levers', 'Also in the bar: plays run Washington’s moves one by one; levers are its tools, each with who pulls it. Pull one or several to see what they move.'],
-    ['Read the dials', 'The readings are dated figures: on the right edge, or as a strip of key readings on a smaller screen. ' + (COARSE ? 'Tap' : 'Click') + ' one to find its actor on the map; “The full ladder” shows how they connect.'],
+    ['Read the indicators', 'Prices and rates sit on the wires as gauges; settings and outcomes hang under the actor they belong to. Every figure is dated. ' + (COARSE ? 'Tap' : 'Hover over') + ' one for what moves it and what it moves; “Indicators” lists all nineteen by role.'],
     ['Open anything', (COARSE ? 'Tap' : 'Click') + ' an actor or a line for a dossier with figures and sources. The capital stack, in the switch at the top, follows the money deal by deal.'],
   ];
   return `<section class="coach6 stips" id="isx-stips" role="region" aria-labelledby="isx-stips-h"><div class="ck"><span>How to use the simulator</span></div><p class="slede" id="isx-stips-h">A working model of how Washington keeps money cheap for the AI build-out. Boxes are actors, lines are the relations between them; every figure is dated and sourced.</p><ol class="sgrid6">${T.map(([h, p], i) => `<li><span class="sn">0${i + 1}</span><b>${h}</b><p>${p}</p></li>`).join('')}</ol><div class="cacts"><button type="button" class="cq" data-sa="skip">Skip</button><button type="button" class="cq" data-sa="never">Don’t show again</button><button type="button" class="cgo" data-sa="done">Got it <span aria-hidden="true">✓</span></button></div></section>`;
@@ -6332,7 +6420,7 @@ const SNONE = { n: new Set(), e: new Set(), l: new Set() };
 const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SLINES[0].beats.length - 1].e.has(i)) : [];
 
 /* ---------- state ---------- */
-const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, seen: new Set(), vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+const SIM = { mode: 'story', line: 0, beat: -1, alt: null, R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', seen: new Set(), vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
@@ -6347,10 +6435,10 @@ const sCur = () => { const L = sLine(); return SIM.beat >= 0 && SIM.beat < L.bea
 const sNextFork = () => { const L = sLine(), B = L.beats[SIM.beat + 1]; return SIM.beat >= 0 && B && B.fork ? B.fork : null; };
 /* what is on the map now */
 function simReveal() {
-  if (SIM.mode !== 'story') return Object.assign({ tmp: new Set(), ne: SALL.e.size }, SALL);
+  if (SIM.mode !== 'story') return Object.assign({ tmp: new Set(), ne: SALL.e.size, re: SALL.e }, SALL);
   const L = sLine(), b = SIM.beat;
-  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign({ tmp: new Set(), ne: F.e.size }, F); }
-  const base = b >= 0 ? L.cum[b] : SNONE, R = { n: base.n, e: new Set(base.e), l: base.l, tmp: new Set(), ne: base.e.size };
+  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign({ tmp: new Set(), ne: F.e.size, re: F.e }, F); }
+  const base = b >= 0 ? L.cum[b] : SNONE, R = { n: base.n, e: new Set(base.e), l: base.l, tmp: new Set(), ne: base.e.size, re: base.e };   /* re: the relations the guide itself has reached (an other path adds to e, never to re) */
   if (SIM.alt) { const O = SFORK[SIM.alt].out; O.e.forEach(i => R.e.add(i)); enodes(O.e).forEach(n => { if (!R.n.has(n)) R.tmp.add(n); }); }
   return R;
 }
@@ -6372,8 +6460,8 @@ function simStyle(act) {
   svg.querySelectorAll('.fn').forEach(g => {
     const n = g.dataset.n, k = got(n); g.classList.toggle('s4dim', !vis(n)); g.classList.toggle('tmp', on && R.tmp.has(n)); g.classList.toggle('hg', on && hinge.includes(n));
     /* stage 5: an actor the guide has not reached is a name only: no value line (stage5.css), no place in the tab order, nothing to read out */
-    const lab = FN[n][3] + ': ' + (k ? FN[n][4] : 'later in the guide'), ti = k ? '0' : '-1';
-    if (g.getAttribute('aria-label') !== lab) g.setAttribute('aria-label', lab); if (g.getAttribute('tabindex') !== ti) g.setAttribute('tabindex', ti);
+    const lab = FN[n][3] + (k ? '' : ': later in the guide'), ti = k ? '0' : '-1';   /* B1-3: a plate is a name; a gauge's label is written with its value (indApply) */
+    if (!isG(n) && g.getAttribute('aria-label') !== lab) g.setAttribute('aria-label', lab); if (g.getAttribute('tabindex') !== ti) g.setAttribute('tabindex', ti);
   });
   /* stage 5: a relation shows once the guide has reached it, and not before. Selecting an actor or pulling a lever
      used to light relations between actors already on the map that the guide had not come to yet. */
@@ -6383,22 +6471,9 @@ function simStyle(act) {
   });
   svg.querySelectorAll('.fzg').forEach(z => z.classList.toggle('s4dim', on && !Object.keys(FN).some(n => FN[n][0] === z.dataset.z && vis(n))));
   const cock = $('cock'); if (!cock) return;
-  simGate(cock, got);
+  indApply(indStates(act));
   cock.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l; b.classList.toggle('gh', on && !R.l.has(i)); b.classList.toggle('fresh', !!B && B.lev.includes(i)); });
   cock.querySelectorAll('.lvg').forEach(g => g.classList.toggle('gh', on && !g.querySelector('.lv:not(.gh)')));
-}
-/* stage 5: a reading the guide has not reached keeps its name, dimmed, in the rail and in the strip; its value is
-   replaced by a dot, and its note, source and colour stay out of the page until the guide reaches its actor. */
-function simGate(cock, got) {
-  cock.querySelectorAll('.s4ri, .tile').forEach(el => {
-    const tile = el.classList.contains('tile'), ok = got(el.dataset.node), v = el.querySelector(tile ? '.tv' : 'b');
-    if (el._v == null) { el._v = v ? v.textContent : ''; el._tip = el.dataset.tip || ''; el._nm = (el.querySelector(tile ? '.tk' : 'span') || el).textContent; }
-    if (el._ok === ok) return; el._ok = ok;
-    if (v) { cancelAnimationFrame(v._r); v.textContent = ok ? el._v : '·'; }
-    el.dataset.tip = ok ? el._tip : `<b>${fe(el._nm)}</b><p>Later in the guide.</p>`;
-    el.classList.toggle(tile ? 'gh' : 's4later', !ok);
-    if (ok) el.removeAttribute('aria-disabled'); else el.setAttribute('aria-disabled', 'true');
-  });
 }
 /* entrances. v2 stage 5: every entrance runs from nothing to the element's own resting look, in one pass, and leaves
    nothing to undo. Actors are on the map from the start (dimmed, stage 4), so they simply brighten: a CSS transition.
@@ -6411,7 +6486,7 @@ function simEnter(prev, R, fwd) {
   const many = now.length > 8, base = now.length ? Math.min(420, 160 + now.length * (many ? 10 : 40)) : 0;
   let k = 0;
   [...R.e].filter(i => !prev.e.has(i)).sort((a, b) => FN[FE[a][0]][1] - FN[FE[b][0]][1]).forEach(i => { const p = svg.querySelector(`.fe[data-e="${i}"]`); if (p) drawOn(p, base + Math.min(600, k++ * (many ? 12 : 60))); });
-  cock.querySelectorAll('.tile, .s4ri').forEach(t => { if (R.n.has(t.dataset.node) && !prev.n.has(t.dataset.node) && t.getClientRects().length) countUp(t.querySelector(t.classList.contains('tile') ? '.tv' : 'b')); });
+  svg.querySelectorAll('.gn.new [data-gv], .gt.new [data-gv]').forEach(v => countUp(v));   /* B1-3: an indicator's value counts up once, at the step that first moves it */
   cock.querySelectorAll('.lv').forEach((b, j) => { const i = +b.dataset.l; if (R.l.has(i) && !prev.l.has(i) && b.animate) b.animate([{ opacity: 0, transform: 'translateY(12px)' }, {}], { duration: 700, delay: many ? Math.min(400, j * 25) : 380, easing: 'cubic-bezier(.2, .75, .25, 1)', fill: 'backwards' }); });
   /* the hinge: where this step picks up from the last one */
   if (fwd) {
@@ -6441,13 +6516,14 @@ const SFULL = [-3, -3, MAPW + 6, MAPH + 6];
 function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = PHONE() ? (simOn() ? '1.12' : '') : ''; }
 function simBox(set) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  set.forEach(n => { const F = FN[n]; x0 = Math.min(x0, F[1] - NW / 2); x1 = Math.max(x1, F[1] + NW / 2); y0 = Math.min(y0, F[2] - NH / 2); y1 = Math.max(y1, F[2] + NH / 2); });
+  set.forEach(n => { const F = FN[n]; x0 = Math.min(x0, F[1] - hwOf(n)); x1 = Math.max(x1, F[1] + hwOf(n)); y0 = Math.min(y0, F[2] - NH / 2); y1 = Math.max(y1, F[2] + NH / 2 + (tagsOf(n).length ? 12 : 0)); });
   return [x0, y0, x1, y1];
 }
 function simCamTarget() {
   const svg = $('rmap'), cock = $('cock'); if (!svg || !cock) return SFULL;
   const on = simOn(), L = sLine(), b = SIM.beat, phone = PHONE();
   if (phone) {
+    cock.dataset.z = 'far';   /* B1-3: on a phone the gauges show their value only; the strip under the map names them */
     if (!on || b < 0 || (b >= L.beats.length && L.main)) return SFULL;
     const act = simActive(), R = SIM.R, set = act ? enodes([...act]) : new Set([...R.n, ...R.tmp]); if (!set.size) return SFULL;
     let [x0, y0, x1, y1] = simBox(set); x0 -= 14; x1 += 14; y0 -= 36; y1 += 14;
@@ -6460,13 +6536,13 @@ function simCamTarget() {
   const rel = (id, edge) => { const e = $(id); if (!e || e.hidden || !e.getClientRects().length) return null; const r = e.getBoundingClientRect(); return edge === 'b' ? r.bottom - sr.top : edge === 't' ? r.top - sr.top : edge === 'r' ? r.right - sr.left : r.left - sr.left; };
   const card = $('snarr'), folded = card && card.classList.contains('folded');
   const top = cock.querySelector('.s2top'), tb = top ? top.getBoundingClientRect().bottom - sr.top : 150;
-  const iT = Math.max(tb + 14, (rel('s2read', 't') || 0) + 50), bar = rel('s2bar', 't'), tps = on ? [] : [rel('s2tray-play', 't'), rel('s2tray-lev', 't')].filter(v => v != null), lev = tps.length ? Math.min(...tps) : null;
+  const iT = tb + 14, bar = rel('s2bar', 't'), tps = on ? [] : [rel('s2tray-play', 't'), rel('s2tray-lev', 't')].filter(v => v != null), lev = tps.length ? Math.min(...tps) : null;
   const iB0 = H - Math.min(bar != null ? bar : H - 80, lev != null ? lev : H) + 30;
   cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB0) + 'px');
   /* stage 5: in the full view the map also clears the legend, which wraps to two rows on narrower screens (the rail keeps its own bottom, --ib) */
   const kt = on ? null : rel('s2low', 't'), iB = kt != null ? Math.max(iB0, H - kt + 10) : iB0;
-  const open = cock.classList.contains('s4open'), rl = rel('s4rail', 'l');
-  const iL = on && !folded && !open && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = rl != null ? Math.max(26, W - rl + 22) : 26;
+  const open = cock.classList.contains('s4open');
+  const iL = on && !folded && !open && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = 26;
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
     const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
@@ -6475,7 +6551,7 @@ function simCamTarget() {
   } else { box = [0, 0, MAPW, MAPH]; cap = 1.5; }
   const aw = Math.max(200, W - iL - iR), ah = Math.max(160, H - iT - iB), bw = box[2] - box[0], bh = box[3] - box[1];
   const k = Math.min(aw / bw, ah / bh, cap);
-  cock.dataset.z = k < .72 ? 'far' : k < 1.08 ? 'mid' : 'near';
+  cock.dataset.z = k < .8 ? 'far' : k < 1.08 ? 'mid' : 'near';
   return [box[0] - (iL + (aw - bw * k) / 2) / k, box[1] - (iT + (ah - bh * k) / 2) / k, W / k, H / k];
 }
 function simCam(anim) {
@@ -6501,6 +6577,8 @@ const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label
 const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
 const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
 const SPI = SLINES.findIndex(L => L.pre);
+/* B1-3: when each indicator first appears: the first step whose lit relations touch it (first principles, and the guide) */
+IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ pre: f(SLINES[SPI]), main: f(SLINES[0]) }, I.at || {}); });
 /* the mechanisms, by where they sit: what Washington sets, the markets that carry it, the economy it lands in */
 const STIER = [['up', 'Upstream · the state and the rules', [0, 5]], ['mid', 'Intermediate · the markets that carry it', [1, 8, 2]], ['down', 'Downstream · where it lands', [4, 7, 6, 3]]];
 function simPickHTML() {
@@ -6516,7 +6594,7 @@ const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Plays', '
 const SCHC = ['#ffd27a', '#ff5d8f', '#ffb547', '#3ee6b8', '#9aa4ff', '#b7f36b', '#ff5a4e'];
 function simTabsHTML() {
   const cur = SIM.mode === 'story' ? 'guide' : SIM.ftab;
-  return `<div class="rt-sw" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div>`;
+  return `<div class="rt-sw" role="group" aria-label="How to explore the simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div><button type="button" class="rt-more" data-s4more aria-expanded="false" aria-controls="isx-b1more" aria-label="More: indicators, share and support"><span aria-hidden="true">⋯</span></button>`;
 }
 /* switch tabs: the guide is the story mode; Plays and Levers are the full map with one tray open */
 function simTab(t) {
@@ -6582,8 +6660,9 @@ function simTrays() {
   const lv = $('s2tray-lev'), pl = $('s2tray-play'), pk = $('s2tray-pick');
   if (lv) lv.hidden = !(full ? SIM.ftab === 'levers' : t === 'lev'); if (pl) pl.hidden = !(full && SIM.ftab === 'plays'); if (pk) pk.hidden = t !== 'pick';
   if (t === 'pick') $('sn-pick').innerHTML = simPickHTML();
-  const lad = $('s5lad'); if (lad) { if (t === 'read') lad.innerHTML = ladHTML(); else if (!lad.hidden) lad.innerHTML = ''; lad.hidden = t !== 'read'; }
-  cock.classList.toggle('rd-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
+  const lad = $('b1led'); if (lad) { if (t === 'read') lad.innerHTML = ledgerHTML(); else if (!lad.hidden) lad.innerHTML = ''; lad.hidden = t !== 'read'; }
+  const more = $('b1more'); if (more && t) more.hidden = true;
+  cock.classList.toggle('led-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
   cock.querySelectorAll('[data-tray]').forEach(x => x.setAttribute('aria-expanded', String(x.dataset.tray === t)));
 }
 function simTray(t) { SIM.tray = SIM.tray === t ? null : t; simTrays(); }
@@ -6750,10 +6829,13 @@ function simMount() {
     const d = t.dataset;
     if (d.sec != null) { const c0 = $('sec3'); simSector(d.sec, d.sec ? t : c0 && c0._from); return; }
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
-    if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); else if (SIM.tray === 'read' && e.detail === 0) focusIn($('s5lad'), '.s5cl'); return; }
-    if (d.s5row != null) { const lad = $('s5lad'), was = t.getAttribute('aria-expanded') === 'true', tog = (x, o) => { x.setAttribute('aria-expanded', String(o)); const dd = document.getElementById(x.getAttribute('aria-controls')); if (dd) dd.hidden = !o; }; lad.querySelectorAll('.s5rb[aria-expanded="true"]').forEach(x => tog(x, false)); if (!was) tog(t, true); return; }
+    if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); else if (SIM.tray === 'read' && e.detail === 0) focusIn($('b1led'), '.lcl'); return; }
+    if (d.s4more != null) { const m = $('b1more'); if (m) { m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); if (!m.hidden && e.detail === 0) m.querySelector('button').focus({ preventScroll: true }); } return; }
+    if (d.b1more === 'share') { $('b1more').hidden = true; const sh = $('share'); if (sh) { sh.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); sh.click(); } return; }
+    if (d.ltab) { SIM.ltab = d.ltab; const lc = $('b1led').querySelector('.lcols'); if (lc) lc.dataset.tab = d.ltab; $('b1led').querySelectorAll('[data-ltab]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.ltab === d.ltab))); return; }
+    if (d.led != null) { const lad = $('b1led'), was = t.getAttribute('aria-expanded') === 'true', tog = (x, o) => { x.setAttribute('aria-expanded', String(o)); const dd = document.getElementById(x.getAttribute('aria-controls')); if (dd) dd.hidden = !o; }; lad.querySelectorAll('.lrb[aria-expanded="true"]').forEach(x => tog(x, false)); if (!was) tog(t, true); return; }
     if (d.s5find) { SIM.tray = null; simTrays(); pickNode(d.s5find); return; }
-    if (t.closest('#isx-s5lad') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
+    if (t.closest('#isx-b1led') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
     if (d.s4tab) { simTab(d.s4tab); return; }
     if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
@@ -6821,7 +6903,7 @@ window.ISX = {
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
-  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, alt: SIM.alt, lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), readings: tilesOrd().map(a => ({ k: a.T.k, node: a.T.n, key: TKEYS.includes(a.T.k) })) }; },
+  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, alt: SIM.alt, lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
