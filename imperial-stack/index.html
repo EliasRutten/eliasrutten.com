@@ -7425,6 +7425,11 @@ window.ISX = {
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
     decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
+  /* fix round: the bond deals of the five technology firms in the page's filing list, for the bond screen's time axis. A row that
+     covers a period (Alphabet's “Jan to Sep 2026” and “2025”) has no single date and is left off the axis. */
+  deals: ISSUE.filter(e => e.t === 'b' && ['Amazon', 'Alphabet', 'Meta', 'Oracle', 'Microsoft'].includes(e.who) && /^\d{4}-\d{2}/.test(e.d) && !/ to |^\d{4}$/.test(e.dl))
+    .map(e => ({ d: e.d.slice(0, 7), dl: e.dl, who: e.who, a: e.a, q: !!e.q, s: e.s })),
+  dealsCut: '8 Nov 2026',
   /* content build: a view can start a play or pull a lever on the map behind it */
   simPlay(i) { if (!PLAYS[i] || !$('cock')) return; SIM.ftab = 'plays'; if (SIM.mode !== 'full') simSetMode('full'); clearSel(); fplay = i; fpstep = 0; simBar(); simTrays(); styleRmap(); renderSide(); },
   simLever(i) { if (!LEVERS[i] || !$('cock')) return; SIM.ftab = 'levers'; if (SIM.mode !== 'full') simSetMode('full'); simBar(); simTrays(); const lv = $('cock').querySelector(`.lv[data-l="${i}"]`); if (lv && !flev.has(i)) lv.click(); },

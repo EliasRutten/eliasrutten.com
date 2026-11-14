@@ -23,3 +23,80 @@
 #isx-root .dtile .dslope { margin-top: 7px; padding-top: 6px; border-top: 1px dashed rgba(255, 255, 255, .1); font-size: 12px; color: var(--ink2); }
 #isx-root .dtile .dslope b { font-family: var(--mono); font-weight: 500; color: #fff; }
 #isx-root .dtile .dslope em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--ink3); }
+
+/* ---------- 2. the bond screen, level 2: one panel ---------- */
+#isx-root .vw-p.bx { border-top: 2px solid #ffd27a; padding: 12px 16px 14px; }
+#isx-root .bx-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+#isx-root .bx-tg, #isx-root .bx-jump button { font: inherit; cursor: pointer; border-radius: 999px; padding: 5px 12px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .16); }
+#isx-root .bx-tg:hover, #isx-root .bx-jump button:hover { color: #fff; border-color: #ffd27a; }
+#isx-root .bx-tg[aria-pressed="true"] { color: #1a1206; background: #ffd27a; border-color: #ffd27a; }
+#isx-root .bx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+#isx-root .bx-chip { font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 4px 12px; border-radius: 999px; color: var(--ink2); background: rgba(255, 255, 255, .025); border: 1px solid rgba(255, 255, 255, .14); }
+#isx-root .bx-chip i { width: 14px; height: 3px; border-radius: 2px; }
+#isx-root .bx-chip span { font-family: var(--display); font-weight: 600; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; }
+#isx-root .bx-chip b { font-family: var(--mono); font-weight: 500; font-size: 13px; color: #fff; }
+#isx-root .bx-chip[aria-pressed="true"] { color: #fff; border-color: #ffd27a; background: rgba(255, 210, 122, .08); }
+#isx-root .bx-chip:focus-visible, #isx-root .bx-tg:focus-visible, #isx-root .bx-jump button:focus-visible, #isx-root .bx-sl:focus-visible, #isx-root .bx-tb:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .bx-note { margin-top: 7px; min-height: 52px; }
+#isx-root .bx-note p { font-size: 12.5px !important; color: #c3cfda; }
+#isx-root .bx-note p b { color: #fff; font-weight: 600; }
+#isx-root .bx-note .bv { font-family: var(--mono); color: #fff; }
+#isx-root .bx-note em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--ink3); }
+#isx-root .bx-note .rd { margin-top: 2px; }
+#isx-root .bx-note .rd span { color: #ffd27a; font-size: 11.5px; }
+#isx-root .bx-note .lsrc { margin-top: 2px; }
+#isx-root .bx-g { display: grid; grid-template-columns: minmax(0, .62fr) minmax(0, 1.38fr); gap: 16px; margin-top: 8px; align-items: start; }
+#isx-root .bx-g figure { margin: 0; }
+#isx-root .bx-l { padding: 8px 6px 4px; border-radius: 12px; background: rgba(0, 0, 0, .2); border: 1px solid rgba(255, 255, 255, .06); }
+#isx-root .lt2 { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9fb2c4; padding: 0 6px; }
+#isx-root .lt2 span { color: #fff; letter-spacing: .04em; }
+#isx-root .bx-cv, #isx-root .bx-ln { display: block; width: 100%; height: auto; }
+#isx-root .bx-cv .gr, #isx-root .bx-ln .gr { stroke: rgba(255, 255, 255, .07); stroke-width: 1; }
+#isx-root .bx-cv .ak, #isx-root .bx-ln .ak { font: 9.5px var(--mono); fill: #7d8fa0; }
+#isx-root .bx-cv .ak { font-size: 10.5px; }
+#isx-root .bx-cv .main { fill: none; stroke: #ffd27a; stroke-width: 2.2; stroke-linejoin: round; }
+#isx-root .bx-cv circle { fill: #0b131c; stroke: #ffd27a; stroke-width: 1.6; }
+#isx-root .bx-cv .cv { font: 11px var(--mono); fill: #fff; }
+#isx-root .bx-cv .cmp { fill: none; stroke: #8fa3b6; stroke-width: 1.2; opacity: .6; }
+#isx-root .bx-cv .cmp.c1 { stroke-dasharray: 4 3; }
+#isx-root .bx-cv .cl { font: 9.5px var(--mono); fill: #8fa3b6; }
+#isx-root .bx-sl { position: relative; cursor: ew-resize; touch-action: pan-y; border-radius: 10px; outline: none; }
+#isx-root .bx-ln .lt { font: 600 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; fill: #9fb2c4; }
+#isx-root .bx-ln .tk { stroke: rgba(255, 255, 255, .2); }
+#isx-root .bx-ln .ln { fill: none; stroke-width: 2; stroke-linejoin: round; transition: opacity .25s; }
+#isx-root .bx-ln .ln.y10 { stroke: #b88a2e; } #isx-root .bx-ln .ln.baa { stroke: #4b8fd0; } #isx-root .bx-ln .ln.move { stroke: #d0703f; }
+#isx-root .bx-ln .spr { fill: rgba(75, 143, 208, .16); }
+#isx-root .bx-ln .sl { font: italic 9px var(--sans); fill: #a9c6e4; }
+#isx-root .bx-ln .el { font: 9.5px var(--mono); fill: #dbe4ec; }
+#isx-root .bx-ln .dl { fill: #c94f7c; }
+#isx-root .bx-ln[data-hl="y10"] .ln:not(.y10), #isx-root .bx-ln[data-hl="baa"] .ln:not(.baa), #isx-root .bx-ln[data-hl="move"] .ln:not(.move) { opacity: .55; }
+#isx-root .bx-ln[data-hl="y10"] .ln.y10, #isx-root .bx-ln[data-hl="baa"] .ln.baa, #isx-root .bx-ln[data-hl="move"] .ln.move { stroke-width: 2.6; }
+#isx-root .bx-ln .cl1 { stroke: #ffd27a; stroke-width: 1; stroke-dasharray: 2 2; }
+#isx-root .bx-ln .cd { fill: #0b131c; stroke-width: 2; } #isx-root .bx-ln .cd.y10 { stroke: #b88a2e; } #isx-root .bx-ln .cd.baa { stroke: #4b8fd0; } #isx-root .bx-ln .cd.move { stroke: #d0703f; }
+#isx-root .bx-ln .ch { fill: #ffd27a; }
+#isx-root .bx-ro { margin-top: 4px !important; min-height: 2.9em; font-family: var(--mono); font-size: 11px !important; color: #dbe4ec; }
+#isx-root .bx-jump { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 6px; }
+#isx-root .bx-jump span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-right: 2px; }
+#isx-root .bx-jump button { padding: 3px 10px; font-size: 10px; }
+#isx-root .bx-cap { font-size: 11.5px !important; color: var(--ink2) !important; }
+#isx-root .bx .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+#isx-root .bx-tb { margin-top: 8px; max-height: 380px; overflow: auto; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .08); }
+#isx-root .bx-tb table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; color: #dbe4ec; }
+#isx-root .bx-tb table + table { margin-top: 10px; }
+#isx-root .bx-tb caption { text-align: left; padding: 7px 10px; font-size: 10px; letter-spacing: .06em; color: #9fb2c4; }
+#isx-root .bx-tb th, #isx-root .bx-tb td { padding: 4px 8px; text-align: right; border-top: 1px solid rgba(255, 255, 255, .05); white-space: nowrap; }
+#isx-root .bx-tb th[scope="row"], #isx-root .bx-tb td:last-child { text-align: left; }
+#isx-root .bx-tb thead th { position: sticky; top: 0; background: #0d1620; color: #9fb2c4; font-weight: 500; }
+#isx-root .vw-more { margin-top: 10px; border-radius: 13px; padding: 10px 14px; background: rgba(255, 255, 255, .02); border: 1px solid rgba(255, 255, 255, .08); }
+#isx-root .vw-more summary { cursor: pointer; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .vw-more summary:focus-visible { outline: 2px solid #ffd27a; outline-offset: 3px; border-radius: 4px; }
+#isx-root .vw-more[open] summary { margin-bottom: 10px; }
+#isx-root .vw-more .vw-grid2 { margin-top: 0; }
+@media (max-width: 900px) { #isx-root .bx-g { grid-template-columns: 1fr; } #isx-root .bx-h { flex-direction: column; } }
+#isx-root .bx-tb thead th:first-child { text-align: left; }
+@media (max-width: 760px) {
+  #isx-root .bx-ln .ak, #isx-root .bx-ln .el { font-size: 11px; }
+  #isx-root .bx-ln .lt { font-size: 10px; letter-spacing: .04em; }
+  #isx-root .bx-ln .sl { font-size: 10.5px; }
+  #isx-root .bx-ln .ln { stroke-width: 2.2; }
+}

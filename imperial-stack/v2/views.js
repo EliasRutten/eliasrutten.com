@@ -73,34 +73,180 @@
     ['Australian dollar', '$3.9bn', 'A$5.5bn', '–', 'No weight: the Reserve Bank of Australia publishes the series as charts, without a data table. Alphabet (19 August 2026).'],
     ['Japanese yen', '$3.6bn', '¥576.5bn', '–', 'No weight: the closest series (JSDA, public straight corporate bonds, ¥14.7tn a year) includes financial firms, so it does not measure what the weight is meant to. Alphabet (15 May 2026).']
   ];
-  function curveSVG() {   /* three points of the curve from the data round's October averages; levels derived from the two spreads */
-    var pts = [['3-month', 4.23], ['2-year', 4.74], ['10-year', 5.13]], x = [26, 96, 196], y = function (v) { return 74 - (v - 4) * 46; };
-    return '<svg class="vw-curve" viewBox="0 0 230 92" role="img" aria-label="The Treasury curve, October 2026 averages: 3-month about 4.23 per cent, 2-year about 4.74 per cent, 10-year 5.13 per cent"><path d="M14 78.5h206" class="ax"/><polyline class="ln" points="' + pts.map(function (p, i) { return x[i] + ',' + y(p[1]).toFixed(1); }).join(' ') + '"/>'
-      + pts.map(function (p, i) { return '<circle cx="' + x[i] + '" cy="' + y(p[1]).toFixed(1) + '" r="3"/><text x="' + x[i] + '" y="' + (y(p[1]) - 8).toFixed(1) + '" text-anchor="middle" class="v">' + p[1].toFixed(2) + '%' + (i < 2 ? '*' : '') + '</text><text x="' + x[i] + '" y="89" text-anchor="middle" class="k">' + p[0] + '</text>'; }).join('') + '</svg>';
+  /* ---------- fix round (14 Nov 2026): the bond screen's second level is one panel with pictures ----------
+     Left, the Treasury curve; right, three lanes on one time axis (April 2016 to October 2026): the 10-year and the corporate
+     yield with the credit spread shaded between them, bond volatility, and the five technology firms' bond deals. A cursor on
+     the time axis (drag, or the arrow keys) redraws the curve for that month. Data: data/bond-panel.json, built from the data
+     round's F7 (FRED) and A-bond-market (MOVE) files; deals: the page's filing list (ISX.deals). */
+  var BP = null, bx = { i: -1, lane: 'y10', table: false };
+  if (X.load) X.load('bond-panel').then(function (d) { BP = d; if (cur === 'bond' && lvl === 2 && box) draw(); }).catch(function () { BP = false; });
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var COL = { y10: '#b88a2e', baa: '#4b8fd0', move: '#d0703f', deal: '#c94f7c' };   /* checked with the dataviz validator against #0a1119 */
+  var MAT = [['3M', '3-month', .25], ['2Y', '2-year', 2], ['5Y', '5-year', 5], ['10Y', '10-year', 10], ['30Y', '30-year', 30]];
+  function mLab(m) { return MON[+m.slice(5, 7) - 1] + ' ' + m.slice(0, 4); }
+  function f2(v) { return (+v).toFixed(2); }
+  function N() { return BP.m.length; }   /* slot N is “latest”: the daily curve of 12 November 2026 */
+  function deals() { return (X.deals || []); }
+  function dealsAt(i) { var m = i < N() ? BP.m[i] : '2026-11'; return deals().filter(function (d) { return d.d === m; }); }
+  function curveAt(i) {
+    if (i >= N()) { var L = BP.daily[0]; return { v: L.v, lab: L.d, kind: 'daily close, ' + L.x }; }
+    return { v: [BP.y3m[i], BP.y2[i], BP.y5[i], BP.y10[i], BP.y30[i]], lab: mLab(BP.m[i]), kind: 'monthly average' };
+  }
+  function shape(v) {
+    var d = v[3] - v[0], d2 = v[3] - v[1];
+    return d < 0 ? 'inverted: the 10-year ' + f2(-d) + ' points below the 3-month' : d2 < 0 ? 'humped: the 10-year below the 2-year, above the 3-month' : 'upward-sloping: the 10-year ' + f2(d) + ' points above the 3-month';
+  }
+  function curveSVG(i) {
+    var W = 300, H = 250, x0 = 30, x1 = 270, y0 = 16, y1 = 214, top = 7;
+    var X1 = function (t) { return x0 + (Math.sqrt(t) - .5) / (Math.sqrt(30) - .5) * (x1 - x0); }, Y = function (v) { return y1 - v / top * (y1 - y0); };
+    var c = curveAt(i), latest = i >= N(), cmp = latest ? [BP.daily[1], BP.daily[2]] : [BP.daily[0]];
+    var pl = function (v) { return MAT.map(function (q, k) { return X1(q[2]).toFixed(1) + ',' + Y(v[k]).toFixed(1); }).join(' '); };
+    var g = '';
+    for (var t = 0; t <= 6; t += 2) g += '<line class="gr" x1="' + x0 + '" x2="' + x1 + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '"/><text class="ak" x="' + (x0 - 6) + '" y="' + (Y(t) + 3).toFixed(1) + '" text-anchor="end">' + t + '%</text>';
+    g += MAT.map(function (q) { return '<text class="ak" x="' + X1(q[2]).toFixed(1) + '" y="' + (y1 + 16) + '" text-anchor="middle">' + q[0] + '</text>'; }).join('');
+    var cm = cmp.map(function (D, k) { var ly = Y(D.v[4]) + (cmp.length > 1 ? (k ? -3 : 9) : (D.v[4] > c.v[4] ? -3 : 11)); return '<polyline class="cmp c' + k + '" points="' + pl(D.v) + '"/><text class="cl" x="' + (x1 + 8) + '" y="' + ly.toFixed(1) + '">' + e(D.d) + '</text>'; }).join('');
+    var mn = '<polyline class="main" points="' + pl(c.v) + '"/>' + MAT.map(function (q, k) { var yy = Y(c.v[k]); return '<circle cx="' + X1(q[2]).toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="3.2"/><text class="cv" x="' + (X1(q[2]) + (k === 4 ? -6 : k ? 0 : 4)).toFixed(1) + '" y="' + (yy - 9).toFixed(1) + '" text-anchor="' + (k === 4 ? 'end' : k ? 'middle' : 'start') + '">' + f2(c.v[k]) + '</text>'; }).join('');
+    var lab = 'The Treasury curve, ' + c.lab + ' (' + c.kind + '): ' + MAT.map(function (q, k) { return q[1] + ' ' + f2(c.v[k]) + '%'; }).join(', ') + '. It is ' + shape(c.v) + '. Quiet lines for comparison: ' + cmp.map(function (D) { return D.d + ' (' + D.x + ')'; }).join(' and ') + '.';
+    return '<svg class="bx-cv" viewBox="0 0 ' + (W + 50) + ' ' + H + '" role="img" aria-label="' + e(lab) + '">' + g + cm + mn + '</svg>';
+  }
+  /* the lanes: drawn once per opening; the cursor moves by attribute */
+  var LGW = { x0: 40, x1: 690, W: 760, l1: [16, 126], l2: [152, 206], l3: [230, 262], ax: 280 }, LGN = { x0: 30, x1: 346, W: 432, l1: [18, 126], l2: [152, 206], l3: [230, 262], ax: 282 }, LG = LGW;   /* narrow: a phone */
+  function lx(i) { var n = N() + 1; return LG.x0 + (i + .5) / n * (LG.x1 - LG.x0); }
+  function ly1(v) { return LG.l1[1] - v / 7 * (LG.l1[1] - LG.l1[0]); }
+  function ly2(v) { return LG.l2[1] - (v - 30) / 130 * (LG.l2[1] - LG.l2[0]); }
+  function path(arr, fy) { return arr.map(function (v, i) { return (i ? 'L' : 'M') + lx(i).toFixed(1) + ',' + fy(v).toFixed(1); }).join(''); }
+  function lanesSVG() {
+    var n = N(), h = '', last = n - 1, gr = function (y) { return '<line class="gr" x1="' + LG.x0 + '" x2="' + LG.x1 + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>'; };
+    h += '<text class="lt" x="' + LG.x0 + '" y="' + (LG.l1[0] - 5) + '">Treasury 10-year and corporate Baa · % a year</text>';
+    [0, 2, 4, 6].forEach(function (t) { h += gr(ly1(t)) + '<text class="ak" x="' + (LG.x0 - 6) + '" y="' + (ly1(t) + 3).toFixed(1) + '" text-anchor="end">' + t + '</text>'; });
+    var sp = 'M' + BP.baa.map(function (v, i) { return lx(i).toFixed(1) + ',' + ly1(v).toFixed(1); }).join('L') + 'L' + BP.y10.map(function (v, i) { return lx(i).toFixed(1) + ',' + ly1(v).toFixed(1); }).reverse().join('L') + 'Z';
+    h += '<path class="spr" d="' + sp + '"/>';
+    var w = 0, wi = 0; for (var k = 0; k < 60; k++) { var d = BP.baa[k] - BP.y10[k]; if (d > w) { w = d; wi = k; } }
+    h += '<text class="sl" x="' + lx(wi).toFixed(1) + '" y="' + ly1((BP.baa[wi] + BP.y10[wi]) / 2 - .1).toFixed(1) + '" text-anchor="middle">credit spread</text>';
+    h += '<path class="ln y10" data-ln="y10" d="' + path(BP.y10, ly1) + '"/><path class="ln baa" data-ln="baa" d="' + path(BP.baa, ly1) + '"/>';
+    h += '<text class="el" data-ln="baa" x="' + (lx(n) + 4).toFixed(1) + '" y="' + (ly1(BP.baa[last]) + 3).toFixed(1) + '">Baa ' + f2(BP.baa[last]) + '</text>';
+    h += '<text class="el" data-ln="y10" x="' + (lx(n) + 4).toFixed(1) + '" y="' + (ly1(BP.y10[last]) + 10).toFixed(1) + '">10-yr ' + f2(BP.y10[last]) + '</text>';
+    h += '<text class="lt" x="' + LG.x0 + '" y="' + (LG.l2[0] - 5) + '">Bond volatility (MOVE) · index points</text>';
+    [50, 100, 150].forEach(function (t) { h += gr(ly2(t)) + '<text class="ak" x="' + (LG.x0 - 6) + '" y="' + (ly2(t) + 3).toFixed(1) + '" text-anchor="end">' + t + '</text>'; });
+    h += '<path class="ln move" data-ln="move" d="' + path(BP.move, ly2) + '"/><text class="el" data-ln="move" x="' + (lx(n) + 4).toFixed(1) + '" y="' + (ly2(BP.move[last]) + 3).toFixed(1) + '">MOVE ' + BP.move[last] + '</text>';
+    h += '<text class="lt" x="' + LG.x0 + '" y="' + (LG.l3[0] - 9) + '">Bond sales by five tech firms · $bn, by month</text>' + gr(LG.l3[1]);
+    var by = {}; deals().forEach(function (d) { by[d.d] = (by[d.d] || 0) + d.a; });
+    Object.keys(by).forEach(function (m) { var i = m === '2026-11' ? n : BP.m.indexOf(m); if (i < 0) return; var hh = Math.max(2, by[m] / 60 * (LG.l3[1] - LG.l3[0])); h += '<rect class="dl" x="' + (lx(i) - 2).toFixed(1) + '" y="' + (LG.l3[1] - hh).toFixed(1) + '" width="4" height="' + hh.toFixed(1) + '" rx="1.5"/>'; });
+    h += '<text class="ak" x="' + (LG.x0 - 6) + '" y="' + (LG.l3[1] + 3) + '" text-anchor="end">0</text><text class="ak" x="' + (LG.x0 - 6) + '" y="' + (LG.l3[1] - 31) + '" text-anchor="end">60</text>';
+    for (var yr = 2017; yr <= 2026; yr++) { var ix = BP.m.indexOf(yr + '-01'); h += '<line class="tk" x1="' + lx(ix).toFixed(1) + '" x2="' + lx(ix).toFixed(1) + '" y1="' + LG.l3[1] + '" y2="' + (LG.l3[1] + 4) + '"/><text class="ak" x="' + lx(ix).toFixed(1) + '" y="' + LG.ax + '" text-anchor="middle">' + yr + '</text>'; }
+    h += '<g class="cur"><line class="cl1" x1="0" x2="0" y1="' + (LG.l1[0] - 2) + '" y2="' + (LG.l3[1] + 2) + '"/><circle class="cd y10" r="3.4"/><circle class="cd baa" r="3.4"/><circle class="cd move" r="3.4"/><rect class="ch" x="-7" y="' + (LG.l3[1] + 5) + '" width="14" height="8" rx="3"/></g>';
+    return '<svg class="bx-ln" viewBox="0 0 ' + LG.W + ' 286" aria-hidden="true">' + h + '</svg>';
+  }
+  function lanesAlt() {
+    var n = N(), mx = function (a) { var m = Math.max.apply(null, a); return [m, BP.m[a.indexOf(m)]]; }, mnv = function (a) { var m = Math.min.apply(null, a); return [m, BP.m[a.indexOf(m)]]; };
+    var sp = BP.baa.map(function (b, i) { return +(b - BP.y10[i]).toFixed(2); }), spx = mx(sp), spn = mnv(sp), ylo = mnv(BP.y10), mv = mx(BP.move), ds = deals().map(function (d) { return d.d; }).sort();
+    return 'Monthly averages, ' + mLab(BP.m[0]) + ' to ' + mLab(BP.m[n - 1]) + '. The 10-year Treasury yield went from ' + f2(BP.y10[0]) + '% to ' + f2(BP.y10[n - 1]) + '%, with a low of ' + f2(ylo[0]) + '% in ' + mLab(ylo[1]) + '. Moody’s Baa corporate yield went from ' + f2(BP.baa[0]) + '% to ' + f2(BP.baa[n - 1]) + '%. The credit spread between them was widest at ' + f2(spx[0]) + ' points in ' + mLab(spx[1]) + ' and narrowest at ' + f2(spn[0]) + ' in ' + mLab(spn[1]) + '; it was ' + f2(sp[n - 1]) + ' in ' + mLab(BP.m[n - 1]) + '. Bond volatility (MOVE) peaked at ' + mv[0] + ' in ' + mLab(mv[1]) + ' and stood at ' + BP.move[n - 1] + '. ' + ds.length + ' bond deals by the five technology firms in the page’s list, from ' + (ds.length ? mLab(ds[0]) : '–') + ' on.';
+  }
+  var LANES = {
+    y10: ['10-year Treasury', 'What the US government pays to borrow for ten years', 'Fed H.15 via FRED DGS10, monthly average of daily values (read 14 Nov 2026)', 'The benchmark price of long-term money: corporate bonds and mortgages are priced over it.', 'Practice, measured: new bonds are sold at a spread over Treasury yields.'],
+    baa: ['Corporate yield (Moody’s Baa)', 'What companies rated Baa, the lowest investment grade, pay on their seasoned bonds', 'FRED BAA, Moody’s seasoned Baa corporate bond yield, monthly (read 14 Nov 2026)', 'The shaded gap over the 10-year is the credit spread: what lenders ask on top for lending to companies instead of the state. This is the whole corporate market, not the AI borrowers.', 'Measured; the spread is computed here (Baa minus 10-year).'],
+    move: ['Bond volatility (MOVE)', 'How far traders expect Treasury yields to swing over the next month, in basis points a year; about 100 means swings of about 6 basis points a day', 'ICE BofA MOVE Index, daily closes via Yahoo Finance (^MOVE), monthly average (read 14 Nov 2026)', 'Low volatility, not the level of yields, is what the house controls: calm lowers haircuts and lets the same capital carry more bonds.', 'Elias Rutten’s reading.']
+  };
+  function laneVal(k, i) { if (i >= N()) { if (k === 'y10') return f2(BP.daily[0].v[3]) + '%'; i = N() - 1; } var v = BP[k][i]; return k === 'move' ? String(v) : f2(v) + '%'; }
+  function chipsHTML() {
+    return '<div class="bx-chips" role="group" aria-label="The three indicators in the panel">' + Object.keys(LANES).map(function (k) { return '<button type="button" class="bx-chip" data-lane="' + k + '" aria-pressed="' + (bx.lane === k) + '"><i style="background:' + COL[k] + '" aria-hidden="true"></i><span>' + e(LANES[k][0]) + '</span><b data-cv="' + k + '"></b></button>'; }).join('') + '</div>'
+      + '<div class="bx-note"></div>';
+  }
+  function noteHTML() {
+    var L = LANES[bx.lane], i = bx.i, lab = i >= N() ? (bx.lane === 'y10' ? BP.daily[0].d + ', daily close' : mLab(BP.m[N() - 1]) + ' average, the latest month') : mLab(BP.m[i]) + ' average';
+    return '<p><b>' + e(L[0]) + '</b> · ' + e(L[1]) + '. <span class="bv">' + e(laneVal(bx.lane, i)) + '</span> <em>' + e(lab) + '</em></p><p class="rd">' + e(L[3]) + ' <span>' + e(L[4]) + '</span></p>' + src(L[2]);
+  }
+  function readout(i) {
+    var n = N(), ds = dealsAt(i), c = curveAt(i);
+    var dt = ds.length ? ' · Deals: ' + ds.map(function (d) { return d.who + ' $' + (+d.a).toFixed(1) + 'bn' + (d.q ? '*' : ''); }).join(', ') : '';
+    if (i >= n) return 'Latest, ' + c.lab + ' (daily closes): curve ' + MAT.map(function (q, k) { return q[0] + ' ' + f2(c.v[k]); }).join(', ') + ' · the monthly lanes end in October 2026' + dt;
+    return mLab(BP.m[i]) + ' · 10-year ' + f2(BP.y10[i]) + '% · Baa ' + f2(BP.baa[i]) + '% · spread ' + f2(BP.baa[i] - BP.y10[i]) + ' points · MOVE ' + BP.move[i] + ' · curve ' + shape(c.v).split(':')[0] + dt;
+  }
+  function jumpsHTML() {
+    var J = [['2020-03', 'Mar 2020'], ['2022-10', 'Oct 2022'], ['2023-05', 'May 2023'], ['2026-10', 'Oct 2026'], ['latest', '12 Nov 2026']];
+    return '<div class="bx-jump" role="group" aria-label="Go to a month"><span>Go to</span>' + J.map(function (j) { return '<button type="button" data-bxj="' + j[0] + '">' + j[1] + '</button>'; }).join('') + '</div>';
+  }
+  function tableHTML() {
+    var n = N(), r = '';
+    for (var i = n - 1; i >= 0; i--) { var ds = dealsAt(i); r += '<tr><th scope="row">' + mLab(BP.m[i]) + '</th><td>' + [BP.y3m[i], BP.y2[i], BP.y5[i], BP.y10[i], BP.y30[i], BP.baa[i]].map(f2).join('</td><td>') + '</td><td>' + f2(BP.baa[i] - BP.y10[i]) + '</td><td>' + BP.move[i] + '</td><td>' + (ds.length ? ds.map(function (d) { return d.who + ' ' + (+d.a).toFixed(1) + (d.q ? '*' : ''); }).join('; ') : '') + '</td></tr>'; }
+    var dl = BP.daily.map(function (D) { return '<tr><th scope="row">' + e(D.d) + '</th><td>' + D.v.map(f2).join('</td><td>') + '</td><td>' + e(D.x) + '</td></tr>'; }).join('');
+    var nov = dealsAt(n);
+    return '<div class="bx-tb" tabindex="0" role="region" aria-label="The panel as a table">'
+      + '<table><caption>Daily curves (FRED, constant maturity, % a year)</caption><thead><tr><th scope="col">Day</th><th scope="col">3M</th><th scope="col">2Y</th><th scope="col">5Y</th><th scope="col">10Y</th><th scope="col">30Y</th><th scope="col">What it is</th></tr></thead><tbody>' + dl + '</tbody></table>'
+      + '<table><caption>Monthly averages, newest first (% a year; spread in points; MOVE in index points; deals in $bn)' + (nov.length ? '. November 2026 deals: ' + nov.map(function (d) { return d.who + ' ' + (+d.a).toFixed(1); }).join('; ') : '') + '</caption><thead><tr><th scope="col">Month</th><th scope="col">3M</th><th scope="col">2Y</th><th scope="col">5Y</th><th scope="col">10Y</th><th scope="col">30Y</th><th scope="col">Baa</th><th scope="col">Spread</th><th scope="col">MOVE</th><th scope="col">Bond deals</th></tr></thead><tbody>' + r + '</tbody></table></div>';
+  }
+  function panelHTML() {
+    if (BP === null) return '<section class="vw-p bx" data-rel="Y10~BAA"><p class="vw-x">Loading the series.</p></section>';
+    if (BP === false) return '<section class="vw-p bx"><p class="vw-x">The series could not be loaded.</p></section>';
+    if (bx.i < 0 || bx.i > N()) bx.i = N();
+    LG = box && box.clientWidth && box.clientWidth < 640 ? LGN : LGW;
+    return '<section class="vw-p bx" data-rel="Y10~BAA"><div class="bx-h"><div><div class="pk">Level 2 · one market, three readings</div><h4>Treasuries, corporate credit and volatility</h4></div>'
+      + '<button type="button" class="bx-tg" data-bxt aria-pressed="' + bx.table + '">' + (bx.table ? 'View as charts' : 'View as table') + '</button></div>'
+      + chipsHTML()
+      + (bx.table ? tableHTML() : '<div class="bx-g"><figure class="bx-l"><figcaption class="lt2">The Treasury curve <span data-cvlab></span></figcaption><div class="bx-cvh"></div></figure>'
+        + '<figure class="bx-r"><div class="bx-sl" role="slider" tabindex="0" aria-label="Month on the time axis; the curve on the left follows it" aria-valuemin="0" aria-valuemax="' + N() + '" aria-describedby="isx-bx-alt">' + lanesSVG() + '</div>'
+        + '<p class="sr" id="isx-bx-alt">' + e(lanesAlt()) + '</p><p class="bx-ro"></p>' + jumpsHTML() + '</figure></div>')
+      + '<p class="vw-x bx-cap">The corporate yield is Moody’s average of seasoned Baa-rated bonds: the whole corporate market, not the AI borrowers, whose own bond yields are not collected here. Monthly averages flatten spikes (March 2020 and March 2023 were sharper day to day). The curve’s points are constant-maturity yields, the 3-month too; the same bill quoted on a discount basis reads lower (4.12% against 4.30% on 10 November 2026). Deals: the page’s filing list to ' + e(X.dealsCut || '8 Nov 2026') + ', the five firms only; Alphabet reports its sales as period totals with no single date, so they are not on the axis, and Microsoft’s $25bn (29 Oct 2026) and Meta’s $15bn (3 Nov 2026) are not in the list yet. *Date or amount from press reports.</p>'
+      + src('FRED (St. Louis Fed): DGS3MO, DGS2, DGS5, DGS10, DGS30 (Fed H.15) and BAA (Moody’s), monthly averages of daily values, and the daily curves of 12 Nov 2026, 10 Nov 2025 and 5 Oct 2026; ICE BofA MOVE Index (Yahoo Finance ^MOVE), monthly average of daily closes; all read 14 Nov 2026 (data round F7 and block A). Deals: company filings, as listed under “Shares and bonds sold”.') + '</section>';
+  }
+  function bxSet(i) {
+    if (!BP || !box) return; var n = N(); bx.i = Math.max(0, Math.min(n, i));
+    var cvh = box.querySelector('.bx-cvh'); if (cvh) cvh.innerHTML = curveSVG(bx.i);
+    var cl = box.querySelector('[data-cvlab]'); if (cl) { var c = curveAt(bx.i); cl.textContent = '· ' + c.lab + ', ' + c.kind.split(',')[0]; }
+    var g = box.querySelector('.bx-ln .cur'); if (g) {
+      g.setAttribute('transform', 'translate(' + lx(bx.i).toFixed(1) + ',0)');
+      [['y10', ly1], ['baa', ly1], ['move', ly2]].forEach(function (q) { var d = g.querySelector('.cd.' + q[0]); if (bx.i < n) { d.setAttribute('cy', q[1](BP[q[0]][bx.i]).toFixed(1)); d.style.display = ''; } else d.style.display = 'none'; });
+    }
+    var ro = readout(bx.i), r = box.querySelector('.bx-ro'); if (r) r.textContent = ro;
+    var sl = box.querySelector('.bx-sl'); if (sl) { sl.setAttribute('aria-valuenow', String(bx.i)); sl.setAttribute('aria-valuetext', ro); }
+    box.querySelectorAll('[data-cv]').forEach(function (b) { b.textContent = laneVal(b.dataset.cv, bx.i); });
+    var nt = box.querySelector('.bx-note'); if (nt) nt.innerHTML = noteHTML();
+  }
+  function bxLane(k) {
+    bx.lane = k; if (!box) return;
+    box.querySelectorAll('.bx-chip').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lane === k)); });
+    var svg = box.querySelector('.bx-ln'); if (svg) svg.setAttribute('data-hl', k);
+    var nt = box.querySelector('.bx-note'); if (nt) nt.innerHTML = noteHTML();
+  }
+  function bxWire() {
+    if (!BP || !box || !box.querySelector('.bx')) return;
+    bxSet(bx.i); bxLane(bx.lane);
+    var sl = box.querySelector('.bx-sl'); if (!sl) return;
+    var svg = sl.querySelector('svg'), drag = false;
+    var at = function (ev) { var r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * LG.W; return Math.round((x - LG.x0) / (LG.x1 - LG.x0) * (N() + 1) - .5); };
+    sl.addEventListener('pointerdown', function (ev) { drag = true; try { sl.setPointerCapture(ev.pointerId); } catch (x) { /* ignore */ } bxSet(at(ev)); });
+    sl.addEventListener('pointermove', function (ev) { if (drag) bxSet(at(ev)); });
+    sl.addEventListener('pointerup', function () { drag = false; }); sl.addEventListener('pointercancel', function () { drag = false; });
+    sl.addEventListener('keydown', function (ev) {
+      var k = ev.key, d = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageDown: -12, PageUp: 12 }[k];
+      if (d) { ev.preventDefault(); bxSet(bx.i + d); } else if (k === 'Home') { ev.preventDefault(); bxSet(0); } else if (k === 'End') { ev.preventDefault(); bxSet(N()); }
+    });
   }
   function bondHTML() {
     if (lvl === 1) return '<div class="vw-tiles">'
-      + fig('10-year yield · what the US government pays to borrow for ten years', '5.14%', 'October 2026 average; touched 5.33%', 'Fed H.15 via FRED; Cboe (19 Oct 2026), on the page')
+      + fig('10-year yield · what the US government pays to borrow for ten years', '5.13%', 'October 2026 average; touched 5.33% intraday', 'Fed H.15 via FRED DGS10; Cboe (19 Oct 2026) for the intraday high')
       + fig('Bond volatility (MOVE) · expected swings in Treasury yields over a month', '≈100', 'Week to 16 Oct 2026 · 92nd–94th percentile', 'Cboe (19 Oct 2026), on the page') + '</div>'
       + '<div class="vw-halves">' + panel('pub', 'Public bonds', 'Treasuries', fig('Gross federal debt', '$40.25tn', 'Oct 2026', 'Circuit, step 08') + fig('Bills, share of marketable debt', '22.2%', 'Jul 2026', 'US Treasury financing estimates, via TrendForce (Aug 2026)') + fig('Deficit', '$1,992bn', 'Fiscal 2026', 'CBO (9 Nov 2026)'), 'TSY>PUB')
-      + '<div class="vw-link" data-rel="BND>PUB"><div class="ll"><span>Same buyers, two borrowers.</span><em>Crowding out: Elias Rutten’s reading. The evidence is mixed.</em></div><p>AI bonds and Treasuries compete for the same long-term buyers; in Elias Rutten’s reading, the more the build-out borrows, the less room is left for the state’s own debt, which is why liquidity has to be injected. Measured so far: other non-financial borrowers’ net issuance has turned negative, while their spreads have not widened (PIMCO, September 2026).</p></div>'
+      + '<div class="vw-link" data-rel="BND>PUB"><div class="ll"><span>Same buyers, two borrowers.</span><em>Crowding out: Elias Rutten’s reading. The evidence is mixed: level 2 shows both sides.</em></div><p>AI bonds and Treasuries compete for the same long-term buyers; in Elias Rutten’s reading, the more the build-out borrows, the less room is left for the state’s own debt, which is why liquidity has to be injected. Measured so far: other non-financial borrowers’ net issuance has turned negative, while their spreads have not widened (PIMCO, September 2026).</p></div>'
       + panel('prv', 'Private bonds', 'The build-out', fig('Build-out bonds sold', F.bonds, '12 months to 8 Nov 2026', 'Company filings (the page’s list)') + fig('of which in other currencies', '≈$73bn*', '12 months to 8 Nov 2026', '*Summed from the filing rows; the data round counts ≈$88bn, with Alphabet’s and Meta’s euro deals of 2 and 4 November') + fig('AI borrowers’ share of non-financial dollar investment-grade supply', 'almost one quarter', '2026 to date', 'PIMCO with Bloomberg (23 Sep 2026)')) + '</div>'
+      ;
+    return panelHTML()
       + '<div class="vw-test"><div class="pk">The relation, tested</div><ul>'
       + '<li class="for"><b>For it</b><p>Net issuance by non-AI non-financial issuers turned negative in 2025 and stayed negative in 2026.</p>' + src('PIMCO, on the ICE BofA dollar investment-grade index (31 Aug 2026). The chart’s numbers are not in its text: not collected.') + '</li>'
       + '<li class="ag"><b>Against it</b><p>Spreads of non-AI issuers have not widened, while the AI borrowers’ spreads have. Goldman Sachs reaches the same conclusion on spreads.</p>' + src('PIMCO (23 Sep 2026); Goldman Sachs via mezha.net (Aug 2026), a secondary source; the note itself: link not stored.') + '</li>'
       + '<li class="ag"><b>Against it, the Treasury channel</b><p>AI bond supply against Treasuries shows no clear sign in nominal yields, term premia or swap spreads.</p>' + src('PIMCO, “The Credit Market Lens: Hyperscalers Are Repricing, Not Displacing (So Far)” (Sep 2026).') + '</li></ul>'
-      + '<p class="vw-x">PIMCO reads the fall in long-dated non-AI net issuance as companies timing maturity to Treasury yields, not as displacement; their gross issuance is still up on a year earlier. Elias Rutten’s reading is balance-sheet crowding out: the same limited capacity of dealers, insurers and pension funds holds both borrowers’ long bonds.</p></div>';
-    return '<div class="vw-grid2">'
-      + panel('y10', 'Level 2', '10-year yield and the curve', curveSVG() + fig('10-year minus 3-month', '0.90 points', 'October 2026 average', 'FRED T10Y3M (data round, 14 Nov 2026)') + fig('10-year minus 2-year', '0.39 points', 'October 2026 average', 'FRED T10Y2Y. *The 3-month and 2-year levels on the chart are derived from these spreads; the 30-year was not collected for the same period')
+      + '<p class="vw-x">PIMCO reads the fall in long-dated non-AI net issuance as companies timing maturity to Treasury yields, not as displacement; their gross issuance is still up on a year earlier. Elias Rutten’s reading is balance-sheet crowding out: the same limited capacity of dealers, insurers and pension funds holds both borrowers’ long bonds.</p></div>'
+      + '<details class="vw-more"><summary>More figures: the curve’s spreads and term premium, the operation aimed at volatility, both halves in detail</summary><div class="vw-grid2">'
+      + panel('y10', 'Level 2', 'Beside the curve', fig('10-year minus 3-month', '0.90 points', 'October 2026 average', 'FRED T10Y3M (data round, 14 Nov 2026)') + fig('10-year minus 2-year', '0.39 points', 'October 2026 average', 'FRED T10Y2Y (data round, 14 Nov 2026)')
         + fig('Term premium (Kim–Wright)', '1.01 points', 'October 2026 average; 0.96 in September', 'Federal Reserve Board, via FRED THREEFYTP10. The New York Fed’s ACM series: not found')
-        + reading('RD-M1', 'Held below the market’s own price', 'The map’s reading: without the operations of the two desks, long yields would be higher. Michael Howell calls it yield-curve control by stealth. Measured beside it: the 10-year still touched 5.33% in October 2026.', 'The map’s reading; Howell, shared by Elias Rutten.'))
-      + panel('mov', 'Level 2', 'Bond volatility (MOVE)', '<p class="vw-x">How far traders expect Treasury yields to swing over the next month, in basis points a year; about 100 means swings of about 6 basis points a day.</p>' + fig('MOVE', '≈100', '99–102 in the week to 16 Oct 2026 · 92nd–94th percentile', 'Cboe (19 Oct 2026), on the page')
+        + reading('RD-M1', 'Held below the market’s own price', 'The map’s reading: without the operations of the two desks, long yields would be higher. Michael Howell calls it yield-curve control by stealth. Measured beside it: the 10-year still touched 5.33% intraday in October 2026.', 'The map’s reading; Howell, shared by Elias Rutten.'))
+      + panel('mov', 'Level 2', 'Aimed at volatility', fig('MOVE', '≈100', '99–102 in the week to 16 Oct 2026 · 92nd–94th percentile', 'Cboe (19 Oct 2026), on the page')
         + fig('The operation aimed at it: Treasury buybacks of long bonds', '$39.3bn', 'Seven operations of up to $6bn, 10 Sep to 4 Nov 2026', 'US Treasury operations as compiled by TFTC, a secondary source (data round); up to $70bn expected “for liquidity support” (Reuters, 4 Nov 2026)')
-        + '<p class="vw-x">In Elias Rutten’s reading, low volatility, not the level of yields, is what the house controls: calm lowers haircuts and lets the same capital carry more bonds.</p><button type="button" class="vw-go" data-vw="desks" data-vr="house">The house always prints ›</button>')
+        + '<button type="button" class="vw-go" data-vw="desks" data-vr="house">The house always prints ›</button>')
       + panel('pub', 'Level 2', 'Public bonds: Treasuries', fig('Debt held by the public', '$32.82tn', '12 Nov 2026', 'Treasury Fiscal Data, Debt to the Penny; gross $40.61tn the same day (the page’s $40.25tn is October)') + fig('Bills, share of marketable debt', '22.96%', '31 Oct 2026 · 14.49% at the end of 2019', 'Monthly Statement of the Public Debt (data round); 22.2% in July, on the page')
         + fig('Net issuance, bills against coupons', '$834bn · $1,045bn', '2026 to 31 Oct', 'Computed from the Monthly Statement of the Public Debt: changes in the amounts outstanding, not gross auction sizes') + fig('Deficit · net interest', '$1,992bn · $1,142bn', 'Fiscal 2026', 'CBO (9 Nov 2026)'), 'TSY>PUB')
       + panel('prv', 'Level 2', 'Private bonds: the build-out', fig('Bonds sold by build-out firms', F.bonds, '12 months to 8 Nov 2026', 'Company filings (the page’s list)') + fig('Cover ratios on hyperscaler bonds', 'nearly 5× to under 2×', 'February to July 2026', 'Apollo, on the page') + fig('Bonds issued in 2026 trading at higher yields than at issue', '78 of 91', '28 Jul 2026', 'Reuters (29 Jul 2026), on the page')
-        + fig('Loans behind data centres', '–', '', 'Morgan Stanley’s forecast of about $800bn of private credit to 2028 (Aug 2025) is on the page', 'Not measured: no source gives a total; the partial figures use different definitions and must not be added.')) + '</div>'
+        + fig('Loans behind data centres', '–', '', 'Morgan Stanley’s forecast of about $800bn of private credit to 2028 (Aug 2025) is on the page', 'Not measured: no source gives a total; the partial figures use different definitions and must not be added.')) + '</div></details>'
       + '<section class="vw-p ccy" data-rel="BND>CUR"><div class="pk">Level 2 · currencies of the alliance</div><h4>Borrowed abroad: ≈$88bn in six currencies, 12 months to 8 Nov 2026</h4>'
       + '<p class="vw-x">The build-out also borrows in the allies’ own currencies. In Elias Rutten’s reading this is a second place of crowding out: AI bonds take room in the euro, sterling, Swiss and Canadian markets that other borrowers there would use. The amounts are measured; the crowding out is his reading, and for these markets it is not measured here.</p>'
       + '<div class="vw-ccy" role="table" aria-label="Big tech bond issuance by currency"><div class="ch" role="row"><span role="columnheader">Currency</span><span role="columnheader">(a) Amount</span><span role="columnheader">(b) Weight in its market</span></div>'
@@ -126,7 +272,7 @@
       + '<button type="button" class="vw-go play" data-vplay="10">Run the play “Coordinate with the Fed” ›<small>Speculative: its links are connections, not a recorded plan.</small></button>'
       + '<section class="vw-p ops"><div class="pk">The operations · each is a lever on the map, dated</div><ul class="vw-ops">' + OPS.map(function (o) { return '<li><button type="button" class="vw-lev" data-vlev="' + o[4] + '"><b>' + e(o[0]) + '</b><span>' + e(o[1]) + '</span></button><p>' + e(o[2]) + '</p>' + src(o[3]) + '</li>'; }).join('') + '</ul></section>'
       + '<div class="vw-rds">'
-      + reading('RD-M1', 'Held below the market’s own price', 'The operations hold long yields and the cost of long-term borrowing below what the market alone would set. Michael Howell calls it yield-curve control by stealth. Measured beside it: the 10-year still touched 5.33% in October 2026.', 'The map’s reading; Howell, shared by Elias Rutten.')
+      + reading('RD-M1', 'Held below the market’s own price', 'The operations hold long yields and the cost of long-term borrowing below what the market alone would set. Michael Howell calls it yield-curve control by stealth. Measured beside it: the 10-year still touched 5.33% intraday in October 2026.', 'The map’s reading; Howell, shared by Elias Rutten.')
       + reading('RD-M2', 'Oil below what supply and demand alone would give', 'Oil prices stay below what supply and demand alone would give, through algorithmic trading and the flow of headlines. Brent fell almost 6% on 9 November 2026, the day a Saudi pipeline fire was reported, and below $90 on 10 November.', 'Elias Rutten (“Why Oil Falls When Pipelines Burn”, 10 Nov 2026); the map’s reading.')
       + '</div>'
       + '<aside class="vw-rd house" data-rd="house" id="isx-vw-house"><div class="pk">Reading · Elias Rutten</div><h4>The house always prints</h4><p>In Elias Rutten’s reading, the money printer never stopped: the Treasury, the Fed and the banks split the work in four steps, so that none of them prints money alone. It is not cheap money, he argues: it is secret money printing.</p>'
@@ -147,8 +293,9 @@
     box.setAttribute('aria-label', 'Inside the machinery: ' + W.t);
     box.dataset.v = cur; box.dataset.l = String(lvl);
     box.innerHTML = '<header class="vw-h"><div><div class="pk">Inside the machinery' + (cur === 'bond' ? ' · level ' + lvl + ' of 2' : '') + '</div><h3 id="isx-vw-t">' + e(W.t) + '</h3><p>' + e(W.s) + '</p></div>'
-      + (cur === 'bond' ? '<button type="button" class="vw-zoom" data-vlvl="' + (lvl === 1 ? 2 : 1) + '">' + (lvl === 1 ? 'Zoom in: curve, volatility, currencies' : 'Zoom out: the main figures') + '</button>' : '')
+      + (cur === 'bond' ? '<button type="button" class="vw-zoom" data-vlvl="' + (lvl === 1 ? 2 : 1) + '">' + (lvl === 1 ? 'Zoom in: yields, credit and volatility' : 'Zoom out: the main figures') + '</button>' : '')
       + '<button type="button" class="vw-x1" data-vclose aria-label="Close this view">×</button></header><div class="vw-b" tabindex="0" role="group" aria-labelledby="isx-vw-t">' + W.html() + '</div>';
+    if (cur === 'bond' && lvl === 2) bxWire();
     if (focusRel) { var t = box.querySelector('[data-rel="' + focusRel + '"], [data-rd="' + focusRel + '"]'); if (t) { t.classList.add('hl'); setTimeout(function () { t.scrollIntoView({ block: 'nearest', behavior: X.reduce ? 'auto' : 'smooth' }); }, 60); } }
   }
   function open(id, o) {
@@ -177,6 +324,9 @@
       var b = ev.target.closest('button'); if (!b || !box.contains(b)) return;
       var d = b.dataset; ev.stopPropagation();
       if (d.vclose != null) { close(); return; }
+      if (d.lane) { bxLane(d.lane); return; }
+      if (d.bxt != null) { bx.table = !bx.table; draw(); var tg = box.querySelector('.bx-tg'); if (tg) tg.focus({ preventScroll: true }); return; }
+      if (d.bxj) { bxSet(d.bxj === 'latest' ? N() : BP.m.indexOf(d.bxj)); return; }
       if (d.vlvl) { lvl = +d.vlvl; draw(); var z = box.querySelector('.vw-zoom'); if (z) z.focus({ preventScroll: true }); box.querySelector('.vw-b').scrollTop = 0; return; }
       if (d.vw) { cur = d.vw; lvl = 1; draw(d.vr); var c = box.querySelector('.vw-x1'); if (c) c.focus({ preventScroll: true }); return; }
       if (d.kid != null) {
