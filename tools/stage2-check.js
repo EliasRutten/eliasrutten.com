@@ -85,7 +85,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
   ok('simulator: card, bar with first principles and eight chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 9 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
-  await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(300);
+  if (await p.$('#isx-sn-body [data-way="guide"]')) { await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(300);
   /* B1: → never chooses. At a choice the walk takes what happened on the card, then goes on with → */
   let worst = 0, n = 0, deepOk = true; const cnts = new Set();
   for (let i = 0; i < 90; i++) {
@@ -102,7 +102,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
   ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
   /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:1"]').click()); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:13"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-chip.lv2').click()); await p.waitForTimeout(300);
   ok('guide: a lever opens its dossier in the card, without a tray', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever pulled/.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none' && document.getElementById('isx-s2tray-lev').hidden; }));
@@ -118,17 +118,18 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
   ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 7 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
-  await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(250);
+  if (await p.$('#isx-sn-body [data-way="guide"]')) { await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(250);
   /* B1-4: a decision is its own card between two steps; the other path is a chain of reveals that ends on a crisis card */
+  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:18"]').click()); await p.waitForTimeout(300); /* tiers A: the first decision now follows step 19 */
   ok('guide: the step before a decision says so on Next', await p.evaluate(() => /Next · your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at Treasury/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
+  ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at the White House/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
   await p.click('#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(300);
   const chain = [];
   for (let i = 0; i < 9; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
-  ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 7 && chain.slice(0, 6).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[6].k) && /Back to\s*What happened/i.test(chain[6].nx), chain);
+  ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 6 && chain.slice(0, 5).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[5].k) && /Back to\s*What happened/i.test(chain[5].nx), chain);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^02\/49$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Keep selling long bonds/.test(b.querySelector('.dyou').textContent) && /Washington sold more bills\./.test(b.querySelector('.dyou').textContent); }));
+  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^20\/49$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Let the market price the war/.test(b.querySelector('.dyou').textContent) && /Washington added barrels and managed the news\./.test(b.querySelector('.dyou').textContent); }));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
