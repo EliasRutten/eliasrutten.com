@@ -1,0 +1,179 @@
+/* The Imperial Stack v2 · b4.css (round B4, 16 Nov 2026)
+   1. The Arm: the machine in two geometries, the bands, the card, the sheet (S4 §2)
+   2. The Revenue map: its card and kicker on the stage (S4 §2.6)
+   3. One look across all tabs (S4 §3)
+   4. Essay, support and “See a mistake?” (S4 §4)
+   Scoped under #isx-root; linked after b3.css. */
+
+/* ---------- 1. the Arm ---------- */
+#isx-root.v-arm .below > .row { display: none; }   /* the narrative, the card and the legend below the fold repeated the card on the stage */
+#isx-root .b4kick { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .b4hint { margin: 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink3); pointer-events: none; }
+#isx-root .b4hint[hidden] { display: none; }
+#isx-root #isx-scene-arm .abands { display: none; }
+@media (min-width: 761px) {
+  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm { position: relative; }
+  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .b4kick, #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .b4hint { position: absolute; z-index: 5; max-width: calc(100% - 44px); }
+  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flat { position: absolute; padding: 0; margin: 0; max-width: none; }
+  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flatin { width: 100%; height: 100%; max-width: none; margin: 0; }
+  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flat svg { width: 100%; height: 100%; }
+  #isx-root.v-arm .tabs-bottom.rt-host { left: 16px; right: 16px; bottom: 12px; }
+  /* bands on a tablet in portrait: the page scrolls under the bar, as on phones */
+  #isx-root.v-arm.arm-bands .tabs-bottom.rt-host { position: sticky; z-index: 12; bottom: 12px; margin: 14px 16px 12px; }
+}
+#isx-root.v-arm.arm-bands #isx-scene-arm .flat { display: none; }
+#isx-root.v-arm.arm-bands #isx-scene-arm .abands { display: grid; padding: 0 16px; }
+#isx-root.v-arm.arm-bands #isx-scene-arm .b4kick { margin: 0 16px 6px; }
+#isx-root.v-arm.arm-bands #isx-scene-arm .b4hint { margin: 0 16px 10px; }
+@media (min-width: 761px) {
+  #isx-root.v-arm.arm-bands #isx-scene-arm { padding-top: 132px; }
+  #isx-root.v-arm.arm-bands #isx-scene-arm .abands { padding: 0 22px; }
+  #isx-root.v-arm.arm-bands #isx-scene-arm .b4kick, #isx-root.v-arm.arm-bands #isx-scene-arm .b4hint { margin-left: 22px; margin-right: 22px; }
+}
+@media (max-width: 760px) { #isx-root.v-arm #isx-scene-arm { padding-top: 14px; } }
+
+/* the machine */
+#isx-root #isx-arm [data-a] { cursor: pointer; outline: none; }
+#isx-root #isx-arm .bandlab { font-size: 12.5px; letter-spacing: .16em; fill: #9aabba; }
+#isx-root #isx-arm.cmp .bandlab { font-size: 13.5px; }
+#isx-root #isx-arm.cmp .stitle { font-size: 15px; letter-spacing: .07em; fill: var(--ink); }
+#isx-root #isx-arm .ssub { font-family: var(--mono); font-size: 13.5px; fill: #8193a2; pointer-events: none; }
+#isx-root #isx-arm .shead { cursor: pointer; }
+#isx-root #isx-arm .mnode, #isx-root #isx-arm .sbox, #isx-root #isx-arm .frow { transition: opacity var(--mo-t, .4s) var(--mo, ease); }
+#isx-root #isx-arm .mnode.dim, #isx-root #isx-arm .sbox.dim { opacity: .32; }
+#isx-root #isx-arm .frow.dim { opacity: .45; }
+#isx-root #isx-arm .mnode.lit rect, #isx-root #isx-arm .sbox.lit .sframe { stroke: var(--sc, #e4ebf1); stroke-opacity: .8; stroke-width: 1.3; }
+#isx-root #isx-arm .mnode.sel rect, #isx-root #isx-arm .sbox.sel .sframe { stroke: #fff; stroke-opacity: 1; stroke-width: 1.8; filter: drop-shadow(0 0 5px rgba(255, 255, 255, .32)); }
+#isx-root #isx-arm .sbox.own .sframe { stroke: rgba(255, 255, 255, .55); }
+#isx-root #isx-arm .frow.sel .fbg { fill: rgba(255, 255, 255, .1); stroke: #fff; stroke-width: 1; }
+#isx-root #isx-arm .frow:hover .fbg { fill: rgba(255, 255, 255, .06); }
+#isx-root #isx-arm .mnode:focus-visible rect, #isx-root #isx-arm .shead:focus-visible .sframe, #isx-root #isx-arm .frow:focus-visible .fbg { stroke: #ffd27a; stroke-width: 2; }
+#isx-root .atip .tk { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink3); margin-top: 3px; }
+
+/* the bands */
+#isx-root .abands { gap: 0; }
+#isx-root .aband { border: 1px solid var(--line); border-radius: 14px; background: rgba(12, 20, 29, .55); padding: 10px; }
+#isx-root .abh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 2px 8px; }
+#isx-root .abh .bl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .abh .bn { font-family: var(--mono); font-size: 10.5px; color: var(--ink3); text-align: right; }
+#isx-root .achips { display: grid; gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#isx-root .achips.st { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (min-width: 761px) { #isx-root .achips.st, #isx-root .achips.ec { grid-template-columns: repeat(5, minmax(0, 1fr)); } #isx-root .achips.sec { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+#isx-root .ach { position: relative; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px 6px 12px; border: 1px solid #22313f; border-radius: 10px; background: #0b131b; color: var(--ink); text-align: left; cursor: pointer; transition: opacity var(--mo-t, .4s) var(--mo, ease), border-color .3s, background .3s, box-shadow .3s; }
+#isx-root .ach .cn { min-width: 0; font-family: var(--sans); font-weight: 500; font-size: 13px; line-height: 1.2; color: var(--ink); }
+#isx-root .ach.sc .cn { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .05em; text-transform: uppercase; }
+#isx-root .ach .cs { display: block; margin-top: 2px; font-family: var(--mono); font-size: 10.5px; font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--ink3); }
+#isx-root .ach .cc { flex: none; min-width: 2ch; text-align: right; font-family: var(--mono); font-size: 12px; color: var(--ink2); }
+#isx-root .ach.rl::before { content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--rc); }
+#isx-root .ach.ec { border-style: dashed; }
+#isx-root .ach.musk { border-color: rgba(255, 181, 71, .6); border-style: dashed; background: #15110a; }
+#isx-root .ach.musk .cn { color: #ffcf7a; }
+#isx-root .ach.dim { opacity: .32; }
+#isx-root .ach.lit { border-color: var(--lc); background: color-mix(in srgb, var(--lc) 9%, #0b131b); }
+#isx-root .ach.sel { border-color: #fff; box-shadow: 0 0 0 1px #fff, 0 0 16px rgba(255, 255, 255, .18); }
+#isx-root .ach:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .agut { display: flex; align-items: center; gap: 10px; padding: 8px 6px; }
+#isx-root .agut .gl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink3); white-space: nowrap; }
+#isx-root .agut .gl b { font-weight: 400; color: var(--ink); }
+#isx-root .agut .ar { color: var(--ink3); font-size: 12px; }
+#isx-root .agut .gbar { flex: 1; display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: #0f1821; }
+#isx-root .agut .gbar i { display: block; height: 100%; }
+@media (max-width: 420px) { #isx-root .agut .gl { white-space: normal; } }
+
+/* the card on the stage: one glass card, the same anatomy as every tab (rule 7) */
+#isx-root .b4card { box-sizing: border-box; z-index: 6; background: rgba(10, 18, 27, .86); border: 1px solid #1a2631; border-radius: 14px; padding: 16px 18px 14px; color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+#isx-root .b4card:empty { display: none; }
+#isx-root .b4card.col, #isx-root .b4card.strip { position: absolute; }
+#isx-root .b4card.col { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #2a3a4a transparent; }
+#isx-root .b4card.flow { position: relative; margin: 14px 16px 0; }
+@media (min-width: 761px) { #isx-root .b4card.flow { margin: 14px 22px 0; } }
+#isx-root .b4k { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .b4k > span { min-width: 0; }
+#isx-root .b4k .cnt { flex: none; font-variant-numeric: tabular-nums; }
+#isx-root .b4k .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; vertical-align: 0; }
+#isx-root .b4t { margin: 8px 0 6px; font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1.1; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); text-wrap: balance; }
+#isx-root .b4card p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+#isx-root .b4fig { display: flex; align-items: baseline; gap: 10px; margin: 12px 0 2px; padding-top: 10px; border-top: 1px dashed #233243; }
+#isx-root .b4fig b { flex: none; font-family: var(--mono); font-weight: 400; font-size: 24px; color: var(--sc, var(--ink)); }
+#isx-root .b4fig span { font-size: 12.5px; line-height: 1.35; color: var(--ink2); }
+#isx-root .b4acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+#isx-root .b4b2 { height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(255, 255, 255, .03); font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); cursor: pointer; white-space: nowrap; transition: border-color .2s, background .2s; }
+#isx-root .b4b2:hover { border-color: rgba(255, 255, 255, .34); background: rgba(255, 255, 255, .06); }
+#isx-root .b4b2[aria-expanded="true"] svg { transform: rotate(90deg); }
+#isx-root .b4b2 svg { transition: transform var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .b4lk { margin: 16px 0 4px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .b4empty { font-size: 13.5px; color: var(--ink3); }
+/* the relations: the Arm's legend is the card's list (rule 10) */
+#isx-root .arl { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 2px; }
+#isx-root .arl button { width: 100%; height: 56px; display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 0 8px; border-radius: 8px; border: 1px solid transparent; background: none; color: var(--ink); text-align: left; cursor: pointer; }
+#isx-root .arl button:hover, #isx-root .arl button[aria-current="true"] { border-color: #22313f; background: rgba(255, 255, 255, .025); }
+#isx-root .arl .sw { width: 12px; height: 3px; border-radius: 2px; }
+#isx-root .arl .rx { min-width: 0; }
+#isx-root .arl .rn { display: block; font-family: var(--display); font-weight: 600; font-size: 13.5px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .arl .rt { display: block; margin-top: 1px; font-size: 12.5px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .arl .rc { font-family: var(--mono); font-size: 12px; color: var(--ink2); }
+/* links, as in the old phone list */
+#isx-root .b4list, #isx-root .b4sh-b { --lkc: var(--ink2); }
+#isx-root .b4list { margin-top: 10px; border-top: 1px solid #1b2733; }
+#isx-root .b4list .lk, #isx-root .b4sh-b .lk { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-bottom: 1px solid #111b25; font-size: 13.5px; line-height: 1.45; color: var(--ink2); }
+#isx-root .b4list .lk i, #isx-root .b4sh-b .lk i { width: 14px; height: 3px; border-radius: 2px; margin-top: .62em; }
+#isx-root .b4list .lk b, #isx-root .b4sh-b .lk b { color: var(--ink); font-weight: 500; }
+#isx-root .b4list .fname, #isx-root .b4sh-b .fname { margin: 12px 0 2px; font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+#isx-root .b4list .fname small, #isx-root .b4sh-b .fname small { margin-left: 6px; font-family: var(--sans); font-weight: 400; font-size: 12.5px; letter-spacing: 0; text-transform: none; color: var(--ink3); }
+/* the card as a strip under the map (761 to 1179 px) */
+#isx-root .b4card.strip { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto minmax(0, 1fr); column-gap: 22px; padding: 12px 18px; overflow: hidden; }
+#isx-root .b4card.strip > .b4k { grid-column: 1; }
+#isx-root .b4card.strip > .b4t { grid-column: 1; margin: 5px 0 4px; font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .b4card.strip > .b4sl { grid-column: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 230px); gap: 18px; align-items: start; min-height: 0; }
+#isx-root .b4card.strip .b4sl p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; line-height: 1.5; }
+#isx-root .b4card.strip .b4sl .b4fig { margin: 0; padding: 0 0 0 14px; border-top: 0; border-left: 1px dashed #233243; align-items: center; }
+#isx-root .b4card.strip .b4sl .b4fig span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#isx-root .b4card.strip > .b4acts { grid-column: 2; grid-row: 1 / span 3; flex-direction: column; justify-content: center; margin: 0; }
+@media (max-width: 760px) { #isx-root .b4t { font-size: 22px; } }
+
+/* the sheet: a tray that rises from the bar, a bottom sheet on phones (rule 9) */
+#isx-root .b4sheet { position: absolute; z-index: 14; left: 16px; bottom: 80px; width: min(440px, calc(100% - 32px)); max-height: 60%; display: flex; flex-direction: column; background: #091017; border: 1px solid #2a3a4a; border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--mo-t, .4s) var(--mo, ease), transform var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .b4sheet[hidden] { display: none; }
+#isx-root .b4sheet.on { opacity: 1; transform: none; pointer-events: auto; }
+#isx-root.v-arm.arm-bands .b4sheet { position: fixed; left: 50%; bottom: 84px; width: min(620px, calc(100vw - 32px)); max-height: 56vh; transform: translate(-50%, 12px); }
+#isx-root.v-arm.arm-bands .b4sheet[data-kind="sel"] { max-height: 46vh; }
+#isx-root.v-arm.arm-bands .b4sheet.on { transform: translate(-50%, 0); }
+#isx-root .b4sh-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--line); }
+#isx-root .b4sh-h h3 { margin: 4px 0 0; font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.15; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+#isx-root .b4x { flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid #2a3a4a; background: none; color: var(--ink2); font-size: 18px; line-height: 1; cursor: pointer; }
+#isx-root .b4x:hover { color: #fff; border-color: #8fa3b6; }
+#isx-root .b4sh-b { overflow-y: auto; overscroll-behavior: contain; padding: 8px 16px 16px; }
+#isx-root .b4sh-b > p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink2); }
+#isx-root .b4scrim { position: fixed; inset: 0; z-index: 13; background: rgba(2, 4, 7, .45); }
+#isx-root .b4scrim[hidden] { display: none; }
+@media (max-width: 760px) {
+  #isx-root .b4sheet, #isx-root.v-arm.arm-bands .b4sheet { position: fixed; left: 0; right: 0; bottom: 0; width: auto; max-height: 72vh; border-radius: 18px 18px 0 0; border-width: 1px 0 0; transform: translateY(102%); opacity: 1; }
+  #isx-root .b4sheet[data-kind="sel"], #isx-root.v-arm.arm-bands .b4sheet[data-kind="sel"] { max-height: 54vh; }
+  #isx-root.v-arm #isx-scene-arm .b4kick { white-space: normal; line-height: 1.6; }
+  #isx-root .b4sheet.on, #isx-root.v-arm.arm-bands .b4sheet.on { transform: none; }
+  #isx-root .b4sh-b { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+}
+/* the bar: a gap between the relation groups on phones */
+#isx-root .rt-host .rt .rt-m.gp { flex: 0 0 4px; max-width: 4px; visibility: hidden; }
+
+/* ---------- 2. the Revenue map ---------- */
+#isx-root:not(.arm-rev) .rkick, #isx-root:not(.arm-rev) #isx-scene-map > .acard { display: none; }
+@media (min-width: 761px) {
+  #isx-root.arm-rev .rkick { position: absolute; z-index: 5; }
+  #isx-root.rev-col #isx-hint { left: 378px; }
+  #isx-root.rev-col #isx-scene-map .globebox { left: 170px; }   /* the globe centres in the room the card leaves */
+}
+@media (max-width: 760px) { #isx-root.arm-rev .rkick { margin: 6px 16px 0; } }
+#isx-root .acard .ftable { margin-top: 6px; }
+#isx-root .acard .stats { margin: 12px 0 2px; }
+
+/* ---------- 3. one look across all tabs (S4 §3) ---------- */
+/* rule 4 · “The mechanism”: a full-width disclosure row in the card foot, 36 px, mono caps, a chevron */
+#isx-root .b4mech { margin-top: 12px; border-top: 1px solid #1b2733; }
+#isx-root .b4mech > summary { height: 36px; display: flex; align-items: center; justify-content: space-between; gap: 10px; list-style: none; cursor: pointer; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .b4mech > summary::-webkit-details-marker { display: none; }
+#isx-root .b4mech > summary:hover { color: #fff; }
+#isx-root .b4mech > summary .cv { flex: none; width: 7px; height: 7px; margin-right: 3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .b4mech[open] > summary .cv { transform: rotate(45deg); }
+#isx-root .b4mech .b4mb { padding: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--ink2); }
+#isx-root .b4mech + .b4mech { margin-top: 0; }

@@ -10,6 +10,11 @@
 
   /* the part of the link after the tab name */
   X.hashDetail = function () {
+    /* B4: the Arm holds its relation and selection, the Revenue map its sector */
+    if (X.view === 'arm') {
+      if (X.armMode === 'rev') return X.revSec && X.revSec !== 'all' ? '/sec=' + X.revSec : '';
+      return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '');
+    }
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
     if (X.ring) return '/ring';                            /* B1: the Circuit's closing ring */
@@ -19,6 +24,13 @@
     return d;
   };
   X.applyDetail = function (hash) {
+    if (X.view === 'arm') {
+      String(hash || '').replace(/^#\/?/, '').split('/').slice(1).forEach(function (p) {
+        if (p.indexOf('rel=') === 0 || p.indexOf('sec=') === 0) X.setArmRel(p.slice(4));
+        else if (p.indexOf('node=') === 0) X.setArmSel(p.slice(5).toUpperCase());
+      });
+      return;
+    }
     if (X.view !== 'map') return;
     var parts = String(hash || '').replace(/^#\/?/, '').split('/').slice(1), st = null, firm = null, iso = null;
     if (parts[0] === 'ring') { if (!X.ring) X.setRing(true); return; }

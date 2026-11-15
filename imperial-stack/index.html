@@ -2366,6 +2366,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/fix.css">
 <link rel="stylesheet" href="/imperial-stack/v2/tiers.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b3.css">
+<link rel="stylesheet" href="/imperial-stack/v2/b4.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2388,16 +2389,20 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-map">
       <div class="globebox"><div class="gskel" aria-hidden="true"><i></i><span>Loading the globe</span></div><div id="isx-globe" role="img" aria-label="3D globe of Pax Silica with flows between allies and to and from the United States"></div></div>
       <div class="zoom6" id="isx-zoom" role="group" aria-label="Zoom the globe"><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Reset view">⟲</button></div>
-      <div class="hint" id="isx-hint">Drag to turn the globe · click a country · ← → to step <button type="button" class="tipsre" data-tips="globe">Take the tour</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
+      <div class="b4kick rkick" id="isx-rkick"></div>
+      <div class="hint" id="isx-hint"><span class="hl" id="isx-hint-t">Drag to turn the globe · click a country · ← → to step</span> <button type="button" class="tipsre" data-tips="globe">Take the tour</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
       <div class="mapmodes panel" id="isx-mapmodes" role="group" aria-label="Map mode"></div>
     </div>
     <div class="scene" id="isx-scene-arm" hidden>
+      <div class="b4kick" id="isx-akick"></div>
+      <p class="b4hint" id="isx-ahint" hidden></p>
       <div class="flat"><div class="flatin">
-        <svg id="isx-arm" viewBox="0 0 1240 724" role="group" aria-label="The imperial arm: the US state, the firms by function and the real economy they draw on"></svg>
+        <svg id="isx-arm" viewBox="0 0 1040 640" role="group" aria-label="The imperial arm: the US state, the firms by sector and the real economy they draw on"></svg>
         <canvas id="isx-cv-arm"></canvas>
-        <div class="atip" id="isx-atip" hidden></div>
-        <div class="armlist" id="isx-armlist"></div>
+        <div class="atip" id="isx-atip" role="tooltip" hidden></div>
       </div></div>
+      <div class="abands" id="isx-abands" role="group" aria-label="The imperial arm in three layers"></div>
+      <article class="b4card acard" id="isx-acard" aria-live="polite"></article>
     </div>
     <div class="scene" id="isx-scene-chain" hidden>
       <div class="flat"><div class="flatin">
@@ -2440,6 +2445,8 @@ button.res:hover { transform: none; box-shadow: none; }
     </div>
     <div class="mapnote" id="isx-mapnote"></div>
     <nav class="tabs-bottom" id="isx-tabs" aria-label="Steps"></nav>
+    <div class="b4scrim" id="isx-ascrim" hidden></div>
+    <aside class="b4sheet" id="isx-asheet" role="dialog" aria-modal="false" aria-labelledby="isx-ash-t" hidden inert><div class="b4sh-h"><div><div class="b4k" id="isx-ash-k"></div><h3 id="isx-ash-t"></h3></div><button type="button" class="b4x" data-ash="x" aria-label="Close">×</button></div><div class="b4sh-b" id="isx-ash-b"></div></aside>
     <div class="dock6" id="isx-dock" role="group" aria-label="Thesis, support, share and full screen">
       <a class="dk dk-th" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener" aria-label="Read the thesis, coming soon" data-tip="<b>Read the thesis · coming soon</b><p>One essay explaining the whole map: how the dollar system rebuilt itself around US profits, and why the AI boom is its newest form. Subscribe to get it.</p>"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg></a>
       <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map" data-tip="<b>Support this free map</b><p>It is free and has no ads. A coffee keeps it going.</p>"><span class="cup" aria-hidden="true">☕</span></a>
@@ -2543,6 +2550,7 @@ const val = v => typeof v === 'function' ? v() : v;
 /* ================= particle engine (machine and chains) ================= */
 function Particles(canvas, vbW, vbH) {
   const ctx = canvas.getContext('2d');
+  /* B4: the Arm's viewBox changes with its geometry (vb), so the particles follow it */
   let flows = [], last = 0, scale = 1, raf = 0, running = false;
   function size() { const dpr = Math.min(ISXP.k.dpr, window.devicePixelRatio || 1); canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr)); canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr)); scale = canvas.width / vbW; }
   function pt(f, t) { const u = 1 - t; if (f.c2) return { x: u * u * u * f.a.x + 3 * u * u * t * f.c.x + 3 * u * t * t * f.c2.x + t * t * t * f.b.x, y: u * u * u * f.a.y + 3 * u * u * t * f.c.y + 3 * u * t * t * f.c2.y + t * t * t * f.b.y }; return { x: u * u * f.a.x + 2 * u * t * f.c.x + t * t * f.b.x, y: u * u * f.a.y + 2 * u * t * f.c.y + t * t * f.b.y }; }
@@ -2567,7 +2575,7 @@ function Particles(canvas, vbW, vbH) {
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   }
   function loop(ts) { const dt = last ? Math.min(.05, (ts - last) / 1000) : 0; last = ts; draw(dt); raf = requestAnimationFrame(loop); }
-  return { set, size, draw, start() { if (running || reduce) return; running = true; last = 0; raf = requestAnimationFrame(loop); }, stop() { running = false; cancelAnimationFrame(raf); } };
+  return { set, size, draw, vb(w, h) { vbW = w; vbH = h; size(); }, start() { if (running || reduce) return; running = true; last = 0; raf = requestAnimationFrame(loop); }, stop() { running = false; cancelAnimationFrame(raf); } };
 }
 const qpath = g => `M${g.a.x.toFixed(1)},${g.a.y.toFixed(1)} Q${g.c.x.toFixed(1)},${g.c.y.toFixed(1)} ${g.b.x.toFixed(1)},${g.b.y.toFixed(1)}`;
 
@@ -2994,7 +3002,7 @@ function renderGlobe(move) {
     points.push({ ll: LL[k], alt: .02, rad: .45, color: '#ffffff' });
     let val = null;
     if (revMode && !reg && ['PLAT', 'NYC', 'DEFHUB'].includes(k)) { const secs = (revSec === 'all' ? REVSEC : [revSec]).filter(x => REV.sectors[x][1] === k); if (secs.length) { const us = REV.firms.filter(f => secs.includes(f[0])).reduce((a, f) => a + f[3] * (f[4].US || 0), 0); val = 'US ' + fmtBn(us); } else continue; }
-    if (revMode && reg) { const v = revFlows(revSec).filter(f => f.from === k).reduce((a, f) => a + f.v, 0); val = fmtBn(v); }
+    if (revMode && reg) { const v = revFlows(revSec).filter(f => f.from === k).reduce((a, f) => a + f.v, 0); val = fmtBn(v); if (PHONE() && v < .05 * revTotals(revSec).total) continue; }   /* B4: small regions keep their label in the card's list on phones */
     if (s.key === 'rent' && reg) { const r = RENT.find(x => 'R_' + x[0] === k); val = r ? fmtBn(r[2]) : null; }
     if (k.startsWith('D_')) { const d = DCS.find(x => x[0] === k); val = dcGW(d).toFixed(1) + ' GW'; }
     if (!(reg && html.some(h => h.ll === LL[k]))) html.push({ ll: LL[k], alt: .03, el: makeLabel(lab, reg ? '' : 'hub', val, reg ? 2e5 : 1e9) });
@@ -3016,8 +3024,13 @@ function renderGlobe(move) {
 }
 
 /* ================= the imperial arm: sectors, firms and the state ================= */
-const AVB = { w: 1240, h: 724 };
-const arm = $('arm'), pArm = Particles($('cv-arm'), AVB.w, AVB.h);
+/* ================= the imperial arm (B4): one machine in two geometries, bands on narrow screens =================
+   The rule (S4 §2.1): the richest layout whose smallest text stays at 11 px or more. The machine with its firms listed
+   (full, 1040 × 640), then the machine with sector plates (compact, 1040 × 470), then the three layers as bands (HTML;
+   phones and tablets in portrait). armLayout() picks the layout from the room the stage leaves and runs again on resize,
+   never on hover. Hover and focus show a tooltip only; a click, a tap, Enter or Space selects; Esc clears. */
+const AGW = 1040, AGH = { full: 640, compact: 470 };
+const arm = $('arm'), pArm = Particles($('cv-arm'), AGW, AGH.full);
 const ATYPE = {
   contract: { c: C.dollar, name: 'The state as customer', t: 'Contracts: the state pays firms', x: 'Defence, intelligence and homeland-security agencies buy the same capabilities the firms sell commercially: cloud, models, targeting software, satellites, biometrics and launch. Government revenue de-risks the products before they are sold abroad. The CIA was Oracle’s first customer and among Palantir’s; ICE’s deportation system runs on Palantir; travellers’ faces sit on Amazon’s government cloud.' },
   equity: { c: C.cap, name: 'The state as owner', t: 'Venture and equity stakes held by the state', x: 'The CIA has invested through In-Q-Tel since 1999, in Palantir and in the start-up that became Google Earth. Since 2025 the state also takes direct stakes: about 10% of Intel, an equity stake plus a guaranteed price in MP Materials, and 5% of Lithium Americas.' },
@@ -3034,135 +3047,269 @@ const ATYPE = {
 const ATAB = { contract: 'Customer', equity: 'Owner', alliance: 'Alliances', invest: 'Reinvested', personnel: 'Revolving door', control: 'Control', debt: 'Plumbing', rent: 'Rents', data: 'Data', displace: 'Displacement', supply: 'Supply' };
 const AF = ['all', 'contract', 'equity', 'alliance', 'invest', 'personnel', 'control', 'debt', 'rent', 'data', 'displace', 'supply'];
 let armFilter = 'all', armMode = 'machine';
+let armSel = null, armGeoMode = 'full', armLay = 'full', armList = false, ashKind = null, ashFrom = null;
+/* the route: the whole machine, then the twelve relations in three groups (S4 §0, item 2) */
+const AGRP = [
+  { id: 'sf', label: 'State and firms', keys: ['contract', 'equity', 'personnel', 'control', 'debt'] },
+  { id: 'ff', label: 'Between firms', keys: ['alliance', 'invest', 'network'] },
+  { id: 'fe', label: 'Firms and economy', keys: ['rent', 'data', 'displace', 'supply'] },
+];
+const AORD = ['all', ...AGRP.flatMap(g => g.keys)];
+/* line styles: no two relations share both a near colour and a line style (S4 §2.2) */
+const ADASH = { control: '5 4', displace: '5 4', personnel: '1.5 4', network: '1.5 4', invest: '8 3' };
+const ARMX = 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from.';
 const NODE = {};
-(function layout() {
-  const x0 = 150, x1 = 1222;
-  const nS = ARM.state.length, nE = ARM.econ.length;
-  ARM.state.forEach(([id, label, sub], i) => { NODE[id] = { id, label, sub, layer: 'state', x: x0 + (x1 - x0) * (i + .5) / nS, y: 64, w: 98, h: 44 }; });
-  ARM.econ.forEach(([id, label, sub], i) => { NODE[id] = { id, label, sub, layer: 'econ', x: x0 + (x1 - x0) * (i + .5) / nE, y: 666, w: 98, h: 48 }; });
-  const cw = (x1 - x0) / 7, rowTop = [150, 384];
-  ARM.sectors.forEach(([id, label, col, row, firms]) => {
-    const w = 140, h = 30 + firms.length * 19 + 6, x = x0 + cw * (col + .5), top = rowTop[row];
-    const S = NODE[id] = { id, label, layer: 'sector', x, y: top + h / 2, w, h, top, firms: [], musk: id === 'MUSK' };
-    firms.forEach(([fid, name, sub], k) => { const F = NODE[fid] = { id: fid, label: name, sub, layer: 'firm', sector: id, x, y: top + 30 + k * 19 + 9, w, h: 19 }; S.firms.push(F); });
-  });
-})();
+ARM.state.forEach(([id, label, sub]) => { NODE[id] = { id, label, sub, layer: 'state' }; });
+ARM.econ.forEach(([id, label, sub]) => { NODE[id] = { id, label, sub, layer: 'econ' }; });
+ARM.sectors.forEach(([id, label, col, row, firms]) => {
+  const S = NODE[id] = { id, label, layer: 'sector', col, row, firms: [], musk: id === 'MUSK' };
+  firms.forEach(([fid, name, sub]) => { const F = NODE[fid] = { id: fid, label: name, sub, layer: 'firm', sector: id }; S.firms.push(F); });
+});
+const NFIRMS = Object.values(NODE).filter(n => n.layer === 'firm').length;
 const boxOf = n => n.layer === 'firm' ? NODE[n.sector] : n;
-function sideFor(n, o) {
-  if (n.layer === 'state') return 'bottom';
-  if (n.layer === 'econ') return 'top';
-  const B = boxOf(n), ob = boxOf(o);
-  if (n.layer === 'sector' && (o.layer === 'state' || o.layer === 'econ')) return o.layer === 'state' ? 'top' : 'bottom';
-  if (ob === B) return 'right';
-  const dx = ob.x - B.x;
-  if (Math.abs(dx) < 2) return (o.layer === 'state' || ob.top < B.top) ? 'right' : 'left';
-  return dx < 0 ? 'left' : 'right';
-}
-(function attach() {
+const aBox = id => boxOf(NODE[id]).id;
+const aLay = id => { const L = NODE[id].layer; return L === 'firm' || L === 'sector' ? 'arm' : L; };
+const aOn = e => armFilter === 'all' || e.type === armFilter;
+const aTouch = (e, id) => NODE[id].layer === 'sector' ? aBox(e.from) === id || aBox(e.to) === id : e.from === id || e.to === id;
+const aOther = (e, id) => NODE[id].layer === 'sector' ? (aBox(e.from) === id ? e.to : e.from) : (e.from === id ? e.to : e.from);
+const aLinks = id => ARM.edges.filter(e => aOn(e) && aTouch(e, id));
+/* the boxes (state bodies, sectors, economy groups) a node is tied to under the relation in hand */
+const aLinked = id => { const s = new Set(); aLinks(id).forEach(e => s.add(aBox(aOther(e, id)))); s.delete(aBox(id)); return s; };
+const aBetween = (a, b) => ARM.edges.filter(e => aOn(e) && ((aLay(e.from) === a && aLay(e.to) === b) || (aLay(e.from) === b && aLay(e.to) === a)));
+const aName = k => k === 'all' ? 'Whole machine' : ATAB[k];
+const aCol = k => k === 'all' ? '#e4ebf1' : ATYPE[k].c;
+const aGrp = k => AGRP.find(g => g.keys.includes(k));
+const aPl = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+
+/* ---------- the two geometries ---------- */
+function armGeo(mode) {
+  const full = mode === 'full', x0 = 12, x1 = 1028, H = AGH[mode], P = {};
+  const sw = (x1 - x0) / ARM.state.length, ew = (x1 - x0) / ARM.econ.length, cw = (x1 - x0) / 7;
+  const armB = full ? [110, 492] : [110, 322], ecTop = armB[1] + 20;
+  const bands = [['US state', 0, 92], ['The arm · ' + ARM.sectors.length + ' sectors · ' + NFIRMS + ' firms', armB[0], armB[1] - armB[0]], ['The real economy', ecTop, H - ecTop]];
+  ARM.state.forEach(([id], i) => { P[id] = { x: x0 + sw * (i + .5), y: 58, w: sw - 10, h: 42 }; });
+  ARM.econ.forEach(([id], i) => { P[id] = { x: x0 + ew * (i + .5), y: ecTop + 64, w: ew - 9, h: 52 }; });
+  const rowTop = full ? [armB[0] + 34, armB[0] + 210] : [armB[0] + 36, armB[0] + 122];
+  ARM.sectors.forEach(([id, , col, row, firms]) => {
+    const w = cw - 8, h = full ? 28 + firms.length * 19 + 6 : 58, x = x0 + cw * (col + .5), top = rowTop[row];
+    P[id] = { x, y: top + h / 2, w, h, top };
+    if (full) firms.forEach(([fid], k) => { P[fid] = { x, y: top + 28 + k * 19 + 9, w, h: 19 }; });
+  });
+  /* ports, as before: each end takes a side, ports spread along it, ordered by where the other end is.
+     In the compact geometry a firm's end attaches to its sector's plate. */
+  const at = id => full || NODE[id].layer !== 'firm' ? id : NODE[id].sector;
+  const pB = id => P[aBox(id)];
+  const side = (id, o) => {
+    const L = NODE[at(id)].layer, OL = NODE[o].layer, B = pB(id), ob = pB(o);
+    if (L === 'state') return 'bottom';
+    if (L === 'econ') return 'top';
+    if (L === 'sector' && (OL === 'state' || OL === 'econ')) return OL === 'state' ? 'top' : 'bottom';
+    if (aBox(o) === aBox(id)) return 'right';
+    const dx = ob.x - B.x;
+    if (Math.abs(dx) < 2) return (OL === 'state' || ob.top < B.top) ? 'right' : 'left';
+    return dx < 0 ? 'left' : 'right';
+  };
   const att = {};
-  ARM.edges.forEach(e => { for (const end of ['from', 'to']) { const n = NODE[e[end]], o = NODE[e[end === 'from' ? 'to' : 'from']], sd = sideFor(n, o); (att[n.id + '|' + sd] = att[n.id + '|' + sd] || []).push({ e, end, o, sd, n }); } });
+  ARM.edges.forEach((e, ix) => ['from', 'to'].forEach(end => { const id = at(e[end]), o = e[end === 'from' ? 'to' : 'from'], sd = side(e[end], o); (att[id + '|' + sd] = att[id + '|' + sd] || []).push({ ix, end, id, o, sd }); }));
+  const ends = ARM.edges.map(() => ({}));
   Object.values(att).forEach(list => {
-    const horiz = list[0].sd === 'top' || list[0].sd === 'bottom';
-    list.sort((p, q) => horiz ? boxOf(p.o).x - boxOf(q.o).x : boxOf(p.o).y - boxOf(q.o).y);
+    const hz = list[0].sd === 'top' || list[0].sd === 'bottom';
+    list.sort((p, q) => hz ? pB(p.o).x - pB(q.o).x : pB(p.o).y - pB(q.o).y);
     list.forEach((it, i) => {
-      const f = (i + 1) / (list.length + 1) - .5, n = it.n, B = boxOf(n); let pt;
-      if (it.sd === 'top') pt = { x: n.x + f * (n.w - 14), y: (n.layer === 'sector' ? n.top : n.y - n.h / 2), t: { x: 0, y: -1 } };
-      else if (it.sd === 'bottom') pt = { x: n.x + f * (n.w - 14), y: (n.layer === 'sector' ? n.top + n.h : n.y + n.h / 2), t: { x: 0, y: 1 } };
-      else { const yy = n.layer === 'firm' ? n.y + f * Math.min(12, 3 * list.length) : n.y + f * (n.h - 12); pt = it.sd === 'left' ? { x: B.x - B.w / 2, y: yy, t: { x: -1, y: 0 } } : { x: B.x + B.w / 2, y: yy, t: { x: 1, y: 0 } }; }
-      it.e[it.end === 'from' ? '_a' : '_b'] = pt;
+      const f = (i + 1) / (list.length + 1) - .5, n = P[it.id], L = NODE[it.id].layer, B = P[aBox(it.id)]; let pt;
+      if (it.sd === 'top') pt = { x: n.x + f * (n.w - 14), y: L === 'sector' ? n.top : n.y - n.h / 2, t: { x: 0, y: -1 } };
+      else if (it.sd === 'bottom') pt = { x: n.x + f * (n.w - 14), y: L === 'sector' ? n.top + n.h : n.y + n.h / 2, t: { x: 0, y: 1 } };
+      else { const yy = L === 'firm' ? n.y + f * Math.min(12, 3 * list.length) : n.y + f * (n.h - 12); pt = it.sd === 'left' ? { x: B.x - B.w / 2, y: yy, t: { x: -1, y: 0 } } : { x: B.x + B.w / 2, y: yy, t: { x: 1, y: 0 } }; }
+      ends[it.ix][it.end === 'from' ? 'a' : 'b'] = pt;
     });
   });
-})();
-function edgeGeom(e) {
-  const A = e._a, B = e._b, d = Math.hypot(B.x - A.x, B.y - A.y), k = Math.max(36, Math.min(150, d * .42));
-  const same = boxOf(NODE[e.from]) === boxOf(NODE[e.to]);
-  const kk = same ? 46 : k;
-  return { a: A, b: B, c: { x: A.x + A.t.x * kk, y: A.y + A.t.y * kk }, c2: { x: B.x + B.t.x * kk, y: B.y + B.t.y * kk } };
+  const eg = ARM.edges.map((e, ix) => {
+    const A = ends[ix].a, Bp = ends[ix].b, d = Math.hypot(Bp.x - A.x, Bp.y - A.y), k = aBox(e.from) === aBox(e.to) ? 40 : Math.max(30, Math.min(140, d * .42));
+    return { a: A, b: Bp, c: { x: A.x + A.t.x * k, y: A.y + A.t.y * k }, c2: { x: Bp.x + Bp.t.x * k, y: Bp.y + Bp.t.y * k } };
+  });
+  return { mode, H, P, bands, eg };
 }
+const AGEO = { full: armGeo('full'), compact: armGeo('compact') };
 const cpath = g => `M${g.a.x.toFixed(1)},${g.a.y.toFixed(1)} C${g.c.x.toFixed(1)},${g.c.y.toFixed(1)} ${g.c2.x.toFixed(1)},${g.c2.y.toFixed(1)} ${g.b.x.toFixed(1)},${g.b.y.toFixed(1)}`;
 function wrapLabel(s, max) { const w = s.split(' '); const out = []; let line = ''; for (const x of w) { if ((line + ' ' + x).trim().length > max && line) { out.push(line); line = x; } else line = (line + ' ' + x).trim(); } out.push(line); return out; }
-let armHover = null;
+
+/* ---------- the machine (SVG) ---------- */
+const AEL = {}, ABT = {};   /* AEL: the element styled for a node (a sector's whole box); ABT: the element that takes focus and clicks */
 function buildArm() {
-  arm.innerHTML = '';
-  [['US state', 16, 96], ['The arm: sectors and firms', 128, 446], ['The real economy', 610, 106]].forEach(([lab, y, h]) => {
-    el('rect', { x: 14, y, width: 1212, height: h, rx: 14, class: 'band' }, arm);
-    el('text', { x: 30, y: y + h / 2, class: 'bandlab', transform: `rotate(-90 30 ${y + h / 2})`, 'text-anchor': 'middle' }, arm).textContent = lab;
+  const G = AGEO[armGeoMode], full = armGeoMode === 'full';
+  arm.innerHTML = ''; [AEL, ABT].forEach(o => Object.keys(o).forEach(k => delete o[k]));
+  arm.setAttribute('viewBox', '0 0 ' + AGW + ' ' + G.H); arm.classList.toggle('cmp', !full);
+  pArm.vb(AGW, G.H);
+  G.bands.forEach(([lab, y, h]) => { el('rect', { x: 2, y: y + 1, width: AGW - 4, height: h - 2, rx: 14, class: 'band' }, arm); el('text', { x: 16, y: y + 19, class: 'bandlab' }, arm).textContent = lab; });
+  const gE = el('g', { id: 'isx-armedges' }, arm), gN = el('g', {}, arm);
+  ARM.edges.forEach((e, ix) => { e.geom = G.eg[ix]; e.path = el('path', { d: cpath(e.geom), class: 'medge', stroke: ATYPE[e.type].c, 'stroke-dasharray': ADASH[e.type] || 'none' }, gE); });
+  const btn = (id, cls, parent) => { const g = el('g', { class: cls, 'data-a': id, tabindex: 0, role: 'button' }, parent); ABT[id] = g; return g; };
+  ARM.state.concat(ARM.econ).forEach(([id, label]) => {
+    const n = G.P[id], ec = NODE[id].layer === 'econ', g = btn(id, 'mnode ' + NODE[id].layer, gN); AEL[id] = g;
+    el('rect', { x: n.x - n.w / 2, y: n.y - n.h / 2, width: n.w, height: n.h, rx: ec ? 8 : 18 }, g);
+    const lines = wrapLabel(label, ec ? 12 : 13);
+    lines.forEach((ln, i) => el('text', { x: n.x, y: n.y + 5 + (i - (lines.length - 1) / 2) * 15, 'text-anchor': 'middle', 'font-size': lines.length > 1 ? 13.5 : 14 }, g).textContent = ln);
   });
-  el('g', { id: 'isx-armedges' }, arm);
-  const gN = el('g', {}, arm), tip = $('atip');
-  const showTip = (n, html) => { tip.innerHTML = html; tip.hidden = false; const box = arm.getBoundingClientRect(), sc = box.width / AVB.w; tip.style.left = (n.x * sc) + 'px'; tip.style.top = ((n.layer === 'firm' ? n.y - 9 : n.y - n.h / 2) * sc) + 'px'; };
-  const hover = (id, html, n) => { armHover = id; showTip(n, html); renderArm(); };
-  const unhover = () => { armHover = null; tip.hidden = true; renderArm(); };
-  Object.values(NODE).filter(n => n.layer === 'state' || n.layer === 'econ').forEach(n => {
-    const g = el('g', { class: 'mnode ' + n.layer }, gN);
-    el('rect', { x: n.x - n.w / 2, y: n.y - n.h / 2, width: n.w, height: n.h, rx: n.layer === 'state' ? 18 : 8 }, g);
-    const lines = wrapLabel(n.label, 13);
-    lines.forEach((ln, i) => el('text', { x: n.x, y: n.y + 5 + (i - (lines.length - 1) / 2) * 14, 'text-anchor': 'middle', 'font-size': lines.length > 1 ? 13 : 14 }, g).textContent = ln);
-    g.addEventListener('mouseenter', () => hover(n.id, `<b>${esc(n.label)}</b><div class="st">${esc(n.sub)}</div>`, n));
-    g.addEventListener('mouseleave', unhover);
-    n.g = g;
+  ARM.sectors.forEach(([id, label]) => {
+    const S = NODE[id], n = G.P[id], x = n.x - n.w / 2, box = el('g', { class: 'sbox' + (S.musk ? ' musk' : '') }, gN); AEL[id] = box;
+    const hd = btn(id, 'shead', box);
+    el('rect', { x, y: n.top, width: n.w, height: n.h, rx: 9, class: 'sframe' }, hd);
+    if (full) {
+      el('rect', { x, y: n.top, width: n.w, height: 24, rx: 9, class: 'shbg' }, hd);
+      el('text', Object.assign({ x: x + 9, y: n.top + 16.5, class: 'stitle' }, label.length * 8.7 > n.w - 18 ? { textLength: n.w - 18, lengthAdjust: 'spacingAndGlyphs' } : {}), hd).textContent = label;
+      S.firms.forEach(F => {
+        const f = G.P[F.id], fg = btn(F.id, 'frow', box); AEL[F.id] = fg;
+        el('rect', { x: x + 3, y: f.y - 9, width: n.w - 6, height: 18, rx: 4, class: 'fbg' }, fg);
+        el('circle', { cx: x + 12, cy: f.y, r: 2.6, class: 'fdot' }, fg);
+        el('text', Object.assign({ x: x + 20, y: f.y + 4.5, class: 'fname' }, F.label.length * 6.6 > n.w - 28 ? { textLength: n.w - 28, lengthAdjust: 'spacingAndGlyphs' } : {}), fg).textContent = F.label;
+      });
+    } else {
+      el('text', Object.assign({ x: x + 11, y: n.top + 25, class: 'stitle' }, label.length * 9.4 > n.w - 22 ? { textLength: n.w - 22, lengthAdjust: 'spacingAndGlyphs' } : {}), hd).textContent = label;
+      el('text', { x: x + 11, y: n.top + 47, class: 'ssub' }, hd);
+    }
   });
-  ARM.sectors.forEach(([id]) => {
-    const S = NODE[id], g = el('g', { class: 'sbox' + (S.musk ? ' musk' : '') }, gN);
-    el('rect', { x: S.x - S.w / 2, y: S.top, width: S.w, height: S.h, rx: 9, class: 'sframe' }, g);
-    const hd = el('g', { class: 'shead' }, g);
-    el('rect', { x: S.x - S.w / 2, y: S.top, width: S.w, height: 24, rx: 9, class: 'shbg' }, hd);
-    el('text', { x: S.x - S.w / 2 + 9, y: S.top + 16, class: 'stitle' }, hd).textContent = S.label;
-    hd.addEventListener('mouseenter', () => hover(id, `<b>${esc(S.label)}</b><div class="st">${S.firms.map(f => esc(f.label)).join(' · ')}</div>${SECD[id] ? `<div class="st">${esc(SECD[id])}</div>` : ''}`, { x: S.x, y: S.top + 12, h: 24, layer: 'sector' }));
-    hd.addEventListener('mouseleave', unhover);
-    S.g = g;
-    S.firms.forEach(F => {
-      const fg = el('g', { class: 'frow' }, g);
-      el('rect', { x: F.x - F.w / 2 + 3, y: F.y - 9, width: F.w - 6, height: 18, rx: 4, class: 'fbg' }, fg);
-      el('circle', { cx: F.x - F.w / 2 + 12, cy: F.y, r: 2.6, class: 'fdot' }, fg);
-      el('text', { x: F.x - F.w / 2 + 20, y: F.y + 4.5, class: 'fname' }, fg).textContent = F.label;
-      fg.addEventListener('mouseenter', () => hover(F.id, `<b>${esc(F.label)}</b><div class="st">${esc(F.sub)}</div>`, F));
-      fg.addEventListener('mouseleave', unhover);
-      F.g = fg;
-    });
-  });
-  const gE = document.getElementById('isx-armedges');
-  ARM.edges.forEach(e => { e.geom = edgeGeom(e); e.path = el('path', { d: cpath(e.geom), class: 'medge', stroke: ATYPE[e.type].c, 'stroke-dasharray': e.type === 'control' || e.type === 'displace' ? '4 4' : e.type === 'personnel' ? '1.5 4' : 'none' }, gE); });
 }
-const touches = (e, id) => { if (!id) return false; const S = NODE[id]; if (S && S.layer === 'sector') return [e.from, e.to].some(x => x === id || (NODE[x].sector === id)); return e.from === id || e.to === id; };
+/* the tooltip: hover and focus tell, they never light anything */
+function armTip(g) {
+  const id = g.dataset.a, n = NODE[id], tip = $('atip'), host = arm.parentNode; if (!n || !tip || !host) return;
+  const c = aLinks(id).length, rel = armFilter !== 'all';
+  tip.innerHTML = `<b>${esc(n.label)}</b>` + (n.layer === 'sector' ? `<div class="st">${n.firms.map(f => esc(f.label)).join(' · ')}</div>${SECD[id] ? `<div class="st">${esc(SECD[id])}</div>` : ''}` : `<div class="st">${esc(n.sub)}</div>`)
+    + `<div class="st tk">${c ? aPl(c, rel ? 'link' : 'documented link') + (rel ? ' of this kind' : '') : 'No link of this kind'}</div>`;
+  tip.hidden = false;
+  const hb = host.getBoundingClientRect(), r = g.getBoundingClientRect();
+  tip.style.left = (r.left - hb.left + r.width / 2).toFixed(1) + 'px'; tip.style.top = (r.top - hb.top).toFixed(1) + 'px';
+}
+arm.addEventListener('pointerover', e => { if (e.pointerType === 'touch') return; const g = e.target.closest('[data-a]'); if (g) armTip(g); });
+arm.addEventListener('pointerout', e => { const g = e.target.closest('[data-a]'); if (g && !(e.relatedTarget && g.contains(e.relatedTarget))) $('atip').hidden = true; });
+arm.addEventListener('focusin', e => { const g = e.target.closest('[data-a]'); if (g) armTip(g); });
+arm.addEventListener('focusout', () => { $('atip').hidden = true; });
+arm.addEventListener('click', e => { const g = e.target.closest('[data-a]'); if (g) armSelect(g.dataset.a); });
+arm.addEventListener('keydown', e => { const g = e.target.closest('[data-a]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); armSelect(g.dataset.a); } });
+
+/* the state of every node under the relation in hand and the selection */
+function armState() {
+  const sel = armSel, lit = sel ? aLinked(sel) : null, sb = sel ? aBox(sel) : null, out = {};
+  Object.keys(NODE).forEach(id => {
+    const n = NODE[id], c = aLinks(id).length, firm = n.layer === 'firm';
+    const isSel = sel === id, isLit = !firm && !!lit && lit.has(id);
+    const dim = firm ? (!sel && armFilter !== 'all' && !c) : sel ? !(id === sb || isLit) : armFilter !== 'all' && !c;
+    out[id] = { c, sel: isSel, lit: isLit, dim, own: !!sel && !isSel && id === sb };
+  });
+  return out;
+}
+const aLab = (id, c) => { const n = NODE[id], rel = armFilter !== 'all'; return esc(n.label) + ': ' + (n.layer === 'sector' ? aPl(n.firms.length, 'firm') + ', ' : '') + (c ? aPl(c, 'link') + (rel ? ' of this kind' : '') : 'no link of this kind'); };
 function renderArm() {
-  const parts = [], nodeOn = new Set();
+  const parts = [], sel = armSel, col = aCol(armFilter);
   ARM.edges.forEach(e => {
-    const typeOn = armFilter === 'all' || e.type === armFilter;
-    const hov = armHover ? touches(e, armHover) : null;
-    const on = typeOn && (hov === null || hov);
-    if (on) { nodeOn.add(e.from); nodeOn.add(e.to); }
-    const strong = on && (armFilter !== 'all' || hov);
-    e.path.setAttribute('stroke-width', strong ? 1.8 : on ? .9 : .8);
-    e.path.setAttribute('opacity', strong ? .85 : on ? .17 : .04);
-    if (on) parts.push({ a: e.geom.a, b: e.geom.b, c: e.geom.c, c2: e.geom.c2, color: ATYPE[e.type].c, n: strong ? 4 : 1, r: strong ? 2.5 : 1.5, alpha: 1, speed: 46 });
+    if (!e.path) return;
+    const on = aOn(e), touch = !!sel && aTouch(e, sel), strong = on && (sel ? touch : armFilter !== 'all');
+    e.path.setAttribute('stroke-width', strong ? 1.8 : .9);
+    e.path.setAttribute('opacity', !on ? .04 : sel ? (touch ? .9 : .05) : strong ? .85 : .2);
+    if (on && (!sel || touch)) parts.push({ a: e.geom.a, b: e.geom.b, c: e.geom.c, c2: e.geom.c2, color: ATYPE[e.type].c, n: strong ? 4 : 1, r: strong ? 2.5 : 1.5, alpha: 1, speed: 46 });
   });
-  pArm.set(parts); renderArmList();
-  const focus = armFilter !== 'all' || armHover;
-  const col = armFilter === 'all' ? '#e4ebf1' : ATYPE[armFilter].c;
-  Object.values(NODE).forEach(n => {
-    if (!n.g) return;
-    const hot = focus && (nodeOn.has(n.id) || (n.layer === 'sector' && n.firms.some(f => nodeOn.has(f.id))));
-    n.g.classList.toggle('hot', !!hot); n.g.style.setProperty('--sc', col);
-    n.g.classList.toggle('dim', !!focus && !hot && n.layer !== 'sector');
+  pArm.set(parts);
+  const S = armState();
+  Object.keys(AEL).forEach(id => {
+    const g = AEL[id], s = S[id], b = ABT[id];
+    g.style.setProperty('--sc', col);
+    g.classList.toggle('sel', s.sel); g.classList.toggle('lit', s.lit); g.classList.toggle('dim', s.dim); g.classList.toggle('own', s.own);
+    g.classList.toggle('hot', !sel && armFilter !== 'all' && s.c > 0);
+    if (b) { b.setAttribute('aria-label', aLab(id, s.c)); b.setAttribute('aria-pressed', String(s.sel)); }
+    const sub = b && b.querySelector('.ssub'); if (sub) sub.textContent = aPl(NODE[id].firms.length, 'firm') + ' · ' + (s.c ? aPl(s.c, 'link') : '–');
   });
+  if (armLay === 'bands') renderBands();
+}
+function armSelect(id) {
+  armSel = id && armSel !== id ? id : null; armList = false;
+  $('atip').hidden = true;
+  renderArm(); renderArmCard();
+  if (armSel && armLay === 'bands') {
+    const c = document.querySelector(`#isx-abands [data-anode="${armSel}"]`);
+    if (c) { const r = c.getBoundingClientRect(); if (r.bottom > innerHeight * .42 || r.top < 70) window.scrollBy({ top: r.top - innerHeight * .18, behavior: reduce ? 'auto' : 'smooth' }); }
+    ashOpen('sel', c || ABT[armSel]);
+  }
+  else if (ashKind === 'sel' || ashKind === 'links') { if (armSel && ashKind === 'links') ashFill(); else if (!armSel) ashClose(); }
+  routeSync(); dockEssay();
+}
+function armSetRel(k) {
+  if (armMode === 'rev') { revSec = k; ashClose(true); armBar(); narrate(); renderRevCard(); renderGlobe(false); routeSync(); dockEssay(); return; }
+  armFilter = k; armSel = null; armList = false; ashClose(true);
+  renderArm(); armBar(); narrate(); renderArmCard(); routeSync(); dockEssay();
+}
+
+/* ---------- the bands: the three layers on phones and tablets in portrait (S4 §2.4) ---------- */
+function renderBands() {
+  const host = $('abands'); if (!host) return;
+  const S = armState(), rc = armFilter === 'all' ? null : aCol(armFilter), lc = aCol(armFilter);
+  const chip = (id, cls, sub) => { const s = S[id], n = NODE[id];
+    return `<button type="button" class="ach ${cls}${s.dim ? ' dim' : ''}${s.lit ? ' lit' : ''}${s.sel ? ' sel' : ''}${rc && s.c ? ' rl' : ''}" data-anode="${id}" style="--lc:${lc}${rc ? ';--rc:' + rc : ''}" aria-pressed="${s.sel}" aria-label="${aLab(id, s.c)}"><span class="cn">${esc(n.label)}${sub ? `<span class="cs">${esc(sub)}</span>` : ''}</span><span class="cc">${s.c || '–'}</span></button>`; };
+  const gut = (a, b, lab, extra) => { const es = aBetween(a, b), by = {}; es.forEach(e => { by[e.type] = (by[e.type] || 0) + 1; });
+    return `<div class="agut" role="note" aria-label="${es.length} links cross between these layers${extra ? '; ' + extra : ''}"><span class="ar" aria-hidden="true">↕</span><span class="gl"><b>${es.length}</b> ${lab}${extra ? ' · ' + extra : ''}</span><span class="gbar" aria-hidden="true">${AORD.slice(1).filter(k => by[k]).map(k => `<i style="flex:${by[k]};background:${ATYPE[k].c}"></i>`).join('')}</span></div>`; };
+  const se = aBetween('state', 'econ').length;
+  host.innerHTML = `<section class="aband" aria-label="US state"><div class="abh"><span class="bl">US state</span><span class="bn">${ARM.state.length} bodies</span></div><div class="achips st">${ARM.state.map(([id]) => chip(id, 'st')).join('')}</div></section>`
+    + gut('state', 'arm', 'state ↔ arm')
+    + `<section class="aband" aria-label="The arm"><div class="abh"><span class="bl">The arm</span><span class="bn">${ARM.sectors.length} sectors · ${NFIRMS} firms · ${aBetween('arm', 'arm').length} inside</span></div><div class="achips sec">${ARM.sectors.map(([id, , , , f]) => chip(id, NODE[id].musk ? 'sc musk' : 'sc', aPl(f.length, 'firm'))).join('')}</div></section>`
+    + gut('arm', 'econ', 'arm ↔ economy', se ? se + ' state ↔ economy' : '')
+    + `<section class="aband" aria-label="The real economy"><div class="abh"><span class="bl">The real economy</span><span class="bn">${aPl(ARM.econ.length, 'group')}</span></div><div class="achips ec">${ARM.econ.map(([id]) => chip(id, 'ec')).join('')}</div></section>`;
+}
+
+/* ---------- the card on the stage (S4 §2.5) ---------- */
+const CHR = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
+/* “The mechanism”: one name and one shape in every tab, one memory for the session (isx-mech) */
+const mechHTML = (h, id) => h ? `<details class="b4mech"${id ? ` id="${id}"` : ''}${stGet('isx-mech', true) === 'open' ? ' open' : ''}><summary>The mechanism<span class="cv" aria-hidden="true"></span></summary><div class="b4mb">${h}</div></details>` : '';
+function relListHTML(cur) {
+  return `<ul class="arl" aria-label="Relations">${AORD.slice(1).map(k => { const T = ATYPE[k]; return `<li><button type="button" data-arel="${k}"${k === cur ? ' aria-current="true"' : ''}><span class="sw" style="background:${T.c}"></span><span class="rx"><span class="rn">${esc(T.name)}</span><span class="rt">${esc(T.t)}</span></span><span class="rc">${ARM.edges.filter(e => e.type === k).length}</span></button></li>`; }).join('')}</ul>`;
+}
+function armCardHTML(strip) {
+  const i = AORD.indexOf(armFilter), cnt = `<span class="cnt">${i + 1} / ${AORD.length}</span>`;
+  if (armSel) {
+    const n = NODE[armSel], ls = aLinks(armSel), tied = aLinked(armSel).size, rel = armFilter !== 'all';
+    const kick = n.layer === 'sector' ? 'Sector · ' + aPl(n.firms.length, 'firm') : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm · ' + NODE[n.sector].label;
+    const sub = n.layer === 'sector' ? n.firms.map(f => f.label).join(' · ') : n.sub;
+    const acts = `<div class="b4acts"><button type="button" class="b4b2" data-acard="links" aria-expanded="${armList && !strip ? 'true' : 'false'}">Its ${aPl(ls.length, 'link')} ${CHR}</button><button type="button" class="b4b2" data-acard="clear">Whole machine</button></div>`;
+    return `<div class="b4k"><span>${esc(kick)}</span>${rel ? `<span><i class="dot" style="background:${aCol(armFilter)}"></i>${esc(aName(armFilter))}</span>` : ''}</div><h3 class="b4t">${esc(n.label)}</h3>`
+      + (strip ? `<div class="b4sl"><p>${esc(sub)}</p><div class="b4fig"><b>${ls.length}</b><span>${rel ? 'links of this kind' : 'documented links'}, tied to ${aPl(tied, 'other part')} of the machine</span></div></div>${acts}`
+        : `<p>${esc(sub)}</p><div class="b4fig"><b>${ls.length}</b><span>${rel ? 'links of this kind' : 'documented links'}, tied to ${aPl(tied, 'other part')} of the machine</span></div>${acts}${armList ? `<div class="b4list">${armDossier(armSel)}</div>` : ''}`);
+  }
+  if (armFilter === 'all') {
+    const [rv, mech] = sSplit(ARMX);
+    const fig = `<div class="b4fig"><b>${ARM.edges.length}</b><span>documented links between ${ARM.state.length} state bodies, ${NFIRMS} firms in ${ARM.sectors.length} sectors and the real economy</span></div>`;
+    return `<div class="b4k"><span>The imperial arm</span>${cnt}</div><h3 class="b4t">The whole machine</h3>`
+      + (strip ? `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-ash="pick">Relations ${CHR}</button>${mech ? '<button type="button" class="b4b2 q" data-acard="mech">The mechanism</button>' : ''}</div>`
+        : `<p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}`);
+  }
+  const T = ATYPE[armFilter], [rv, mech] = sSplit(T.x), n = ARM.edges.filter(e => e.type === armFilter).length;
+  const fig = `<div class="b4fig"><b>${n}</b><span>${esc(T.t.charAt(0).toLowerCase() + T.t.slice(1))}</span></div>`;
+  return `<div class="b4k"><span><i class="dot" style="background:${T.c}"></i>${esc(aGrp(armFilter).label)}</span>${cnt}</div><h3 class="b4t">${esc(T.name)}</h3>`
+    + (strip ? `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-acard="links">Every link · ${n} ${CHR}</button>${mech ? '<button type="button" class="b4b2 q" data-acard="mech">The mechanism</button>' : ''}</div>`
+      : `<p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4acts"><button type="button" class="b4b2" data-acard="links" aria-expanded="${armList ? 'true' : 'false'}">Every link · ${n} ${CHR}</button></div>${armList ? `<div class="b4list">${armEvery()}</div>` : ''}`);
 }
 function renderArmCard() {
-  resetCardParts();
-  const L = $('c-links');
-  const lab = id => NODE[id].layer === 'firm' ? NODE[id].label : NODE[id].label;
-  if (armFilter === 'all') {
-    $('c-title').textContent = 'The whole machine';
-    $('c-status').textContent = `${ARM.state.length} state bodies, ${ARM.sectors.length} sectors with ${Object.values(NODE).filter(n => n.layer === 'firm').length} firms, and ${ARM.edges.length} documented links. Pick a relation in the tabs to list every link behind it, or hover a firm.`;
-    Object.entries(ATYPE).forEach(([k, t]) => {
-      const list = ARM.edges.filter(e => e.type === k);
-      const li = document.createElement('li'); li.innerHTML = `<i style="background:${t.c}"></i><div><div class="k">${esc(t.name)} · ${list.length}</div>${esc(t.t)}</div>`; L.appendChild(li);
-    });
-  } else {
-    const t = ATYPE[armFilter], list = ARM.edges.filter(e => e.type === armFilter);
-    $('c-title').textContent = t.name; $('c-status').textContent = `${list.length} links: ${t.t.charAt(0).toLowerCase() + t.t.slice(1)}.`;
-    list.forEach(e => { const li = document.createElement('li'); li.innerHTML = `<i style="background:${t.c}"></i><div><div class="k">${esc(lab(e.from))} → ${esc(lab(e.to))}</div>${esc(e.text)}</div>`; L.appendChild(li); });
-  }
+  const c = $('acard'); if (!c || view !== 'arm' || armMode === 'rev') return;
+  const strip = c.classList.contains('strip');
+  c.style.setProperty('--sc', aCol(armFilter));
+  c.innerHTML = armCardHTML(strip);
+  c.setAttribute('aria-label', 'The imperial arm: ' + (armSel ? NODE[armSel].label : armFilter === 'all' ? 'the whole machine' : ATYPE[armFilter].name));
+  mechWire(c);
+  emit('card');
+}
+/* every link of a node: the dossier (the old phone list's markup, now the sheet's body) */
+function armDossier(id) {
+  const n = NODE[id], ls = aLinks(id);
+  const lk = (e, me) => { const out = e.from === me, o = NODE[out ? e.to : e.from]; return `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${out ? '→' : '←'} ${esc(o.label)}</b> · ${esc(e.text)}</div></div>`; };
+  if (!ls.length) return '<p class="b4empty">No link of this kind.</p>';
+  if (n.layer !== 'sector') return ls.map(e => lk(e, id)).join('');
+  let h = '';
+  const sec = ls.filter(e => e.from === id || e.to === id);
+  if (sec.length) h += `<div class="fname">Whole sector</div>` + sec.map(e => lk(e, id)).join('');
+  n.firms.forEach(F => { const fe = ls.filter(e => e.from === F.id || e.to === F.id); if (!fe.length) return; h += `<div class="fname">${esc(F.label)}<small>${esc(F.sub)}</small></div>` + fe.map(e => lk(e, F.id)).join(''); });
+  return h;
+}
+/* every link of a relation, grouped by where it starts */
+function armEvery() {
+  const ls = ARM.edges.filter(aOn), g = {};
+  ls.forEach(e => { const b = aBox(e.from); (g[b] = g[b] || []).push(e); });
+  return Object.keys(g).map(b => `<div class="fname">${esc(NODE[b].label)}</div>` + g[b].map(e => `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${esc(NODE[e.from].label)} → ${esc(NODE[e.to].label)}</b> · ${esc(e.text)}</div></div>`).join('')).join('');
 }
 
 /* revenue map (arm view, map mode) */
@@ -3188,27 +3335,218 @@ function revSrcHTML(name) {
   const lk = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.src)}</a>` : esc(s.src);
   return `<div class="fsrc"><span class="stt ${s.st}">${esc(REVST[s.st])}</span> ${lk}</div>`;
 }
-function renderRevCard() {
-  resetCardParts();
+/* B4: the Revenue map's card sits on the stage, as the Arm's does (S4 §2.6) */
+function revText() {
   const t = revTotals(revSec);
-  $('c-title').textContent = revSec === 'all' ? 'All five sectors' : REV.sectors[revSec][0];
-  $('c-status').textContent = `${fmtBn(t.total)} of revenue, ${Math.round(t.foreign / t.total * 100)}% of it earned outside the US. Latest fiscal year; splits marked “est.” are estimated from company disclosures.`;
-  const host = $('c-table'), mx = Math.max(...t.firms.map(f => f[3]));
-  const tb = document.createElement('div'); tb.className = 'ftable';
-  tb.innerHTML = '<div class="fh">Firm</div><div class="fh r">Revenue</div><div class="fh r">Abroad</div><div class="fh"></div>';
+  return (revSec === 'all' ? 'US platform, cloud, chip, payment and defence firms earn much of their revenue abroad. Europe is the largest foreign source for platforms and payments; chipmakers book theirs in Greater China and the rest of Asia, where the hardware is assembled; Tether earns its profit mainly from holders in emerging markets. ' : REV.sectors[revSec][3] + ' ') + `Together, the firms shown earned ${fmtBn(t.foreign)} outside the US, ${Math.round(t.foreign / t.total * 100)}% of their revenue.`;
+}
+function revTableHTML() {
+  const t = revTotals(revSec), mx = Math.max(...t.firms.map(f => f[3]));
+  let h = '<div class="ftable"><div class="fh">Firm</div><div class="fh r">Revenue</div><div class="fh r">Abroad</div><div class="fh"></div>';
   t.firms.slice().sort((a, b) => b[3] - a[3]).forEach(f => {
     const ab = 1 - (f[4].US || 0);
-    const cells = [`<div class="fn">${esc(f[1])}<span class="fy">${esc(f[2])}${f[5] === 'rep' ? '' : f[5] === 'part' ? ' · part est.' : ' · est.'}</span></div>`, `<div class="r mono">${fmtBn(f[3])}</div>`, `<div class="r mono">${Math.round(ab * 100)}%</div>`,
-      `<div class="bar"><i style="width:${(f[3] / mx * 100).toFixed(1)}%;background:${rgba(RCOL(f[0]), .35)}"></i><i style="width:${(f[3] * ab / mx * 100).toFixed(1)}%;background:${RCOL(f[0])}"></i></div>`];
-    tb.insertAdjacentHTML('beforeend', cells.join(''));
-    if (f[6]) tb.insertAdjacentHTML('beforeend', `<div class="fnote2">${esc(f[6])}</div>`);
-    tb.insertAdjacentHTML('beforeend', revSrcHTML(f[1]));
+    h += `<div class="fn">${esc(f[1])}<span class="fy">${esc(f[2])}${f[5] === 'rep' ? '' : f[5] === 'part' ? ' · part est.' : ' · est.'}</span></div><div class="r mono">${fmtBn(f[3])}</div><div class="r mono">${Math.round(ab * 100)}%</div>`
+      + `<div class="bar"><i style="width:${(f[3] / mx * 100).toFixed(1)}%;background:${rgba(RCOL(f[0]), .35)}"></i><i style="width:${(f[3] * ab / mx * 100).toFixed(1)}%;background:${RCOL(f[0])}"></i></div>`;
+    if (f[6]) h += `<div class="fnote2">${esc(f[6])}</div>`;
+    h += revSrcHTML(f[1]);
   });
-  host.appendChild(tb);
-  const rs = document.createElement('dl'); rs.className = 'stats';
-  REV.regions.forEach(([r, nm]) => { const v = t.firms.reduce((a, f) => a + f[3] * (f[4][r] || 0), 0); rs.insertAdjacentHTML('beforeend', `<dt>${esc(nm)}</dt><dd>${fmtBn(v)}</dd>`); });
-  host.appendChild(rs);
+  h += '</div><dl class="stats">';
+  REV.regions.forEach(([r, nm]) => { const v = t.firms.reduce((a, f) => a + f[3] * (f[4][r] || 0), 0); h += `<dt>${esc(nm)}</dt><dd>${fmtBn(v)}</dd>`; });
+  return h + '</dl>';
 }
+const REVMECH = 'Arc width ∝ revenue from each region. Hubs show revenue earned in the US. Latest fiscal year; splits marked “est.” are estimated from company disclosures.';
+function revCardHTML(strip) {
+  const keys = ['all', ...REVSEC], i = keys.indexOf(revSec), t = revTotals(revSec), [rv, mech] = sSplit(revText());
+  const title = revSec === 'all' ? 'Where the revenue comes from' : REV.sectors[revSec][0], dot = revSec === 'all' ? '' : `<i class="dot" style="background:${RCOL(revSec)}"></i>`;
+  const fig = `<div class="b4fig"><b>${fmtBn(t.foreign)}</b><span>revenue earned outside the US, ${Math.round(t.foreign / t.total * 100)}% of ${fmtBn(t.total)}, latest fiscal year</span></div>`;
+  const head = `<div class="b4k"><span>${dot}Revenue map · ${revSec === 'all' ? 'all sectors' : 'one sector'}</span><span class="cnt">${i + 1} / ${keys.length}</span></div><h3 class="b4t">${esc(title)}</h3>`;
+  if (strip) return head + `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-acard="firms">Every firm · ${t.firms.length} ${CHR}</button><button type="button" class="b4b2 q" data-acard="mech">The mechanism</button></div>`;
+  return head + `<p>${esc(rv)}</p>${fig}${mechHTML((mech ? esc(mech) + ' ' : '') + esc(REVMECH))}<details class="b4mech b4more"${armList ? ' open' : ''}><summary>Every firm · ${t.firms.length}<span class="cv" aria-hidden="true"></span></summary><div class="b4mb">${revTableHTML()}</div></details>`;
+}
+function renderRevCard() {
+  resetCardParts();
+  const c = $('acard'); if (!c || view !== 'arm' || armMode !== 'rev') return;
+  c.style.setProperty('--sc', revSec === 'all' ? '#e4ebf1' : RCOL(revSec));
+  c.innerHTML = revCardHTML(c.classList.contains('strip'));
+  c.setAttribute('aria-label', 'Revenue map: ' + (revSec === 'all' ? 'all sectors' : REV.sectors[revSec][0]));
+  mechWire(c);
+  const mr = c.querySelector('details.b4more'); if (mr) mr.addEventListener('toggle', () => { armList = mr.open; });
+  emit('card');
+}
+function mechWire(c) {
+  c.querySelectorAll('details.b4mech:not(.b4more)').forEach(d => d.addEventListener('toggle', () => { if (!PHONE()) stSet('isx-mech', d.open ? 'open' : 'shut', true); }));
+}
+
+/* ---------- the sheet: the dossier, every link, the relations, the mechanism of a strip card ----------
+   On phones a bottom sheet; from 761 px a tray that rises from the bar. The dossier has no scrim, so the lit bands stay
+   readable above it. Esc, × and a click outside close it, and focus returns to what opened it. */
+function ashHTML(kind) {
+  const rev = armMode === 'rev';
+  if (kind === 'pick') {
+    const row = (k, nm, t, c, n) => `<li><button type="button" data-arel="${k}"${k === (rev ? revSec : armFilter) ? ' aria-current="true"' : ''}><span class="sw" style="background:${c}"></span><span class="rx"><span class="rn">${esc(nm)}</span>${t ? `<span class="rt">${esc(t)}</span>` : ''}</span><span class="rc">${n}</span></button></li>`;
+    if (rev) return { k: 'What you follow', t: 'Sectors', b: `<ul class="arl">${['all', ...REVSEC].map(k => row(k, k === 'all' ? 'All sectors' : REV.sectors[k][0], '', k === 'all' ? '#e4ebf1' : RCOL(k), fmtBn(revTotals(k).foreign) + ' abroad')).join('')}</ul>` };
+    return { k: 'What you follow', t: 'Relations', b: `<ul class="arl">${row('all', 'The whole machine', 'Every relation at once', '#e4ebf1', ARM.edges.length)}</ul>` + AGRP.map(g => `<div class="b4lk">${esc(g.label)}</div><ul class="arl">${g.keys.map(k => row(k, ATYPE[k].name, ATYPE[k].t, ATYPE[k].c, ARM.edges.filter(e => e.type === k).length)).join('')}</ul>`).join('') };
+  }
+  if (kind === 'firms') return { k: 'Revenue map · every firm', t: revSec === 'all' ? 'All five sectors' : REV.sectors[revSec][0], b: revTableHTML() };
+  if (kind === 'mech') {
+    if (rev) { const [, m] = sSplit(revText()); return { k: 'The mechanism', t: revSec === 'all' ? 'Where the revenue comes from' : REV.sectors[revSec][0], b: `<p>${esc((m ? m + ' ' : '') + REVMECH)}</p>` }; }
+    const [, m] = sSplit(armFilter === 'all' ? ARMX : ATYPE[armFilter].x); return { k: 'The mechanism', t: armFilter === 'all' ? 'The whole machine' : ATYPE[armFilter].name, b: `<p>${esc(m)}</p>` };
+  }
+  if (armSel) { const n = NODE[armSel], ls = aLinks(armSel); return { k: (n.layer === 'sector' ? 'Sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm') + ' · ' + aPl(ls.length, 'link'), t: n.label, b: armDossier(armSel) }; }
+  return { k: aName(armFilter) + ' · ' + aPl(ARM.edges.filter(aOn).length, 'link'), t: armFilter === 'all' ? 'The whole machine' : ATYPE[armFilter].name, b: armEvery() };
+}
+function ashFill() {
+  if (!ashKind) return;
+  const S = ashHTML(ashKind); $('ash-k').textContent = S.k; $('ash-t').textContent = S.t; const b = $('ash-b'); b.innerHTML = S.b; b.scrollTop = 0;
+}
+function ashOpen(kind, from) {
+  const sh = $('asheet'); if (!sh) return;
+  ashKind = kind; ashFrom = from || document.activeElement; ashFill();
+  sh.dataset.kind = kind; sh.hidden = false; sh.removeAttribute('inert');
+  $('ascrim').hidden = !(PHONE() && kind !== 'sel');
+  void sh.offsetWidth; sh.classList.add('on');
+  setTimeout(() => { const x = sh.querySelector('.b4x'); if (x && ashKind) x.focus({ preventScroll: true }); }, 40);
+  armBar();
+}
+function ashClose(quiet) {
+  const sh = $('asheet'); if (!sh) return;
+  const open = ashKind != null; ashKind = null;
+  sh.classList.remove('on'); $('ascrim').hidden = true; sh.setAttribute('inert', '');
+  setTimeout(() => { if (!ashKind) sh.hidden = true; }, reduce ? 0 : 320);
+  if (open && !quiet && ashFrom && ashFrom.isConnected) ashFrom.focus({ preventScroll: true });
+  ashFrom = null;
+  if (open && view === 'arm') armBar();
+}
+
+/* ---------- the shared bar: the Arm follows relations, the Revenue map sectors (S4 §0, item 2) ---------- */
+function armBar() {
+  const host = $('tabs'); if (!RT || !host || view !== 'arm') return;
+  const rev = armMode === 'rev', keys = rev ? ['all', ...REVSEC] : AORD, cur = rev ? revSec : armFilter, i = Math.max(0, keys.indexOf(cur)), n = keys.length;
+  const nm = k => rev ? (k === 'all' ? 'All sectors' : REV.sectors[k][0]) : aName(k), cl = k => rev ? (k === 'all' ? '#e4ebf1' : RCOL(k)) : aCol(k);
+  const mk = k => ({ kind: 'mark', state: k === cur ? 'cur' : '', target: k, title: rev ? nm(k) : k === 'all' ? 'The whole machine' : ATYPE[k].name, sub: rev ? '' : k === 'all' ? ARM.edges.length + ' documented links' : ATYPE[k].t, colour: cl(k) });
+  const gap = { kind: 'mark', state: 'gp' };
+  let segs, pm;
+  if (rev) { segs = [{ label: 'Five sectors and all of them', colour: cl(cur), current: true, wide: true, grow: 1, marks: keys.map(mk) }]; pm = keys.map(mk); }
+  else {
+    segs = [{ label: 'All', colour: '#e4ebf1', current: cur === 'all', grow: 1.4, marks: [mk('all')] }].concat(AGRP.map(g => { const c = g.keys.includes(cur); return { label: c ? g.label + ' · ' + nm(cur) : g.label, colour: c ? cl(cur) : '#8fa3b6', current: c, grow: g.keys.length + 1.6, marks: g.keys.map(mk) }; }));
+    pm = [mk('all')]; AGRP.forEach(g => { pm.push(gap); g.keys.forEach(k => pm.push(mk(k))); });
+  }
+  const nx = keys[(i + 1) % n];
+  RT.render(host, { id: rev ? 'revenue' : 'arm', label: rev ? 'Revenue map: sectors' : 'The imperial arm: relations', stage: rev ? $('scene-map') : $('scene-arm'),
+    back: { enabled: i > 0, label: i > 0 ? 'Back: ' + nm(keys[i - 1]) : 'Back' },
+    next: { kicker: 'Next', title: nm(nx), pkicker: 'Next', ptitle: nm(nx) },
+    line: { kicker: rev ? 'Sector' : 'Relation', title: nm(cur), attrs: { 'data-ash': 'pick', 'aria-haspopup': 'dialog', 'aria-expanded': String(ashKind === 'pick'), 'aria-controls': 'isx-asheet' } },
+    segs, ph: { label: rev ? 'Sector' : cur === 'all' ? 'Whole machine' : aGrp(cur).label, count: (i + 1) + ' / ' + n, colour: cl(cur), marks: pm } });
+}
+function armNav(ev) {
+  if (view !== 'arm') return;
+  const rev = armMode === 'rev', keys = rev ? ['all', ...REVSEC] : AORD, i = keys.indexOf(rev ? revSec : armFilter);
+  let k;
+  if (ev.target != null) k = ev.target;
+  else if (ev.nav === 'next') k = keys[(i + 1) % keys.length];
+  else { if (i <= 0) return; k = keys[i - 1]; }
+  if (!keys.includes(k)) return;
+  hintDone(); armSetRel(k);
+}
+
+/* ---------- the layout rule (S4 §2.1) ---------- */
+const ASTRIP = 114;   /* the card as a strip under the map, 761 to 1179 px: a fixed height, so the rule never flips with the text */
+function armLayout() {
+  if (view !== 'arm') return;
+  const rev = armMode === 'rev', sc = rev ? $('scene-map') : $('scene-arm'), card = $('acard'), fr = $('frame'), flat = $('scene-arm').querySelector('.flat');
+  if (!card || !sc || !fr) return;
+  if (card.parentNode !== sc) sc.appendChild(card);
+  const ph = PHONE(), W = fr.clientWidth, col = !ph && W >= 1180, padL = 22, padR = 16;
+  const fs = document.fullscreenElement === fr, Hm = fs ? innerHeight : Math.max(600, Math.min(1040, innerHeight - 34));
+  const hud = ROOT.querySelector('.hud-top'), hb = hud ? Math.max(hud.getBoundingClientRect().bottom, ...[...hud.querySelectorAll(':scope > *')].filter(e => e.getClientRects().length).map(e => e.getBoundingClientRect().bottom)) : 0;
+  const top0 = hud ? Math.round(hb - fr.getBoundingClientRect().top) + 10 : 96, cTop = top0 + 22;
+  const was = card.className;
+  const place = (e, o) => { Object.assign(e.style, { left: '', right: '', top: '', bottom: '', width: '', height: '', maxHeight: '' }, o || {}); };
+  const kick = $(rev ? 'rkick' : 'akick'); if (kick) kick.textContent = rev ? `Revenue map · latest fiscal year · ${REVSEC.length} sectors · ${REV.firms.length} firms` : `The imperial arm · ${ARM.state.length} state bodies · ${ARM.sectors.length} sectors · ${NFIRMS} firms · ${ARM.edges.length} documented links`;
+  if (rev) {
+    const H = sc.clientHeight, barTop = H - 68;
+    card.className = 'b4card acard ' + (ph ? 'flow' : col ? 'col' : 'strip');
+    if (ph) place(card); else if (col) place(card, { left: padL + 'px', top: cTop + 'px', width: '340px', maxHeight: (barTop - 14 - cTop) + 'px' }); else place(card, { left: padL + 'px', right: padR + 'px', top: (barTop - 8 - ASTRIP) + 'px', height: ASTRIP + 'px' });
+    if (kick) { if (ph) place(kick); else place(kick, { left: padL + 'px', top: top0 + 'px' }); }
+    ROOT.classList.toggle('rev-col', col);
+    if (card.className !== was) renderRevCard();
+    return;
+  }
+  let mode = 'bands', L = null;
+  if (!ph) {
+    const barTop = Hm - 68;
+    /* the hint line sits inside the map, in the economy band's empty foot, so it takes no room of its own */
+    if (col) { const mx = padL + 340 + 16; L = { mx, mw: W - mx - padR, mt: cTop, mh: barTop - 14 - cTop, barTop }; }
+    else { const ct = barTop - 8 - ASTRIP; L = { mx: padL, mw: W - padL - padR, mt: cTop, mh: ct - 8 - cTop, barTop, ct }; }
+    const kf = Math.min(L.mw / AGW, L.mh / AGH.full), kc = Math.min(L.mw / AGW, L.mh / AGH.compact);
+    mode = 12.5 * kf >= 11.2 ? 'full' : 13.5 * kc >= 11 ? 'compact' : 'bands';
+    L.k = mode === 'full' ? kf : kc;
+  }
+  armLay = mode;
+  ['full', 'compact', 'bands'].forEach(m => ROOT.classList.toggle('arm-' + m, m === mode));
+  if (mode === 'bands') {
+    sc.style.height = ''; card.className = 'b4card acard flow';
+    [card, flat, kick, $('ahint')].forEach(e => e && place(e));
+    renderBands();
+  } else {
+    sc.style.height = Hm + 'px';
+    if (armGeoMode !== mode) { armGeoMode = mode; buildArm(); renderArm(); }
+    const ww = AGW * L.k, hh = AGEO[mode].H * L.k, fx = L.mx + (L.mw - ww) / 2, fy = L.mt + Math.max(0, (L.mh - hh) / 2);
+    place(flat, { left: fx.toFixed(1) + 'px', top: fy.toFixed(1) + 'px', width: ww.toFixed(1) + 'px', height: hh.toFixed(1) + 'px' });
+    card.className = 'b4card acard ' + (col ? 'col' : 'strip');
+    if (col) place(card, { left: padL + 'px', top: cTop + 'px', width: '340px', maxHeight: (L.barTop - 14 - cTop) + 'px' });
+    else place(card, { left: padL + 'px', right: padR + 'px', top: L.ct + 'px', height: ASTRIP + 'px' });
+    place(kick, { left: padL + 'px', top: top0 + 'px' });
+    place($('ahint'), { left: (fx + 16 * L.k).toFixed(1) + 'px', top: (fy + hh - 24 * L.k - 6).toFixed(1) + 'px' });
+    pArm.size();
+  }
+  if (card.className !== was) renderArmCard();
+}
+let armRZ = 0;
+window.addEventListener('resize', () => { clearTimeout(armRZ); armRZ = setTimeout(() => { if (view === 'arm') { armLayout(); if (armMode !== 'rev') renderArm(); } }, 120); });
+document.addEventListener('fullscreenchange', () => setTimeout(armLayout, 60));
+/* the header can grow after the first layout (the strip is built later, fonts load): the stage follows it */
+if ('ResizeObserver' in window) { let rq = 0; new ResizeObserver(() => { cancelAnimationFrame(rq); rq = requestAnimationFrame(() => { if (view === 'arm') armLayout(); }); }).observe(document.querySelector('#isx-root .hud-top')); }
+
+function dockEssay() { /* B4-4 fills the dock's essay segment */ }
+/* ---------- hint lines: true for the pointer in hand (S4 §3, rule 11), shown until the first interaction ---------- */
+const HINTS = {
+  map: ['Drag to turn the globe · click a country · ← → to step', 'Swipe the globe to turn it · tap a country · use the bar to step'],
+  rev: ['Drag to turn the globe · click a region', 'Swipe the globe to turn it · tap a region'],
+  arm: ['Click a sector, a firm or a state body to see what it is tied to.', 'Tap a sector or a state body to see what it is tied to.'],
+};
+const hintKey = () => view === 'arm' ? (armMode === 'rev' ? 'rev' : 'arm') : view === 'map' ? 'map' : null;
+function hints() {
+  const k = hintKey(), done = k && stGet('isx-hint-' + k, true) === '1', c = COARSE ? 1 : 0;
+  const t = $('hint-t'); if (t && (k === 'map' || k === 'rev')) { t.textContent = HINTS[k][c]; t.hidden = done; }
+  const a = $('ahint'); if (a) { a.textContent = HINTS.arm[c]; a.hidden = k !== 'arm' || done; }
+}
+function hintDone() {
+  const k = hintKey(); if (!k || stGet('isx-hint-' + k, true) === '1') return;
+  stSet('isx-hint-' + k, '1', true); hints();
+}
+/* the card, the bands and the sheet answer one listener; Esc closes the sheet, then clears the selection */
+ROOT.addEventListener('click', e => {
+  const t = e.target.closest('[data-arel], [data-acard], [data-ash], [data-anode]'); if (!t || view !== 'arm') return;
+  const d = t.dataset;
+  if (d.arel != null) { hintDone(); armSetRel(d.arel); return; }
+  if (d.anode != null) { hintDone(); armSelect(d.anode); return; }
+  if (d.ash === 'x') { ashClose(); return; }
+  if (d.ash === 'pick') { if (ashKind === 'pick') ashClose(); else ashOpen('pick', t); return; }
+  if (d.acard === 'clear') { armSel = null; armList = false; ashClose(true); armSetRel('all'); return; }
+  if (d.acard === 'mech' || d.acard === 'firms') { ashOpen(d.acard, t); return; }
+  if (d.acard === 'links') {
+    if ($('acard').classList.contains('col')) { armList = !armList; renderArmCard(); const b = $('acard').querySelector('[data-acard="links"]'); if (b) b.focus({ preventScroll: true }); }
+    else ashOpen('links', t);
+  }
+});
+$('ascrim').addEventListener('click', () => ashClose());
+document.addEventListener('pointerdown', e => { if (ashKind && view === 'arm' && !PHONE() && !e.target.closest('#isx-asheet, [data-ash], [data-acard], [data-anode], [data-a], .rt')) ashClose(true); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || view !== 'arm' || e.defaultPrevented) return;
+  if (ashKind) { e.preventDefault(); ashClose(); return; }
+  if (armSel) { e.preventDefault(); const f = armSel; armSelect(null); const b = ABT[f] || document.querySelector(`#isx-abands [data-anode="${f}"]`); if (b && b.isConnected) b.focus({ preventScroll: true }); }
+});
 
 /* ================= chains of action ================= */
 const chainSvg = $('chain'), pCh = Particles($('cv-chain'), 1240, 600);
@@ -3402,28 +3740,6 @@ function buildMapModes() {
   });
   host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
-}
-/* phone: the arm as tap-open lists */
-function renderArmList() {
-  const host = $('armlist'); if (!host) return;
-  const open = new Set([...host.querySelectorAll('details[open]')].map(d => d.dataset.id));
-  host.innerHTML = '';
-  const on = e => armFilter === 'all' || e.type === armFilter;
-  const other = e => { const a = NODE[e.from], b = NODE[e.to]; return a; };
-  const lk = (e, me) => { const o = NODE[e.from === me ? e.to : e.from], dir = e.from === me ? '→' : '←'; return `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${dir} ${esc(o.label)}</b> · ${esc(e.text)}</div></div>`; };
-  ARM.sectors.forEach(([id, label]) => {
-    const S = NODE[id], ids = [id, ...S.firms.map(f => f.id)];
-    const es = ARM.edges.filter(e => on(e) && (ids.includes(e.from) || ids.includes(e.to)));
-    if (!es.length) return;
-    const d = document.createElement('details'); d.dataset.id = id; if (open.has(id)) d.open = true;
-    let h = `<summary><span class="${S.musk ? 'musk' : ''}">${esc(label)}</span><span class="n">${es.length} link${es.length > 1 ? 's' : ''}</span></summary><div class="fl">`;
-    const sec = es.filter(e => e.from === id || e.to === id);
-    if (sec.length) h += `<div class="fname">Whole sector</div>` + sec.map(e => lk(e, id)).join('');
-    S.firms.forEach(F => { const fe = es.filter(e => e.from === F.id || e.to === F.id); if (!fe.length) return; h += `<div class="fname">${esc(F.label)}</div><div class="fsub">${esc(F.sub)}</div>` + fe.map(e => lk(e, F.id)).join(''); });
-    d.innerHTML = h + '</div>'; host.appendChild(d);
-  });
-  const rest = ARM.edges.filter(e => on(e) && !NODE[e.from].layer.match(/sector|firm/) && !NODE[e.to].layer.match(/sector|firm/));
-  if (rest.length) { const d = document.createElement('details'); d.dataset.id = 'rest'; if (open.has('rest')) d.open = true; d.innerHTML = `<summary><span>State and economy</span><span class="n">${rest.length} links</span></summary><div class="fl">${rest.map(e => `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${esc(NODE[e.from].label)} → ${esc(NODE[e.to].label)}</b> · ${esc(e.text)}</div></div>`).join('')}</div>`; host.appendChild(d); }
 }
 /* phone: a chain as a vertical timeline */
 function renderChainList() {
@@ -5679,16 +5995,13 @@ const RT = window.ISXR || null;
 function buildTabs() {
   const host = $('tabs');
   if (RT && view === 'map') { circBar(); return; }
+  if (RT && view === 'arm') { armBar(); return; }   /* B4: the Arm and the Revenue map join the shared bar */
   if (RT) { RT.drop(host); if (!(view === 'story' || (view === 'fin' && finMode === 'plumb'))) RT.release(); }
   host.innerHTML = '';
   const tab = (n, t, col, cur, fn, extra) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tb' + (extra ? ' ' + extra : ''); b.style.setProperty('--sc', col); b.innerHTML = `<span class="n">${n}</span><span class="t">${esc(t)}</span>`; if (cur) b.setAttribute('aria-current', 'true'); b.addEventListener('click', fn); host.appendChild(b); return b; };
   if (view === 'map') {
     const pb = tab('▶', timer ? 'Pause' : 'Play', C.dollar, false, play, 'play'); pb.id = 'isx-play';
     tabs5(tab);
-  } else if (view === 'arm' && armMode === 'rev') {
-    ['all', ...REVSEC].forEach(k => tab(k === 'all' ? '●' : '—', k === 'all' ? 'All sectors' : REV.sectors[k][0], k === 'all' ? '#e4ebf1' : RCOL(k), k === revSec, () => { revSec = k; buildTabs(); narrate(); renderRevCard(); renderGlobe(false); }));
-  } else if (view === 'arm') {
-    AF.forEach(k => tab(k === 'all' ? '●' : '—', k === 'all' ? 'Whole machine' : ATAB[k], k === 'all' ? '#e4ebf1' : ATYPE[k].c, k === armFilter, () => { armFilter = k; buildTabs(); renderArm(); narrate(); renderArmCard(); }));
   } else if (view === 'fin') {
     FINM.filter(([k]) => fmOK(k)).forEach(([k, n, t, c]) => tab(n, t, c, k === finMode, () => { finMode = k; routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); $('frame').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
   } else if (view === 'story') {
@@ -5879,7 +6192,7 @@ function narrate() {
   } else if (view === 'arm' && armMode === 'rev') {
     const t = revTotals(revSec);
     h = revSec === 'all' ? 'Where the revenue comes from' : REV.sectors[revSec][0];
-    x = (revSec === 'all' ? 'US platform, cloud, chip, payment and defence firms earn much of their revenue abroad. Europe is the largest foreign source for platforms and payments; chipmakers book theirs in Greater China and the rest of Asia, where the hardware is assembled; Tether earns its profit mainly from holders in emerging markets. ' : REV.sectors[revSec][3] + ' ') + `Together, the firms shown earned ${fmtBn(t.foreign)} outside the US, ${Math.round(t.foreign / t.total * 100)}% of their revenue.`;
+    x = revText();
     sc = revSec === 'all' ? '#e4ebf1' : RCOL(revSec); fig = fmtBn(t.foreign); cap = 'revenue earned outside the US, latest fiscal year';
     scale = 'Arc width ∝ revenue from each region. Hubs show revenue earned in the US.';
   } else if (view === 'fin') {
@@ -5889,10 +6202,10 @@ function narrate() {
     h = S.h; x = S.sum; sc = '#ff3b5c'; fig = String(nch); cap = nch === 1 ? 'chokepoint, where a US switch limits sovereignty' : 'chokepoints, where a US switch limits sovereignty';
     scale = 'Step through the chain above; red broken links mark a switch, sanction or refusal.';
   } else if (view === 'arm') {
-    const t = armFilter === 'all' ? { name: 'The imperial arm', x: 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from. Pick a relation in the tabs, hover a firm or a sector, or switch to the revenue map.' } : ATYPE[armFilter];
+    const t = armFilter === 'all' ? { name: 'The imperial arm', x: 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from.' } : ATYPE[armFilter];
     h = t.name; x = t.x; sc = armFilter === 'all' ? '#e4ebf1' : ATYPE[armFilter].c;
     fig = String(ARM.edges.filter(e => armFilter === 'all' || e.type === armFilter).length); cap = armFilter === 'all' ? 'documented links between state, firms and economy' : 'links of this kind';
-    scale = 'Particles show the direction of each relation, not its size. Hover a firm or a sector heading to isolate its links.';
+    scale = 'Particles show the direction of each relation, not its size.';
   } else {
     const ch = CH.chains[chainIdx]; sc = CHC[ch.kind];
     h = ch.h; fig = ch.id; cap = ch.kind === 'real' ? 'documented case, ' + ch.when : 'composite scenario';
@@ -6088,19 +6401,21 @@ function setView(v) {
   if (globe) globeWake();
   $('card').style.removeProperty('--sc');
   if (v === 'map') { renderGlobe(true); renderCountryCard(); }
-  else if (v === 'arm' && armMode === 'rev') { selIso = null; renderGlobe(true); renderRevCard(); }
-  else if (v === 'arm') { pArm.size(); renderArm(); pArm.start(); renderArmCard(); }
+  else if (v === 'arm' && armMode === 'rev') { selIso = null; armSel = null; ashClose(true); renderGlobe(true); armLayout(); renderRevCard(); }
+  else if (v === 'arm') { ashClose(true); armLayout(); renderArm(); pArm.start(); renderArmCard(); }
   else if (v === 'fin') { renderFin(); renderFinCard(); }
   else if (v === 'story') { storyStep = -1; renderStoryCard(); scSync({ instant: true }); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
-  fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync();
+  if (v !== 'arm') { ashClose(true); ['full', 'compact', 'bands'].forEach(m => ROOT.classList.remove('arm-' + m)); ROOT.classList.remove('rev-col'); }
+  ROOT.classList.toggle('arm-rev', v === 'arm' && armMode === 'rev');
+  fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync(); hints();
   emit('view', view); ISXP.sync();
 }
 ['map', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
 ['machine', 'rev'].forEach(m => $('m-' + m).addEventListener('click', () => { armMode = m; $('m-machine').setAttribute('aria-pressed', String(m === 'machine')); $('m-rev').setAttribute('aria-pressed', String(m === 'rev')); setView('arm'); }));
 $('clear').addEventListener('click', () => select(null));
 $('waico').addEventListener('click', () => { showWaico = !showWaico; $('waico').setAttribute('aria-checked', String(showWaico)); repaint(); renderLegend(); legend6(); });
-window.addEventListener('resize', () => { if (view === 'arm') pArm.size(); if (view === 'chain') pCh.size(); });
+window.addEventListener('resize', () => { if (view === 'chain') pCh.size(); });   /* B4: the Arm resizes through armLayout() */
 
 
 /* ================= v.1.10: boot, first-visit tips, analytics hook =================
@@ -6242,7 +6557,6 @@ function tipsAct(k) {
   ['pointerup', 'pointercancel'].forEach(t => g.addEventListener(t, () => { p0 = null; }, { passive: true }));
   window.addEventListener('resize', gtPlace);
   const hint = $('hint');
-  if (hint && COARSE) hint.firstChild.textContent = 'Swipe sideways to turn the globe · tap a country · use the step bar to step ';
   ROOT.addEventListener('click', e => {
     const b = e.target.closest('[data-tips]'); if (!b) return;
     if (b.dataset.tips === 'globe') { stSet(TKEY.globe, null, true); if (view !== 'map') setView('map'); if (window.ISX && ISX.tour) ISX.tour.open(true); else gtOpen(true); } /* v2: the short tour (v2/tour.js) replaces the four globe tips; they remain the fallback */
@@ -6323,13 +6637,7 @@ function mstepSync() {
 }
 $('ms-prev').addEventListener('click', () => stepBy(-1)); $('ms-next').addEventListener('click', () => stepBy(1));
 $('ms-prev').innerHTML = MS_ARR.l;
-/* the line under the globe names what the phone layout offers */
-(() => {
-  const hint = $('hint'); if (!hint || !hint.firstChild) return;
-  const base = hint.firstChild.textContent, mq = matchMedia('(max-width: 760px)');
-  const set = () => { if (mq.matches) hint.firstChild.textContent = (COARSE ? 'Swipe sideways to turn the globe · tap a country' : 'Drag to turn the globe · click a country') + ' · use the arrows below to step '; else hint.firstChild.textContent = COARSE ? 'Swipe sideways to turn the globe · tap a country · use the step bar to step ' : base; };
-  set(); if (mq.addEventListener) mq.addEventListener('change', set);
-})();
+/* B4: the line under the globe is written per pointer by hints() (the Arm's tab code) */
 
 /* ---------- share ---------- */
 const SHARE_BASE = (() => { const c = document.querySelector('link[rel="canonical"]'); return (c && c.href) || (location.origin + location.pathname); })();
@@ -7541,7 +7849,9 @@ if (RT) {
     if (ev.id === 'circuit') { if (view !== 'map') return; if (ev.target != null) { if (ev.target === 'play') play(); else if (ev.target === 'ring') ringSet(true); else { stopPlay(); setStep(+ev.target); } } else stepBy(ev.nav === 'next' ? 1 : -1); }
     else if (ev.id === 'scenarios') { if (view !== 'story' || (window.ISX && ISX.scenes && ISX.scenes.busy)) return; if (ev.target != null) storySet(+ev.target); else scNav(ev.nav === 'next' ? 1 : -1); }
     else if (ev.id === 'sim') simNav(ev);
+    else if (ev.id === 'arm' || ev.id === 'revenue') armNav(ev);
   });
+  RT.swipe($('scene-arm'), 'arm', '.b4sheet');
   RT.swipe($('tournarr'), 'circuit'); RT.swipe($('sc3'), 'scenarios', '.b3rail, .b3sheet, .b3strip');
 }
 if (location.hash === '#tour') ROOT.classList.add('tour');
@@ -7561,7 +7871,7 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
 window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP, route: RT,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
-  get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
+  get finMode() { return finMode; }, get armMode() { return armMode; }, get armRel() { return armFilter; }, get armSel() { return armSel; }, get armLay() { return armLay; }, get revSec() { return revSec; }, setArmRel: k => { if (AORD.includes(k) || k === 'all' || REVSEC.includes(k)) armSetRel(k); }, setArmSel: id => { if (!id || NODE[id]) { if ((id || null) !== armSel) armSelect(id || null); } }, armEdges: () => ARM.edges.map(e => ({ from: e.from, to: e.to, type: e.type, fb: aBox(e.from), tb: aBox(e.to) })), armOrder: AORD, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */

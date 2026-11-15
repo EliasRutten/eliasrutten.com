@@ -59,11 +59,12 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
 
   /* ---------- Arm ---------- */
   p = await open(c, '#arm', 'arm');
-  const nt = await p.evaluate(() => document.querySelectorAll('#isx-tabs .tb').length); res.counts.armtabs = nt;
-  for (let i = 0; i < nt; i++) { await p.evaluate(k => document.querySelectorAll('#isx-tabs .tb')[k].click(), i); await p.waitForTimeout(250); await snap(p, 'arm/tab' + i, '#isx-narr, #isx-card, #isx-armlist'); }
+  /* B4: the Arm's relations are the shared bar's marks; the card is on the stage */
+  const nt = await p.evaluate(() => ISX.armOrder.length); res.counts.armtabs = nt;
+  for (let i = 0; i < nt; i++) { await p.evaluate(k => ISX.setArmRel(ISX.armOrder[k]), i); await p.waitForTimeout(250); await snap(p, 'arm/tab' + i, '#isx-acard, #isx-tabs'); }
   await count(p, 'arm-svg-nodes', '#isx-arm g');
   await p.close();
-  p = await open(c, '#revenue', 'revenue'); await snap(p, 'arm/revenue', '#isx-narr, #isx-card, #isx-tabs'); await p.close();
+  p = await open(c, '#revenue', 'revenue'); await snap(p, 'arm/revenue', '#isx-acard, #isx-tabs'); await p.close();
 
   /* ---------- Simulator, full view ---------- */
   p = await open(c, '#simulator', 'sim-full');
