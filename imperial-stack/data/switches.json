@@ -438,6 +438,125 @@
    "short": "Tether"
   }
  ],
+ "cap": {
+  "mh17": [
+   "Flight MH17 is shot down over eastern Ukraine by a Buk missile. All 298 people on board are killed.",
+   "A Buk launcher brought in from Russia fires from a farm field near Pervomaiskyi and leaves the next day.",
+   "Photos and videos of the launcher appear on social media, including on Twitter and YouTube.",
+   "Bellingcat geolocates the images and follows the launcher back to Russia’s 53rd anti-aircraft brigade.",
+   "Ukraine’s security service hands over intercepted calls; telecom data places phones along the route.",
+   "The US says within days that it detected the launch, but never releases its satellite data.",
+   "The Hague court convicts three men of murder in absentia in 2022. In 2025 ICAO holds Russia responsible.",
+   "The layers that solved MH17 now run denser and mostly through US firms."
+  ],
+  "protest": [
+   "A Turkish doctoral student at Tufts University co-writes an op-ed in the student newspaper.",
+   "Canary Mission, an anonymous website that profiles pro-Palestinian students, publishes a page about her.",
+   "“Catch and Revoke” uses AI to scan foreign students’ social media. Whether it flagged her is not public.",
+   "The Secretary of State revokes her student visa without telling her.",
+   "Plainclothes agents in masks detain her on a street in Somerville, Massachusetts.",
+   "ICE’s case management runs on Palantir. Its role in her case is not public.",
+   "Within a day she is moved through Vermont to a detention centre in Basile, Louisiana, far from her lawyers.",
+   "After six weeks in detention, a federal judge in Vermont orders her release. Her case continues."
+  ],
+  "border": [
+   "A proposed CBP rule would make visa-waiver travellers list five years of social-media accounts for ESTA.",
+   "The Marechaussee checked air passengers’ data in a system built on Palantir software, under a 2014 contract.",
+   "Visa-waiver countries must let US officers query their police databases, or lose visa-free travel.",
+   "A DHS rule lets CBP photograph every non-citizen entering or leaving the US and match each face.",
+   "Fingerprints and faces collected across DHS are moving into HART, on Amazon Web Services’ government cloud.",
+   "Border officers can search phones without a warrant. A French scientist was refused entry in Houston.",
+   "He is put on a plane back to Europe. The decision rests on an officer’s reading of a phone."
+  ],
+  "icc": [
+   "An executive order authorises sanctions on the court and designates its chief prosecutor, Karim Khan.",
+   "Sanctions bar US people and companies from providing services to those designated.",
+   "Microsoft disables the chief prosecutor’s email, the AP reports. Microsoft says it never suspended services.",
+   "The court’s own work runs on Microsoft. With its prosecutor cut off, his email moves to Proton.",
+   "US payment networks and platforms close the accounts of sanctioned officials.",
+   "Judge Nicolas Guillou loses his cards and his Amazon, Airbnb and PayPal accounts.",
+   "Under oath, Microsoft France says it cannot guarantee French data would not be handed to US authorities.",
+   "The ICC plans to replace Microsoft Office with openDesk, an open-source suite from Germany."
+  ],
+  "kenya": [
+   "A trader in Nairobi turns shillings into USDT through M-Pesa and an exchange.",
+   "Tether, registered in El Salvador, issues one USDT for every dollar it receives.",
+   "Cantor Fitzgerald in New York holds most of Tether’s reserves and earns tens of millions a year in fees.",
+   "The reserves are mostly short-term US government debt: more than $141bn of exposure at the end of 2025.",
+   "Stablecoin demand pushes bill yields down. Savers abroad lend to the US government through a token.",
+   "The holder earns no interest. Kenya’s own 91-day Treasury bills paid 7.9% in September 2025.",
+   "Tether made more than $10bn of profit in 2025 and owns a portfolio of more than $20bn.",
+   "Cantor’s chief executive, Howard Lutnick, became US Commerce Secretary in 2025, pledging to divest.",
+   "Tether can freeze any USDT address. A Kenyan saver holds dollars that one company can switch off."
+  ],
+  "nexperia": [
+   "The Netherlands has required export licences for ASML’s advanced chip machines to China since 2023.",
+   "The US put Wingtech, Nexperia’s Chinese owner, on its entity list. Nexperia itself was not listed.",
+   "US officials: Nexperia’s Chinese chief executive would have to be replaced, or it could lose the US market.",
+   "Washington extended its export controls to every company at least 50% owned by a blacklisted firm.",
+   "The economy ministry invoked a 1952 law; the Enterprise Chamber suspended the chief executive.",
+   "China banned exports from Nexperia’s Chinese unit, which makes about 70% of the company’s output.",
+   "European carmakers and suppliers, Volkswagen and ZF among them, warned of shortages of basic chips.",
+   "After Trump and Xi met in Busan, Washington suspended the 50% rule and Beijing granted export exemptions."
+  ],
+  "huawei": [
+   "The US put Huawei on its entity list: no US technology without a licence.",
+   "Google suspended Huawei’s licence for Google Mobile Services. New models lost the Play Store, Gmail and Maps.",
+   "Outside China, new Huawei phones shipped without Google’s apps, and buyers abroad turned away.",
+   "Washington extended its rules to foreign-made chips. TSMC stopped shipping to Huawei from 15 September 2020.",
+   "Huawei could no longer have its own chip designs made. It fell from the largest smartphone seller to sixth.",
+   "Huawei sold its budget phone brand Honor.",
+   "The Mate 60 launched with a 7-nanometre chip made by China’s SMIC, running Huawei’s own HarmonyOS."
+  ],
+  "russia": [
+   "The US, EU and allies froze roughly half of the Bank of Russia’s reserves of more than $600bn.",
+   "Seven Russian banks were removed from SWIFT, the messaging network banks use for cross-border payments.",
+   "Visa and Mastercard suspended operations in Russia. Cards issued in Russia stopped working abroad.",
+   "Apple and Microsoft halted sales; Oracle and SAP suspended operations.",
+   "Russia fell back on its own card scheme, Mir, its SPFS messaging system and trade settled in yuan.",
+   "The EU made the freeze open-ended: €210bn of Russian state assets, €185bn of them at Euroclear.",
+   "Profits on the frozen assets back a $50bn G7 loan to Ukraine. A plan to lend the assets themselves failed."
+  ],
+  "nayara": [
+   "The EU added Nayara Energy, an Indian refiner 49.13% owned by Rosneft, to its Russia sanctions list.",
+   "Microsoft applied the EU listing to a customer in India, which does not recognise the EU sanctions.",
+   "Microsoft suspended Nayara’s Outlook, Teams and Office accounts and its access to data on its servers.",
+   "Nayara sued in the Delhi High Court. Microsoft restored the services before the next hearing.",
+   "SAP India suspended support for Nayara’s enterprise software, citing the same sanctions.",
+   "The Delhi High Court ordered SAP to restore service, ruling that Indian law governs the contract."
+  ],
+  "maven": [
+   "Satellite and drone imagery of militia and weapons sites in Iraq and Syria feeds the targeting system.",
+   "Maven, the targeting system Palantir builds for the Pentagon, narrows down targets for more than 85 strikes.",
+   "Officers at Central Command approve the targets. The AI “isn’t ready to recommend the order of attack”.",
+   "US aircraft strike seven facilities in Iraq and Syria, days after a drone attack killed three US soldiers.",
+   "The Maven contract was worth $480m in May 2024; in May 2025 its ceiling was raised to about $1.3bn.",
+   "The Pentagon makes Maven a programme of record: a standing budget line paid to a private firm.",
+   "NATO buys the Maven Smart System for its own command. Allied targeting now runs on the same US software."
+  ],
+  "ice": [
+   "Ordinary apps, such as weather and navigation apps, share their users’ location with advertising partners.",
+   "Gravy Analytics and its subsidiary Venntel aggregate the location data and sell it on.",
+   "ICE and CBP bought access to Venntel’s location data. ICE used it to identify immigrants later arrested.",
+   "ICE pays Palantir $30m to build ImmigrationOS, a system to select and track people for deportation.",
+   "ICE arrests and deports. Every link in the chain before the arrest was commercial."
+  ],
+  "gaza": [
+   "Project Nimbus, a $1.2bn contract, gives the Israeli government cloud services from Google and Amazon.",
+   "Israel’s signals-intelligence unit records Palestinians’ phone calls at mass scale.",
+   "The recordings are stored on Azure servers in the Netherlands and Ireland.",
+   "An AI system, Lavender, marks as many as 37,000 Palestinians as suspected militants.",
+   "Officers approve strikes; sources say reviews of Lavender’s picks were often brief.",
+   "Airstrikes on Gaza.",
+   "Microsoft blocks some Israeli defence-ministry accounts from the services used for the surveillance."
+  ],
+  "garantex": [
+   "The Treasury sanctions Garantex, a Moscow crypto exchange. The EU follows in February 2025.",
+   "Tether freezes about $27m of USDT held in Garantex wallets, working with US authorities.",
+   "Garantex suspends all services, including withdrawals.",
+   "The US Secret Service seizes the exchange’s web domains."
+  ]
+ },
  "pic": {
   "ukr": {
    "cols": [
@@ -549,6 +668,10 @@
     "Washington pauses intelligence sharing and cuts Maxar imagery for six days, until Ukraine accepts a ceasefire proposal.",
     "SpaceX and Kyiv switch on a whitelist of verified terminals. Smuggled Russian Starlinks lose their links."
    ],
+   "close": {
+    "title": "Two holders, three switches",
+    "text": "It has three switches. SpaceX, a private company, holds two of them; Washington holds the third."
+   },
    "short": {
     "ukr-1": [
      "SpaceX",

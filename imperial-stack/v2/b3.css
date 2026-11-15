@@ -237,6 +237,56 @@
 #isx-root .b3 .b3btn.pri { border-color: #ff5873; background: linear-gradient(180deg, rgba(255, 59, 92, .26), rgba(120, 14, 36, .5)); color: #fff; }
 #isx-root .b3 .b3btn.pri:hover { color: #fff; border-color: #ff8a9c; }
 
+#isx-root .b3 .b3more { margin-top: 14px; display: inline-flex; gap: 8px; align-items: center; font: 500 12px var(--display); letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .b3 .b3more svg { width: 14px; height: 14px; }
+#isx-root .b3 .b3more:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---------- depth: the drawer and the ledger, over everything in the frame ---------- */
+#isx-root .b3 .b3sheet { position: absolute; z-index: 40; background: rgba(4, 7, 11, .9); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); opacity: 0; visibility: hidden; pointer-events: none; overflow-y: auto; overscroll-behavior: contain; transition: opacity .5s ease, transform .7s var(--b3o), visibility 0s linear .5s; }
+#isx-root .b3 .b3sheet.on { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity .5s ease, transform .7s var(--b3o), visibility 0s; }
+#isx-root .b3[data-sheet="drawer"]::after { content: ""; position: absolute; inset: 0; z-index: 39; background: rgba(4, 7, 11, .5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+#isx-root .b3 .b3x { position: absolute; right: 22px; top: 22px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #2a3b4a; font-size: 16px; color: #b4c2cf; }
+#isx-root .b3 .b3x:hover { border-color: #ffd27a; color: #ffd27a; }
+#isx-root .b3 .b3drawer { right: 0; top: 0; bottom: 0; width: min(520px, 100%); padding: 34px 34px 40px; border-left: 1px solid rgba(120, 160, 200, .18); transform: translateX(30px); }
+#isx-root .b3 .b3drawer .b3kk { padding-right: 52px; }
+#isx-root .b3 .b3drawer h2 { margin: 12px 0 0; font: 600 34px/1 var(--display); letter-spacing: .03em; text-transform: uppercase; color: #fff; text-wrap: balance; }
+#isx-root .b3 .b3drawer h3 { margin: 26px 0 8px; font: 400 11px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: #8a9bab; }
+#isx-root .b3 .b3drawer p { margin: 0 0 10px; font-family: var(--sans); font-size: 15px; line-height: 1.6; color: #c3cfda; }
+#isx-root .b3 .b3drawer .b3lay { margin: 12px 0 0; font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8a9bab; }
+#isx-root .b3 .b3drawer .b3lay b { margin-left: 8px; font-weight: 400; color: #e4ebf1; }
+#isx-root .b3 .b3drawer .b3src { font: 12px/1.5 var(--mono); color: #9aabba; }
+#isx-root .b3 .b3drawer .b3src span { color: #8a9bab; }
+#isx-root .b3 .b3dl { display: grid; grid-template-columns: 110px 1fr; gap: 10px 14px; margin: 0; padding: 14px 16px; border: 1px solid rgba(255, 59, 92, .3); border-radius: 14px; background: rgba(255, 59, 92, .05); font-family: var(--sans); font-size: 14px; line-height: 1.45; color: var(--ink); }
+#isx-root .b3 .b3dl dt { padding-top: 3px; font: 10px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8a9bab; }
+#isx-root .b3 .b3dl dd { margin: 0; }
+#isx-root .b3 .b3dl dd small { display: block; font: 11px var(--mono); color: #8a9bab; }
+#isx-root .b3 .b3dl dd.none { color: #8a9bab; }
+#isx-root .b3 .b3dl .b3gly { vertical-align: -1px; }
+#isx-root .b3 .b3sl, #isx-root .b3 .b3srcs { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+#isx-root .b3 .b3sl button { display: flex; gap: 12px; width: 100%; padding: 9px 10px; border-radius: 10px; text-align: left; font-family: var(--sans); font-size: 14px; color: #b4c2cf; }
+#isx-root .b3 .b3sl button:hover { background: rgba(255, 255, 255, .04); }
+#isx-root .b3 .b3sl button[aria-current="step"] { background: rgba(255, 210, 122, .08); color: #fff; }
+#isx-root .b3 .b3sl small { padding-top: 2px; font: 11px var(--mono); color: #8a9bab; }
+#isx-root .b3 .b3sl em { margin-left: 8px; font: normal 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #ff6b85; }
+#isx-root .b3 .b3srcs { counter-reset: b3s; }
+#isx-root .b3 .b3srcs li { counter-increment: b3s; display: flex; gap: 12px; padding: 3px 10px; font: 12px/1.5 var(--mono); color: #9aabba; }
+#isx-root .b3 .b3srcs li::before { content: counter(b3s, decimal-leading-zero); color: #8a9bab; }
+#isx-root .b3 .b3ledger { inset: 0; padding: calc(var(--b3top) + 4px) clamp(20px, 6vw, 90px) 40px; transform: translateY(18px); }
+#isx-root .b3 .b3ledger h2 { margin: 0; padding-right: 52px; font: 600 clamp(34px, 4vw, 56px)/1 var(--display); letter-spacing: .03em; text-transform: uppercase; color: #fff; }
+#isx-root .b3 .b3lead { margin: 10px 0 20px; max-width: 62ch; font-family: var(--sans); font-size: 15px; line-height: 1.5; color: #b4c2cf; }
+#isx-root .b3 .b3fch { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+#isx-root .b3 .b3fch button { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #2a3b4a; font: 500 12px var(--display); letter-spacing: .14em; text-transform: uppercase; color: #b4c2cf; }
+#isx-root .b3 .b3fch button b { margin-left: 4px; font: 400 11px var(--mono); letter-spacing: 0; color: #8a9bab; }
+#isx-root .b3 .b3fch button[aria-pressed="true"] { border-color: #ffd27a; color: #ffd27a; background: rgba(255, 210, 122, .08); }
+#isx-root .b3 .b3fch button[aria-pressed="true"] b { color: #ffd27a; }
+#isx-root .b3 .b3lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+#isx-root .b3 .b3lc { display: block; text-align: left; padding: 16px 18px; border-radius: 16px; border: 1px solid #1f2d39; background: rgba(10, 18, 27, .7); transition: border-color .3s, transform .4s var(--b3o), opacity .3s; }
+#isx-root .b3 .b3lc:hover { border-color: #ffd27a; transform: translateY(-3px); }
+#isx-root .b3 .b3lc .a { display: flex; align-items: center; gap: 10px; font: 600 15px var(--display); letter-spacing: .07em; text-transform: uppercase; color: #fff; }
+#isx-root .b3 .b3lc .b { display: block; margin: 8px 0 0; font-family: var(--sans); font-size: 13.5px; line-height: 1.45; color: #b4c2cf; }
+#isx-root .b3 .b3lc .c { display: block; margin-top: 10px; font: 11px var(--mono); letter-spacing: .08em; color: #8a9bab; }
+#isx-root .b3 .b3lc:disabled { opacity: .22; cursor: default; transform: none; border-color: #1f2d39; }
+
 /* ---------- the strip: the shared bar in its scene skin (round step buttons with the step's icon, joined by links) ---------- */
 #isx-root .b3 .sc3bar.b3strip { position: absolute; z-index: auto; left: 50%; right: auto; top: auto; bottom: 10px; width: max-content; max-width: calc(100% - 24px); height: auto; margin: 0; padding: 0; display: block; background: none; box-shadow: none; border-radius: 0; transform: translateX(calc(-50% - var(--b3sx, 0px))); }
 #isx-root .b3 .sc3bar.b3strip[hidden] { display: none; }
@@ -292,6 +342,8 @@
   #isx-root .b3 .b3strip .rt.sk-strip .rt-route { padding: 0 3px; }
   #isx-root .b3 .b3strip .rt-sp { width: 28px; height: 28px; } #isx-root .b3 .b3strip .rt-sp svg { width: 13px; height: 13px; } #isx-root .b3 .b3strip .rt-lk { width: 7px; }
   #isx-root .b3 .b3wm { font-size: 26vw; right: -4vw; top: 30%; }
+  #isx-root .b3 .b3drawer { padding: 26px 20px 40px; } #isx-root .b3 .b3drawer h2 { font-size: 28px; } #isx-root .b3 .b3dl { grid-template-columns: 90px 1fr; }
+  #isx-root .b3 .b3ledger { padding: 20px 16px 30px; } #isx-root .b3 .b3lg { grid-template-columns: 1fr; } #isx-root .b3 .b3x { right: 14px; top: 14px; }
   #isx-root .b3 .b3tc .h { letter-spacing: .3em; } #isx-root .b3 .b3tc.show .h { letter-spacing: .08em; }
   #isx-root .b3 .b3rail { padding: 10px 18px 8px; bottom: 6px; gap: 9px; } #isx-root .b3 .b3chip { width: 116px; height: 80px; border-radius: 12px; } #isx-root .b3 .b3chip[aria-current="true"] { width: 132px; transform: translateY(-5px); } #isx-root .b3 .b3ct b { font-size: 13px; } #isx-root .b3 .b3ct small { font-size: 9.5px; } #isx-root .b3 .b3gl { display: none; }
 }

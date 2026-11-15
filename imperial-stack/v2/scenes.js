@@ -301,7 +301,60 @@
       tg.querySelector('.tr').animate([{ fill: 'rgba(68, 215, 236, .12)', stroke: '#44d7ec' }, { fill: 'rgba(255, 59, 92, .22)', stroke: '#ff3b5c' }], o);
     }
   }
-  function drawDrawer() {}
+
+  /* ---------- depth: the drawer and the ledger ---------- */
+  var drawer = id('b3-drawer'), ledger = id('b3-ledger'), opener = null, XB = '<button type="button" class="b3x" data-b3="close" aria-label="Close">✕</button>';
+  function srcHTML(stp) {
+    return '<p class="b3src">' + (stp.src ? (stp.ev === 'cap' ? 'Capability documented elsewhere · ' : 'Source: ') + esc(stp.src) + ' <span>· link not stored</span>' : 'Source: not stored') + '</p>';
+  }
+  function drawDrawer() {
+    var c = S.G.c, N = c.steps.length, s = S.cur, w = s < N ? swOf(c, s) : null, h = XB;
+    var lst = '<h3>This case</h3><ul class="b3sl">' + c.steps.map(function (x, j) { return '<li><button type="button" data-b3go="' + j + '"' + (j === s ? ' aria-current="step"' : '') + '><small>' + pad(j + 1) + '</small><span>' + esc(x.title) + (x.choke ? '<em>Switch</em>' : '') + '</span></button></li>'; }).join('') + '</ul>';
+    if (s >= N) {
+      h += '<div class="b3kk" style="--kc:' + GOLD + '"><i></i>' + esc(D.group(c.id)) + ' · ' + esc(c.when) + '</div><h2>' + esc(c.h) + '</h2><h3>The case</h3><p>' + esc(c.sum) + '</p>' + lst
+        + '<h3>Sources</h3><ol class="b3srcs">' + c.steps.map(function (x) { return '<li>' + (x.src ? (x.ev === 'cap' ? 'Capability documented elsewhere · ' : '') + esc(x.src) : 'not stored') + '</li>'; }).join('') + '</ol><p class="b3src"><span>Links are not stored.</span></p>';
+    } else {
+      var stp = c.steps[s], lay = (SLAY.filter(function (l) { return l[0] === c.nodes[stp.n].lay; })[0] || ['', ''])[1];
+      h += '<div class="b3kk" style="--kc:' + (stp.choke ? RED : lc(stp.link)) + '"><i></i>' + pad(s + 1) + ' / ' + pad(N) + ' · ' + esc(stp.date) + '</div><h2>' + esc(stp.title) + '</h2>'
+        + (lay ? '<p class="b3lay">Layer of the stack <b>' + esc(lay) + '</b></p>' : '') + '<h3>The step</h3><p>' + esc(stp.text) + '</p>' + srcHTML(stp);
+      if (w) h += '<h3>The switch in plain terms</h3><dl class="b3dl"><dt>Instrument</dt><dd data-f="instr">' + esc(S.sw.INSTR[w.instr] || w.instr) + '</dd><dt>Held by</dt><dd data-f="holder">' + glyph(w, 12, w.status === 'thrown') + ' ' + esc(w.holder) + '<small>' + HT[w.type] + ' · ' + OR[w.origin] + '</small></dd>'
+        + (w.via ? '<dt>Through</dt><dd>' + esc(w.via) + '</dd>' : '') + '<dt>What it cuts</dt><dd data-f="cut">' + esc(w.cut) + '</dd><dt>Target</dt><dd>' + esc(w.target) + '</dd><dt>How long</dt><dd>' + esc(w.span) + '</dd>'
+        + (w.restored ? '<dt>Restored</dt><dd>' + esc(w.restored) + '</dd>' : '') + '<dt>Their way out</dt><dd' + (w.exit ? '' : ' class="none"') + '>' + (w.exit ? esc(w.exit) : 'Not on the page') + '</dd></dl>';
+      else if (stp.choke) h += '<p class="b3src">' + (S.swErr ? 'The switch list could not load.' : 'The switch list is loading.') + '</p>';
+      h += lst;
+    }
+    drawer.innerHTML = h;
+  }
+  var FCH = [['all', 'All'], ['usstate', 'US state'], ['usfirm', 'US firms'], ['other', 'Others'], ['joint', 'Joint']];
+  function fpass(w, f) { return f === 'all' || (f === 'usstate' && w.type === 'state' && w.origin === 'US') || (f === 'usfirm' && w.type === 'private' && w.origin === 'US') || (f === 'other' && w.origin === 'other') || (f === 'joint' && (w.type === 'joint' || w.origin === 'mixed')); }
+  function drawLedger() {
+    if (!S.sw) { ledger.innerHTML = XB + '<h2>All switches</h2><p class="b3lead">' + (S.swErr ? 'The switch list could not load.' : 'The switch list is loading.') + '</p>'; return; }
+    var f = S.filt || 'all', ci = function (k) { return STORIES.findIndex(function (x) { return x.id === k; }); };
+    var rows = S.sw.SW.filter(function (w) { return ci(w['case']) >= 0; }).sort(function (a, b) { return ORD.indexOf(ci(a['case'])) - ORD.indexOf(ci(b['case'])) || a.step - b.step; });
+    ledger.innerHTML = XB + '<h2>All ' + rows.length + ' switches</h2><p class="b3lead">Every chokepoint in the ' + STORIES.length + ' cases, with who holds it. Pick one to be thrown into the case at that step.</p>'
+      + '<div class="b3fch" role="group" aria-label="Held by">' + FCH.map(function (k) { return '<button type="button" data-b3f="' + k[0] + '" aria-pressed="' + (f === k[0]) + '">' + k[1] + ' <b>' + rows.filter(function (w) { return fpass(w, k[0]); }).length + '</b></button>'; }).join('') + '</div>'
+      + '<div class="b3lg">' + rows.map(function (w) {
+        var i = ci(w['case']), c = STORIES[i], stp = c.steps[w.step - 1], on = fpass(w, f);
+        return '<button type="button" class="b3lc" data-b3j="' + i + ':' + (w.step - 1) + '" data-sw="' + w.id + '"' + (on ? '' : ' disabled') + '><span class="a">' + glyph(w, 14, w.status === 'thrown') + esc(hname(w)) + '</span><span class="b">' + esc(w.cut) + '</span><span class="c">' + esc(c.t) + ' · ' + esc(dshort(stp ? stp.date : w.date)) + '</span></button>';
+      }).join('') + '</div>';
+  }
+  /* the ledger covers the whole frame: what lies under it (the site's header, the dock) is out of reach while it is open */
+  function under(off) { [X.root.querySelector('.hud-top'), id('dock')].forEach(function (e) { if (e) e.inert = off; }); }
+  function openSheet(which, from) {
+    if (S.busy || (which === 'drawer' && S.mode !== 'scene')) return;
+    if (S.sheet) closeSheets(true);
+    S.sheet = which; opener = from || document.activeElement;
+    var el = which === 'drawer' ? drawer : ledger; if (which === 'drawer') drawDrawer(); else drawLedger();
+    el.inert = false; el.classList.add('on'); st.dataset.sheet = which; hud.inert = true; gal.inert = true; under(which === 'ledger');
+    var f = el.querySelector('.b3x'); if (f) f.focus({ preventScroll: true });
+  }
+  function closeSheets(quiet) {
+    if (!S.sheet) return;
+    [drawer, ledger].forEach(function (e) { e.classList.remove('on'); e.inert = true; }); delete st.dataset.sheet; S.sheet = null;
+    hud.inert = S.mode !== 'scene'; gal.inert = S.mode !== 'gallery'; under(false);
+    if (!quiet) { var to = opener && opener.isConnected ? opener : S.mode === 'scene' ? card.querySelector('.b3more') || hud.querySelector('.b3deep button') : gal.querySelector('.b3lnk'); if (to) to.focus({ preventScroll: true }); }
+    opener = null;
+  }
 
   /* ---------- the card ---------- */
   function seeHTML(c) {
@@ -330,7 +383,7 @@
     inn.innerHTML = h;
     if (animate && !still() && inn.animate) [].forEach.call(inn.children, function (e, q) { e.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: q * 70, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'backwards' }); });
   }
-  function moreHTML() { return ''; }   /* B3-4: the row button that opens the drawer */
+  function moreHTML(sw) { return '<button type="button" class="b3more" data-b3="read">' + (sw ? 'The switch in plain terms' : 'Full text and sources') + ' ' + ARR + '</button>'; }
 
   /* ---------- the strip: the shared bar (v2/route.js) in its scene skin ---------- */
   function drawStrip() {
@@ -399,7 +452,6 @@
     leaveT = setTimeout(function () { if (S.mode === 'gallery') { world.innerHTML = ''; S.built = -1; S.cur = -2; } }, instant || still() ? 0 : 1000);
     if (had) { var b = gal.querySelector('.b3cta'); if (b) b.focus({ preventScroll: true }); }
   }
-  function closeSheets() {}   /* B3-4 */
 
   /* ---------- the page tells us where it stands ---------- */
   function sync(o) {
@@ -413,6 +465,7 @@
       else { if (st.dataset.mode !== 'gallery') setMode('gallery'); hideStrip(); showCase(i, o.instant || S.shown === i); }
       return;
     }
+    if (o.jump && S.mode !== 'gallery') leave(true);
     if (S.mode === 'gallery') { enter(i, n); return; }
     if (S.built !== i) { showCase(i, true); buildScene(i); setStep(n, { instant: true, fresh: true }); return; }
     setStep(n, o);
@@ -431,7 +484,17 @@
     else if (a === 'nextcase') D.nav(1);
     else act(a, t);
   });
-  function act() {}   /* B3-4: the drawer and the ledger */
+  function act(a, t) {
+    if (a === 'read') openSheet('drawer', t);
+    else if (a === 'ledger') openSheet('ledger', t);
+    else if (a === 'close') closeSheets();
+  }
+  st.addEventListener('click', function (e) {
+    if (S.sheet === 'drawer' && e.target === st) { closeSheets(); return; }   /* a click on the dark sheet beside the drawer closes it */
+    var g = e.target.closest('[data-b3go]'); if (g) { D.set(+g.dataset.b3go); var f = drawer.querySelector('[aria-current="step"]'); if (f) f.focus({ preventScroll: true }); return; }
+    var fl = e.target.closest('[data-b3f]'); if (fl) { S.filt = fl.dataset.b3f; drawLedger(); var b = ledger.querySelector('[data-b3f="' + S.filt + '"]'); if (b) b.focus({ preventScroll: true }); return; }
+    var j = e.target.closest('[data-b3j]'); if (j) { var q = j.dataset.b3j.split(':'); closeSheets(true); D.pick(+q[0], { step: +q[1], jump: true }); }
+  });
   document.addEventListener('keydown', function (e) {
     if (X.view !== 'story' || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
     if (S.busy) { doSkip(); return; }
@@ -448,7 +511,7 @@
       else if (e.key === 'Escape') { e.preventDefault(); D.set(-1); }
     }
   });
-  function keySheet() { return false; }   /* B3-4 */
+  function keySheet(e) { if (!S.sheet) return false; if (e.key === 'Escape') { e.preventDefault(); closeSheets(); } return true; }
   var rz = 0;
   window.addEventListener('resize', function () {
     clearTimeout(rz); rz = setTimeout(function () {
@@ -466,10 +529,13 @@
     start: function () { if (S.run) return; S.run = true; st.classList.add('run'); parts(false); }, stop: function () { if (!S.run) return; S.run = false; st.classList.remove('run'); parts(false); } });
 
   galInit(); setMode('gallery');
+  id('b3-deep').innerHTML = '<button type="button" data-b3="read">Read</button><button type="button" data-b3="ledger">All switches</button>';
+  gal.querySelector('.b3lnk').hidden = false;
   X.load('switches').then(function (d) {
     S.sw = d; (d.SW || []).forEach(function (w) { S.by[w['case'] + ':' + w.step] = w; });
-    if (X.view === 'story' && S.mode === 'scene' && S.built >= 0) drawCard(false);
-  }).catch(function () { S.swErr = true; });
-  X.scenes = { sync: sync, build: function (i, lbl) { S.lbl = lbl || null; buildScene(i); S.lbl = null; }, skip: doSkip, get mode() { return S.mode; }, get busy() { return S.busy; }, get geom() { return S.G; }, pose: function (n) { return S.G ? poseFor(n == null ? S.cur : n) : null; }, pos: function (k) { return S.G ? nodePos(S.G.c, k) : null; }, get sw() { return S.sw; }, get swErr() { return S.swErr; } };
+    if (X.view === 'story' && S.mode === 'scene' && S.built >= 0) { drawCard(false); if (S.sheet === 'drawer') drawDrawer(); }
+    if (S.sheet === 'ledger') drawLedger();
+  }).catch(function () { S.swErr = true; if (S.sheet === 'ledger') drawLedger(); });
+  X.scenes = { sync: sync, build: function (i, lbl) { S.lbl = lbl || null; buildScene(i); S.lbl = null; }, skip: doSkip, get mode() { return S.mode; }, get busy() { return S.busy || !!S.sheet; }, get sheet() { return S.sheet; }, get geom() { return S.G; }, pose: function (n) { return S.G ? poseFor(n == null ? S.cur : n) : null; }, pos: function (k) { return S.G ? nodePos(S.G.c, k) : null; }, get sw() { return S.sw; }, get swErr() { return S.swErr; } };
   if (X.view === 'story') sync({ instant: true });
 })();
