@@ -65,12 +65,20 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   if (want(1)) {
     for (const [hash, host, name] of [['#circuit', 'isx-tabs', 'Circuit'], ['#simulator', 'isx-s2bar', 'Simulator'], ['#scenarios', 'isx-sc-bar', 'Scenarios']]) {
       const p = await page(hash);
+      /* B3: in Scenarios the gallery is the door and has no bar (its rail and Prev · Next do the work); the bar appears in a case,
+         in its strip skin (Back, one round button per step, Next), and the dock keeps its own corner instead of joining the bar */
+      if (name === 'Scenarios') {
+        const g = await js(p, () => { const h = document.getElementById('isx-sc-bar'), d = document.getElementById('isx-dock'), v = e => !!e && e.getClientRects().length > 0; return { hidden: h.hidden && !v(h), dock: v(d) && !h.contains(d), bars: [...document.querySelectorAll('.rt-host .rt')].filter(v).length, rail: document.querySelectorAll('#isx-b3-gal .b3chip').length }; });
+        ok('bar (Scenarios): hidden in the gallery, where the rail of fourteen cases and Prev · Next do its work; the dock keeps its corner', g.hidden && g.dock && g.bars === 0 && g.rail === 14, g);
+        await click(p, '#isx-b3-gal .b3cta'); await p.waitForTimeout(500);
+      }
       const r = await js(p, id => { const h = document.getElementById(id), v = e => !!e && e.getClientRects().length > 0, x = e => e.getBoundingClientRect().left, d = document.getElementById('isx-dock');
         const bars = [...document.querySelectorAll('.rt-host .rt')].filter(v), bk = h.querySelector('.rt-bk'), nx = h.querySelector('.rt-nx'), rt = h.querySelector('.rt-route');
-        return { bars: bars.length, mine: h.querySelectorAll('.rt').length, parts: [bk, nx, rt, d].every(v), order: v(bk) && v(nx) && v(rt) && v(d) && x(bk) < x(nx) && x(nx) < x(rt) && x(rt) < x(d), inBar: h.contains(d), docks: document.querySelectorAll('#isx-dock').length,
+        return { strip: !!h.querySelector('.rt.sk-strip'), sp: h.querySelectorAll('.rt-sp').length, xs: [bk, nx, rt].map(x), cur: h.querySelectorAll('.rt-sp[aria-current="step"]').length, bars: bars.length, mine: h.querySelectorAll('.rt').length, parts: [bk, nx, rt, d].every(v), order: v(bk) && v(nx) && v(rt) && v(d) && x(bk) < x(nx) && x(nx) < x(rt) && x(rt) < x(d), inBar: h.contains(d), docks: document.querySelectorAll('#isx-dock').length,
           links: [d.querySelector('a.dk-th') && d.querySelector('a.dk-th').href, d.querySelector('a.dk-bmc') && d.querySelector('a.dk-bmc').href], ids: ['isx-share', 'isx-sharepop', 'isx-fs'].map(i => document.querySelectorAll('#' + i).length === 1 && (d.contains(document.getElementById(i)) || (i === 'isx-fs' && document.getElementById('isx-zoom').contains(document.getElementById(i))))) }; }, host);   /* interface fixes: in the Circuit “Full screen” stands beside the zoom buttons (tools/interface-check.js, section 1) */
       ok(`bar (${name}): one bar on screen, in this tab’s own host`, r.bars === 1 && r.mine === 1, r);
-      ok(`bar (${name}): Back, Next, the route and the dock, in that order, in one bar`, r.parts && r.order && r.inBar, r);
+      if (name === 'Scenarios') ok('bar (Scenarios): in a case the same bar in its strip skin: Back, one round button per step (eight, one current), Next; the dock stays in its corner', r.parts && r.strip && r.sp === 8 && r.cur === 1 && r.xs[0] < r.xs[2] && r.xs[2] < r.xs[1] && !r.inBar, r);
+      else ok(`bar (${name}): Back, Next, the route and the dock, in that order, in one bar`, r.parts && r.order && r.inBar, r);
       ok(`bar (${name}): the dock is the page’s own (one #isx-dock, its links and ids unchanged)`, r.docks === 1 && r.links[0] === 'https://eliasrutten.substack.com/subscribe' && r.links[1] === 'https://www.buymeacoffee.com/ruttenelias' && r.ids.every(Boolean), r);
       ok(`bar (${name}): no page errors`, p._errs.length === 0, p._errs); await p.context().close();
     }

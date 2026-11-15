@@ -67,6 +67,7 @@
 #isx-root .b3 .b3ct { position: absolute; left: 12px; right: 10px; bottom: 9px; z-index: 2; }
 #isx-root .b3 .b3ct b { display: block; font: 600 15px/1.05 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #fff; }
 #isx-root .b3 .b3ct small { font: 10.5px var(--mono); letter-spacing: .08em; color: #a9b8c5; }
+#isx-root .b3 .b3vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 #isx-root .b3 .b3chip:hover { transform: translateY(-4px); border-color: #3a5164; }
 #isx-root .b3 .b3chip:hover svg { opacity: 1; transform: scale(1.06); }
 #isx-root .b3 .b3chip[aria-current="true"] { transform: translateY(-8px); width: 172px; border-color: #ffd27a; box-shadow: 0 14px 40px -12px rgba(255, 210, 122, .35); }
@@ -318,6 +319,11 @@
 #isx-root .b3 .b3strip .rt-lk.k { background: repeating-linear-gradient(90deg, rgba(255, 59, 92, .4) 0 4px, transparent 4px 7px); }
 #isx-root .b3 .b3strip .rt-lk.k.d { background: repeating-linear-gradient(90deg, #ff3b5c 0 4px, transparent 4px 7px); }
 
+/* a short stage: a smaller title and tighter lines, so the hero stays clear of the header */
+@media (max-height: 800px) and (min-width: 761px) {
+  #isx-root .b3 .b3hero { bottom: 190px; } #isx-root .b3 .b3hero h2 { font-size: clamp(44px, min(8.6vw, 10.5vh), 124px); margin-top: 10px; }
+  #isx-root .b3 .b3sub { margin-top: 9px; } #isx-root .b3 .b3sum { margin-top: 12px; font-size: 15px; line-height: 1.5; } #isx-root .b3 .b3row { margin-top: 18px; }
+}
 /* a short stage has no room for the lede above the hero */
 @media (max-height: 800px) and (min-width: 761px) { #isx-root .b3 .sc3lede { display: none; } }
 @media (max-width: 760px) {
@@ -332,7 +338,7 @@
   #isx-root .b3 .b3nav { right: 14px; top: calc(var(--b3top) + 58px); gap: 6px; } #isx-root .b3 .b3nb { width: 40px; height: 40px; } #isx-root .b3 .b3lnk { height: 40px; padding: 0 12px; font-size: 11px; letter-spacing: .1em; } #isx-root .b3 .b3cnt { display: none; }
   #isx-root .b3 .b3back { left: 14px; height: 36px; padding: 0 12px 0 9px; font-size: 11px; letter-spacing: .1em; }
   #isx-root .b3 .b3deep { right: 14px; gap: 6px; } #isx-root .b3 .b3deep button { height: 36px; padding: 0 11px; font-size: 11px; letter-spacing: .1em; }
-  #isx-root .b3 .b3card { left: 12px; right: 12px; width: auto; bottom: 76px; max-height: 46%; padding: 16px 16px 14px; border-radius: 18px; }
+  #isx-root .b3 .b3card { left: 12px; right: 12px; width: auto; bottom: 76px; max-height: 58%; padding: 16px 16px 14px; border-radius: 18px; }
   #isx-root .b3 .b3card h2 { font-size: 27px; } #isx-root .b3 .b3cap { font-size: 14px; margin-top: 8px; }
   #isx-root .b3 .b3who { flex-wrap: wrap; margin-top: 12px; padding: 9px 11px; }
   #isx-root .b3 .sc3bar.b3strip { bottom: 8px; }
@@ -347,5 +353,6 @@
   #isx-root .b3 .b3tc .h { letter-spacing: .3em; } #isx-root .b3 .b3tc.show .h { letter-spacing: .08em; }
   #isx-root .b3 .b3rail { padding: 10px 18px 8px; bottom: 6px; gap: 9px; } #isx-root .b3 .b3chip { width: 116px; height: 80px; border-radius: 12px; } #isx-root .b3 .b3chip[aria-current="true"] { width: 132px; transform: translateY(-5px); } #isx-root .b3 .b3ct b { font-size: 13px; } #isx-root .b3 .b3ct small { font-size: 9.5px; } #isx-root .b3 .b3gl { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { #isx-root .b3, #isx-root .b3 * { transition-duration: .01ms !important; transition-delay: 0s !important; animation: none !important; } }
-#isx-root.rm .b3, #isx-root.rm .b3 * { transition-duration: .01ms !important; transition-delay: 0s !important; animation: none !important; }
+/* reduced motion: no glides, no fades, no loops; the scene cuts from state to state (the entry is skipped in scenes.js) */
+@media (prefers-reduced-motion: reduce) { #isx-root .b3, #isx-root .b3 *, #isx-root.v-story .hud-top { transition: none !important; animation: none !important; } }
+#isx-root.rm .b3, #isx-root.rm .b3 *, #isx-root.rm.v-story .hud-top { transition: none !important; animation: none !important; }

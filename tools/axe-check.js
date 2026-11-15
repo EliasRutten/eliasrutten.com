@@ -63,14 +63,25 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('simulator, guide: backstop, first step', '#simulator', sim(38), 1440, 900);
   await run('simulator, full view: the ladder open', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, click('#isx-b1ind'));
   await run('simulator, full view: a sector card', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .fzk[data-sec="hh"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
-  await run('scenarios: opening', '#scenarios', seen, 1440, 900);
-  await run('scenarios: a chokepoint step, “Read more” and layers open', '#scenarios', seen, 1440, 900, async p => { for (let i = 0; i < 6; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(120); } await p.evaluate(() => { document.querySelector('#isx-ssteps .sstep:not([hidden]) .scmore').open = true; document.querySelector('#isx-sc-bar [data-sc="lay"]').click(); }); await p.waitForTimeout(300); });
-  await run('scenarios: the close', '#scenarios', seen, 1440, 900, async p => { for (let i = 0; i < 9; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(120); } });
-  await run('scenarios: picker open', '#scenarios', seen, 1440, 900, click('#isx-sc-pick'));
+  /* B3 (15 Nov 2026): Scenarios in three depths. The stepped card with “Read more”, “Layers used” and the picker are gone, and so
+     are their four states; in their place: the gallery, the end of the entry, a step, a switch step, the drawer, the ledger
+     (whole and filtered) and the close. The pages here run with motion on, so the entry is ended with a key. */
+  const scIn = n => async p => { await p.evaluate(() => document.querySelector('#isx-b3-gal .b3cta').click()); await p.waitForTimeout(300); await p.keyboard.press('Shift'); await p.waitForTimeout(700); for (let i = 0; i < n; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(150); } await p.waitForTimeout(1900); };
+  const scThen = (n, sel) => async p => { if (n != null) await scIn(n)(p); await p.evaluate(q => document.querySelector(q).click(), sel); await p.waitForTimeout(900); };
+  await run('scenarios: the gallery', '#scenarios', seen, 1440, 900);
+  await run('scenarios: the end of the entry, watched to step 1', '#scenarios', seen, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-b3-gal .b3cta').click()); await p.waitForTimeout(5400); });
+  await run('scenarios: a step', '#scenarios', seen, 1440, 900, scIn(2));
+  await run('scenarios: a switch step', '#scenarios', seen, 1440, 900, scIn(6));
+  await run('scenarios: the drawer on a switch step', '#scenarios', seen, 1440, 900, scThen(6, '#isx-b3-card .b3more'));
+  await run('scenarios: the ledger, from the gallery', '#scenarios', seen, 1440, 900, scThen(null, '#isx-b3-gal [data-b3="ledger"]'));
+  await run('scenarios: the ledger filtered to US firms', '#scenarios', seen, 1440, 900, async p => { await scThen(null, '#isx-b3-gal [data-b3="ledger"]')(p); await p.evaluate(() => document.querySelector('#isx-b3-ledger [data-b3f="usfirm"]').click()); await p.waitForTimeout(500); });
+  await run('scenarios: the close', '#scenarios', seen, 1440, 900, scIn(8));
   await run('ownership web', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
   await run('ownership web: a firm', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForSelector('#isx-web3 .wnode[data-id="f:TSMC"]', { state: 'attached', timeout: 20000 }); await p.waitForTimeout(300); await p.evaluate(() => document.querySelector('#isx-web3 .wnode[data-id="f:TSMC"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300); });   /* waits for the web itself: on a slow machine 900 ms was not always enough */
-  await run('phone: scenarios, a step', '#scenarios', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-sc-bar .rt-nx').click()); await p.waitForTimeout(300); });
-  await run('phone: scenarios, picker', '#scenarios', seen, 390, 844, click('#isx-sc-pick'));
+  await run('phone: scenarios, the gallery', '#scenarios', seen, 390, 844);
+  await run('phone: scenarios, a switch step', '#scenarios', seen, 390, 844, scIn(6));
+  await run('phone: scenarios, the drawer', '#scenarios', seen, 390, 844, scThen(6, '#isx-b3-card .b3more'));
+  await run('phone: scenarios, the ledger', '#scenarios', seen, 390, 844, scThen(null, '#isx-b3-gal [data-b3="ledger"]'));
   await run('phone: ownership web', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
   await run('phone: the ledger', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 390, 844, click('#isx-b1ind'));
   /* stage 5: readings as names until the guide reaches them, the strip of key readings below 1180 px, the full ladder as a list */
@@ -117,7 +128,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('interface: the Simulator’s bar with “Full screen”', '#simulator', sim(23), 1440, 900);
   await run('interface: a line’s card in the full view', '#simulator', full, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .feh[data-e="1"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
   await run('interface: a line’s card in the guide', '#simulator', sim(11), 1440, 900, async p => { await p.evaluate(() => { const S = ISX.sim, i = S.lines[S.line].steps[S.beat].e[0]; document.querySelector(`#isx-rmap .feh[data-e="${i}"]`).dispatchEvent(new MouseEvent('click', { bubbles: true })); }); await p.waitForTimeout(400); });
-  await run('interface: Scenarios, the bar with “Full screen”', '#scenarios', seen, 1024, 768);
+  await run('interface: Scenarios at 1024 × 768, a step (the strip beside the dock with “Full screen”)', '#scenarios', seen, 1024, 768, scIn(3));   /* B3: was the bar with “Full screen” in it */
   await run('interface: the Arm, the dock with “Full screen”', '#arm', seen, 1280, 760);
   await run('interface, phone: the Arm’s dock', '#arm', seen, 390, 844);
   /* content build: the three deeper views, a door, the yen card's history rail, the tour, the locked switch */

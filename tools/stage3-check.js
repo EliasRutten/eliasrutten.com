@@ -100,25 +100,28 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('no page errors (full view)', p._errs.length === 0, p._errs); await p.context().close();
 
   /* ---------- 3. Scenarios ---------- */
+  /* B3 (15 Nov 2026): Scenarios in three depths. The stepped card of stage 3 is now the scene's card; the picker, the chain
+     strip under the map, “Layers used” and “Read more” are retired (their selectors are gone from this check). The gallery,
+     the scene and its depth are checked in full by tools/b3-check.js; here: the stage still fits the window, the sentence
+     still links to the Simulator, a case is still walked with ← →, closes with what you can now see, and is remembered. */
   p = await page('#scenarios');
-  ok('scenarios: one stage no longer than the window, with the sentence, picker, card and bar', await p.evaluate(() => { const f = document.getElementById('isx-frame').getBoundingClientRect(); return f.height <= innerHeight && /exercise of power/.test(document.getElementById('isx-sc-lede').textContent) && /financial flows/.test(document.getElementById('isx-sc-lede').textContent) && !!document.querySelector('#isx-sc-card .sintro:not([hidden])') && !!document.querySelector('#isx-sc-bar .rt-bk') && !!document.querySelector('#isx-sc-bar .rt-nx') && !!document.querySelector('#isx-sc-bar #isx-sc-pick') && !!document.querySelector('#isx-sc-bar #isx-dock'); }));
-  ok('scenarios: the map sits beside the card, not under it', await p.evaluate(() => { const c = document.getElementById('isx-sc-card').getBoundingClientRect(), s = document.querySelector('.sc3 .sstage').getBoundingClientRect(); return s.left >= c.right && s.height > 400; }));
-  await p.click('#isx-sc-pick'); await p.waitForTimeout(250);
-  ok('picker: fourteen cases in five groups, each with a preview', await p.evaluate(() => { const t = document.getElementById('isx-sc-tray'); return !t.hidden && t.querySelectorAll('.spill').length === 14 && t.querySelectorAll('.scg').length === 5 && [...t.querySelectorAll('.spill .pv')].every(x => x.textContent.length > 20); }));
-  await p.keyboard.press('Escape'); await p.waitForTimeout(150);
-  ok('picker: Esc closes it', await p.evaluate(() => document.getElementById('isx-sc-tray').hidden));
+  ok('scenarios: one stage no longer than the window; the gallery with the sentence, the case and the rail of fourteen', await p.evaluate(() => { const f = document.getElementById('isx-frame').getBoundingClientRect(), l = document.getElementById('isx-sc-lede'); return f.height <= innerHeight && /exercise of power/.test(l.textContent) && /financial flows/.test(l.textContent) && l.getClientRects().length > 0 && document.querySelector('#isx-b3-gal .b3hero h2').textContent === 'Ukraine' && document.querySelectorAll('#isx-b3-gal .b3chip').length === 14 && document.getElementById('isx-sc-bar').hidden; }));
+  ok('gallery: fourteen cases in five groups, each with its own map, name and years', await p.evaluate(() => { const g = document.getElementById('isx-b3-gal'); return g.querySelectorAll('.b3gl').length === 5 && [...g.querySelectorAll('.b3chip')].every(c => c.querySelector('svg path') && c.querySelector('.b3ct b').textContent.length > 2 && /\d{4}/.test(c.querySelector('.b3ct small').textContent)); }));
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
+  ok('gallery: → shows the next case', await p.evaluate(() => /Maven/i.test(document.querySelector('#isx-b3-gal .b3hero h2').textContent) && ISX.sc.step === -1));
+  await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(400);
+  await p.click('#isx-b3-gal .b3cta'); await p.waitForTimeout(300); await p.keyboard.press('Shift'); await p.waitForTimeout(600);   /* any key ends the entry */
+  ok('scenarios: the case plays on its map beside the card, not under it', await p.evaluate(() => { const c = document.getElementById('isx-b3-card').getBoundingClientRect(), n = [...document.querySelectorAll('#isx-b3-world .nd.on .bd')].map(e => e.getBoundingClientRect()); return ISX.scenes.mode === 'scene' && n.length >= 1 && n.every(r => r.left >= c.right); }));
   let steps = 0, sw = 0, more = true;
   for (let i = 0; i < 12; i++) {
-    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(160);
-    const r = await p.evaluate(() => { const a = document.querySelector('#isx-ssteps .sstep:not([hidden])'); return a ? { s: a.querySelector('p').textContent, more: !!a.querySelector('.scmore .ssrc') } : null; });
-    if (!r) break; steps++; sw = Math.max(sw, sent(r.s)); if (!r.more) more = false;
+    const r = await p.evaluate(() => { const c = document.querySelector('#isx-b3-card .b3cap'); return c ? { s: c.textContent, more: !!document.querySelector('#isx-b3-card .b3more') } : null; });
+    if (!r) break; steps++; sw = Math.max(sw, r.s.split(/[.!?]\s+(?=[A-Z“‘$])/).length); more = more && r.more;
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250);
   }
-  ok('scenarios: ← → step through the eight steps; two sentences at most, sources behind “Read more”', steps === 8 && sw <= 2 && more, { steps, sw, more });
-  ok('scenarios: the case closes with what you can now see, and counts it', await p.evaluate(() => { const e = document.querySelector('#isx-ssteps .send:not([hidden])'); return !!e && /What you can now see/i.test(e.textContent) && /layers/.test(e.textContent) && /chokepoints/.test(e.textContent) && /1 of 14 scenarios followed/.test(e.textContent) && JSON.parse(localStorage.getItem('isx-scen-seen')).length === 1; }));
-  await p.click('#isx-sc-bar [data-sc="lay"]'); await p.waitForTimeout(150);
-  ok('scenarios: “Layers used” is a toggle', await p.evaluate(() => !document.getElementById('isx-slay').hidden && document.querySelector('#isx-sc-bar [data-sc="lay"]').getAttribute('aria-pressed') === 'true'));
-  await p.click('#isx-ssteps .send .snext'); await p.waitForTimeout(350);
-  ok('scenarios: “Next” opens the next case at its start', await p.evaluate(() => /Maven/i.test(document.getElementById('isx-sc-pick').textContent) && !!document.querySelector('#isx-ssteps .sintro:not([hidden])')));
+  ok('scenarios: ← → step through the eight steps; two sentences at most on the card, the full text and source one click away', steps === 8 && sw <= 2 && more, { steps, sw, more });
+  ok('scenarios: the case closes with what you can now see, and is remembered', await p.evaluate(() => { const e = document.querySelector('#isx-b3-card .b3see'); return !!e && /What you can now see/i.test(document.getElementById('isx-b3-card').textContent) && /layers/.test(e.textContent) && /switches/.test(e.textContent) && JSON.parse(localStorage.getItem('isx-scen-seen')).length === 1; }));
+  await p.click('#isx-b3-card [data-b3="nextcase"]'); await p.waitForTimeout(500);
+  ok('scenarios: “Next” opens the next case in the gallery, and the case just followed carries its mark', await p.evaluate(() => /Maven/i.test(document.querySelector('#isx-b3-gal .b3hero h2').textContent) && ISX.sc.step === -1 && ISX.scenes.mode === 'gallery' && document.querySelectorAll('#isx-b3-gal .b3chip.seen').length === 1));
   await p.click('#isx-sc-tofin'); await p.waitForTimeout(600);
   ok('scenarios: the sentence links to the Simulator', await p.evaluate(() => ISX.view === 'fin'));
   ok('no page errors (scenarios)', p._errs.length === 0, p._errs); await p.context().close();
@@ -150,7 +153,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     await p.context().close();
   }
   p = await page('#scenarios', {}, { w: 390, h: 844, touch: true });
-  ok('phone: Scenarios in one column, no sideways scroll, the bar reachable', await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1 && document.querySelectorAll('#isx-sc-bar button').length >= 2 && document.getElementById('isx-sc-pick').getBoundingClientRect().height >= 44));
+  ok('phone: the Scenarios gallery without sideways scroll, its buttons large enough to tap', await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1 && document.querySelector('#isx-b3-gal .b3cta').getBoundingClientRect().height >= 44 && [...document.querySelectorAll('#isx-b3-gal .b3nb')].every(b => b.getBoundingClientRect().height >= 40)));
+  await p.tap('#isx-b3-gal .b3cta'); await p.waitForTimeout(300); await p.keyboard.press('Shift'); await p.waitForTimeout(700);
+  ok('phone: in a case the strip sits at the foot of the stage, inside the screen, with Back and Next', await p.evaluate(() => { const b = document.querySelector('#isx-sc-bar .rt').getBoundingClientRect(); return document.documentElement.scrollWidth <= innerWidth + 1 && b.bottom <= innerHeight + 1 && b.left >= 0 && b.right <= innerWidth && document.querySelectorAll('#isx-sc-bar .rt-bk, #isx-sc-bar .rt-nx').length === 2; }));
   await p.evaluate(() => ISX.setView('map')); await p.waitForTimeout(500);
   ok('phone: the tab row fits', await p.evaluate(() => { const s = document.querySelector('#isx-strip .seg').getBoundingClientRect(); return s.right <= innerWidth + 1 && document.documentElement.scrollWidth <= innerWidth + 1; }));
   ok('no page errors (phone)', p._errs.length === 0, p._errs); await p.context().close();

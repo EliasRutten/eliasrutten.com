@@ -50,6 +50,8 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
         ok(`${tag}: one button, on screen, with the visible label “Full screen” as its name`, r.n === 1 && r.vis && r.text === 'Full screen' && r.labW > 40 && r.labH >= 8 && r.fontPx >= 9 && r.aria === null && r.inView && r.onTop, r);
         if (name === 'Circuit') ok(`${tag}: beside the zoom buttons, on their row, directly before +`, r.inZoom && r.zoomVis && r.sameRow && r.gap >= 0 && r.gap <= 12 && /full screen/i.test(r.zoomLabel) && !/full screen/i.test(r.dockLabel), r);
         else if (name === 'Arm') ok(`${tag}: in the dock, clear of the Arm’s tabs`, r.inDock && !r.inZoom && r.clearOfTabs && /full screen/i.test(r.dockLabel), r);
+        /* B3: the Scenarios gallery has no bar and a case plays with the strip skin, so the dock (with “Full screen”) keeps its own corner there, as in the Arm */
+        else if (name === 'Scenarios') ok(`${tag}: in the dock, in its corner of the stage` + (touch ? ' (under the stage on a phone)' : ''), r.inDock && !r.inZoom && !r.inBar && /full screen/i.test(r.dockLabel), r);
         else ok(`${tag}: ` + (touch ? 'in the dock under the stage' : 'the last segment of the bar'), r.inDock && !r.inZoom && (touch || r.inBar) && /full screen/i.test(r.dockLabel), r);
         ok(`${tag}: no page errors`, p._errs.length === 0, p._errs);
         await p.context().close();
@@ -111,7 +113,9 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
   /* ================= 3. one motion curve: the top strip's bubble and the bottom bar's ================= */
   if (want(3)) {
     const curve = s => /cubic-bezier\(0?\.2, 0?\.8, 0?\.2, 1\)/.test(s);
-    for (const [hash, host, name] of [['#circuit/03', 'isx-tabs', 'Circuit'], ['#simulator', 'isx-s2bar', 'Machinery'], ['#scenarios', 'isx-sc-bar', 'Scenarios']]) {
+    /* B3: Scenarios left this loop. Its bar is hidden in the gallery and wears the strip skin in a case: the step in hand grows and
+       glows in place, with no sliding bubble and no flow marks (tools/b3-check.js checks the strip; the bubble's absence is checked below). */
+    for (const [hash, host, name] of [['#circuit/03', 'isx-tabs', 'Circuit'], ['#simulator', 'isx-s2bar', 'Machinery']]) {
       const p = await page(hash, { motion: true, pos: '{"l":0,"b":4}' });
       if (name === 'Scenarios') { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(700); }
       const t = await js(p, id => { const tr = e => { const s = getComputedStyle(e), props = s.transitionProperty.split(',').map(x => x.trim()), i = props.indexOf('transform'), pick = v => { const a = v.match(/cubic-bezier\([^)]*\)|[^,]+/g).map(x => x.trim()); return a[i % a.length]; }; return { dur: pick(s.transitionDuration), fn: pick(s.transitionTimingFunction), i }; };
@@ -142,6 +146,13 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
       const rm = await js(q, id => new Promise(res => { let max = 0, t0 = performance.now(); (function f() { max = Math.max(max, document.querySelectorAll('#' + id + ' .rt-flow i').length); if (performance.now() - t0 < 300) requestAnimationFrame(f); else res({ max, dur: getComputedStyle(document.querySelector('#' + id + ' .rt-here')).transitionDuration }); })(); }), host);
       ok(`motion (${name}): under reduced motion the bubble cuts and no flow marks are made`, rm.max === 0 && /^0s(, 0s)*$/.test(rm.dur), rm);
       await q.context().close();
+    }
+    {
+      const s = await page('#scenarios', { motion: true });
+      await s.click('#isx-b3-gal .b3cta'); await s.waitForTimeout(300); await s.keyboard.press('Shift'); await s.waitForTimeout(700); await s.keyboard.press('ArrowRight'); await s.waitForTimeout(900);
+      const st = await js(s, () => { const h = document.getElementById('isx-sc-bar'), c = h.querySelector('.rt-sp.c'), cs = c ? getComputedStyle(c) : null; return { strip: !!h.querySelector('.rt.sk-strip'), here: getComputedStyle(h.querySelector('.rt-here')).display, flow: h.querySelectorAll('.rt-flow i').length, cur: !!c && c.getAttribute('aria-current') === 'step', grown: !!cs && /matrix\(1\.2/.test(cs.transform), glow: !!cs && cs.boxShadow !== 'none', step: ISX.sc.step }; });
+      ok('motion (Scenarios): in a case the strip lights the step in hand in place (grown, with a glow); no sliding bubble, no flow marks', st.strip && st.here === 'none' && st.flow === 0 && st.cur && st.grown && st.glow && st.step === 1, st);
+      await s.context().close();
     }
     /* the cards of the three tabs arrive on the same curve */
     const p = await page('#circuit/03', { motion: true });

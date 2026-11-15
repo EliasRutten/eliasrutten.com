@@ -104,7 +104,7 @@
       g[1].forEach(function (k) {
         var i = STORIES.findIndex(function (x) { return x.id === k; }); if (i < 0) return;
         var c = STORIES[i], n = nChoke(c);
-        rail += '<button type="button" class="b3chip" data-b3c="' + i + '">' + mapSVG(c, true) + (n ? '<span class="b3sw" aria-hidden="true">' + '●'.repeat(Math.min(n, 4)) + '</span>' : '') + '<span class="b3ct"><b>' + esc(c.t) + '</b><small>' + esc(c.when) + '</small></span><i class="b3ok" aria-hidden="true">✓</i></button>';
+        rail += '<button type="button" class="b3chip" data-b3c="' + i + '">' + mapSVG(c, true) + (n ? '<span class="b3sw" aria-hidden="true">' + '●'.repeat(Math.min(n, 4)) + '</span>' : '') + '<span class="b3ct"><b>' + esc(c.t) + '</b> <small>' + esc(c.when) + '</small><span class="b3vh"></span></span><i class="b3ok" aria-hidden="true">✓</i></button>';
       });
     });
     gal.innerHTML = '<div class="b3hero"><div class="b3kick"></div><h2></h2><div class="b3sub"></div><p class="b3sum"></p><div class="b3row"><button type="button" class="b3cta" data-b3="enter">Follow the chain ' + ARR + '</button><div class="b3pills"></div></div></div>'
@@ -123,7 +123,7 @@
     gal.querySelectorAll('.b3chip').forEach(function (b) {
       var j = +b.dataset.b3c, on = j === i, x = STORIES[j], sn = seen.indexOf(x.id) >= 0;
       b.setAttribute('aria-current', String(on)); b.classList.toggle('seen', sn);
-      b.setAttribute('aria-label', x.t + ', ' + x.when + (sn ? ', followed' : ''));
+      b.querySelector('.b3vh').textContent = sn ? ', followed' : '';   /* the button's name is the text it shows; the tick is said in words */
       /* scroll the rail itself, never scrollIntoView: that would scroll the page */
       if (on) rail.scrollTo({ left: b.offsetLeft - (rail.clientWidth - b.offsetWidth) / 2, behavior: still() || st.dataset.cut ? 'auto' : 'smooth' });
     });
@@ -474,6 +474,7 @@
   /* ---------- events ---------- */
   st.addEventListener('click', function (e) { if (S.busy) { e.preventDefault(); e.stopPropagation(); doSkip(); } }, true);
   st.addEventListener('click', function (e) {
+    if (e.target.closest('#isx-sc-tofin')) { X.setView('fin'); return; }   /* the sentence above the gallery links to the Simulator */
     var c = e.target.closest('[data-b3c]'); if (c) { D.pick(+c.dataset.b3c); return; }
     var t = e.target.closest('[data-b3]'); if (!t) return;
     var a = t.dataset.b3;
