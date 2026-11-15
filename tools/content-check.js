@@ -2,7 +2,8 @@
    Usage: node tools/content-check.js [baseUrl]   — needs `python3 -m http.server 8731` at the repo root. Exits 1 on a failed check.
    1 counts · 2 every relation id resolves · 3 nothing shown before its step · 4 every figure has a date and a source ·
    5 every flare direction matches its gauge · 6 the doors open and close by keyboard and by touch · 7 the tour runs and restarts ·
-   8 the locks. */
+   8 the locks · 9 (tiers build B) the copy round's three rules: a term is defined where each route first uses it, each primer screen and
+   reveal stands alone, no “map’s reading” hedges or intent disclaimers. */
 const { chromium } = require('playwright');
 const base = process.argv.slice(2).find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 let pass = 0, fail = 0;
@@ -26,12 +27,12 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
   let p = await mk({}, 'full');
   const C = await p.evaluate(() => { const S = ISX.sim, g = new Set(S.gauges), nodes = [...document.querySelectorAll('#isx-rmap .fn')].map(e => e.dataset.n);
     return { actors: nodes.filter(n => !g.has(n)).length, gauges: g.size, relations: S.relations.length, levers: document.querySelectorAll('#isx-cock .lv').length, indicators: S.indicators.length,
-      plays: document.querySelectorAll('#isx-cock .pchip').length, steps: S.lines[0].steps.length, pre: S.lines.find(L => L.pre).steps.length, decisions: S.decisions.length, links: S.decisions.reduce((a, d) => a + d.chain.length, 0),
+      plays: document.querySelectorAll('#isx-cock .pchip').length, steps: S.lines[0].steps.length, pre: S.lines.find(L => L.pre).steps.length, gnd: S.lines.find(L => L.gnd).steps.length, decisions: S.decisions.length, links: S.decisions.reduce((a, d) => a + d.chain.length, 0),
       crises: S.decisions.filter(d => d.crisis).length, views: ISX.views.ids.length, badRel: S.decisions.flatMap(d => d.chain.flatMap(c => [...c.e, ...c.off])).filter(i => !(i >= 0 && i < S.relations.length)).length,
       badNode: S.relations.filter(r => !nodes.includes(r[0]) || !nodes.includes(r[1])).length, badInd: S.decisions.flatMap(d => d.chain.flatMap(c => Object.keys(c.fl))).filter(id => !S.indicators.some(I => I.id === id)).length,
       lines: S.lines.length, emptyChain: S.decisions.flatMap(d => d.chain).filter(c => !c.e.length && !c.off.length).length }; });
   console.log('counts  ' + JSON.stringify(C));
-  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 11, steps: 49, pre: 7, decisions: 7, links: 37, crises: 7, views: 3 };
+  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 11, steps: 52, pre: 8, gnd: 8, decisions: 7, links: 37, crises: 7, views: 3 };
   Object.keys(EXP).forEach(k => ok(C[k] === EXP[k], 'count ' + k, C[k] + ' (expected ' + EXP[k] + ')'));
   ok(!C.badRel && !C.badNode && !C.badInd && !C.emptyChain, 'every relation, actor and indicator id in a chain resolves', JSON.stringify([C.badRel, C.badNode, C.badInd, C.emptyChain]));
   ok(!p._errs.some(e => /unknown relation/.test(e)), 'no “unknown relation” in the console', p._errs.join(' | '));
@@ -119,7 +120,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
           if (want && C.fl.yen !== want) out.fl.push(h + ': yen should be ' + want); if (C.fl.yen && arr !== C.fl.yen) out.fl.push(h + ': the yen gauge shows ' + arr);
           if (C.fl.yen && !lab.includes(C.fl.yen === '▲' ? 'a weaker yen' : 'a stronger yen')) out.fl.push(h + ': the yen’s label does not say which way: ' + lab); }
         const chips = [...document.querySelectorAll('#isx-sn-body .dfl b')].map(e => e.textContent); if (chips.length !== Object.keys(C.fl).length) out.fl.push(h + ': pressure chips ' + chips.length + ' of ' + Object.keys(C.fl).length);
-        if (!document.querySelector('#isx-sn-body .cb-nt')) out.fl.push(h + ': no “whose reading”'); }
+        const nt = document.querySelector('#isx-sn-body .cb-nt'); if (nt && /map’s reading/.test(nt.textContent)) out.fl.push(h + ': a “map’s reading” note'); }   /* tiers build B: a link's note credits an author or a measurement, or is gone (copy Part H) */
       if (S.ph === 'ask' && S.dec === '5-3') { const g2 = document.querySelector('#isx-rmap .gn[data-n="YEN"]'); if (g2.querySelector('[data-gv="yen"]').textContent !== '?' || g2.querySelector('.garr').textContent !== '▲') out.fl.push('the yen decision: the gauge should read “?” with ▲'); }
       if (S.ph === 'crisis' && S.dec === '5-3') out.rail = document.querySelectorAll('#isx-sn-body .cb-rail li').length + ':' + !!document.querySelector('#isx-sn-body .cb-shows');
       if (S.line === 0 && S.beat >= L.steps.length) break;
@@ -129,10 +130,47 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
     return out; });
   ok(!walk.early.length, 'nothing is shown before its step (' + walk.states + ' states walked)', walk.early.slice(0, 6).join('; '));
   ok(walk.seen.length === 37, 'all 37 chain links were walked', String(walk.seen.length));
-  ok(!walk.fl.length, 'every flare direction matches its gauge; every link says whose reading it is', walk.fl.slice(0, 6).join('; '));
+  ok(!walk.fl.length, 'every flare direction matches its gauge; no link carries a “map’s reading” note', walk.fl.slice(0, 6).join('; '));
   ok(walk.rail === '7:true', 'the yen card has its history rail (7 rows) and “What it shows”', walk.rail);
   ok(!p._errs.length, 'no page errors (guide)', p._errs.join(' | '));
   await p.context().close();
+
+  /* ---------- 9: the copy round's three rules (claude/content/tiers-copy.md, section 0), tiers build B ---------- */
+  {
+    const fs = require('fs'), path = require('path'), ROOT = path.join(__dirname, '..', 'imperial-stack');
+    /* rule 3: no “map’s reading” hedges and no intent disclaimers anywhere in the page's text or data; credit stays where it is due */
+    const HEDGE = /map’s (structural )?reading|map's reading|page’s reading|not an allegation|what any person intended|No claim is made about/;
+    const files = ['index.html', ...fs.readdirSync(path.join(ROOT, 'v2')).filter(f => /\.js$/.test(f)).map(f => 'v2/' + f), ...fs.readdirSync(path.join(ROOT, 'data')).filter(f => /\.json$/.test(f)).map(f => 'data/' + f)];
+    const hedges = files.flatMap(f => fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').map((l, i) => HEDGE.test(l) ? f + ':' + (i + 1) : null).filter(Boolean));
+    ok(!hedges.length, 'rule 3: no “map’s reading” hedges and no intent disclaimers in the page, its scripts or its data', hedges.join(', '));
+    /* rules 1 and 2, walked route by route */
+    const PLAIN = { deficit: /\bdeficits?\b/i, debt: /\bdebt\b/i, rate: /\binterest rates?\b/i, treasuries: /\bTreasuries\b/, bond: /\bbonds?\b/i, yield: /\byields?\b/i, surplus: /\bsurplus(es)?\b/i };
+    const q = await mk({}, 'story');
+    const R9 = await q.evaluate(async ([plainSrc]) => {
+      const w = ms => new Promise(r => setTimeout(r, ms)), L = ISX.sim.lines, gi = L.findIndex(x => x.gnd), pi = L.findIndex(x => x.pre);
+      const TW = ISX.tipw.map(([k, s, f]) => [k, new RegExp(s, f)]), PL = plainSrc.map(([k, s, f]) => [k, new RegExp(s, f)]);
+      const card = () => { const B = document.getElementById('isx-sn-body'), vis = [...B.querySelectorAll('.s2why, .s2p, .dctx > p, .thesis-echo')], fold = [...B.querySelectorAll('.s2d > p')];
+        const keys = el => new Set(el.flatMap(e => [...e.querySelectorAll('dfn.df')].map(d => d.dataset.d)));
+        return { h: (B.querySelector('h3') || {}).textContent || '', vis: vis.map(e => e.textContent).join(' '), fold: fold.map(e => e.textContent).join(' '), kv: keys(vis), kf: keys(fold) }; };
+      const walk = async (start) => { const out = []; document.getElementById('isx-sn-pickb').click(); await w(80); document.querySelector(`#isx-sn-pick [data-sl="${start}"]`).click(); await w(120);
+        for (let g = 0; g < 400; g++) { const S = ISX.sim, Ln = S.lines[S.line]; if (S.beat >= 0 && S.beat < Ln.steps.length || S.ph) out.push(Object.assign(card(), { at: (Ln.gnd ? 'basics ' : Ln.pre ? 'first principles ' : 'step ') + (S.beat + 1) + (S.ph ? ' ' + S.ph + (S.ph === 'chain' ? ' ' + (S.c + 1) : '') : ''), line: S.line }));
+          if (S.line === 0 && S.beat >= Ln.steps.length) break;
+          if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click(); await w(35); }
+        return out; };
+      const first = (cards, list, fold) => list.map(([k, re]) => { const i = cards.findIndex(c => re.test(c.vis) || (fold && re.test(c.fold))); if (i < 0) return null; const c = cards[i];
+        return (re.test(c.vis) ? c.kv.has(k) : c.kf.has(k)) ? null : k + ' first used at ' + c.at + ' (“' + c.h + '”) without its tip'; }).filter(Boolean);
+      localStorage.setItem('isx-way', 'ground'); const ground = await walk(gi); localStorage.setItem('isx-way', 'guide'); const guide = await walk(pi);
+      const BACK = /\b(as above|see above|as before|the (previous|last|next) (screen|card|reveal)|the (screen|card|reveal) before|as we saw|as you saw)\b/i;
+      return { n: [ground.length, guide.length], g1: first(ground, TW, false), g2: first(guide, TW, false), plain: first(ground.filter(c => c.line === gi || c.line === pi), PL, true),
+        back: ground.filter(c => c.line === gi || c.line === pi).filter(c => BACK.test(c.vis)).map(c => c.at) };
+    }, [Object.entries(PLAIN).map(([k, re]) => [k, re.source, re.flags])]);
+    console.log('rule 1: cards walked, ground route ' + R9.n[0] + ', guide route ' + R9.n[1]);
+    ok(!R9.g1.length && !R9.g2.length, 'rule 1: every technical term carries its tip where each route first uses it (the ground route and the guide’s)', [...R9.g1, ...R9.g2].join('; '));
+    ok(!R9.plain.length, 'rule 1: deficit, debt, interest rate, Treasuries, bond, yield and surplus are defined where the ground route first uses them (the primer)', R9.plain.join('; '));
+    ok(!R9.back.length, 'rule 2: each primer screen and first-principles reveal stands alone (no “as above”, no pointer to the card before)', R9.back.join('; '));
+    ok(!q._errs.length, 'no page errors (rules)', q._errs.join(' | '));
+    await q.context().close();
+  }
 
   /* ---------- 7: the tour ---------- */
   p = await mk({}, 'story', true);

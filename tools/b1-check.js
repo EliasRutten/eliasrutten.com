@@ -11,7 +11,8 @@ let fails = 0;
 const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && !cond ? '  → ' + JSON.stringify(extra).slice(0, 700) : '')); };
 
 /* the first step of every indicator, first principles and guide (spec S1 §4.6) */
-const FIRST = { ffr: [null, 24], res: [null, 29], bills: [7, 27], y10: [null, 4], mtg: [4, 17], yen: [null, 41], dxy: [null, 41], brent: [null, 19], move: [null, 25], off: [2, 8], stb: [7, 27], basis: [null, 31], repo: [null, 29], haircut: [null, 29], rrp: [null, 28], tga: [null, 28], capex: [null, 2], bnd: [null, 3], ai: [3, 9], shr: [null, 11], con: [1, 13], save: [4, 18], pce: [null, 21], diesel: [null, 22] };   /* tiers build A (15 Nov 2026): recomputed for the new chapter order (build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks) */
+const FIRST = { ffr: [null, 24], res: [null, 29], bills: [null, 27], y10: [null, 4], mtg: [5, 17], yen: [null, 42], dxy: [null, 42], brent: [null, 19], move: [null, 25], off: [2, 8], stb: [null, 27], basis: [null, 32], repo: [null, 29], haircut: [null, 29], rrp: [null, 28], tga: [null, 28], capex: [null, 2], bnd: [null, 3], ai: [3, 9], shr: [null, 11], con: [1, 13], save: [5, 18], pce: [null, 21], diesel: [null, 22] };   /* tiers build A (15 Nov 2026): recomputed for the new chapter order (build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks).
+   Tiers build B: R7 is gone (bills and stablecoins first move in the guide), R4 split (mortgage and saving at reveal 5), the new step 30 moves the yen and the basis trade one step on */
 const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]];
 
 (async () => {
@@ -43,7 +44,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   const walk = async (p, each) => {
     const out = []; const take = async tag => { const s = await state(p); s.tag = tag; out.push(s); if (each) await each(s); return s; };
     await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
-    for (let i = 0; i < 7; i++) { await take('reveal ' + (i + 1)); await right(p); }
+    for (let i = 0; i < 8; i++) { await take('reveal ' + (i + 1)); await right(p); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
     for (let guard = 0; guard < 120; guard++) {
       const s = await take('step'); s.tag = 'step ' + (s.beat + 1);
@@ -82,7 +83,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const first = { pre: {}, main: {} };
       const rows = await walk(p, s => { if (s.ph) return; const k = s.pre ? 'pre' : s.main ? 'main' : null; if (!k) return; Object.keys(s.vals).forEach(id => { if (s.vals[id] && s.vals[id] !== '?' && first[k][id] == null) first[k][id] = s.beat + 1; }); });
       const n = { reveals: rows.filter(r => /^reveal/.test(r.tag)).length, steps: rows.filter(r => /^step/.test(r.tag)).length, asks: rows.filter(r => /^decision/.test(r.tag)).length, links: rows.filter(r => /^link/.test(r.tag)).length, crises: rows.filter(r => /^crisis/.test(r.tag)).length };
-      ok(`walk (${w} px): 7 reveals, 49 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 7 && n.steps === 49 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
+      ok(`walk (${w} px): 8 reveals, 52 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 8 && n.steps === 52 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
       if (want(2)) {
         const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);
         ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.length} cards (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });
@@ -139,12 +140,12 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 10 && s2.beat === 9, [s1.beat, s2.beat]);
     await swipe('#isx-b1play', -120); await q.waitForTimeout(300);
     ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 9);
-    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 32; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
+    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 33; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
     await right(q, 350); await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q);
-    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 32, [d0.ph, d1.ph, d1.beat]);
+    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 33, [d0.ph, d1.ph, d1.beat]);
     await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const d2 = await state(q);
-    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 32, [d2.ph, d2.beat]);
+    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 33, [d2.ph, d2.beat]);
     ok('swipe: no page errors', q._errs.length === 0, q._errs); await q.context().close();
   }
 
@@ -152,7 +153,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   if (want(5) || want(6)) {
     const p = await page('#simulator', { pos: '{"l":0,"b":0}' });
     const DEC = await js(p, () => ISX.sim.decisions.map(D => Object.assign({}, D, { step: ISX.sim.lines[0].steps[D.at].t })));
-    ok('decisions: seven, before steps 20, 25, 27, 29, 34, 36 and 41 (tiers build A: the new chapter order); 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '20,25,27,29,34,36,41' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
+    ok('decisions: seven, before steps 20, 25, 27, 30, 35, 37 and 42 (tiers build B: the repo backstop now leads to the new step 30); 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '20,25,27,30,35,37,42' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
     for (const D of DEC) {
       const tag = 'decision before step ' + (D.at + 1);
       await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), '0:' + (D.at - 1)); await p.waitForTimeout(350);

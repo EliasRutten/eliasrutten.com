@@ -1,4 +1,5 @@
-/* Tiers build A (15 Nov 2026): checks on what the round changed (claude/specs/tiers.md §1, §1.1, §2, §3b, §4.3, §6).
+/* Tiers builds A and B (15 Nov 2026): checks on what the rounds changed (claude/specs/tiers.md §1, §1.1, §2, §3, §3b, §4, §4.3, §6;
+   claude/content/tiers-copy.md Parts A to H).
    Usage: node tools/tiers-check.js [baseUrl]. Needs `python3 -m http.server 8731` at the repo root. Exits 1 on a failed check.
    1 the chapter order and where the seven decisions sit; the ledes the order needs
    2 the door card: three doors, named by what each route assumes, the guide gold, the ground-up door locked until the primer exists;
@@ -7,7 +8,10 @@
    4 expert mode: the key line (full view only), “Guide steps” (index, Esc, focus back), a step opened from it with the way back,
      “In the guide” in the dossiers of the full view
    5 term tips: the glossary entries, tips define and carry no figures; the tooltip is tied to its term, Esc hides it, it can be
-     hovered, a tap toggles it, it never covers the term */
+     hovered, a tap toggles it, it never covers the term
+   6 build B: the primer (eight screens, the hand-over, the way up, hidden text alternatives, the route in the bar, reading level, one
+     screen); first principles (eight reveals); the three new steps and the trims; the thesis echoes and their rules (listed); the
+     guide's close with the stored sterling figure; the Circuit's first line; the play runner keeps a play's order */
 const { chromium } = require('playwright');
 const base = process.argv.slice(2).find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 let pass = 0, fail = 0;
@@ -36,11 +40,11 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   let p = await mk();
   const ord = await js(p, () => { const L = ISX.sim.lines[0]; return { ch: [...document.querySelectorAll('#isx-sn-body .s2chl li b')].map(x => x.textContent), n: L.steps.length, first: L.steps[0].t, dec: ISX.sim.decisions.map(D => [D.k, D.at + 1]) }; });
   ok(ord.ch.join('|') === ORDER.join('|'), 'chapter order: build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks', ord.ch);
-  ok(ord.n === 49 && ord.first === 'A lab needs compute', 'the guide still has 49 steps and opens on “A lab needs compute”', ord);
-  ok(JSON.stringify(Object.fromEntries(ord.dec)) === JSON.stringify({ '0-1': 27, '0-3': 29, '0-4': 34, '0-6': 25, '9-4': 36, '5-3': 41, '6-1': 20 }), 'the seven decisions follow their steps: oil before 20, long yields before 25, funding before 27, repo before 29, leverage before 34, tariffs before 36, the yen before 41', ord.dec);
+  ok(ord.n === 52 && ord.first === 'A lab needs compute', 'the guide has 52 steps (49 and three new) and opens on “A lab needs compute”', ord);
+  ok(JSON.stringify(Object.fromEntries(ord.dec)) === JSON.stringify({ '0-1': 27, '0-7': 30, '0-4': 35, '0-6': 25, '9-4': 37, '5-3': 42, '6-1': 20 }), 'the seven decisions follow their steps: oil before 20, long yields before 25, funding before 27, the repo backstop (key 0-7) before 30, leverage before 35, tariffs before 37, the yen before 42', ord.dec);
   const ledes = await js(p, async () => {
     const out = {}, go = async t => { document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(); await new Promise(r => setTimeout(r, 300)); return ((document.querySelector('#isx-sn-body .s2why') || {}).textContent || '') + ' ' + ((document.querySelector('#isx-sn-body .sn-why p') || {}).textContent || ''); };
-    out.dc = await go('0:0'); out.who = await go('0:25'); out.yip = await go('0:33'); out.t25 = await go('0:24');
+    out.dc = await go('0:0'); out.who = await go('0:25'); out.yip = await go('0:34'); out.t25 = await go('0:24');
     document.querySelector(`#isx-s2bar [data-rt-t="0:23"]`).click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));
     out.q06 = (document.querySelector('#isx-sn-body .dq') || {}).textContent || ''; out.ph = ISX.sim.ph; return out;
   });
@@ -48,11 +52,13 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(/All of this runs on borrowed money, and the state borrows most of all\./.test(ledes.who), 'chapter 5 (who buys the debt) opens with its lead line', ledes.who);
   ok(/One rule sets how much those banks can carry\./.test(ledes.yip), 'the leverage rule, now in “Bonds get yippy”, follows from the dealer banks', ledes.yip);
   ok(ledes.ph === 'ask' && /the Treasury still has to sell its debt/.test(ledes.q06), 'the call “Long yields climb” no longer assumes the leveraged funds of chapter 6', ledes);
-  ok(await js(p, async () => { document.querySelector(`#isx-s2bar [data-rt-t="${ISX.sim.lines.findIndex(L => L.pre)}:6"]`).click(); await new Promise(r => setTimeout(r, 250)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return /starts where the money lands: a data centre that has to be paid for/.test(document.getElementById('isx-sn-body').textContent); }), 'first principles hand over to the build-out, not to the central banks');
-  const raw = await js(p, async () => { const out = [], L = ISX.sim.lines, pre = L.findIndex(x => x.pre);
-    for (const [l, n] of [[pre, L[pre].steps.length], [0, L[0].steps.length]]) for (let i = -1; i <= n; i++) { const t = document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`); if (!t) continue; t.click(); await new Promise(r => setTimeout(r, 40)); const x = document.getElementById('isx-sn-body').textContent + document.getElementById('isx-s2bar').textContent; if (/\{\{|\}\}/.test(x)) out.push(l + ':' + i); }
-    return out; });
-  ok(!raw.length, 'no raw tip markup on any card or in the bar (first principles and the guide)', raw);
+  ok(await js(p, async () => { const pl = ISX.sim.lines.findIndex(L => L.pre); document.querySelector(`#isx-s2bar [data-rt-t="${pl}:${ISX.sim.lines[pl].steps.length - 1}"]`).click(); await new Promise(r => setTimeout(r, 250)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return /starts where the money lands: a data centre that has to be paid for/.test(document.getElementById('isx-sn-body').textContent); }), 'first principles hand over to the build-out, not to the central banks');
+  const raw = await js(p, async () => { const out = [], L = ISX.sim.lines, pre = L.findIndex(x => x.pre), gnd = L.findIndex(x => x.gnd); localStorage.setItem('isx-way', 'ground');
+    document.getElementById('isx-sn-pickb').click(); await new Promise(r => setTimeout(r, 80)); document.querySelector(`#isx-sn-pick [data-sl="${gnd}"]`).click(); await new Promise(r => setTimeout(r, 80));
+    for (const [l, n] of [[gnd, L[gnd].steps.length], [pre, L[pre].steps.length], [0, L[0].steps.length]]) {
+      for (let i = -1; i <= n; i++) { const t = document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`); if (!t) continue; t.click(); await new Promise(r => setTimeout(r, 40)); const x = document.getElementById('isx-sn-body').textContent + document.getElementById('isx-s2bar').textContent; if (/\{\{|\}\}/.test(x)) out.push(l + ':' + i); } }
+    localStorage.removeItem('isx-way'); return out; });
+  ok(!raw.length, 'no raw tip markup on any card or in the bar (the basics, first principles and the guide)', raw);
   ok(!p._errs.length, 'no page errors (order)', p._errs.join(' | '));
   await p.context().close();
 
@@ -68,7 +74,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(dc.ways.join() === 'ground,guide,map' && dc.names.join('|') === 'From the ground up|The guide|The full map', 'three doors: From the ground up, The guide, The full map', dc.names);
   ok(/^Assumes nothing\./.test(dc.lines[0]) && /^Assumes you know what a Treasury yield is\. First principles, 8 chapters, 7 calls\.$/.test(dc.lines[1]) && /^Assumes you know the plumbing\. The layout is part of the thesis/.test(dc.lines[2]) && /guide explains\.$/.test(dc.lines[2]), 'each door says what its route assumes; the full map says the layout is part of the thesis', dc.lines);
   ok(dc.gold.join() === 'false,true,false', 'the guide is the gold door', dc.gold);
-  ok(dc.off[0] === 'true' && /coming soon/i.test(dc.m[0]) && dc.off[1] === null && dc.off[2] === null, 'the ground-up door is locked “coming soon” until the primer exists; the other two are live', dc);
+  ok(dc.off.every(x => x === null) && dc.m[0] === 'about ' + dc.mins.ground + ' minutes' && dc.mins.ground > dc.mins.guide, 'build B: the ground-up door is open now the primer exists, with its own minutes; all three are live', dc);
   ok(dc.m[1] === 'about ' + dc.mins.guide + ' minutes' && new RegExp('About ' + dc.mins.main + ' minutes\\.').test(dc.fold) && dc.mins.guide > dc.mins.main && /every figure lit/.test(dc.m[2]), 'the minutes are computed from the text, on the door and in the fold', [dc.m, dc.mins]);
   ok(dc.native && dc.group === 'Three ways in' && dc.desc.every((t, i) => t.includes(dc.lines[i]) && t.includes(dc.m[i])) && !dc.old && dc.last === 0 && dc.click, 'native buttons in a group labelled “Three ways in”, each described by its line and its minutes; the old buttons and the skip link are gone; the click line stays', dc);
   ok(/Economic theory has come far in recognizing global trade imbalances/.test(dc.th) && /the instability is manufactured/.test(dc.th) && /That is the thesis of the author, Elias Rutten\./.test(dc.th) && /Follow the plumbing and you can see who holds the valves\./.test(dc.th) && !/Klein|Pettis|Gowan|Hudson/.test(dc.th), 'the thesis is Elias Rutten’s wording and names no economist', dc.th);
@@ -82,8 +88,11 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   await js(p, () => { sessionStorage.setItem('isx-sim-pos', '{"l":0,"b":-1}'); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
   st = await js(p, () => ({ beat: ISX.sim.beat, mode: ISX.sim.mode, last: [...document.querySelectorAll('#isx-sn-body .tw-door')].filter(d => d.querySelector('.tw-last')).map(d => d.dataset.way), txt: (document.querySelector('#isx-sn-body .tw-last') || {}).textContent }));
   ok(st.mode === 'story' && st.beat === -1 && st.last.join() === 'guide' && st.txt === 'Last time', 'a returning visitor of the guide sees the door card again, the guide marked “Last time” in words', st);
-  await js(p, () => document.querySelector('#isx-sn-body [data-way="ground"]').click()); await p.waitForTimeout(250);
-  ok(await js(p, () => ISX.sim.beat === -1 && localStorage.getItem('isx-way') === 'guide'), 'the locked door does nothing');
+  await js(p, () => document.querySelector('#isx-sn-body [data-way="ground"]').click()); await p.waitForTimeout(400);
+  st = await js(p, () => ({ way: localStorage.getItem('isx-way'), gnd: ISX.sim.lines[ISX.sim.line].gnd, beat: ISX.sim.beat, h3: document.querySelector('#isx-sn-body h3').textContent }));
+  ok(st.way === 'ground' && st.gnd && st.beat === 0 && st.h3 === 'The US spends more than it collects', 'build B: the ground-up door opens the primer at screen 1; isx-way = ground', st);
+  await js(p, () => { sessionStorage.setItem('isx-sim-pos', '{"l":0,"b":-1}'); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
+  ok(await js(p, () => ISX.sim.beat === -1 && [...document.querySelectorAll('#isx-sn-body .tw-door')].filter(d => d.querySelector('.tw-last')).map(d => d.dataset.way).join() === 'ground'), 'a returning visitor of the primer sees the door card again, “From the ground up” marked');
   await p.focus('#isx-sn-body [data-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(600);
   st = await js(p, () => ({ way: localStorage.getItem('isx-way'), mode: ISX.sim.mode, f: document.activeElement && document.activeElement.className }));
   ok(st.way === 'map' && st.mode === 'full' && /rt-swb/.test(st.f), 'the full map’s door, by keyboard: the full view, focus in the bar; isx-way = map', st);
@@ -117,16 +126,16 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ex = await js(p, () => { const g = document.getElementById('isx-gsteps'), sec = [...g.querySelectorAll(':scope > .tw-gsg > section')], pre = g.querySelector('.tw-gspre');
     return { open: !g.hidden, exp: document.getElementById('isx-gsb').getAttribute('aria-expanded'), ch: sec.map(s => s.querySelector('h4').textContent.replace(/^\d+/, '')), steps: g.querySelectorAll(':scope > .tw-gsg > section li:not(.dec)').length, dec: g.querySelectorAll(':scope > .tw-gsg > section li.dec').length, pre: pre && pre.querySelector('summary').textContent, preN: pre && pre.querySelectorAll('li').length, focus: g.contains(document.activeElement), label: g.getAttribute('role') === 'dialog' && document.getElementById(g.getAttribute('aria-labelledby')).textContent }; });
   ok(ex.open && ex.exp === 'true' && ex.focus && ex.label === 'Guide steps', 'Guide steps opens the index as a labelled dialog, focus inside', ex);
-  ok(ex.ch.join('|') === ORDER.join('|') && ex.steps === 49 && ex.dec === 7, 'the index: eight chapters in the new order, 49 steps, 7 calls marked “Your call”', ex);
-  ok(/^Before the guide: First principles \(7\)$/.test(ex.pre) && ex.preN === 7, 'the index: first principles folded on top', ex.pre);
+  ok(ex.ch.join('|') === ORDER.join('|') && ex.steps === 52 && ex.dec === 7, 'the index: eight chapters in the new order, 52 steps, 7 calls marked “Your call”', ex);
+  ok(/^Before the guide: The basics \(8\) · First principles \(8\)$/.test(ex.pre) && ex.preN === 16, 'the index: the basics and first principles folded on top', ex.pre);
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok(await js(p, () => document.getElementById('isx-gsteps').hidden && document.activeElement && document.activeElement.id === 'isx-gsb' && ISX.sim.mode === 'full'), 'Esc closes the index and returns focus to its button; the full view stays');
   await js(p, () => document.getElementById('isx-gsb').click()); await p.waitForTimeout(250);
-  await js(p, () => document.querySelector('#isx-gsteps [data-gs="0:30"]').click()); await p.waitForTimeout(600);
+  await js(p, () => document.querySelector('#isx-gsteps [data-gs="0:31"]').click()); await p.waitForTimeout(600);
   ex = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, h3: document.querySelector('#isx-sn-body h3').textContent, ret: (document.querySelector('#isx-sn-body .tw-ret') || {}).textContent, focus: document.activeElement && document.activeElement.hasAttribute('data-twret') }));
-  ok(ex.mode === 'story' && ex.beat === 30 && ex.h3 === 'The largest holder nobody counts' && /Back to the full map/.test(ex.ret) && ex.focus, 'a step opened from the index: the guide at that step, with “Back to the full map”', ex);
+  ok(ex.mode === 'story' && ex.beat === 31 && ex.h3 === 'The largest holder nobody counts' && /Back to the full map/.test(ex.ret) && ex.focus, 'a step opened from the index: the guide at that step, with “Back to the full map”', ex);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
-  ok(await js(p, () => ISX.sim.beat === 31 && !!document.querySelector('#isx-sn-body .tw-ret')), 'the way back stays while the visitor walks on');
+  ok(await js(p, () => ISX.sim.beat === 32 && !!document.querySelector('#isx-sn-body .tw-ret')), 'the way back stays while the visitor walks on');
   await js(p, () => document.querySelector('#isx-sn-body [data-twret]').click()); await p.waitForTimeout(500);
   ok(await js(p, () => ISX.sim.mode === 'full' && ISX.sim.ret === null), '“Back to the full map” returns to the full view');
   await js(p, () => document.getElementById('isx-gsb').click()); await p.waitForTimeout(250);
@@ -194,6 +203,105 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(await js(p, () => document.getElementById('isx-tip6').hidden), '390 px: a tap elsewhere hides it');
   ok(!p._errs.length, 'no page errors (tips, phone)', p._errs.join(' | '));
   await p.context().close();
+
+  /* ---------- 6. build B ---------- */
+  const fs = require('fs'), path = require('path'), ROOT = path.join(__dirname, '..', 'imperial-stack');
+  const PRIMER = ['The US spends more than it collects', 'It borrows by selling IOUs', 'The yield is the price of borrowing', 'The 10-year prices everything else', 'Who lends to Washington', 'The twin deficit', 'Why it matters now', 'How to read the map'];
+  const REVEALS = ['Every deficit is someone’s surplus', 'The surplus economies spend less than they earn', 'The claims are taken in dollars', 'The US spends more than it earns', 'Jobs or debt', 'Built over half a century', 'Money into assets', 'Lower yields, higher prices'];
+  /* a rough Flesch–Kincaid grade: syllables by vowel groups, a silent final e dropped */
+  const syl = w => { w = w.toLowerCase().replace(/[^a-z]/g, ''); if (!w) return 0; if (w.length <= 3) return 1; w = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, ''); const m = w.match(/[aeiouy]{1,2}/g); return Math.max(1, m ? m.length : 1); };
+  const fk = t => { const s = t.split(/(?<=[.!?])\s+(?=[A-Z“$0-9])/).filter(x => /\w/.test(x)), w = t.split(/\s+/).filter(x => /\w/.test(x)); const sy = w.reduce((a, x) => a + syl(x), 0); return { wps: w.length / s.length, grade: .39 * w.length / s.length + 11.8 * sy / w.length - 15.59 }; };
+  p = await mk({}, { way: 'ground' });
+  const G = await js(p, async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), L = ISX.sim.lines, gi = L.findIndex(x => x.gnd), pi = L.findIndex(x => x.pre), out = { gi, pi, n: L[gi].steps.length, s: [] };
+    document.querySelector('#isx-sn-body [data-way="ground"]').click(); await w(300);
+    out.seg = document.querySelectorAll('#isx-s2bar .rt-segs > .rt-s').length;
+    out.route = document.getElementById('isx-s2bar').textContent;
+    for (let i = 0; i < out.n; i++) {
+      const B = document.getElementById('isx-sn-body'), d = B.querySelector('details.s2deep');
+      out.s.push({ line: ISX.sim.line, beat: ISX.sim.beat, k: B.querySelector('.s2k').textContent.replace(/\s+/g, ' ').trim(), h3: B.querySelector('h3').textContent, x: B.querySelector('.s2p').textContent, vh: (B.querySelector('.vh') || {}).textContent || '',
+        map: (B.querySelector('.gnd-map') || {}).textContent || '', know: !!B.querySelector(`.gnd-know [data-sl="${pi}"][data-sb="0"]`), fold: d ? d.querySelector('summary').textContent : '', more: d ? [...d.querySelectorAll('.s2d > p, .s2d dd')].map(e => e.textContent).join(' ') : '',
+        src: (B.querySelector('.s2d .lsrc') || {}).textContent || '', terms: [...B.querySelectorAll('.gnd-terms dt')].map(x => x.textContent), tips: [...new Set([...B.querySelectorAll('dfn.df')].map(x => x.dataset.d))], echo: [...B.querySelectorAll('.thesis-echo')].map(x => x.textContent),
+        lit: ISX.sim.lines[gi].steps[i].e.length + ISX.sim.lines[gi].steps[i].n.length });
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await w(260);
+    }
+    const H = document.getElementById('isx-sn-body'); out.hand = { h3: H.querySelector('h3').textContent, go: (H.querySelector(`.sn-go[data-sl="${pi}"][data-sb="0"]`) || {}).textContent || '', skip: (H.querySelector('.sn-q2[data-sl="0"][data-sb="0"]') || {}).textContent || '' };
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await w(300);
+    out.after = [ISX.sim.line, ISX.sim.beat]; return out;
+  });
+  ok(G.n === 8 && G.s.map(x => x.h3).join('|') === PRIMER.join('|'), 'the primer: eight screens, in the order of the spec', G.s.map(x => x.h3));
+  ok(G.s.every((x, i) => x.k === `The basics${i + 1} of 8`), 'each screen’s kicker: “The basics · k of 8”', G.s.map(x => x.k));
+  ok(G.s.every(x => x.x.split(/(?<=[.!?])\s+(?=[A-Z“$])/).length <= 2), 'each screen shows at most two sentences; the rest is behind “Say more”', G.s.filter(x => x.x.split(/(?<=[.!?])\s+(?=[A-Z“$])/).length > 2).map(x => x.h3));
+  ok(G.s.every(x => /^On the map: /.test(x.vh) && x.vh.length > 30), 'each screen has its hidden text alternative', G.s.map(x => x.vh));
+  ok(/5\.13%/.test(G.s[2].vh) && /7\.24%/.test(G.s[3].vh), 'the figures in the text alternatives come from the indicators (5.13%, 7.24%)', [G.s[2].vh, G.s[3].vh]);
+  ok(G.s.every(x => /^On the map/.test(x.map) && x.know && x.fold === 'Say more'), 'each screen: what is lit, the quiet “I know this: go to the guide”, and “Say more”', G.s.map(x => [x.map.slice(0, 30), x.know, x.fold]));
+  ok(G.s.every(x => /^Source: /.test(x.src)) && G.s.every((x, i) => i === 1 || i === 7 || /\d{4}/.test(x.src)), 'every screen with a figure names its source and date', G.s.map(x => x.src));
+  ok(G.s.slice(0, 7).every(x => x.lit > 0), 'screens 1 to 7 light real parts of the map', G.s.map(x => x.lit));
+  ok(G.s.every(x => x.tips.every(k => x.terms.includes(D[k][0]))) && G.s[0].terms.join('|') === 'Deficit|Federal debt|Rollover|Interest rate|Twin deficit', 'each screen lists the terms it defines, with the glossary’s own wording', G.s.map(x => x.terms));
+  ok(G.s.map(x => x.echo.length).join() === '0,0,0,0,0,0,1,0' && /not an accident: it is made, and it is used on purpose/.test(G.s[6].echo[0]), 'screen 7 carries the one thesis echo of the primer', G.s.map(x => x.echo));
+  ok(G.hand.h3 === 'The ground is laid.' && /^First principles: why the world’s savings come to the US/.test(G.hand.go) && G.hand.skip === 'Straight to the guide', 'the hand-over card: first principles as the main button, straight to the guide as the second', G.hand);
+  ok(G.after[0] === G.pi && G.after[1] === 0, 'Next from the hand-over leads to first principles, reveal 1', G.after);
+  ok(/The basics/.test(G.route), 'the bar shows the primer as the first segment of the ground-up route', G.route.slice(0, 200));
+  const lv = G.s.map(x => fk((x.x + ' ' + x.more).replace(/\s+/g, ' ')));
+  console.log('      primer reading level (words a sentence, grade): ' + lv.map(r => r.wps.toFixed(1) + '/' + r.grade.toFixed(1)).join(' · '));
+  const avg = lv.reduce((a, r) => a + r.wps, 0) / lv.length;
+  ok(lv.every(r => r.grade <= 7) && avg <= 15, 'the primer reads at grade 7 or lower on every screen, at most 15 words a sentence on average (spec §6; rough syllable count)', { avg, lv });
+  ok(!p._errs.length, 'no page errors (primer)', p._errs.join(' | '));
+  await p.context().close();
+  /* the way up, and the primer at 1280×760 */
+  p = await mk({ viewport: { width: 1280, height: 760 } }, { way: 'ground', pos: '{"l":13,"b":4}' });
+  const fit = await js(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), out = [];
+    for (let i = 0; i < 8; i++) { document.querySelector(`#isx-s2bar [data-rt-t="13:${i}"]`).click(); await w(250); const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-snarr').getBoundingClientRect(), box = document.getElementById('isx-sn-in');
+      out.push(card.top >= 0 && card.bottom <= bar.top + 1 && box.scrollHeight <= box.clientHeight + 1 && scrollY === 0 && c.getBoundingClientRect().bottom <= innerHeight + 1); }
+    document.querySelector('#isx-sn-body .gnd-know button').click(); await w(300); return { fit: out, up: [ISX.sim.lines[ISX.sim.line].pre, ISX.sim.beat] }; });
+  ok(fit.fit.every(Boolean), '1280×760: every primer screen fits one screen, card above the bar, no inner scroll', fit.fit);
+  ok(fit.up[0] && fit.up[1] === 0, '“I know this: go to the guide” moves up to first principles, reveal 1', fit.up);
+  await p.context().close();
+
+  /* first principles, the new steps, the trims, the echoes, the close */
+  p = await mk({}, { way: 'guide' });
+  const C = await js(p, async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), L = ISX.sim.lines, pi = L.findIndex(x => x.pre), out = { pre: L[pi].steps.map(s => s.t), main: L[0].steps.map(s => s.t), cards: [] };
+    const grab = (l, i, kind) => { const B = document.getElementById('isx-sn-body'); return { l, i, kind, h3: (B.querySelector('h3') || {}).textContent || '', x: [...B.querySelectorAll('.s2p')].map(e => e.textContent).join(' '), nt: [...B.querySelectorAll('.sn-note')].map(e => e.textContent).join(' '), echo: [...B.querySelectorAll('.thesis-echo')].map(e => e.textContent), ch: (ISX.sim.line === 0 && ISX.sim.beat >= 0 && ISX.sim.beat < L[0].steps.length) ? null : null }; };
+    for (const l of [pi, 0]) { const n = L[l].steps.length;
+      for (let i = 0; i <= n; i++) { const t = document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`); if (!t) continue;
+        const dk = document.querySelector(`#isx-s2bar [data-rt-t="d:${l}:${i - 1}"]`);
+        if (dk) { dk.click(); await w(60); out.cards.push(grab(l, i, 'ask')); document.querySelector('#isx-sn-body [data-fk="alt"]').click(); await w(60);
+          for (let c = 0; c < 9; c++) { out.cards.push(grab(l, i, ISX.sim.ph)); if (ISX.sim.ph === 'crisis') break; document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await w(60); } }
+        document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`).click(); await w(80); out.cards.push(grab(l, i, i === n ? 'end' : 'step')); } }
+    out.chOf = L[0].steps.map((s, i) => { const b = document.querySelector(`#isx-s2bar [data-rt-t="0:${i}"]`); return b ? [...document.querySelectorAll('#isx-s2bar .rt-segs > .rt-s')].findIndex(sg => sg.contains(b)) : -1; });
+    return out; });
+  ok(C.pre.join('|') === REVEALS.join('|'), 'first principles: eight reveals (R4 and R6 split, R7 removed)', C.pre);
+  const card = (l, t) => C.cards.find(c => c.kind === 'step' && c.l === l && c.h3 === t) || {};
+  ok(/Most accounts treat the global imbalance as a flaw to be fixed\. The map’s thesis is that it is also a tool: made on purpose, and used\./.test(card(12, REVEALS[2]).echo.join(' ')), 'R3 carries the line on the map’s thesis', card(12, REVEALS[2]).echo);
+  ok(/Since about 2014 the claims have come back less as central-bank reserves/.test(card(12, REVEALS[5]).x) && /Elias Rutten’s thesis: the dollar system is moving “from a state-centric, public-reserve hegemony to an asset-driven, private-capital network”\./.test(card(12, REVEALS[5]).nt), 'R5: the 2014 shift on the card, Elias Rutten’s thesis in its note', card(12, REVEALS[5]));
+  ok(/This is accounting: the two amounts are the same by definition\./.test(card(12, REVEALS[3]).nt), 'R4a marks the accounting as accounting', card(12, REVEALS[3]).nt);
+  const at = t => C.main.indexOf(t) + 1;
+  ok(at('The Fed opens the tap') === 30 && at('As statecraft, it adds up') === 45 && at('Dollars without a bank') === 46 && at('Dollars for the underclass') === 47 && at('Does it add up?') === 44, 'the three new steps sit at 30, 45 and 47; “Dollars without a bank” at 46', [at('The Fed opens the tap'), at('As statecraft, it adds up'), at('Dollars without a bank'), at('Dollars for the underclass')]);
+  const S = t => card(0, t).x || '';
+  ok(/On 10 December 2025 the Fed removed the \$500bn cap on its standing repo/.test(S('The Fed opens the tap')) && !/\$830bn/.test(S('The cushion runs out')) && /That is capital flows used as a weapon\./.test(S('As statecraft, it adds up')) && /foreign monetary underclass/.test(S('Dollars for the underclass')) && /“Hierarchical dollarisation” and “foreign monetary underclass” are Elias Rutten’s terms\./.test(card(0, 'Dollars for the underclass').nt), 'the new cards carry their own text; Elias Rutten’s terms are on a card, credited to him', [S('The Fed opens the tap'), S('As statecraft, it adds up'), S('Dollars for the underclass')]);
+  ok(/that would be about a quarter of what they put into US securities\.$/.test(S('Back to Wall Street').trim()) && /^The richest tenth do more than 45% of consumer spending/.test(S('The top tenth does the spending').trim()) && /Households buy goods, not chips/.test(S('Spending becomes imports')) && /in the 12 months to 8 November 2026/.test(S('Shares fund capex too')) && /^A spike in bond volatility forces leveraged buyers out, as in March 2020\.$/.test(S('Volatility').trim()) && /long yields kept climbing into October\./.test(S('A calmer long end, mostly')), 'the trims: the cards read as the copy round wrote them (steps 9, 12, 13, 15, 25 and 51)', ['Back to Wall Street', 'Shares fund capex too', 'Volatility'].map(S));
+  const ech = C.cards.filter(c => c.echo.length);
+  console.log('      thesis echoes:\n' + ech.map(c => `        ${c.l === 0 ? 'step ' + (c.i + 1) : c.l === 12 ? 'first principles ' + (c.i + 1) : c.l + ':' + c.i} · ${c.h3} · ${c.echo.join(' ')}`).join('\n'));
+  ok(ech.every(c => c.kind === 'step' || c.kind === 'end'), 'no echo on a decision, chain or crisis card', ech.filter(c => c.kind !== 'step' && c.kind !== 'end').map(c => c.h3));
+  const mainE = ech.filter(c => c.l === 0 && c.kind === 'step').map(c => c.i), chOf = i => C.chOf[i];
+  ok(mainE.every((i, k) => !k || i - mainE[k - 1] > 1), 'never on two cards in a row', mainE);
+  ok(new Set(mainE.map(chOf)).size === mainE.length && mainE.every(i => chOf(i) >= 4), 'at most one echo per chapter, none in the first three chapters', mainE.map(i => [i + 1, chOf(i)]));
+  const end = C.cards.find(c => c.kind === 'end' && c.l === 0) || {};
+  ok(/A price manipulated, buyers captured, rules shaped, dollars rationed: those are the valves, and you have seen who holds them\./.test(end.echo.join(' ')) && /Malaysia’s and Singapore’s gross AI-hardware exports about 37% and 35%/.test(end.x) && /took 47% of sterling corporate bond issuance in 2026 to early September/.test(end.x), 'the guide’s close pays off the thesis, with the bought-in economies and the sterling share', end);
+  const endFold = await js(p, async () => { document.querySelector(`#isx-s2bar [data-rt-t="0:${ISX.sim.lines[0].steps.length}"]`).click(); await new Promise(r => setTimeout(r, 200)); return (document.querySelector('#isx-sn-body details.s2deep') || {}).textContent || ''; });
+  ok(/Sterling: Bank of England Financial Policy Committee record, 25 Sep 2026/.test(endFold) && /Gross exports include imported parts/.test(endFold), 'the close’s figures carry their sources and the gross-exports caveat', endFold.slice(0, 200));
+  ok(!p._errs.length, 'no page errors (first principles and the guide)', p._errs.join(' | '));
+  await p.context().close();
+  /* the play runner keeps a play's own order: in the full view, play 0's fifth move is the Fed opening the tap */
+  p = await mk({}, { mode: 'full' });
+  const pr = await js(p, async () => { ISX.simPlay(0); await new Promise(r => setTimeout(r, 300)); const t = []; for (let i = 0; i < 8; i++) { t.push((document.querySelector('#isx-rside h4') || {}).textContent || ''); const n = document.getElementById('isx-pn'); if (!n || i === 7) break; n.click(); await new Promise(r => setTimeout(r, 120)); } return t; });
+  ok(pr[4] === '5. The Fed opens the tap' && pr[3] === '4. The cushion runs out' && pr.length === 8, 'the full view’s play runner follows the play’s order: the tap after the cushion', pr);
+  ok(!p._errs.length, 'no page errors (plays)', p._errs.join(' | '));
+  await p.context().close();
+  /* the Circuit's first line (copy Part G) */
+  const ins = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'insights.json'), 'utf8'));
+  ok(ins.first.t === 'The world’s dollars used to go into US government debt. In the year to August 2026 foreign investors put $1.01tn into US shares, while foreign central banks sold $164bn of Treasuries.' && ins.first.src === '12 months to August 2026 · US Treasury' && ins.first.go.label === 'Follow the dollar', 'the Circuit’s first line says why the pair of figures matters; same figures, source and button', ins.first);
 
   await b.close();
   console.log(`tiers-check: ${pass} pass, ${fail} fail`);

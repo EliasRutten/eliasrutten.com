@@ -126,12 +126,12 @@ const AUDITOR = () => {
     };
     const key = k => () => p.keyboard.press(k);
     await step('opening card → first principles', () => click(p, '#isx-sn-body [data-way="guide"]'), 2100);
-    for (let i = 2; i <= 7; i++) await step('first principles ' + i, key('ArrowRight'), 2100);
+    for (let i = 2; i <= 8; i++) await step('first principles ' + i, key('ArrowRight'), 2100);
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
-    ok(`flicker (${tag}): the guide is at step 1 of 49`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 49; }));
-    for (let i = 2; i <= 49; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
-    ok(`flicker (${tag}): stepped through all 49`, (await where(p)).beat === 48);
+    ok(`flicker (${tag}): the guide is at step 1 of 52`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 52; }));
+    for (let i = 2; i <= 52; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
+    ok(`flicker (${tag}): stepped through all 52`, (await where(p)).beat === 51);
     /* B1-4: each decision's other path, link by link, to its crisis card and back to what happened */
     let links = 0;
     for (const D of await js(p, () => ISX.sim.decisions)) {
@@ -162,7 +162,7 @@ const AUDITOR = () => {
     await step('→ Levers', () => click(p, '[data-s4tab="levers"]'), 2000);
     for (let i = 0; i < 14; i++) { await step('lever ' + (i + 1) + ' pulled', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); await step('lever ' + (i + 1) + ' released', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); }
     await step('→ back to the guide', () => click(p, '[data-s4tab="guide"]'), 2400);
-    ok(`flicker (${tag}): ${total.steps} steps (7 first principles, 49 guide, 7 decisions with their 37 chain links, ${moves} play moves, 17 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
+    ok(`flicker (${tag}): ${total.steps} steps (8 first principles, 52 guide, 7 decisions with their 37 chain links, ${moves} play moves, 17 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
     ok(`flicker (${tag}): no page errors`, p._errs.length === 0, p._errs);
     await p.context().close();
   }
@@ -194,16 +194,19 @@ const AUDITOR = () => {
   /* ================= 2. nothing is shown before the guide reaches it ================= */
   for (const [w, h, touch] of [[1440, 900, false], [1024, 768, false], [390, 844, true]]) {
     const p = await page({}, { w, h, touch }), rows = [], leaks = [];
-    const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
+    const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line === 13 ? 'the basics ' : a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
     await take();
-    await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
-    for (let i = 0; i < 7; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
+    /* tiers build B: the route from the ground up, so the primer's eight screens are audited too; the hand-over card is passed */
+    await click(p, '#isx-sn-body [data-way="ground"]'); await p.waitForTimeout(350);
+    for (let i = 0; i < 8; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(900);   /* the primer's relations fade out over a quarter of a second, as the guide's do */
+    for (let i = 0; i < 8; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
     let seenSteps = 0;
-    for (let i = 0; i < 49; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
+    for (let i = 0; i < 52; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
-    ok(`no early reveal (${w} px): opening card, 7 reveals of first principles and all 49 steps audited`, rows.length === 58 && seenSteps === 49, { rows: rows.length, seenSteps });
+    ok(`no early reveal (${w} px): opening card, 8 primer screens, 8 reveals of first principles and all 52 steps audited`, rows.length === 70 && seenSteps === 52, { rows: rows.length, seenSteps });
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
     ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
     ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);
@@ -286,7 +289,7 @@ const AUDITOR = () => {
     await click(p, '[data-s4tab="levers"]'); await p.waitForTimeout(400); await click(p, '#isx-s2tray-lev .lv', 3); await p.waitForTimeout(300);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
-    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 49), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*49$/.test((res.cnt || '').trim()) && /step 12 of 49/.test(lab) && res.sel === 0, { res, lab });
+    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 52), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*52$/.test((res.cnt || '').trim()) && /step 12 of 52/.test(lab) && res.sel === 0, { res, lab });
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
@@ -361,7 +364,7 @@ const AUDITOR = () => {
   {
     const p = await page({ 'isx-sim-mode': 'full' });
     const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.indicators.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length, c.querySelectorAll('#isx-rmap .fn.pl').length, c.querySelectorAll('#isx-rmap .fn.gn').length, c.querySelectorAll('#isx-rmap .gt').length]; });
-    ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 11 plays, 49 guide steps', n.join() === '37,75,17,24,11,49,29,8,15', n); await p.context().close();
+    ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 11 plays, 52 guide steps', n.join() === '37,75,17,24,11,52,29,8,15', n); await p.context().close();
   }
 
   await b.close();

@@ -96,11 +96,11 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     else await p.keyboard.press('ArrowRight');
     await p.waitForTimeout(120);
   }
-  ok('guide: all 49 steps are reachable with →, choosing on the card at each choice', n === 49, n);
+  ok('guide: all 52 steps are reachable with →, choosing on the card at each choice', n === 52, n);
   ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
   ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[8].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
-  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
+  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/52$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
   /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:13"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
@@ -114,9 +114,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: Indicators opens the role ledger: every indicator reached so far with its value, the rest as names', await p.evaluate(() => { const c = document.getElementById('isx-cock'), l = document.getElementById('isx-b1led'), got = l.querySelectorAll('.lr.ind:not(.later)').length, n = +document.querySelector('#isx-b1ind b').textContent.split('/')[0]; return c.classList.contains('led-open') && !l.hidden && l.querySelectorAll('.lr.ind').length === 24 && got === n && got > 0 && got < 24 && [...l.querySelectorAll('.lr.ind.later')].every(x => !/\d/.test(x.querySelector('b').textContent)); }));
   await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.click('#isx-sn-pickb'); await p.waitForTimeout(200);
-  ok('guide: the picker lists first principles, the guide and eleven mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 13));
-  await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[3].click()); await p.waitForTimeout(300);
-  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 7 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
+  ok('guide: the picker lists the basics, first principles, the guide and eleven mechanisms', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 14));
+  await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[4].click()); await p.waitForTimeout(300);
+  ok('guide: a mechanism opens with its steps in the bar', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 9 && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
   if (await p.$('#isx-sn-body [data-way="guide"]')) { await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(250);
   /* B1-4: a decision is its own card between two steps; the other path is a chain of reveals that ends on a crisis card */
@@ -129,7 +129,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   for (let i = 0; i < 9; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
   ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 6 && chain.slice(0, 5).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[5].k) && /Back to\s*What happened/i.test(chain[5].nx), chain);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^20\/49$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Let the market price the war/.test(b.querySelector('.dyou').textContent) && /Washington added barrels and managed the news\./.test(b.querySelector('.dyou').textContent); }));
+  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^20\/52$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Let the market price the war/.test(b.querySelector('.dyou').textContent) && /Washington added barrels and managed the news\./.test(b.querySelector('.dyou').textContent); }));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
