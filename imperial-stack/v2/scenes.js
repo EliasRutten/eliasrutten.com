@@ -273,8 +273,34 @@
     drawCard(arriving || !!o.fresh); drawStrip();
     if (S.sheet === 'drawer') drawDrawer();
   }
-  /* B3-3 draws the living background here: the light, the texture, the date in outline, the switch moment */
-  function scenery() {}
+  /* The living background: every step changes the scene behind the nodes. The light takes the colour of the link in hand
+     (red on a switch, gold at the close; a fainter glow in the holder's colour on a switch); a texture, masked to a circle
+     round the node, says what kind of step it is (the kind of link, or the switch's instrument); the step's date stands in
+     outline behind everything. Arriving at a switch plays the one loud moment of the scene, as Web Animations: a flash at
+     the node, a shockwave ring, and the toggle, live for a second and a half, flips off. A threatened switch keeps its
+     toggle live with a dashed outline, in amber and without flash or ring; a standing one has no moment at all. */
+  var tex = id('b3-tex'), wm = id('b3-wm'), redv = id('b3-redv'), flash = id('b3-flash'), OUT = 'cubic-bezier(.16, 1, .3, 1)';
+  function texFor(stp, w) { return !stp ? 'end' : w ? w.instr : stp.choke ? 'control' : (LINK[stp.link] ? stp.link : 'data'); }
+  function scenery(c, n, stp, w, col, fwd) {
+    var N = c.steps.length, stt = w ? w.status : stp && stp.choke ? 'thrown' : '', tone = !stp || !stp.choke ? '' : stt === 'threatened' ? 'warn' : stt === 'standing' ? '' : 'red';
+    var t = texFor(stp, w); if (tex && tex.dataset.t !== t) tex.dataset.t = t;
+    st.style.setProperty('--b3tc', col); st.style.setProperty('--b3hc', w ? hcol(w) : 'transparent');
+    if (redv && redv.dataset.tone !== tone) redv.dataset.tone = tone;
+    if (wm) {
+      var wt = n >= N ? c.t : dshort(stp.date);
+      if (wm.textContent !== wt) { wm.textContent = wt; if (!still() && wm.animate && S.mode === 'scene') wm.animate([{ opacity: 0, transform: 'translate(60px, -50%)' }, { opacity: 1, transform: 'translate(0, -50%)' }], { duration: 1400, easing: OUT }); }
+      if (wm.dataset.tone !== tone) wm.dataset.tone = tone;
+    }
+    if (!fwd || still() || tone !== 'red') return;
+    if (flash && flash.animate) flash.animate([{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 0 }], { duration: 1000, easing: 'ease-out' });
+    var sh = world.querySelector('.shock[data-k="' + n + '"]'), tg = world.querySelector('.tg[data-s="' + n + '"]');
+    if (sh && sh.animate) sh.animate([{ transform: 'scale(.2)', opacity: .9 }, { transform: 'scale(7)', opacity: 0 }], { duration: 1400, delay: 500, easing: OUT });
+    if (tg && tg.animate) {
+      var o = { duration: 550, delay: 1500, easing: OUT, fill: 'backwards' };
+      tg.querySelector('.kn').animate([{ transform: 'translateX(10px)', fill: '#44d7ec' }, { transform: 'translateX(-10px)', fill: '#ff3b5c' }], o);
+      tg.querySelector('.tr').animate([{ fill: 'rgba(68, 215, 236, .12)', stroke: '#44d7ec' }, { fill: 'rgba(255, 59, 92, .22)', stroke: '#ff3b5c' }], o);
+    }
+  }
   function drawDrawer() {}
 
   /* ---------- the card ---------- */
