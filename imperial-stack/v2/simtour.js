@@ -11,7 +11,7 @@
   var host = function () { return $('cock'); };   /* the note lives on the Simulator's own stage, which is rebuilt when the view changes */
   var box = null, at = 0, live = false;
   var phone = function () { return window.innerWidth <= 760; };
-  var onCard = function () { var S = X.sim; return S.mode === 'story' && S.beat < 0 && !S.ph && !!root.querySelector('#isx-sn-body .s4go'); };
+  var onCard = function () { var S = X.sim; return S.mode === 'story' && S.beat < 0 && !S.ph && !!root.querySelector('#isx-sn-body [data-way="guide"]'); };
 
   function stops() {
     var tap = U.COARSE ? 'Tap' : 'Click', ph = phone();
@@ -34,7 +34,7 @@
     host().appendChild(box);
     box.addEventListener('click', function (e) {
       var b = e.target.closest('[data-a]'); if (!b) return;
-      if (b.dataset.a === 'next') { if (at < stops().length - 1) { at++; render(true); } else { var go = onCard(); close(); if (go) { var s = root.querySelector('#isx-sn-body .s4go'); if (s) { s.click(); s = X.route && X.route.next('sim'); if (s) s.focus({ preventScroll: true }); } } } }
+      if (b.dataset.a === 'next') { if (at < stops().length - 1) { at++; render(true); } else { var go = onCard(); close(); if (go) { var s = root.querySelector('#isx-sn-body [data-way="guide"]'); if (s) { s.click(); s = X.route && X.route.next('sim'); if (s) s.focus({ preventScroll: true }); } } } }
       else close();
     });
     box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } });

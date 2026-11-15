@@ -1,0 +1,121 @@
+/* Imperial Stack v2, tiers build A (15 Nov 2026): three ways in, expert mode, term tips. Scoped under #isx-root, linked after fix.css. */
+
+/* ---------- 1. the door card: three equal doors, the house pattern of the ring's “Where next”; the guide is the gold one ---------- */
+#isx-root .s2 .tw-in { margin: 14px 0 4px; container-type: inline-size; }
+#isx-root .s2 .tw-k { margin: 0 0 7px; font: 9.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: #8fa3b6; }
+#isx-root .s2 .tw-doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+#isx-root #isx-cock.s2 .s2card .tw-door { --dc: #c9d4de; position: relative; display: grid; grid-template-rows: auto 1fr auto; align-content: start; gap: 5px; min-height: 0; height: auto; margin: 0; padding: 11px 11px 9px 12px; border-radius: 16px 16px 8px 8px; text-align: left; color: var(--ink); cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--dc) 34%, #22313f);
+  background: radial-gradient(130% 62% at 50% -6%, color-mix(in srgb, var(--dc) 16%, transparent) 0%, color-mix(in srgb, var(--dc) 4%, transparent) 55%, transparent 80%), linear-gradient(180deg, #101a24, #080e15);
+  box-shadow: inset 0 2px 0 -0.5px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9); transition: border-color .25s ease, box-shadow .25s ease, filter .2s ease; }
+#isx-root #isx-cock.s2 .s2card .tw-door b { font: 600 15px/1.1 var(--display); letter-spacing: .07em; text-transform: uppercase; color: #fff; text-wrap: balance; }
+#isx-root #isx-cock.s2 .s2card .tw-door > span { display: block; font: 11.5px/1.36 var(--sans); color: #b4c2ce; text-wrap: pretty; }
+#isx-root #isx-cock.s2 .s2card .tw-door .tw-a { display: block; }
+#isx-root #isx-cock.s2 .s2card .tw-door .tw-m { display: flex; align-items: center; gap: 5px; margin-top: 6px; font: 9.5px/1.25 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: var(--dc); }
+#isx-root #isx-cock.s2 .s2card .tw-door > i { position: absolute; right: 10px; top: 10px; font: 14px/1 var(--sans); font-style: normal; color: var(--dc); opacity: .8; transition: transform var(--mo-t) var(--mo), opacity .2s; }
+#isx-root #isx-cock.s2 .s2card .tw-door .tw-last { justify-self: start; padding: 1px 6px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--dc) 55%, transparent); font: 9px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dc); }
+#isx-root #isx-cock.s2 .s2card .tw-door:hover, #isx-root #isx-cock.s2 .s2card .tw-door:focus-visible { border-color: color-mix(in srgb, var(--dc) 70%, #22313f); box-shadow: inset 0 2px 0 -0.5px var(--dc), 0 0 26px -10px var(--dc), 0 10px 22px -16px rgba(0, 0, 0, .9); }
+#isx-root #isx-cock.s2 .s2card .tw-door:hover > span, #isx-root #isx-cock.s2 .s2card .tw-door:focus-visible > span { color: #e4ebf1; }
+#isx-root #isx-cock.s2 .s2card .tw-door:hover > i, #isx-root #isx-cock.s2 .s2card .tw-door:focus-visible > i { transform: translateX(3px); opacity: 1; }
+#isx-root #isx-cock.s2 .s2card .tw-door:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+/* the recommended door: the filled gold of the former “Start the guide” */
+#isx-root #isx-cock.s2 .s2card .tw-door.gold { --dc: #1b1305; border: 1px solid #ffe2a6; background: linear-gradient(180deg, #ffe1a3, #ffc65a); box-shadow: 0 0 0 4px rgba(255, 210, 122, .12), 0 12px 30px -14px rgba(255, 190, 90, .7); }
+#isx-root #isx-cock.s2 .s2card .tw-door.gold b { color: #1b1305; }
+#isx-root #isx-cock.s2 .s2card .tw-door.gold > span { color: #4a3610; }
+#isx-root #isx-cock.s2 .s2card .tw-door.gold .tw-m { color: #5a3f0c; }
+#isx-root #isx-cock.s2 .s2card .tw-door.gold:hover, #isx-root #isx-cock.s2 .s2card .tw-door.gold:focus-visible { filter: brightness(1.05); box-shadow: 0 0 0 6px rgba(255, 210, 122, .16), 0 14px 34px -12px rgba(255, 190, 90, .7); }
+#isx-root #isx-cock.s2 .s2card .tw-door.gold:hover > span { color: #3a2a0c; }
+/* a door not built yet: locked, quiet, “coming soon” */
+#isx-root #isx-cock.s2 .s2card .tw-door.off { --dc: #8fa3b6; cursor: default; background: linear-gradient(180deg, #0d151d, #080e15); box-shadow: none; border-style: dashed; }
+#isx-root #isx-cock.s2 .s2card .tw-door.off b { color: #b4c2ce; }
+#isx-root #isx-cock.s2 .s2card .tw-door.off > span { color: #8fa3b6; }
+#isx-root #isx-cock.s2 .s2card .tw-door.off:hover, #isx-root #isx-cock.s2 .s2card .tw-door.off:focus-visible { border-color: #3a4b5b; box-shadow: none; }
+#isx-root .s2 .tw-in + .ifx-click { margin-top: 8px; }
+/* narrow card (tablets, phones): three rows of the same size, the arrow at the right */
+@container (max-width: 520px) {
+  #isx-root .s2 .tw-doors { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  #isx-root #isx-cock.s2 .s2card .tw-door { grid-template-rows: auto auto; padding: 9px 34px 9px 12px; border-radius: 12px; }
+  #isx-root #isx-cock.s2 .s2card .tw-door > i { top: 50%; transform: translateY(-50%); }
+  #isx-root #isx-cock.s2 .s2card .tw-door:hover > i, #isx-root #isx-cock.s2 .s2card .tw-door:focus-visible > i { transform: translate(3px, -50%); }
+}
+@supports not (container-type: inline-size) { #isx-root .s2 .tw-doors { grid-template-columns: minmax(0, 1fr); } }
+/* laptop heights: the doors stay one screen with the thesis (1280×760, no inner scroll) */
+@media (max-height: 820px) and (min-width: 761px) {
+  #isx-root .s2 .tw-in { margin: 8px 0 2px; }
+  #isx-root .s2 .tw-k { margin-bottom: 5px; }
+  #isx-root #isx-cock.s2 .s2card .tw-door { padding: 7px 9px 7px 10px; gap: 2px; }
+  #isx-root #isx-cock.s2 .s2card .tw-door b { font-size: 14px; }
+  #isx-root #isx-cock.s2 .s2card .tw-door > span { font-size: 11px; line-height: 1.3; }
+  #isx-root #isx-cock.s2 .s2card .tw-door .tw-m { margin-top: 3px; }
+  #isx-root .s2 .tw-in + .ifx-click { margin-top: 5px; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root #isx-cock.s2 .s2card .tw-door, #isx-root #isx-cock.s2 .s2card .tw-door > i { transition: none; } }
+
+/* the thesis is a plain string now (no titles in italics) */
+#isx-root .s2thesis p .df { color: inherit; }
+
+/* ---------- 2. expert mode ---------- */
+/* the one-line key, in the full view only; on phones it folds behind “Key” */
+#isx-root .s2 .tw-keyw { display: none; }
+#isx-root .s2.full .tw-keyw { display: block; pointer-events: auto; }
+#isx-root .s2.full.tray-on .tw-keyw { display: none; }
+#isx-root .s2 .tw-keyb { display: none; }
+#isx-root .s2 .tw-key { margin: 0; padding-left: 4px; max-width: 980px; font: 11.5px/1.4 var(--sans); color: #a9b8c5; text-wrap: pretty; }
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2 .s2low > .tw-keyw { order: 5; }
+  #isx-root .s2.full .tw-keyb { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 9px; border: 1px solid #22313d; background: rgba(7, 12, 18, .9); color: var(--ink2); font: 600 12px var(--display); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+  #isx-root .s2.full .tw-keyb[aria-expanded="true"] { color: #ffd27a; border-color: #4a3b1c; }
+  #isx-root .s2 .tw-key { display: none; padding: 6px 2px 0; }
+  #isx-root .s2 .tw-keyw.open .tw-key { display: block; }
+}
+/* “Guide steps” in the bar: one more segment of the tab's controls, same height and baseline */
+#isx-root .rt-host .rt .tw-gsb { display: flex; align-items: center; gap: 7px; padding: 0 13px; border: 0; border-left: 1px solid rgba(255, 255, 255, .07); background: none; color: var(--ink2); font: 600 14px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer; transition: background .15s; }
+#isx-root .rt-host .rt .tw-gsb span { font-size: 15px; color: #ffd27a; }
+#isx-root .rt-host .rt .tw-gsb:hover { background: rgba(255, 255, 255, .04); color: #fff; }
+#isx-root .rt-host .rt .tw-gsb[aria-expanded="true"] { box-shadow: inset 0 -2px 0 #ffd27a; color: #ffd27a; }
+#isx-root .rt-host .rt .tw-gsb:focus-visible { outline: 2px solid #ffd27a; outline-offset: -2px; }
+#isx-root .rt-host .rt.ph .tw-gsb { display: none; }
+#isx-root .s2:not(.full) .b1more .tw-gsm { display: none; }
+/* the index: the chapters in order, decisions marked */
+#isx-root .s2 .tw-gs { position: absolute; z-index: 9; left: 50%; top: 84px; transform: translateX(-50%); width: min(1180px, calc(100% - 36px)); max-height: calc(100% - 84px - 84px); overflow-y: auto; scrollbar-width: thin; padding: 14px 18px 14px; border-radius: 16px; border: 1px solid #253442; background: rgba(7, 12, 18, .98); box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .9); }
+#isx-root .s2 .tw-gs[hidden] { display: none; }
+#isx-root .s2 .tw-gsh { position: relative; padding-right: 40px; }
+#isx-root .s2 .tw-gsh h3 { margin: 0; font: 600 18px/1.1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #fff; }
+#isx-root .s2 .tw-gsh p { margin: 4px 0 0; font-size: 12.5px; color: #a9b8c5; }
+#isx-root .s2 .tw-gsh .dx { position: absolute; right: -4px; top: -4px; }
+#isx-root .s2 .tw-gspre { margin: 10px 0 4px; }
+#isx-root .s2 .tw-gspre summary { cursor: pointer; font: 10px/1.6 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8fa3b6; }
+#isx-root .s2 .tw-gspre summary:hover { color: #fff; }
+#isx-root .s2 .tw-gsg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 16px; margin-top: 10px; }
+#isx-root .s2 .tw-gsg section { --rc: #44d7ec; min-width: 0; }
+#isx-root .s2 .tw-gsg h4 { display: flex; gap: 7px; align-items: baseline; margin: 0 0 4px; padding-bottom: 4px; border-bottom: 1px solid color-mix(in srgb, var(--rc) 35%, #1b2733); font: 600 13px/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--rc); }
+#isx-root .s2 .tw-gsg h4 span { font-family: var(--mono); font-size: 10px; }
+#isx-root .s2 .tw-gsg ol { margin: 0; padding: 0; list-style: none; }
+#isx-root .s2 .tw-gsg li button { display: flex; gap: 6px; width: 100%; padding: 3px 4px; border: 0; border-radius: 6px; background: none; color: #cfd9e2; font: 12px/1.3 var(--sans); text-align: left; cursor: pointer; }
+#isx-root .s2 .tw-gsg li button .n { flex: none; min-width: 18px; font: 10px/1.6 var(--mono); color: #7d8f9f; }
+#isx-root .s2 .tw-gsg li button:hover, #isx-root .s2 .tw-gsg li button:focus-visible { background: rgba(255, 255, 255, .06); color: #fff; }
+#isx-root .s2 .tw-gsg li button:focus-visible { outline: 2px solid #ffd27a; outline-offset: -1px; }
+#isx-root .s2 .tw-gsg li.dec button { color: #ffd27a; font-size: 11.5px; }
+@media (max-width: 1100px) { #isx-root .s2 .tw-gsg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  #isx-root .s2 .tw-gs { position: fixed; z-index: 70; inset: 0; transform: none; width: auto; max-height: none; border-radius: 0; border: 0; padding: 14px 14px calc(16px + env(safe-area-inset-bottom)); }
+  #isx-root .s2 .tw-gsg { grid-template-columns: minmax(0, 1fr); }
+  #isx-root .s2 .tw-gsg li button { min-height: 40px; align-items: center; font-size: 14px; }
+}
+/* “In the guide” in a dossier */
+#isx-root .dossier .tw-ing { display: grid; gap: 2px; margin: 10px 0 6px; padding: 7px 10px; border-radius: 10px; border: 1px solid #1f2d3a; background: rgba(255, 255, 255, .02); }
+#isx-root .dossier .tw-ing > span { font: 9.5px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .dossier .tw-ing em { font-style: normal; font-size: 12.5px; line-height: 1.45; color: #b4c2ce; }
+#isx-root .dossier .tw-ing button { padding: 0; border: 0; background: none; font: inherit; color: #e4ebf1; text-decoration: underline dotted rgba(255, 210, 122, .6); text-underline-offset: 3px; cursor: pointer; }
+#isx-root .dossier .tw-ing button:hover, #isx-root .dossier .tw-ing button:focus-visible { color: #ffd27a; }
+/* a card opened from the index: the way back */
+#isx-root .s2 .tw-ret { margin: 0 0 6px; }
+#isx-root .s2 .tw-ret .s2lnk { font-size: 12px; }
+
+/* ---------- 4.3 and 6: term tips. A term's tip can be hovered (WCAG 1.4.13); other tooltips stay out of the pointer's way ---------- */
+#isx-root .tip6.df6 { pointer-events: auto; }
+
+/* the opening card: 680 px since the fix round, but never wider than the stage; on phones it flows like every other card
+   (the fix round's width ran off the screen at 390 px) */
+#isx-root #isx-cock.s2.s4open .s2card { max-width: calc(100% - 36px); }
+@media (max-width: 760px) { #isx-root #isx-cock.s2.s4open .s2card { width: auto; max-width: none; } }

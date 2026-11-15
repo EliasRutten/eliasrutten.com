@@ -2364,6 +2364,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/interface.css">
 <link rel="stylesheet" href="/imperial-stack/v2/content.css">
 <link rel="stylesheet" href="/imperial-stack/v2/fix.css">
+<link rel="stylesheet" href="/imperial-stack/v2/tiers.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -3850,6 +3851,66 @@ const DEFS = {
   networth: ['Household net worth', 'Assets minus debts of US households and non-profits, from the Fed’s Financial Accounts (Z.1).'],
   lastresort: ['Consumer of last resort', 'The economy whose deficits absorb other economies’ unsold output.'],
   gw: ['Gigawatt (GW)', 'A billion watts of power capacity, roughly the output of one large nuclear reactor.'],
+  /* tiers build A (15 Nov 2026): term tips for every tier (spec §4.3; six more from the copy round). Tips define; figures stay on the map */
+  deficit: ['Deficit', 'What the government spends in a year beyond what it collects in taxes. It is covered by borrowing.'],
+  debt: ['Federal debt', 'What is still owed from all past deficits. Gross debt includes what the government owes its own trust funds; debt held by the public does not.'],
+  rate: ['Interest rate', 'What a borrower pays a lender each year, as a share of the loan: 5% on $100 is $5 a year.'],
+  surplus: ['Surplus', 'The opposite of a deficit: earning or producing more than is spent. A trade surplus means selling more abroad than is bought.'],
+  treasuries: ['Treasuries', 'The IOUs the US government sells. “The Treasury” is the finance ministry; “Treasuries” are its debt.'],
+  bond: ['Bond', 'A loan cut into pieces that can be sold on. The buyer lends now and is paid interest until the loan is repaid on a set date.'],
+  yield: ['Yield', 'The interest a bond pays as a share of its price today. When a bond’s price falls, its yield rises: the same payments, bought more cheaply.'],
+  y10: ['The 10-year', 'The yield on ten-year US government debt. Historically the benchmark price of long-term money: corporate bonds and mortgages are priced over it.'],
+  spread: ['Spread', 'What lenders ask on top for lending to companies instead of the state.'],
+  coupon: ['Coupon', 'The fixed interest a bond pays each year, as a share of the amount borrowed.'],
+  bp: ['Basis point', 'A hundredth of a percentage point: 4 basis points is 0.04%.'],
+  auction: ['Auction', 'How the Treasury sells its debt: buyers bid the interest they want, and the issue goes to the lowest bids until it is sold.'],
+  collateral: ['Collateral', 'What a borrower hands over as security for a loan. The lender keeps it if the loan is not repaid.'],
+  mmf: ['Money fund', 'A fund that holds bills and lends cash overnight. Savers treat it almost like a bank account.'],
+  underwrite: ['Underwrite', 'A bank buys a new issue of shares or bonds to sell on to investors, and carries the risk if they do not sell.'],
+  rrp: ['Reverse repo', 'A Fed facility where money funds park cash overnight and earn interest on it.'],
+  tga: ['The Treasury’s account (TGA)', 'The government’s own account at the Fed. When it fills up, money leaves the banks; when it is spent, money flows back.'],
+  debtlimit: ['Debt limit', 'A legal cap on federal debt set by Congress. While it binds, the Treasury cannot borrow more and spends down its account.'],
+  qt: ['Quantitative tightening (QT)', 'The Fed shrinking its holdings of bonds by letting them mature without buying new ones. It drains reserves from banks.'],
+  qe: ['Quantitative easing (QE)', 'The Fed buying bonds with newly created reserves to push long-term yields down.'],
+  policyrate: ['Policy rate', 'The overnight interest rate the Fed sets. Every other rate takes it as its floor.'],
+  srf: ['Standing repo', 'The Fed’s own repo window for dealers: cash against Treasuries at a set rate, which caps what repo can cost.'],
+  haircut: ['Haircut', 'The discount a lender applies to collateral: with a 2% haircut, $100 of Treasuries secures a $98 loan. Much Treasury repo carries none.'],
+  leverage: ['Leverage', 'Buying with borrowed money. It multiplies gains and losses, and forces sales when lenders ask for more security.'],
+  hedgefund: ['Hedge fund', 'A private investment fund for institutions and the wealthy, free to borrow heavily and to bet on falling prices.'],
+  basis: ['Basis trade', 'Buying Treasuries with borrowed money while selling futures on them, to earn the small gap between the two prices. It pays only with heavy borrowing.'],
+  dealer: ['Dealer bank', 'A bank that must bid at Treasury auctions and makes markets in the debt. The same banks lend to the hedge funds.'],
+  pb: ['Prime brokerage', 'What banks sell hedge funds: loans of money and securities, and custody of their assets.'],
+  margin: ['Margin', 'Cash a trader must post with a lender or a clearing house to cover possible losses. It rises when prices swing.'],
+  vol: ['Volatility', 'How much and how fast a price swings. Lenders ask for more security when it rises.'],
+  swapspread: ['Swap-spread trade', 'A leveraged bet on the gap between Treasury yields and interest-rate swap rates. It unwinds when that gap moves the wrong way.'],
+  clearing: ['Central clearing', 'Trades settled through a clearing house that stands between buyer and seller and collects margin from both.'],
+  termprem: ['Term premium', 'The extra yield investors ask for holding a long bond instead of rolling over short ones.'],
+  hyperscalers: ['Hyperscalers', 'The giant cloud firms that build the data centres: Amazon, Alphabet, Microsoft, Meta and Oracle.'],
+  sp500: ['S&P 500', 'An index of 500 large US companies, the benchmark for US shares.'],
+  cover: ['Cover ratio', 'Bids received at a bond sale divided by the amount sold: 5× means five dollars bid for every dollar sold.'],
+  reservecur: ['Reserve currency', 'The currency central banks hold to pay abroad and to steady their own money. The dollar is the main one.'],
+  bw: ['Bretton Woods', 'The post-war system of 1944 that tied currencies to the dollar and the dollar to gold. It ended in the early 1970s.'],
+  petrodollar: ['Petrodollar', 'Oil exporters’ dollar earnings, recycled into US assets.'],
+  inflow: ['Capital inflow', 'Money from abroad buying a country’s shares, bonds, firms or property.'],
+  swapline: ['Swap line', 'One central bank or treasury lends dollars to another in exchange for its currency, to be swapped back later.'],
+  fima: ['FIMA facility', 'The Fed’s window for foreign central banks: dollars lent against their Treasuries, so they need not sell them.'],
+  esf: ['Exchange Stabilization Fund', 'A Treasury fund for steadying currencies, used by the Treasury Secretary with the President’s approval.'],
+  fxint: ['Currency intervention', 'A government buying or selling currencies to move an exchange rate.'],
+  carry: ['Carry trade', 'Borrowing in a currency with low interest, such as the yen, to invest where interest is higher. It reverses fast when the cheap currency rises.'],
+  brent: ['Brent', 'The benchmark price of crude oil, set in futures markets.'],
+  pce: ['PCE price index', 'The measure of consumer prices the Fed targets.'],
+  genius: ['GENIUS Act', 'The US law of July 2025 for dollar stablecoins: tokens must be backed by cash and short Treasuries, and may not pay their holders interest.'],
+  hierdollar: ['Hierarchical dollarisation', 'Spreading dollar tokens abroad as US policy: an offensive dollar strategy that reaches past central banks too weak to resist it (Elias Rutten’s term).'],
+  hotmoney: ['Hot money', 'Short-term money that crosses borders chasing the best return, and leaves as fast as it came.'],
+  geoecon: ['Geoeconomic', 'Using economic means, such as money, trade and markets, to win power between states.'],
+  underclass: ['Foreign monetary underclass', 'Savers abroad who are extracted from: they hold dollars that pay them nothing while the issuer keeps the yield (Elias Rutten’s term).'],
+  fip: ['Financialised industrial policy', 'The state steering credit, rather than its own spending, towards the industries it wants: here the AI build-out.'],
+  twin: ['Twin deficit', 'The government’s budget deficit and the country’s deficit with the rest of the world, named as a pair. They often move together.'],
+  curve: ['Yield curve', 'A chart of yields against the length of the loan, from three months to thirty years. Normally longer loans pay more.'],
+  imbalance: ['Global imbalance', 'Large, lasting current-account deficits in some economies, above all the US, matched by surpluses in others.'],
+  safepremium: ['Safe-asset premium', 'What investors will pay for an asset’s safety, ease of sale and use as collateral, in the form of a lower yield. Also called the convenience yield.'],
+  grossnet: ['Gross and net flows', 'Net is what is left when money in and money out are set against each other. The gross flows behind it are far larger, and pass through financial centres.'],
+  tpu: ['TPU', 'Google’s own AI chip (tensor processing unit), rented out through its cloud.'],
 };
 
 /* The circuit, rewritten: sum = the card (thesis plus the key number); deep = the full picture, scannable blocks. */
@@ -4010,6 +4071,8 @@ const IC6 = {
 const svgIc = (k, sz) => `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC6[k] || IC6.all}</svg>`;
 const SSL = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>';
 const richText = t => String(t == null ? '' : t).replace(/\{\{(\w+)\|([^}]+)\}\}/g, (m, k, x) => DEFS[k] ? `<dfn class="df" data-d="${k}" tabindex="0">${x}</dfn>` : x);
+const ft = t => richText(esc(t));   /* tiers build A: card text with its term tips, escaped first */
+const plainT = t => String(t == null ? '' : t).replace(/\{\{\w+\|([^}]+)\}\}/g, '$1');   /* the same text without the tip markup (labels, counts) */
 const VIS = new Set();
 let surMode = 'ca', ringPrev = null, loops6 = 0;
 
@@ -4054,21 +4117,39 @@ function celebrate() {
 }
 
 /* ---------- tooltips: definitions and anything with data-tip ---------- */
-const TIP6 = document.createElement('div'); TIP6.className = 'tip6'; TIP6.setAttribute('role', 'tooltip'); TIP6.hidden = true; ROOT.appendChild(TIP6);
-let tipEl = null;
+const TIP6 = document.createElement('div'); TIP6.className = 'tip6'; TIP6.id = 'isx-tip6'; TIP6.setAttribute('role', 'tooltip'); TIP6.hidden = true; ROOT.appendChild(TIP6);
+let tipEl = null, tipOut = 0, tipPtr = '', tipPtrT = 0, tipAt = 0;
+/* tiers build A (15 Nov 2026), WCAG 1.4.13: a term's tip is tied to its term (aria-describedby while it shows), Esc hides it, it stays open
+   while the pointer is on the tip itself, a tap toggles it on touch, and it never covers the term */
 function showTip(el) {
+  clearTimeout(tipOut);
   const html = el.dataset.d && DEFS[el.dataset.d] ? `<b>${esc(DEFS[el.dataset.d][0])}</b><p>${esc(DEFS[el.dataset.d][1])}</p>` : el.dataset.tip; if (!html) return;
-  tipEl = el; TIP6.innerHTML = html; TIP6.hidden = false;
+  if (tipEl && tipEl !== el && tipEl.classList.contains('df')) tipEl.removeAttribute('aria-describedby');
+  if (tipEl !== el || TIP6.hidden) tipAt = performance.now();
+  tipEl = el; TIP6.innerHTML = html; TIP6.hidden = false; TIP6.classList.toggle('df6', el.classList.contains('df'));
+  if (el.classList.contains('df')) el.setAttribute('aria-describedby', TIP6.id);
   const r = el.getBoundingClientRect(), w = TIP6.offsetWidth, h = TIP6.offsetHeight;
-  const x = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2)); let y = r.top - h - 9; if (y < 8) y = r.bottom + 9;
+  const x = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
+  let y = r.top - h - 9; if (y < 8) y = r.bottom + 9;
+  if (y < r.bottom && y + h > r.top) y = r.top - h - 9 >= 0 ? r.top - h - 9 : r.bottom + 9;   /* never over the term */
   TIP6.style.left = x + 'px'; TIP6.style.top = y + 'px';
 }
-function hideTip() { TIP6.hidden = true; tipEl = null; }
-ROOT.addEventListener('mouseover', e => { const el = e.target.closest('.df, [data-tip]'); if (el && el !== tipEl) showTip(el); });
-ROOT.addEventListener('mouseout', e => { const el = e.target.closest('.df, [data-tip]'); if (el && !el.contains(e.relatedTarget)) hideTip(); });
+function hideTip() { clearTimeout(tipOut); if (tipEl && tipEl.classList && tipEl.classList.contains('df')) tipEl.removeAttribute('aria-describedby'); TIP6.hidden = true; TIP6.classList.remove('df6'); tipEl = null; }
+const tipLater = () => { clearTimeout(tipOut); tipOut = setTimeout(hideTip, 220); };
+ROOT.addEventListener('pointerdown', e => { tipPtr = e.pointerType; tipPtrT = performance.now(); if (!TIP6.hidden && tipEl && !tipEl.contains(e.target) && !TIP6.contains(e.target)) hideTip(); }, true);
+const tipTouch = () => tipPtr === 'touch' && performance.now() - tipPtrT < 900;
+ROOT.addEventListener('mouseover', e => { if (TIP6.contains(e.target)) { clearTimeout(tipOut); return; } const el = e.target.closest('.df, [data-tip]'); if (el && el.classList.contains('df') && tipTouch()) return; if (el && el !== tipEl) showTip(el); else if (el) clearTimeout(tipOut); });
+ROOT.addEventListener('mouseout', e => {
+  if (tipTouch()) return;   /* a tap's emulated mouse events do not close the tip it opened */
+  if (TIP6.contains(e.target)) { if (!TIP6.contains(e.relatedTarget) && !(tipEl && tipEl.contains(e.relatedTarget))) tipLater(); return; }
+  const el = e.target.closest('.df, [data-tip]'); if (!el || el.contains(e.relatedTarget)) return;
+  if (el.classList.contains('df')) { if (!TIP6.contains(e.relatedTarget)) tipLater(); } else hideTip();
+});
 ROOT.addEventListener('focusin', e => { const el = e.target.closest('.df, [data-tip]'); if (el) showTip(el); });
 ROOT.addEventListener('focusout', e => { if (e.target.closest('.df, [data-tip]')) hideTip(); });
-ROOT.addEventListener('click', e => { const el = e.target.closest('.df'); if (el) { e.preventDefault(); if (tipEl === el && !TIP6.hidden) hideTip(); else showTip(el); } }, true);
+/* a click or tap toggles; a tip that the same press opened (by focus or hover, after its pointerdown) stays open */
+ROOT.addEventListener('click', e => { const el = e.target.closest('.df'); if (el) { e.preventDefault(); if (tipEl === el && !TIP6.hidden && tipAt < tipPtrT) hideTip(); else showTip(el); } }, true);
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !TIP6.hidden) { const df = TIP6.classList.contains('df6'); hideTip(); if (df) { e.preventDefault(); e.stopPropagation(); } } }, true);
 window.addEventListener('scroll', hideTip, { passive: true });
 ROOT.addEventListener('scroll', hideTip, { passive: true });
 
@@ -5350,10 +5431,10 @@ function renderFin() {
       + `<header class="s2top"><div class="s2ttl"><div class="fk">The imperial machinery · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
-      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
+      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
-      + `<div class="s2low" id="isx-s2low"><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${RORD.map(r => `<span class="k3"><i class="t3" style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
+      + `<div class="s2low" id="isx-s2low"><div class="tw-keyw"><button type="button" class="tw-keyb" data-twkey aria-expanded="false" aria-controls="isx-tw-key">Key</button><p class="tw-key" id="isx-tw-key">${fe(SKEYLINE)}</p></div><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${RORD.map(r => `<span class="k3"><i class="t3" style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
       + `<div class="s2tray tr-lev" id="isx-s2tray-lev" hidden>${levBarHTML()}</div>`
       + `<nav class="s2bar" id="isx-s2bar" aria-label="Guide: chapters and trays"></nav></div>`
@@ -5522,7 +5603,7 @@ function renderSide(lev) {
     /* B1-3: the indicators this actor or gauge carries, once the guide has reached them */
     const ist = indStates(null), gz = isG(fsel), tl = IND.filter(I => I.n === fsel && (ist[I.id].reached || ist[I.id].bor)).map(I => `<div class="dtile" style="--rc:${ROLE[I.role][3]}"><span class="dr">${fe(ROLE[I.role][0])}${indWhen(I) ? ' · first moved · ' + fe(indWhen(I)) : ''}</span><b>${fe(I.g.k || I.k)}: ${fe(indVal(I))}</b>${I.g.delta ? ` <em>${fe(I.g.delta)}</em>` : ''}<p>${fe(TMEAN[I.k] || '')} ${fe(I.g.note || '')}</p><div class="lsrc">${fe(I.g.src || 'link not stored')}</div>${I.slope ? `<div class="dslope"><span>${fe(I.slope[0])}</span> <b>${fe(I.slope[1])}</b> <em>${fe(I.slope[2])}</em><div class="lsrc">${fe(I.slope[3])}</div></div>` : ''}</div>`).join('');
     s.hidden = false; s.style.setProperty('--dc', N[5]);
-    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><p>${fe(N[6])}</p>${tl}${DOOR[fsel] ? doorSm(DOOR[fsel][0], fsel) : ''}${outs.length ? `<h5>${gz ? 'Moves' : 'Gives'}</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>${gz ? 'Moved by' : 'Gets'}</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
+    s.innerHTML = `${X}<div class="pk" style="color:${N[5]}">${fic(N[7], 15)} ${fe(FZ.find(z => z[0] === N[0])[1])}</div><h4>${fe(N[3])}</h4><p>${fe(N[6])}</p>${tl}${DOOR[fsel] ? doorSm(DOOR[fsel][0], fsel) : ''}${guideRowHTML(fsel)}${outs.length ? `<h5>${gz ? 'Moves' : 'Gives'}</h5><ul class="nrel">${li(outs, 1)}</ul>` : ''}${ins.length ? `<h5>${gz ? 'Moved by' : 'Gets'}</h5><ul class="nrel">${li(ins, 0)}</ul>` : ''}${later ? `<p class="s5more">${later} more relation${later > 1 ? 's' : ''} later in the guide.</p>` : ''}`;
     s.querySelectorAll('.go').forEach(b => b.addEventListener('click', () => pickNode(b.dataset.go)));
     placeDossier(); done(); return;
   }
@@ -5531,7 +5612,7 @@ function renderSide(lev) {
     /* the gauges that sit on this line: a price or rate node at either end, once the guide has reached it */
     const tl = IND.filter(I => (I.tag ? I.rel.includes(fedge) : ends.includes(I.n)) && (ist[I.id].reached || ist[I.id].bor)).map(I => `<div class="dtile" style="--rc:${ROLE[I.role][3]}"><span class="dr">${fe(ROLE[I.role][0])}${indWhen(I) ? ' · first moved · ' + fe(indWhen(I)) : ''}</span><b>${fe(I.g.k || I.k)}: ${fe(indVal(I))}</b>${I.g.delta ? ` <em>${fe(I.g.delta)}</em>` : ''}<p>${fe(TMEAN[I.k] || '')} ${fe(I.g.note || '')}</p><div class="lsrc">${fe(I.g.src || 'link not stored')}</div>${I.slope ? `<div class="dslope"><span>${fe(I.slope[0])}</span> <b>${fe(I.slope[1])}</b> <em>${fe(I.slope[2])}</em><div class="lsrc">${fe(I.slope[3])}</div></div>` : ''}</div>`).join('');
     s.hidden = false; s.style.setProperty('--dc', T[0]);
-    s.innerHTML = `${X}<div class="pk" style="color:${T[0]}"><i class="rl-sw" style="background:${T[0]}"></i> Relation · ${fe(T[1])}</div><h4>${fe(FN[e[0]][3])} → ${fe(FN[e[1]][3])}</h4><p>${fe(e[3])}</p>${tl}`
+    s.innerHTML = `${X}<div class="pk" style="color:${T[0]}"><i class="rl-sw" style="background:${T[0]}"></i> Relation · ${fe(T[1])}</div><h4>${fe(FN[e[0]][3])} → ${fe(FN[e[1]][3])}</h4><p>${fe(e[3])}</p>${tl}${guideRowHTML(null, fedge)}`
       + `<h5>Between</h5><ul class="nrel">${ends.map((k, j) => `<li><i style="background:${FN[k][5]}"></i><span><button type="button" class="go" data-go="${k}">${fe(FN[k][3])}</button> ${j ? 'receives' : 'gives'}</span></li>`).join('')}</ul>`
       + (e[5] ? `<p class="cb-who"><span>Whose reading</span> ${fe(e[5])}</p>` : '')
       + (e[4] ? `<div class="lsrc">Source: ${fe(e[4])}</div>` : tl ? '' : `<div class="lsrc">Source for this line: link not stored. The two actors’ cards carry their dated figures.</div>`);
@@ -6578,17 +6659,19 @@ const SMETA = [
 /* the main story: chapters of play steps [play, step, link override] in causal order */
 const SMAIN = {
   t: 'How the plumbing was built', c: '#ffd27a',
-  lede: 'The US runs the deficit that absorbs the world’s surpluses, and those surpluses come back as claims on the US. For decades foreign central banks held them as Treasuries; now they are stepping back, just as the AI build-out needs cheap money. Start with the first principles, then follow what Washington did, step by step.',
-  /* fix round (14 Nov 2026): the map's thesis against Klein and Pettis, on the opening card. Wording proposed in the brief; Elias reads it once */
-  thesis: ['Klein and Pettis (', ['Trade Wars Are Class Wars'], ', 2020) read the dollar system as a bad deal for the United States, a rip-off that American workers and manufacturers pay for. This map starts from the opposite reading: Washington took it as a conscious trade-off and weaponizes the system of capital flows on purpose. That reading runs from Peter Gowan (', ['The Global Gamble'], ', 1999) to Michael Hudson.'],
+  lede: 'The US runs the deficit that absorbs the world’s surpluses, and those surpluses come back as claims on the US. For decades foreign central banks held them as Treasuries; now they are stepping back, just as the AI build-out needs cheap money.',
+  /* tiers build A (15 Nov 2026): the map's thesis, Elias Rutten's wording (spec §1.1). Stated in full once, here; elsewhere at most one-sentence echoes */
+  thesis: 'Economic theory has come far in recognizing {{imbalance|global trade imbalances}}, and the {{hotmoney|hot money}} flows that follow them, as persistently distorting and destabilizing. What it still misses is that the instability is manufactured: it is there on purpose, to be weaponized for {{geoecon|geoeconomic}} ends. That is the thesis of the author, Elias Rutten. The United States and China are both leading powers in this weaponized system. Follow the plumbing and you can see who holds the valves.',
+  /* tiers build A (15 Nov 2026): the guide follows the money before the plumbing: where it lands, where it comes from, what squeezes it,
+     then who lends to the state at those yields (spec §3b). Data only; decisions follow their steps (keys unchanged). */
   ch: [
-    { t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6]] },
-    { t: 'Bonds get yippy', s: 'Yippy bonds', w: '2019 to Nov 2026', b: [[9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm.'], [9, 1], [9, 2], [9, 3], [9, 4], [9, 5]] },
-    { t: 'A data centre gets paid for', s: 'Data centre', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'Long yields set the price of credit, and the AI build-out runs on credit.'], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
+    { t: 'A data centre gets paid for', s: 'Data centre', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'The money that comes back to US markets meets a build-out that runs on credit.', 1], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
     { t: 'The allies’ savings come back', s: 'Savings', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
     { t: 'The consumer keeps it flowing', s: 'Consumer', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
+    { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [6, 3], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 4, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.'], [0, 6, 'Long yields are climbing, and the Treasury still has to sell its debt.']] },
+    { t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowed money, and the state borrows most of all. The buyers it relied on for decades are leaving.', 1], [0, 1], [0, 2], [0, 3], [0, 5]] },
+    { t: 'Bonds get yippy', s: 'Yippy bonds', w: '2019 to Nov 2026', b: [[9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm.'], [9, 1], [9, 2], [0, 4, 'One rule sets how much those banks can carry.'], [9, 3, 'How much the funds can borrow depends on how calm the bond market is.'], [9, 4], [9, 5]] },
     { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6]] },
-    { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [6, 3], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 4, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.']] },
     { t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
   ],
 };
@@ -6676,9 +6759,9 @@ const SDEC = {
         s: [['Barth and Kahn, OFR Working Paper 21-01 (Apr 2021)', 'https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/events/2021/fsc-2021/kahn-paper.pdf'], DSRC.ks] }],
       who: 'The chain is this map’s reading; the 2020 exemption is measured. What happened carries its own risk: a thinner capital buffer at the banks, the reason Governors Barr and Cook dissented.', links: [] } },
   '0-6': { when: 'August 2026', nt: 'Long yields climb', ord: ['real', 'alt'], sus: {},
-    q: 'Long yields are climbing, and funds hold more long bonds on borrowed cash. What do you do?',
+    q: 'Long yields are climbing, and the Treasury still has to sell its debt. What do you do?',
     real: ['Buy back long bonds', 'take them out of private hands'], alt: ['Leave the long end alone', 'and let the market absorb it'],
-    ctx: { x: 'The 30-year yield hit 5.34% on 18 August, a 19-year high.', more: [], s: 'Reuters, 20 Aug 2026 (from the 10-year yield’s note).', links: [] },
+    ctx: { x: 'Back in August, the 30-year yield hit 5.34% on the 18th, a 19-year high.', more: [], s: 'Reuters, 20 Aug 2026 (from the 10-year yield’s note).', links: [] },
     after: { real: 'So did Washington.', alt: 'Washington bought back long bonds.' },
     chain: [
       { t: 'Volatility rises', e: [], off: E('TSY>MOV'), fl: { move: '▲' }, n: 'The map’s reading.',
@@ -6819,7 +6902,7 @@ const SPRE = {
 const SLINES = (() => {
   const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri })), beats: [] }];
   SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why, ld]) => L[0].beats.push(sBeat(p, s, ci, why, ld))));
-  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? SMAIN.ch[5].tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
+  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? (SMAIN.ch.find(C => C.tri) || {}).tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
   /* first principles: the last line in the list (so stored places in the guide and the mechanisms keep their numbers), shown first */
   L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, why: '', lev: B.lev || [], fork: null, ld: false })) });
   L.forEach(l => {
@@ -7058,7 +7141,7 @@ function simBar() {
   if (!on) {
     RT.render(host, { id: 'sim', label: 'Scott Bessent Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
       next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : SIM.ph === 'ask' ? 'your call after step ' + (b + 1) : SIM.ph ? 'the other path after step ' + (b + 1) : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
-      line: null, segs: [], controls: simTabsHTML(),
+      line: null, segs: [], controls: simTabsHTML() + `<button type="button" class="tw-gsb" id="isx-gsb" data-gsteps aria-expanded="false" aria-controls="isx-gsteps"><span aria-hidden="true">≡</span>Guide steps</button>`,
       note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
     return;
   }
@@ -7151,8 +7234,8 @@ const sSrcHTML = ss => ss.length ? `<div class="lsrc">${ss.map(([t, u]) => u ? `
    Neither outcome is on the card. */
 function sAskHTML(k) {
   const D = SDEC[k], was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', more = D.ctx.more.length || D.ctx.s || D.ctx.links.length;
-  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${fe(D.q)}</p>`
-    + `<div class="dctx"><b>The situation</b><p>${fe(D.ctx.x)}</p>`
+  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${ft(D.q)}</p>`
+    + `<div class="dctx"><b>The situation</b><p>${ft(D.ctx.x)}</p>`
     + (more ? `<button type="button" class="dmore" data-dctx aria-expanded="${open}" aria-controls="isx-dctx">More context</button><div class="dmo" id="isx-dctx"${open ? '' : ' hidden'}>${D.ctx.more.map(t => `<p>${fe(t)}</p>`).join('')}${D.ctx.s ? `<div class="lsrc">${fe(D.ctx.s)}</div>` : ''}${sLinksHTML(D.ctx.links)}</div>` : '') + `</div>`
     + `<div class="dopts" role="group" aria-label="Your call">${D.ord.map((o, i) => `<button type="button" class="sn-opt dopt${was === o ? ' was' : ''}" data-fk="${o}"><span class="dl" aria-hidden="true">${'AB'[i]}</span><b>${fe(D[o][0])}</b><span>${fe(D[o][1])}</span>${was === o ? '<em>your earlier call</em>' : ''}</button>`).join('')}</div>`
     + `<p class="dfine">What happened opens after you choose; the other path stays open too.</p>`
@@ -7160,7 +7243,7 @@ function sAskHTML(k) {
 }
 function sChainHTML(k) {
   const D = SDEC[k], C = D.chain[SIM.c], n = D.chain.length;
-  return `<div class="s2k kch" style="--rc:#ff8a5c"><i></i>Other path<em>${fe(D.alt[0])}</em><span class="sn-cnt">link ${SIM.c + 1} / ${n}</span></div><h3>${fe(C.t)}</h3><p class="s2p">${fe(C.x)}</p>`
+  return `<div class="s2k kch" style="--rc:#ff8a5c"><i></i>Other path<em>${fe(D.alt[0])}</em><span class="sn-cnt">link ${SIM.c + 1} / ${n}</span></div><h3>${fe(C.t)}</h3><p class="s2p">${ft(C.x)}</p>`
     + (Object.keys(C.fl).length ? `<div class="sn-new dpr"><span>Pressure</span>${Object.entries(C.fl).map(([id, a]) => `<span class="sn-chip dfl" style="--nc:${ROLE[INDX[id].role][3]}"><i aria-hidden="true"></i>${fe(INDX[id].k)} <b>${a}</b><span class="vh">${fe(prsOf(id, a).replace('pressure ', ''))}</span></span>`).join('')}</div>` : '')
     + (C.n ? `<p class="sn-note cb-nt">${fe(C.n)}</p>` : '') + (C.vw ? doorBtn(C.vw[0], C.rd || C.vw[1]) : '')
     + sDeep(`<p>Each link in this chain is a relation already on the map. Arrows show the direction of pressure; the values on the gauges stay the measured ones.</p>`
@@ -7168,22 +7251,75 @@ function sChainHTML(k) {
 }
 function sCrisisHTML(k) {
   const D = SDEC[k], K = D.crisis;
-  return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${fe(K.x)}</p>${sSrcHTML(K.s)}`
-    + (K.built ? `<details class="cb-rail"${PHONE() ? ' open' : ''}><summary>How it was built <em>${K.built.length} dated steps, what they show, whose reading</em></summary><ol>${K.built.map(([d, t, x, s, w]) => `<li><span class="rd">${fe(d)}</span><b>${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)} · ${fe(w)}</div></li>`).join('')}</ol>${K.shows ? `<div class="cb-shows"><b>What it shows</b><p>${fe(K.shows)}</p></div>` : ''}<p class="dwho">${fe(K.who)}</p></details>` : '')
-    + K.prec.map(P => `<div class="dprec"><b>${fe(P.k)}</b><p>${fe(P.x)}</p>${sSrcHTML(P.s)}${P.cav ? `<p class="dcav">${fe(P.cav)}</p>${sSrcHTML(P.cs)}` : ''}</div>`).join('')
+  return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${ft(K.x)}</p>${sSrcHTML(K.s)}`
+    + (K.built ? `<details class="cb-rail"${PHONE() ? ' open' : ''}><summary>How it was built <em>${K.built.length} dated steps, what they show, whose reading</em></summary><ol>${K.built.map(([d, t, x, s, w]) => `<li><span class="rd">${fe(d)}</span><b>${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)} · ${fe(w)}</div></li>`).join('')}</ol>${K.shows ? `<div class="cb-shows"><b>What it shows</b><p>${ft(K.shows)}</p></div>` : ''}<p class="dwho">${fe(K.who)}</p></details>` : '')
+    + K.prec.map(P => `<div class="dprec"><b>${fe(P.k)}</b><p>${ft(P.x)}</p>${sSrcHTML(P.s)}${P.cav ? `<p class="dcav">${fe(P.cav)}</p>${sSrcHTML(P.cs)}` : ''}</div>`).join('')
     + (K.built ? '' : `<p class="dwho">${fe(K.who)}</p>`)
     + `<div class="s2acts dacts"><button type="button" class="sn-go" data-dgo="real">Back to what happened ${sArrR}</button>${sLinksHTML(K.links)}</div>`;
 }
+/* tiers build A (15 Nov 2026): expert mode (spec §2). The full view as it is, plus a one-line key, an index of the guide's steps in the bar,
+   and an “In the guide” row in every dossier. All computed from SLINES[0], so they follow any reorder. */
+const SKEYLINE = 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources; a gold tab means more inside. The layout is part of the thesis: read it and the argument can be pieced together; where it is unclear, the guide explains.';
+function guideRefs(n, ei) {
+  const G = SLINES[0]; return G.beats.map((B, i) => i).filter(i => ei != null ? G.beats[i].e.includes(ei) : bN(G.beats[i]).has(n));
+}
+function guideRowHTML(n, ei) {
+  if (SIM.mode !== 'full') return '';
+  const r = guideRefs(n, ei), G = SLINES[0];
+  if (!r.length) return `<div class="tw-ing"><span>In the guide</span><em>Not one of the guide’s steps.</em></div>`;
+  const more = r.slice(1, 5);
+  return `<div class="tw-ing"><span>In the guide</span><em>First lit at <button type="button" data-gs="0:${r[0]}">step ${r[0] + 1}, ${fe(G.beats[r[0]].t)}</button>${more.length ? ` · also ${more.map(i => `<button type="button" data-gs="0:${i}" aria-label="Step ${i + 1}, ${fe(G.beats[i].t)}">${i + 1}</button>`).join(', ')}${r.length > 5 ? ` and ${r.length - 5} more` : ''}` : ''}</em></div>`;
+}
+function gstepsHTML() {
+  const G = SLINES[0], P = SLINES[SPI], Q = SLINES.find(L => L.gnd);
+  const li = (l, i, B) => (B.fork && i > 0 ? `<li class="dec"><button type="button" data-gs="d:${l}:${i - 1}"><span aria-hidden="true">◆</span> Your call · ${fe(SDEC[B.fork].nt)}</button></li>` : '') + `<li><button type="button" data-gs="${l}:${i}"><span class="n">${l === 0 ? i + 1 : ''}</span>${fe(B.t)}</button></li>`;
+  const pre = [Q ? ['The basics', SLINES.indexOf(Q), Q] : null, ['First principles', SPI, P]].filter(Boolean);
+  return `<div class="tw-gsh"><h3 id="isx-gs-h">Guide steps</h3><p>Open any step in the guide; its card carries a way back to the full map.</p><button type="button" class="dx" data-gsx aria-label="Close">×</button></div>`
+    + `<details class="tw-gspre"><summary>Before the guide: ${pre.map(([t, , L]) => fe(t) + ' (' + L.beats.length + ')').join(' · ')}</summary><div class="tw-gsg">${pre.map(([t, l, L]) => `<section><h4>${fe(t)}</h4><ol>${L.beats.map((B, i) => li(l, i, B)).join('')}</ol></section>`).join('')}</div></details>`
+    + `<div class="tw-gsg">${G.chs.map((C, ci) => `<section style="--rc:${SCHC[ci]}"><h4><span>${ci + 1}</span>${fe(C.t)}</h4><ol>${G.beats.map((B, i) => B.ch === ci ? li(0, i, B) : '').join('')}</ol></section>`).join('')}</div>`;
+}
+function gsOpen(on, from) {
+  const g = $('gsteps'); if (!g) return;
+  if (on) { g.innerHTML = gstepsHTML(); g.hidden = false; g._from = from || null; const m = $('b1more'); if (m) m.hidden = true; const f = g.querySelector(':scope > .tw-gsg button'); if (f) f.focus({ preventScroll: true }); }
+  else { g.hidden = true; g.innerHTML = ''; const f = g._from || $('gsb'); g._from = null; if (f && f.isConnected && f.getClientRects().length && f.focus) f.focus({ preventScroll: true }); }
+  ROOT.querySelectorAll('[data-gsteps][aria-expanded]').forEach(b => b.setAttribute('aria-expanded', String(!!on)));
+}
+/* tiers build A (15 Nov 2026): three ways in, named by what each route assumes (spec §1). The house pattern for three equal doors is the
+   Circuit ring's “Where next”; the guide is the gold one. The ground-up route (the primer) is built in the next round: until then its door
+   is shown locked, “coming soon”, like the capital stack. The door used last time is marked in words. One key: isx-way. */
+const SWAY = 'isx-way', SGND_OPEN = () => SLINES.some(L => L.gnd);
+const sWords = t => String(t || '').replace(/\{\{\w+\|([^}]+)\}\}/g, '$1').split(/\s+/).filter(Boolean).length;
+/* minutes from the text itself: words at 200 a minute plus 8 seconds a card; each decision, one walk of its other path and its crisis card counted once */
+function sMins(ids) {
+  let w = 0, c = 0;
+  ids.forEach(id => { const L = SLINES.find(l => l.id === id); if (!L) return; L.beats.forEach(B => { w += sWords(B.t) + sWords(B.why) + sWords(B.x); c++;
+    if (B.fork) { const D = SDEC[B.fork]; w += sWords(D.q) + sWords(D.ctx && D.ctx.x) + sWords(D.real.join(' ')) + sWords(D.alt.join(' ')) + sWords(D.crisis.t) + sWords(D.crisis.x); c += 2 + D.chain.length; D.chain.forEach(C => { w += sWords(C.t) + sWords(C.x); }); } }); });
+  return Math.max(1, Math.round(w / 200 + c * 8 / 60));
+}
+function sDoorsHTML() {
+  const last = stGet(SWAY), gnd = SGND_OPEN();
+  const D = [
+    { k: 'ground', t: 'From the ground up', a: 'Assumes nothing. Eight short screens on deficits, bonds and yields, then the guide.', m: gnd ? 'about ' + sMins(['gnd', 'pre', 'main']) + ' minutes' : 'coming soon', off: !gnd },
+    { k: 'guide', t: 'The guide', a: 'Assumes you know what a Treasury yield is. First principles, ' + SLINES[0].chs.length + ' chapters, ' + SLINES[0].beats.filter(B => B.fork).length + ' calls.', m: 'about ' + sMins(['pre', 'main']) + ' minutes', gold: true },
+    { k: 'map', t: 'The full map', a: 'Assumes you know the plumbing. The layout is part of the thesis, so you can piece it together from the map alone. Where it isn’t clear, the guide explains.', m: 'every figure lit · any step one click away' },
+  ];
+  return `<div class="tw-in"><div class="tw-k" id="isx-tw-k">Three ways in</div><div class="tw-doors" role="group" aria-labelledby="isx-tw-k">${D.map(d => `<button type="button" class="tw-door${d.gold ? ' gold' : ''}${d.off ? ' off' : ''}" data-way="${d.k}" aria-describedby="isx-tw-${d.k}"${d.off ? ' aria-disabled="true"' : ''}>`
+    + `<b>${fe(d.t)}</b>${last === d.k && !d.off ? '<small class="tw-last">Last time</small>' : ''}<span id="isx-tw-${d.k}"><span class="tw-a">${fe(d.a)}</span> <em class="tw-m">${d.off ? LOCK3 : ''}${fe(d.m)}</em></span>${d.off ? '' : '<i aria-hidden="true">→</i>'}</button>`).join('')}</div></div>`;
+}
 function simBodyHTML() {
+  const h = simBodyHTML0();
+  return SIM.ret === 'full' && SIM.mode === 'story' ? `<p class="tw-ret"><button type="button" class="s2lnk" data-twret>← Back to the full map</button></p>` + h : h;
+}
+function simBodyHTML0() {
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (b < 0) {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
-    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${fe(l1)}</p>`
-      + (L.main && SMAIN.thesis ? `<div class="s2thesis"><span>The map’s thesis</span><p>${SMAIN.thesis.map(x => Array.isArray(x) ? `<i>${fe(x[0])}</i>` : fe(x)).join('')}</p></div>` : '')
-      + (L.main ? `<div class="s4start"><div class="s5two"><button type="button" class="sn-go s4go" data-sl="${SPI}" data-sb="0"><span><b>Start the guide</b><small>First principles, then the plumbing · about 18 minutes</small></span>${sArrR}</button><button type="button" class="s5full" data-sm="full"><span><b>Explore the full map</b><small>Everything lit · run a play, pull a lever</small></span>${sArrR}</button></div><p class="ifx-click"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l12.5 6.2-5.6 1.9-2.1 5.9z"/><path d="M13 12l5.5 5.5"/></svg>${sClickLine()}</p><div class="s4or"><button type="button" class="s2lnk s4skip" data-sg="start">Skip to the plumbing</button></div></div>`
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
+      + (L.main && SMAIN.thesis ? `<div class="s2thesis"><span>The map’s thesis</span><p>${richText(fe(SMAIN.thesis))}</p></div>` : '')
+      + (L.main ? sDoorsHTML() + `<p class="ifx-click"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l12.5 6.2-5.6 1.9-2.1 5.9z"/><path d="M13 12l5.5 5.5"/></svg>${sClickLine()}</p>`
         : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
-      + sDeep((l2 ? `<p>${fe(l2)}</p>` : '') + (L.main ? `<p>About fifteen minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
+      + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.main ? `<p>About ${sMins(['main'])} minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you sit in Bessent’s chair and choose before you see what happened. Either way, you can walk the other path.</p>` : '')
         + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''), L.main || L.pre ? 'How the guide works' : 'The mechanism');
   }
@@ -7191,7 +7327,7 @@ function simBodyHTML() {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
     const nxt = L.main ? null : SLINES[SIM.line % PLAYS.length + 1];
     if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
-      + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where that arrangement falters: the central banks that used to buy the debt are stepping back.</p>`
+      + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">How the plumbing was built ${sArrR}</button></div>`
       + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
@@ -7206,14 +7342,14 @@ function simBodyHTML() {
   const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]);
   /* the step a decision leads to: once the visitor has made a call, the card says what happened and how the call compares */
   const wk = B.fork && SIM.pick[B.fork] ? B.fork : null, WD = wk ? SDEC[wk] : null;
-  const lead = !!(B.why && P && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
+  const lead = !!(B.why && (P || B.ld) && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
   let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : R[1]}"><i></i>${WD ? 'What happened' : R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
     + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + `<h3>${fe(B.t)}</h3>`
-    + (lead ? `<p class="s2why">${fe(B.why)}</p>` : '') + `<p class="s2p">${fe(x1)}</p>` + (B.nt ? `<p class="sn-note cb-nt">${fe(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
+    + (lead ? `<p class="s2why">${ft(B.why)}</p>` : '') + `<p class="s2p">${ft(x1)}</p>` + (B.nt ? `<p class="sn-note cb-nt">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
   if (WD && !SIM.seenAlt.has(wk)) h += `<p class="dfine"><button type="button" class="s2lnk" data-dgo="alt">See the other path</button></p>`;
-  h += sDeep((x2 ? `<p>${fe(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${fe(t)}</p>`).join('') : '') + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + (B.lk ? sLinksHTML(B.lk) : '')
-    + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${fe(B.why)}</p>` : ''}</div>` : '')
+  h += sDeep((x2 ? `<p>${ft(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${ft(t)}</p>`).join('') : '') + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + (B.lk ? sLinksHTML(B.lk) : '')
+    + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${ft(B.why)}</p>` : ''}</div>` : '')
     + (L.pre ? '' : simTriHTML(B))
     + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : ''));
   return h;
@@ -7305,7 +7441,8 @@ function simChoose(k) {
 }
 function simSetMode(m) {
   if (SIM.mode === m) return;
-  SIM.mode = m; stSet(SKEY.mode, m); SIM.tray = null; track('Mode', { mode: m });
+  SIM.mode = m; stSet(SKEY.mode, m); SIM.tray = null; if (m === 'full') SIM.ret = null; track('Mode', { mode: m });
+  if (m === 'story') gsOpen(false);
   if (m === 'story') clearSel();   /* stage 5: back in the guide, the step it was left on is lit, not a lever or a play from the full view */
   simApply(true);
   if (m === 'full') { const fr = $('cock'); if (fr && fr.getBoundingClientRect().top < 0) fr.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' }); }
@@ -7356,6 +7493,15 @@ function simMount() {
     if (d.s5find) { SIM.tray = null; simTrays(); pickNode(d.s5find); return; }
     if (t.closest('#isx-b1led') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
     if (d.s4tab) { simTab(d.s4tab); return; }
+    if (d.gsteps != null) { const g = $('gsteps'); gsOpen(g && g.hidden, t); return; }
+    if (d.gsx != null) { gsOpen(false); return; }
+    if (d.gs) { const q = d.gs.split(':'); gsOpen(false); SIM.ret = 'full'; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.tray = null; if (q[0] === 'd') simPhase(+q[1], +q[2], 'ask'); else simGo(+q[0], +q[1]); focusIn($('snarr'), '[data-twret]'); return; }
+    if (d.twret != null) { SIM.ret = null; simSetMode('full'); focusIn(cock, '#isx-gsb'); return; }
+    if (d.twkey != null) { const o = t.getAttribute('aria-expanded') !== 'true'; t.setAttribute('aria-expanded', String(o)); t.parentNode.classList.toggle('open', o); return; }
+    if (d.way) { if (t.getAttribute('aria-disabled') === 'true') return; stSet(SWAY, d.way); track('Way', { way: d.way });
+      if (d.way === 'map') { simSetMode('full'); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
+      else { const g = SLINES.findIndex(L => L.gnd); simGo(d.way === 'ground' && g >= 0 ? g : SPI, 0, 'focus'); }
+      return; }
     if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.dgo === 'real') { simNext(); return; }   /* the crisis card's one button */
@@ -7377,6 +7523,7 @@ function simMount() {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.fzk')) { e.preventDefault(); const g = e.target.closest('.fzk'); simSector(g.dataset.sec, g); return; }
     if (e.key !== 'Escape' || e.defaultPrevented) return;
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
+    if ($('gsteps') && !$('gsteps').hidden) { e.preventDefault(); gsOpen(false); return; }
     if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
     else if (fsel || fedge != null || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
     else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
@@ -7425,7 +7572,9 @@ window.ISX = {
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
-  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
+  get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */
+  get mins() { return { guide: sMins(['pre', 'main']), main: sMins(['main']) }; },
+  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
     decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
   /* fix round: the bond deals of the five technology firms in the page's filing list, for the bond screen's time axis. A row that
