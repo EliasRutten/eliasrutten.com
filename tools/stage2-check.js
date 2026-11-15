@@ -100,7 +100,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
   ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[8].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
-  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^14\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
+  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
   /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:1"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));

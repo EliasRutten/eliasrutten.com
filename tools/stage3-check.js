@@ -47,8 +47,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 2. the Simulator: first principles, ladder, sectors, backstop ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
-  ok('guide: the opening offers first principles and the plumbing', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles/.test(b.querySelector('.sn-go').textContent) && !!b.querySelector('.s4skip[data-sg="start"]') && /49 steps/.test(b.textContent); }));
-  await p.click('#isx-sn-body .sn-go'); await p.waitForTimeout(350);
+  ok('guide: the opening offers first principles and the plumbing (tiers build A: the guide's door, beside the full map)', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles/.test(b.querySelector('[data-way="guide"]').textContent) && !!b.querySelector('[data-way="map"]') && /49 steps/.test(b.textContent); }));
+  await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
   let n = 0, worst = 0, deepOk = true, kinds = [];
   for (let i = 0; i < 20; i++) {
     const r = await p.evaluate(() => ({ s: (document.querySelector('#isx-sn-body .s2p') || {}).textContent || '', deep: document.querySelectorAll('#isx-sn-body .s2deep .s2d > p').length, cnt: document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''), k: document.querySelector('#isx-sn-body .s2k').textContent, lit: document.querySelectorAll('#isx-rmap .fn:not(.gh)').length }));
@@ -63,9 +63,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350);
   ok('first principles: the close hands over to the guide', await p.evaluate(() => /Now the plumbing/.test(document.getElementById('isx-sn-body').textContent) && !!document.querySelector('#isx-sn-body .sn-go[data-sl="0"][data-sb="0"]')));
   await p.click('#isx-sn-body .sn-go'); await p.waitForTimeout(350);
-  ok('guide: it starts at step 1 of 49', await p.evaluate(() => /^01\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /Central banks step back/i.test(document.querySelector('#isx-sn-body h3').textContent)));
+  ok('guide: it starts at step 1 of 49', await p.evaluate(() => /^01\/49$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /A lab needs compute/i.test(document.querySelector('#isx-sn-body h3').textContent)));
   /* the backstop chapter: window, swaps, yen, pledges, with a historical lead-in */
-  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[6].querySelector('.rt-sl').click()); await p.waitForTimeout(350);
+  await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[7].querySelector('.rt-sl').click()); await p.waitForTimeout(350);
   const bk = [];
   /* B1-4: the yen decision is its own card between “Swaps for friends” and the joint action; the walk takes what happened */
   for (let i = 0; i < 5; i++) { bk.push(await p.evaluate(() => ({ h: document.querySelector('#isx-sn-body h3').textContent, why: (document.querySelector('#isx-sn-body .s2why') || {}).textContent || '', s: document.querySelector('#isx-sn-body .s2p').textContent, fork: /your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent) }))); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); if (await p.evaluate(() => !!document.querySelector('#isx-sn-body .dopts'))) { await p.click('#isx-sn-body [data-fk="real"]'); await p.waitForTimeout(250); } }

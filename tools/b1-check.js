@@ -11,7 +11,7 @@ let fails = 0;
 const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && !cond ? '  → ' + JSON.stringify(extra).slice(0, 700) : '')); };
 
 /* the first step of every indicator, first principles and guide (spec S1 §4.6) */
-const FIRST = { ffr: [null, 7], res: [null, 4], bills: [7, 2], y10: [null, 7], mtg: [4, 30], yen: [null, 35], dxy: [null, 35], brent: [null, 39], move: [null, 7], off: [2, 1], stb: [7, 2], basis: [null, 8], repo: [null, 4], haircut: [null, 4], rrp: [null, 3], tga: [null, 3], capex: [null, 15], bnd: [null, 16], ai: [3, 22], shr: [null, 24], con: [1, 26], save: [4, 31], pce: [null, 41], diesel: [null, 42] };   /* content build: recomputed for the 49 steps */
+const FIRST = { ffr: [null, 24], res: [null, 29], bills: [7, 27], y10: [null, 4], mtg: [4, 17], yen: [null, 41], dxy: [null, 41], brent: [null, 19], move: [null, 25], off: [2, 8], stb: [7, 27], basis: [null, 31], repo: [null, 29], haircut: [null, 29], rrp: [null, 28], tga: [null, 28], capex: [null, 2], bnd: [null, 3], ai: [3, 9], shr: [null, 11], con: [1, 13], save: [4, 18], pce: [null, 21], diesel: [null, 22] };   /* tiers build A (15 Nov 2026): recomputed for the new chapter order (build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks) */
 const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]];
 
 (async () => {
@@ -42,7 +42,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   /* the whole guide: 7 reveals, 37 steps, and at each decision the card, the other path link by link, the crisis card */
   const walk = async (p, each) => {
     const out = []; const take = async tag => { const s = await state(p); s.tag = tag; out.push(s); if (each) await each(s); return s; };
-    await click(p, '#isx-sn-body .s4go'); await p.waitForTimeout(350);
+    await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
     for (let i = 0; i < 7; i++) { await take('reveal ' + (i + 1)); await right(p); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
     for (let guard = 0; guard < 120; guard++) {
@@ -113,19 +113,19 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
 
   /* ================= 4. → never chooses; swipes; ← returns to the decision ================= */
   if (want(4)) {
-    const p = await page('#simulator', { pos: '{"l":0,"b":0}' });
+    const p = await page('#simulator', { pos: '{"l":0,"b":25}' });
     await right(p, 300);
     const a = await state(p); await right(p, 300); await right(p, 300);
     const c = await state(p), foc = await js(p, () => { const e = document.activeElement; return !!e && e.classList.contains('sn-opt') && e === document.querySelector('#isx-sn-body .sn-opt'); });
-    ok('decision: → on a decision card does not leave it; it moves focus to option A', a.ph === 'ask' && c.ph === 'ask' && c.beat === 0 && foc, { a: a.ph, c: c.ph, foc });
+    ok('decision: → on a decision card does not leave it; it moves focus to option A', a.ph === 'ask' && c.ph === 'ask' && c.beat === 25 && foc, { a: a.ph, c: c.ph, foc });
     await click(p, '#isx-s2bar .rt-nx'); await p.waitForTimeout(250);
     ok('decision: the held Next does the same (it is not a dead button)', (await state(p)).ph === 'ask' && await js(p, () => document.querySelector('#isx-s2bar .rt-nx').getAttribute('aria-disabled') === 'true'));
     await left(p, 300);
     const back = await state(p);
-    ok('decision: ← on a decision card goes back to the step before it', back.ph === null && back.beat === 0, back);
+    ok('decision: ← on a decision card goes back to the step before it', back.ph === null && back.beat === 25, back);
     await right(p, 300); await click(p, '#isx-sn-body [data-fk="real"]'); await p.waitForTimeout(300);
     const real = await state(p); await left(p, 300); const again = await state(p);
-    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 1 && real.ph === null && again.ph === 'ask' && again.beat === 0 && await js(p, () => { const o = document.querySelector('#isx-sn-body .sn-opt.was'); return !!o && o.dataset.fk === 'real' && /your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
+    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 26 && real.ph === null && again.ph === 'ask' && again.beat === 25 && await js(p, () => { const o = document.querySelector('#isx-sn-body .sn-opt.was'); return !!o && o.dataset.fk === 'real' && /your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
     ok('decision: no page errors', p._errs.length === 0, p._errs); await p.context().close();
     /* a phone: a swipe is Next or Back on a step, and never a choice on a decision card */
     const q = await page('#simulator', { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
@@ -139,12 +139,12 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 10 && s2.beat === 9, [s1.beat, s2.beat]);
     await swipe('#isx-b1play', -120); await q.waitForTimeout(300);
     ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 9);
-    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 33; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
+    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 32; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
     await right(q, 350); await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q);
-    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 33, [d0.ph, d1.ph, d1.beat]);
+    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 32, [d0.ph, d1.ph, d1.beat]);
     await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const d2 = await state(q);
-    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 33, [d2.ph, d2.beat]);
+    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 32, [d2.ph, d2.beat]);
     ok('swipe: no page errors', q._errs.length === 0, q._errs); await q.context().close();
   }
 
@@ -152,7 +152,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   if (want(5) || want(6)) {
     const p = await page('#simulator', { pos: '{"l":0,"b":0}' });
     const DEC = await js(p, () => ISX.sim.decisions.map(D => Object.assign({}, D, { step: ISX.sim.lines[0].steps[D.at].t })));
-    ok('decisions: seven, before steps 2, 4, 5, 7, 12, 35 and 40; 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '2,4,5,7,12,35,40' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
+    ok('decisions: seven, before steps 20, 25, 27, 29, 34, 36 and 41 (tiers build A: the new chapter order); 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '20,25,27,29,34,36,41' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
     for (const D of DEC) {
       const tag = 'decision before step ' + (D.at + 1);
       await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), '0:' + (D.at - 1)); await p.waitForTimeout(350);

@@ -125,7 +125,7 @@ const AUDITOR = () => {
       if (r.cls.length || r.ops.length) bad.push({ step: name, classes: r.cls.slice(0, 6), opacity: r.ops.slice(0, 6), more: Math.max(0, r.cls.length + r.ops.length - 12) });
     };
     const key = k => () => p.keyboard.press(k);
-    await step('opening card → first principles', () => click(p, '#isx-sn-body .s4go'), 2100);
+    await step('opening card → first principles', () => click(p, '#isx-sn-body [data-way="guide"]'), 2100);
     for (let i = 2; i <= 7; i++) await step('first principles ' + i, key('ArrowRight'), 2100);
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
@@ -196,7 +196,7 @@ const AUDITOR = () => {
     const p = await page({}, { w, h, touch }), rows = [], leaks = [];
     const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
     await take();
-    await click(p, '#isx-sn-body .s4go'); await p.waitForTimeout(350);
+    await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
     for (let i = 0; i < 7; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
     let seenSteps = 0;
@@ -268,16 +268,18 @@ const AUDITOR = () => {
   /* ================= 3. the opening card and the way back ================= */
   {
     const p = await page();
-    const card = await js(p, () => { const r = s => { const e = document.querySelector('#isx-sn-body ' + s); return e ? e.getBoundingClientRect() : null; }, a = r('.s4go'), f = r('.s5full'), k = document.querySelector('#isx-sn-body .s4skip'), fs = getComputedStyle(document.querySelector('#isx-sn-body .s5full'));
-      return { both: !!a && !!f, sameRow: !!a && !!f && Math.abs(a.top - f.top) < 1 && Math.abs(a.height - f.height) < 1, fullAfter: !!a && !!f && f.left > a.right, w: f && Math.round(f.width), h: f && Math.round(f.height), text: document.querySelector('#isx-sn-body .s5full b').textContent, border: fs.borderTopWidth, gold: getComputedStyle(document.querySelector('#isx-sn-body .s4go')).backgroundImage !== 'none', fullPlain: fs.backgroundImage === 'none', skip: !!k && /Skip to the plumbing/.test(k.textContent) && getComputedStyle(k).borderTopWidth === '0px', links: document.querySelectorAll('#isx-sn-body .s4start .s2lnk').length, own: /Explore on my own/.test(document.getElementById('isx-sn-body').textContent) }; });
-    ok('opening card: “Start the guide” and “Explore the full map” are two buttons side by side, the same height', card.both && card.sameRow && card.fullAfter && card.w >= 200 && card.h >= 56 && card.text === 'Explore the full map', card);
-    ok('opening card: the guide is the gold one, the full map is outlined; “Skip to the plumbing” is the one quiet link', card.gold && card.fullPlain && card.border === '1px' && card.skip && card.links === 1 && !card.own, card);
-    await p.focus('#isx-sn-body .s5full'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
+    /* tiers build A (15 Nov 2026): the two buttons and the skip link became three equal doors; the guide is the gold one */
+    const card = await js(p, () => { const d = [...document.querySelectorAll('#isx-sn-body .tw-door')], r = d.map(x => x.getBoundingClientRect()), cs = d.map(x => getComputedStyle(x));
+      return { n: d.length, ways: d.map(x => x.dataset.way).join(), sameRow: r.every(q => Math.abs(q.top - r[0].top) < 1 && Math.abs(q.height - r[0].height) < 1), order: r.every((q, i) => !i || q.left > r[i - 1].right), w: Math.round(r[2].width), h: Math.round(r[2].height),
+        text: d[2].querySelector('b').textContent, gold: /gradient/.test(cs[1].backgroundImage) && d[1].classList.contains('gold'), plain: !d[2].classList.contains('gold') && cs[2].borderTopWidth === '1px', skip: !document.querySelector('#isx-sn-body .s4skip'), group: d[0].parentNode.getAttribute('role') === 'group' }; });
+    ok('opening card: three doors side by side, the same height: “From the ground up”, “The guide”, “The full map”', card.n === 3 && card.ways === 'ground,guide,map' && card.sameRow && card.order && card.w >= 180 && card.h >= 56 && card.text === 'The full map', card);
+    ok('opening card: the guide is the gold door, the full map is outlined; the doors are one labelled group; no skip link', card.gold && card.plain && card.skip && card.group, card);
+    await p.focus('#isx-sn-body [data-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
     const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
-    ok('opening card: “Explore the full map” opens the full view (37 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && /rt-swb/.test(full.focus), full);
+    ok('opening card: “The full map” opens the full view (37 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && /rt-swb/.test(full.focus), full);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
-    ok('back to the guide: one click, and the opening card is back', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body .s4go')));
-    await click(p, '#isx-sn-body .s4skip'); await p.waitForTimeout(300);
+    ok('back to the guide: one click, and the opening card is back', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body [data-way="guide"]')));
+    await js(p, () => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300);   /* the guide's first step, from the bar (the skip link is gone) */
     for (let i = 0; i < 30 && (await where(p)).beat < 11; i++) { await fwd(p); await p.waitForTimeout(160); }
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(500); await click(p, '#isx-cock .pchip', 2); await p.waitForTimeout(300); await click(p, '#isx-pn'); await p.waitForTimeout(300);
     const lab = await js(p, () => document.querySelector('#isx-s2bar .rt-nx.ret').textContent.replace(/\s+/g, ' ').trim());
@@ -298,7 +300,7 @@ const AUDITOR = () => {
     ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 24” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 24' && !o.btnShown && !o.strip && o.old === 0, o);
     await p.context().close(); p = await page({}, { w, h, pos: '{"l":0,"b":9}' });
     const g = await js(p, onMap);
-    ok(`${w} px, step 10: 2 gauge nodes carry their value, 10 tags hang under their actors, the button reads “12 / 24” and is clear of the card and the bar`, g.live === 2 && g.sockets === 6 && g.tags === 10 && g.btn === '12 / 24' && g.btnShown && g.btnClear && !g.strip, g);
+    ok(`${w} px, step 10: 1 gauge node carries its value, 4 tags hang under their actors, the button reads “5 / 24” (tiers build A: the new chapter order) and is clear of the card and the bar`, g.live === 1 && g.sockets === 7 && g.tags === 4 && g.btn === '5 / 24' && g.btnShown && g.btnClear && !g.strip, g);
     ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(700);
     const f = await js(p, onMap);
@@ -316,11 +318,11 @@ const AUDITOR = () => {
     ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 24”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 24/.test(o.all) && o.mapVals === 0 && !o.btn, o);
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
     const g = await js(p, strip), play10 = await js(p, () => { const S = ISX.sim, L = S.lines[0], now = new Set(L.steps[9].e), prev = new Set(L.steps[8].e), fresh = [...now].filter(i => !prev.has(i)); return S.indicators.filter(I => I.rel.some(i => fresh.includes(i))).map(I => I.id); });
-    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 12 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 12 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
+    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 5 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 5 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
     ok('390 px, step 10: the chips are the indicators in play, no fixed set', g.chips.map(c => c[0]).sort().join() === (await js(p, () => [...document.querySelectorAll('#isx-rmap .gn.play, #isx-rmap .gt.play')].flatMap(x => x.dataset.ind.split(' ')).sort().join())), { chips: g.chips, play10 });
-    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":41}' });
+    await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":21}' });
     const t = await js(p, strip);
-    ok('390 px, step 42: diesel arrives as “first moved here”, inflation is in play', t.chips.some(c => c[0] === 'diesel' && c[2] === 'first moved here') && t.chips.some(c => c[0] === 'pce') && /All 24 indicators|All \d+ of 24/.test(t.all), t);
+    ok('390 px, step 22: diesel arrives as “first moved here”, inflation is in play', t.chips.some(c => c[0] === 'diesel' && c[2] === 'first moved here') && t.chips.some(c => c[0] === 'pce') && /All 24 indicators|All \d+ of 24/.test(t.all), t);
     await js(p, () => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(350);
     const sh = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => e.getClientRects().length > 0, r = l.getBoundingClientRect(); return { open: !l.hidden, tabs: [...l.querySelectorAll('.ltabs [data-ltab]')].filter(v).length, cols: [...l.querySelectorAll('.lcol')].filter(v).length, rows: l.querySelectorAll('.lr.ind').length, full: r.left <= 1 && r.right >= innerWidth - 1 && r.height > innerHeight * .7 }; });
     ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 24 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 24 && sh.full, sh);

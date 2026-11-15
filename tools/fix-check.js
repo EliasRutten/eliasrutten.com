@@ -62,7 +62,7 @@ const DOORS = { SAV: 'loop', Y10: 'bond', MOV: 'bond', BND: 'bond', TSY: 'desks'
   await p.context().close();
 
   /* ---------- 1, 2: a chain borrows gauges before the guide reaches them ---------- */
-  p = await mk({}, { mode: 'guide', pos: JSON.stringify({ l: 0, b: 0, ph: 'chain', c: 3 }) });
+  p = await mk({}, { mode: 'guide', pos: JSON.stringify({ l: 0, b: 25, ph: 'chain', c: 3 }) });
   const ch = await p.evaluate(() => ({ ph: ISX.sim.ph, c: ISX.sim.c, dec: ISX.sim.dec }));
   ok(ch.ph === 'chain' && ch.c === 3 && ch.dec === '0-1', 'the chain state loads (decision 0-1, link 4)', ch);
   for (const n of ['Y10', 'MOV', 'BND']) {
@@ -72,7 +72,7 @@ const DOORS = { SAV: 'loop', Y10: 'bond', MOV: 'bond', BND: 'bond', TSY: 'desks'
     ok(d.open && d.door && d.tiles.length === d.ind && d.tiles.every(t => /\d/.test(t.v) && t.date && t.src), n + ': borrowed by the chain, its dossier opens with figure, date, source and the door row', d);
   }
   const early = await p.evaluate(() => {
-    const S = ISX.sim, E = new Set(S.lines[0].steps[0].e), tmp = new Set([...document.querySelectorAll('#isx-rmap .fn.tmp')].map(g => g.dataset.n));
+    const S = ISX.sim, E = new Set(S.lines[0].steps[25].e), tmp = new Set([...document.querySelectorAll('#isx-rmap .fn.tmp')].map(g => g.dataset.n));
     const out = [];
     const nOf = {}; document.querySelectorAll('#isx-rmap .gn, #isx-rmap .gt').forEach(g => g.dataset.ind.split(' ').forEach(id => { nOf[id] = g.dataset.n; }));
     S.indicators.forEach(I => { if (I.rel.some(i => E.has(i)) || tmp.has(nOf[I.id])) return; const v = document.querySelector(`#isx-rmap [data-gv="${I.id}"]`); if (v && v.textContent.trim() && !document.querySelector(`#isx-rmap .flare [data-gv="${I.id}"], #isx-rmap .flare[data-ind="${I.id}"]`)) out.push(I.id + '=' + v.textContent); });
@@ -86,8 +86,9 @@ const DOORS = { SAV: 'loop', Y10: 'bond', MOV: 'bond', BND: 'bond', TSY: 'desks'
     th: (document.querySelector('#isx-sn-body .s2thesis, .s2thesis') || {}).textContent || '' }));
   ok(!op.vals.length && !op.tabs.length, 'no early reveal: the opening card leaves the map without figures and door tabs', op);
   /* ---------- 6: the thesis ---------- */
-  ok(/Klein and Pettis/.test(op.th) && /Trade Wars Are Class Wars/.test(op.th) && /Peter Gowan/.test(op.th) && /The Global Gamble/.test(op.th) && /Michael Hudson/.test(op.th) && /conscious trade-off/.test(op.th), 'the opening card carries the thesis against Klein and Pettis, crediting Gowan and Hudson', op.th);
-  ok(!/does not assert|not a claim|no claim is made/i.test(op.th) && !/["']/.test(op.th.replace(/’/g, '')), 'the thesis has no hedge line and no straight quotes', op.th);
+  /* tiers build A (15 Nov 2026): the thesis in Elias Rutten's wording, no economist named */
+  ok(/the instability is manufactured/.test(op.th) && /Elias Rutten/.test(op.th) && /weaponized system/.test(op.th) && /who holds the valves/.test(op.th) && !/Klein|Pettis|Gowan|Hudson/.test(op.th), 'the opening card carries the thesis in Elias Rutten’s wording, naming no economist', op.th);
+  ok(!/does not assert|not a claim|no claim is made|map’s reading/i.test(op.th) && !/["']/.test(op.th), 'the thesis has no hedge line and no straight quotes', op.th);
   await p.context().close();
 
   /* ---------- 3, 4: level 2 ---------- */
