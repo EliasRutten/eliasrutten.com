@@ -119,3 +119,25 @@
    (the fix round's width ran off the screen at 390 px) */
 #isx-root #isx-cock.s2.s4open .s2card { max-width: calc(100% - 36px); }
 @media (max-width: 760px) { #isx-root #isx-cock.s2.s4open .s2card { width: auto; max-width: none; } }
+
+/* ---------- tiers build B (15 Nov 2026) ---------- */
+/* the thesis echo: one quiet line under a card's two sentences (spec §1.1); a note that is an echo reads the same way */
+#isx-root .s2 .thesis-echo { margin: 7px 0 2px; padding: 1px 0 1px 9px; border-left: 2px solid rgba(255, 210, 122, .7); font-size: 12.5px; line-height: 1.45; font-style: italic; color: #e6d3a8; }
+#isx-root .s2 .sn-note.thesis-echo { color: #e6d3a8; }
+/* the primer: what is lit, the way up, the route ahead and the terms of the screen */
+#isx-root .s2 .gnd-map { margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: #b4c2ce; }
+#isx-root .s2 .gnd-map span { margin-right: 4px; font: 9.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: #e4ebf1; }
+#isx-root .s2 .gnd-know { margin: 6px 0 0; }
+#isx-root .s2 .gnd-know .s2lnk { font-size: 12px; }
+#isx-root .s2 .gnd-parts { display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; margin: 6px 0 8px; font-size: 12.5px; line-height: 1.4; }
+#isx-root .s2 .gnd-parts dt { font-weight: 600; color: #e4ebf1; }
+#isx-root .s2 .gnd-parts dd { margin: 0; color: #c9d4de; }
+#isx-root .s2 .gnd-terms { margin: 9px 0 0; padding-top: 7px; border-top: 1px solid rgba(143, 163, 182, .2); }
+#isx-root .s2 .gnd-terms b { display: block; margin-bottom: 4px; font: 9.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: #8fa3b6; }
+#isx-root .s2 .gnd-terms dl { margin: 0; font-size: 12px; line-height: 1.4; }
+#isx-root .s2 .gnd-terms dt { margin-top: 4px; font-weight: 600; color: #e4ebf1; }
+#isx-root .s2 .gnd-terms dd { margin: 0; color: #b4c2ce; }
+/* the guide's close: who else is bought in, and its note */
+#isx-root .s2 .s2close { font-size: 13px; }
+#isx-root .s2 .s2closen { margin: 4px 0 8px; }
+@media (max-width: 600px) { #isx-root .s2 .gnd-parts { grid-template-columns: 1fr; } }

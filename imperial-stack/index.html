@@ -4651,7 +4651,7 @@ LEVERS[5].fx.push(
   ['+', 'That income can lift asset prices, the opposite of what a hike is meant to do'],
   ['+', `Higher prices reopen the window for new shares: ${bn0(ISUM.s)} in the 12 months to 8 November, among them the SpaceX IPO ($75.0bn), Alphabet ($44.75bn), Meta ($37.5bn) and Oracle ($34.9bn)`],
   ['−', `The same hike is the cost side of every new bond: bonds are priced over Treasury yields, and the build-out sold ${bn0(ISUM.b)} in the same 12 months. Amazon’s dollar notes carried coupons of 3.85–6.05% in March and 4.20–6.25% in July`],
-  ['=', 'The transfer is arithmetic; the price effect is this page’s reading, not a measured result']
+  ['=', 'The transfer is arithmetic; the price effect is not measured on this page']
 );
 LEVERS[5].src += ' Share and bond sales: filings listed in “Shares and bonds sold” below (SpaceX underwriting agreement, 11 Jun 2026; Alphabet pricing release, 3 Jun 2026; Meta 424B5, 26 Oct 2026; Oracle 10-Q and 424B5; Amazon 10-Q, Q3 2026).';
 
@@ -4690,10 +4690,10 @@ LEVERS.push(
     src: 'Korea Economic Institute of America, The Peninsula (2025); Bernama-Kyodo (13 Feb 2026); Bloomberg via SupplyChainBrain (18 Feb 2026); Korea Times (14 Nov 2025); Pettis, Carnegie (7 Jul 2025).' },
   /* content build (S2b): three levers, 14 to 16 */
   { g: 'debt', who: 'Federal Reserve', ic: '∞', t: 'Uncap the repo backstop', d: '10 Dec 2025', c: '#ffd27a',
-    fx: [['+', 'From 11 December 2025 the Fed’s standing repo operations have no aggregate limit: dealers can borrow overnight against Treasuries in full, at the top of the rate range. The $500bn cap is gone'], ['+', 'Use had hit a record $50.35bn on 31 October 2025, and set a new record on the last day of 2025 ($74.6bn*)'], ['=', 'The same day the Fed began buying about $40bn of bills a month'], ['=', 'A ceiling on repo rates also caps the funding cost of the basis trade (this map’s reading)']],
+    fx: [['+', 'From 11 December 2025 the Fed’s standing repo operations have no aggregate limit: dealers can borrow overnight against Treasuries in full, at the top of the rate range. The $500bn cap is gone'], ['+', 'Use had hit a record $50.35bn on 31 October 2025, and set a new record on the last day of 2025 ($74.6bn*)'], ['=', 'The same day the Fed began buying about $40bn of bills a month'], ['=', 'A ceiling on repo rates also caps the funding cost of the basis trade']],
     src: 'New York Fed operating statements (10 Dec 2025); Reuters via StreetInsider (29 Dec 2025); Reuters via Investing.com (2 Jan 2026). *$74.6bn via Blockonomi, a secondary source.' },
   { g: 'comm', who: 'White House, State Department', ic: '❝', t: 'Talk the oil price down', d: 'Mar to Nov 2026', c: '#b7f36b',
-    fx: [['+', 'Statements on the war talks move Brent within minutes: Brent fell more than 5% on 27 May after Rubio said the talks would get every chance'], ['+', 'Brent fell almost 6% on 9 November, the day a Saudi pipeline fire was reported, and below $90 on 10 November'], ['=', 'Most futures orders are placed by machines, and leveraged funds cut exposure when margins and risk limits bind'], ['=', 'Officials speak, mediators leak, algorithms sell: the structure makes the decision, with plausible deniability and the same outcome (this map’s reading, after Elias Rutten)'], ['−', 'The shortage itself stays: the strait is shut and the US emergency reserve is at its lowest since 1982']],
+    fx: [['+', 'Statements on the war talks move Brent within minutes: Brent fell more than 5% on 27 May after Rubio said the talks would get every chance'], ['+', 'Brent fell almost 6% on 9 November, the day a Saudi pipeline fire was reported, and below $90 on 10 November'], ['=', 'Most futures orders are placed by machines, and leveraged funds cut exposure when margins and risk limits bind'], ['=', 'Officials speak, mediators leak, algorithms sell: the structure makes the decision, with plausible deniability and the same outcome (after Elias Rutten)'], ['−', 'The shortage itself stays: the strait is shut and the US emergency reserve is at its lowest since 1982']],
     src: 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026); CFTC staff, “Impact of Automated Orders in Futures Markets” (27 Mar 2019).' },
   { g: 'debt', who: 'SEC', ic: '◷', t: 'Time the clearing mandate', d: 'Cash 31 Dec 2026 · repo 30 Jun 2027', c: '#ffd27a',
     fx: [['=', 'The SEC rule moves most Treasury cash and repo trades into central clearing, where the clearing house sets the margin'], ['+', 'In February 2025 both deadlines were pushed back a year, after industry requests'], ['=', 'Until then much repo stays bilateral, where haircuts on Treasury repo can be zero'], ['−', 'Ken Griffin (Citadel) argued that regulators should look at the banks that lend for the basis trade rather than at the funds']],
@@ -4712,7 +4712,7 @@ LEVERS[4].fx[1] = ['+', 'Dollar stablecoins in circulation: $287.8bn on 13 Novem
 LEVERS[4].fx.push(['=', 'The law bars issuers from paying holders interest, so the yield on the bills stays with the issuer'], ['+', 'An executive order of January 2025 makes promoting dollar stablecoins worldwide US policy']);
 LEVERS[4].src = 'GENIUS Act §4(a)(11); DefiLlama (13 Nov 2026); *Crypto Briefing (Nov 2026), a secondary source; US Treasury (12 Nov 2025); Executive Order 14178 (link not stored); BIS Working Paper 1270.';
 LEVERS[13].fx.splice(2, 0, ['+', 'The first three projects, $36bn in gas power, oil and gas and critical minerals, were approved in February 2026'], ['+', 'Korea: $200bn in cash, capped at $20bn a year, plus $150bn for shipbuilding (memorandum of 14 November 2025)']);
-LEVERS[13].fx.push(['=', 'By the accounts a capital inflow is matched by a wider trade deficit; Michael Pettis argues the US is not short of savings, so inflows add debt rather than investment'], ['=', 'As statecraft it adds up: allies’ savings are steered into projects on US soil, under US control (this map’s reading)']);
+LEVERS[13].fx.push(['=', 'By the accounts a capital inflow is matched by a wider trade deficit; Michael Pettis argues the US is not short of savings, so inflows add debt rather than investment'], ['=', 'As statecraft it adds up: allies’ savings are steered into projects on US soil, under US control']);
 const LCOL = { debt: '#ffd27a', home: '#3ee6b8', abroad: '#44d7ec', comm: '#b7f36b' };
 
 /* ================= v.1.4: the cockpit: geometry, icons, nodes, relations ================= */
@@ -4834,7 +4834,7 @@ const FE = [
   ['FED', 'BNK', 'cash', 'Reserves for bills (Dec 2025 to Jul 2026) and uncapped standing repo since 11 Dec 2025; the Fed pays interest on reserves', 'New York Fed (10 Dec 2025)', 'measured'],
   ['REG', 'BNK', 'rule', 'Leverage rule eased: room for Treasuries'],
   ['CGR', 'STB', 'rule', 'GENIUS Act: tokens must hold cash and bills'],
-  ['TSY', 'Y10', 'sig', 'Fewer long bonds in private hands', 'Cboe (19 Oct 2026) for the 5.33%', 'the map’s reading: without these operations, long yields would be higher; Michael Howell calls it yield-curve control by stealth, a reading Elias Rutten shares. Measured beside it: the 10-year still touched 5.33% intraday in October 2026'],
+  ['TSY', 'Y10', 'sig', 'Fewer long bonds in private hands', 'Cboe (19 Oct 2026) for the 5.33%', 'Michael Howell: without these operations, long yields would be higher; he calls it yield-curve control by stealth, a reading Elias Rutten shares. Measured beside it: the 10-year still touched 5.33% intraday in October 2026'],
   ['TSY', 'MOV', 'sig', 'Buybacks: up to $6bn per operation from 9 Sep 2026', 'Reuters (20 Aug and 4 Nov 2026)', 'measured'],
   ['FED', 'Y10', 'sig', 'Rate hike on 16 September 2026'],
   ['Y10', 'PCR', 'sig', 'Sets the cost of credit'],
@@ -4853,7 +4853,7 @@ const FE = [
   ['CEN', 'HYP', 'eq', 'Fund domiciles hold US shares'],
   ['WH', 'CHP', 'rule', 'Export controls and tariffs on the chip chain'],
   ['BNK', 'BND', 'cash', 'Dealers underwrite the sales: ≈$194bn of bonds in 2026 to July'],
-  ['MOV', 'HFD', 'sig', 'A volatility spike raises margins and haircuts and forces leveraged sellers out', 'BCBS–CPMI–IOSCO (Sep 2022); IMF GFSR (Apr 2026)', 'the mechanism is measured; the trigger is the map’s reading'],
+  ['MOV', 'HFD', 'sig', 'A volatility spike raises margins and haircuts and forces leveraged sellers out', 'BCBS–CPMI–IOSCO (Sep 2022); IMF GFSR (Apr 2026)', 'the mechanism is measured'],
   ['TSY', 'GOV', 'cash', '$20bn swap framework for Argentina, Oct 2025; Gulf and Asian requests considered'],
   ['TSY', 'YEN', 'sig', 'Joint intervention with Japan, 31 Jul 2026'],
   ['YEN', 'OFF', 'sig', 'A weak yen pushes Japan, the largest holder, toward selling Treasuries'],
@@ -4889,17 +4889,17 @@ const FE = [
   ['TSY', 'HFD', 'debt', 'Notes and bonds for the basis trade: Cayman funds took 37% of net note and bond issuance, 2022–24', 'Barth and others, Fed FEDS Notes (15 Oct 2025)', 'measured (Fed staff estimate)'],
   ['BNK', 'HFD', 'cash', 'Repo and prime-brokerage loans: $3.0tn of repo (Sep 2025), often at low or zero haircuts', 'Monin, Fed FEDS Notes (22 Jun 2026)', 'measured'],
   ['HFD', 'CEN', 'eq', 'Booked in the Cayman Islands: ≈$1.85tn of Treasuries at end-2024, against ≈$0.45tn recorded', 'Barth and others, Fed FEDS Notes (15 Oct 2025); the recorded figure is derived from their $1.4tn gap', 'measured (Fed staff estimate)'],
-  ['HFD', 'TSY', 'rule', 'Advise on borrowing: Bridgewater and Millennium sit on the Treasury’s borrowing committee', 'US Treasury, TBAC members (Nov 2026)', 'measured; the map’s structural reading'],
+  ['HFD', 'TSY', 'rule', 'Advise on borrowing: Bridgewater and Millennium sit on the Treasury’s borrowing committee', 'US Treasury, TBAC members (Nov 2026)', 'measured'],
   ['BNK', 'TSY', 'rule', 'Dealers chair and fill the borrowing committee: BNY in the chair; JPMorgan, Goldman, Bank of America, Morgan Stanley', 'US Treasury, TBAC members (Nov 2026)', 'measured'],
   ['MMF', 'FED', 'cash', 'Parked a record $2.55tn at the Fed’s reverse repo (30 Dec 2022); under $100bn by Dec 2024 as bills drew it out', 'New York Fed data via Reuters (30 Dec 2022); Bloomberg (20 Dec 2024)', 'measured'],
   ['TSY', 'FED', 'cash', 'The Treasury’s cash account: $1tn on 30 Oct 2025. When it fills, bank reserves drain', 'TBAC minutes (4 Nov 2025)', 'accounting'],
   ['BNK', 'MKM', 'cash', 'Finance market makers’ inventory; JPMorgan cut part of Jane Street’s lines after it entered Treasury market-making*', '*Financial Times via Newsquawk (2 Sep 2026), a secondary source', 'measured*'],
-  ['WH', 'MKM', 'sig', 'Statements and leaked progress in the war talks become trading signals', 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026); CFTC staff (27 Mar 2019)', 'Elias Rutten; the map’s reading'],
+  ['WH', 'MKM', 'sig', 'Statements and leaked progress in the war talks become trading signals', 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026); CFTC staff (27 Mar 2019)', 'Elias Rutten'],
   ['MKM', 'OIL', 'sig', 'Algorithms trade the headline in milliseconds: the benchmark moves before the facts are checked', 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026)', 'Elias Rutten'],
   ['DUA', 'STB', 'cash', 'Buy dollar tokens with local savings; by law the tokens pay no interest', 'GENIUS Act §4(a)(11); Danielsson and Macrae, SUERF Policy Brief 1440 (7 May 2026)', 'measured; law'],
   ['WH', 'STB', 'rule', 'Policy to spread dollar stablecoins worldwide (executive order, 23 Jan 2025)', 'Executive Order 14178 (link not stored), quoted in de Hemptinne and Bakalli, RTI Working Paper 23 (May 2026)', 'law'],
   ['YEN', 'HFD', 'cash', 'Cheap yen funds the carry trade: ≈¥40tn ($250bn) of yen loans to non-banks abroad (Mar 2024)', 'BIS Bulletin 90 (27 Aug 2024)', 'measured; the BIS calls it a floor'],
-  ['YEN', 'SAV', 'sig', 'Yen and Japanese yields decide whether Japanese savings stay abroad', 'Elias Rutten, “Will Japan cause a global debt crisis? (Part 2 of 2)” (13 May 2026)', 'Elias Rutten; the map’s reading'],
+  ['YEN', 'SAV', 'sig', 'Yen and Japanese yields decide whether Japanese savings stay abroad', 'Elias Rutten, “Will Japan cause a global debt crisis? (Part 2 of 2)” (13 May 2026)', 'Elias Rutten'],
 ];
 /* how a line is drawn beyond its type: the savers' market lines are thick, the route at issue thin and dotted */
 const ECLS = { 'SAV>SPX': ' thick', 'SAV>Y10': ' thick', 'SAV>BND': ' thin' };
@@ -4913,18 +4913,24 @@ const PSH = ['Cheap money', 'Data centre', 'Savings return', 'If it breaks', 'Th
 const PLAYS = [
   { t: 'The state keeps money cheap', ic: 'gap', c: '#ffd27a', steps: [
     ['Central banks step back', 'Foreign central banks sold $164bn of Treasuries in the year to August 2026. Someone else has to buy.', E('OFF>TSY')],
-    ['Bills, not bonds', 'The Treasury funds itself with bills, 22.2% of marketable debt, which money funds, banks and stablecoin issuers treat as cash.', E('TSY>MMF', 'TSY>BNK', 'TSY>STB')],
-    ['The reservoir drains', 'Money funds had parked a record $2.55tn at the Fed’s reverse repo at the end of 2022. Bills paying a little more drew it out: by December 2024 less than $100bn was left, and the Treasury had borrowed it without draining bank reserves.', E('MMF>FED', 'TSY>MMF', 'TSY>FED'),
-      { d: ['The Fed was shrinking its balance sheet at the same time (quantitative tightening, from June 2022), yet reserves held up, because the cash that left the reverse repo went into bills.', 'Two other cushions helped. In March 2023, after Silicon Valley Bank failed, the Fed’s Bank Term Funding Program lent to banks against Treasuries at face value; about $165bn was extended before it closed to new loans on 11 March 2024. And while the debt limit bound, the Treasury spent down its own account: to $23bn just before the limit was suspended on 3 June 2023.', 'Michael Howell calls this the first phase of a liquidity rebound engineered without QE (his reading).'],
+    ['Bills, not bonds', 'The Treasury funds itself with bills, 22.2% of marketable debt, which money funds, banks and stablecoin issuers treat as cash.', E('TSY>MMF', 'TSY>BNK', 'TSY>STB'),
+      { d: ['The GENIUS Act of July 2025 makes stablecoin issuers hold cash and short-term Treasuries. A stablecoin adds a new buyer of bills only where the money behind it was not already in bills or money funds: most clearly when it comes from abroad.'], src: 'GENIUS Act (18 Jul 2025).' }],
+    ['The reservoir drains', 'At the end of 2022 money funds had a record $2.55tn parked at the Fed’s reverse repo. Bills paid a little more and drew that cash out, so the Treasury could borrow without draining bank reserves.', E('MMF>FED', 'TSY>MMF', 'TSY>FED'),
+      { d: ['By December 2024 less than $100bn was left in the reverse repo.', 'The Fed was shrinking its balance sheet at the same time (quantitative tightening, from June 2022), yet reserves held up, because the cash that left the reverse repo went into bills.', 'Two other cushions helped. In March 2023, after Silicon Valley Bank failed, the Fed’s Bank Term Funding Program lent to banks against Treasuries at face value; about $165bn was extended before it closed to new loans on 11 March 2024. And while the debt limit bound, the Treasury spent down its own account: to $23bn just before the limit was suspended on 3 June 2023.', 'Michael Howell calls this the first phase of a liquidity rebound engineered without QE (his reading).'],
         src: 'New York Fed data via Reuters (30 Dec 2022); Bloomberg (20 Dec 2024); Fed Financial Stability Report via Reuters (Apr 2024); GAO-26-107872 (Mar 2026).' }],
-    ['The cushion runs out', 'After the debt limit was raised in July 2025 the Treasury rebuilt its account to $1tn, and with the reverse repo empty that money came out of bank reserves, which fell below $3tn. Repo rates broke above the Fed’s ceiling at month-ends, in the market where hedge funds finance about $830bn of basis trades.', E('TSY>FED', 'FED>BNK', 'BNK>HFD'),
-      { d: ['The Treasury’s account stood at $313bn in early July 2025, well below its own policy level, before the $5tn increase in the debt limit on 4 July; by 30 October it held $1tn. Reserves fell to $2.93tn in the week to 22 October. On 29 October the Fed said runoff would end on 1 December. Use of its standing repo hit a record $50.35bn on 31 October.', 'On 10 December 2025 the Fed removed the $500bn cap on its standing repo and began buying about $40bn of bills a month. Borrowing hit a record at the year-end, and repo stayed close to the ceiling.', 'Michael Howell reads what followed as a second phase: balance sheet manufactured through bill purchases and looser rules rather than drained from cushions (his reading).'],
-        src: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); New York Fed (10 Dec 2025); Reuters via StreetInsider (29 Dec 2025); Reuters via Investing.com (2 Jan 2026).' }],
-    ['The regulators help', 'Regulators cut the leverage rule for the largest banks from April 2026, giving dealers room to hold Treasuries and lend in repo. The GENIUS Act of July 2025 makes stablecoin issuers buyers of bills.', E('REG>BNK', 'TSY>BNK', 'CGR>STB', 'TSY>STB'),
-      { d: ['A final rule of 25 November 2025, in force from 1 April 2026, cut tier 1 requirements at the largest banks’ deposit-taking arms by 28%, $219bn. Governors Barr and Cook voted against, warning that the banks’ own cushion was being thinned.'], src: 'Federal Reserve, FDIC and OCC final rule (25 Nov 2025); statements by Governors Barr and Cook (25 Nov 2025); GENIUS Act (18 Jul 2025).' }],
+    ['The cushion runs out', 'After the debt limit was raised in July 2025 the Treasury rebuilt its account at the Fed to $1tn, and with the reverse repo empty the money came out of bank reserves. Reserves fell below $3tn, and repo rates broke above the Fed’s ceiling at month-ends.', E('TSY>FED', 'FED>BNK', 'BNK>HFD'),
+      { d: ['The Treasury’s account stood at $313bn in early July 2025, well below its own policy level, before the $5tn increase in the debt limit on 4 July; by 30 October it held $1tn. Reserves fell to $2.93tn in the week to 22 October. On 29 October the Fed said runoff would end on 1 December. Use of its standing repo hit a record $50.35bn on 31 October.'],
+        src: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); Reuters via StreetInsider (29 Dec 2025).' }],
+    ['The regulators help', 'Regulators cut the leverage rule for the largest banks from April 2026, giving dealers room to hold Treasuries and lend in repo. Governors Barr and Cook voted against, warning that the banks’ own cushion was being thinned.', E('REG>BNK', 'TSY>BNK', 'CGR>STB', 'TSY>STB'),
+      { d: ['A final rule of 25 November 2025, in force from 1 April 2026, cut tier 1 requirements at the largest banks’ deposit-taking arms by 28%, $219bn.', 'The rule does more than add a buyer. When a bank buys a Treasury, or lends against one in repo, it pays with a deposit it creates. Easing the rule therefore adds room to create money, which is closer to monetising the debt than to borrowing someone’s savings.'], src: 'Federal Reserve, FDIC and OCC final rule (25 Nov 2025); statements by Governors Barr and Cook (25 Nov 2025).' }],
     ['Financial hubs take the rest', 'Funds and custodians booked in seven financial centres added $245bn of Treasuries in a year, much of it bought with borrowed money. The largest of them, the Cayman Islands, barely shows in the official count: the next chapter follows it.', E('TSY>CEN', 'BNK>CEN', 'MMF>BNK'), { d: ['See where they are booked: Circuit, step 07.'], src: 'TIC (Aug 2026).' }],
-    ['A calmer long end, mostly', 'Fewer long bonds and targeted buybacks aim to calm long yields and volatility: the price of credit for everyone else. Not always: the 10-year touched 5.33% intraday in October.', E('TSY>Y10', 'TSY>MOV', 'FED>Y10', 'Y10>PCR')],
-  ] },
+    ['A calmer long end, mostly', 'Fewer long bonds and targeted buybacks aim to calm long yields and volatility: the price of credit for everyone else. Not always: long yields kept climbing into October.', E('TSY>Y10', 'TSY>MOV', 'FED>Y10', 'Y10>PCR')],
+    /* tiers build B (15 Nov 2026): what happened after the call “The repo backstop”, cut from the depth of “The cushion runs out” (spec §3.2).
+       Appended, so no decision key but the one it answers changes; the play's own line follows PLAYS[0].ord */
+    ['The Fed opens the tap', 'On 10 December 2025 the Fed removed the $500bn cap on its standing repo and began buying about $40bn of bills a month. Borrowing hit a record at the year-end, and repo stayed close to the ceiling.', E('FED>BNK', 'BNK>HFD'),
+      { d: ['Michael Howell reads what followed as a second phase: balance sheet manufactured through bill purchases and looser rules rather than drained from cushions (his reading).', 'The Fed’s bill holdings stood at $571bn on 28 October 2026.'],
+        src: 'New York Fed (10 Dec 2025); Reuters via StreetInsider (29 Dec 2025); Reuters via Investing.com (2 Jan 2026); Fed H.4.1 (29 Oct 2026).' }],
+  ], ord: [0, 1, 2, 3, 7, 4, 5, 6] },
   { t: 'A data centre gets paid for', ic: 'capex', c: '#8fa3b6', steps: [
     ['A lab needs compute', 'AI labs sign multi-year compute contracts. About $200bn of Google’s TPU contracts depend on Anthropic’s lease payments.', E('LAB>HYP', 'HYP>LAB')],
     ['Off the balance sheet', 'Special-purpose vehicles borrow to build or buy: Meta’s Hyperion ($27.3bn bond), the TPU vehicle for Anthropic ($35bn).', E('PCR>LAB', 'PCR>HYP')],
@@ -4934,22 +4940,23 @@ const PLAYS = [
   { t: 'The allies’ savings come back', ic: 'recycle', c: '#ffb547', steps: [
     ['Orders', 'The hyperscalers buy the hardware abroad.', E('HYP>CHP')],
     ['Surpluses', 'The producers run surpluses; what they do not consume at home is saved, by pension funds, insurers and households.', E('CHP>SAV', 'EXP>OFF')],
-    ['Back to Wall Street', 'Allied savers do not fund the hyperscalers directly; they buy US shares and bonds in the market, and the firms raise money from that market. Even if foreign buyers had taken every new share and bond the build-out sold in a year (≈$480bn), that would be about a quarter of what they put into US securities ($1.88tn).', E('SAV>SPX', 'SAV>Y10', 'CEN>HYP'),
+    ['Back to Wall Street', 'Allied savers do not fund the hyperscalers directly; they buy US shares and bonds in the market, and the firms raise money from that market. Even if foreigners had bought every new share and bond the build-out sold in a year, that would be about a quarter of what they put into US securities.', E('SAV>SPX', 'SAV>Y10', 'CEN>HYP'),
       { d: [`≈$480bn is ${bn0(ISUM.s)} of new shares plus ${bn0(ISUM.b)} of new bonds (company filings, 12 months to 8 November 2026); $1.88tn is what foreigners bought of US securities in the 12 months to August 2026, $1.01tn of it shares (TIC). The ratio, about 26%*, is an upper bound, and the two windows differ.`, 'The comparison is arithmetic on measured figures. That the market channel is what matters for the build-out, because it lifts valuations, which open the window for issuance and cheapen it, is Elias Rutten’s reading, shared with Adam Tooze.', 'TIC counts all foreign buyers, not only allied savers, and part of what it records is US money booked in fund centres: 27% of foreign-held US shares sit in fund domiciles (Circuit, step 07). So $1.88tn overstates what allied savers alone put in. The upper bound still holds, because the numerator also counts every buyer.', 'US shares booked in Japan: $1,169bn; in Norway: $826bn (June 2025). Foreign buyers’ share of new AI bond issues is not measured on this page yet.'],
         nt: 'The comparison is arithmetic; that the market route is the one that matters is Elias Rutten’s reading.', src: 'TIC (Aug 2026); company filings listed in “Shares and bonds sold”; US Treasury portfolio-holdings survey (Apr 2026). *Derived.', vw: 'loop' }],
     ['Valuations and wealth', 'AI stocks reach 49% of the S&P 500; the richest tenth of households own 88% of household stocks and spend accordingly.', E('TOP>HYP', 'HYP>SPX', 'SPX>TOP')],
   ] },
   { t: 'If it breaks', ic: 'asset', c: '#ff5a4e', steps: [
     ['Revenue falls short', 'OpenAI’s annualised revenue was close to $50bn in October, about $20bn short of what it had signalled to investors.', E('LAB>HYP')],
-    ['Leases at risk', 'Vehicles that depend on one customer feel it first. Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', E('PCR>LAB', 'PCR>HYP', 'BNK>BND', 'BND>HYP')],
+    ['Leases at risk', 'Demand for hyperscaler bonds was already cooling: cover ratios fell from nearly 5× to under 2×.', E('PCR>LAB', 'PCR>HYP', 'BNK>BND', 'BND>HYP')],
     ['Insurers exposed', 'US insurance supervisors began examining insurers’ exposure to data-centre financing in June 2026.', E('INS>PCR')],
-    ['Volatility', 'A spike in bond volatility forces leveraged buyers out, as in March 2020, when the Fed became the buyer of last resort (about $1.6tn of Treasuries in a few weeks).', E('MOV>HFD', 'TSY>HFD', 'BNK>HFD'), { src: 'Kashyap and Stein, “Safeguarding the Treasury Market”, F&D (Mar 2026).' }],
+    ['Volatility', 'A spike in bond volatility forces leveraged buyers out, as in March 2020.', E('MOV>HFD', 'TSY>HFD', 'BNK>HFD'), { d: ['In March 2020 the Fed became the buyer of last resort: about $1.6tn of Treasuries in a few weeks.'], src: 'Kashyap and Stein, “Safeguarding the Treasury Market”, F&D (Mar 2026).' }],
     ['The wealth effect in reverse', 'With 49% of the S&P 500 in AI stocks, a fall hits the richest households, who do more than 45% of spending.', E('HYP>SPX', 'SPX>TOP')],
   ] },
   { t: 'The consumer keeps the surpluses flowing', ic: 'surplus', c: '#3ee6b8', steps: [
     ['Tax cuts reach households', 'The 2025 tax law lifted 2026 refunds by about $55bn, to roughly $350bn. Morgan Stanley expected much of it to be saved or used to pay down debt before it was spent.', E('CGR>CON')],
-    ['The top tenth does the spending', 'The richest 10% own 88% of household stocks and do more than 45% of consumer spending, so AI valuations and consumption move together.', E('TOP>CON', 'HYP>SPX', 'SPX>TOP')],
-    ['Spending becomes imports', 'Consumer spending was 67.6% of GDP in the third quarter of 2026; real final sales to private domestic purchasers grew 4.9% and imports rose faster than in the second quarter. The US deficit, about 0.9% of world GDP, is the world’s demand. Households buy goods, not chips: the chip chain is busy because the exporters are.', E('CON>EXP')],
+    ['The top tenth does the spending', 'The richest tenth do more than 45% of consumer spending, so AI valuations and consumption move together.', E('TOP>CON', 'HYP>SPX', 'SPX>TOP')],
+    ['Spending becomes imports', 'Consumer spending was 67.6% of GDP in the third quarter of 2026, and imports rose faster than in the second: the US deficit, about 0.9% of world GDP, is the world’s demand. Households buy goods, not chips: the chip chain is busy because the exporters are.', E('CON>EXP'),
+      { d: ['Real final sales to private domestic purchasers grew 4.9% in the third quarter of 2026.'] }],
     ['The surpluses come back', 'Exporters save what they do not consume; their pension funds and insurers buy US shares and bonds. The loop closes only while the American consumer keeps buying.', E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>SPX', 'SAV>Y10')],
     ['If the consumer stops', 'Diesel at $6.53 a gallon and tariffs that raise prices at the till squeeze spending; a weaker consumer means smaller surpluses abroad and less money coming back.', E('FUEL>CON', 'WH>CON')],
   ] },
@@ -4963,8 +4970,8 @@ const PLAYS = [
     ['A supply shock', 'War with Iran closed the Strait of Hormuz from 28 February 2026, cutting about a fifth of world oil supply. Brent peaked near $118 in late March.', E('HOR>OIL', 'PET>OIL')],
     ['Washington tries to cap it', 'The IEA released 400 million barrels, 172 million of them American, and the Treasury waived sanctions on Russian oil already at sea. Brent was still above $100 in September.', E('ENG>OIL', 'ENG>PET')],
     ['Talking the price down', 'Statements on the talks with Iran move Brent within minutes, because algorithms trade headlines before anyone can check them: oil fell almost 6% on 9 November, the day a Saudi pipeline fire was reported. Officials speak, mediators leak, machines sell: in Elias Rutten’s reading, the market structure makes the decision and leaves no one to blame.', E('WH>MKM', 'MKM>OIL', 'OIL>INF', 'OIL>Y10'),
-      { d: ['Futures set the benchmark, and most orders there are placed by machines that read headlines, score their sentiment and trade within milliseconds. Leveraged funds then cut exposure as margins and risk limits bind.', 'A constant stream of claims and denials means the truth arrives after the price has moved. Washington controls more of these channels (the presidency’s messaging, mediators’ leaks, allied capital) than Tehran, whose levers are physical (Elias Rutten).', 'Cheaper oil keeps inflation expectations and long yields lower, which keeps the market open for share sales (this map’s reading).'],
-        nt: 'Elias Rutten’s reading (10 Nov 2026); the map’s reading. The price moves are measured.', src: 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026); CFTC staff, “Impact of Automated Orders in Futures Markets” (27 Mar 2019).', lk: [EL.oil, EL.oil200] }],
+      { d: ['Futures set the benchmark, and most orders there are placed by machines that read headlines, score their sentiment and trade within milliseconds. Leveraged funds then cut exposure as margins and risk limits bind.', 'A constant stream of claims and denials means the truth arrives after the price has moved. Washington controls more of these channels (the presidency’s messaging, mediators’ leaks, allied capital) than Tehran, whose levers are physical (Elias Rutten).', 'Cheaper oil keeps inflation expectations and long yields lower, which keeps the market open for share sales.'],
+        nt: 'Elias Rutten’s reading (10 Nov 2026). The price moves are measured.', src: 'Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026); CFTC staff, “Impact of Automated Orders in Futures Markets” (27 Mar 2019).', lk: [EL.oil, EL.oil200] }],
     ['The pump and the price index', 'US diesel reached $6.53 a gallon, up 77% in a year, and energy fed inflation.', E('OIL>FUEL', 'FUEL>CON', 'OIL>INF')],
     ['The Fed answers, yields rise', 'The Fed raised rates on 16 September and the 10-year touched 5.33% intraday in October: dearer oil meant dearer money for the build-out.', E('INF>FED', 'FED>Y10', 'OIL>Y10')],
   ] },
@@ -4978,7 +4985,8 @@ const PLAYS = [
     ['Savers buy the paper', `Dealers underwrite the sales; insurers, pension funds and bond funds take the notes. The firms in the build-out sold ${bn0(ISUM.b)} of bonds in the 12 months to 8 November 2026.`, E('BNK>BND', 'INS>BND')],
     ['The proceeds become capex', 'Bond money pays for data centres, chips and power. Amazon, Alphabet, Meta, Oracle and Nvidia are the largest sellers on the list below.', E('BND>HYP')],
     ['Rising shares open a second door', 'With AI stocks at 49% of the S&P 500, the market is open for new shares and listings.', E('HYP>SPX', 'SPX>ISS')],
-    ['Shares fund capex too', `New shares raised ${bn0(ISUM.s)} in the same 12 months: SpaceX $75.0bn, Alphabet $44.75bn, Meta $37.5bn (of which $25.0bn is paid only when the forward sale settles) and Oracle $34.9bn.`, E('ISS>HYP')],
+    ['Shares fund capex too', `New shares raised ${bn0(ISUM.s)} in the 12 months to 8 November 2026: SpaceX $75.0bn, Alphabet $44.75bn, Meta $37.5bn and Oracle $34.9bn.`, E('ISS>HYP'),
+      { d: ['Of Meta’s $37.5bn, $25.0bn is paid only when the forward sale settles.'] }],
     ['Both are priced by long yields', 'The Fed raised rates on 16 September and the 10-year touched 5.33% intraday in October. On 2 November Oracle sold $10bn of shares and $10bn of notes at the same time.', E('FED>Y10', 'Y10>BND')],
   ] },
 ];
@@ -4992,12 +5000,21 @@ PLAYS[5].steps.splice(2, 0, ['Tokyo’s trilemma', 'Japan wants low borrowing co
   { d: ['Tokyo spent ¥11.7tn in April and May 2026 pulling the yen back from 160. The 10-year Japanese government bond yield reached 2.5%, the highest since 1997.', 'Three pools of capital could move: leveraged carry trades (about ¥40tn directly funded by the BIS’s count, which it calls a floor), households (¥2,519tn of financial assets at the end of June 2026, 44.6% of it in cash and deposits) and Japan as structural creditor ($1.14tn of Treasuries at the end of May 2026).', 'Higher Japanese yields reverse the reason for holding money abroad, at a threshold no one can locate (Elias Rutten, 13 May 2026).'],
     nt: 'The trilemma is Elias Rutten’s reading (13 May 2026); the figures are measured.', src: 'Elias Rutten, “Will Japan cause a global debt crisis? (Part 2 of 2)” (13 May 2026); Japan Ministry of Finance (7 Aug 2026); BIS Bulletin 90 (27 Aug 2024); Bank of Japan flow of funds, via Business Insider Japan (21 Oct 2026); TIC via FRED (May 2026).', lk: [['Japan, part 1', EP + 'japans-economic-miracle-is-also-its'], ['Japan, part 2', EP + 'will-japan-cause-a-global-debt-crisis']] }]);
 PLAYS[5].steps.push(
-  ['Does it add up?', 'By the accounts, money that flows in must be matched by a wider trade deficit, so the pledges cannot both bring capital and close the gap; Michael Pettis argues the US is not short of savings, so inflows add debt rather than investment. As statecraft it adds up: a US-only committee picks the projects, the President approves them, and Japan must pay within 45 days or face higher tariffs.', E('GOV>WH'),
-    { d: ['The identity: a capital-account surplus is matched by a current-account deficit of the same size; only its timing is open (Steil, CFR).', 'Pettis: US investment is not held back by a lack of saving, so net foreign inflows show up as more consumption, more debt or more unemployment, not more investment (Carnegie, 7 July 2025). On its assumptions the St. Louis Fed finds Japan loses $127–191bn in present value, 3.2–4.8% of its GDP.', 'The case for the pledges is geopolitical: allies’ savings are steered into gas, minerals, chips and ships on US soil, under US control. The first three projects, $36bn, were approved in February 2026. That is capital flows used as a weapon, and in the map’s reading it deepens allied dependence whatever it does to the trade balance.'],
-      nt: 'The identity is accounting; the savings argument is Pettis’s; that it works as statecraft is the map’s reading.', src: 'Steil, CFR (2025); Pettis, Carnegie (7 Jul 2025); St. Louis Fed (24 Nov 2025); Bernama-Kyodo (13 Feb 2026); Bloomberg via SupplyChainBrain (18 Feb 2026).' }],
-  ['Dollars for the underclass', 'Dollar tokens let savers in Turkey, Argentina or Nigeria hold dollars without a US bank, and by law they earn nothing: the issuer keeps the yield on the bills behind them. Spreading them abroad is US policy: hierarchical dollarisation, an offensive dollar strategy that reaches past central banks too weak to resist it. The savers it reaches are a foreign monetary underclass.', E('DUA>STB', 'WH>STB', 'TSY>STB'),
-    { d: ['An executive order of 23 January 2025 commits the US to promoting dollar-backed stablecoins worldwide. Payment stablecoins must hold cash and short Treasuries, and may pay their holders nothing.', 'Danielsson and Macrae describe three groups: the US controls issuance, settlement and compliance; hubs such as Singapore, Hong Kong and the UAE earn the fees; user countries carry the risk without control, and in a crisis the tokens can speed currency flight faster than policy can respond. In Turkey, stablecoin purchases were about 4.3% of GDP in 2023–24.', 'Holders pay an inflation tax on money that yields nothing, the base of the hierarchy of money (the Firms profitability view, coming soon).', 'Bessent expects the market to grow tenfold by 2030; it stood at $287.8bn on 13 November 2026, below its May peak.*'],
-      nt: '“Hierarchical dollarisation” and “foreign monetary underclass” are Elias Rutten’s terms; the three groups are Danielsson and Macrae’s; that the strategy is offensive is the map’s reading.', src: 'Danielsson and Macrae, SUERF Policy Brief 1440 (7 May 2026); Executive Order 14178 (link not stored), via de Hemptinne and Bakalli, RTI Working Paper 23 (May 2026); GENIUS Act §4(a)(11); DefiLlama (13 Nov 2026); US Treasury (12 Nov 2025); *Crypto Briefing (Nov 2026), a secondary source.', lk: [EL.dol2] }]);
+  ['Does it add up?', 'By the accounts, money that flows in must be matched by a wider trade deficit, so the pledges cannot both bring capital and close the gap. Michael Pettis argues the US is not short of savings, so inflows add debt rather than investment.', E('GOV>WH'),
+    { d: ['The identity: a capital-account surplus is matched by a current-account deficit of the same size; only its timing is open (Steil, CFR).', 'Pettis: US investment is not held back by a lack of saving, so net foreign inflows show up as more consumption, more debt or more unemployment, not more investment (Carnegie, 7 July 2025). On its assumptions the St. Louis Fed finds Japan loses $127–191bn in present value, 3.2–4.8% of its GDP.'],
+      nt: 'The identity is accounting; the savings argument is Pettis’s.', src: 'Steil, CFR (2025); Pettis, Carnegie (7 Jul 2025); St. Louis Fed (24 Nov 2025); Bernama-Kyodo (13 Feb 2026); Bloomberg via SupplyChainBrain (18 Feb 2026).' }],
+  ['Dollars without a bank', 'Dollar tokens let savers in Turkey, Argentina or Nigeria hold dollars without a US bank. By law the tokens pay them nothing: the issuer keeps the yield on the bills behind them.', E('DUA>STB', 'WH>STB', 'TSY>STB'),
+    { d: ['An executive order of 23 January 2025 commits the US to promoting dollar-backed stablecoins worldwide. Payment stablecoins must hold cash and short Treasuries, and may pay their holders nothing.', 'Bessent expects the market to grow tenfold by 2030; it stood at $287.8bn on 13 November 2026, below its May peak.*'],
+      src: 'Executive Order 14178 (link not stored), via de Hemptinne and Bakalli, RTI Working Paper 23 (May 2026); GENIUS Act §4(a)(11); DefiLlama (13 Nov 2026); US Treasury (12 Nov 2025); *Crypto Briefing (Nov 2026), a secondary source.' }],
+  /* tiers build B (15 Nov 2026): the second halves of “Does it add up?” and of the stablecoin step, now cards of their own (spec §3.2),
+     appended so the decision keys keep their names; the play's own line follows PLAYS[5].ord */
+  ['As statecraft, it adds up', 'As statecraft it adds up: a US-only committee picks the projects, the President approves them, and Japan must pay within 45 days or face higher tariffs. That is capital flows used as a weapon.', E('GOV>WH'),
+    { d: ['The case for the pledges is geopolitical: allies’ savings are steered into gas, minerals, chips and ships on US soil, under US control. The first three projects, $36bn, were approved in February 2026. It deepens allied dependence whatever it does to the trade balance.'],
+      src: 'Bernama-Kyodo (13 Feb 2026); Bloomberg via SupplyChainBrain (18 Feb 2026).' }],
+  ['Dollars for the underclass', 'Spreading them abroad is US policy: hierarchical dollarisation, an offensive dollar strategy that reaches past central banks too weak to resist it. The savers it reaches are a foreign monetary underclass.', E('WH>STB', 'DUA>STB'),
+    { d: ['Danielsson and Macrae describe three groups: the US controls issuance, settlement and compliance; hubs such as Singapore, Hong Kong and the UAE earn the fees; user countries carry the risk without control, and in a crisis the tokens can speed currency flight faster than policy can respond. In Turkey, stablecoin purchases were about 4.3% of GDP in 2023–24.', 'Holders pay an inflation tax on money that yields nothing, the base of the hierarchy of money (the Firms profitability view, coming soon).'],
+      nt: '“Hierarchical dollarisation” and “foreign monetary underclass” are Elias Rutten’s terms.', src: 'Danielsson and Macrae, SUERF Policy Brief 1440 (7 May 2026).', lk: [EL.dol2] }]);
+PLAYS[5].ord = [0, 1, 2, 3, 4, 5, 7, 6, 8];
 /* content build (S2b, with Elias's additions of 14 Nov): play 9, the chapter “Bonds get yippy” */
 PLAYS.push({ t: 'Bonds get yippy', ic: 'asset', c: '#ff8a5c',
   lede: 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm. When calm breaks, volatility does the selling: March 2020, September 2019, April 2025.',
@@ -5006,19 +5023,19 @@ PLAYS.push({ t: 'Bonds get yippy', ic: 'asset', c: '#ff8a5c',
       { d: ['The official data miss them because the bonds are handed on as collateral in the repo that finances the trade. The owners are largely American: on an ownership basis the holdings would mostly count as US, and US residents held about $900bn of Cayman fund shares at the end of 2023.', 'So part of the “foreign demand” for US debt is US money going round, as the Circuit shows at step 07. Fragility matters for the state’s funding: in 2022–24 these funds bought almost as much as all other foreign investors together.'],
         src: 'Barth and others, “The Cross-Border Trail of the Treasury Basis Trade”, Fed FEDS Notes (15 Oct 2025).', lk: [EL.pop, EL.gran] }],
     ['Few funds, close to power', 'Fifty funds hold about 90% of hedge funds’ Treasury positions; Citadel, Millennium, ExodusPoint, Capula & others are among the largest basis traders. The debt’s managers come from the same world: the Treasury Secretary ran a macro hedge fund, the Fed chair was a partner in Stanley Druckenmiller’s family office, and Millennium and Bridgewater sit on the Treasury’s borrowing committee.', E('HFD>TSY', 'BNK>TSY'),
-      { d: ['Scott Bessent was chief investment officer of Soros Fund Management and founded Key Square. Kevin Warsh was a partner at Stanley Druckenmiller’s Duquesne Family Office. Stephen Miran went from Hudson Bay Capital to the White House, then to the Fed (September 2025 to May 2026), and back to Hudson Bay in June 2026.', 'The Treasury Borrowing Advisory Committee, which advises on what the Treasury sells, is chaired by BNY’s chief investment officer; its vice chair is Bridgewater’s head of rates, and Millennium, JPMorgan, Goldman Sachs, Bank of America and Morgan Stanley sit on it.', 'This is the map’s structural reading, not an allegation about any person: the people who design the debt’s plumbing come from the firms whose trades depend on it.'],
-        nt: 'The names and seats are measured; the reading is the map’s structural reading.', src: 'Monin, Fed FEDS Notes (22 Jun 2026); Fortune citing Bloomberg (26 May 2023); US Treasury biography (Bessent); CBS (Warsh); Axios (15 Jun 2026, Miran); US Treasury, TBAC members (Nov 2026).' }],
-    ['Who lends to them', 'Dealer banks finance the funds in repo and through prime brokerage: hedge funds borrowed $3.0tn in repo by September 2025, often at a zero haircut. The same banks finance the electronic market makers, and ration that credit when the makers compete with them.', E('BNK>HFD', 'BNK>MKM'),
-      { d: ['JPMorgan cut part of its financing to Jane Street after the firm began making markets in US Treasuries.* Ken Griffin argued that regulators should look at the banks that lend for the basis trade rather than at the funds.', 'Central clearing would put a clearing house’s margin between lender and fund, and its deadlines were pushed back to 31 December 2026 (cash) and 30 June 2027 (repo).'],
+      { d: ['Scott Bessent was chief investment officer of Soros Fund Management and founded Key Square. Kevin Warsh was a partner at Stanley Druckenmiller’s Duquesne Family Office. Stephen Miran went from Hudson Bay Capital to the White House, then to the Fed (September 2025 to May 2026), and back to Hudson Bay in June 2026.', 'The Treasury Borrowing Advisory Committee, which advises on what the Treasury sells, is chaired by BNY’s chief investment officer; its vice chair is Bridgewater’s head of rates, and Millennium, JPMorgan, Goldman Sachs, Bank of America and Morgan Stanley sit on it.', 'The people who design the debt’s plumbing come from the firms whose trades depend on it.'],
+        nt: 'The names and seats are measured.', src: 'Monin, Fed FEDS Notes (22 Jun 2026); Fortune citing Bloomberg (26 May 2023); US Treasury biography (Bessent); CBS (Warsh); Axios (15 Jun 2026, Miran); US Treasury, TBAC members (Nov 2026).' }],
+    ['Who lends to them', 'Dealer banks finance the funds in repo and through prime brokerage. Hedge funds had borrowed $3.0tn in repo by September 2025, often at a zero haircut.', E('BNK>HFD', 'BNK>MKM'),
+      { d: ['The same banks finance the electronic market makers, and ration that credit when the makers compete with them.', 'JPMorgan cut part of its financing to Jane Street after the firm began making markets in US Treasuries.* Ken Griffin argued that regulators should look at the banks that lend for the basis trade rather than at the funds.', 'Central clearing would put a clearing house’s margin between lender and fund, and its deadlines were pushed back to 31 December 2026 (cash) and 30 June 2027 (repo).'],
         src: 'Monin, Fed FEDS Notes (22 Jun 2026); *Financial Times via Newsquawk (2 Sep 2026), a secondary source; Fortune (8 Nov 2023); SEC via DTCC (25 Mar 2025).' }],
-    ['Calm is a subsidy', 'Margins and haircuts are set by recent volatility, so a quiet MOVE index lets the same capital carry more Treasuries. Every action that calms the long end (buybacks, a repo backstop, fewer long bonds) widens the funds’ leverage: an implicit subsidy to the trade the state now relies on.', E('MOV>HFD', 'TSY>MOV', 'BNK>HFD'),
+    ['Calm is a subsidy', 'Margins and haircuts are set by recent volatility, so a quiet MOVE index lets the same capital carry more Treasuries. Every action that calms the long end (buybacks, a repo backstop, fewer long bonds) hands those funds more leverage: a subsidy from the state to the trade it relies on, paid to firms whose people sit at the Treasury and the Fed.', E('MOV>HFD', 'TSY>MOV', 'BNK>HFD'),
       { d: ['When volatility jumps, margins jump with it. In March 2020 initial margin at clearing houses rose by about $300bn in a month, and variation-margin calls peaked at $140bn on 9 March.', 'The IMF describes the loop: higher yields push up repo rates and can trigger unwinds of the basis trade, which push yields higher still. Kashyap and Stein warn that backstops create moral hazard, a “Fed put” that encourages more leverage.', 'Low volatility is a net positive for liquidity, because more leverage means more buyers; the cost shows up only when it ends. MOVE was about 100 in mid-October 2026, in its 92nd–94th percentile.'],
-        nt: 'The margin mechanism is measured; that calm is a subsidy is Elias Rutten’s reading, and the map’s.', src: 'BCBS–CPMI–IOSCO, “Review of margining practices” (29 Sep 2022); IMF GFSR (Apr 2026); Kashyap and Stein, F&D (Mar 2026); Cboe (19 Oct 2026).' }],
-    ['When calm breaks', 'In March 2020 a volatility spike forced the funds out of the basis trade, and the Fed bought about $1.6tn of Treasuries in a few weeks. In April 2025 tariff news set off a smaller unwind of about $60bn of swap-spread trades, and most of the tariffs were paused within a week.', E('MOV>HFD', 'TSY>HFD', 'FED>BNK', 'TSY>Y10'),
-      { d: ['The pattern is general: calm, then volatility, then forced selling. In September 2019 a tax date and a large settlement of Treasuries drained cash, and the overnight repo rate (SOFR) jumped from 2.43% to 5.25%.', 'How much the funds’ selling caused the 2020 dysfunction is debated: researchers at the Office of Financial Research found losses but no defaults and doubted a feedback loop. The Fed also temporarily exempted Treasuries and reserves from the leverage ratio in 2020.', 'In the week after 2 April 2025 the 10-year yield rose about half a point, the biggest weekly rise since 2001. On 9 April most tariffs were paused for 90 days; Trump said bond investors “were getting yippy”.'],
+        nt: 'The margin mechanism is measured; the subsidy reading is Elias Rutten’s.', src: 'BCBS–CPMI–IOSCO, “Review of margining practices” (29 Sep 2022); IMF GFSR (Apr 2026); Kashyap and Stein, F&D (Mar 2026); Cboe (19 Oct 2026).' }],
+    ['When calm breaks', 'In March 2020 a spike in volatility forced the funds out of the basis trade, and the Fed bought about $1.6tn of Treasuries in a few weeks. In April 2025 tariff news set off a smaller unwind, and most of the tariffs were paused within a week.', E('MOV>HFD', 'TSY>HFD', 'FED>BNK', 'TSY>Y10'),
+      { d: ['The April 2025 unwind was of about $60bn of swap-spread trades.', 'The pattern is general: calm, then volatility, then forced selling. In September 2019 a tax date and a large settlement of Treasuries drained cash, and the overnight repo rate (SOFR) jumped from 2.43% to 5.25%.', 'How much the funds’ selling caused the 2020 dysfunction is debated: researchers at the Office of Financial Research found losses but no defaults and doubted a feedback loop. The Fed also temporarily exempted Treasuries and reserves from the leverage ratio in 2020.', 'In the week after 2 April 2025 the 10-year yield rose about half a point, the biggest weekly rise since 2001. On 9 April most tariffs were paused for 90 days; Trump said bond investors “were getting yippy”.'],
         src: 'Kashyap and Stein, F&D (Mar 2026); Barth and Kahn, OFR (2020, 2021); Monin, Fed FEDS Notes (22 Jun 2026); Anbil, Anderson and Senyuz, Fed FEDS Notes (27 Feb 2020); Bloomberg (11 Apr 2025, link not stored).' }],
     ['The fixes nobody applies', 'Most analysts prescribe fixes for the basis trade, and the fixes are easy: central clearing, haircut floors, a leverage rule. They are not applied, because these arrangements are ways to weaponise the financial system and to practise financialised industrial policy: the fragility is useful to the state.', E('BNK>HFD', 'TSY>HFD', 'REG>BNK'),
-      { d: ['What the page can source: the clearing mandate exists, and both its deadlines were pushed back a year in February 2025; much Treasury repo still carries a zero haircut; and the leverage rule for the largest banks was eased, not tightened, from April 2026.', 'The reading describes what the arrangement does. Leverage that depends on calm gives the state a market that absorbs its debt and funds the build-out, and the cost shows only when calm breaks. The page makes no claim about what any person intended.'],
+      { d: ['What the page can source: the clearing mandate exists, and both its deadlines were pushed back a year in February 2025; much Treasury repo still carries a zero haircut; and the leverage rule for the largest banks was eased, not tightened, from April 2026.', 'Leverage that depends on calm gives the state a market that absorbs its debt and funds the build-out, and the cost shows only when calm breaks.'],
         nt: 'Whose reading: Elias Rutten (14 Nov 2026). The delays and the rules are measured.', src: 'SEC via DTCC (25 Mar 2025); Monin, Fed FEDS Notes (22 Jun 2026); FSB (4 Feb 2026); Federal Reserve, FDIC and OCC final rule (25 Nov 2025).' }],
   ] });
 /* content build (map logic): play 10, “Coordinate with the Fed”. It is a play only, not part of the guide. Its dotted line between
@@ -5033,7 +5050,7 @@ PLAYS.push({ t: 'Coordinate with the Fed', ic: 'gap', c: '#ffd27a', warn: 'Specu
     ['The revolving door', 'Stephen Miran went from Hudson Bay Capital to the White House, from the White House to the Fed’s board, and back to Hudson Bay. For four and a half months he held both offices, on unpaid leave from the White House.', E('TSY>MMF', 'FED>BNK'),
       { d: ['He chaired the Council of Economic Advisers, took office as a Fed governor on 16 September 2025 while on unpaid leave from that post, resigned from the White House on 3 February 2026, left the Fed on 21 May 2026 to make room for Warsh, and rejoined Hudson Bay as a senior strategist on 15 June 2026.'], nt: 'Measured.', src: 'Federal Reserve Board (14 May 2026); Federal Reserve History; AP via WTOP (3 Feb 2026); Axios (15 Jun 2026).', vw: 'desks', vr: 'TSY~FED' }],
     ['The question the line leaves', 'Bills out, bills bought, long bonds bought back: the operations of the two desks pull the same way. Whether that is coordination is the contested question of central-bank independence; the structure is the same either way, because the people who design the debt’s plumbing and the people who set the rate come from the same circles.', E('TSY>Y10', 'TSY>MOV', 'FED>BNK'),
-      { d: ['No claim is made about what any person intended. The page shows the dated operations (the levers “Fund the deficit with bills”, “Buy back long bonds” and “The Fed buys bills”) and the dated roles above; the reader sees the line.'], nt: 'The map’s structural reading.', src: 'As for the three steps before.', vw: 'desks', vr: 'TSY~FED' }],
+      { d: ['The page shows the dated operations (the levers “Fund the deficit with bills”, “Buy back long bonds” and “The Fed buys bills”) and the dated roles above; the reader sees the line.'], src: 'As for the three steps before.', vw: 'desks', vr: 'TSY~FED' }],
   ] });
 /* which relations each lever moves (levers are in the order of LEVERS) */
 const LEDGE = [
@@ -5068,7 +5085,7 @@ function plumbText() {
       <div class="expc"><h4>Why “Scott Bessent”</h4><p>Scott Bessent runs the Treasury, which holds many of these levers: debt issuance and buybacks, sanctions, swaps, currency action. Others are pulled elsewhere. The Fed sets rates and buys bills, Congress writes tax and stablecoin law, the Supreme Court struck down the emergency tariffs, the White House bargains over trade. <b>Each lever below says who pulls it.</b></p>
         <p>The name is a shorthand for a system in which debt management, trade and foreign policy have fused.</p></div>
       <div class="expc"><h4>How to read it, and what it is not</h4><p>Lines show relations, not amounts. The map reads left to right, from the countries abroad through the state and the financial sector to the AI build-out, households and energy. The indicators on the map carry measured values, each with a date and a source (hover for it): prices and rates sit on the wires as gauges, settings and outcomes hang under the actor they belong to. Running a play, pulling a lever or clicking an actor lights the relations involved and the indicators they move. Nothing here is a forecast: a lever shows what the real action moved, not what would happen if you repeated it.</p>
-        <p>Some labels are this map’s reading, not the government’s. Michael Howell calls the bill strategy “Treasury QE”; the Treasury calls its buybacks “liquidity support”.</p></div>
+        <p>Some labels on the map are not the government’s own. Michael Howell calls the bill strategy “Treasury QE”; the Treasury calls its buybacks “liquidity support”.</p></div>
       </div>
       <div class="expcol">
       <div class="expc"><h4>Four layers, one machine</h4>
@@ -5287,7 +5304,7 @@ function indStates(act) {
   });
   return out;
 }
-const indWhen = I => { const f = I.first || {}, L = sLine(), pre = simOn() && L.pre; return pre && f.pre ? 'first principles ' + f.pre : f.main ? 'step ' + f.main : f.pre ? 'first principles ' + f.pre : ''; };
+const indWhen = I => { const f = I.first || {}, L = sLine(), pre = simOn() && L.pre, gnd = simOn() && L.gnd; return gnd && f.gnd ? 'the basics ' + f.gnd : pre && f.pre ? 'first principles ' + f.pre : f.main ? 'step ' + f.main : f.pre ? 'first principles ' + f.pre : ''; };
 /* the breakdown: role, value, what it measures, what moves it and what it moves (the relations the guide has reached), source */
 function indTip(I) {
   const on = simOn() && !!SIM.R, re = on ? SIM.R.re : SALL.e, n = I.n, g = I.g, rc = ROLE[I.role][3];
@@ -5524,8 +5541,10 @@ function drawRmap() {
   styleRmap();
 }
 function fHover(n) { if (simOn()) n = null; if (fhover === n) return; fhover = n; styleRmap(); }
+/* tiers build B: a play's steps in its own order (new steps are appended to PLAYS, so decision keys keep their names) */
+const pStep = (P, i) => P.steps[P.ord ? P.ord[i] : i];
 function activeEdges(all) {
-  if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : PLAYS[fplay].steps[fpstep][2]);
+  if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : pStep(PLAYS[fplay], fpstep)[2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
   if (fedge != null) return new Set([fedge]);
@@ -5582,7 +5601,7 @@ function renderSide(lev) {
   const X = '<button type="button" class="dx" id="isx-dx" aria-label="Close">×</button>';
   const done = () => { const dx = $('dx'); if (dx) dx.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); }); };
   if (fplay != null) {
-    const P = PLAYS[fplay], st = P.steps[fpstep];
+    const P = PLAYS[fplay], st = pStep(P, fpstep);
     s.hidden = false; s.style.setProperty('--dc', P.c);
     s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4>${P.warn ? `<p class="cb-warn">${fe(P.warn)}</p>` : ''}<p>${fe(st[1])}</p>${(st[3] || {}).nt ? `<p class="sn-note cb-nt">${fe(st[3].nt)}</p>` : ''}${(st[3] || {}).src ? `<div class="lsrc">Sources: ${fe(st[3].src)}</div>` : ''}${(st[3] || {}).vw ? doorBtn(st[3].vw, st[3].vr) : ''}<div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play in the guide</button>`;
     $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); });
@@ -6602,10 +6621,11 @@ const SMETA = [
   [['p', 'Year to Aug 2026', '', []],
     ['d', 'Since 2023', 'Someone else has to buy, so the Treasury sells the debt that cash-holders want: bills.', [0]],
     ['c', 'Dec 2022 to Dec 2024', 'Bills need cash to buy them, and money funds had cash parked at the Fed.', []],
-    ['p', 'Jul to Dec 2025', 'Once the cushion was spent, every dollar the Treasury raised came out of bank reserves.', [14, 2]],
+    ['p', 'Jul to Dec 2025', 'Once the cushion was spent, every dollar the Treasury raised came out of bank reserves.', []],
     ['d', 'Jul 2025 to Apr 2026', 'More bills need more buyers, and rules can create them.', [3, 4]],
     ['c', 'Year to Aug 2026', 'The long bonds still need a home: leveraged funds take them, with borrowed cash.', []],
-    ['d', 'Aug to Oct 2026', 'Funds that hold bonds on borrowed cash sell when volatility spikes, so the Treasury takes long bonds back.', [1]]],
+    ['d', 'Aug to Oct 2026', 'Funds that hold bonds on borrowed cash sell when volatility spikes, so the Treasury takes long bonds back.', [1]],
+    ['d', '10 Dec 2025 to Jan 2026', 'Repo above the ceiling means cash is short where the debt is financed, so the Fed supplies it.', [14, 2]]],
   [['p', '2026', '', []],
     ['d', 'Oct 2025 and Jun 2026', 'The leases need financing, and the platforms prefer it off their own books.', []],
     ['c', 'End of Jun 2026', 'Private credit lends money it raises from insurers, annuities and pension funds.', []],
@@ -6630,7 +6650,9 @@ const SMETA = [
     ['d', '31 Jul 2026', 'The yen slides to 40-year lows, and Japan is the largest foreign holder of Treasuries.', [12]],
     ['d', 'Jul to Nov 2025', 'The surpluses themselves belong to allies, so Washington also bargains over where they go.', [13]],
     ['c', 'Jul 2025 to Feb 2026', 'A pledge to invest is a capital inflow, and the accounts say what that does.', []],
-    ['d', 'Jan 2025 to Nov 2026', 'Beyond the allies, Washington reaches the savers of weaker economies directly.', []]],
+    ['d', 'Jan 2025 to Nov 2026', 'Beyond the allies, Washington reaches the savers of weaker economies directly.', []],
+    ['d', 'Jul 2025 to Feb 2026', 'What the pledges cannot do for the trade balance, they do for control.', []],
+    ['d', 'Jan 2025 to Nov 2026', 'The tokens do not spread by themselves.', []]],
   [['p', '28 Feb 2026', '', []],
     ['d', 'Mar to May 2026', 'Dear oil threatens prices and the consumer, so Washington tries to add supply.', [6, 7, 8]],
     ['d', 'Mar to Nov 2026', 'Stocks and waivers add barrels slowly; words move the price at once.', [15]],
@@ -6669,9 +6691,9 @@ const SMAIN = {
     { t: 'The allies’ savings come back', s: 'Savings', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
     { t: 'The consumer keeps it flowing', s: 'Consumer', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
     { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [6, 3], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 4, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.'], [0, 6, 'Long yields are climbing, and the Treasury still has to sell its debt.']] },
-    { t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowed money, and the state borrows most of all. The buyers it relied on for decades are leaving.', 1], [0, 1], [0, 2], [0, 3], [0, 5]] },
+    { t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowed money, and the state borrows most of all. The buyers it relied on for decades are leaving.', 1], [0, 1], [0, 2], [0, 3], [0, 7], [0, 5]] },
     { t: 'Bonds get yippy', s: 'Yippy bonds', w: '2019 to Nov 2026', b: [[9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm.'], [9, 1], [9, 2], [0, 4, 'One rule sets how much those banks can carry.'], [9, 3, 'How much the funds can borrow depends on how calm the bond market is.'], [9, 4], [9, 5]] },
-    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6]] },
+    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 7], [5, 6], [5, 8]] },
     { t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
   ],
 };
@@ -6683,7 +6705,7 @@ const SMAIN = {
    Content build (chains round, 14 Nov 2026): seven decisions, 37 links. Every chain ends in two places, the build-out and the economy;
    every chain that touches the bond market passes through bond volatility; an arrow follows the number on its gauge (a weaker yen is ▲,
    because the gauge shows yen per dollar). vw: a link whose relation exists only inside a deeper view opens that view. seat: whose chair.
-   Keys after the content build: 0-1 funding the deficit · 0-3 the repo backstop · 0-4 the leverage rule · 0-6 long yields climb ·
+   Keys after the content build: 0-1 funding the deficit · 0-7 the repo backstop (0-3 until tiers build B) · 0-4 the leverage rule · 0-6 long yields climb ·
    9-4 tariffs or the bond market · 5-3 the yen · 6-1 oil. */
 const SJ1 = EP + 'japans-economic-miracle-is-also-its', SJ2 = EP + 'will-japan-cause-a-global-debt-crisis';
 const DSRC = {
@@ -6701,23 +6723,23 @@ const SDEC = {
     chain: [
       { t: 'Every long bond needs a buyer', e: E('OFF>TSY'), off: [], fl: { off: '▼' }, n: 'Measured (TIC).',
         x: 'With central banks stepping back, every extra long bond needs a private buyer. Official holders cut $164bn of Treasuries in the year to August 2026.' },
-      { t: 'The long end asks more', e: E('TSY>Y10'), off: [], fl: { y10: '▲' }, n: 'The map’s reading.', vw: ['bond', 'TSY>PUB'],
+      { t: 'The long end asks more', e: E('TSY>Y10'), off: [], fl: { y10: '▲' }, vw: ['bond', 'TSY>PUB'],
         x: 'The more long bonds the market has to absorb, the higher the yield it tends to ask.' },
-      { t: 'Leverage takes the bonds, and volatility rises', e: E('TSY>HFD', 'BNK>HFD', 'MOV>HFD'), off: [], fl: { basis: '▲', move: '▲' }, n: 'Measured (Barth and others, Fed FEDS Notes, 15 Oct 2025); the forced-selling mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022; IMF GFSR, Apr 2026), its trigger here is the map’s reading.',
+      { t: 'Leverage takes the bonds, and volatility rises', e: E('TSY>HFD', 'BNK>HFD', 'MOV>HFD'), off: [], fl: { basis: '▲', move: '▲' }, n: 'Measured (Barth and others, Fed FEDS Notes, 15 Oct 2025); the forced-selling mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022; IMF GFSR, Apr 2026).',
         x: 'The buyer at the margin is a leveraged fund: from 2022 to 2024 hedge funds booked in the Cayman Islands took 37% of net new notes and bonds, financed in repo. The more of the long end rests on borrowed cash, the more a jump in volatility forces sales into a falling market.' },
-      { t: 'Credit reprices, and AI bonds compete for the same buyers', e: E('Y10>BND', 'Y10>PCR', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' }, n: 'The pricing is the map’s reading; crowding out is Elias Rutten’s reading (14 Nov 2026), and the evidence on it is mixed: the bond screen shows both sides.', vw: ['bond', 'BND>PUB'],
+      { t: 'Credit reprices, and AI bonds compete for the same buyers', e: E('Y10>BND', 'Y10>PCR', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' }, n: 'Crowding out is Elias Rutten’s reading (14 Nov 2026), and the evidence on it is mixed: the bond screen shows both sides.', vw: ['bond', 'BND>PUB'],
         x: 'The 10-year prices credit across this map: corporate bonds, the loans behind data centres, mortgages. In Elias Rutten’s reading AI bonds and Treasuries also compete for the same long-term buyers, so more long Treasuries leave less room for both.' },
-      { t: 'The build-out pays more', e: E('BND>HYP', 'PCR>HYP', 'HYP>SPX', 'SPX>ISS', 'ISS>HYP'), off: [], fl: { capex: '▼', shr: '▼', ai: '▼' }, n: `The pricing is measured practice; the share window is the map’s reading; ${bn0(ISUM.s)} is measured (filings, 12 months to 8 Nov 2026).`,
+      { t: 'The build-out pays more', e: E('BND>HYP', 'PCR>HYP', 'HYP>SPX', 'SPX>ISS', 'ISS>HYP'), off: [], fl: { capex: '▼', shr: '▼', ai: '▼' }, n: `The pricing is measured practice; ${bn0(ISUM.s)} is measured (filings, 12 months to 8 Nov 2026).`,
         x: `New AI bonds are sold at a spread over the 10-year and the vehicles behind data centres borrow on terms priced off it, so the build-out’s borrowing costs rise with it. Higher yields also lower what AI shares are worth, which narrows the window for new shares that raised ${bn0(ISUM.s)} in a year.` },
-      { t: 'Households pay for it', e: E('MTG>CON', 'SVR>CON', 'CON>EXP'), off: [], fl: { mtg: '▲', save: '▼', con: '▼' }, n: 'The map’s reading; the saving rate is measured (BEA, 29 Oct 2026).',
+      { t: 'Households pay for it', e: E('MTG>CON', 'SVR>CON', 'CON>EXP'), off: [], fl: { mtg: '▲', save: '▼', con: '▼' }, n: 'The saving rate is measured (BEA, 29 Oct 2026).',
         x: 'The 30-year mortgage moves with the 10-year, and households have little cushion: they saved 3.8% of income in September 2026. Dearer credit cuts spending, and with it the imports that keep the surpluses, and the savings they fund, coming back.' }],
     crisis: { t: 'The long end takes the strain',
       x: 'Selling long bonds into a market without official buyers leaves the long end with leveraged funds, and every repricing runs straight into the cost of the build-out and of mortgages. How fast it can move showed in April 2025: after the tariff announcement of 2 April the 10-year jumped about half a point in a week, the biggest weekly rise since 2001.',
       s: [['Bloomberg, 11 Apr 2025', '']],
       prec: [{ k: 'September 2022 · measured', x: 'A fiscal statement sent long gilt yields up so fast that leveraged pension funds were forced to sell; when the Bank of England stepped in on 28 September, 30-year yields fell by more than a percentage point that day.',
         s: [['Bank of England, letter to the Treasury Committee, Oct 2022', 'https://committees.parliament.uk/publications/30136/documents/174584/default'], DSRC.boe] }],
-      who: 'The chain is this map’s reading; crowding out (link 4) is Elias Rutten’s reading (14 Nov 2026); the 2025 and 2022 moves are measured.', links: [] } },
-  '0-3': { when: 'December 2025', nt: 'The repo backstop', seat: 'the Fed', ord: ['alt', 'real'], sus: {},
+      who: 'Crowding out (link 4) is Elias Rutten’s reading (14 Nov 2026); the 2025 and 2022 moves are measured.', links: [] } },
+  '0-7': { when: 'December 2025', nt: 'The repo backstop', seat: 'the Fed', ord: ['alt', 'real'], sus: {},
     q: 'Hedge funds finance about $830bn of basis trades overnight in this market, and repo rates keep breaking above your ceiling. What do you do?',
     real: ['Open the tap', 'lend without limit against Treasuries, and buy bills'], alt: ['Hold the line', 'keep the cap, and let repo find its price'],
     ctx: { x: 'The reverse repo is empty, the Treasury’s account holds $1tn and bank reserves have fallen below $3tn.', more: ['Use of the Fed’s standing repo hit a record $50.35bn on 31 October 2025.'], s: 'TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); Reuters via StreetInsider (29 Dec 2025).', links: [EL.pop] },
@@ -6725,54 +6747,54 @@ const SDEC = {
     chain: [
       { t: 'Reserves drain', e: E('TSY>FED'), off: E('FED>BNK'), fl: { res: '▼' }, n: 'Accounting: what the Treasury’s account gains, bank reserves lose.',
         x: 'The Treasury’s account keeps filling, and with the reverse repo empty every dollar comes out of bank reserves.' },
-      { t: 'Repo spikes', e: E('BNK>HFD'), off: [], fl: { haircut: '▲', move: '▲' }, n: 'The map’s reading.',
+      { t: 'Repo spikes', e: E('BNK>HFD'), off: [], fl: { haircut: '▲', move: '▲' },
         x: 'Banks short of reserves lend less in repo, and the rate spikes. Lenders raise haircuts, and bond volatility rises with them.' },
-      { t: 'The basis trade unwinds', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { basis: '▼', move: '▲' }, n: 'The mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022); the trigger is the map’s reading.',
+      { t: 'The basis trade unwinds', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { basis: '▼', move: '▲' }, n: 'The mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022).',
         x: 'Margins rise, the trade stops paying, and funds sell cash Treasuries and buy back futures.' },
-      { t: 'Long yields jump', e: E('TSY>Y10', 'Y10>BND', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' }, n: 'The map’s reading.',
+      { t: 'Long yields jump', e: E('TSY>Y10', 'Y10>BND', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' },
         x: 'Forced sales of Treasuries lift long yields, and with them the price of every bond and mortgage priced off the 10-year.' },
-      { t: 'The build-out and households pay', e: E('BND>HYP', 'SPX>ISS', 'ISS>HYP', 'MTG>CON'), off: [], fl: { capex: '▼', shr: '▼', con: '▼' }, n: 'The map’s reading.',
+      { t: 'The build-out and households pay', e: E('BND>HYP', 'SPX>ISS', 'ISS>HYP', 'MTG>CON'), off: [], fl: { capex: '▼', shr: '▼', con: '▼' },
         x: 'Dearer and scarcer credit reaches the build-out’s bonds and its share window, and households’ mortgages. A funding squeeze in one market becomes a cost for the whole loop.' }],
     crisis: { t: 'Funding breaks the trade',
       x: 'Without a backstop, repo breaks before the trade does, and the Fed ends up lending anyway.', s: [],
       prec: [{ k: 'September 2019 · measured', x: 'When a tax date and a large settlement of Treasuries drained cash on 16 and 17 September 2019, the overnight repo rate (SOFR) jumped from 2.43% to 5.25%, and the New York Fed lent in repo for the first time since the 2008 crisis.', s: [DSRC.s19] }],
-      who: 'The chain is this map’s reading; the 2019 figures are measured. That the rescue comes anyway is also Elias Rutten’s reading (The house always prints, 18 Sep 2026).', links: [EL.house] } },
+      who: 'The 2019 figures are measured. That the rescue comes anyway is Elias Rutten’s reading (The house always prints, 18 Sep 2026).', links: [EL.house] } },
   '0-4': { when: '2025', nt: 'The leverage rule', seat: 'the regulators’ table', ord: ['real', 'alt'], sus: {},
     q: 'Do you cut the leverage rule for the largest banks?',
     real: ['Cut it', 'free balance sheet for Treasuries and repo'], alt: ['Keep it', 'dealers stay constrained'],
     ctx: { x: 'Dealers say they lack balance sheet for the debt that is coming; the leverage rule counts a Treasury in full, like any other asset.', more: [], s: 'Federal Reserve, FDIC and OCC, eSLR final rule (25 Nov 2025), for the rule as it stood.', links: [] },
     after: { real: 'So did the regulators: a final rule of 25 November 2025, in force from 1 April 2026.', alt: 'The regulators cut it: a final rule of 25 November 2025, in force from 1 April 2026.' },
     chain: [
-      { t: 'Auctions keep growing', e: E('TSY>BNK'), off: E('REG>BNK'), fl: {}, n: 'The map’s reading.',
+      { t: 'Auctions keep growing', e: E('TSY>BNK'), off: E('REG>BNK'), fl: {},
         x: 'Auctions keep growing, and dealers have to absorb more Treasuries on the same capital.' },
-      { t: 'Less room to lend', e: E('BNK>HFD'), off: [], fl: { repo: '▼' }, n: 'The map’s reading.',
+      { t: 'Less room to lend', e: E('BNK>HFD'), off: [], fl: { repo: '▼' },
         x: 'With their balance sheets full, dealers have less room to lend in repo, and the funds’ financing tightens.' },
-      { t: 'In the next shock, nobody takes the bonds', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { move: '▲', basis: '▼' }, n: 'The mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022); the trigger is the map’s reading.',
+      { t: 'In the next shock, nobody takes the bonds', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { move: '▲', basis: '▼' }, n: 'The mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022).',
         x: 'In the next volatility shock the funds sell, and dealers cannot take the bonds.' },
-      { t: 'Yields gap up', e: E('TSY>Y10', 'Y10>BND', 'Y10>MTG'), off: [], fl: { y10: '▲', move: '▲', mtg: '▲' }, n: 'The map’s reading.',
+      { t: 'Yields gap up', e: E('TSY>Y10', 'Y10>BND', 'Y10>MTG'), off: [], fl: { y10: '▲', move: '▲', mtg: '▲' },
         x: 'With no balance sheet to absorb the selling, long yields gap up, and bond volatility with them.' },
-      { t: 'The build-out pays more', e: E('BND>HYP', 'Y10>PCR', 'PCR>HYP', 'MTG>CON'), off: [], fl: { capex: '▼', mtg: '▲', con: '▼' }, n: 'The map’s reading.',
+      { t: 'The build-out pays more', e: E('BND>HYP', 'Y10>PCR', 'PCR>HYP', 'MTG>CON'), off: [], fl: { capex: '▼', mtg: '▲', con: '▼' },
         x: 'With dealers full, every new bond clears at a higher yield, including the build-out’s and the loans behind its data centres. Households meet the same yields in their mortgages.' }],
     crisis: { t: 'Dealers hit the wall',
       x: 'With dealers’ balance sheets full, a shock leaves nobody to take the bonds, and the rule ends up bent in the crisis itself.', s: [],
       prec: [{ k: 'April 2020 · measured', x: 'With dealers’ balance sheets full, the Fed temporarily excluded Treasuries and reserves from the leverage ratio while buying Treasuries on a vast scale.',
         s: [['Barth and Kahn, OFR Working Paper 21-01 (Apr 2021)', 'https://www.clevelandfed.org/-/media/project/clevelandfedtenant/clevelandfedsite/events/2021/fsc-2021/kahn-paper.pdf'], DSRC.ks] }],
-      who: 'The chain is this map’s reading; the 2020 exemption is measured. What happened carries its own risk: a thinner capital buffer at the banks, the reason Governors Barr and Cook dissented.', links: [] } },
+      who: 'The 2020 exemption is measured. What happened carries its own risk: a thinner capital buffer at the banks, the reason Governors Barr and Cook dissented.', links: [] } },
   '0-6': { when: 'August 2026', nt: 'Long yields climb', ord: ['real', 'alt'], sus: {},
     q: 'Long yields are climbing, and the Treasury still has to sell its debt. What do you do?',
     real: ['Buy back long bonds', 'take them out of private hands'], alt: ['Leave the long end alone', 'and let the market absorb it'],
     ctx: { x: 'Back in August, the 30-year yield hit 5.34% on the 18th, a 19-year high.', more: [], s: 'Reuters, 20 Aug 2026 (from the 10-year yield’s note).', links: [] },
     after: { real: 'So did Washington.', alt: 'Washington bought back long bonds.' },
     chain: [
-      { t: 'Volatility rises', e: [], off: E('TSY>MOV'), fl: { move: '▲' }, n: 'The map’s reading.',
+      { t: 'Volatility rises', e: [], off: E('TSY>MOV'), fl: { move: '▲' },
         x: 'Without buybacks, more of the long end stays with funds that hold it on borrowed cash. When bond volatility spikes, those funds are forced to sell.' },
-      { t: 'Leveraged funds sell', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { move: '▲', basis: '▼' }, n: 'The mechanism and the figure are measured (BCBS–CPMI–IOSCO, Sep 2022; Monin, Fed FEDS Notes, 22 Jun 2026); the trigger is the map’s reading.',
+      { t: 'Leveraged funds sell', e: E('MOV>HFD', 'TSY>HFD'), off: [], fl: { move: '▲', basis: '▼' }, n: 'The mechanism and the figure are measured (BCBS–CPMI–IOSCO, Sep 2022; Monin, Fed FEDS Notes, 22 Jun 2026).',
         x: 'Margins and haircuts are set by recent volatility, so a spike raises them and funds in the basis trade, about $830bn in September 2025, have to sell. Their selling pushes yields higher still.' },
-      { t: 'Repo pulls back', e: E('BNK>HFD'), off: [], fl: { repo: '▼', haircut: '▲' }, n: 'The map’s reading; $3.0tn is measured (Monin, 22 Jun 2026, data to Sep 2025).',
+      { t: 'Repo pulls back', e: E('BNK>HFD'), off: [], fl: { repo: '▼', haircut: '▲' }, n: '$3.0tn is measured (Monin, 22 Jun 2026, data to Sep 2025).',
         x: 'Their positions rest on $3.0tn of repo from the dealer banks; when lenders raise haircuts or cut lines, the selling feeds on itself.' },
-      { t: 'The build-out loses its market', e: E('Y10>BND', 'BND>HYP', 'SPX>ISS', 'ISS>HYP'), off: [], fl: { y10: '▲', capex: '▼', shr: '▼' }, n: 'Measured (Federal Reserve, 23 Mar 2020; filings, 12 months to 8 Nov 2026); the dependence is the map’s reading.',
+      { t: 'The build-out loses its market', e: E('Y10>BND', 'BND>HYP', 'SPX>ISS', 'ISS>HYP'), off: [], fl: { y10: '▲', capex: '▼', shr: '▼' }, n: 'Measured (Federal Reserve, 23 Mar 2020; filings, 12 months to 8 Nov 2026).',
         x: `When Treasuries, the safest collateral, cannot find buyers, corporate bonds stop selling too: in March 2020 that market reopened only after the Fed said it would buy corporate bonds for the first time. The build-out sold ${bn0(ISUM.b)} of bonds in a year, and needs that market open.` },
-      { t: 'Valuations and the wealth effect turn', e: E('HYP>SPX', 'SPX>TOP', 'TOP>CON'), off: [], fl: { ai: '▼', con: '▼' }, n: 'The map’s reading; the figures are measured (JPMorgan; Moody’s; on the page).',
+      { t: 'Valuations and the wealth effect turn', e: E('HYP>SPX', 'SPX>TOP', 'TOP>CON'), off: [], fl: { ai: '▼', con: '▼' }, n: 'The figures are measured (JPMorgan; Moody’s; on the page).',
         x: 'Forced selling reaches shares: AI stocks are 49% of the S&P 500, and the top tenth, who own most of them, do more than 45% of consumer spending. The shock passes from the bond market to the economy.' },
       { t: 'The house prints anyway', e: E('FED>BNK', 'REG>BNK', 'TSY>MMF'), off: [], fl: { res: '▲', bills: '▲' }, n: 'Elias Rutten’s reading; the operations are measured (the levers “Fund the deficit with bills”, “Buy back long bonds”, “The Fed buys bills” and “Free up the big banks”).', vw: ['desks', 'TSY~FED'], rd: 'house',
         x: 'Leaving the long end alone does not keep the state out; it brings it in later and larger, through the Fed’s repo backstop, bill purchases and looser bank rules. In Elias Rutten’s reading that is the house printing: duration out, money in (The house always prints, 18 Sep 2026).' }],
@@ -6782,27 +6804,27 @@ const SDEC = {
       prec: [{ k: 'March 2020 · measured', x: 'Large hedge funds’ gross Treasury exposures fell by $426bn in March 2020, most of it in funds likely trading the cash-futures basis.',
         s: [['Banegas, Monin and Petrasek, FEDS Notes (6 Oct 2021)', 'https://www.federalreserve.gov/econres/notes/feds-notes/sizing-hedge-funds-treasury-market-activities-and-holdings-20211006.htm']],
         cav: 'How far the basis trade caused the stress, rather than suffered it, is debated.', cs: [['OFR working paper (2021)', 'https://www.financialresearch.gov/working-papers/2021/04/01/hedge-funds-and-the-treasury-cash-futures-disconnect/']] }],
-      who: 'The chain is this map’s reading; “the house always prints” is Elias Rutten’s reading (18 Sep 2026); the March 2020 figures are measured.', links: [EL.house] } },
+      who: '“The house always prints” is Elias Rutten’s reading (18 Sep 2026); the March 2020 figures are measured.', links: [EL.house] } },
   '9-4': { when: '2 April 2025', nt: 'Tariffs or the bond market', seat: 'the White House', ord: ['alt', 'real'], sus: {},
     q: 'The bond market is selling Treasuries as the tariffs land. What do you do?',
     real: ['Pause most tariffs', 'for 90 days'], alt: ['Hold the line', 'and keep the tariffs in place'],
     ctx: { x: 'Sweeping tariffs are announced; within a week the 10-year yield jumps about half a point, the biggest weekly rise since 2001, and leveraged swap-spread trades start to unwind.', more: [], s: 'Bloomberg (11 Apr 2025, link not stored); Monin, Fed FEDS Notes (22 Jun 2026).', links: [] },
     after: { real: 'So did the White House: on 9 April most tariffs were paused for 90 days.', alt: 'The White House paused most tariffs on 9 April, for 90 days.' },
     chain: [
-      { t: 'Yields keep climbing', e: E('TSY>Y10'), off: [], fl: { y10: '▲' }, n: 'The April 2025 move is measured; that it goes on is the map’s reading.',
+      { t: 'Yields keep climbing', e: E('TSY>Y10'), off: [], fl: { y10: '▲' }, n: 'The April 2025 move is measured.',
         x: 'With the tariffs in place the selling goes on, and long yields keep climbing.' },
       { t: 'Volatility hits the leveraged funds', e: E('MOV>HFD'), off: [], fl: { move: '▲' }, n: 'The mechanism is measured (BCBS–CPMI–IOSCO, Sep 2022).',
         x: 'Bond volatility rises with the yields, and margins and haircuts rise with volatility.' },
-      { t: 'The unwind spreads', e: E('TSY>HFD', 'BNK>HFD'), off: [], fl: { basis: '▼', repo: '▼' }, n: 'The $60bn unwind is measured (Monin, 22 Jun 2026); that it spreads is the map’s reading.',
+      { t: 'The unwind spreads', e: E('TSY>HFD', 'BNK>HFD'), off: [], fl: { basis: '▼', repo: '▼' }, n: 'The $60bn unwind is measured (Monin, 22 Jun 2026).',
         x: 'The unwind spreads from swap-spread trades, about $60bn in April 2025, to the basis trade.' },
-      { t: 'Credit reprices', e: E('Y10>MTG', 'Y10>BND'), off: [], fl: { mtg: '▲' }, n: 'The map’s reading.',
+      { t: 'Credit reprices', e: E('Y10>MTG', 'Y10>BND'), off: [], fl: { mtg: '▲' },
         x: 'Mortgages and corporate bonds are priced off the 10-year, so credit reprices with it.' },
-      { t: 'A backstop is needed', e: E('FED>BNK', 'BND>HYP', 'SPX>ISS', 'MTG>CON'), off: [], fl: { res: '▲', capex: '▼', con: '▼' }, n: 'The map’s reading.',
+      { t: 'A backstop is needed', e: E('FED>BNK', 'BND>HYP', 'SPX>ISS', 'MTG>CON'), off: [], fl: { res: '▲', capex: '▼', con: '▼' },
         x: 'The repricing reaches the build-out’s bonds and share sales, and households’ mortgages. In the end the Fed has to stand behind the market.' }],
     crisis: { t: 'The bond market sets the terms',
       x: 'A policy held against a selling bond market ends with the market setting the terms, and the central bank buying.', s: [],
       prec: [{ k: 'September 2022 · measured', x: 'After the UK’s mini-budget of 23 September, leveraged pension funds were forced to sell gilts. The Bank of England offered to buy up to £65bn and bought £19.3bn between 28 September and 14 October.', s: [DSRC.boe] }],
-      who: 'The chain and the sentence above are this map’s reading; the 2025 and 2022 figures are measured.', links: [] } },
+      who: 'The 2025 and 2022 figures are measured.', links: [] } },
   '5-3': { when: 'July 2026', nt: 'The yen slides', ord: ['alt', 'real'], sus: { yen: ['▲', 'at 40-year lows'] },
     q: 'The yen slides to 40-year lows, and Japan is the largest foreign holder of Treasuries. What do you do?',
     real: ['Intervene with Japan', 'buy yen together, the first joint action since 2011'], alt: ['Let the yen slide', 'and leave it to Tokyo'],
@@ -6813,13 +6835,13 @@ const SDEC = {
     chain: [
       { t: 'Tokyo defends alone', e: E('YEN>OFF', 'OFF>TSY'), off: E('TSY>YEN'), fl: { yen: '▲', off: '▼' }, n: 'Measured (Ministry of Finance, 7 Aug 2026; TIC via FRED). That the May fall paid for the intervention is Bloomberg’s reading (8 Jun 2026); TIC counts market value, so part of the fall is price.',
         x: 'Washington stays out, the yen keeps sliding past 160, and Tokyo defends it alone by selling dollar assets to buy yen, as it did with ¥11.7tn in April and May 2026. Japan’s Treasury holdings fell $67bn in May, the month that round was paid for.' },
-      { t: 'Japanese money comes home', e: E('YEN>SAV', 'SAV>Y10', 'SAV>SPX'), off: [], fl: { yen: '▼' }, n: 'Elias Rutten, Current Japanese financial dynamics (13 May 2026), for the ¥1,500tn, the hedge ratios and the point at which coming home becomes cheaper; Bank of Japan flow of funds, Q2 2026 (via Business Insider Japan, 21 Oct 2026), for households; the pull home is the map’s reading.',
+      { t: 'Japanese money comes home', e: E('YEN>SAV', 'SAV>Y10', 'SAV>SPX'), off: [], fl: { yen: '▼' }, n: 'Elias Rutten, Current Japanese financial dynamics (13 May 2026), for the ¥1,500tn, the hedge ratios and the point at which coming home becomes cheaper; Bank of Japan flow of funds, Q2 2026 (via Business Insider Japan, 21 Oct 2026), for households.',
         x: 'Defending the yen lifts Japanese yields, and that removes the reason Japan’s pension funds, insurers and banks went abroad: they hold about ¥1,500tn of foreign assets, and households had raised theirs to 5.8% of ¥2,519tn by June 2026. Insurers hedge less of the currency risk than in 2020 (46% against 63%), so a rising yen turns into losses that make coming home cheaper than staying.' },
-      { t: 'The carry trade unwinds', e: E('YEN>HFD', 'MOV>HFD', 'BNK>HFD'), off: [], fl: { yen: '▼', move: '▲', basis: '▼' }, n: 'Measured (BIS Bulletin 90, 27 Aug 2024); that it reaches Treasury volatility and the basis trade is the map’s reading.',
+      { t: 'The carry trade unwinds', e: E('YEN>HFD', 'MOV>HFD', 'BNK>HFD'), off: [], fl: { yen: '▼', move: '▲', basis: '▼' }, n: 'Measured (BIS Bulletin 90, 27 Aug 2024).',
         x: 'Money borrowed in cheap yen and invested elsewhere has to be repaid in dearer yen, and when the yen jumps the trade unwinds at once rather than over years: about ¥40tn by the BIS’s count, which it calls a floor. As in August 2024 the selling spreads across markets, and in Treasuries the rise in volatility forces leveraged holders out.' },
       { t: 'Long yields rise in Japan and the US together', e: E('TSY>Y10', 'Y10>MTG'), off: [], fl: { y10: '▲', mtg: '▲' }, n: 'Elias Rutten, Current Japanese financial dynamics (13 May 2026), after Quinn Thompson, for the two bond markets rising together; the yields are measured (Rutten, May 2026; Reuters, 20 Aug 2026).',
         x: 'Japanese selling and leveraged selling meet in the same market, so US long yields rise with Japanese ones: Japan’s 10-year reached 2.5% in May 2026, its highest since 1997, and the US 30-year hit a 19-year high of 5.34% on 18 August. The 30-year mortgage, and every loan priced off the 10-year, follows.' },
-      { t: 'The build-out pays more, and the spine runs in reverse', e: E('Y10>BND', 'BND>HYP', 'HYP>SPX', 'SPX>ISS', 'ISS>HYP', 'SPX>TOP'), off: [], fl: { capex: '▼', shr: '▼', ai: '▼', con: '▼' }, n: 'The map’s reading; the cover ratios are measured (Apollo, on the page), the spending share is measured (Moody’s, on the page).',
+      { t: 'The build-out pays more, and the spine runs in reverse', e: E('Y10>BND', 'BND>HYP', 'HYP>SPX', 'SPX>ISS', 'ISS>HYP', 'SPX>TOP'), off: [], fl: { capex: '▼', shr: '▼', ai: '▼', con: '▼' }, n: 'The cover ratios are measured (Apollo, on the page), the spending share is measured (Moody’s, on the page).',
         x: 'Higher long yields raise what the hyperscalers pay on new bonds and lower what their shares are worth; buyers were already thinning, with cover ratios down from nearly 5× in February to under 2× in July 2026. With Japanese savers selling too, the spine runs in reverse: less money for the build-out, and less wealth for the top tenth, who do more than 45% of consumer spending.' }],
     crisis: { t: 'A disorderly yen',
       x: 'In May 2026 Elias Rutten set out two ways it could break: either the yen went through 160 and Japanese and US yields rose together, or Tokyo defended the line, the yen jumped and the carry trade unwound through the markets above. When he wrote, Tokyo was managing the slide, and a carry trade can also be wound down slowly over years; the danger is a fast unwind, whose strain on US long yields would reach the build-out and the households whose wealth rides on it.', s: [],
@@ -6831,7 +6853,7 @@ const SDEC = {
         ['1999 to 2024', 'The world’s funding currency', 'Zero rates from 1999, then QE, negative rates and yield-curve control, kept savers’ returns near zero, so Japanese money went abroad for yield and foreign funds borrowed yen to do the same: about ¥40tn of carry trades by 2024.', 'Rutten (11 May 2026) for the policy dates; BIS Bulletin 90', 'measured; that suppressed returns made the yen the funding currency is Rutten’s reading'],
         ['Jun 2019', 'The largest creditor', 'Japan overtook China as the largest foreign holder of Treasuries, with $1.12tn; it held $1.14tn at the end of May 2026.', 'TIC via CNBC (15 Aug 2019); TIC via FRED (May 2026)', 'measured'],
         ['2026', 'A client again', 'Tokyo spent ¥11.7tn alone in April and May while Washington offered “constant and robust” coordination and asked for higher Japanese rates, whose cost falls on Japan.', 'Ministry of Finance (7 Aug 2026); Reuters (20 May 2026); Rutten, Current Japanese financial dynamics (13 May 2026)', 'measured; the cost on Japan is Rutten’s reading']],
-      shows: 'Decades of suppressed household returns made Japan the dollar system’s largest saver and the world’s cheapest lender: distorted trade on one side, fast money on the other. In Rutten’s reading that makes Japan a client of the system, and the map’s reading adds the lever: the same savings are steered from Washington, through a $550bn pledge whose projects a US-led committee picks, with higher tariffs if Japan does not pay within 45 days.',
+      shows: 'Decades of suppressed household returns made Japan the dollar system’s largest saver and the world’s cheapest lender: distorted trade on one side, fast money on the other. In Rutten’s reading that makes Japan a client of the system. The lever: the same savings are steered from Washington, through a $550bn pledge whose projects a US-led committee picks, with higher tariffs if Japan does not pay within 45 days.',
       prec: [{ k: '5 August 2024 · measured', x: 'A Bank of Japan rate rise on 31 July and weak US payrolls two days later sent the yen up and forced yen-funded carry trades to unwind. The Nikkei fell 12.4% on 5 August, its worst day since 1987, and markets steadied within days.',
         s: [DSRC.bis90, ['Rutten (13 May 2026), for the Nikkei figure', SJ2]] }],
       who: 'The two ways it could break are Elias Rutten’s reading (Current Japanese financial dynamics, 13 May 2026), after Quinn Thompson; whether the carry trade is unwinding now is not measured on this page. The history follows Rutten (Japanese economic history, 11 May 2026), with figures checked against the IMF, TIC and Japan’s Ministry of Finance; the August 2024 unwind is measured.', links: [['Japan, part 1', SJ1], ['Japan, part 2', SJ2]] } },
@@ -6843,32 +6865,40 @@ const SDEC = {
     chain: [
       { t: 'Physical cargoes near $150', e: E('HOR>OIL'), off: E('ENG>OIL'), fl: { brent: '▲' }, n: 'Elias Rutten, Current Japanese financial dynamics (13 May 2026), for the cargo prices of April and May.',
         x: 'With no barrels added and the strait shut, the price is left to the shortage: physical cargoes traded near $150 in April and May 2026.' },
-      { t: 'The pump takes a bigger share', e: E('OIL>FUEL', 'FUEL>CON'), off: [], fl: { diesel: '▲', con: '▼' }, n: 'The map’s reading.',
+      { t: 'The pump takes a bigger share', e: E('OIL>FUEL', 'FUEL>CON'), off: [], fl: { diesel: '▲', con: '▼' },
         x: 'Diesel and petrol follow crude, and take a bigger share of household spending.' },
-      { t: 'Inflation rises, and the Fed hikes harder', e: E('OIL>INF', 'INF>FED'), off: [], fl: { pce: '▲' }, n: 'The map’s reading.',
+      { t: 'Inflation rises, and the Fed hikes harder', e: E('OIL>INF', 'INF>FED'), off: [], fl: { pce: '▲' },
         x: 'Energy feeds the price index, and the Fed answers higher inflation with higher rates.' },
-      { t: 'Long yields climb', e: E('FED>Y10', 'OIL>Y10', 'Y10>BND'), off: [], fl: { y10: '▲', move: '▲' }, n: 'The map’s reading.',
+      { t: 'Long yields climb', e: E('FED>Y10', 'OIL>Y10', 'Y10>BND'), off: [], fl: { y10: '▲', move: '▲' },
         x: 'Long yields climb, and new bonds cost more. Inflation risk makes yields swing more, and bond volatility rises with it.' },
-      { t: 'The share window closes', e: E('SPX>ISS', 'ISS>HYP'), off: [], fl: { shr: '▼', capex: '▼' }, n: 'The map’s reading.',
+      { t: 'The share window closes', e: E('SPX>ISS', 'ISS>HYP'), off: [], fl: { shr: '▼', capex: '▼' },
         x: 'Falling shares close the window for new shares, and capex loses a source of money.' }],
     crisis: { t: 'The war reaches the bond market',
       x: 'An oil shock left to the market reaches the bond market through inflation and the Fed, and the share market through long yields.', s: [],
       prec: [{ k: '2022 · measured', x: 'After Russia’s invasion of Ukraine, energy prices soared and the Fed tightened faster than at any time since the 1980s; US IPOs raised $7.7bn, the least in Renaissance Capital’s 30-plus years of records. Washington’s answer then was the largest stock release in US history, 180 million barrels from 31 March 2022.',
         s: [['Renaissance Capital (3 Jan 2023)', 'https://renaissancecapital.com/IPO-Center/News/96381/Renaissance-Capitals-2022-US-IPO-Market-Review'], ['EY via CFO Dive, Dec 2022', ''], ['White House, 31 Mar 2022', 'https://www.whitehouse.gov/briefing-room/speeches-remarks/2022/03/31/remarks-by-president-biden-on-actions-to-lower-gas-prices-at-the-pump-for-american-families/']] }],
-      who: 'The chain and the sentence above are this map’s reading; the 2022 figures are measured. That headlines did much of the work in 2026 is Elias Rutten’s reading (10 Nov 2026).', links: [EL.oil] } },
+      who: 'The 2022 figures are measured. That headlines did much of the work in 2026 is Elias Rutten’s reading (10 Nov 2026).', links: [EL.oil] } },
 };
 
 /* ---------- stories as data: beats, chapters and what each step has put on the map ---------- */
 const enodes = es => { const s = new Set(); es.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); return s; };
 const bN = B => { const s = enodes(B.e); (B.n || []).forEach(n => s.add(n)); return s; };   /* a beat's actors: those of its relations, plus any it names on its own */
+/* tiers build B (15 Nov 2026): the thesis echoes. One sentence each, under the card's two sentences, at most one a chapter and never on a
+   decision, chain or crisis card (spec §1.1, copy Part D). Any can be cut here without touching a step; tools/tiers-check.js lists them. */
+const SECHO = {
+  '6-2': 'The thesis at work: a price this important is not left to the market, it is manipulated.',
+  '0-5': 'When the old buyers step back, Washington does not wait for the market to find new ones: it builds them.',
+  '9-3': 'Market rules are the instrument: change the rule, and the price of the state’s borrowing changes with it.',
+  '5-1': 'A dollar shortage abroad is leverage for whoever can lend dollars.',
+};
 function sBeat(p, s, ch, why, ld) {
   const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s, o = st[3] || {};   /* content build: depth, sources, links, whose reading, a view */
-  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n };
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n, ech: SECHO[k] || null };
 }
 /* v2 round 3: first principles. Seven reveals that come before the plumbing: the accounting, the surplus side, why the
    claims are taken in dollars, how the US accommodates them, how long this has been built, what it does to US markets,
    and the rules that widen the channel. They are a line of their own (not play steps), so the guide keeps its 37 steps.
-   Every figure is one the page already carries; where a sentence states a direction of causation it says whose reading it is.
+   Every figure is one the page already carries; an author’s reading carries the author’s name (tiers build B: no hedges on whose reading).
    t = title, bs = short name in the bar, r = kind (SROLE), w = date label, x = the reveal (two sentences at most),
    d = depth (paragraphs behind “The mechanism”), e = relations lit, lev = levers introduced. */
 Object.assign(SROLE, { i: ['Identity', '#e4ebf1'], m: ['Mechanism', '#44d7ec'], h: ['History', '#ffd27a'], a: ['Amplifier', '#d78bff'] });
@@ -6877,34 +6907,144 @@ const SPRE = {
   lede: 'Before the plumbing, the ground it stands on. Why the US runs a deficit with the world, why the world’s savings come back as claims on the US, and why that has meant rising debt for half a century.',
   b: [
     { t: 'Every deficit is someone’s surplus', bs: 'The identity', r: 'i', w: '2025', e: E('CON>EXP'),
-      x: 'The world’s current accounts add up to zero: every deficit is another economy’s surplus. The US deficit was $1.18tn in 2025, the mirror of surpluses elsewhere.',
-      d: ['This is accounting, not theory. It says the two sides must match; it does not say which side moves first.', 'The same holds inside an economy. The balances of households, non-financial firms, the financial sector, the government and the rest of the world add up to zero: when one sector spends more than it earns, the others together earn more than they spend.', 'Which side drives the other is the question the next steps answer. That reading is Matthew Klein and Michael Pettis’s, and this map’s.'] },
+      x: 'The world’s {{ca|current accounts}} add up to zero: every deficit is another economy’s surplus. The US deficit was $1.18tn in 2025, the mirror of surpluses elsewhere: that pairing is the {{imbalance|global imbalance}}.',
+      d: ['This is accounting, not theory. It says the two sides must match; it does not say which side moves first.', 'The same holds inside an economy. The balances of households, non-financial firms, the financial sector, the government and the rest of the world add up to zero: when one sector spends more than it earns, the others together earn more than they spend.', 'Which side drives the other is the question the next steps answer. That reading is Matthew Klein and Michael Pettis’s.'] },
     { t: 'The surplus economies spend less than they earn', bs: 'Surplus side', r: 'm', w: '', e: E('EXP>OFF', 'CHP>SAV'),
       x: 'In the surplus economies wages and household consumption lag behind output. What is produced and not bought at home is sold abroad, and the income from it is saved.',
-      d: ['The pattern is built into their growth models: state-guided exporters in Japan and Korea, Taiwan’s foundry economy, German and Dutch wage restraint (Circuit, step 06). China, too, holds household consumption down relative to what it produces.', 'An economy that spends less than it earns acquires claims on the rest of the world of exactly that size: reserves at its central bank, or foreign shares and bonds held by its pension funds and insurers. The surplus and the claims are one fact, seen from two sides.', 'The identity fixes the net amount only. The gross flows behind it are far larger and pass through financial centres, which is why the Circuit marks custody and fund centres.'] },
+      d: ['The pattern is built into their growth models: state-guided exporters in Japan and Korea, Taiwan’s foundry economy, German and Dutch wage restraint (Circuit, step 06). China, too, holds household consumption down relative to what it produces.', 'An economy that spends less than it earns acquires claims on the rest of the world of exactly that size: reserves at its central bank, or foreign shares and bonds held by its pension funds and insurers. The surplus and the claims are one fact, seen from two sides.', 'The identity fixes the {{grossnet|net amount}} only, which is why the Circuit marks the custody and fund centres the gross flows pass through.'] },
     { t: 'The claims are taken in dollars', bs: 'Into dollars', r: 'm', w: 'Mid-2026', e: E('SAV>SPX', 'CEN>HYP', 'EXP>OFF'), n: ['TSY'],
-      x: 'The dollar is the reserve currency and US markets are deep and open, so a large share of those claims is taken in US assets. Foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
-      d: ['No other market takes savings on this scale: China’s bloc offers no open, deep market in which to park them (Circuit, step 06).', 'So the US deficit is structural. It is the counterpart of the rest of the world’s wish to hold dollar claims, and not chiefly the result of Americans consuming too much.', 'That direction of causation, from the capital account to the trade account, is Klein and Pettis’s reading and this map’s. The accounting itself is silent on it.'] },
-    { t: 'The US has to accommodate the inflow', bs: 'Debt, not jobs', r: 'm', w: 'Sep and Oct 2026', e: E('SVR>CON', 'MTG>CON', 'CGR>CON'),
-      x: 'A deficit with the world means the US spends more than it earns, by exactly what foreigners add to their US claims. If investment does not rise to match, saving has to fall: through lost output and jobs, or through more borrowing.',
-      d: ['Imports take the place of demand for home production. Left alone, that shows up as unemployment, which lowers income and with it saving. The other way is to replace the lost demand with borrowed spending: by households, or by the government.', 'For decades the US has chosen debt. The personal saving rate was 3.8% in September 2026, and gross federal debt passed $40tn in October.', 'That is why US liabilities (Treasuries, agency debt, bank deposits, and the shares foreigners buy) grow in step with foreign holdings: they are two sides of one balance sheet.'] },
+      ech: 'Most accounts treat the global imbalance as a flaw to be fixed. The map’s thesis is that it is also a tool: made on purpose, and used.',
+      x: 'The dollar is the {{reservecur|reserve currency}} and US markets are deep and open, so a large share of those claims is taken in US assets. Foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
+      d: ['No other market takes savings on this scale: China’s bloc offers no open, deep market in which to park them (Circuit, step 06).', 'So the US deficit is structural. It is the counterpart of the rest of the world’s wish to hold dollar claims, and not chiefly the result of Americans consuming too much.', 'That direction of causation, from the capital account to the trade account, is Klein and Pettis’s reading. The accounting itself is silent on it.'] },
+    /* tiers build B (15 Nov 2026): R4 split in two (spec §3.1) */
+    { t: 'The US spends more than it earns', bs: 'Above its income', r: 'i', w: '', e: E('CON>EXP'),
+      x: 'A deficit with the world means the US spends more than it earns, by exactly what foreigners add to their US claims.',
+      nt: 'This is accounting: the two amounts are the same by definition.',
+      d: ['That is why US liabilities (Treasuries, agency debt, bank deposits, and the shares foreigners buy) grow in step with foreign holdings: they are two sides of one balance sheet.'] },
+    { t: 'Jobs or debt', bs: 'Debt, not jobs', r: 'm', w: 'Sep and Oct 2026', e: E('SVR>CON', 'MTG>CON', 'CGR>CON'),
+      x: 'If investment does not rise to match, saving has to fall: through lost output and jobs, or through more borrowing. For decades the US has chosen debt.',
+      d: ['Imports take the place of demand for home production. Left alone, that shows up as unemployment, which lowers income and with it saving. The other way is to replace the lost demand with borrowed spending: by households, or by the government.', 'The personal saving rate was 3.8% in September 2026, and gross federal debt passed $40tn in October.'] },
     { t: 'Built over half a century', bs: 'Since the 1970s', r: 'h', w: '1944 to 2026', e: E('EXP>OFF'), n: ['PET', 'TSY'],
-      x: 'None of this is sudden. Since Bretton Woods ended in the early 1970s the US has run the deficits that absorb others’ surpluses: first the oil exporters’ (the petrodollar), then East Asia’s and Germany’s, then China’s.',
-      d: ['From 1944 to the early 1970s it ran the other way: the US recycled its own surpluses to Europe and Japan through aid, loans and investment (Circuit, step 06).', 'The form of the return flow has changed too. Until about 2014 it came largely as central-bank reserves held in Treasuries; since then mostly as private purchases of shares. Foreigners held 47% of US federal debt in 2014 and 30% in 2025.'] },
-    { t: 'What it does to US markets', bs: 'In the markets', r: 'c', w: 'Oct 2026', e: E('HYP>SPX', 'SPX>TOP', 'TOP>HYP', 'TOP>CON'),
-      x: 'Abundant foreign money meets weak demand from wage earners, so it flows into financial assets more than into broad real investment. Yields are lower and asset prices higher than they would otherwise be, and finance grows.',
-      d: ['The richest tenth of households own 88% of household stocks and do more than 45% of consumer spending, so spending rides on asset prices.', 'Investment gathers where the valuations are: the AI build-out, with the state steering credit towards it (financialised industrial policy).', 'Lower than otherwise, not low: the 10-year yield averaged 5.13% in October 2026. That yields are lower than they would be without the inflow is this map’s reading, not a measurement.'] },
-    { t: 'Rules widen the channel', bs: 'The rules', r: 'a', w: 'Jul 2025 and Apr 2026', e: E('REG>BNK', 'TSY>BNK', 'CGR>STB', 'TSY>STB'), lev: [3, 4],
-      x: 'Washington also sets the rules for who can hold its debt. The leverage rule for the largest banks was eased from April 2026, and the GENIUS Act of July 2025 makes stablecoin issuers hold cash and short-term Treasuries.',
-      d: ['Both add buyers and so hold yields down. The bank channel does more: when a bank buys a Treasury, or lends against one in repo, it pays with a deposit it creates. Easing the rule therefore adds room to create money, which is closer to monetising the debt than to borrowing someone’s savings (this map’s reading).', 'A stablecoin adds a new buyer of bills only where the money behind it was not already in bills or money funds: most clearly when it comes from abroad.', 'These are amplifiers, not causes. They widen a channel dug by surplus recycling and by political choices, at home and abroad, about who saves and who spends.'] },
+      x: 'Since {{bw|Bretton Woods}} ended in the early 1970s the US has run the deficits that absorb others’ surpluses: first the oil exporters’ (the {{petrodollar|petrodollar}}), then East Asia’s and Germany’s, then China’s. Since about 2014 the claims have come back less as central-bank reserves held in Treasuries and more as private purchases of US shares.',
+      nt: 'Elias Rutten’s thesis: the dollar system is moving “from a state-centric, public-reserve hegemony to an asset-driven, private-capital network”.', ntEcho: 1,
+      d: ['From 1944 to the early 1970s it ran the other way: the US recycled its own surpluses to Europe and Japan through aid, loans and investment (Circuit, step 06).', 'Foreigners held 47% of US federal debt in 2014 and 30% in 2025.', 'The retreat has sped up. Foreign central banks stopped adding to their Treasuries after 2014 and sold $164bn in the year to August 2026. The premium the world pays to hold Treasuries is eroding too: against corporate bonds, the 10-year’s fell from about 60 to about 10 basis points between 2023 and October 2026 (Chumbo and Krishnamurthy, VoxEU, 3 Nov 2026).'] },
+    /* tiers build B (15 Nov 2026): R6 split in two; R7 (“Rules widen the channel”) removed as a repeat of “The regulators help”: its bank-money
+       point went to that step's mechanism, its stablecoin point to “Bills, not bonds” (spec §3.1) */
+    { t: 'Money into assets', bs: 'Into assets', r: 'c', w: 'Oct 2026', e: E('SPX>TOP', 'TOP>HYP', 'TOP>CON'),
+      x: 'Abundant foreign money meets weak demand from wage earners, so it flows into financial assets more than into broad real investment.',
+      d: ['The richest tenth of households own 88% of household stocks and do more than 45% of consumer spending, so spending rides on asset prices.'] },
+    { t: 'Lower yields, higher prices', bs: 'In the markets', r: 'c', w: 'Oct 2026', e: E('HYP>SPX'),
+      x: 'Yields are lower and asset prices higher than they would otherwise be, and finance grows. Investment gathers where the valuations are: the AI build-out.',
+      d: ['Lower than otherwise, not low: the 10-year yield averaged 5.13% in October 2026.', 'The state steers credit towards the build-out: {{fip|financialised industrial policy}}.'] },
+  ],
+};
+/* tiers build B (15 Nov 2026): the beginner primer, “The basics” (spec §4, copy Part A, trial text §5). Eight screens that assume nothing,
+   then first principles, then the guide. A line of its own, appended after first principles, so stored places keep their numbers.
+   Each screen lights real parts of the map, shows two sentences, keeps “Say more” behind a fold, carries a hidden text alternative and a
+   quiet way up to the guide. Every figure is one the page already carries, with its date and source. */
+Object.assign(SROLE, { b: ['The basics', '#e4ebf1'] });
+const SGND = {
+  t: 'The basics: deficits, bonds and yields', s: 'The basics', c: '#e4ebf1',
+  lede: 'Eight short screens that assume nothing: what the US borrows, from whom, at what price, and why that price matters now.',
+  b: [
+    { t: 'The US spends more than it collects', bs: 'The deficit', n: ['CGR', 'TSY'], e: [],
+      x: 'Year after year the US government spends more than it collects in taxes, and borrows the difference: that gap is the {{deficit|deficit}}. The borrowing piles up as {{debt|debt}}, which passed $40tn in October 2026.',
+      more: ['Debt is not paid off; it is {{rollover|rolled over}}. When a loan falls due, the Treasury repays it by borrowing again, at whatever {{rate|interest rate}} the market asks that day.',
+        'A household that borrowed like this would be cut off. A state that borrows in its own money, which is also the world’s money, is not: the lenders come to it.',
+        'So the question is never whether Washington can repay. It is who will keep lending, and at what price. That price sets the price of money for everyone else: for a mortgage, for a company, for a data centre.',
+        'Washington is not a passive borrower, though. It can use its geopolitical power to capture buyers for its debt. It can also reshape how the markets work and how money is raised at home, so that borrowing stays cheap for it. Many accounts of the deficit miss this.',
+        'This is one half of the {{twin|twin deficit}}. The other half is the country’s deficit with the rest of the world. The map is about how the two are tied together.'],
+      src: 'Gross federal debt, $40.25tn, October 2026 (the Circuit, step 08).',
+      map: 'Congress and the US Treasury are lit. Click either for what it does.',
+      alt: () => 'On the map: Congress and the US Treasury are lit; everything else waits in outline.' },
+    { t: 'It borrows by selling IOUs', bs: 'IOUs', e: E('TSY>MMF', 'TSY>BNK'),
+      x: 'To borrow, the Treasury sells IOUs called {{treasuries|Treasuries}}. {{bills|Bills}} are repaid within a year; notes and {{bond|bonds}} run for up to thirty years.',
+      more: ['Whoever buys one lends to the US government and is paid interest for it.',
+        'Bills are the short end. Banks, {{mmf|money funds}} and the issuers of dollar tokens hold them almost as if they were cash. Bonds are the long end. Pension funds and insurers hold them for decades, because they owe pensions decades from now.',
+        'Every week the Treasury holds {{auction|auctions}}. It sells to the bidders who ask the lowest interest, until the whole issue is sold. When buyers are plentiful the interest is low; when they hold back, the Treasury has to offer more.',
+        'Treasuries are the safest dollar asset in the world, so they are also its {{collateral|collateral}}: banks lend against them every night. The state’s debt is the floor the private financial system stands on.'],
+      map: 'Two lines run from the US Treasury, to Money funds and to Dealer banks. Hover a line for what flows along it.',
+      alt: () => 'On the map: two lines run from the US Treasury, to Money funds and to Dealer banks: the debt going out to its first buyers.' },
+    { t: 'The yield is the price of borrowing', bs: 'The yield', e: E('TSY>Y10'),
+      x: 'A {{yield|yield}} is the price of borrowing money, and it changes with the length of the loan. The {{curve|yield curve}} shows how: short loans follow the Fed’s rate, and longer loans cost more, by a {{termprem|term premium}}.',
+      more: ['Plot yields against the length of the loan, from three months to thirty years, and you get the yield curve.',
+        'The short end is set by policy. The Fed sets the {{policyrate|policy rate}}, the rate for overnight money, and short yields follow it.',
+        'The rest is the term premium: what lenders ask on top for tying up their money for longer. Many things set it: how the market is built, guidance from policy, and now geopolitics too. Above all it depends on who buys, and the buyers can be arranged.',
+        'That price is set in a political context. As the guide will show, it is a manipulated indicator, and the manipulation is on purpose. Institutions with mandates, such as the Fed and the Treasury, make it work the way politics finds useful.',
+        'That helps some groups in society and costs others. When politics changes, the winners change, and so does the setting in which the price is formed.',
+        'In October 2026 the 10-year yield averaged 5.13%.'],
+      src: '10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10).',
+      map: 'The 10-year gauge is lit. Click it for its date and source; the gold tab “MORE INSIDE ›” opens the yield curve.',
+      alt: () => 'On the map: the 10-year gauge is lit: ' + indVal(INDX.y10) + ', ' + INDX.y10.sub + '.' },
+    { t: 'The 10-year prices everything else', bs: 'The 10-year', e: E('Y10>MTG', 'Y10>BND', 'Y10>PCR'),
+      x: 'Historically the {{y10|10-year yield}} has been the benchmark price of long-term money: corporate bonds and mortgages are priced over it. When it rises, a mortgage, a company loan and a data centre all cost more.',
+      more: ['For decades markets treated the yield on US government debt as the rate to price everything else against. Every other borrower paid that rate plus something on top. The something is the {{spread|spread}}: what a lender asks for the extra risk.',
+        'So the ten-year yield works as a floor under other prices. Raise the floor and everything built on it rises too.',
+        'A family feels it in the mortgage. In October 2026 the ten-year averaged 5.13%. In the week to 29 October a thirty-year mortgage cost 7.24%.',
+        'A company feels it when it sells bonds. The firms building AI data centres borrow this way, at a spread over the same yield.',
+        'That is why one number gets so much attention. It is the price at which the state borrows, and the price everyone else starts from.'],
+      src: '10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10); 30-year fixed mortgage, 7.24%, week to 29 October 2026 (Freddie Mac).',
+      map: 'Lines run from the 10-year gauge to the mortgage gauge, to New bonds and to Private credit. Compare the two gauges.',
+      alt: () => 'On the map: lines run from the 10-year gauge to the mortgage gauge (' + indVal(INDX.mtg) + ', ' + INDX.mtg.sub + '), to New bonds and to Private credit.' },
+    { t: 'Who lends to Washington', bs: 'The lenders', e: E('OFF>TSY', 'TSY>MMF', 'TSY>BNK', 'TSY>CEN', 'TSY>HFD', 'SAV>Y10'),
+      x: 'The US borrows from foreign central banks, {{mmf|money funds}}, banks, pension funds, insurers and {{hedgefund|hedge funds}}. The central banks were the anchor for decades and cut their Treasuries by $164bn in the year to August 2026 ({{tic|TIC}}); hedge funds, helped by the state, now take a large share of the new long bonds.',
+      more: ['Each lender wants something different.',
+        'Foreign {{official|central banks}} hold Treasuries as reserves. They buy to hold, not to trade. For decades that made them the anchor.',
+        'Money funds want {{bills|bills}}, because bills turn back into cash within months. {{dealer|Dealer banks}} must bid at every auction, and sell on what they buy. Pension funds and insurers want long bonds, to match promises that fall due decades from now.',
+        'Hedge funds buy with borrowed money, to earn small gaps between prices. They are forced to sell when markets turn rough.',
+        'The state does more than borrow from them. How much a bank will lend a fund against its Treasuries depends on how calm the market is. When the Treasury and the Fed calm the long end, with {{buyback|buybacks}} and a backstop at the Fed, the same capital can carry more bonds. That is a subsidy from the state to the funds, and it keeps the buyers coming.',
+        'The two sides also share people. The Treasury Secretary ran a macro hedge fund, and the Fed chair was a partner in Stanley Druckenmiller’s family office. The people who design the debt’s plumbing come from the firms whose trades depend on it.',
+        'So the anchor is lifting, and a new one is being built: private lenders, many of them borrowing to buy, held in place by a calm the state supplies.'],
+      src: 'Foreign official holders cut $164bn of Treasuries in the year to August 2026 (TIC, major foreign holders; the indicator “Official Treasuries”). The subsidy and the officials’ careers: as stored at “Calm is a subsidy” and “Few funds, close to power” (BCBS–CPMI–IOSCO, Sep 2022; US Treasury biography of Bessent; CBS on Warsh).',
+      map: 'Six buyers are lit, each with a line to the Treasury’s debt; the line from Central banks is marked as selling. Click each buyer.',
+      alt: () => 'On the map: six buyers are lit, each with a line to the Treasury’s debt; the line from Central banks is marked as selling.' },
+    { t: 'The twin deficit', bs: 'Twin deficit', e: E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>SPX', 'SAV>Y10'),
+      x: 'The US also runs a deficit with the world, $1.18tn in 2025 (the Circuit), and with the government’s deficit it forms the {{twin|twin deficit}}. The dollars the world earns by selling to the US come back to buy US shares and bonds, and part of them funds the government.',
+      more: ['The government’s deficit is the one you met first. The other half is the country’s: the US buys more from the world than it sells to it.',
+        'Americans pay for imports in dollars. The exporters who earn those dollars do not spend them all. What is left is saved, and the savings are held as American assets: Treasuries, company bonds, shares.',
+        'That part is bookkeeping, not theory. A country that buys more than it sells hands over claims on itself to cover the gap. Every {{ca|deficit with the world}} is someone else’s {{surplus|surplus}}, and someone else’s claim. Economists call this pairing of deficits and surpluses the {{imbalance|global imbalance}}.',
+        'So the two halves meet. The dollars that leave through trade come back through the markets. Some of them lend to the government. Even more sit in shares: foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
+        'Which side moves first, the buying or the saving, is argued over. First principles take that up.'],
+      src: 'US current-account deficit, $1.18tn, 2025 (BEA, annual update of 24 June 2026; the Circuit). Foreign holdings, mid-2026: as stored at first principles, “The claims are taken in dollars”, and the Circuit’s opening card.',
+      map: 'A loop is lit, from consumers to exporters, on to their central banks and savers, and back into AI stocks and the 10-year. Follow it by its arrows.',
+      alt: () => 'On the map: a loop is lit: consumers to exporters, exporters to their central banks, the chip makers to allied savers, and the savers back into AI stocks and the 10-year.' },
+    { t: 'Why it matters now', bs: 'Why now', e: E('OFF>TSY', 'Y10>BND', 'BND>HYP'),
+      x: 'The old buyers stopped adding to their Treasuries after 2014, and now they are selling. The {{safepremium|premium}} the world once paid to hold Treasuries is eroding too, just as the AI build-out needs cheap long-term money.',
+      ech: 'The map’s thesis is that this instability is not an accident: it is made, and it is used on purpose.',
+      more: ['Foreigners held 47% of US federal debt in 2014 and 30% in 2025. In the year to August 2026 foreign central banks cut their Treasuries by $164bn.',
+        'A Treasury is more than a loan. It is the asset the world can sell in a hurry or pledge as collateral, and for that safety and ease investors accepted a lower yield. That is the safe-asset premium.',
+        'A VoxEU column by Miguel Chumbo and Arvind Krishnamurthy (3 November 2026) measures it. Against corporate bonds, the 10-year Treasury’s premium fell from about 60 to about 10 {{bp|basis points}} between 2023 and October 2026, while the premium on {{repo|repo}} stayed near 90. Repo, not the Treasury, is now the dollar safe asset the world pays most for. Against euro safe assets the premium has shrunk to near zero.',
+        'Their rough calculation: if only bills and repo count as safe, the supply of public dollar safe assets fell from 70% of GDP in 2019 to 20% in 2025, even though more than $10tn of Treasuries were issued in between. The authors say the comparison overstates the fall, and the direction is the point.',
+        'So the state has to find new lenders and keep them. Washington works the levers that keep lenders coming, and that keep money cheap for the industry it wants built. The guide follows that work in four parts.'],
+      parts: [['Where the money lands.', 'A data centre has to be paid for: with bonds, with shares, and with loans kept off the books.'],
+        ['Where it comes from.', 'The savings of America’s allies, and the spending of the American consumer.'],
+        ['What squeezes it.', 'Oil, then the Fed, then long yields.'],
+        ['Who lends to the state.', 'At those yields: which buyers, on how much borrowed money, and under whose rules.']],
+      after: 'Two shorter parts close the guide: how the dollar is backed abroad, and what happens if it breaks.',
+      src: 'Foreign holders’ share of US federal debt and official holders’ $164bn cut, as stored at first principles (“Built over half a century”) and in TIC, year to August 2026. Safe-asset premium: Chumbo and Krishnamurthy, “Repo is the new dollar safe asset”, VoxEU (CEPR), 3 Nov 2026, Figures 1 and 2 and text.',
+      lk: [['Chumbo and Krishnamurthy, VoxEU (3 Nov 2026)', 'https://cepr.org/voxeu/columns/repo-new-dollar-safe-asset']],
+      map: 'The line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.',
+      alt: () => 'On the map: the line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.' },
+    { t: 'How to read the map', bs: 'Reading the map', e: [],
+      x: 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources.',
+      more: ['A line’s colour says what kind of relation it is. The key under the map lists them.',
+        'A gauge shows one price, with its date and its source.',
+        'A gold tab, “MORE INSIDE ›”, means a deeper view sits behind that part of the map.',
+        'Dotted underlines are defined terms: hover or tap them.',
+        'The guide lights the map one step at a time. What is dim has not been reached yet.',
+        'At seven points the guide stops and asks what you would do. Then it shows what happened, and where the other choice leads. Nothing is scored.'],
+      map: 'The whole map is shown in outline, with the key below it. Try one click.',
+      alt: () => 'On the map: the whole map is shown in outline, with the key below it.' },
   ],
 };
 const SLINES = (() => {
   const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri })), beats: [] }];
   SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why, ld]) => L[0].beats.push(sBeat(p, s, ci, why, ld))));
-  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? (SMAIN.ch.find(C => C.tri) || {}).tri : null }], beats: P.steps.map((x, s) => sBeat(i, s, 0)) }));
+  PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? (SMAIN.ch.find(C => C.tri) || {}).tri : null }], beats: (P.ord || P.steps.map((x, s) => s)).map(s => sBeat(i, s, 0)) }));
   /* first principles: the last line in the list (so stored places in the guide and the mechanisms keep their numbers), shown first */
-  L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, why: '', lev: B.lev || [], fork: null, ld: false })) });
+  L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, nt: B.nt, ntEcho: B.ntEcho, ech: B.ech, why: '', lev: B.lev || [], fork: null, ld: false })) });
+  /* tiers build B: the primer, appended last so every stored place keeps its number */
+  L.push({ id: 'gnd', t: SGND.t, s: SGND.s, c: SGND.c, gnd: true, lede: SGND.lede, chs: [{ t: SGND.t, w: '' }], beats: SGND.b.map(B => Object.assign({ p: -1, s: -1, ch: 0, d: null, n: B.n || [], r: 'b', w: '', why: '', lev: [], fork: null, ld: false }, B)) });
   L.forEach(l => {
     let n = new Set(), e = new Set(), v = new Set();
     l.cum = l.beats.map(B => { n = new Set([...n, ...bN(B)]); e = new Set([...e, ...B.e]); v = new Set([...v, ...B.lev]); return { n, e, l: v }; });
@@ -7101,18 +7241,18 @@ const simNarrHTML = () => `<aside class="snarr s2card" id="isx-snarr" aria-label
 </div></aside>`;
 const sArrL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>';
 const sArrR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg>';
-const SPI = SLINES.findIndex(L => L.pre);
+const SPI = SLINES.findIndex(L => L.pre), SGI = SLINES.findIndex(L => L.gnd);
 /* B1-3: when each indicator first appears: the first step whose lit relations touch it (first principles, and the guide) */
 /* content build: “Tokyo’s trilemma” lights the yen’s lines one step before the decision on the yen. The gauge stays an empty socket until
    the step that decision leads to, so its dated value (after the intervention) cannot answer the question first. */
 (() => { const yb = SLINES[0].beats.findIndex(B => B.e.includes(EIDX['TSY>YEN'])); if (yb >= 0) ['yen', 'dxy'].forEach(id => { INDX[id].at = { main: yb + 1 }; }); })();
-IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ pre: f(SLINES[SPI]), main: f(SLINES[0]) }, I.at || {}); });
+IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ gnd: f(SLINES[SGI]), pre: f(SLINES[SPI]), main: f(SLINES[0]) }, I.at || {}); });
 /* the mechanisms, by where they sit: what Washington sets, the markets that carry it, the economy it lands in */
 const STIER = [['up', 'Upstream · the state and the rules', [0, 5, 10]], ['mid', 'Intermediate · the markets that carry it', [9, 1, 8, 2]], ['down', 'Downstream · where it lands', [4, 7, 6, 3]]];
 function simPickHTML() {
-  const M = SLINES[0], Pp = SLINES[SPI];
+  const M = SLINES[0], Pp = SLINES[SPI], Q = SLINES[SGI];
   const mech = i => { const L = SLINES[i + 1]; return `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`; };
-  return `<div class="pk-h">Start here</div><button type="button" class="pk-l pk-pre${SIM.line === SPI ? ' on' : ''}" data-sl="${SPI}" data-sb="-1" style="--pc:${Pp.c}"><i aria-hidden="true"></i><b>${fe(Pp.t)}</b><small>${Pp.beats.length} reveals · the source of it all</small></button>`
+  return `<div class="pk-h">Start here</div><button type="button" class="pk-l pk-pre${SIM.line === SGI ? ' on' : ''}" data-sl="${SGI}" data-sb="0" style="--pc:${Q.c}"><i aria-hidden="true"></i><b>${fe(Q.t)}</b><small>${Q.beats.length} screens · assumes nothing</small></button><button type="button" class="pk-l pk-pre${SIM.line === SPI ? ' on' : ''}" data-sl="${SPI}" data-sb="-1" style="--pc:${Pp.c}"><i aria-hidden="true"></i><b>${fe(Pp.t)}</b><small>${Pp.beats.length} reveals · the source of it all</small></button>`
     + `<div class="pk-h">The guide</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
     + `<div class="pk-h">One mechanism at a time</div>` + STIER.map(([k, t, ids]) => `<div class="pk-t pk-${k}"><div class="pk-tk">${fe(t)}</div><div class="pk-ms">${ids.map(mech).join('')}</div></div>`).join('');
 }
@@ -7145,7 +7285,7 @@ function simBar() {
       note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
     return;
   }
-  const guide = !!(L.main || L.pre), P = SLINES[SPI], G = SLINES[0];
+  const guide = !!(L.main || L.pre || L.gnd), P = SLINES[SPI], G = SLINES[0], Q = SLINES[SGI];
   const stt = (l, i) => SIM.line === l ? (i === b && !SIM.ph ? 'cur' : i < b || b >= n || (i === b && SIM.ph) ? 'done' : '') : SIM.vis.has(l + ':' + i) ? 'done' : '';
   /* B1-4: a decision is a diamond before the step it leads to: hollow, gold once called, orange once the other path has been walked.
      While its chain plays, the diamond grows a branch: one mark per link and a ring for the crisis card. */
@@ -7154,11 +7294,12 @@ function simBar() {
     if (k && i > 0) { const D = SDEC[k], here = SIM.line === l && dk === k && b === i - 1;
       out.push({ kind: 'fork', state: here && SIM.ph === 'ask' ? 'cur' : SIM.seenAlt.has(k) ? 'alt' : SIM.pick[k] ? 'seen' : '', target: 'd:' + l + ':' + (i - 1), title: 'Your call · ' + D.nt, sub: SIM.pick[k] ? 'You chose: ' + D[SIM.pick[k]][0] : D.q });
       if (here && SIM.ph !== 'ask') { D.chain.forEach((C, j) => out.push({ kind: 'link', state: SIM.ph === 'crisis' || j < SIM.c ? 'done' : j === SIM.c ? 'cur' : '', target: 'c:' + l + ':' + (i - 1) + ':' + j, title: 'Other path · ' + (j + 1) + ' · ' + C.t })); out.push({ kind: 'crisis', state: SIM.ph === 'crisis' ? 'cur' : '', target: 'x:' + l + ':' + (i - 1), title: 'Where it leads · ' + D.crisis.t }); } }
-    out.push({ kind: 'step', state: stt(l, i), target: l + ':' + i, title: (SLINES[l].pre ? '' : (i + 1) + ' · ') + B.t });
+    out.push({ kind: 'step', state: stt(l, i), target: l + ':' + i, title: (SLINES[l].pre || SLINES[l].gnd ? '' : (i + 1) + ' · ') + B.t });
     return out; };
   let segs;
   if (guide) {
-    segs = [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }]
+    segs = (L.gnd || stGet(SWAY) === 'ground' ? [{ label: Q.s, colour: Q.c, current: !!L.gnd && b >= 0 && b <= n, target: SGI + ':0', title: Q.t, sub: Q.beats.length + ' screens', marks: Q.beats.flatMap((B, i) => mk(SGI, i)) }] : [])
+      .concat([{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }])
       .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.flatMap(i => mk(0, i)) }; }));
     segs.push({ label: '', colour: SMAIN.c, current: !!L.main && b >= n, grow: 2, cls: 'end', marks: [{ kind: 'end', state: L.main && b >= n ? 'cur' : '', target: '0:' + G.beats.length, title: 'The whole machine' }] });
   } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
@@ -7168,9 +7309,9 @@ function simBar() {
   else if (SIM.ph === 'chain') nx = { kind: 'branch', kicker: 'Next in the chain', title: SIM.c < DD.chain.length - 1 ? DD.chain[SIM.c + 1].t : DD.crisis.t, pkicker: 'Chain', ptitle: 'Next' };
   else if (SIM.ph === 'crisis') nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
   else if (b < 0) nx = L.main ? { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' } : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
-  else if (b >= n) nx = L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % PLAYS.length + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
+  else if (b >= n) nx = L.gnd ? { kicker: 'Next · first principles', title: P.beats[0].t, pkicker: 'Next', ptitle: 'First principles' } : L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % PLAYS.length + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
   else if (sNextFork()) nx = { kicker: 'Next · your call', title: SDEC[sNextFork()].nt, pkicker: 'Next', ptitle: 'Your call' };
-  else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : 'Mechanism complete', ptitle: 'Next' };
+  else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : L.gnd ? 'The ground is laid' : 'Mechanism complete', ptitle: 'Next' };
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
   const cs = segs.find(s => s.current);
   RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : 'Mechanism: steps', stage,
@@ -7195,7 +7336,7 @@ function simNav(ev) {
   if (SIM.ph === 'ask') { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
   if (SIM.ph) { simNext(); return; }
   if (b < 0) { simGo(L.main ? SPI : SIM.line, 0, 'focus'); return; }
-  if (b >= n) { if (L.pre) simGo(0, 0, 'focus'); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
+  if (b >= n) { if (L.pre) simGo(0, 0, 'focus'); else if (L.gnd) simGo(SPI, 0, 'focus'); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
   simNext();
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
@@ -7219,11 +7360,11 @@ const sWord = n => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven',
 const sChip = n => `<button type="button" class="sn-chip" data-sn="${n}" style="--nc:${FN[n][5]}"><i aria-hidden="true"></i>${fe(FN[n][3])}</button>`;
 /* a reveal is one or two sentences: the first two of a text, and what is left of it for “The mechanism” */
 function sSplit(x, keep) {
-  const s = String(x), cut = [], k = keep || 2; const re = /[.!?]\s+(?=[A-Z“‘$])/g; let m;
+  const s = String(x), cut = [], k = keep || 2; const re = /[.!?]\s+(?=[A-Z“‘$]|\{\{\w+\|[A-Z])/g; let m;
   while ((m = re.exec(s))) cut.push(m.index + 1);
   return cut.length < k ? [s, ''] : [s.slice(0, cut[k - 1]), s.slice(cut[k - 1]).trim()];
 }
-const sOne = x => !/[.!?]\s+(?=[A-Z“‘$])/.test(String(x));
+const sOne = x => !/[.!?]\s+(?=[A-Z“‘$]|\{\{\w+\|[A-Z])/.test(String(x));
 /* B1-4: “Go deeper” is “The mechanism” (other labels by card). Whether it starts open is settled after the card is drawn (simNarr):
    the visitor's own choice this session, else open only where the window is tall and the opened card still fits; shut on phones. */
 const sDeep = (h, lab) => h ? `<details class="s2deep"><summary>${lab || 'The mechanism'}</summary><div class="s2d">${h}</div></details>` : '';
@@ -7233,9 +7374,9 @@ const sSrcHTML = ss => ss.length ? `<div class="lsrc">${ss.map(([t, u]) => u ? `
 /* the decision card: the question, the situation (one sentence, with more behind one click), two options in a fixed order.
    Neither outcome is on the card. */
 function sAskHTML(k) {
-  const D = SDEC[k], was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', more = D.ctx.more.length || D.ctx.s || D.ctx.links.length;
-  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${ft(D.q)}</p>`
-    + `<div class="dctx"><b>The situation</b><p>${ft(D.ctx.x)}</p>`
+  const D = SDEC[k], was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', more = D.ctx.more.length || D.ctx.s || D.ctx.links.length, [tq, tx] = sTips([D.q, D.ctx.x]);
+  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${ft(tq)}</p>`
+    + `<div class="dctx"><b>The situation</b><p>${ft(tx)}</p>`
     + (more ? `<button type="button" class="dmore" data-dctx aria-expanded="${open}" aria-controls="isx-dctx">More context</button><div class="dmo" id="isx-dctx"${open ? '' : ' hidden'}>${D.ctx.more.map(t => `<p>${fe(t)}</p>`).join('')}${D.ctx.s ? `<div class="lsrc">${fe(D.ctx.s)}</div>` : ''}${sLinksHTML(D.ctx.links)}</div>` : '') + `</div>`
     + `<div class="dopts" role="group" aria-label="Your call">${D.ord.map((o, i) => `<button type="button" class="sn-opt dopt${was === o ? ' was' : ''}" data-fk="${o}"><span class="dl" aria-hidden="true">${'AB'[i]}</span><b>${fe(D[o][0])}</b><span>${fe(D[o][1])}</span>${was === o ? '<em>your earlier call</em>' : ''}</button>`).join('')}</div>`
     + `<p class="dfine">What happened opens after you choose; the other path stays open too.</p>`
@@ -7243,7 +7384,7 @@ function sAskHTML(k) {
 }
 function sChainHTML(k) {
   const D = SDEC[k], C = D.chain[SIM.c], n = D.chain.length;
-  return `<div class="s2k kch" style="--rc:#ff8a5c"><i></i>Other path<em>${fe(D.alt[0])}</em><span class="sn-cnt">link ${SIM.c + 1} / ${n}</span></div><h3>${fe(C.t)}</h3><p class="s2p">${ft(C.x)}</p>`
+  return `<div class="s2k kch" style="--rc:#ff8a5c"><i></i>Other path<em>${fe(D.alt[0])}</em><span class="sn-cnt">link ${SIM.c + 1} / ${n}</span></div><h3>${fe(C.t)}</h3><p class="s2p">${ft(sTips([C.x])[0])}</p>`
     + (Object.keys(C.fl).length ? `<div class="sn-new dpr"><span>Pressure</span>${Object.entries(C.fl).map(([id, a]) => `<span class="sn-chip dfl" style="--nc:${ROLE[INDX[id].role][3]}"><i aria-hidden="true"></i>${fe(INDX[id].k)} <b>${a}</b><span class="vh">${fe(prsOf(id, a).replace('pressure ', ''))}</span></span>`).join('')}</div>` : '')
     + (C.n ? `<p class="sn-note cb-nt">${fe(C.n)}</p>` : '') + (C.vw ? doorBtn(C.vw[0], C.rd || C.vw[1]) : '')
     + sDeep(`<p>Each link in this chain is a relation already on the map. Arrows show the direction of pressure; the values on the gauges stay the measured ones.</p>`
@@ -7251,10 +7392,10 @@ function sChainHTML(k) {
 }
 function sCrisisHTML(k) {
   const D = SDEC[k], K = D.crisis;
-  return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${ft(K.x)}</p>${sSrcHTML(K.s)}`
+  return `<div class="s2k" style="--rc:#ff5a4e"><i></i>Where it leads<span class="sn-cnt">end of the chain</span></div><h3>${fe(K.t)}</h3><p class="s2p">${ft(sTips([K.x])[0])}</p>${sSrcHTML(K.s)}`
     + (K.built ? `<details class="cb-rail"${PHONE() ? ' open' : ''}><summary>How it was built <em>${K.built.length} dated steps, what they show, whose reading</em></summary><ol>${K.built.map(([d, t, x, s, w]) => `<li><span class="rd">${fe(d)}</span><b>${fe(t)}</b><p>${fe(x)}</p><div class="lsrc">${fe(s)} · ${fe(w)}</div></li>`).join('')}</ol>${K.shows ? `<div class="cb-shows"><b>What it shows</b><p>${ft(K.shows)}</p></div>` : ''}<p class="dwho">${fe(K.who)}</p></details>` : '')
     + K.prec.map(P => `<div class="dprec"><b>${fe(P.k)}</b><p>${ft(P.x)}</p>${sSrcHTML(P.s)}${P.cav ? `<p class="dcav">${fe(P.cav)}</p>${sSrcHTML(P.cs)}` : ''}</div>`).join('')
-    + (K.built ? '' : `<p class="dwho">${fe(K.who)}</p>`)
+    + (K.built || !K.who ? '' : `<p class="dwho">${fe(K.who)}</p>`)
     + `<div class="s2acts dacts"><button type="button" class="sn-go" data-dgo="real">Back to what happened ${sArrR}</button>${sLinksHTML(K.links)}</div>`;
 }
 /* tiers build A (15 Nov 2026): expert mode (spec §2). The full view as it is, plus a one-line key, an index of the guide's steps in the bar,
@@ -7306,6 +7447,54 @@ function sDoorsHTML() {
   return `<div class="tw-in"><div class="tw-k" id="isx-tw-k">Three ways in</div><div class="tw-doors" role="group" aria-labelledby="isx-tw-k">${D.map(d => `<button type="button" class="tw-door${d.gold ? ' gold' : ''}${d.off ? ' off' : ''}" data-way="${d.k}" aria-describedby="isx-tw-${d.k}"${d.off ? ' aria-disabled="true"' : ''}>`
     + `<b>${fe(d.t)}</b>${last === d.k && !d.off ? '<small class="tw-last">Last time</small>' : ''}<span id="isx-tw-${d.k}"><span class="tw-a">${fe(d.a)}</span> <em class="tw-m">${d.off ? LOCK3 : ''}${fe(d.m)}</em></span>${d.off ? '' : '<i aria-hidden="true">→</i>'}</button>`).join('')}</div></div>`;
 }
+/* tiers build B (15 Nov 2026): term tips at first use on a card (spec §4.3 and §7 G; copy rule 1: a term is defined where each route first
+   uses it). The primer and first principles carry their tips in the text; on every card the first use of a technical term below is tipped
+   as well, once per card, never inside another tip. Plain words (deficit, debt, yield, bond) are tipped only where the primer and first
+   principles define them, because elsewhere they would mislead (a trade deficit is not the budget deficit). */
+const TIPW = [['srf', /\bstanding repo\b/], ['rrp', /\breverse repo\b/], ['swapspread', /\bswap-spread trades?\b/], ['basis', /\bbasis trades?\b/], ['eslr', /\bleverage rule\b/],
+  ['pb', /\bprime brokerage\b/], ['repo', /\brepo\b/], ['haircut', /\bhaircuts?\b/], ['move', /\bMOVE\b/], ['vol', /\b[Vv]olatility\b/], ['leverage', /\b[Ll]everage\b/],
+  ['tga', /Treasury’s account|its account at the Fed/], ['reserves', /(?<!central-)\b[Bb]ank reserves\b|\bReserves\b/], ['debtlimit', /\bdebt limit\b/], ['buyback', /\bbuybacks?\b/],
+  ['bills', /\b[Bb]ills\b/], ['mmf', /\b[Mm]oney funds?\b/], ['dealer', /\b[Dd]ealer banks?\b|\b[Dd]ealers\b/], ['hedgefund', /\b[Hh]edge funds?\b/],
+  ['genius', /\bGENIUS Act\b/], ['stablecoin', /\b[Ss]tablecoins?\b/], ['swapline', /\bswap lines?\b|\bswap framework\b/], ['esf', /Exchange Stabilization Fund/],
+  ['fima', /\bFIMA\b/], ['fxint', /\bintervened\b|\bcurrency intervention\b/], ['carry', /\bcarry trades?\b/], ['brent', /\bBrent\b/], ['pce', /\bPCE\b/],
+  ['hyperscalers', /\b[Hh]yperscalers\b/], ['sp500', /S&P 500/], ['cover', /\bcover ratios?\b/], ['spv', /\b[Ss]pecial-purpose vehicles?\b|\bSPVs?\b/],
+  ['privcredit', /\b[Pp]rivate credit\b/], ['capex', /\bcapex\b/], ['forward', /\bforward sale\b/], ['tpu', /\bTPUs?\b/], ['underwrite', /\bunderwrite\b/],
+  ['coupon', /\bcoupons?\b/], ['spread', /\bspread(?= over)/], ['y10', /\b10-year (Treasury )?yield\b|\bthe 10-year\b/], ['termprem', /\bterm premium\b/], ['curve', /\byield curve\b/],
+  ['policyrate', /\bpolicy rate\b/], ['bp', /\bbasis points?\b/], ['qt', /\bquantitative tightening\b/], ['qe', /\bquantitative easing\b/], ['tqe', /\bTreasury QE\b/],
+  ['margin', /\b[Mm]argins?\b/], ['clearing', /\b[Cc]entral clearing\b/], ['collateral', /\bcollateral\b/], ['auction', /\bauctions?\b/], ['rollover', /\brolled over\b|\brollover\b/],
+  ['ca', /\bcurrent[- ]accounts?\b/], ['tic', /\bTIC\b/], ['official', /\b[Ff]oreign official\b|\b[Oo]fficial holders\b/], ['identity', /\baccounting identity\b|\b[Tt]he identity\b/],
+  ['inflow', /\bcapital inflows?\b|\binflows?\b/], ['reservecur', /\breserve currency\b/], ['bw', /Bretton Woods/], ['petrodollar', /\bpetrodollars?\b/],
+  ['hierdollar', /\bhierarchical dollarisation\b/], ['underclass', /\bforeign monetary underclass\b/], ['fip', /\bfinanciali[sz]ed industrial policy\b/],
+  ['hotmoney', /\bhot money\b/], ['geoecon', /\bgeoeconomic\b/], ['safepremium', /\bsafe-asset premium\b/], ['twin', /\btwin deficit\b/], ['imbalance', /\bglobal (trade )?imbalances?\b/]];
+function sTips(arr) {
+  const used = new Set(); arr.forEach(t => String(t == null ? '' : t).replace(/\{\{(\w+)\|/g, (m, k) => { used.add(k); return m; }));
+  return arr.map(t => {
+    if (!t) return t; let out = String(t);
+    TIPW.forEach(([k, re]) => {
+      if (used.has(k) || !DEFS[k]) return;
+      const parts = out.split(/(\{\{\w+\|[^}]+\}\})/);
+      for (let i = 0; i < parts.length; i += 2) { const m = re.exec(parts[i]); if (m) { parts[i] = parts[i].slice(0, m.index) + '{{' + k + '|' + m[0] + '}}' + parts[i].slice(m.index + m[0].length); used.add(k); out = parts.join(''); return; } }
+    });
+    return out;
+  });
+}
+/* the thesis echo: one line under a card's two sentences (spec §1.1); the class is the marker the check lists */
+const sEcho = t => t ? `<p class="thesis-echo">${ft(t)}</p>` : '';
+/* the terms a primer screen defines, listed in its fold (spec §5) */
+const sTermsHTML = (...ts) => { const ks = []; ts.join(' ').replace(/\{\{(\w+)\|/g, (m, k) => { if (DEFS[k] && !ks.includes(k)) ks.push(k); return m; }); return ks.length ? `<div class="gnd-terms"><b>Terms on this screen</b><dl>${ks.map(k => `<dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd>`).join('')}</dl></div>` : ''; };
+/* a primer screen: the kicker, two sentences, the echo where there is one, what is lit (hidden line), a quiet way up, and “Say more” */
+function sGndHTML(L, b) {
+  const B = L.beats[b], n = L.beats.length, more = B.more || [];
+  return `<div class="s2k" style="--rc:${L.c}"><i></i>The basics<span class="sn-cnt">${b + 1} of ${n}</span></div><h3>${fe(B.t)}</h3><p class="s2p">${ft(B.x)}</p>${sEcho(B.ech)}`
+    + `<p class="vh">${fe(B.alt ? B.alt() : '')}</p>`
+    + `<p class="gnd-map"><span>On the map</span> ${fe(B.map)}</p>`
+    + `<p class="gnd-know"><button type="button" class="s2lnk" data-sl="${SPI}" data-sb="0">I know this: go to the guide</button></p>`
+    + sDeep(more.map(t => `<p>${ft(t)}</p>`).join('') + (B.parts ? `<dl class="gnd-parts">${B.parts.map(([h, t]) => `<dt>${fe(h)}</dt><dd>${fe(t)}</dd>`).join('')}</dl>` : '') + (B.after ? `<p>${fe(B.after)}</p>` : '')
+      + `<div class="lsrc cb-src">${B.src ? 'Source: ' + fe(B.src) : 'Source: no figure on this screen.'}</div>` + (B.lk ? sLinksHTML(B.lk) : '') + sTermsHTML(B.x, ...more), 'Say more');
+}
+/* the figure the closing card needs and the page did not carry: stored here with its source (copy Part F, point 2) */
+const SFIG = { gbp: { v: '47%', k: 'Hyperscalers’ share of sterling corporate bond issuance', d: '2026 to early September', src: 'Bank of England Financial Policy Committee record, 25 Sep 2026 (data round F6, section 3)' } };
+const sAiPct = k => { const r = AIR(k); return r && r.gdp ? Math.round(r.x / r.gdp * 100) : null; };
 function simBodyHTML() {
   const h = simBodyHTML0();
   return SIM.ret === 'full' && SIM.mode === 'story' ? `<p class="tw-ret"><button type="button" class="s2lnk" data-twret>← Back to the full map</button></p>` + h : h;
@@ -7315,37 +7504,46 @@ function simBodyHTML0() {
   if (b < 0) {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
-    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : L.gnd ? 'From the ground up · ' + n + ' screens' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
       + (L.main && SMAIN.thesis ? `<div class="s2thesis"><span>The map’s thesis</span><p>${richText(fe(SMAIN.thesis))}</p></div>` : '')
       + (L.main ? sDoorsHTML() + `<p class="ifx-click"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l12.5 6.2-5.6 1.9-2.1 5.9z"/><path d="M13 12l5.5 5.5"/></svg>${sClickLine()}</p>`
-        : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="-1">${L.pre ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
-      + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.main ? `<p>About ${sMins(['main'])} minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About three minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting; where a sentence says which way the causation runs, it says whose reading that is.</p>` : '')
+        : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${L.gnd ? SPI : 0}" data-sb="${L.gnd ? 0 : -1}">${L.pre || L.gnd ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
+      + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.main ? `<p>About ${sMins(['main'])} minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About ${sMins(['pre'])} minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting, and an author’s reading carries the author’s name.</p>` : L.gnd ? `<p>About ${sMins(['gnd'])} minutes. Each screen lights the part of the map it is about, and every term is defined where it first appears: hover or tap a dotted word. Then first principles, then the guide.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you sit in Bessent’s chair and choose before you see what happened. Either way, you can walk the other path.</p>` : '')
-        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''), L.main || L.pre ? 'How the guide works' : 'The mechanism');
+        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''), L.main || L.pre || L.gnd ? 'How the guide works' : 'The mechanism');
   }
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
+    if (L.gnd) return `<div class="s2k" style="--rc:${L.c}"><i></i>The basics · ${n} screens</div><h3>The ground is laid.</h3>`
+      + `<p class="s2p">You have the words the guide uses: deficit, Treasuries, yield, the 10-year, the twin deficit. Next comes the question under all of them: why the world’s savings come to the US at all.</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="${SPI}" data-sb="0">First principles: why the world’s savings come to the US ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="0">Straight to the guide</button></div>`;
     const nxt = L.main ? null : SLINES[SIM.line % PLAYS.length + 1];
     if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
       + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">How the plumbing was built ${sArrR}</button></div>`
       + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
-      + `<p class="s2p">${L.main ? `${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.` : `${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine.`} Open the full view to run the plays, pull any lever and click anything.</p>`
+      + (L.main ? `<p class="s2p">${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.</p>`
+        /* tiers build B: the close pays off the thesis (spec §1.1 rule 5, copy Part D); its four verbs answer the four echoes */
+        + sEcho('A price manipulated, buyers captured, rules shaped, dollars rationed: those are the valves, and you have seen who holds them.')
+        + `<p class="s2p s2close">${ft(`The system also holds because others are bought in. In 2025 Taiwan’s exports of ICT goods and components were about half its GDP, and Malaysia’s and Singapore’s {{gross|gross}} AI-hardware exports about ${sAiPct('MYS')}% and ${sAiPct('SGP')}%. Economies that grow like this cannot step out of the trade without giving up growth. At home they are crowded out: the hyperscalers also borrow in the allies’ own currencies, and took ${SFIG.gbp.v} of sterling corporate bond issuance in ${SFIG.gbp.d}, so local firms compete with them for their own savers.`)}</p>`
+        + `<p class="s2p">Open the full view to run the plays, pull any lever and click anything. Scenarios shows the same power being exercised.</p>`
+        : `<p class="s2p">${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine. Open the full view to run the plays, pull any lever and click anything.</p>`)
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
       + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
-      + sDeep(L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : '', 'Not in the guide');
+      + sDeep((L.main ? `<p class="lsrc s2closen">Gross exports include imported parts, so for the re-export hubs Singapore and Malaysia they overstate what is earned at home. Taiwan: the broader ICT category. Source: as stored on the Circuit’s exposure chart, 2025 (step 06, layer “Hardware exports”). Sterling: ${fe(SFIG.gbp.src)}, ${fe(SFIG.gbp.k.toLowerCase())}, ${fe(SFIG.gbp.d)}: a high share of a small market, and not comparable with another currency’s share, because each has a different base.</p>` : '') + (L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : ''), L.main ? 'Sources, and what the guide left out' : 'Not in the guide');
   }
   const dk = sDecK();
   if (dk) return SIM.ph === 'ask' ? sAskHTML(dk) : SIM.ph === 'chain' ? sChainHTML(dk) : sCrisisHTML(dk);
+  if (L.gnd) return sGndHTML(L, b);
   const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, R = SROLE[B.r], prevN = b > 0 ? L.cum[b - 1].n : new Set();
   const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]);
   /* the step a decision leads to: once the visitor has made a call, the card says what happened and how the call compares */
   const wk = B.fork && SIM.pick[B.fork] ? B.fork : null, WD = wk ? SDEC[wk] : null;
-  const lead = !!(B.why && (P || B.ld) && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x);
+  const lead = !!(B.why && (P || B.ld) && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x), [tw, tx1] = sTips([lead ? B.why : '', x1]);
   let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : R[1]}"><i></i>${WD ? 'What happened' : R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
     + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + `<h3>${fe(B.t)}</h3>`
-    + (lead ? `<p class="s2why">${ft(B.why)}</p>` : '') + `<p class="s2p">${ft(x1)}</p>` + (B.nt ? `<p class="sn-note cb-nt">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
+    + (lead ? `<p class="s2why">${ft(tw)}</p>` : '') + `<p class="s2p">${ft(tx1)}</p>` + sEcho(B.ech) + (B.nt ? `<p class="sn-note cb-nt${B.ntEcho ? ' thesis-echo' : ''}">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
   if (WD && !SIM.seenAlt.has(wk)) h += `<p class="dfine"><button type="button" class="s2lnk" data-dgo="alt">See the other path</button></p>`;
   h += sDeep((x2 ? `<p>${ft(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${ft(t)}</p>`).join('') : '') + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + (B.lk ? sLinksHTML(B.lk) : '')
@@ -7572,10 +7770,11 @@ window.ISX = {
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
   get finMode() { return finMode; }, get armMode() { return armMode; }, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
+  get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */
-  get mins() { return { guide: sMins(['pre', 'main']), main: sMins(['main']) }; },
+  get mins() { return { ground: sMins(['gnd', 'pre', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
-    decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ main: !!L.main, pre: !!L.pre, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
+    decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ id: L.id, main: !!L.main, pre: !!L.pre, gnd: !!L.gnd, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
   /* fix round: the bond deals of the five technology firms in the page's filing list, for the bond screen's time axis. A row that
      covers a period (Alphabet's “Jan to Sep 2026” and “2025”) has no single date and is left off the axis. */
