@@ -2440,7 +2440,7 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="mstep" id="isx-mstep" role="group" aria-label="Step through the dollar loop"><button type="button" class="ms-b ms-prev" id="isx-ms-prev" aria-label="Previous step"></button><div class="ms-mid"><div class="ms-top"><b class="ms-n" id="isx-ms-n">00</b><span class="ms-of" id="isx-ms-of">/ 10</span><span class="ms-t" id="isx-ms-t">Overview</span></div><div class="ms-bar" id="isx-ms-bar" aria-hidden="true"></div></div><button type="button" class="ms-b ms-next" id="isx-ms-next" aria-label="Next step"></button></div>
     <div class="cmd6" id="isx-cmd">
       <button type="button" class="bigbtn prev" id="isx-t-prev"><span class="ar" aria-hidden="true">◀</span><span class="bi" id="isx-t-previ" aria-hidden="true"></span><span class="bt"><small>Back</small> <b id="isx-t-prevl"></b></span></button>
-      <div class="tournarr panel" id="isx-tournarr"><button type="button" class="tfold" id="isx-t-fold" aria-label="Fold">–</button><div class="tk" id="isx-t-k"></div><h3 id="isx-t-h"></h3><p id="isx-t-p"></p><div class="tfig"><div class="v" id="isx-t-v"></div><div class="vc" id="isx-t-c"></div></div><div class="tx6" id="isx-t-x"></div><div class="tnav"><button type="button" class="godeep" id="isx-t-more">Go deeper <span aria-hidden="true">↓</span></button><a class="essay6" id="isx-t-essay" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"></a></div><div class="tmeta"><button type="button" class="howc" data-how>How we count</button></div><div class="legm" id="isx-t-legm"></div><div class="pips" id="isx-t-pips" aria-hidden="true"></div><div class="tnudge" id="isx-t-nudge" hidden></div></div>
+      <div class="tournarr panel" id="isx-tournarr"><button type="button" class="tfold" id="isx-t-fold" aria-label="Fold">–</button><div class="tk" id="isx-t-k"></div><h3 id="isx-t-h"></h3><p id="isx-t-p"></p><div class="tfig"><div class="v" id="isx-t-v"></div><div class="vc" id="isx-t-c"></div></div><div class="tx6" id="isx-t-x"></div><div class="tnav"><a class="essay6" id="isx-t-essay" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"></a><button type="button" class="howc" data-how>How we count</button></div><details class="b4mech" id="isx-t-mech"><summary>The mechanism<span class="cv" aria-hidden="true"></span></summary><div class="b4mb" id="isx-t-mb"></div><button type="button" class="b4below" id="isx-t-more">Figures, sources and definitions below the map <span aria-hidden="true">↓</span></button></details><div class="legm" id="isx-t-legm"></div><div class="pips" id="isx-t-pips" aria-hidden="true"></div><div class="tnudge" id="isx-t-nudge" hidden></div></div>
       <button type="button" class="bigbtn next" id="isx-t-next"><span class="bt"><small id="isx-t-nextk">Next</small> <b id="isx-t-nextl"></b> <i id="isx-t-tease"></i></span><span class="bi" id="isx-t-nexti" aria-hidden="true"></span><span class="ar" aria-hidden="true">▶</span></button>
     </div>
     <div class="mapnote" id="isx-mapnote"></div>
@@ -3738,7 +3738,7 @@ function buildMapModes() {
     if (k === mapMode && m.grad) { const lo = k === 'ai' && aiAbs ? '$0' : m.lo, hi = k === 'ai' && aiAbs ? '$470bn' : m.hi, nn = Object.keys(CTY).filter(i => mmOnMap(i) && mmValue(i) != null).length;
       host.insertAdjacentHTML('beforeend', `<div class="mmscale" style="background:${m.grad}"></div><div class="mmlab"><span>${lo}</span><span>${hi}</span></div><div class="mmnf3"><i aria-hidden="true"></i><span>${nn} economies have a figure. The others are neutral: not collected, which is not zero.</span></div>`); }
   });
-  host.insertAdjacentHTML('beforeend', '<div class="mmhint">Drag to turn · click a country · ← → to step<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>');
+  host.insertAdjacentHTML('beforeend', '<div class="mmhint">' + (COARSE ? 'Swipe to turn · tap a country' : 'Drag to turn · click a country · ← → to step') + '<br>Data as of ' + esc(LIVE.asof || '') + '<button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>');
   host.style.setProperty('--pc', MM[mapMode].c);
 }
 /* phone: a chain as a vertical timeline */
@@ -4369,6 +4369,9 @@ function narr6() {
   tr.classList.remove('in'); void tr.offsetWidth; tr.classList.add('in');
   $('n-cap').innerHTML = richText(val(s.cap) || '');
   deep6(s); mstepSync();
+  /* B4: “The mechanism” in the card: the step's full text where the card shows its summary, then the blocks of the full picture */
+  { const bl = val(s.deep) || [], mb = $('t-mb'), md = $('t-mech'), h = bl.map(([k, t]) => `<p><b>${esc(k)}.</b> ${richText(t)}</p>`).join('');
+    if (mb && md) { mb.innerHTML = h || '<p>The full picture for this step is below the map.</p>'; md.open = stGet('isx-mech', true) === 'open' && !PHONE(); } }
   tr.classList.toggle('ringc', ringOn); if (ringOn) ringCard();
 }
 function deep6(s) {
@@ -5554,7 +5557,7 @@ function renderFin() {
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">The imperial machinery · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2>Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: from the ground up, the guide, the full map"><span aria-hidden="true">↩</span>Three ways in</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: from the ground up, the guide, the full map"><span aria-hidden="true">↩</span>Three ways in</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
       + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
@@ -5893,7 +5896,7 @@ const INTRO_HTML = `
         <h3>How to read the map</h3>
         <div class="in-ways">
           <p><b>Follow the loop.</b> Press <em>Play</em> or use the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
-          <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the imperial Machinery (with the Scott Bessent Simulator) and 14 Scenarios. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
+          <p><b>Find everything.</b> Tabs at the top: the Circuit, the imperial Arm, the imperial Machinery (with the Scott Bessent Simulator) and 14 Scenarios; a crisis simulation is coming. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page.</p>
         </div>
       </div>
     </div>
@@ -7466,7 +7469,7 @@ function sSplit(x, keep) {
   return cut.length < k ? [s, ''] : [s.slice(0, cut[k - 1]), s.slice(cut[k - 1]).trim()];
 }
 const sOne = x => !/[.!?]\s+(?=[A-Z“‘$]|\{\{\w+\|[A-Z])/.test(String(x));
-/* B1-4: “Go deeper” is “The mechanism” (other labels by card). Whether it starts open is settled after the card is drawn (simNarr):
+/* B1-4: the old disclosure is “The mechanism” (other labels by card). Whether it starts open is settled after the card is drawn (simNarr):
    the visitor's own choice this session, else open only where the window is tall and the opened card still fits; shut on phones. */
 const sDeep = (h, lab) => h ? `<details class="s2deep"><summary>${lab || 'The mechanism'}</summary><div class="s2d">${h}</div></details>` : '';
 const sSub = `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2.5 1.5h11v1.6h-11zM2.5 4.4h11V6h-11zM2.5 7.3h11v7.2L8 11.4l-5.5 3.1z"/></svg>`;
@@ -7840,6 +7843,8 @@ ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); i
 initIntro(); buildResbar(); buildMapModes(); bootGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
 $('t-more').addEventListener('click', () => crisp($('narr')));
+$('t-mech').addEventListener('toggle', () => { if (!PHONE() && $('t-mech')._u) stSet('isx-mech', $('t-mech').open ? 'open' : 'shut', true); });
+$('t-mech').querySelector('summary').addEventListener('click', () => { $('t-mech')._u = true; setTimeout(() => { $('t-mech')._u = false; }, 0); });
 $('t-fold').addEventListener('click', () => { const t = $('tournarr'); t.classList.toggle('folded'); $('t-fold').textContent = t.classList.contains('folded') ? '+' : '–'; });
 $('t-p').addEventListener('click', () => $('tournarr').classList.toggle('open'));
 document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (!RT && view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } });

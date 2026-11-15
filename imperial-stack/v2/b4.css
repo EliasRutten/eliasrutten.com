@@ -177,3 +177,52 @@
 #isx-root .b4mech[open] > summary .cv { transform: rotate(45deg); }
 #isx-root .b4mech .b4mb { padding: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--ink2); }
 #isx-root .b4mech + .b4mech { margin-top: 0; }
+#isx-root .cmd6 .tournarr .b4mech .b4mb { max-height: min(17vh, 160px); overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+#isx-root .cmd6 .tournarr .b4mech .b4mb p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.55; color: var(--ink2); }
+#isx-root .cmd6 .tournarr .b4mech .b4mb p b { color: var(--ink); font-weight: 600; }
+#isx-root .b4below { height: 24px; display: inline-flex; align-items: center; gap: 6px; margin: 2px 0 10px; padding: 0 10px; border-radius: 999px; border: 1px solid #2c3e50; background: none; font: 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); cursor: pointer; }
+#isx-root .b4below:hover { color: #fff; border-color: #8fa3b6; }
+#isx-root .cmd6 .tournarr .tnav { display: flex; align-items: center; gap: 10px; }
+#isx-root .cmd6 .tournarr .tnav .howc { height: 24px; margin-left: auto; padding: 0 10px; border: 1px solid #2c3e50; border-radius: 999px; }
+#isx-root .cmd6 .tournarr .tmeta { display: none; }
+/* the Simulator's “The mechanism”: the same row */
+#isx-root .s2 .s2deep { margin-top: 12px; padding-top: 0; border-top: 1px solid #1b2733; }
+#isx-root .s2 .s2deep summary { display: flex; width: 100%; height: 36px; min-height: 36px; align-items: center; justify-content: space-between; padding: 0; border: 0; border-radius: 0; background: none; font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .s2 .s2deep summary::after, #isx-root .s2 .s2deep[open] summary::after { content: ""; width: 7px; height: 7px; margin-right: 3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .s2 .s2deep[open] summary::after { transform: rotate(45deg); }
+#isx-root .s2 .s2deep summary:hover { color: #fff; }
+#isx-root .s2 .s2deep.lock .dlock { width: 100%; min-height: 36px; padding: 0; border: 0; border-radius: 0; }
+#isx-root .b4sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* rule 1 · the type scale: nothing under 10.5 px but the “soon” badge and the route labels (10 px) */
+#isx-root .rt-host .rt .rt-sl, #isx-root .rt-host .rt .rt-st small, #isx-root .rt-host .rt .rt-s .lg, #isx-root .rt-host .rt .rt-s .sm, #isx-root .rt-host .rt .rt-pl { font-size: 10px; }
+#isx-root .rt-host .rt .rt-nx small, #isx-root .rt-host .rt .rt-line small { font-size: 10.5px; }
+#isx-root #isx-resbar .res .k, #isx-root #isx-resbar .res .rd6, #isx-root .tp small, #isx-root .dir, #isx-root .legbox2 .lgt span, #isx-root .legbox2 .lw { font-size: 10.5px; }
+#isx-root .s2 .s2ttl .fk, #isx-root .s2 .tw-k, #isx-root #isx-cock.s2 .s2card .tw-door .tw-m, #isx-root .s2 .s2thesis > span, #isx-root .s2 .sn-why > span, #isx-root .s2 .r > span, #isx-root .s2 .s2card em { font-size: 10.5px; }
+#isx-root .b3 .b3gl, #isx-root .b3 .b3sw { font-size: 10.5px; }
+/* rule 2 · one kicker: mono 10.5, caps, .14em */
+#isx-root .cmd6 .tournarr .tk { font-size: 10.5px; letter-spacing: .14em; }
+/* rule 3 · one primary: gold fill, dark text. Scenarios’ red primaries go gold; red stays the colour of a switch */
+#isx-root .b3 .b3cta { height: 56px; border-color: #ffd27a; background: linear-gradient(180deg, #ffe2a6, #ffc35c); color: #1d1406; box-shadow: 0 10px 34px -12px rgba(255, 195, 92, .55); }
+#isx-root .b3 .b3cta:hover { box-shadow: 0 0 0 4px rgba(255, 210, 122, .14), 0 16px 50px -8px rgba(255, 195, 92, .6); }
+#isx-root .b3 .b3strip .rt.sk-strip .rt-nx { height: 44px; border-color: rgba(255, 210, 122, .55); background: linear-gradient(180deg, rgba(255, 210, 122, .22), rgba(120, 90, 30, .35)); color: #ffe2a6; }
+#isx-root .b3 .b3strip .rt.sk-strip .rt-nx:hover { background: linear-gradient(180deg, rgba(255, 210, 122, .34), rgba(140, 104, 36, .5)); border-color: #ffd27a; }
+@media (max-width: 760px) { #isx-root .b3 .b3cta { height: 44px; } }
+/* rule 7 · one card: the Circuit's corner brackets retire */
+#isx-root .cmd6 .tournarr::after { display: none; }
+#isx-root .cmd6 .tournarr { border-radius: 14px; }
+/* rule 14 · four heights (24, 36, 44, 56) and four radii (8, 12, 14, 999) */
+#isx-root .zoom6 button { width: 36px; height: 36px; border-radius: 8px; }
+#isx-root .legbox2 .lgt { min-height: 36px; }
+#isx-root .legbox2 .leg6 .lfull { min-height: 24px; display: inline-flex; align-items: center; }
+#isx-root .s2 .cb-tourb { height: 24px; min-height: 24px; }
+#isx-root .s2 .s2fold { width: 36px; height: 36px; top: 4px; right: 4px; }
+#isx-root .s2 .b1ind { height: 36px; }
+#isx-root .dock6 .dk { height: 44px; }
+#isx-root .zoom6 #isx-fs { height: 36px; }
+/* rule 15 · one motion curve; reduced motion cuts transitions */
+@media (prefers-reduced-motion: reduce) { #isx-root .b4card *, #isx-root .b4sheet, #isx-root .ach, #isx-root #isx-arm * { transition: none !important; } }
+/* rule 17 · the phone strip fits: Crisis is not wired and leaves it below 761 px (About lists it) */
+@media (max-width: 760px) { #isx-root #isx-v-crisis { display: none; } }
+/* focus: one ring */
+#isx-root .b4card button:focus-visible, #isx-root .b4card summary:focus-visible, #isx-root .b4sheet button:focus-visible, #isx-root .b3 button:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
