@@ -110,3 +110,13 @@
 #isx-root .s2thesis span { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .13em; text-transform: uppercase; color: #ffd27a; }
 #isx-root .s2thesis p { margin: 3px 0 0; font-size: 13px; line-height: 1.5; color: #dbe4ec; }
 #isx-root .s2thesis i { font-style: italic; }
+@media (max-height: 820px) {
+  #isx-root .s2thesis { margin: 7px 0 2px; padding: 6px 10px 7px; }
+  #isx-root .s2thesis span { display: inline; margin-right: 6px; }
+  #isx-root .s2thesis p { display: inline; font-size: 12.5px; line-height: 1.42; }
+}
+/* the opening card carries the thesis: a little wider, so it stays one screen without inner scroll at 1280×760 */
+#isx-root #isx-cock.s2.s4open .s2card { width: 680px; }
+@media (max-height: 820px) { #isx-root #isx-cock.s2.s4open .s2card { max-height: calc(100% - 210px); } }
+/* at laptop heights the card reaches the title row: it moves right, clear of the title and the Tour button */
+@media (max-height: 820px) and (min-width: 1100px) { #isx-root #isx-cock.s2.s4open .s2card { left: calc(50% + 115px); } }

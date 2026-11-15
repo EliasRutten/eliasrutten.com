@@ -132,6 +132,12 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('content build: the Simulator’s tour', '#simulator', sim(-1), 1440, 900, async p => { await p.evaluate(() => ISX.simtour.open(true)); await p.waitForTimeout(400); });
   await run('content build, phone: the Simulator’s tour', '#simulator', sim(-1), 390, 844, async p => { await p.evaluate(() => ISX.simtour.open(true)); await p.waitForTimeout(400); });
   await run('content build: the capital stack locked in the switch', '#simulator', { ...sim(-1), 'isx-stack': 'shut' }, 1440, 900);
+  /* fix round: the bond screen's panel (cursor moved, a chip pressed, the table view), the door tab and a borrowed gauge's dossier, the thesis */
+  await run('fix round: level 2, cursor at May 2023, the MOVE chip pressed', '#simulator', fullv, 1440, 900, async p => { await vw('bond', { level: 2 })(p); await p.evaluate(() => { document.querySelector('#isx-vw [data-bxj="2023-05"]').click(); document.querySelector('#isx-vw .bx-chip[data-lane="move"]').click(); }); await p.waitForTimeout(200); });
+  await run('fix round: level 2 as a table', '#simulator', fullv, 1280, 760, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
+  await run('fix round, phone: level 2 as a table', '#simulator', fullv, 390, 844, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
+  await run('fix round: a chain borrows the 10-year; its dossier with figure and door row', '#simulator', sim(0), 1440, 900, async p => { await chainTo(3)(p); await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="Y10"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
+  await run('fix round: the opening card with the thesis at 1280×760', '#simulator', sim(-1), 1280, 760);
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

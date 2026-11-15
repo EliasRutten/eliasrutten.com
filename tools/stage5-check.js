@@ -249,7 +249,8 @@ const AUDITOR = () => {
       await click(q, '#isx-b1ind'); await q.waitForTimeout(300);
       const lad = await js(q, () => { const S = ISX.sim, E = new Set(S.lines[0].steps[11].e), l = document.getElementById('isx-b1led'), later = [...l.querySelectorAll('.lr.ind.later')]; return { open: !l.hidden, later: later.length, should: S.indicators.filter(I => !I.rel.some(i => E.has(i))).length, digits: later.filter(x => x.querySelector('b').textContent !== '·' || !/Later in the guide/.test(x.textContent) || /\d/.test(x.textContent.replace(x.querySelector('.ln').textContent, ''))).length, details: later.filter(x => x.querySelector('.ld, button')).length, how: !!l.querySelector('.lsrc3'), tips: [...l.querySelectorAll('.lr.ind:not(.later) .b1tip li.later')].length, figsLater: l.querySelectorAll('.lr.later:not(.ind)').length }; });
       ok('no early reveal: the role ledger, opened at step 12, keeps unreached rows to a name and “Later in the guide”; the source layer waits', lad.open && lad.later === lad.should && lad.later > 0 && lad.digits === 0 && lad.details === 0 && !lad.how, lad);
-      /* an other path borrows actors and gauges from later in the guide: they are named, not valued (tools/b1-check.js walks every chain) */
+      /* an other path borrows actors and gauges from later in the guide. Fix round (14 Nov 2026): they carry their figures (the decisions now come
+         early, and Elias wants the statistics on the map); indicators the chain does not touch stay hidden (tools/b1-check.js walks every chain) */
       await q.keyboard.press('Escape');
       const fork = await js(q, async () => {
         const S = ISX.sim, wait = ms => new Promise(r => setTimeout(r, ms)), i = S.lines[0].steps.findIndex((s, j) => j > 11 && false);
@@ -257,9 +258,9 @@ const AUDITOR = () => {
         const T = ISX.sim; if (!T.alt) return { alt: null };
         const cum = new Set(T.lines[0].steps[T.beat].n), tmp = [...document.querySelectorAll('#isx-rmap .fn.tmp')];
         const E = new Set(T.lines[0].steps[T.beat].e), late = T.indicators.filter(I => !I.rel.some(i => E.has(i)));
-        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => g.textContent.trim() !== (g.querySelector('.fnt') || { textContent: g.textContent.trim() }).textContent.trim() && [...g.querySelectorAll('[data-gv], [data-gt]')].some(x => x.textContent.trim())).length, rail: late.filter(I => [...document.querySelectorAll(`#isx-rmap [data-gv="${I.id}"]`)].some(x => x.textContent.trim())).length };
+        return { alt: T.alt, tmp: tmp.length, valued: tmp.filter(g => g.textContent.trim() !== (g.querySelector('.fnt') || { textContent: g.textContent.trim() }).textContent.trim() && [...g.querySelectorAll('[data-gv], [data-gt]')].some(x => x.textContent.trim())).length, rail: late.filter(I => [...document.querySelectorAll(`#isx-rmap [data-gv="${I.id}"]`)].some(x => x.textContent.trim() && !x.closest('.bor, .flare'))).length };
       });
-      ok('no early reveal: on an other path, borrowed actors and gauges show a name only and their indicators stay hidden', !!fork.alt && fork.valued === 0 && fork.rail === 0, fork);
+      ok('no early reveal: on an other path, borrowed actors and gauges carry their figures, and indicators the chain does not reach stay off the rail', !!fork.alt && fork.rail === 0, fork);
       ok('no page errors (reveal)', q._errs.length === 0, q._errs); await q.context().close();
     } else { ok(`no page errors (reveal, ${w} px)`, p._errs.length === 0, p._errs); await p.context().close(); }
   }
