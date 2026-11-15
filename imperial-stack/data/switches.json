@@ -1,0 +1,568 @@
+{
+ "INSTR": {
+  "service": "Service withheld or cut",
+  "intel": "Intelligence and imagery access",
+  "access": "Access list",
+  "sanction": "Sanction",
+  "freeze": "Asset freeze",
+  "export": "Export control",
+  "payments": "Payment and messaging access",
+  "token": "Token freeze",
+  "entry": "Visa and entry",
+  "market": "Market-access condition",
+  "datadem": "Data-access demand"
+ },
+ "SW": [
+  {
+   "id": "ukr-1",
+   "case": "ukr",
+   "step": 6,
+   "date": "September 2022",
+   "holder": "SpaceX, on Elon Musk’s decision",
+   "type": "private",
+   "origin": "US",
+   "instr": "service",
+   "cut": "Starlink coverage for one operation",
+   "target": "A Ukrainian drone attack on the Russian fleet near Crimea",
+   "span": "One operation, near Crimea",
+   "status": "thrown",
+   "hand": "sense",
+   "at": "sense",
+   "short": "SpaceX"
+  },
+  {
+   "id": "ukr-2",
+   "case": "ukr",
+   "step": 7,
+   "date": "5–11 March 2025",
+   "holder": "Washington: the White House and the NGA",
+   "type": "state",
+   "origin": "US",
+   "instr": "intel",
+   "cut": "US intelligence sharing, and Maxar imagery bought through the NGA’s GEGD contract",
+   "target": "Ukraine",
+   "span": "Six days; lifted after Ukraine accepted a US ceasefire proposal in Jeddah",
+   "status": "thrown",
+   "via": "the NGA’s GEGD contract with Maxar",
+   "restored": "11 March 2025",
+   "hand": "state",
+   "at": "sense",
+   "short": "Washington"
+  },
+  {
+   "id": "ukr-3",
+   "case": "ukr",
+   "step": 8,
+   "date": "February 2026",
+   "holder": "SpaceX with Ukraine’s defence ministry",
+   "type": "joint",
+   "origin": "mixed",
+   "instr": "access",
+   "cut": "Starlink links for terminals not on a whitelist of verified ones",
+   "target": "Russian units using smuggled terminals",
+   "span": "Along the front, from February 2026",
+   "status": "thrown",
+   "hand": "sense",
+   "at": "sense",
+   "short": "SpaceX + Kyiv"
+  },
+  {
+   "id": "mh17-1",
+   "case": "mh17",
+   "step": 6,
+   "date": "2014–2020",
+   "holder": "Washington: US intelligence",
+   "type": "state",
+   "origin": "US",
+   "instr": "intel",
+   "cut": "US satellite data on the launch",
+   "target": "The investigation and the court in The Hague",
+   "span": "Never released; briefed confidentially to Dutch prosecutors",
+   "status": "thrown",
+   "hand": "state",
+   "at": "sense",
+   "short": "Washington"
+  },
+  {
+   "id": "protest-1",
+   "case": "protest",
+   "step": 4,
+   "date": "March 2025",
+   "holder": "The US Secretary of State",
+   "type": "state",
+   "origin": "US",
+   "instr": "entry",
+   "cut": "Her student visa",
+   "target": "A Tufts student",
+   "span": "Revoked without notice",
+   "status": "thrown",
+   "flag": "The page does not name her outside the source (Ozturk v. Hyde); keep it so.",
+   "hand": "state",
+   "at": "state",
+   "short": "The US Secretary of State"
+  },
+  {
+   "id": "border-1",
+   "case": "border",
+   "step": 3,
+   "date": "Deadline 31 December 2026",
+   "holder": "Washington: the Enhanced Border Security Partnership",
+   "type": "state",
+   "origin": "US",
+   "instr": "datadem",
+   "cut": "Visa-free travel, unless US officers may query police databases",
+   "target": "The Netherlands and other visa-waiver countries",
+   "span": "Deadline 31 December 2026",
+   "status": "threatened",
+   "hand": "data",
+   "at": "state",
+   "short": "Washington"
+  },
+  {
+   "id": "border-2",
+   "case": "border",
+   "step": 7,
+   "date": "March 2025",
+   "holder": "US border officers",
+   "type": "state",
+   "origin": "US",
+   "instr": "entry",
+   "cut": "Entry to the United States",
+   "target": "A French scientist",
+   "span": "Sent back on arrival",
+   "status": "thrown",
+   "hand": "state",
+   "at": "state",
+   "short": "US border officers"
+  },
+  {
+   "id": "icc-1",
+   "case": "icc",
+   "step": 4,
+   "date": "May 2025",
+   "holder": "Washington: Executive Order 14203 and OFAC",
+   "type": "state",
+   "origin": "US",
+   "instr": "sanction",
+   "cut": "The prosecutor’s Microsoft email",
+   "target": "The International Criminal Court’s prosecutor",
+   "span": "From May 2025",
+   "status": "thrown",
+   "via": "Microsoft",
+   "exit": "His email moved to Proton, a Swiss provider (on the page); the court moved out in October 2025",
+   "hand": "act",
+   "at": "cloud",
+   "short": "Washington"
+  },
+  {
+   "id": "icc-2",
+   "case": "icc",
+   "step": 6,
+   "date": "August 2025 onwards",
+   "holder": "Washington: OFAC",
+   "type": "state",
+   "origin": "US",
+   "instr": "sanction",
+   "cut": "Cards and accounts: Visa, Mastercard, Amex, Amazon, Airbnb, PayPal, Expedia",
+   "target": "Judge Nicolas Guillou",
+   "span": "From August 2025",
+   "status": "thrown",
+   "via": "Visa, Mastercard, Amex, Amazon, Airbnb, PayPal and Expedia",
+   "hand": "act",
+   "at": "money",
+   "short": "Washington"
+  },
+  {
+   "id": "kenya-1",
+   "case": "kenya",
+   "step": 9,
+   "date": "Any day",
+   "holder": "Tether",
+   "type": "private",
+   "origin": "other",
+   "instr": "token",
+   "cut": "Any USDT address",
+   "target": "A Kenyan saver, or any holder",
+   "span": "Not used here; used against Garantex in March 2025",
+   "status": "standing",
+   "flag": "Tether’s domicile is not on the page; origin shown as “not US” only if Elias agrees, else “not on the page”.",
+   "hand": "money",
+   "at": "money",
+   "short": "Tether"
+  },
+  {
+   "id": "nexperia-1",
+   "case": "nexperia",
+   "step": 3,
+   "date": "12 June 2025",
+   "holder": "Washington: US officials",
+   "type": "state",
+   "origin": "US",
+   "instr": "market",
+   "cut": "Access to the US market, unless the Chinese chief executive is replaced",
+   "target": "Nexperia and the Dutch government",
+   "span": "Stated as a condition in meeting minutes",
+   "status": "threatened",
+   "hand": "state",
+   "at": "state",
+   "short": "Washington"
+  },
+  {
+   "id": "nexperia-2",
+   "case": "nexperia",
+   "step": 4,
+   "date": "29 September 2025",
+   "holder": "US Commerce Department",
+   "type": "state",
+   "origin": "US",
+   "instr": "export",
+   "cut": "US technology for firms at least 50% owned by a blacklisted firm",
+   "target": "Nexperia",
+   "span": "From 29 September 2025; paused after the November deal",
+   "status": "thrown",
+   "restored": "November 2025 (paused)",
+   "hand": "chips",
+   "at": "chips",
+   "short": "US Commerce Department"
+  },
+  {
+   "id": "nexperia-3",
+   "case": "nexperia",
+   "step": 6,
+   "date": "4 October 2025",
+   "holder": "Beijing: the Commerce Ministry",
+   "type": "state",
+   "origin": "other",
+   "instr": "export",
+   "cut": "Exports from Nexperia’s Chinese unit, about 70% of output",
+   "target": "Nexperia, and car plants downstream",
+   "span": "From 4 October 2025",
+   "status": "thrown",
+   "hand": "chips",
+   "at": "chips",
+   "short": "Beijing"
+  },
+  {
+   "id": "huawei-1",
+   "case": "huawei",
+   "step": 1,
+   "date": "16 May 2019",
+   "holder": "US Commerce Department",
+   "type": "state",
+   "origin": "US",
+   "instr": "export",
+   "cut": "US technology without a licence (entity list)",
+   "target": "Huawei",
+   "span": "From 16 May 2019",
+   "status": "thrown",
+   "hand": "act",
+   "at": "chips",
+   "short": "US Commerce Department"
+  },
+  {
+   "id": "huawei-2",
+   "case": "huawei",
+   "step": 3,
+   "date": "2019–2020",
+   "holder": "US Commerce Department",
+   "type": "state",
+   "origin": "US",
+   "instr": "export",
+   "cut": "Google’s apps on new Huawei phones abroad",
+   "target": "Huawei",
+   "span": "From 2019",
+   "status": "thrown",
+   "via": "Google",
+   "hand": "act",
+   "at": "cloud",
+   "short": "US Commerce Department"
+  },
+  {
+   "id": "huawei-3",
+   "case": "huawei",
+   "step": 5,
+   "date": "Q2 → Q4 2020",
+   "holder": "US Commerce Department",
+   "type": "state",
+   "origin": "US",
+   "instr": "export",
+   "cut": "Manufacture of Huawei’s own chip designs",
+   "target": "Huawei",
+   "span": "From 2020",
+   "status": "thrown",
+   "via": "TSMC",
+   "exit": "Building around the stack: SMIC and HarmonyOS, August 2023 (on the page)",
+   "hand": "act",
+   "at": "chips",
+   "short": "US Commerce Department"
+  },
+  {
+   "id": "russia-1",
+   "case": "russia",
+   "step": 1,
+   "date": "26–28 February 2022",
+   "holder": "The US, the EU and allies",
+   "type": "state",
+   "origin": "mixed",
+   "instr": "freeze",
+   "cut": "Roughly half of the Bank of Russia’s reserves of more than $600bn",
+   "target": "The Bank of Russia",
+   "span": "From February 2022",
+   "status": "thrown",
+   "hand": "money",
+   "at": "money",
+   "short": "The US, the EU and allies"
+  },
+  {
+   "id": "russia-2",
+   "case": "russia",
+   "step": 2,
+   "date": "From 12 March 2022",
+   "holder": "The EU Council",
+   "type": "state",
+   "origin": "other",
+   "instr": "payments",
+   "cut": "SWIFT messaging for seven Russian banks",
+   "target": "Seven Russian banks",
+   "span": "From 12 March 2022",
+   "status": "thrown",
+   "via": "SWIFT (Belgium)",
+   "exit": "Russia’s own rails, and China’s (on the page)",
+   "hand": "money",
+   "at": "money",
+   "short": "The EU Council"
+  },
+  {
+   "id": "russia-3",
+   "case": "russia",
+   "step": 3,
+   "date": "5 March 2022",
+   "holder": "Visa and Mastercard",
+   "type": "private",
+   "origin": "US",
+   "instr": "payments",
+   "cut": "Card payments in and out of Russia",
+   "target": "Russian cardholders and foreign cards in Russia",
+   "span": "From 5 March 2022",
+   "status": "thrown",
+   "flag": "The page says the firms suspended operations; it does not say whether they were ordered to. Holder kept as the firms.",
+   "hand": "money",
+   "at": "money",
+   "short": "Visa and Mastercard"
+  },
+  {
+   "id": "russia-4",
+   "case": "russia",
+   "step": 6,
+   "date": "12 December 2025",
+   "holder": "The EU",
+   "type": "state",
+   "origin": "other",
+   "instr": "freeze",
+   "cut": "€210bn of Russian state assets in the EU, €185bn at Euroclear",
+   "target": "The Bank of Russia",
+   "span": "Open-ended from 12 December 2025",
+   "status": "thrown",
+   "via": "Euroclear (Brussels)",
+   "hand": "money",
+   "at": "money",
+   "short": "The EU"
+  },
+  {
+   "id": "nayara-1",
+   "case": "nayara",
+   "step": 3,
+   "date": "22 July 2025",
+   "holder": "Microsoft, applying an EU listing",
+   "type": "private",
+   "origin": "US",
+   "instr": "service",
+   "cut": "Outlook, Teams, Office and data on Microsoft’s servers",
+   "target": "Nayara Energy (49% Rosneft)",
+   "span": "Eight days; restored before the Delhi High Court hearing",
+   "status": "thrown",
+   "restored": "30 July 2025",
+   "hand": "act",
+   "at": "cloud",
+   "short": "Microsoft"
+  },
+  {
+   "id": "nayara-2",
+   "case": "nayara",
+   "step": 5,
+   "date": "July 2025",
+   "holder": "SAP India, citing the same sanctions",
+   "type": "private",
+   "origin": "other",
+   "instr": "service",
+   "cut": "Support for the refinery’s enterprise software",
+   "target": "Nayara Energy",
+   "span": "Until an Indian court ordered service restored",
+   "status": "thrown",
+   "hand": "cloud",
+   "at": "cloud",
+   "short": "SAP India"
+  },
+  {
+   "id": "gaza-1",
+   "case": "gaza",
+   "step": 7,
+   "date": "September 2025",
+   "holder": "Microsoft",
+   "type": "private",
+   "origin": "US",
+   "instr": "service",
+   "cut": "Services some Israeli defence-ministry accounts used for surveillance",
+   "target": "A unit of Israel’s defence ministry",
+   "span": "From September 2025",
+   "status": "thrown",
+   "hand": "cloud",
+   "at": "cloud",
+   "short": "Microsoft"
+  },
+  {
+   "id": "garantex-1",
+   "case": "garantex",
+   "step": 2,
+   "date": "March 2025",
+   "holder": "Tether, working with US authorities",
+   "type": "joint",
+   "origin": "mixed",
+   "instr": "token",
+   "cut": "About $27m of USDT in Garantex wallets",
+   "target": "Garantex",
+   "span": "From March 2025",
+   "status": "thrown",
+   "hand": "money",
+   "at": "money",
+   "short": "Tether"
+  }
+ ],
+ "pic": {
+  "ukr": {
+   "cols": [
+    {
+     "id": "c0",
+     "steps": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "t": "The chain",
+     "s": "2022 onwards · every day"
+    },
+    {
+     "id": "sep22",
+     "t": "Sep 2022",
+     "steps": [
+      6
+     ],
+     "sw": "ukr-1"
+    },
+    {
+     "id": "jun23",
+     "t": "Jun 2023",
+     "mark": {
+      "on": "star",
+      "t": "the Pentagon pays SpaceX",
+      "from": "step 3 text"
+     },
+     "reveal": 3
+    },
+    {
+     "id": "mar25",
+     "t": "5–11 Mar 2025",
+     "steps": [
+      7
+     ],
+     "sw": "ukr-2",
+     "window": true
+    },
+    {
+     "id": "feb26",
+     "t": "Feb 2026",
+     "steps": [
+      8
+     ],
+     "sw": "ukr-3"
+    }
+   ],
+   "bands": [
+    "sat",
+    "pltr",
+    "star",
+    "unit"
+   ],
+   "extra": [
+    {
+     "id": "ru",
+     "lane": "sense",
+     "from": "step 8 node “Russian Starlinks”",
+     "start": "not on the page"
+    },
+    {
+     "id": "ruunits",
+     "lane": "act",
+     "label": "Russian units · at the front",
+     "from": "step 8 text"
+    },
+    {
+     "id": "crimea-attack",
+     "lane": "act",
+     "label": "Attack on the fleet · near Crimea",
+     "from": "step 6 text"
+    }
+   ],
+   "cuts": {
+    "ukr-1": {
+     "branch": "star→crimea-attack",
+     "scope": "one operation"
+    },
+    "ukr-2": {
+     "cut": [
+      "sat",
+      "unit"
+     ],
+     "starve": [
+      "pltr"
+     ],
+     "win": "window",
+     "resume": "11 Mar"
+    },
+    "ukr-3": {
+     "cut": [
+      "ru",
+      "ruunits"
+     ],
+     "win": "onward"
+    }
+   },
+   "cap": [
+    "US commercial satellites image Russian positions; much of the imagery reaches Ukraine through US contracts.",
+    "Palantir merges satellite, drone and open-source feeds and proposes targets.",
+    "Starlink keeps commanders, spotters and drone teams connected. From June 2023 the Pentagon pays.",
+    "A drone team receives the target over Starlink and streams video back.",
+    "The target is hit, the result is checked, and the loop starts again.",
+    "Musk declines to extend Starlink coverage for a drone attack on the Russian fleet near Crimea.",
+    "Washington pauses intelligence sharing and cuts Maxar imagery for six days, until Ukraine accepts a ceasefire proposal.",
+    "SpaceX and Kyiv switch on a whitelist of verified terminals. Smuggled Russian Starlinks lose their links."
+   ],
+   "short": {
+    "ukr-1": [
+     "SpaceX",
+     "private · US"
+    ],
+    "ukr-2": [
+     "Washington",
+     "state · US"
+    ],
+    "ukr-3": [
+     "SpaceX + Kyiv",
+     "private + state"
+    ]
+   }
+  }
+ }
+}

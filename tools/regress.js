@@ -104,10 +104,12 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   /* ---------- Scenarios ---------- */
   c = await ctxFor(1440, 900, 'full');
   p = await open(c, '#scenarios', 'scenarios');
-  const ns = await p.evaluate(() => document.querySelectorAll('#isx-spick button').length); res.counts.scenarios = ns;
+  /* B3: the gallery is the door. One state per case, in the order of the page's list of cases (the keys are those of the rounds
+     before): the gallery's text, then every step's card and the close, with the sources card and the narration under the stage. */
+  const ns = await p.evaluate(() => document.querySelectorAll('#isx-b3-gal .b3chip').length); res.counts.scenarios = ns;
   for (let i = 0; i < ns; i++) {
-    await p.evaluate(k => document.querySelectorAll('#isx-spick button')[k].click(), i); await p.waitForTimeout(350);
-    await snap(p, 'scen/' + String(i).padStart(2, '0'), '#isx-ssteps, #isx-shud, #isx-slay, #isx-card, #isx-narr');
+    await p.evaluate(k => document.querySelector('#isx-b3-gal .b3chip[data-b3c="' + k + '"]').click(), i); await p.waitForTimeout(350);
+    await snap(p, 'scen/' + String(i).padStart(2, '0'), '#isx-b3-gal .b3hero, #isx-ssteps, #isx-card, #isx-narr');
     res.counts['scen-steps-' + i] = await p.evaluate(() => document.querySelectorAll('#isx-ssteps .sstep').length);
   }
   await p.close(); await c.close();

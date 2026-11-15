@@ -1,0 +1,104 @@
+/* The Imperial Stack v2 · b3.css (round B3, 15 Nov 2026)
+   Scenarios: the gallery, the scene and its depth. Linked after tiers.css; every rule starts with #isx-root.
+   The stage is the box of the tab (#isx-sc3.b3). The case map and the overlay share one transform, kept in three numbers
+   (--b3x, --b3y, --b3z) that are registered so they can glide. Browsers without @property jump instead. */
+@property --b3x { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --b3y { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --b3z { syntax: '<number>'; inherits: true; initial-value: 1; }
+@property --b3gc { syntax: '<color>'; inherits: true; initial-value: #44d7ec; }
+@property --b3iris { syntax: '<percentage>'; inherits: true; initial-value: 120%; }
+
+#isx-root .sc3.b3 { --b3e: cubic-bezier(.65, 0, .2, 1); --b3o: cubic-bezier(.16, 1, .3, 1); --b3top: 96px; --b3gc: #44d7ec; --b3iris: 120%;
+  display: block; padding: 0; overflow: clip; background: radial-gradient(1400px 900px at 70% -10%, #0b1824, #04070b 70%); }
+#isx-root .b3 > .b3map, #isx-root .b3 > .b3vig, #isx-root .b3 > .b3gal { position: absolute; inset: 0; }
+#isx-root .b3 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+#isx-root .b3 button:focus-visible { outline: 2px solid #ffd27a; outline-offset: 3px; border-radius: 8px; }
+@media (max-width: 900px) { #isx-root .sc3.b3 { height: clamp(600px, calc(100dvh - 34px), 920px); border-radius: 0 0 20px 20px; } }
+
+/* ---------- the map ---------- */
+#isx-root .b3 .b3map { transform: translate(calc(var(--b3x) * 1px), calc(var(--b3y) * 1px)) scale(var(--b3z)); transform-origin: 0 0; will-change: transform;
+  transition: --b3x 1.5s var(--b3e), --b3y 1.5s var(--b3e), --b3z 1.5s var(--b3e), opacity .7s ease, filter 1.2s ease; }
+#isx-root .b3 .b3map svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+#isx-root .b3 .b3map.swap { opacity: 0; transition: opacity .22s ease; }
+#isx-root .b3 .sgrat { fill: none; stroke: rgba(80, 130, 180, .10); stroke-width: .8; }
+#isx-root .b3 .sland { fill: #0d1824; stroke: rgba(95, 160, 220, .30); stroke-width: .7; }
+#isx-root .b3 .sland.focus { fill: #15293f; stroke: rgba(130, 195, 255, .85); stroke-width: 1.2; }
+#isx-root .b3 .b3map .sland.focus { filter: drop-shadow(0 0 22px rgba(70, 150, 255, .22)); }
+#isx-root .b3 .sland.dim { fill: #0a131c; }
+#isx-root .b3 .sland.bord { fill: none; stroke: rgba(95, 160, 220, .22); stroke-width: .6; }
+#isx-root .b3 .socc { fill: url(#isx-b3-hatch); stroke: rgba(255, 138, 92, .7); stroke-width: 1; stroke-dasharray: 3 3; }
+#isx-root .b3 .splace { display: inline; font-family: var(--mono); font-size: 11px; fill: rgba(180, 200, 220, .5); }
+#isx-root .b3 .stag { font-family: var(--display); font-size: 24px; letter-spacing: .5em; fill: rgba(140, 185, 230, .16); }
+#isx-root .b3 .b3vig { pointer-events: none; background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(2, 4, 7, .78) 100%); }
+
+/* ---------- gallery ---------- */
+#isx-root .b3 .b3gal { z-index: 3; pointer-events: none; }
+#isx-root .b3 .b3gal > * { pointer-events: auto; }
+#isx-root .b3 .sc3lede { position: absolute; z-index: 3; left: 20px; top: calc(var(--b3top) + 4px); width: min(360px, 34vw); margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink2); text-shadow: 0 1px 10px #04070b, 0 0 2px #04070b; }
+#isx-root .b3 .b3hero { position: absolute; left: 40px; bottom: 198px; width: min(600px, 46vw); }
+#isx-root .b3 .b3kick { display: flex; gap: 14px; align-items: center; font: 12px var(--mono); letter-spacing: .24em; text-transform: uppercase; color: #9aabba; }
+#isx-root .b3 .b3kick i { width: 34px; height: 1px; background: linear-gradient(90deg, #ff8a9c, transparent); }
+#isx-root .b3 .b3hero h2 { margin: 14px 0 0; font: 600 clamp(48px, min(8.6vw, 13.5vh), 124px)/.9 var(--display); letter-spacing: .015em; text-transform: uppercase; color: #fff; text-shadow: 0 6px 44px rgba(0, 0, 0, .55); }
+#isx-root .b3 .b3sub { margin-top: 12px; max-width: 30em; font: 500 clamp(15px, 1.5vw, 21px)/1.25 var(--display); letter-spacing: .15em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .b3 .b3sum { margin: 18px 0 0; max-width: 44ch; font-family: var(--sans); font-size: 16px; line-height: 1.55; color: #c3cfda; text-shadow: 0 1px 12px rgba(4, 7, 11, .9); }
+#isx-root .b3 .b3row { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; }
+#isx-root .b3 .b3cta { display: inline-flex; align-items: center; gap: 14px; height: 54px; padding: 0 26px; border-radius: 14px; border: 1px solid #ff5873; background: linear-gradient(180deg, rgba(255, 59, 92, .26), rgba(120, 14, 36, .5));
+  font: 600 16px var(--display); letter-spacing: .16em; text-transform: uppercase; color: #fff; box-shadow: 0 10px 40px -10px rgba(255, 59, 92, .55); transition: transform .35s var(--b3o), box-shadow .35s ease; }
+#isx-root .b3 .b3cta:hover { transform: translateY(-2px); box-shadow: 0 0 0 4px rgba(255, 59, 92, .12), 0 16px 50px -8px rgba(255, 59, 92, .7); }
+#isx-root .b3 .b3cta svg { width: 20px; height: 20px; transition: transform .35s var(--b3o); }
+#isx-root .b3 .b3cta:hover svg { transform: translateX(5px); }
+#isx-root .b3 .b3pills { display: flex; gap: 8px; flex-wrap: wrap; }
+#isx-root .b3 .b3pills span { font: 11.5px var(--mono); letter-spacing: .08em; color: #b4c2cf; border: 1px solid #263644; border-radius: 999px; padding: 6px 11px; background: rgba(8, 14, 20, .55); }
+#isx-root .b3 .b3nav { position: absolute; right: 20px; top: var(--b3top); display: flex; align-items: center; gap: 10px; }
+#isx-root .b3 .b3nb { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #2a3b4a; background: rgba(8, 14, 20, .6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: grid; place-items: center; color: var(--ink); transition: border-color .25s, background .25s, transform .3s var(--b3o); }
+#isx-root .b3 .b3nb:hover { border-color: #ffd27a; background: rgba(255, 210, 122, .08); transform: scale(1.06); }
+#isx-root .b3 .b3nb svg { width: 18px; height: 18px; }
+#isx-root .b3 .b3cnt { min-width: 64px; text-align: center; font: 12px var(--mono); letter-spacing: .16em; color: #9aabba; }
+#isx-root .b3 .b3lnk { height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #2a3b4a; background: rgba(8, 14, 20, .6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font: 500 12.5px var(--display); letter-spacing: .16em; text-transform: uppercase; color: #b4c2cf; transition: border-color .25s, color .25s; }
+#isx-root .b3 .b3lnk:hover { border-color: #ffd27a; color: #ffd27a; }
+#isx-root .b3 .b3lnk[hidden] { display: none; }
+#isx-root .b3 .b3rail { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; gap: 12px; align-items: flex-end; overflow-x: auto; overflow-y: hidden; padding: 12px 40px 10px; scrollbar-width: none; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+#isx-root .b3 .b3rail::-webkit-scrollbar { display: none; }
+#isx-root .b3 .b3gl { flex: none; align-self: stretch; display: flex; align-items: flex-end; padding: 0 2px 6px 8px; font: 10px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: #7f91a0; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+#isx-root .b3 .b3chip { flex: none; scroll-snap-align: center; position: relative; width: 148px; height: 100px; border-radius: 14px; overflow: hidden; border: 1px solid #1f2d39; background: rgba(8, 14, 20, .55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); text-align: left;
+  transition: transform .4s var(--b3o), border-color .3s, box-shadow .4s, width .4s var(--b3o); }
+#isx-root .b3 .b3chip svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .78; transition: opacity .3s, transform .6s var(--b3o); }
+#isx-root .b3 .b3chip::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 38%, rgba(4, 7, 11, .94)); }
+#isx-root .b3 .b3ct { position: absolute; left: 12px; right: 10px; bottom: 9px; z-index: 2; }
+#isx-root .b3 .b3ct b { display: block; font: 600 15px/1.05 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #fff; }
+#isx-root .b3 .b3ct small { font: 10.5px var(--mono); letter-spacing: .08em; color: #a9b8c5; }
+#isx-root .b3 .b3chip:hover { transform: translateY(-4px); border-color: #3a5164; }
+#isx-root .b3 .b3chip:hover svg { opacity: 1; transform: scale(1.06); }
+#isx-root .b3 .b3chip[aria-current="true"] { transform: translateY(-8px); width: 172px; border-color: #ffd27a; box-shadow: 0 14px 40px -12px rgba(255, 210, 122, .35); }
+#isx-root .b3 .b3chip[aria-current="true"] svg { opacity: 1; }
+#isx-root .b3 .b3sw { position: absolute; right: 8px; top: 8px; z-index: 2; font: 10px var(--mono); color: #ff3b5c; letter-spacing: .06em; }
+#isx-root .b3 .b3ok { display: none; position: absolute; left: 9px; top: 7px; z-index: 2; font: normal 11px var(--mono); color: #3ee6b8; }
+#isx-root .b3 .b3chip.seen .b3ok { display: block; }
+/* the case changes: the lines of the hero lift in one after another, the map crossfades */
+#isx-root .b3 .b3hero > * { transition: opacity .5s ease, transform .7s var(--b3o); }
+#isx-root .b3 .b3hero > :nth-child(2) { transition-delay: .06s; } #isx-root .b3 .b3hero > :nth-child(3) { transition-delay: .12s; } #isx-root .b3 .b3hero > :nth-child(4) { transition-delay: .18s; } #isx-root .b3 .b3hero > :nth-child(5) { transition-delay: .24s; }
+#isx-root .b3 .b3gal.sw .b3hero > * { opacity: 0; transform: translateY(14px); transition: none; }
+/* wide screens: the dock keeps its corner, so the rail ends before it */
+@media (min-width: 901px) { #isx-root .b3 .b3rail { right: 286px; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 46px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 46px), transparent); padding-right: 46px; } }
+
+/* B3-1 only: until the scene is built, the steps play on the stage of the round before */
+#isx-root .b3[data-mode="gallery"] > .sc3card, #isx-root .b3[data-mode="gallery"] > .sstagewrap, #isx-root .b3[data-mode="gallery"] > .sc3bar { display: none; }
+#isx-root .b3[data-mode="old"] > .b3map, #isx-root .b3[data-mode="old"] > .b3vig, #isx-root .b3[data-mode="old"] > .b3gal, #isx-root .b3[data-mode="old"] > .sc3lede { display: none; }
+#isx-root .b3[data-mode="old"] { background: none; overflow: visible; }
+
+/* a short stage has no room for the lede above the hero */
+@media (max-height: 800px) and (min-width: 761px) { #isx-root .b3 .sc3lede { display: none; } }
+@media (max-width: 760px) {
+  #isx-root .sc3.b3 { height: clamp(560px, calc(100dvh - 150px), 900px); }
+  #isx-root .b3 .sc3lede { left: 14px; right: 14px; width: auto; font-size: 12px; }
+  #isx-root .b3 .b3hero { left: 18px; right: 18px; width: auto; bottom: 150px; }
+  #isx-root .b3 .b3hero h2 { font-size: clamp(46px, 15vw, 64px); }
+  #isx-root .b3 .b3sub { font-size: 13px; margin-top: 8px; }
+  #isx-root .b3 .b3sum { font-size: 14px; margin-top: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  #isx-root .b3 .b3row { margin-top: 16px; gap: 10px; } #isx-root .b3 .b3cta { height: 48px; padding: 0 20px; font-size: 14px; }
+  #isx-root .b3 .b3pills span:nth-child(3) { display: none; }
+  #isx-root .b3 .b3nav { right: 14px; top: calc(var(--b3top) + 58px); gap: 6px; } #isx-root .b3 .b3nb { width: 40px; height: 40px; } #isx-root .b3 .b3lnk { height: 40px; padding: 0 12px; font-size: 11px; letter-spacing: .1em; } #isx-root .b3 .b3cnt { display: none; }
+  #isx-root .b3 .b3rail { padding: 10px 18px 8px; bottom: 6px; gap: 9px; } #isx-root .b3 .b3chip { width: 116px; height: 80px; border-radius: 12px; } #isx-root .b3 .b3chip[aria-current="true"] { width: 132px; transform: translateY(-5px); } #isx-root .b3 .b3ct b { font-size: 13px; } #isx-root .b3 .b3ct small { font-size: 9.5px; } #isx-root .b3 .b3gl { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .b3, #isx-root .b3 * { transition-duration: .01ms !important; transition-delay: 0s !important; animation: none !important; } }
+#isx-root.rm .b3, #isx-root.rm .b3 * { transition-duration: .01ms !important; transition-delay: 0s !important; animation: none !important; }
