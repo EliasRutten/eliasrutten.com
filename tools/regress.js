@@ -105,13 +105,18 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   c = await ctxFor(1440, 900, 'full');
   p = await open(c, '#scenarios', 'scenarios');
   /* B3: the gallery is the door. One state per case, in the order of the page's list of cases (the keys are those of the rounds
-     before): the gallery's text, then every step's card and the close, with the sources card and the narration under the stage. */
+     before): the gallery's text with the sources card and the narration under the stage, then the card of every step and the close. */
   const ns = await p.evaluate(() => document.querySelectorAll('#isx-b3-gal .b3chip').length); res.counts.scenarios = ns;
   for (let i = 0; i < ns; i++) {
     await p.evaluate(k => document.querySelector('#isx-b3-gal .b3chip[data-b3c="' + k + '"]').click(), i); await p.waitForTimeout(350);
-    await snap(p, 'scen/' + String(i).padStart(2, '0'), '#isx-b3-gal .b3hero, #isx-ssteps, #isx-card, #isx-narr');
-    res.counts['scen-steps-' + i] = await p.evaluate(() => document.querySelectorAll('#isx-ssteps .sstep').length);
+    let acc = await text(p, '#isx-b3-gal .b3hero, #isx-card, #isx-narr');
+    await p.click('#isx-b3-gal .b3cta'); await p.waitForTimeout(300);
+    const n = await p.evaluate(() => document.querySelectorAll('#isx-sc-bar .rt-sp').length); res.counts['scen-steps-' + i] = n;
+    for (let k = 0; k <= n; k++) { acc += ' ¦ ' + await text(p, '#isx-b3-card'); if (k < n) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(120); } }
+    res.states['scen/' + String(i).padStart(2, '0')] = { h: sha(acc), n: acc.length, head: acc.slice(0, 90) };
+    await p.keyboard.press('Escape'); await p.waitForTimeout(250);
   }
+  res.counts['scen-switches'] = await p.evaluate(() => ISX.sc.STORIES.reduce((a, S) => a + S.steps.filter(x => x.choke).length, 0));
   await p.close(); await c.close();
 
   /* ---------- phone, and a pass with motion on: errors and overflow only ---------- */

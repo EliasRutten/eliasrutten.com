@@ -11,6 +11,10 @@
    it is never rebuilt, so its ids, links and the share popover keep working.
    This file also owns the one ← → handler and the swipe on phones. It knows nothing about the tabs: each tab
    hands it a model from the function that already drew its bar, and listens with ISXR.on().
+   B3 (15 Nov 2026): two options on the model. skin: 'strip' draws the route as a floating strip of round step buttons, each
+   with its own icon (model.steps: icon, colour, state, target, title, cut), joined by links; Back, Next, the keys and the
+   events are the same. hidden: true hides the bar and hands the dock back (the Scenarios gallery, where the rail and
+   Prev · Next do its work); a hidden bar takes no keys.
    Loaded before the page script (like perf.js); the page publishes it as ISX.route. */
 (function () {
   'use strict';
@@ -57,6 +61,15 @@
       + '<div class="rt-ms">' + s.marks.map(function (m) { return mark(m, s.lab); }).join('') + '</div></div>';
   }
 
+  /* B3: one step of the strip skin: a link, then a round button with the step's icon */
+  function sp(m, i) {
+    var st = ' ' + String(m.state || '') + ' ', cur = st.indexOf(' cur ') >= 0, done = st.indexOf(' done ') >= 0;
+    return (i ? '<i class="rt-lk' + (m.cut ? ' k' : '') + (done || cur ? ' d' : '') + '" aria-hidden="true"></i>' : '')
+      + '<button type="button" class="rt-sp' + (done ? ' d' : '') + (cur ? ' c' : '') + (m.cut ? ' k' : '') + '" style="--kc:' + esc(m.colour || '#8fb4d6') + '" data-rt="go" data-rt-t="' + esc(m.target) + '" tabindex="' + (cur ? 0 : -1) + '"'
+      + ' aria-label="' + esc(m.title || '') + '" data-tip="<b>' + esc(esc(m.title || '')) + '</b>"' + (cur ? ' aria-current="step"' : '') + '>'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (m.icon || '') + '</svg></button>';
+  }
+
   /* ---------- one bar ---------- */
   function build(host) {
     var R = { host: host, model: null, first: true, lineAttrs: [], ctl: null, mode: null };
@@ -83,8 +96,11 @@
   }
   function render(host, M) {
     if (!host) return;
-    var R = host._rt && host._rt.bar && host._rt.bar.parentNode === host ? host._rt : build(host), ph = phone(), cp = !ph && window.innerWidth <= 1000, mode = ph ? 'ph' : cp ? 'cp' : 'w', bar = R.bar;
+    var R = host._rt && host._rt.bar && host._rt.bar.parentNode === host ? host._rt : build(host), strip = M.skin === 'strip', ph = !strip && phone(), cp = !strip && !ph && window.innerWidth <= 1000, mode = strip ? 'strip' : ph ? 'ph' : cp ? 'cp' : 'w', bar = R.bar;
     R.model = M;
+    host.hidden = !!M.hidden;
+    if (M.hidden) { if (dock && bar.contains(dock)) release(); return; }
+    bar.classList.toggle('sk-strip', strip);
     bar.classList.toggle('ph', ph); bar.classList.toggle('cp', cp); bar.dataset.id = M.id;
     host.setAttribute('aria-label', M.label || 'Steps');
     /* Back */
@@ -107,7 +123,8 @@
     }
     /* the route */
     var ae = document.activeElement, keep = ae && R.segs.contains(ae) ? ae.getAttribute('data-rt-t') : null, h;
-    if (M.note) h = '<p class="rt-note">' + esc(M.note) + '</p>';
+    if (strip) h = '<div class="rt-chain">' + (M.steps || []).map(sp).join('') + '</div>';
+    else if (M.note) h = '<p class="rt-note">' + esc(M.note) + '</p>';
     else if (ph || cp) {
       var P = M.ph || (function () { var c = (M.segs || []).filter(function (s) { return s.current; })[0] || (M.segs || [])[0] || { label: '', marks: [] }; return { label: c.label, colour: c.colour, marks: c.marks, count: M.count }; })();
       h = '<div class="rt-s cur" style="--sc:' + esc(P.colour || '#ffd27a') + '"><span class="rt-pl"><b>' + esc(P.label || '') + '</b><em>' + esc(P.count || '') + '</em></span><div class="rt-ms">' + (P.marks || []).map(function (m) { return mark(m, false); }).join('') + '</div></div>';
@@ -130,7 +147,7 @@
   function place(R, cut) {
     if (!R) { live.forEach(function (x) { if (x.host.isConnected && x.model) place(x, cut); }); return; }
     var here = R.here, m = R.segs.querySelector('.c');
-    if (!m || !m.getClientRects().length) { here.style.opacity = '0'; R.at = null; return; }
+    if (!m || !m.getClientRects().length || (R.model && R.model.skin === 'strip')) { here.style.opacity = '0'; R.at = null; return; }   /* the strip lights its own step */
     var rr = R.route.getBoundingClientRect(), mr = m.getBoundingClientRect(), wide = m.classList.contains('rt-st'), cs = getComputedStyle(m);
     var w = wide ? mr.width - 2 : Math.max(20, mr.width + 10), h = wide ? mr.height - 3 : 14;
     var x = wide ? mr.left - rr.left + 1 : mr.left - rr.left + mr.width / 2 - w / 2, y = wide ? mr.top - rr.top : mr.top - rr.top + 2.5 - h / 2;
@@ -181,7 +198,7 @@
   document.addEventListener('keydown', function (ev) {
     if (ev.defaultPrevented || ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey || (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft')) return;
     var t = ev.target;
-    if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"], .mapscroll, [role="dialog"], .s2tray, .sc3tray, .shpop, .tour2, .b1sheet')) return;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"], .mapscroll, [role="dialog"], .s2tray, .sc3tray, .shpop, .tour2, .b1sheet, .b3sheet')) return;
     var R = current(); if (!R || R.model.keys === false) return;
     var st = R.model.stage || R.host, r = st.getBoundingClientRect();
     if (r.bottom < 80 || r.top > window.innerHeight - 80) return;
@@ -209,7 +226,7 @@
   var rt = 0;
   window.addEventListener('resize', function () {
     clearTimeout(rt); rt = setTimeout(function () {
-      live.forEach(function (R) { if (!R.host.isConnected || !R.model || !R.host.getClientRects().length) return; var m = phone() ? 'ph' : window.innerWidth <= 1000 ? 'cp' : 'w'; if (R.mode !== m) render(R.host, R.model); else place(R, true); });
+      live.forEach(function (R) { if (!R.host.isConnected || !R.model || !R.host.getClientRects().length) return; var m = R.model.skin === 'strip' ? 'strip' : phone() ? 'ph' : window.innerWidth <= 1000 ? 'cp' : 'w'; if (R.mode !== m) render(R.host, R.model); else place(R, true); });
     }, 90);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { place(null, true); });

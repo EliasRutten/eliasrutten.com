@@ -2409,18 +2409,25 @@ button.res:hover { transform: none; box-shadow: none; }
     <div class="scene" id="isx-scene-story" hidden>
       <div class="story sc3 b3" id="isx-sc3" data-mode="gallery">
         <div class="b3map" id="isx-b3-map" aria-hidden="true"></div>
+        <div class="b3grade" aria-hidden="true"></div>
+        <div class="b3tex" id="isx-b3-tex" aria-hidden="true"></div>
+        <div class="b3wm" id="isx-b3-wm" aria-hidden="true"></div>
         <div class="b3vig" aria-hidden="true"></div>
+        <div class="b3redv" id="isx-b3-redv" aria-hidden="true"></div>
+        <div class="b3sc" aria-hidden="true"><div class="b3world" id="isx-b3-world"></div></div>
         <p class="sc3lede" id="isx-sc-lede"><b>Scenarios</b> shows the exercise of power: geoeconomic coercion, switches turned on and off. The <button type="button" class="sc3lnk" id="isx-sc-tofin">Scott Bessent Simulator</button> shows the financial flows and how the dollar system was built.</p>
         <section class="b3gal" id="isx-b3-gal" aria-label="Scenarios: fourteen cases"></section>
-        <aside class="sc3card" id="isx-sc-card" aria-label="Scenario, step by step"><div class="ssteps" id="isx-ssteps" aria-live="polite"></div></aside>
-        <div class="sstagewrap"><div class="sstage">
-          <svg id="isx-sstage" viewBox="0 0 1000 650" role="group" aria-label="The chain of the selected scenario, drawn on a map"></svg>
-          <div class="shud" id="isx-shud"><div class="k" id="isx-shud-k"></div><div class="t" id="isx-shud-t"></div></div>
-          <button type="button" class="stap prev" id="isx-stap-p" aria-label="Previous step"></button><button type="button" class="stap next" id="isx-stap-n" aria-label="Next step"></button>
-          <div class="schoke" id="isx-schoke" hidden>Chokepoint · sovereignty limited</div>
-          <div class="slay" id="isx-slay" aria-label="Layers of the stack used" hidden></div>
-        </div></div>
-        <nav class="sc3bar" id="isx-sc-bar" aria-label="Scenario steps"></nav>
+        <div class="b3hud" id="isx-b3-hud" role="region" aria-label="Scenario, step by step">
+          <button type="button" class="b3back" data-b3="leave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg><span>All cases</span></button>
+          <div class="b3deep" id="isx-b3-deep"></div>
+          <article class="b3card" id="isx-b3-card" aria-live="polite"><div class="b3in"></div></article>
+          <nav class="sc3bar b3strip" id="isx-sc-bar" aria-label="Scenario steps"></nav>
+        </div>
+        <div class="b3tc" id="isx-b3-tc" aria-hidden="true"><div class="b3tcin"><div class="k"></div><div class="h"></div><div class="rule"></div><div class="s"></div></div></div>
+        <div class="b3flash" id="isx-b3-flash" aria-hidden="true"></div>
+        <div class="b3veil" id="isx-b3-veil" aria-hidden="true"></div>
+        <aside class="b3sheet b3drawer" id="isx-b3-drawer" aria-label="Step details" inert></aside>
+        <section class="b3sheet b3ledger" id="isx-b3-ledger" aria-label="All switches" inert></section>
       </div>
     </div>
 
@@ -3300,217 +3307,34 @@ const ICON = {
 };
 const KIND = { usfirm: { c: '#5aa9ff', n: 'US firm' }, usstate: { c: '#ffb547', n: 'US state' }, foreign: { c: '#cfd8e3', n: 'Others' }, target: { c: '#ff8a5c', n: 'Target' }, issuer: { c: '#d78bff', n: 'Dollar issuer' }, choke: { c: '#ff3b5c', n: 'Chokepoint' } };
 const LINK = { data: { c: '#44d7ec', n: 'Data and connectivity' }, kinetic: { c: '#ff8a5c', n: 'Force' }, control: { c: '#ff3b5c', n: 'Control: a switch or a sanction' }, money: { c: '#ffb547', n: 'Money' }, legal: { c: '#c9b6ff', n: 'Law and courts' }, people: { c: '#f2a3ff', n: 'People moving between firm and state' } };
-let storyIdx = 0, storyStep = -2, storyBuilt = -1;
-const sSvg = $('sstage');
-function iconUse(name, x, y, s, parent, color) {
-  const g = el('g', { transform: `translate(${x - s / 2},${y - s / 2}) scale(${s / 24})`, fill: 'none', stroke: color || 'currentColor', 'stroke-width': 1.7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, parent);
-  g.innerHTML = ICON[name] || ICON.target; return g;
-}
-function buildStoryMap() {
-  const S = STORIES[storyIdx], M = SMAPS[S.map];
-  sSvg.innerHTML = '';
-  const defs = el('defs', {}, sSvg);
-  defs.innerHTML = '<filter id="isx-sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
-    + '<radialGradient id="isx-svig" cx="50%" cy="45%" r="70%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".75"/></radialGradient>'
-    + '<pattern id="isx-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v6" stroke="rgba(255,138,92,.45)" stroke-width="1.4"/></pattern>';
-  const gm = el('g', { class: 'smap' }, sSvg);
-  el('rect', { x: 0, y: 0, width: 1000, height: 560, class: 'ssea' }, gm);
-  el('path', { d: M.grat, class: 'sgrat' }, gm);
-  M.paths.forEach(p => { const a = el('path', { d: p.d, class: 'sland ' + p.cls }, gm); if (p.cls.includes('occ')) el('path', { d: p.d, class: 'socc' }, gm); });
-  if (M.lines.front) { el('polyline', { points: M.lines.front.map(p => p.join(',')).join(' '), class: 'sfront' }, gm); const q = M.lines.front[2]; el('text', { x: q[0] + 10, y: q[1] - 6, class: 'splace lab-front' }, gm).textContent = 'front line (schematic)'; }
-  if (M.lines.flight) { el('polyline', { points: M.lines.flight.map(p => p.join(',')).join(' '), class: 'sflight' }, gm); const q = M.lines.flight[1]; el('text', { x: q[0] - 10, y: q[1] - 10, class: 'splace', 'text-anchor': 'end' }, gm).textContent = 'MH17 route'; }
-  if (M.lines.buk) { el('polyline', { points: M.lines.buk.map(p => p.join(',')).join(' '), class: 'sbuk' }, gm); }
-  if (M.lines.transfer) el('polyline', { points: M.lines.transfer.map(p => p.join(',')).join(' '), class: 'sroute' }, gm);
-  if (M.lines.route) el('polyline', { points: M.lines.route.map(p => p.join(',')).join(' '), class: 'sroute' }, gm);
-  M.labels.forEach(([t, k]) => { const p = M.places[k]; if (!p) return; el('circle', { cx: p[0], cy: p[1], r: 2.2, class: 'sdotp' }, gm); el('text', { x: Math.min(985, p[0] + 6), y: p[1] - 6, class: 'splace', 'text-anchor': p[0] > 900 ? 'end' : 'start' }, gm).textContent = t; });
-  el('text', { x: M.tagAt[0], y: M.tagAt[1], class: 'stag', 'text-anchor': 'middle' }, gm).textContent = M.tag;
-  if (S.inset) { const I = S.inset; el('rect', { x: I.x, y: I.y, width: I.w, height: I.h, rx: 14, class: 'sinset' }, gm); el('text', { x: I.x + 14, y: I.y + 22, class: 'sinlab' }, gm).textContent = I.label.toUpperCase(); }
-  el('rect', { x: 0, y: 0, width: 1000, height: 560, fill: 'url(#isx-svig)', 'pointer-events': 'none' }, gm);
-  el('g', { id: 'isx-slinks' }, sSvg); el('g', { id: 'isx-snodes' }, sSvg); el('g', { id: 'isx-schain' }, sSvg);
-  storyBuilt = storyIdx;
-}
-function qpt(a, c, b, t) { const u = 1 - t; return [u * u * a[0] + 2 * u * t * c[0] + t * t * b[0], u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]; }
-function linkGeom(a, b, bend) {
-  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1;
-  const c = [mx - dy / d * d * bend, my + dx / d * d * bend];
-  const t0 = Math.min(.45, 30 / d), t1 = 1 - Math.min(.45, 30 / d);
-  return { a: qpt(a, c, b, t0), b: qpt(a, c, b, t1), c, full: [a, c, b], t0, t1 };
-}
-const qd = (a, c, b) => `M${a[0].toFixed(1)},${a[1].toFixed(1)} Q${c[0].toFixed(1)},${c[1].toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}`;
-function subQ(P, t0, t1) { // sub-curve of a quadratic between t0 and t1
-  const [a, c, b] = P, p0 = qpt(a, c, b, t0), p2 = qpt(a, c, b, t1);
-  const d0 = [2 * ((1 - t0) * (c[0] - a[0]) + t0 * (b[0] - c[0])), 2 * ((1 - t0) * (c[1] - a[1]) + t0 * (b[1] - c[1]))];
-  const k = (t1 - t0) / 2; return [p0, [p0[0] + d0[0] * k, p0[1] + d0[1] * k], p2];
-}
-function renderStage(force) {
-  const S = STORIES[storyIdx];
-  if (storyBuilt !== storyIdx) buildStoryMap();
-  const ai = storyStep;
-  const gl = document.getElementById('isx-slinks'), gn = document.getElementById('isx-snodes'), gc = document.getElementById('isx-schain');
-  gl.innerHTML = ''; gn.innerHTML = ''; gc.innerHTML = '';
-  const M = SMAPS[S.map];
-  const cl = (v, a, b) => Math.max(a, Math.min(b, v));
-  Object.values(S.nodes).forEach(N => { if (N.off && M.places[N.at]) { const p = M.places[N.at]; N.pos = [cl(p[0] + N.off[0], 80, 920), cl(p[1] + N.off[1], 118, 505)]; } });
-  const shown = new Map();
-  S.steps.forEach((st, i) => { if (i > ai) return; (st.frm || []).forEach(k => { if (!shown.has(k)) shown.set(k, i); }); if (!shown.has(st.n)) shown.set(st.n, i); });
-  // links
-  S.steps.forEach((st, i) => {
-    if (i > ai || !st.frm) return;
-    st.frm.forEach((fk, j) => {
-      const a = S.nodes[fk].pos, b = S.nodes[st.n].pos, cur = i === ai, L = LINK[st.link] || LINK.data;
-      const g = linkGeom(a, b, (j % 2 ? -1 : 1) * .16);
-      const col = st.choke ? LINK.control.c : L.c;
-      const grp = el('g', { class: 'slink' + (cur ? ' cur' : ' past') + (st.choke ? ' choke' : '') }, gl);
-      if (st.choke) {
-        const P1 = subQ(g.full, g.t0, .44), P2 = subQ(g.full, .56, g.t1), m = qpt(...g.full, .5);
-        el('path', { d: qd(...P1), stroke: col, class: 'sl' }, grp); el('path', { d: qd(...P2), stroke: col, class: 'sl' }, grp);
-        const x = el('g', { transform: `translate(${m[0]},${m[1]})`, class: 'sbreak' }, grp);
-        el('circle', { r: cur ? 13 : 9, class: 'sbreakr' }, x); el('path', { d: 'M-5,-5L5,5M5,-5L-5,5', stroke: col, 'stroke-width': 2.4 }, x);
-      } else {
-        const d = qd(...subQ(g.full, g.t0, g.t1));
-        if (cur) el('path', { d, stroke: col, class: 'slglow' }, grp);
-        el('path', { d, stroke: col, class: 'sl' + (cur ? ' flow' : '') }, grp);
-        if (cur && !reduce) for (let k = 0; k < 3; k++) { const c = el('g', { class: 'spart' }, grp); el('circle', { r: 7, fill: col, opacity: .22 }, c); el('circle', { r: 3, fill: '#fff' }, c); el('animateMotion', { dur: '1.8s', repeatCount: 'indefinite', begin: (k * .6) + 's', path: d }, c); }
-      }
-    });
-  });
-  // nodes
-  shown.forEach((first, k) => {
-    const N = S.nodes[k], K = KIND[N.kind], cur = S.steps[ai] && S.steps[ai].n === k;
-    const g = el('g', { class: 'snode' + (cur ? ' cur' : '') + (N.kind === 'choke' ? ' choke' : ''), style: `--kc:${K.c}` }, gn);
-    if (N.at && M.places[N.at]) { const p = M.places[N.at]; el('line', { x1: p[0], y1: p[1], x2: N.pos[0], y2: N.pos[1], class: 'slead' }, g); el('circle', { cx: p[0], cy: p[1], r: 3.4, class: 'sat' }, g); }
-    if (cur) el('circle', { cx: N.pos[0], cy: N.pos[1], r: 26, class: 'spulse' }, g);
-    el('circle', { cx: N.pos[0], cy: N.pos[1], r: cur ? 25 : 21, class: 'sbadge' }, g);
-    iconUse(N.icon, N.pos[0], N.pos[1], cur ? 26 : 22, g, K.c);
-    const lx = Math.max(70, Math.min(930, N.pos[0])), ly = N.pos[1] + (cur ? 42 : 38);
-    el('text', { x: lx, y: ly, class: 'slabel', 'text-anchor': 'middle' }, g).textContent = N.label;
-    if (N.sub) el('text', { x: lx, y: ly + 14, class: 'ssub', 'text-anchor': 'middle' }, g).textContent = N.sub;
-  });
-  // the chain along the bottom
-  const n = S.steps.length, x0 = 64, x1 = 936, y = 604, xs = S.steps.map((_, i) => x0 + (x1 - x0) * (n === 1 ? .5 : i / (n - 1)));
-  el('rect', { x: 0, y: 568, width: 1000, height: 82, class: 'schainbg' }, gc);
-  S.steps.forEach((st, i) => {
-    if (i === 0) return;
-    const xa = xs[i - 1] + 17, xb = xs[i] - 17, past = i <= ai, broken = !!st.choke;
-    const L = (xb - xa), nl = Math.max(2, Math.round(L / 22)), w = L / nl;
-    for (let k = 0; k < nl; k++) {
-      const cx = xa + w * (k + .5), vert = k % 2 === 1;
-      const mid = broken && k === Math.floor(nl / 2);
-      const cls = 'clink' + (past ? ' on' : '') + (broken ? ' red' : '') + (mid ? ' snap' : '');
-      if (mid) { el('path', { d: `M${cx - w * .55},${y - 4} a${w * .55},4 0 0 1 ${w * .4},-0.2 M${cx + w * .55},${y + 4} a${w * .55},4 0 0 1 ${-w * .4},0.2`, class: cls }, gc); }
-      else el('ellipse', { cx, cy: y, rx: vert ? w * .3 : w * .62, ry: vert ? 2.2 : 5.2, class: cls }, gc);
-    }
-  });
-  S.steps.forEach((st, i) => {
-    const N = S.nodes[st.n], K = st.choke ? KIND.choke : KIND[N.kind], cur = i === ai, past = i < ai;
-    const g = el('g', { class: 'cnode2' + (cur ? ' cur' : past ? ' past' : ' fut'), style: `--kc:${K.c}`, tabindex: 0, role: 'button', 'aria-label': `Step ${String(i + 1).padStart(2, '0')}: ${st.title}` }, gc);
-    el('circle', { cx: xs[i], cy: y, r: cur ? 17 : 14, class: 'cnb' }, g);
-    iconUse(N.icon, xs[i], y, cur ? 18 : 15, g, i <= ai ? K.c : '#56687a');
-    el('text', { x: xs[i], y: y + 32, class: 'cnum', 'text-anchor': 'middle' }, g).textContent = String(i + 1).padStart(2, '0');
-    const go = () => storySet(i);
-    g.addEventListener('click', go); g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
-  });
-  // heads-up text
-  const st = S.steps[ai];
-  $('shud').style.setProperty('--kc', st ? (st.choke ? KIND.choke.c : (LINK[st.link] || LINK.data).c) : '#e4ebf1');
-  $('shud-k').textContent = st ? `${String(ai + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')} · ${st.date}` : `${S.when} · ${S.steps.length} steps`;
-  $('shud-t').textContent = st ? st.title : S.h;
-  $('schoke').hidden = !(st && st.choke); layStrip(S, st);
-  const stg = sSvg.parentNode; if (st && st.choke && !reduce && stg.dataset.last !== String(storyIdx) + ':' + ai) { stg.classList.remove('alarm'); void stg.offsetWidth; stg.classList.add('alarm'); }
-  stg.dataset.last = String(storyIdx) + ':' + ai;
-  ROOT.querySelectorAll('.sstep').forEach(c => c.classList.toggle('on', +c.dataset.i === ai));
-  storyCard();
-}
-/* v2 round 3: Scenarios on the stage. One map, one card, one bar. The card shows the step in hand (two sentences at most;
-   the rest of the text and the source sit behind “Read more”); Back, Next, ← → and the chain on the map move it.
-   A case closes with what the reader can now see, built from the case's own data. Scrolling no longer drives the map.
+/* B3: Scenarios in three depths (gallery, scene, depth) are drawn by v2/scenes.js. This script keeps the state: which case
+   (storyIdx) and where in it (storyStep: -1 the gallery, 0 to n-1 a step, n the close), and the setters every control goes through.
    Cases followed to the end are remembered on this device (localStorage isx-scen-seen). */
+let storyIdx = 0, storyStep = -2;
 const SKEEN = 'isx-scen-seen';
 const scSeen = () => { try { const a = JSON.parse(stGet(SKEEN) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
-/* B1: one colour per group of scenarios, for the route in the bar */
-const SGCOL = { 'Kill chains': '#ff5f7e', 'Pointed inward': '#ffb547', 'Switches and sanctions': '#44d7ec', 'Money': '#ffd27a', 'The tech squeeze': '#9aa4ff' };
 const scGroup = id => (SORDER.find(([, ids]) => ids.includes(id)) || [''])[0];
 const scOrder = () => SORDER.flatMap(([, ids]) => ids).map(id => STORIES.findIndex(x => x.id === id)).filter(i => i >= 0);
-const scCut = x => { const m = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(String(x)); if (!m) return [String(x), '']; const m2 = /^(.*?[.!?])\s+(?=[A-Z“‘$])([\s\S]*)$/.exec(m[2]); return m2 ? [m[1] + ' ' + m2[1], m2[2]] : [String(x), '']; };
-let scLay = false, scMore = false;
-function scSee(S) {
-  const used = SLAY.filter(([k]) => Object.values(S.nodes).some(N => N.lay === k)).map(([, n]) => n), ch = S.steps.filter(x => x.choke);
-  const list = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
-  return `<p>This chain runs through ${used.length} of the stack’s ${SLAY.length} layers: ${esc(list(used))}.</p>`
-    + (ch.length ? `<p>It ${ch.length === 1 ? 'has one chokepoint' : 'has ' + ch.length + ' chokepoints'}, where one decision cuts the chain: ${ch.map(x => '“' + esc(x.title) + '”').join(', ')}.</p>` : '<p>No link in this chain was cut: every step ran as built.</p>');
-}
-function buildStorySteps() {
-  const S = STORIES[storyIdx], host = $('ssteps'); host.innerHTML = '';
-  const nch = S.steps.filter(x => x.choke).length, [s1, s2] = scCut(S.sum);
-  const intro = document.createElement('div'); intro.className = 'sintro'; intro.dataset.i = -1;
-  intro.innerHTML = `<div class="sk">${esc(scGroup(S.id))} · ${esc(S.when)}</div><h3>${esc(S.h)}</h3><p>${esc(s1)}</p>${s2 ? `<details class="scmore"><summary>Read more</summary><p>${esc(s2)}</p></details>` : ''}<div class="scmeta"><span>${S.steps.length} steps</span><span>${nch} chokepoint${nch === 1 ? '' : 's'}</span></div><button type="button" class="scgo" data-sc="next">Follow the chain <span aria-hidden="true">→</span></button>`;
-  host.appendChild(intro);
-  S.steps.forEach((st, i) => {
-    const a = document.createElement('article'); a.className = 'sstep' + (st.choke ? ' choke' : ''); a.dataset.i = i;
-    const col = st.choke ? KIND.choke.c : (LINK[st.link] || LINK.data).c, [x1, x2] = scCut(st.text);
-    a.style.setProperty('--kc', col);
-    a.innerHTML = `<div class="sno"><span>${String(i + 1).padStart(2, '0')} / ${String(S.steps.length).padStart(2, '0')}</span>${esc(st.date)}</div>${st.choke ? '<div class="schip">Chokepoint</div>' : ''}<h4></h4><p></p><details class="scmore"><summary>Read more</summary>${x2 ? '<p class="scx"></p>' : ''}<div class="ssrc"></div></details>`;
-    a.querySelector('h4').textContent = st.title; a.querySelector('p').textContent = x1; if (x2) a.querySelector('.scx').textContent = x2;
-    a.querySelector('.ssrc').textContent = (st.ev === 'cap' ? 'Capability documented elsewhere · ' : 'Source: ') + st.src;
-    host.appendChild(a);
-  });
-  const end = document.createElement('div'); end.className = 'send'; end.dataset.i = S.steps.length;
-  const ord = scOrder(), nx = ord[(ord.indexOf(storyIdx) + 1) % ord.length];
-  end.innerHTML = `<div class="sk">What you can now see</div><h3>${esc(S.t)}</h3>${scSee(S)}<div class="scdone" id="isx-sc-done"></div>`;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'snext'; b.innerHTML = `Next: ${esc(STORIES[nx].t)} <span aria-hidden="true">→</span>`;
-  b.addEventListener('click', () => pickStory(nx, true)); end.appendChild(b);
-  const b2 = document.createElement('button'); b2.type = 'button'; b2.className = 'sclnk'; b2.dataset.sc = 'pick'; b2.textContent = 'Choose another scenario'; end.appendChild(b2);
-  host.appendChild(end);
-  host.querySelectorAll('.scmore').forEach(d => { d.open = scMore; d.addEventListener('toggle', () => { scMore = d.open; }); });
-}
-/* the card shows one part at a time: the opening, the step in hand, or the close */
-function storyCard() {
-  const S = STORIES[storyIdx], n = S.steps.length, host = $('ssteps'); if (!host) return;
-  [...host.children].forEach(c => { const on = +c.dataset.i === storyStep; c.hidden = !on; if (on) { const d = c.querySelector('.scmore'); if (d) d.open = scMore; } });
-  if (storyStep >= n) {
-    let seen = scSeen(); if (!seen.includes(S.id)) { seen.push(S.id); try { stSet(SKEEN, JSON.stringify(seen)); } catch (e) { /* ignore */ } }
-    const d = $('sc-done'); if (d) d.innerHTML = `<i style="--p:${Math.round(seen.length / STORIES.length * 100)}%"></i><span><b>${seen.length}</b> of ${STORIES.length} scenarios followed${seen.length === STORIES.length ? ': the whole set' : ''}</span>`;
-  }
-  const bar = $('sc-bar'); if (!bar) return;
-  const ord = scOrder(), k = ord.indexOf(storyIdx) + 1;
-  /* B1: the shared bar. The scenario is what you follow (the picker opens from the bar); steps are marks, chokepoints red diamonds */
-  if (RT) {
-    const P2 = v => String(v).padStart(2, '0'), cur = storyStep >= 0 && storyStep < n ? S.steps[storyStep] : null, gc = SGCOL[scGroup(S.id)] || '#e4ebf1';
-    const stt = i => i === storyStep ? 'cur' : i < storyStep || storyStep >= n ? 'done' : '';
-    const marks = S.steps.map((x, i) => ({ kind: x.choke ? 'fork' : 'step', colour: x.choke ? KIND.choke.c : null, state: stt(i), target: String(i), title: P2(i + 1) + ' · ' + x.title + (x.choke ? ' · chokepoint' : '') }));
-    marks.push({ kind: 'end', state: storyStep >= n ? 'cur' : '', target: String(n), title: 'What you can now see' });
-    RT.render(bar, { id: 'scenarios', label: 'Scenario: steps', stage: $('sc3'),
-      back: { enabled: storyStep >= 0, label: storyStep > 0 ? 'Back: ' + S.steps[Math.min(storyStep, n) - 1].title : 'Back' },
-      next: { kind: 'go', enabled: storyStep < n, kicker: storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : 'Next', title: storyStep < 0 ? '01 ' + S.steps[0].title : storyStep >= n ? S.t : storyStep === n - 1 ? 'What you can now see' : P2(storyStep + 2) + ' ' + S.steps[storyStep + 1].title, ptitle: storyStep >= n ? 'Done' : storyStep === n - 1 ? 'The close' : 'Step ' + P2(storyStep + 2) },
-      line: { kicker: scGroup(S.id) + ' · ' + k + ' / ' + STORIES.length, title: S.t, attrs: { id: 'isx-sc-pick' } },
-      segs: [{ label: storyStep < 0 ? 'Start' : storyStep >= n ? 'What you can now see' : P2(storyStep + 1) + ' ' + cur.title, colour: gc, current: true, wide: true, grow: 1, marks }],
-      ph: { label: S.t, count: storyStep < 0 ? 'Start' : storyStep >= n ? 'Done' : P2(storyStep + 1) + ' / ' + P2(n), colour: gc, marks },
-      controls: `<button type="button" class="rt-tg" data-sc="lay" aria-pressed="${scLay}">Layers used</button>` });
-  }
-  const sl = $('slay'); if (sl) sl.hidden = !scLay;
-}
+const scLayers = S => SLAY.filter(([k]) => Object.values(S.nodes).some(N => N.lay === k)).map(([, n]) => n);
 function scSync(o) { if (window.ISX && ISX.scenes) ISX.scenes.sync(o || {}); }
-function storySet(n) { const S = STORIES[storyIdx]; n = Math.max(-1, Math.min(S.steps.length, n)); if (n === storyStep) return; storyStep = n; renderStage(); scSync(); emit('story', { id: S.id, step: n }); }
-function storyGo(d) { storySet(storyStep + d); }
-/* B3: Back and Next. In the gallery they change the case; in a case they move one step */
-function scNav(d) { const ord = scOrder(); if (storyStep < 0) { pickStory(ord[(ord.indexOf(storyIdx) + d + ord.length) % ord.length]); return; } storySet(storyStep + d); }
-function pickStory(i, scroll) {
-  storyIdx = i; storyStep = -1; buildStorySteps(); renderStage(true); narrate(); renderStoryCard(); renderLegend(); scSync();
-  emit('story', { id: STORIES[i].id, step: -1 });
+function storySet(n, o) {
+  const S = STORIES[storyIdx]; n = Math.max(-1, Math.min(S.steps.length, n)); if (n === storyStep) return; storyStep = n;
+  if (n >= S.steps.length) { const seen = scSeen(); if (!seen.includes(S.id)) { seen.push(S.id); try { stSet(SKEEN, JSON.stringify(seen)); } catch (e) { /* ignore */ } } }
+  scSync(o); emit('story', { id: S.id, step: n });
 }
-(() => {
-  const sc = $('sc3'); if (!sc) return;
-  sc.addEventListener('click', e => {
-    const t = e.target.closest('button'); if (!t) return;
-    if (t.id === 'isx-sc-pick') { storySet(-1); return; }
-    if (t.id === 'isx-sc-tofin') { setView('fin'); return; }
-    const k = t.dataset.sc; if (!k) return;
-    if (k === 'next') { storyGo(1); const f = sc.querySelector('.sc3bar .rt-nx:not(.off)') || sc.querySelector('.send .snext'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
-    else if (k === 'prev') { storyGo(-1); const f = sc.querySelector('.sc3bar .rt-bk:not(.off)') || sc.querySelector('.sc3bar .rt-nx'); if (f && e.detail === 0) f.focus({ preventScroll: true }); }
-    else if (k === 'lay') { scLay = !scLay; storyCard(); const f = sc.querySelector('.rt-tg'); if (f) f.focus({ preventScroll: true }); }
-    else if (k === 'pick') storySet(-1);
-  });
-})();
+function storyGo(d) { storySet(storyStep + d); }
+/* Back and Next. In the gallery they change the case; in a case they move one step: Back on the first step returns to the
+   gallery, Next on the close goes to the next case's gallery view. */
+function scNav(d) {
+  const n = STORIES[storyIdx].steps.length, ord = scOrder();
+  if (storyStep < 0 || (d > 0 && storyStep >= n)) { pickStory(ord[(ord.indexOf(storyIdx) + d + ord.length) % ord.length]); return; }
+  storySet(storyStep + d);
+}
+function pickStory(i, o) {
+  storyIdx = i; storyStep = o && o.step != null ? Math.max(-1, Math.min(STORIES[i].steps.length, o.step)) : -1;
+  narrate(); renderStoryCard(); renderLegend(); scSync(o);
+  emit('story', { id: STORIES[i].id, step: storyStep });
+}
 function renderStoryCard() {
   resetCardParts();
   const S = STORIES[storyIdx];
@@ -3688,13 +3512,6 @@ function table5(s, host) {
   return false;
 }
 function ownNote(iso) { const r = H5[iso]; return r && r[3] ? r[3] : ''; }
-
-/* scenarios: which layers of the stack each case used */
-function layStrip(S, st) {
-  const host = $('slay'); if (!host) return;
-  const used = new Set(Object.values(S.nodes).map(N => N.lay)), cur = st ? S.nodes[st.n].lay : null;
-  host.innerHTML = '<span class="slk">Layers used</span>' + SLAY.map(([k, nm]) => `<span class="sly${used.has(k) ? ' u' : ''}${k === cur ? ' c' : ''}">${esc(nm)}</span>`).join('');
-}
 
 /* support */
 $('sup-link').addEventListener('click', e => { e.preventDefault(); $('support').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); });
@@ -5857,7 +5674,7 @@ let timer = null;
 function resetCardParts() { ['c-firm', 'c-stats', 'c-table', 'c-links', 'c-steps', 'c-firms', 'c-note'].forEach(i => { $(i).innerHTML = ''; }); $('clear').hidden = true; }
 /* B1: the bar. The Circuit, the Simulator's guide and Scenarios are walked through one component (v2/route.js): Back, Next,
    what you follow, the route, the tab's own controls, the dock. Each tab hands it a model from the function that already
-   drew its bar: buildTabs() here, simBar() and storyCard(). The Arm and the capital stack keep their plain tabs. */
+   drew its bar: buildTabs() here, simBar() and, for Scenarios, v2/scenes.js (B3: the bar in its strip skin). The Arm and the capital stack keep their plain tabs. */
 const RT = window.ISXR || null;
 function buildTabs() {
   const host = $('tabs');
@@ -6274,7 +6091,7 @@ function setView(v) {
   else if (v === 'arm' && armMode === 'rev') { selIso = null; renderGlobe(true); renderRevCard(); }
   else if (v === 'arm') { pArm.size(); renderArm(); pArm.start(); renderArmCard(); }
   else if (v === 'fin') { renderFin(); renderFinCard(); }
-  else if (v === 'story') { buildStorySteps(); storyStep = -1; renderStage(true); renderStoryCard(); scSync({ instant: true }); }
+  else if (v === 'story') { storyStep = -1; renderStoryCard(); scSync({ instant: true }); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
   fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync();
   emit('view', view); ISXP.sync();
@@ -7717,16 +7534,15 @@ $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventLis
 $('t-more').addEventListener('click', () => crisp($('narr')));
 $('t-fold').addEventListener('click', () => { const t = $('tournarr'); t.classList.toggle('folded'); $('t-fold').textContent = t.classList.contains('folded') ? '+' : '–'; });
 $('t-p').addEventListener('click', () => $('tournarr').classList.toggle('open'));
-$('stap-p').addEventListener('click', () => storyGo(-1)); $('stap-n').addEventListener('click', () => storyGo(1));
-document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (!RT && view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } else if (!RT && view === 'story' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); storyGo(ev.key === 'ArrowRight' ? 1 : -1); } });
+document.addEventListener('keydown', ev => { if (ev.target.closest && ev.target.closest('input, textarea, select')) return; if (!RT && view === 'map' && (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft')) { ev.preventDefault(); stepBy(ev.key === 'ArrowRight' ? 1 : -1); } else if (view === 'map' && !introEl && !ev.ctrlKey && !ev.metaKey && !ev.altKey && ['+', '=', '-', '_'].includes(ev.key)) { const zb = $('zoom').querySelector(`[data-z="${ev.key === '+' || ev.key === '=' ? 'in' : 'out'}"]`); if (zb) { ev.preventDefault(); zb.click(); } } });
 /* B1: Back, Next, the marks, ← → and the swipe of all three tabs arrive here from the bar (v2/route.js) */
 if (RT) {
   RT.on(ev => {
     if (ev.id === 'circuit') { if (view !== 'map') return; if (ev.target != null) { if (ev.target === 'play') play(); else if (ev.target === 'ring') ringSet(true); else { stopPlay(); setStep(+ev.target); } } else stepBy(ev.nav === 'next' ? 1 : -1); }
-    else if (ev.id === 'scenarios') { if (view !== 'story') return; if (ev.target != null) storySet(+ev.target); else scNav(ev.nav === 'next' ? 1 : -1); }
+    else if (ev.id === 'scenarios') { if (view !== 'story' || (window.ISX && ISX.scenes && ISX.scenes.busy)) return; if (ev.target != null) storySet(+ev.target); else scNav(ev.nav === 'next' ? 1 : -1); }
     else if (ev.id === 'sim') simNav(ev);
   });
-  RT.swipe($('tournarr'), 'circuit'); RT.swipe($('sc-card'), 'scenarios');
+  RT.swipe($('tournarr'), 'circuit'); RT.swipe($('sc3'), 'scenarios', '.b3rail, .b3sheet, .b3strip');
 }
 if (location.hash === '#tour') ROOT.classList.add('tour');
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
@@ -7773,7 +7589,7 @@ window.ISX = {
   highlight(pred) { hlPred = pred || null; renderGlobe(false); },
   hashDetail: null, applyDetail: null, viewName: null,
   /* B3: the Scenarios data and state for v2/scenes.js; it draws, the setters here keep the state */
-  sc: { STORIES, SMAPS, ICON, KIND, LINK, SLAY, SORDER, get idx() { return storyIdx; }, get step() { return storyStep; }, set: storySet, pick: pickStory, seen: scSeen, group: scGroup, order: scOrder },
+  sc: { STORIES, SMAPS, ICON, KIND, LINK, SLAY, SORDER, get idx() { return storyIdx; }, get step() { return storyStep; }, set: storySet, nav: scNav, pick: pickStory, seen: scSeen, group: scGroup, order: scOrder, layers: scLayers },
   scenes: null,
   load(name) {
     const el = document.getElementById('isx-data-' + name);
