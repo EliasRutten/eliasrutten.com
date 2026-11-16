@@ -166,6 +166,17 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('tiers B, phone: a primer screen', '#simulator', sim(0, 13), 390, 844);
   await run('tiers B: the new step “The Fed opens the tap”', '#simulator', sim(29), 1440, 900);
   await run('tiers B: the guide’s close, its sources open', '#simulator', sim(52), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
+  /* B4: the Arm in its three layouts, the sheets, the mistake panel */
+  await run('B4: the Arm, full, Platforms selected', '#arm', seen, 1440, 900, async p => { await p.evaluate(() => ISX.setArmSel('PLAT')); await p.waitForTimeout(400); });
+  await run('B4: the Arm, compact, a relation', '#arm', seen, 1280, 760, async p => { await p.evaluate(() => ISX.setArmRel('control')); await p.waitForTimeout(400); });
+  await run('B4: the Arm, a relation with every link open in the card', '#arm', seen, 1440, 900, async p => { await p.evaluate(() => { ISX.setArmRel('rent'); document.querySelector('#isx-acard [data-acard="links"]').click(); }); await p.waitForTimeout(400); });
+  await run('B4, phone: the Arm in bands, the dossier sheet open', '#arm', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-abands [data-anode="CLOUD"]').click()); await p.waitForTimeout(600); });
+  await run('B4, tablet: the Arm in bands', '#arm', seen, 768, 1024);
+  await run('B4: the relation picker sheet', '#arm', seen, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-tabs [data-ash="pick"]').click()); await p.waitForTimeout(500); });
+  await run('B4, phone: the relation picker sheet', '#arm', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-tabs [data-ash="pick"]').click()); await p.waitForTimeout(500); });
+  await run('B4: the Revenue map with its card', '#revenue', seen, 1440, 900);
+  await run('B4: the mistake panel open', '#circuit/03', seen, 1440, 900, async p => { await p.evaluate(() => document.getElementById('isx-mis').click()); await p.waitForTimeout(300); });
+  await run('B4, phone: the mistake panel open', '#arm', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-b4row [data-mis]').click()); await p.waitForTimeout(300); });
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

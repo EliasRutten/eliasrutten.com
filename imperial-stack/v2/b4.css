@@ -296,3 +296,15 @@
 /* below 1440 px the header has no room to spare: the pill keeps its flag, its name moves to the label and the tooltip */
 @media (min-width: 761px) { #isx-root .brand .er-ps { display: none; } }   /* the header has no room to spare; Pax Silica stays in About */
 @media (min-width: 761px) and (max-width: 1439px) { #isx-root .b4mis { width: 24px; padding: 0; justify-content: center; margin-left: 6px; } #isx-root .b4mis span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+/* rule 1 · card titles 24 px on step cards (22 on phones); the Simulator's opening card and Scenarios' scene title keep their display size */
+@media (min-width: 761px) { #isx-root .cmd6 .tournarr h3, #isx-root .s2 .s2body h3 { font-size: 24px; } #isx-root #isx-cock.s2.s4open .s2card h3 { font-size: 30px; } }
+#isx-root .s2 .s2chl button { min-height: 36px; height: 36px; }
+#isx-root #isx-hint .tipsre { min-height: 24px; }
+#isx-root .acard .fy, #isx-root .acard .stt, #isx-root .b4sh-b .fy, #isx-root .b4sh-b .stt { font-size: 10.5px; }
+#isx-root .rt-host .rt .tw-gsb { align-self: stretch; }
+/* the essay segment keeps one width while its title changes, so the route never shifts under the lit step */
+@media (min-width: 1440px) { #isx-root .rt-host .rt .dock6 .dk.dk-es:not(.dk-fs) { width: 236px; } }
+@media (min-width: 1180px) and (max-width: 1439px) { #isx-root .rt-host .rt .dock6 .dk.dk-es:not(.dk-fs) { width: 186px; } }
+@media (max-width: 1679px) { #isx-root .rt-host .rt[data-id="circuit"] .dock6 .dk.dk-es:not(.dk-fs) { width: 176px; } }
+#isx-root .tournarr.ringc .b4mech { display: none; }
+@media (max-height: 820px) and (min-width: 761px) { #isx-root .b3 .b3cta { height: 44px; } }   /* a short stage: the gallery keeps its room above the rail */
