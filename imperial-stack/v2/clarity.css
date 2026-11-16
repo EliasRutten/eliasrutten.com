@@ -1,0 +1,35 @@
+/* clarity build (17 Nov 2026): the imperial machinery, taken by the hand. New rules for the round, after reach.css.
+   The guide's card: the question as heading, the step's name under it, terms defined where they first appear, episodes offered as doors. */
+#isx-root .s2 .s2body h3.cl-q { margin-top: 8px; font: 600 19.5px/1.24 var(--display); letter-spacing: .01em; text-transform: none; color: #f3f6f9; text-wrap: balance; }
+#isx-root .s2 .cl-a { margin: 7px 0 0; font: 600 12px/1.2 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--rc, #ffd27a); }
+#isx-root .s2 .s2body:has(.cl-q) > .s2k + .dyou { margin-top: 8px; }
+#isx-root .s2 .cl-new { display: grid; gap: 4px; margin: 10px 0 0; padding: 8px 10px 9px; border-radius: 9px; border: 1px solid #1f2d3a; background: rgba(143, 216, 255, .045); }
+#isx-root .s2 .cl-new .cl-nk { font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8fd8ff; }
+#isx-root .s2 .cl-new div { font-size: 12.5px; line-height: 1.42; color: #c3d0db; }
+#isx-root .s2 .cl-new dt { display: inline; font-weight: 600; color: #eef3f7; }
+#isx-root .s2 .cl-new dt::after { content: ": "; }
+#isx-root .s2 .cl-new dd { display: inline; margin: 0; }
+/* an episode: a door on the card, or a fold in it */
+#isx-root .s2 .cl-ep, #isx-root .s2 .cl-epi > summary { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; margin: 9px 0 0; padding: 0 11px; border-radius: 10px; border: 1px dashed color-mix(in srgb, var(--ec, #ffd27a) 45%, #22313f); background: color-mix(in srgb, var(--ec, #ffd27a) 5%, transparent); color: var(--ink); cursor: pointer; text-align: left; font: inherit; list-style: none; }
+#isx-root .s2 .cl-epi > summary::-webkit-details-marker { display: none; }
+#isx-root .s2 .cl-ep:hover, #isx-root .s2 .cl-epi > summary:hover { border-style: solid; background: color-mix(in srgb, var(--ec, #ffd27a) 10%, transparent); }
+#isx-root .s2 .cl-ep:focus-visible, #isx-root .s2 .cl-epi > summary:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .s2 .cl-ep span, #isx-root .s2 .cl-epi > summary span { flex: none; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ec, #ffd27a) 80%, #fff); }
+#isx-root .s2 .cl-ep b, #isx-root .s2 .cl-epi > summary b { min-width: 0; font: 600 13px/1.2 var(--display); letter-spacing: .05em; text-transform: uppercase; color: #eef3f7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#isx-root .s2 .cl-ep small, #isx-root .s2 .cl-epi > summary small { flex: none; margin-left: auto; font-size: 11.5px; color: var(--ink2); white-space: nowrap; }
+#isx-root .s2 .cl-ep i { flex: none; font-style: normal; font-size: 15px; color: color-mix(in srgb, var(--ec, #ffd27a) 80%, #fff); }
+#isx-root .s2 .cl-epi > summary::after { content: "+"; flex: none; font: 15px/1 var(--mono); color: #ffd27a; }
+#isx-root .s2 .cl-epi[open] > summary::after { content: "–"; }
+#isx-root .s2 .cl-epi > div { padding: 8px 11px 2px; font-size: 13px; line-height: 1.5; color: #c9d4de; }
+#isx-root .s2 .cl-epi > div p { margin: 0 0 7px; }
+#isx-root .s2 .cl-epn { margin: 9px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink2); }
+#isx-root .s2 .cl-ret { margin: 0 0 7px; }
+/* the chapter's outline, in “The mechanism” */
+#isx-root .s2 .cl-out { margin: 10px 0 0; }
+#isx-root .s2 .cl-out > span { font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .s2 .cl-out ol { display: grid; gap: 2px; margin: 7px 0 0; padding: 0 0 0 20px; font-size: 12.5px; line-height: 1.4; color: #7f92a3; }
+#isx-root .s2 .cl-out li.cur { color: #ffd27a; }
+#isx-root .s2 .cl-out li b { font-weight: 600; color: #f3f6f9; }
+#isx-root .s2 .cl-out li button { padding: 0; border: 0; background: none; font: inherit; color: #c3d0db; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: #3a4d5f; text-underline-offset: 3px; }
+#isx-root .s2 .cl-out li button:hover { color: #fff; text-decoration-color: #ffd27a; }
+@media (max-width: 760px) { #isx-root .s2 .s2body h3.cl-q { font-size: 18px; } }

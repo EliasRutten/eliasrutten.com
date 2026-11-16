@@ -2371,6 +2371,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/entry.css">
 <link rel="stylesheet" href="/imperial-stack/v2/onboard.css">
 <link rel="stylesheet" href="/imperial-stack/v2/reach.css">
+<link rel="stylesheet" href="/imperial-stack/v2/clarity.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -3865,7 +3866,7 @@ const SECTION_ESSAY = {
   circuit: 'grandma', circuitClose: 'bubble', minerals: 'oil200',
   arm: { all: 'grandma', contract: 'palantir', control: 'palantir', personnel: 'palantir', data: 'palantir', debt: 'crypto', displace: 'crypto', alliance: 'bubble', invest: 'bubble', rent: 'bubble' },
   revenue: 'bubble',
-  simulator: 'house', simChapter: { 'Data centre': 'bubble', Consumer: 'bubble', Savings: 'grandma', Oil: 'oil', 'If it breaks': 'oil200' }, simYen: 'japan2', simStable: 'dollar20',
+  simulator: 'house', simChapter: { 'The loop': 'grandma', 'Borrowed money': 'bubble', 'Off the books': 'bubble', 'If it breaks': 'oil200' }, simEp: { oil: 'oil', calm: 'bubble' }, simYen: 'japan2', simStable: 'dollar20',
   capitalStack: 'grandma',
   scenarios: 'oil200', scenario: { kenya: 'crypto', garantex: 'dollar20', maven: 'palantir', border: 'palantir' },
 };
@@ -3882,6 +3883,7 @@ function essayKey() {
       if (B) { const tx = [B.t, B.x, B.bs].filter(Boolean).join(' ');
         if (/\byen\b/i.test(tx)) return E.simYen;
         if (/stablecoin/i.test(tx)) return E.simStable;
+        if (L.ep && E.simEp[L.ep.id]) return E.simEp[L.ep.id];
         if (L.main) { const C = SLINES[0].chs[B.ch]; if (C && E.simChapter[C.s]) return E.simChapter[C.s]; } }
     } catch (e) { /* the default */ }
     return E.simulator;
@@ -3912,7 +3914,7 @@ function whereNow(from) {
   if (view === 'fin') {
     const L = sLine(), b = SIM.beat, n = L.beats.length;
     if (SIM.mode === 'full') { const bits = []; let sl = 'simulator/full';
-      if (fplay != null) { bits.push('play ' + PLAYS[fplay].t); sl += '/play=' + (fplay + 1); }
+      if (fplay != null) { bits.push('episode ' + RUNS[fplay].t); sl += '/play=' + (fplay + 1); }
       else if (flev.size) { bits.push('lever ' + [...flev].map(i => i + 1).join(', ')); sl += '/lever=' + [...flev].map(i => i + 1).join(','); }
       else if (fsel) { bits.push(FN[fsel] ? FN[fsel][3] : fsel); sl += '/actor=' + String(fsel).toLowerCase(); }
       else if (fedge != null) { bits.push('a line on the map'); sl += '/line=' + fedge; }
@@ -5475,15 +5477,17 @@ const PLAYS = [
     ['Central banks step back', 'Foreign central banks sold $164bn of Treasuries in the year to August 2026. Someone else has to buy.', E('OFF>TSY')],
     ['Bills, not bonds', 'The Treasury funds itself with bills, 22.2% of marketable debt, which money funds, banks and stablecoin issuers treat as cash.', E('TSY>MMF', 'TSY>BNK', 'TSY>STB'),
       { d: ['The GENIUS Act of July 2025 makes stablecoin issuers hold cash and short-term Treasuries. A stablecoin adds a new buyer of bills only where the money behind it was not already in bills or money funds: most clearly when it comes from abroad.'], src: 'GENIUS Act (18 Jul 2025).' }],
-    ['The reservoir drains', 'At the end of 2022 money funds had a record $2.55tn parked at the Fed’s reverse repo. Bills paid a little more and drew that cash out, so the Treasury could borrow without draining bank reserves.', E('MMF>FED', 'TSY>MMF', 'TSY>FED'),
-      { d: ['By December 2024 less than $100bn was left in the reverse repo.', 'The Fed was shrinking its balance sheet at the same time (quantitative tightening, from June 2022), yet reserves held up, because the cash that left the reverse repo went into bills.', 'Two other cushions helped. In March 2023, after Silicon Valley Bank failed, the Fed’s Bank Term Funding Program lent to banks against Treasuries at face value; about $165bn was extended before it closed to new loans on 11 March 2024. And while the debt limit bound, the Treasury spent down its own account: to $23bn just before the limit was suspended on 3 June 2023.', 'Michael Howell calls this the first phase of a liquidity rebound engineered without QE (his reading).'],
-        src: 'New York Fed data via Reuters (30 Dec 2022); Bloomberg (20 Dec 2024); Fed Financial Stability Report via Reuters (Apr 2024); GAO-26-107872 (Mar 2026).' }],
+    ['Cash parked at the Fed', 'At the end of 2022 money funds had a record $2.55tn parked at the Fed’s reverse repo. Bills paid a little more and drew that cash out, so the Treasury could borrow without draining bank reserves.', E('MMF>FED', 'TSY>MMF', 'TSY>FED'),
+      { d: ['By December 2024 less than $100bn was left in the reverse repo.', 'The Fed was shrinking its balance sheet at the same time (quantitative tightening, from June 2022), yet reserves held up, because the cash that left the reverse repo went into bills.', 'Another cushion helped: while the debt limit bound, the Treasury spent down its own account, to $23bn just before the limit was suspended on 3 June 2023.', 'Michael Howell calls this the first phase of a liquidity rebound engineered without QE (his reading).'],
+        src: 'New York Fed data via Reuters (30 Dec 2022); Bloomberg (20 Dec 2024); GAO-26-107872 (Mar 2026).',
+        /* clarity build (17 Nov 2026): a dated moment inside a core step opens as an episode in the card (w = when, t = what, x = paragraphs) */
+        ep: [{ w: 'March 2023', t: 'Silicon Valley Bank fails', x: ['In March 2023, after Silicon Valley Bank failed, the Fed’s Bank Term Funding Program lent to banks against Treasuries at face value; about $165bn was extended before it closed to new loans on 11 March 2024.', 'It was one more cushion under bank reserves while the Treasury kept borrowing.'], src: 'Fed Financial Stability Report via Reuters (Apr 2024).' }] }],
     ['The cushion runs out', 'After the debt limit was raised in July 2025 the Treasury rebuilt its account at the Fed to $1tn, and with the reverse repo empty the money came out of bank reserves. Reserves fell below $3tn, and repo rates broke above the Fed’s ceiling at month-ends.', E('TSY>FED', 'FED>BNK', 'BNK>HFD'),
-      { d: ['The Treasury’s account stood at $313bn in early July 2025, well below its own policy level, before the $5tn increase in the debt limit on 4 July; by 30 October it held $1tn. Reserves fell to $2.93tn in the week to 22 October. On 29 October the Fed said runoff would end on 1 December. Use of its standing repo hit a record $50.35bn on 31 October.'],
-        src: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); Reuters via StreetInsider (29 Dec 2025).' }],
+      { src: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025).',
+        ep: [{ w: 'July to October 2025', t: 'The debt-limit summer', x: ['The Treasury’s account stood at $313bn in early July 2025, well below its own policy level, before the $5tn increase in the debt limit on 4 July; by 30 October it held $1tn.', 'Reserves fell to $2.93tn in the week to 22 October. On 29 October the Fed said runoff would end on 1 December. Use of its standing repo hit a record $50.35bn on 31 October.'], src: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); Reuters via StreetInsider (29 Dec 2025).' }] }],
     ['The regulators help', 'Regulators cut the leverage rule for the largest banks from April 2026, giving dealers room to hold Treasuries and lend in repo. Governors Barr and Cook voted against, warning that the banks’ own cushion was being thinned.', E('REG>BNK', 'TSY>BNK', 'CGR>STB', 'TSY>STB'),
       { d: ['A final rule of 25 November 2025, in force from 1 April 2026, cut tier 1 requirements at the largest banks’ deposit-taking arms by 28%, $219bn.', 'The rule does more than add a buyer. When a bank buys a Treasury, or lends against one in repo, it pays with a deposit it creates. Easing the rule therefore adds room to create money, which is closer to monetising the debt than to borrowing someone’s savings.'], src: 'Federal Reserve, FDIC and OCC final rule (25 Nov 2025); statements by Governors Barr and Cook (25 Nov 2025).' }],
-    ['Financial hubs take the rest', 'Funds and custodians booked in seven financial centres added $245bn of Treasuries in a year, much of it bought with borrowed money. The largest of them, the Cayman Islands, barely shows in the official count: the next chapter follows it.', E('TSY>CEN', 'BNK>CEN', 'MMF>BNK'), { d: ['See where they are booked: Circuit, step 07.'], src: 'TIC (Aug 2026).' }],
+    ['Financial hubs take the rest', 'Funds and custodians booked in seven financial centres added $245bn of Treasuries in a year, much of it bought with borrowed money. The largest of them, the Cayman Islands, barely shows in the official count: the next steps follow it.', E('TSY>CEN', 'BNK>CEN', 'MMF>BNK'), { d: ['See where they are booked: Circuit, step 07.'], src: 'TIC (Aug 2026).' }],
     ['A calmer long end, mostly', 'Fewer long bonds and targeted buybacks aim to calm long yields and volatility: the price of credit for everyone else. Not always: long yields kept climbing into October.', E('TSY>Y10', 'TSY>MOV', 'FED>Y10', 'Y10>PCR')],
     /* tiers build B (15 Nov 2026): what happened after the call “The repo backstop”, cut from the depth of “The cushion runs out” (spec §3.2).
        Appended, so no decision key but the one it answers changes; the play's own line follows PLAYS[0].ord */
@@ -5544,7 +5548,7 @@ const PLAYS = [
     ['Yields price the bond', 'Every new note is sold at a spread over the Treasury yield. Amazon’s dollar notes carried coupons of 3.85–6.05% in March 2026 and 4.20–6.25% in July.', E('Y10>BND')],
     ['Savers buy the paper', `Dealers underwrite the sales; insurers, pension funds and bond funds take the notes. The firms in the build-out sold ${bn0(ISUM.b)} of bonds in the 12 months to 8 November 2026.`, E('BNK>BND', 'INS>BND')],
     ['The proceeds become capex', 'Bond money pays for data centres, chips and power. Amazon, Alphabet, Meta, Oracle and Nvidia are the largest sellers on the list below.', E('BND>HYP')],
-    ['Rising shares open a second door', 'With AI stocks at 49% of the S&P 500, the market is open for new shares and listings.', E('HYP>SPX', 'SPX>ISS')],
+    ['Rising shares open the door', 'With AI stocks at 49% of the S&P 500, the market is open for new shares and listings.', E('HYP>SPX', 'SPX>ISS')],
     ['Shares fund capex too', `New shares raised ${bn0(ISUM.s)} in the 12 months to 8 November 2026: SpaceX $75.0bn, Alphabet $44.75bn, Meta $37.5bn and Oracle $34.9bn.`, E('ISS>HYP'),
       { d: ['Of Meta’s $37.5bn, $25.0bn is paid only when the forward sale settles.'] }],
     ['Both are priced by long yields', 'The Fed raised rates on 16 September and the 10-year touched 5.33% intraday in October. On 2 November Oracle sold $10bn of shares and $10bn of notes at the same time.', E('FED>Y10', 'Y10>BND')],
@@ -5591,9 +5595,10 @@ PLAYS.push({ t: 'Bonds get yippy', ic: 'asset', c: '#ff8a5c',
     ['Calm is a subsidy', 'Margins and haircuts are set by recent volatility, so a quiet MOVE index lets the same capital carry more Treasuries. Every action that calms the long end (buybacks, a repo backstop, fewer long bonds) hands those funds more leverage: a subsidy from the state to the trade it relies on, paid to firms whose people sit at the Treasury and the Fed.', E('MOV>HFD', 'TSY>MOV', 'BNK>HFD'),
       { d: ['When volatility jumps, margins jump with it. In March 2020 initial margin at clearing houses rose by about $300bn in a month, and variation-margin calls peaked at $140bn on 9 March.', 'The IMF describes the loop: higher yields push up repo rates and can trigger unwinds of the basis trade, which push yields higher still. Kashyap and Stein warn that backstops create moral hazard, a “Fed put” that encourages more leverage.', 'Low volatility is a net positive for liquidity, because more leverage means more buyers; the cost shows up only when it ends. MOVE was about 100 in mid-October 2026, in its 92nd–94th percentile.'],
         nt: 'The margin mechanism is measured; the subsidy reading is Elias Rutten’s.', src: 'BCBS–CPMI–IOSCO, “Review of margining practices” (29 Sep 2022); IMF GFSR (Apr 2026); Kashyap and Stein, F&D (Mar 2026); Cboe (19 Oct 2026).' }],
-    ['When calm breaks', 'In March 2020 a spike in volatility forced the funds out of the basis trade, and the Fed bought about $1.6tn of Treasuries in a few weeks. In April 2025 tariff news set off a smaller unwind, and most of the tariffs were paused within a week.', E('MOV>HFD', 'TSY>HFD', 'FED>BNK', 'TSY>Y10'),
-      { d: ['The April 2025 unwind was of about $60bn of swap-spread trades.', 'The pattern is general: calm, then volatility, then forced selling. In September 2019 a tax date and a large settlement of Treasuries drained cash, and the overnight repo rate (SOFR) jumped from 2.43% to 5.25%.', 'How much the funds’ selling caused the 2020 dysfunction is debated: researchers at the Office of Financial Research found losses but no defaults and doubted a feedback loop. The Fed also temporarily exempted Treasuries and reserves from the leverage ratio in 2020.', 'In the week after 2 April 2025 the 10-year yield rose about half a point, the biggest weekly rise since 2001. On 9 April most tariffs were paused for 90 days; Trump said bond investors “were getting yippy”.'],
-        src: 'Kashyap and Stein, F&D (Mar 2026); Barth and Kahn, OFR (2020, 2021); Monin, Fed FEDS Notes (22 Jun 2026); Anbil, Anderson and Senyuz, Fed FEDS Notes (27 Feb 2020); Bloomberg (11 Apr 2025, link not stored).' }],
+    /* clarity build (17 Nov 2026): this step is April 2025 only; its March 2020 half is step 9-6, appended below (keys keep their names) */
+    ['April 2025: tariffs meet the bond market', 'In April 2025 tariff news set off a smaller unwind, and most of the tariffs were paused within a week.', E('MOV>HFD', 'TSY>HFD', 'TSY>Y10'),
+      { d: ['The April 2025 unwind was of about $60bn of swap-spread trades.', 'In the week after 2 April 2025 the 10-year yield rose about half a point, the biggest weekly rise since 2001. On 9 April most tariffs were paused for 90 days; Trump said bond investors “were getting yippy”.'],
+        src: 'Monin, Fed FEDS Notes (22 Jun 2026); Bloomberg (11 Apr 2025, link not stored).' }],
     ['The fixes nobody applies', 'Most analysts prescribe fixes for the basis trade, and the fixes are easy: central clearing, haircut floors, a leverage rule. They are not applied, because these arrangements are ways to weaponise the financial system and to practise financialised industrial policy: the fragility is useful to the state.', E('BNK>HFD', 'TSY>HFD', 'REG>BNK'),
       { d: ['What the page can source: the clearing mandate exists, and both its deadlines were pushed back a year in February 2025; much Treasury repo still carries a zero haircut; and the leverage rule for the largest banks was eased, not tightened, from April 2026.', 'Leverage that depends on calm gives the state a market that absorbs its debt and funds the build-out, and the cost shows only when calm breaks.'],
         nt: 'Whose reading: Elias Rutten (14 Nov 2026). The delays and the rules are measured.', src: 'SEC via DTCC (25 Mar 2025); Monin, Fed FEDS Notes (22 Jun 2026); FSB (4 Feb 2026); Federal Reserve, FDIC and OCC final rule (25 Nov 2025).' }],
@@ -5612,6 +5617,24 @@ PLAYS.push({ t: 'Coordinate with the Fed', ic: 'gap', c: '#ffd27a', warn: 'Specu
     ['The question the line leaves', 'Bills out, bills bought, long bonds bought back: the operations of the two desks pull the same way. Whether that is coordination is the contested question of central-bank independence; the structure is the same either way, because the people who design the debt’s plumbing and the people who set the rate come from the same circles.', E('TSY>Y10', 'TSY>MOV', 'FED>BNK'),
       { d: ['The page shows the dated operations (the levers “Fund the deficit with bills”, “Buy back long bonds” and “The Fed buys bills”) and the dated roles above; the reader sees the line.'], src: 'As for the three steps before.', vw: 'desks', vr: 'TSY~FED' }],
   ] });
+/* clarity build (17 Nov 2026): four steps appended (keys keep their names). 9-6 is the March 2020 half of the old “When calm breaks”.
+   0-8, 0-9 and 9-7 are plain reveals of the plumbing words the second act uses (bank reserves and the reverse repo, repo, borrowing to
+   buy bonds), built from wording the page already carries: the glossary (DEFS), the indicators' meanings (TMEAN), the primer's folds
+   (“It borrows by selling IOUs”, “Who lends to Washington”) and the Hedge funds dossier. No new figure. */
+PLAYS[9].steps.push(
+  ['March 2020: the funds are forced out', 'In March 2020 a spike in volatility forced the funds out of the basis trade, and the Fed bought about $1.6tn of Treasuries in a few weeks.', E('MOV>HFD', 'TSY>HFD', 'FED>BNK'),
+    { d: ['The pattern is general: calm, then volatility, then forced selling. In September 2019 a tax date and a large settlement of Treasuries drained cash, and the overnight repo rate (SOFR) jumped from 2.43% to 5.25%.', 'How much the funds’ selling caused the 2020 dysfunction is debated: researchers at the Office of Financial Research found losses but no defaults and doubted a feedback loop. The Fed also temporarily exempted Treasuries and reserves from the leverage ratio in 2020.'],
+      src: 'Kashyap and Stein, F&D (Mar 2026); Barth and Kahn, OFR (2020, 2021); Anbil, Anderson and Senyuz, Fed FEDS Notes (27 Feb 2020).' }],
+  ['Buying bonds with borrowed money', 'A hedge fund buys a Treasury and pledges it overnight for the cash to pay for it, so it can hold far more bonds than its own money would buy: that is {{leverage|leverage}}. In the {{basis|basis trade}} it also sells the matching futures contract, and earns a small price gap many times over.', E('BNK>HFD', 'TSY>HFD'),
+    { d: ['The lender can hold back part of the loan as a {{haircut|haircut}}: with a 2% haircut, $100 of Treasuries secures a $98 loan. Much Treasury repo carries none.', 'Borrowed money multiplies gains and losses, and forces sales when lenders ask for more security. The funds are forced to sell when markets turn rough.'],
+      src: 'Wording as stored in the glossary (leverage, basis trade, haircut), the Hedge funds dossier and the primer’s “Who lends to Washington”; no figure of its own.' }]);
+PLAYS[0].steps.push(
+  ['The banks’ bank', 'Banks hold money in accounts at the Fed: these are {{reserves|bank reserves}}, the base of dollar liquidity. {{mmf|Money funds}} can park cash at the Fed overnight too and earn interest on it, the {{rrp|reverse repo}}, and the government keeps {{tga|its own account}} there as well.', E('MMF>FED'),
+    { n: ['BNK'], d: ['When the government’s account fills up, money leaves the banks; when it is spent, money flows back.', 'Cash that flows out of the reverse repo into bills lets the Treasury borrow without draining bank reserves.'],
+      src: 'Wording as stored in the glossary (bank reserves, reverse repo, the Treasury’s account) and the indicators’ meanings; no figure of its own.' }],
+  ['A loan against a bond', '{{repo|Repo}} is a short loan, usually overnight, against {{collateral|collateral}}, mostly Treasuries: the holder of a bond turns it into cash for a night. The Fed has a repo window of its own, the {{srf|standing repo}}, which lends at a set rate and so caps what repo can cost.', E('MMF>BNK'),
+    { d: ['Treasuries are the safest dollar asset in the world, so they are also its collateral: banks lend against them every night.', 'The Office of Financial Research put the US repo market at about $12.6tn of daily exposures in Q3 2025, 69% of it backed by Treasuries.'],
+      src: 'Wording as stored in the glossary (repo, standing repo) and the primer’s “It borrows by selling IOUs”; repo market size: Office of Financial Research, Q3 2025, as stored in the glossary.' }]);
 /* which relations each lever moves (levers are in the order of LEVERS) */
 const LEDGE = [
   E('TSY>MMF', 'TSY>BNK', 'TSY>STB', 'TSY>Y10', 'MMF>FED'),
@@ -5853,13 +5876,13 @@ const LOCK3 = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" strok
 /* ---------- what each indicator looks like now ---------- */
 function indStates(act) {
   const on = simOn() && !!SIM.R, R = SIM.R, L = sLine(), b = SIM.beat, n = L.beats.length, re = on ? R.re : SALL.e;
-  const prev = on && !SIM.ph && b >= 0 && b < n ? (b > 0 ? L.cum[b - 1].e : SNONE.e) : null, chain = on && sInChain(), FL = on ? R.fl : {}, SUS = on ? R.sus : {}, out = {};
+  const prev = on && !SIM.ph && b >= 0 && b < n ? (b > 0 ? L.cum[b - 1].e : sEpBase() ? sEpBase().e : SNONE.e) : null, chain = on && sInChain(), FL = on ? R.fl : {}, SUS = on ? R.sus : {}, out = {};
   IND.forEach(I => {
-    const lit = L.main && I.at && I.at.main != null, reached = !on || (lit ? b + 1 >= I.at.main : I.rel.some(i => re.has(i)));
+    const A = I.at ? I.at[L.id] : null, lit = A != null, reached = !on || (lit ? b + 1 >= A : I.rel.some(i => re.has(i)));
     const fl = chain && FL[I.id] ? FL[I.id] : '', sus = SUS[I.id] && !reached ? SUS[I.id] : null;
     /* borrowed: a chain reaches it before its own step. Fix round (14 Nov 2026): a borrowed gauge or tag carries its figure, date and
        source like a reached one (the decisions now come early, so their chains pass through gauges the guide reaches later) */
-    out[I.id] = { reached, play: !!act && reached && I.rel.some(i => act.has(i)), isNew: !!prev && reached && (lit ? b + 1 === I.at.main : !I.rel.some(i => prev.has(i))),
+    out[I.id] = { reached, play: !!act && reached && I.rel.some(i => act.has(i)), isNew: !!prev && reached && (lit ? b + 1 === A : !I.rel.some(i => prev.has(i))),
       bor: !reached && chain && (!!fl || R.tmp.has(I.n)), fl, sus: sus ? sus[0] : '', susNote: sus ? sus[1] : '' };
   });
   return out;
@@ -6013,7 +6036,7 @@ function levHover(n) {
   if (n && vis(n)) { const g = svg.querySelector(`.fn[data-n="${n}"]`); if (g) g.classList.add('lvhv'); }
 }
 function playBarHTML() {
-  return `<div class="pbar"><span class="pbl s4pl"><b>Run a play</b><span>Washington’s moves, one by one</span></span>${PLAYS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${P.steps.length} moves, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(PSH[i])}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
+  return `<div class="pbar"><span class="pbl s4pl"><b>Episodes</b><span>dated moments, step by step</span></span>${RUNS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${fe(P.w)} · ${P.steps.length} steps, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(P.sh)}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
 }
 function renderFin() {
   const host = $('fin'); if (!host) return;
@@ -6135,7 +6158,7 @@ function fHover(n) { if (simOn()) n = null; if (fhover === n) return; fhover = n
 /* tiers build B: a play's steps in its own order (new steps are appended to PLAYS, so decision keys keep their names) */
 const pStep = (P, i) => P.steps[P.ord ? P.ord[i] : i];
 function activeEdges(all) {
-  if (fplay != null) return new Set(all ? PLAYS[fplay].steps.flatMap(s => s[2]) : pStep(PLAYS[fplay], fpstep)[2]);
+  if (fplay != null) return new Set(all ? RUNS[fplay].steps.flatMap(s => s[2]) : pStep(RUNS[fplay], fpstep)[2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
   if (fedge != null) return new Set([fedge]);
@@ -6199,11 +6222,11 @@ function renderSide(lev) {
   const X = '<button type="button" class="dx" id="isx-dx" aria-label="Close">×</button>';
   const done = () => { const dx = $('dx'); if (dx) dx.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); }); };
   if (fplay != null) {
-    const P = PLAYS[fplay], st = pStep(P, fpstep);
+    const P = RUNS[fplay], st = pStep(P, fpstep);
     s.hidden = false; s.style.setProperty('--dc', P.c);
-    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Play · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4>${P.warn ? `<p class="cb-warn">${fe(P.warn)}</p>` : ''}<p>${fe(st[1])}</p>${(st[3] || {}).nt ? `<p class="sn-note cb-nt">${fe(st[3].nt)}</p>` : ''}${(st[3] || {}).src ? `<div class="lsrc">Sources: ${fe(st[3].src)}</div>` : ''}${(st[3] || {}).vw ? doorBtn(st[3].vw, st[3].vr) : ''}<div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this play in the guide</button>`;
+    s.innerHTML = `${X}<div class="pk" style="color:${P.c}">${svgIc(P.ic, 14)} Episode · ${fe(P.t)}</div><div class="pdots">${P.steps.map((x, i) => `<i class="${i === fpstep ? 'cur' : i < fpstep ? 'done' : ''}" style="--pc:${P.c}"></i>`).join('')}</div><h4>${fpstep + 1}. ${fe(st[0])}</h4>${P.warn ? `<p class="cb-warn">${fe(P.warn)}</p>` : ''}<p>${fe(st[1])}</p>${(st[3] || {}).nt ? `<p class="sn-note cb-nt">${fe(st[3].nt)}</p>` : ''}${(st[3] || {}).src ? `<div class="lsrc">Sources: ${fe(st[3].src)}</div>` : ''}${(st[3] || {}).vw ? doorBtn(st[3].vw, st[3].vr) : ''}<div class="pnav"><button type="button" class="bigbtn sm prev" id="isx-pp" ${fpstep ? '' : 'disabled'}>◀ Back</button><button type="button" class="bigbtn sm next" id="isx-pn" style="--sc:${P.c}">${fpstep === P.steps.length - 1 ? 'Finish ✓' : 'Next ▶'}</button></div><button type="button" class="sn-asstory" data-pl="${fplay}">Follow this episode in the guide</button>`;
     $('pp').addEventListener('click', () => { fpstep--; styleRmap(); renderSide(); });
-    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); } else { burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Play complete ✓</div><b>${fe(P.t)}</b><p>Try another play, or pull a lever.</p>`, 4500); } });
+    $('pn').addEventListener('click', () => { if (fpstep < P.steps.length - 1) { fpstep++; styleRmap(); renderSide(); } else { burst(); clearSel(); styleRmap(); renderSide(); toast6(`<div class="tk6">Episode complete ✓</div><b>${fe(P.t)}</b><p>Try another episode, or pull a lever.</p>`, 4500); } });
     placeDossier(); done(); return;
   }
   if (lev != null && flev.has(lev)) {
@@ -7206,7 +7229,7 @@ $('sharepop').addEventListener('focusout', e => { if (shOpen && e.relatedTarget 
    on the map and then returns to what happened. Those outcomes use only facts already on this page.
    State lives in SIM; what is drawn is a pure function of (mode, story, step, choice), so any jump restores exactly.
    Mode is remembered (localStorage isx-sim-mode); the place in the story for the session (sessionStorage isx-sim-pos). */
-const SROLE = { p: ['Problem', '#ff5a4e'], d: ['What was done', '#ffd27a'], c: ['Consequence', '#44d7ec'] };
+const SROLE = { p: ['Problem', '#ff5a4e'], d: ['What was done', '#ffd27a'], c: ['Consequence', '#44d7ec'], k: ['How it works', '#8fd8ff'] };   /* clarity build: k, a plain reveal of a plumbing word */
 /* per play, per step: role, date label, the link from the step before it in that play, levers it introduces */
 const SMETA = [
   [['p', 'Year to Aug 2026', '', []],
@@ -7269,25 +7292,70 @@ const SMETA = [
     ['c', 'Sep 2025 to Jun 2026', 'One person moved between both.', []],
     ['c', '', 'What the operations and the roles add up to is contested.', []]],
 ];
+/* clarity build (17 Nov 2026): rows for the steps appended to plays 0 and 9; 9-4 is April 2025 only */
+SMETA[9][4] = ['d', 'April 2025', 'Five years on, the same market was tested again, by tariffs.', []];
+SMETA[9].push(['p', 'March 2020', 'The subsidy has a cost when volatility returns.', []], ['k', '', 'The long bonds are bought with borrowed money. Here is how that works.', []]);
+SMETA[0].push(['k', '', 'Before the next step, three accounts at the Fed.', []], ['k', '', 'One more word before the cash runs short: repo.', []]);
 /* the main story: chapters of play steps [play, step, link override] in causal order */
 const SMAIN = {
   t: 'The imperial machinery', c: '#ffd27a',
   lede: 'The world saves in dollars, and the US has to produce claims for those savings to land in. For decades the claims were Treasuries held by central banks; now they are shares and bonds tied to the AI build-out, and Washington works to keep the savings landing there.',
   /* tiers build A (15 Nov 2026): the map's thesis, Elias Rutten's wording (spec §1.1). Stated in full once, here; elsewhere at most one-sentence echoes */
   thesis: 'Economic theory has come far in recognizing {{imbalance|global trade imbalances}}, and the {{hotmoney|hot money}} flows that follow them, as persistently distorting and destabilizing. What it still misses is that the instability is manufactured: it is there on purpose, to be weaponized for {{geoecon|geoeconomic}} ends. That is the thesis of the author, Elias Rutten. The United States and China are both leading powers in this weaponized system. Follow the plumbing and you can see who holds the valves.',
-  /* tiers build A (15 Nov 2026): the guide follows the money before the plumbing: where it lands, where it comes from, what squeezes it,
-     then who lends to the state at those yields (spec §3b). Data only; decisions follow their steps (keys unchanged). */
+  /* clarity build (17 Nov 2026): the guide teaches the machine in three acts (SACTS), seven chapters, 42 steps. What is true in any
+     month is here; a dated moment when the machine was used or strained is an episode (SEPI), opened from the step where it fits.
+     A step is [play, step, link override, lead]: with lead, the link shows on the card as a plain first line and the card keeps one
+     sentence of the step. Decisions follow their steps (keys unchanged): 0-1, 0-7, 0-4 and 0-6 are in the second act. */
   ch: [
-    { t: 'A data centre gets paid for', s: 'Data centre', w: 'Oct 2025 to Nov 2026', b: [[1, 0, 'The money that comes back to US markets meets a build-out that runs on credit.', 1], [1, 1], [1, 2], [8, 0, 'The platforms also borrow in their own name, at a spread over Treasury yields.'], [8, 1], [8, 2], [1, 3]] },
-    { t: 'The allies’ savings come back', s: 'Savings', w: 'Jun 2025 to Nov 2026', b: [[2, 1, 'Hardware orders become export earnings abroad; what is not spent there is saved.'], [2, 2], [2, 3], [8, 3, 'High share prices also open a second way to raise money.'], [8, 4]] },
-    { t: 'The consumer keeps it flowing', s: 'Consumer', w: 'Jul 2025 to Oct 2026', b: [[4, 1, 'The richest tenth owns most of those shares, and does much of the spending.'], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [4, 2], [4, 3], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [7, 1]] },
-    { t: 'Oil squeezes the loop', s: 'Oil', w: 'Feb to Oct 2026', b: [[6, 0, 'Then a shock from outside finance: war closes the Strait of Hormuz.'], [6, 1], [6, 2], [6, 3], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.'], [6, 4, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.'], [0, 6, 'Long yields are climbing, and the Treasury still has to sell its debt.']] },
-    { t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowed money, and the state borrows most of all. The buyers it relied on for decades are leaving.', 1], [0, 1], [0, 2], [0, 3], [0, 7], [0, 5]] },
-    { t: 'Bonds get yippy', s: 'Yippy bonds', w: '2019 to Nov 2026', b: [[9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm.'], [9, 1], [9, 2], [0, 4, 'One rule sets how much those banks can carry.'], [9, 3, 'How much the funds can borrow depends on how calm the bond market is.'], [9, 4], [9, 5]] },
-    { t: 'Abroad: the dollar’s backstop', s: 'Backstop', w: 'Jul 2025 to Aug 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries', c: 'The yen rose to 155.20 after the joint action of 31 July 2026' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 7], [5, 6], [5, 8]] },
-    { t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles in this story rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [3, 4]] },
+    { act: 0, t: 'The loop', s: 'The loop', w: 'Q3 2026', b: [[4, 2, 'Start with the shopper. Much of what American households buy is made abroad, so their spending becomes other countries’ sales.', 1], [2, 1, 'The exporting economies earn more dollars than they spend.'], [2, 2], [2, 3], [8, 3], [8, 1, 'The same firms also borrow, by selling bonds of their own.'], [8, 2], [1, 3], [4, 3, 'Orders abroad are export earnings there, which brings the money back to where it started.']] },
+    { act: 1, t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowed money, and the state borrows most of all. The buyers it relied on for decades are leaving.', 1], [0, 1], [0, 8], [0, 2], [0, 9], [0, 3, 'Once the parked cash was spent, every dollar the Treasury raised came out of bank reserves.', 1], [0, 7]] },
+    { act: 1, t: 'On borrowed money', s: 'Borrowed money', w: '2019 to Nov 2026', b: [[0, 5], [9, 7], [9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of leveraged funds, booked offshore, financed by the big banks, and dependent on calm.'], [9, 2], [0, 4, 'One rule sets how much those banks can carry.'], [9, 3, 'How much the funds can borrow depends on how calm the bond market is.'], [9, 1], [9, 5]] },
+    { act: 1, t: 'The long end', s: 'Long end', w: 'Mar to Oct 2026', b: [[8, 0, 'Because the build-out borrows at them: long Treasury yields are the floor under every bond the AI firms sell.', 1], [7, 0, 'The same long yields that price the build-out reach households through the mortgage.'], [0, 6]] },
+    { act: 1, t: 'The dollar abroad', s: 'Abroad', w: 'Jan 2025 to Nov 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create; when dollars run short abroad, the fastest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 6], [5, 8]] },
+    { act: 2, t: 'Off the books', s: 'Off the books', w: 'Oct 2025 to Jun 2026', b: [[1, 0, 'The data centres from the loop need tenants, and the tenants are the AI labs.', 1], [1, 1], [1, 2]] },
+    { act: 2, t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles rest on lease payments, and those rest on AI revenue.'], [3, 1], [3, 2], [3, 3], [4, 1], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [7, 1], [3, 4]] },
   ],
 };
+/* the three acts: numeral, name, what the visitor does in it */
+const SACTS = [['I', 'The loop', 'how the money goes round'], ['II', 'The chair', 'you sit in Scott Bessent’s seat'], ['III', 'It breaks', 'where the machine is fragile']];
+/* clarity build: the question each step answers (Elias Rutten, 16 Nov 2026: questions, then answers). Keyed like the decisions; it is the
+   card's heading, and the step keeps its name everywhere else (the bar, the index, Next). */
+const SQ = {
+  '4-2': 'Where does American spending go?', '2-1': 'What do the exporters do with the dollars they earn?', '2-2': 'Where do those savings go?', '2-3': 'What does all that buying do to share prices?',
+  '8-3': 'How do high share prices become money for the AI firms?', '8-1': 'And when the firms borrow instead?', '8-2': 'What is the money spent on?', '1-3': 'Where do the orders go?', '4-3': 'So where does the loop close?',
+  '0-0': 'Who lends to Washington now?', '0-1': 'What does the Treasury sell instead?', '0-8': 'Where does the cash for all those bills sit?', '0-2': 'Where did the buyers for all those bills come from?', '0-9': 'What is repo?',
+  '0-3': 'What happens when the parked cash is gone?', '0-7': 'What does the Fed do when cash runs short?',
+  '0-5': 'Bills find buyers. Who takes the long bonds?', '9-7': 'How does a fund hold more bonds than it can pay for?', '9-0': 'How much do these funds hold?', '9-2': 'Who lends them the money?', '0-4': 'How much can the banks carry?',
+  '9-3': 'Why does a quiet bond market matter so much?', '9-1': 'Who are these funds?', '9-5': 'If the risk is known, why is it not fixed?',
+  '8-0': 'Why does the chair care about long yields?', '7-0': 'What do long yields cost a household?', '0-6': 'How does the Treasury hold long yields down?',
+  '5-0': 'What if a foreign central bank needs dollars fast?', '5-1': 'And those with no Treasuries to pledge?', '5-6': 'Can the dollar reach savers without a bank?', '5-8': 'What does that make of the savers it reaches?',
+  '1-0': 'Who is the build-out for?', '1-1': 'Who builds the data centres, and on whose books?', '1-2': 'Whose money is in those vehicles?',
+  '3-0': 'What if the labs earn less than they promised?', '3-1': 'What happens to the debt behind the leases?', '3-2': 'Who would take the losses?', '3-3': 'Can trouble in credit reach the Treasury market?',
+  '4-1': 'Who is doing the spending?', '4-0': 'What else holds spending up?', '7-1': 'How much room do households have?', '3-4': 'And if AI shares fall?',
+  /* episodes */
+  '6-0': 'What happened to oil?', '6-1': 'What did Washington do about the price?', '6-2': 'How do words move a price?', '6-3': 'Where did households feel it?', '6-4': 'What did the Fed do?', '4-4': 'What does it do to the shopper?',
+  '9-6': 'What happens when the calm ends?', '9-4': 'And when it was tested again?',
+  '5-2': 'Why was the yen sliding?', '5-3': 'What did Washington do?', '5-4': 'What do tariffs buy?', '5-5': 'Does the bargain add up?', '5-7': 'What is it for, then?',
+  '8-4': 'How much did new shares raise?', '8-5': 'What ties the two together?',
+  '10-0': 'What do the two desks do?', '10-1': 'Who sits at them?', '10-2': 'Who moved between them?', '10-3': 'What does that add up to?',
+};
+/* clarity build: the episodes. Dated moments when the machine was used or strained; each opens from the core step where it fits (from)
+   and returns there. b: its steps, like a chapter's. Two more are folded into their core step (the step's own `ep`): Silicon Valley Bank
+   (March 2023) and the debt-limit summer (2025). */
+const SEPI = [
+  { id: 'oil', t: 'The oil shock', s: 'Oil shock', w: '28 Feb to Oct 2026', ic: 'inputs', c: '#b7f36b', from: '0-6', lede: 'A shock from outside finance: war closes the Strait of Hormuz, oil jumps, and the price of money rises with it. Six steps, with one call that is yours.',
+    b: [[6, 0, 'A shock from outside finance: war closes the Strait of Hormuz.', 1], [6, 1], [6, 2], [6, 3], [6, 4, 'Oil and tariffs pushed prices up, so the Fed raises rates, and long yields rise with it.'], [4, 4, 'Dearer fuel, and tariffs at the till, squeeze the consumer the loop depends on.']] },
+  { id: 'calm', t: 'When calm breaks', s: 'Calm breaks', w: 'March 2020 · April 2025', ic: 'asset', c: '#ff8a5c', from: '9-3', lede: 'Leverage that depends on calm unwinds when calm ends. Twice in five years volatility did the selling: in March 2020, and in April 2025, when the call is yours.',
+    b: [[9, 6], [9, 4]] },
+  { id: 'door', t: 'The revolving door', s: 'Revolving door', w: 'Sep 2025 to Jun 2026', ic: 'gap', c: '#ffd27a', from: '9-1', lede: PLAYS[10].lede, warn: PLAYS[10].warn,
+    b: [[10, 0], [10, 1], [10, 2], [10, 3]] },
+  { id: 'issue', t: 'The build-out goes to market', s: 'To market', w: '12 months to 8 Nov 2026', ic: 'capex', c: '#9aa4ff', from: '8-2', lede: 'In the 12 months to 8 November 2026 the firms in the build-out sold new shares as well as bonds, and both were priced by the same long yields.',
+    b: [[8, 4], [8, 5]] },
+  { id: 'yen', t: 'The yen action', s: 'Yen action', w: '31 July 2026', ic: 'rent', c: '#44d7ec', from: '5-0', lede: 'In 2026 the largest foreign holder of Treasuries had a currency problem. Two steps, from Tokyo’s trilemma to the joint action of 31 July, with one call that is yours.',
+    b: [[5, 2, 'The largest foreign holder of Treasuries is Japan, and in 2026 its currency was sliding.', 1], [5, 3]] },
+  { id: 'pledge', t: 'Tariffs for investment', s: 'Tariff pledges', w: 'Jul 2025 to Feb 2026', ic: 'rent', c: '#44d7ec', from: '5-1', lede: 'The surpluses belong to allies, so Washington also bargains over where they go: tariff deals paired with investment pledges, in three steps.',
+    b: [[5, 4], [5, 5], [5, 7]] },
+];
 /* content build: SFORK is retired; a decision carries its own two options (real, alt).
    B1-4. A decision is its own card between two steps, keyed by the step that what happened leads to.
    The visitor sits in the chair of whoever decided and chooses before seeing what happened. The other path plays as a chain reaction:
@@ -7484,7 +7552,7 @@ const SECHO = {
 };
 function sBeat(p, s, ch, why, ld) {
   const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s, o = st[3] || {};   /* content build: depth, sources, links, whose reading, a view */
-  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n, ech: SECHO[k] || null };
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n, ech: SECHO[k] || null, k, q: SQ[k] || null, epi: o.ep || null, eps: SEPI.filter(X => X.from === k).map(X => X.id) };
 }
 /* v2 round 3: first principles. Seven reveals that come before the plumbing: the accounting, the surplus side, why the
    claims are taken in dollars, how the US accommodates them, how long this has been built, what it does to US markets,
@@ -7591,16 +7659,19 @@ const SGND = {
   t: 'The basics: deficits, bonds and yields', s: 'The basics', c: '#e4ebf1',
   lede: 'Twelve short screens that assume nothing: why the world holds American IOUs, which ones, at what price, and why the AI trade now carries them.',
   b: [
-    { id: 'P1', t: 'The US spends more than it collects', bs: 'The deficit', n: ['CGR', 'TSY'], e: [],
-      x: 'Year after year the US government spends more than it collects in taxes, and borrows the difference: that gap is the {{deficit|deficit}}. The borrowing piles up as {{debt|debt}}, which passed $40tn in October 2026.',
-      more: ['Debt is not paid off; it is {{rollover|rolled over}}. When a loan falls due, the Treasury repays it by borrowing again, at whatever {{rate|interest rate}} the market asks that day.',
-        'A household that borrowed like this would be cut off. A state that borrows in its own money, which is also the world’s money, is not: the lenders come to it.',
-        'So the question is never whether Washington can repay. It is who will keep lending, and at what price. That price sets the price of money for everyone else: for a mortgage, for a company, for a data centre.',
-        'Washington is not a passive borrower, though. It can use its geopolitical power to capture buyers for its debt. It can also reshape how the markets work and how money is raised at home, so that borrowing stays cheap for it. Many accounts of the deficit miss this.',
-        'This is one half of the {{twin|twin deficit}}. The other half is the country’s deficit with the rest of the world. The map is about how the two are tied together.'],
-      src: 'Gross federal debt, $40.25tn, October 2026 (the Circuit, step 08).',
-      map: 'Congress and the US Treasury are lit. Click either for what it does.',
-      alt: () => 'On the map: Congress and the US Treasury are lit; everything else waits in outline.' },
+    /* clarity build (17 Nov 2026): the same twelve screens in a new order (ids stay with their cards): how to read the map, the claims,
+       the IOUs, the yield, the 10-year, the pyramid, the eras, the deficit, the lenders, profits, why now, the AI trade. A reader meets
+       Treasuries before the pyramid and the eras that name them, and the deficit where the eras arrive at it. */
+    { id: 'P8', t: 'How to read the map', bs: 'Reading the map', e: E('CON>EXP'),
+      x: 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources.',
+      more: ['A line is grey until it is in focus; then it takes a colour that says what kind of relation it is. “Key”, at the top of the map, lists the colours.',
+        'A gauge shows one price, with its date and its source.',
+        'A gold tab, “MORE INSIDE ›”, means a deeper view sits behind that part of the map.',
+        'Dotted underlines are defined terms: hover or tap them.',
+        'The guide lights the map one step at a time. What is dim has not been reached yet.',
+        'At seven points, four in the guide and three in its episodes, you are asked what you would do. Then you see what happened, and where the other choice leads. Nothing is scored.'],
+      map: 'Two boxes and the line between them are lit: All consumers and Exporters. Click a box, then hover the line.',
+      alt: () => 'On the map: the whole map is shown in outline; All consumers, Exporters and the line between them are lit.' },
     /* guide build (16 Nov 2026): P9, the step before the IOUs (guide spine §3.2). It takes over the retired “The twin deficit” (P6) */
     { id: 'P9', t: 'The US adjusts by producing claims', bs: 'Claims', e: E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>SPX', 'SAV>Y10'),
       x: 'The US buys more from the world than it sells: its {{ca|deficit with the world}} was $1.18tn in 2025. The world saves the dollars it earns, so the US has to adjust by producing {{claims|claims}} on itself for those savings to sit in.',
@@ -7614,36 +7685,8 @@ const SGND = {
       src: 'US current-account deficit, $1.18tn, 2025 (BEA, annual update of 24 June 2026; the Circuit). Foreign holdings, mid-2026: as stored at first principles, “The claims are taken in dollars”, and the Circuit’s opening card.',
       map: 'A loop is lit, from consumers to exporters, on to their central banks and savers, and back into AI stocks and the 10-year. Follow it by its arrows.',
       alt: () => 'On the map: a loop is lit: consumers to exporters, exporters to their central banks, the chip makers to allied savers, and the savers back into AI stocks and the 10-year.' },
-    /* P10, the hierarchy of money (guide spine §3.3): one screen and a diagram. The pyramid is round S2a's (shares at the apex), with tokens
-       in a tier of their own beyond deposits (Elias, 16 Nov 2026); the idea is Perry Mehrling's and is credited to him */
-    { id: 'P10', t: 'A pyramid of IOUs', bs: 'The pyramid', n: ['FED', 'BNK', 'MMF', 'TSY', 'BND', 'SPX', 'DUA'], e: [], dg: 'pyr',
-      x: 'Foreigners can hold any IOU on the {{hierarchy|hierarchy of money}}, from cash at the base to shares at the top. The closer a claim is to cash, the safer it is and the less it pays.',
-      more: ['An IOU is a promise to pay. Some promises are almost as good as cash, and some are far from it.',
-        'At the base sit cash and bank deposits: they pay little or nothing, but they can be spent today. Just above them sit {{stablecoin|dollar tokens}}. They promise a dollar, but how good that promise is depends on the token and how the rules are read. Then come {{mmf|money funds}} and {{bills|Treasury bills}}, which turn back into cash within months.',
-        'Higher up are long Treasury bonds, then company and mortgage bonds, and at the top shares. Each pays more, because its price can fall further before the holder gets money back. A share is no promise to repay at all: it is a claim on a firm’s future profits.',
-        'Each layer is a promise to pay in the layer beneath it: a bond pays out in deposits, a deposit in cash. The economist Perry Mehrling named this the hierarchy of money.',
-        `In October 2026 a savings deposit paid ${SFIGN.sndr.v} on average, and the 10-year Treasury 5.13%.`,
-        'In a panic, everyone runs down towards cash, and only the central bank can create the base. Whom it lends to decides who is rescued.',
-        'Which tier foreigners buy matters at home. It decides who in the US issues the claim, and so who carries the debt: the state, households or firms.'],
-      src: `P. Mehrling, “The inherent hierarchy of money”, in L. Taylor, A. Rezai and T. Michl (eds), Social Fairness and Economics (Routledge, 2013), pp. 394–404 (link not stored). ${SFIGN.sndr.k}, ${SFIGN.sndr.v}, ${SFIGN.sndr.d} (${SFIGN.sndr.src}). 10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10).`,
-      map: 'The issuers are lit: the Federal Reserve, Dealer banks, Money funds, the US Treasury, New bonds and AI stocks, with Dollar users abroad for the tokens. Click any of them.',
-      alt: () => 'A pyramid of eight tiers, from cash and bank reserves at the base, through bank deposits, dollar tokens, money funds, Treasury bills, long Treasury bonds and company and mortgage bonds, to shares at the top. Lower tiers are safer and pay less; higher tiers are riskier and pay more. On the map the issuers of each tier are lit.' },
-    /* P11, the eras of adjustment (guide spine §3.4): four bands, each ending in the break that forced the next; the fifth is lit on P13 */
-    { id: 'P11', t: 'Which claims, when', bs: 'The eras', n: ['OFF', 'PET', 'TSY', 'MTG'], e: E('EXP>OFF', 'OFF>TSY', 'MTG>CON'), dg: 'eras',
-      x: 'Each way of giving the world its claims solved the last crisis and built the next one: gold until 1971, oil money until the debt crisis of 1982, mortgages until 2008, then the government’s own debt. Central banks were the steady buyers for most of that time, and their appetite moved with politics, not by economic law.',
-      more: ['The world has always needed somewhere to keep its dollars. What changes is which American IOU it buys, and who in the US issues it. Each answer worked for a while, piled up its own strains, and broke; the fix for the break became the next answer.',
-        ['1944 to 1971: dollars tied to gold.', 'Under {{bw|Bretton Woods}} the US sold more than it bought. It sent dollars abroad through aid, loans, investment and its military bases, and foreign central banks held them as reserves they could swap for gold. In August 1971 President Nixon ended that swap.'],
-        ['1974 to 1982: oil money.', 'When oil prices quadrupled, the oil exporters earned more dollars than they could spend. Washington insisted the money be recycled through private banks, not the IMF. In 1974 Saudi Arabia agreed in secret to put oil revenue into Treasuries. The banks lent the rest to Latin America, until the debt crisis of 1982.'],
-        'The 1980s showed another route. Large government deficits drew in Japanese savings, and the US began to run deficits with the world that absorbed other countries’ surpluses.',
-        ['1997 to 2008: American mortgages.', `After the Asian crisis of 1997, central banks in Asia and the oil states piled up dollars. Government dollar assets grew from ${sStar('goda')}. The federal budget was in surplus from 1998 to 2001, so new Treasuries ran short. Buyers turned to the bonds of the mortgage {{agency|agencies}} and to {{mbs|mortgage-backed securities}}, ${sStar('plmbs')} of private ones in 2001 to 2007. American households issued the claims, by borrowing against their homes.`],
-        ['From 2008: the government’s own debt.', `When house prices fell, the private route broke, and households paid down debt. The federal deficit took over as the main source of claims. In the national accounts it averaged ${SFIGN.fedb0013.v} of GDP a year in 2000 to 2013, and ${SFIGN.fedb1425.v} in 2014 to 2025. Central banks bought the Treasuries, until about 2014.`],
-        'Their appetite was never set by economics alone. Countries chose to build surpluses inside the system the US had built: after the Asian crisis of 1997, many piled up dollars as insurance against ever needing the IMF. Official buying stalled in 2014, the year of the first sanctions on Russia; the data cannot show whether that was distrust or something else.'],
-      xl: SXL,
-      src: `Bretton Woods and 1971: stable history, no figure. Recycling through private banks and the US refusal of IMF recycling: Peter Gowan, The Global Gamble (1999), as cited in Elias Rutten’s master’s thesis (§5.1). The 1974 Saudi agreement: Wong (2016), from declassified Treasury documents, as cited in the same thesis (link not stored). * ${SFIGN.goda.k}, ${SFIGN.goda.v}, and ${SFIGN.plmbs.k.toLowerCase()}, ${SFIGN.plmbs.v}, ${SFIGN.plmbs.d}: ${SFIGN.goda.src}. Budget surpluses, ${SFIGN.surp.v}: ${SFIGN.surp.src}. Federal net borrowing, average % of GDP: ${NIPA} (P2). The point that countries built surpluses after 1997 to avoid the IMF is Elias Rutten’s and Klein and Pettis’s. The exchange on X: ${SFIGN.x0409.d}.`,
-      map: 'Central banks, the Oil exporters, the US Treasury and the 30-year mortgage are lit: the buyers and the issuers across the eras.',
-      alt: () => 'A timeline in five bands, each ending in a crisis. 1944 to 1971: dollar reserves tied to gold, until Nixon ended convertibility. 1974 to 1982: oil money, recycled through banks, until the debt crisis. 1997 to 2008: American mortgages, sold as bonds, until the financial crisis. 2008 to 2014: the government’s own debt, bought by central banks, until official buying stalled. Since 2014: still to come. On the map, central banks, the oil exporters, the Treasury and the mortgage gauge are lit.' },
-    { id: 'P2', t: 'It borrows by selling IOUs', bs: 'IOUs', e: E('TSY>MMF', 'TSY>BNK'),
-      x: 'Today the main issuer of claims is the government. To borrow, the Treasury sells IOUs called {{treasuries|Treasuries}}: {{bills|bills}} are repaid within a year, and notes and {{bond|bonds}} run for up to thirty years.',
+    { id: 'P2', t: 'The IOUs on offer', bs: 'IOUs', e: E('TSY>MMF', 'TSY>BNK'),
+      x: 'The claim the world knows best is the US government’s own IOU. To borrow, the Treasury sells IOUs called {{treasuries|Treasuries}}: {{bills|bills}} are repaid within a year, and notes and {{bond|bonds}} run for up to thirty years.',
       more: ['Whoever buys one lends to the US government and is paid interest for it.',
         'Bills are the short end. Banks, {{mmf|money funds}} and the issuers of dollar tokens hold them almost as if they were cash. Bonds are the long end. Pension funds and insurers hold them for decades, because they owe pensions decades from now.',
         'Every week the Treasury holds {{auction|auctions}}. It sells to the bidders who ask the lowest interest, until the whole issue is sold. When buyers are plentiful the interest is low; when they hold back, the Treasury has to offer more.',
@@ -7672,6 +7715,44 @@ const SGND = {
       src: '10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10); 30-year fixed mortgage, 7.24%, week to 29 October 2026 (Freddie Mac).',
       map: 'Lines run from the 10-year gauge to the mortgage gauge, to New bonds and to Private credit. Compare the two gauges.',
       alt: () => 'On the map: lines run from the 10-year gauge to the mortgage gauge (' + indVal(INDX.mtg) + ', ' + INDX.mtg.sub + '), to New bonds and to Private credit.' },
+    /* P10, the hierarchy of money (guide spine §3.3): one screen and a diagram. The pyramid is round S2a's (shares at the apex), with tokens
+       in a tier of their own beyond deposits (Elias, 16 Nov 2026); the idea is Perry Mehrling's and is credited to him */
+    { id: 'P10', t: 'A pyramid of IOUs', bs: 'The pyramid', n: ['FED', 'BNK', 'MMF', 'TSY', 'BND', 'SPX', 'DUA'], e: [], dg: 'pyr',
+      x: 'Foreigners can hold any IOU on the {{hierarchy|hierarchy of money}}, from cash at the base to shares at the top. The closer a claim is to cash, the safer it is and the less it pays.',
+      more: ['An IOU is a promise to pay. Some promises are almost as good as cash, and some are far from it.',
+        'At the base sit cash and bank deposits: they pay little or nothing, but they can be spent today. Just above them sit {{stablecoin|dollar tokens}}. They promise a dollar, but how good that promise is depends on the token and how the rules are read. Then come {{mmf|money funds}} and {{bills|Treasury bills}}, which turn back into cash within months.',
+        'Higher up are long Treasury bonds, then company and mortgage bonds, and at the top shares. Each pays more, because its price can fall further before the holder gets money back. A share is no promise to repay at all: it is a claim on a firm’s future profits.',
+        'Each layer is a promise to pay in the layer beneath it: a bond pays out in deposits, a deposit in cash. The economist Perry Mehrling named this the hierarchy of money.',
+        `In October 2026 a savings deposit paid ${SFIGN.sndr.v} on average, and the 10-year Treasury 5.13%.`,
+        'In a panic, everyone runs down towards cash, and only the central bank can create the base. Whom it lends to decides who is rescued.',
+        'Which tier foreigners buy matters at home. It decides who in the US issues the claim, and so who carries the debt: the state, households or firms.'],
+      src: `P. Mehrling, “The inherent hierarchy of money”, in L. Taylor, A. Rezai and T. Michl (eds), Social Fairness and Economics (Routledge, 2013), pp. 394–404 (link not stored). ${SFIGN.sndr.k}, ${SFIGN.sndr.v}, ${SFIGN.sndr.d} (${SFIGN.sndr.src}). 10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10).`,
+      map: 'The issuers are lit: the Federal Reserve, Dealer banks, Money funds, the US Treasury, New bonds and AI stocks, with Dollar users abroad for the tokens. Click any of them.',
+      alt: () => 'A pyramid of eight tiers, from cash and bank reserves at the base, through bank deposits, dollar tokens, money funds, Treasury bills, long Treasury bonds and company and mortgage bonds, to shares at the top. Lower tiers are safer and pay less; higher tiers are riskier and pay more. On the map the issuers of each tier are lit.' },
+    /* P11, the eras of adjustment (guide spine §3.4): four bands, each ending in the break that forced the next; the fifth is lit on P13 */
+    { id: 'P11', t: 'Which claims, when', bs: 'The eras', n: ['OFF', 'PET', 'TSY', 'MTG'], e: E('EXP>OFF', 'OFF>TSY', 'MTG>CON'), dg: 'eras',
+      x: 'Each way of giving the world its claims solved the last crisis and built the next one: gold until 1971, oil money until the debt crisis of 1982, mortgages until 2008, then the government’s own debt. Central banks were the steady buyers for most of that time, and their appetite moved with politics, not by economic law.',
+      more: ['The world has always needed somewhere to keep its dollars. What changes is which American IOU it buys, and who in the US issues it. Each answer worked for a while, piled up its own strains, and broke; the fix for the break became the next answer.',
+        ['1944 to 1971: dollars tied to gold.', 'Under {{bw|Bretton Woods}} the US sold more than it bought. It sent dollars abroad through aid, loans, investment and its military bases, and foreign central banks held them as reserves they could swap for gold. In August 1971 President Nixon ended that swap.'],
+        ['1974 to 1982: oil money.', 'When oil prices quadrupled, the oil exporters earned more dollars than they could spend. Washington insisted the money be recycled through private banks, not the IMF. In 1974 Saudi Arabia agreed in secret to put oil revenue into Treasuries. The banks lent the rest to Latin America, until the debt crisis of 1982.'],
+        'The 1980s showed another route. Large government deficits drew in Japanese savings, and the US began to run deficits with the world that absorbed other countries’ surpluses.',
+        ['1997 to 2008: American mortgages.', `After the Asian crisis of 1997, central banks in Asia and the oil states piled up dollars. Government dollar assets grew from ${sStar('goda')}. The federal budget was in surplus from 1998 to 2001, so new Treasuries ran short. Buyers turned to the bonds of the mortgage {{agency|agencies}} and to {{mbs|mortgage-backed securities}}, ${sStar('plmbs')} of private ones in 2001 to 2007. American households issued the claims, by borrowing against their homes.`],
+        ['From 2008: the government’s own debt.', `When house prices fell, the private route broke, and households paid down debt. The federal deficit took over as the main source of claims. In the national accounts it averaged ${SFIGN.fedb0013.v} of GDP a year in 2000 to 2013, and ${SFIGN.fedb1425.v} in 2014 to 2025. Central banks bought the Treasuries, until about 2014.`],
+        'Their appetite was never set by economics alone. Countries chose to build surpluses inside the system the US had built: after the Asian crisis of 1997, many piled up dollars as insurance against ever needing the IMF. Official buying stalled in 2014, the year of the first sanctions on Russia; the data cannot show whether that was distrust or something else.'],
+      xl: SXL,
+      src: `Bretton Woods and 1971: stable history, no figure. Recycling through private banks and the US refusal of IMF recycling: Peter Gowan, The Global Gamble (1999), as cited in Elias Rutten’s master’s thesis (§5.1). The 1974 Saudi agreement: Wong (2016), from declassified Treasury documents, as cited in the same thesis (link not stored). * ${SFIGN.goda.k}, ${SFIGN.goda.v}, and ${SFIGN.plmbs.k.toLowerCase()}, ${SFIGN.plmbs.v}, ${SFIGN.plmbs.d}: ${SFIGN.goda.src}. Budget surpluses, ${SFIGN.surp.v}: ${SFIGN.surp.src}. Federal net borrowing, average % of GDP: ${NIPA} (P2). The point that countries built surpluses after 1997 to avoid the IMF is Elias Rutten’s and Klein and Pettis’s. The exchange on X: ${SFIGN.x0409.d}.`,
+      map: 'Central banks, the Oil exporters, the US Treasury and the 30-year mortgage are lit: the buyers and the issuers across the eras.',
+      alt: () => 'A timeline in five bands, each ending in a crisis. 1944 to 1971: dollar reserves tied to gold, until Nixon ended convertibility. 1974 to 1982: oil money, recycled through banks, until the debt crisis. 1997 to 2008: American mortgages, sold as bonds, until the financial crisis. 2008 to 2014: the government’s own debt, bought by central banks, until official buying stalled. Since 2014: still to come. On the map, central banks, the oil exporters, the Treasury and the mortgage gauge are lit.' },
+    { id: 'P1', t: 'The state became the main issuer', bs: 'The deficit', n: ['CGR', 'TSY'], e: [],
+      x: 'Since 2008 the government’s own debt has been the main claim the US gives the world. Year after year it spends more than it collects in taxes and borrows the difference, the {{deficit|deficit}}; the borrowing piles up as {{debt|debt}}, which passed $40tn in October 2026.',
+      more: ['Debt is not paid off; it is {{rollover|rolled over}}. When a loan falls due, the Treasury repays it by borrowing again, at whatever {{rate|interest rate}} the market asks that day.',
+        'A household that borrowed like this would be cut off. A state that borrows in its own money, which is also the world’s money, is not: the lenders come to it.',
+        'So the question is never whether Washington can repay. It is who will keep lending, and at what price. That price sets the price of money for everyone else: for a mortgage, for a company, for a data centre.',
+        'Washington is not a passive borrower, though. It can use its geopolitical power to capture buyers for its debt. It can also reshape how the markets work and how money is raised at home, so that borrowing stays cheap for it. Many accounts of the deficit miss this.',
+        'This is one half of the {{twin|twin deficit}}. The other half is the country’s deficit with the rest of the world. The map is about how the two are tied together.'],
+      src: 'Gross federal debt, $40.25tn, October 2026 (the Circuit, step 08).',
+      map: 'Congress and the US Treasury are lit. Click either for what it does.',
+      alt: () => 'On the map: Congress and the US Treasury are lit, with what the earlier screens reached.' },
     { id: 'P5', t: 'Who lends to Washington', bs: 'The lenders', e: E('OFF>TSY', 'TSY>MMF', 'TSY>BNK', 'TSY>CEN', 'TSY>HFD', 'SAV>Y10'),
       x: 'The US borrows from foreign central banks, {{mmf|money funds}}, banks, pension funds, insurers and {{hedgefund|hedge funds}}. The central banks were the anchor for decades and cut their Treasuries by $164bn in the year to August 2026 ({{tic|TIC}}); hedge funds, helped by the state, now take a large share of the new long bonds.',
       more: ['Each lender wants something different.',
@@ -7720,36 +7801,26 @@ const SGND = {
         'Those shares are worth buying because US firms earn high profits, and deficits help keep them high. Buyers get a share in the profits of American firms, wherever those profits are earned.',
         `The AI build-out is where those profits and the new claims are now concentrated. In October 2026, 41 AI-related stocks made up ${SFIGN.ai49.v} of the {{sp500|S&P 500}}’s value. In the 12 months to 8 November 2026, the firms building the data centres sold ${bn0(ISUM.s)} of new shares and ${bn0(ISUM.b)} of new bonds.`,
         'So the build-out does two jobs at once. It gives the world’s savings a home, and it gives the US the industry it wants. Washington works the levers that keep both going: cheap long-term money, a calm bond market, and buyers for its debt.',
-        'Like every fix before it, this one builds its own strains: debt piled on the build-out, savers tied to a few firms, a bond market that needs calm. If the AI trade falters, the claims lose their pull, and the US needs yet another way to absorb the world’s savings. The guide follows the machine that keeps it going, in four parts, and ends where it could break.'],
-      parts: [['Where the money lands.', 'A data centre has to be paid for: with bonds, with shares, and with loans kept off the books.'],
-        ['Where it comes from.', 'The savings of America’s allies, and the spending of the American consumer.'],
-        ['What squeezes it.', 'Oil, then the Fed, then long yields.'],
-        ['Who lends to the state.', 'At those yields: which buyers, on how much borrowed money, and under whose rules.']],
-      after: 'Two shorter parts close the guide: how the dollar is backed abroad, and what happens if it breaks.',
+        'Like every fix before it, this one builds its own strains: debt piled on the build-out, savers tied to a few firms, a bond market that needs calm. If the AI trade falters, the claims lose their pull, and the US needs yet another way to absorb the world’s savings. The guide follows the machine that keeps it going, in three acts, and ends where it could break.'],
+      parts: [['Act I · The loop.', 'How American spending comes back as savings, share prices and data centres.'],
+        ['Act II · The chair.', 'You sit in Scott Bessent’s seat: who buys the debt, on how much borrowed money, under whose rules.'],
+        ['Act III · It breaks.', 'Where the machine is fragile, and who would take the losses.']],
+      after: 'Dated moments, such as the oil shock of 2026, are episodes: they open from the step where they fit, and the guide never stops for them.',
       src: `Foreign share of US federal debt, 47% (2014) and 30% (2025): as stored at the Circuit, step 00. Foreign purchases of US shares, $1.01tn, and official sales of Treasuries, $164bn, 12 months to August 2026 (US Treasury TIC; the Circuit). Safe-asset premium: Chumbo and Krishnamurthy, VoxEU (CEPR), 3 Nov 2026. ${SFIGN.ai49.k}, ${SFIGN.ai49.v}, ${SFIGN.ai49.d} (${SFIGN.ai49.src}). New shares and bonds: company filings, the page’s list, 12 months to 8 November 2026. Elias Rutten’s words: 5 November 2026.`,
       map: 'The savers’ line into AI stocks is lit, and from there the money into new shares and new bonds for the hyperscalers.',
       alt: () => 'The timeline’s fifth band is lit: since 2014, claims on US profits, the AI trade, issued by firms. On the map: allied savers’ line into AI stocks, and from AI stocks into new shares and new bonds for the hyperscalers.' },
-    { id: 'P8', t: 'How to read the map', bs: 'Reading the map', e: [],
-      x: 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources.',
-      more: ['A line’s colour says what kind of relation it is. The key under the map lists them.',
-        'A gauge shows one price, with its date and its source.',
-        'A gold tab, “MORE INSIDE ›”, means a deeper view sits behind that part of the map.',
-        'Dotted underlines are defined terms: hover or tap them.',
-        'The guide lights the map one step at a time. What is dim has not been reached yet.',
-        'At seven points the guide stops and asks what you would do. Then it shows what happened, and where the other choice leads. Nothing is scored.'],
-      map: 'The whole map is shown in outline, with the key below it. Try one click.',
-      alt: () => 'On the map: the whole map is shown in outline, with the key below it.' },
-  
   ],
 };
 const SLINES = (() => {
-  const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri })), beats: [] }];
+  const L = [{ id: 'main', t: SMAIN.t, c: SMAIN.c, main: true, chs: SMAIN.ch.map(C => ({ t: C.t, s: C.s, w: C.w, tri: C.tri, act: C.act })), beats: [] }];
   SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why, ld]) => L[0].beats.push(sBeat(p, s, ci, why, ld))));
   PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? (SMAIN.ch.find(C => C.tri) || {}).tri : null }], beats: (P.ord || P.steps.map((x, s) => s)).map(s => sBeat(i, s, 0)) }));
   /* first principles: the last line in the list (so stored places in the guide and the mechanisms keep their numbers), shown first */
   L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, nt: B.nt, ntEcho: B.ntEcho, ech: B.ech, src: B.src, sl: B.sl, xl: B.xl, why: '', lev: B.lev || [], fork: null, ld: false })) });
   /* tiers build B: the primer, appended last so every stored place keeps its number */
   L.push({ id: 'gnd', t: SGND.t, s: SGND.s, c: SGND.c, gnd: true, lede: SGND.lede, chs: [{ t: SGND.t, w: '' }], beats: SGND.b.map(B => Object.assign({ p: -1, s: -1, ch: 0, d: null, n: B.n || [], r: 'b', w: '', why: '', lev: [], fork: null, ld: false }, B)) });
+  /* clarity build: one line per episode, after the primer (stored places keep their numbers) */
+  SEPI.forEach(X => L.push({ id: 'ep-' + X.id, t: X.t, s: X.s, c: X.c, ep: X, lede: X.lede, chs: [{ t: X.t, w: X.w }], beats: X.b.map(([p, s2, why, ld]) => sBeat(p, s2, 0, why, ld)) }));
   L.forEach(l => {
     let n = new Set(), e = new Set(), v = new Set();
     l.cum = l.beats.map(B => { n = new Set([...n, ...bN(B)]); e = new Set([...e, ...B.e]); v = new Set([...v, ...B.lev]); return { n, e, l: v }; });
@@ -7764,12 +7835,13 @@ const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SL
 /* ---------- state ---------- */
 /* B1-4: ph is where a decision stands (null: a step; 'ask': the decision card; 'chain': link c of the other path; 'crisis': its end).
    While ph is set, beat stays on the step before the decision. pick: the visitor's latest call per decision; seenAlt: other paths walked. */
-const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, epRet: null, epSeen: new Set(), pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
   try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0));
     const nb = SLINES[p.l].beats[SIM.beat + 1], dk = SIM.beat >= 0 && nb ? nb.fork : null;   /* a stored decision or chain position (old values carry no ph and load as before) */
+    if (SLINES[p.l].ep && Array.isArray(p.r) && SLINES[p.r[0]] && SLINES[p.r[0]].main) SIM.epRet = { l: p.r[0], b: Math.max(0, Math.min(SLINES[p.r[0]].beats.length - 1, +p.r[1] || 0)) };
     if (dk && ['ask', 'chain', 'crisis'].includes(p.ph)) { SIM.ph = p.ph; SIM.c = Math.max(0, Math.min(SDEC[dk].chain.length - 1, +p.c || 0)); if (p.ph !== 'ask') SIM.seenAlt.add(dk); } } } catch (e) { /* ignore */ }
 })();
 const simOn = () => SIM.mode === 'story' && view === 'fin' && finMode === 'plumb' && !!$('snarr');
@@ -7783,13 +7855,16 @@ const sDecK = () => SIM.ph ? sNextFork() : null;   /* the decision in hand */
 const sInChain = () => !!sDecK() && SIM.ph !== 'ask';
 const sLinks = () => { const k = sDecK(); return k && SIM.ph !== 'ask' ? SDEC[k].chain.slice(0, SIM.ph === 'crisis' ? SDEC[k].chain.length : SIM.c + 1) : []; };   /* the chain so far */
 const sChE = C => [...C.e, ...C.off];
+/* clarity build: an episode opened from a step of the guide keeps on the map what the guide had reached by then */
+const sEpBase = () => { const L = sLine(), r = SIM.epRet, G = L.ep && r && SLINES[r.l]; return G && r.b >= 0 ? G.cum[Math.min(r.b, G.beats.length - 1)] : null; };
+const sUni = (a, b) => b ? { n: new Set([...b.n, ...a.n]), e: new Set([...b.e, ...a.e]), l: new Set([...b.l, ...a.l]) } : a;
 /* what is on the map now */
 function simReveal() {
   const X = { tmp: new Set(), ch: new Set(), off: new Set(), fl: {}, sus: {} };   /* ch, off: the chain's relations; fl: pressure per indicator; sus: the decision's subject */
   if (SIM.mode !== 'story') return Object.assign(X, { ne: SALL.e.size, re: SALL.e }, SALL);
   const L = sLine(), b = SIM.beat;
-  if (b >= L.beats.length) { const F = L.main ? SALL : L.cum[L.beats.length - 1]; return Object.assign(X, { ne: F.e.size, re: F.e }, F); }
-  const base = b >= 0 ? L.cum[b] : SNONE, R = Object.assign(X, { n: base.n, e: new Set(base.e), l: base.l, ne: base.e.size, re: base.e });   /* re: the relations the guide itself has reached (an other path adds to e, never to re) */
+  if (b >= L.beats.length) { const F = L.main ? SALL : sUni(L.cum[L.beats.length - 1], sEpBase()); return Object.assign(X, { ne: F.e.size, re: F.e }, F); }
+  const base = sUni(b >= 0 ? L.cum[b] : SNONE, sEpBase()), R = Object.assign(X, { n: base.n, e: new Set(base.e), l: base.l, ne: base.e.size, re: base.e });   /* re: the relations the guide itself has reached (an other path adds to e, never to re) */
   const k = sDecK();
   if (k && SIM.ph === 'ask') { R.sus = SDEC[k].sus; Object.keys(R.sus).forEach(id => { const n = INDX[id].n; if (!R.n.has(n)) R.tmp.add(n); }); }
   else if (k) {
@@ -7950,21 +8025,25 @@ const SPI = SLINES.findIndex(L => L.pre), SGI = SLINES.findIndex(L => L.gnd);
 /* B1-3: when each indicator first appears: the first step whose lit relations touch it (first principles, and the guide) */
 /* content build: “Tokyo’s trilemma” lights the yen’s lines one step before the decision on the yen. The gauge stays an empty socket until
    the step that decision leads to, so its dated value (after the intervention) cannot answer the question first. */
-(() => { const yb = SLINES[0].beats.findIndex(B => B.e.includes(EIDX['TSY>YEN'])); if (yb >= 0) ['yen', 'dxy'].forEach(id => { INDX[id].at = { main: yb + 1 }; }); })();
+SLINES.forEach(L => { if (!(L.main || L.ep)) return; const yb = L.beats.findIndex(B => B.e.includes(EIDX['TSY>YEN'])); if (yb >= 0) ['yen', 'dxy'].forEach(id => { (INDX[id].at = INDX[id].at || {})[L.id] = yb + 1; }); });
 IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ gnd: f(SLINES[SGI]), pre: f(SLINES[SPI]), main: f(SLINES[0]) }, I.at || {}); });
 /* the mechanisms, by where they sit: what Washington sets, the markets that carry it, the economy it lands in */
 const STIER = [['up', 'Upstream · the state and the rules', [0, 5, 10]], ['mid', 'Intermediate · the markets that carry it', [9, 1, 8, 2]], ['down', 'Downstream · where it lands', [4, 7, 6, 3]]];
 function simPickHTML() {
-  const M = SLINES[0], Pp = SLINES[SPI], Q = SLINES[SGI];
-  const mech = i => { const L = SLINES[i + 1]; return `<button type="button" class="pk-l${SIM.line === i + 1 ? ' on' : ''}" data-sl="${i + 1}" data-sb="-1" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${L.beats.length} steps</small></button>`; };
+  const M = SLINES[0], Pp = SLINES[SPI], Q = SLINES[SGI], cur = M.beats[SIM.beat], ca = SIM.line === 0 && cur ? M.chs[cur.ch].act : -1;
+  const act = (A, i) => { const cs = M.chs.filter(C => C.act === i), nb = M.beats.filter(B => M.chs[B.ch].act === i).length; return `<button type="button" class="pk-l${ca === i ? ' on' : ''}" data-act="${i}" style="--pc:${SCHC[M.chs.findIndex(C => C.act === i)]}"><i aria-hidden="true"></i><b>Act ${A[0]} · ${fe(A[1])}</b><small>${nb} steps · ${fe(cs.length > 1 ? cs.map(C => C.s).join(', ') : A[2])}</small></button>`; };
+  const ep = L => `<button type="button" class="pk-l${SLINES[SIM.line] === L ? ' on' : ''}" data-ep="${L.ep.id}" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${fe(L.ep.w)} · ${L.beats.length} steps${SIM.epSeen.has(L.ep.id) ? ' · seen' : ''}</small></button>`;
   return `<div class="pk-h">Start here</div><button type="button" class="pk-l pk-pre${SIM.line === SGI ? ' on' : ''}" data-sl="${SGI}" data-sb="0" style="--pc:${Q.c}"><i aria-hidden="true"></i><b>${fe(Q.t)}</b><small>${Q.beats.length} screens · assumes nothing</small></button><button type="button" class="pk-l pk-pre${SIM.line === SPI ? ' on' : ''}" data-sl="${SPI}" data-sb="-1" style="--pc:${Pp.c}"><i aria-hidden="true"></i><b>${fe(Pp.t)}</b><small>${Pp.beats.length} reveals · the source of it all</small></button>`
-    + `<div class="pk-h">The guide</div><button type="button" class="pk-l${SIM.line === 0 ? ' on' : ''}" data-sl="0" data-sb="-1"><b>${fe(M.t)}</b><small>${M.chs.length} chapters · ${M.beats.length} steps</small></button>`
-    + `<div class="pk-h">One mechanism at a time</div>` + STIER.map(([k, t, ids]) => `<div class="pk-t pk-${k}"><div class="pk-tk">${fe(t)}</div><div class="pk-ms">${ids.map(mech).join('')}</div></div>`).join('');
+    + `<div class="pk-h">The guide · ${M.beats.length} steps in three acts</div><div class="pk-t pk-acts"><div class="pk-ms">${SACTS.map(act).join('')}</div></div>`
+    + `<div class="pk-h">Episodes · dated moments, opened from the step where they fit</div><div class="pk-t pk-eps"><div class="pk-ms">${SLINES.filter(L => L.ep).map(ep).join('')}</div></div>`;
 }
 /* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
-const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Plays', 'watch a move', '#ffb547'], ['levers', 'Levers', 'pull one', '#44d7ec']];
+const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Episodes', 'dated moments', '#ffb547'], ['levers', 'Levers', 'pull one', '#44d7ec']];
 /* B1: the chapters in their own colours, for the route (eight since the content build) */
-const SCHC = ['#ffd27a', '#ff8a5c', '#ff5d8f', '#ffb547', '#3ee6b8', '#9aa4ff', '#b7f36b', '#ff5a4e'];
+const SCHC = ['#ffb547', '#ffd27a', '#ff8a5c', '#9aa4ff', '#44d7ec', '#8fa3b6', '#ff5a4e'];
+/* clarity build: what the full view runs on the map from its tray: the episodes, each a list of steps like a play. The guide's own
+   chapters are reached by “Guide steps”, so nothing is offered twice. */
+const RUNS = SEPI.map(X => ({ t: X.t, sh: X.s, ic: X.ic, c: X.c, ep: X.id, w: X.w, warn: X.warn, steps: X.b.map(([p, s2]) => PLAYS[p].steps[s2]) }));
 function simTabsHTML() {
   const cur = SIM.mode === 'story' ? 'guide' : SIM.ftab;
   return `<div class="rt-sw" role="group" aria-label="How to explore the Scott Bessent Simulator">${S4T.map(([k, t, x]) => `<button type="button" class="rt-swb" data-s4tab="${k}" aria-pressed="${k === cur}"><b>${t}</b><small>${x}</small></button>`).join('')}</div><button type="button" class="rt-more" data-s4more aria-expanded="false" aria-controls="isx-b1more" aria-label="More: indicators, share and support"><span aria-hidden="true">⋯</span></button>`;
@@ -7979,6 +8058,15 @@ function simTab(t) {
 /* B1: the bar is the shared one (v2/route.js). The guide's route is one line, first principles and then the seven
    chapters, although the data stays two lines; a mechanism shows its own steps. In Plays and Levers the Next segment
    leads back to the guide, to the step it was left on. */
+/* clarity build: where the visitor is, in words, for the bar's line button: the act and the chapter, readable and never cut */
+function sWhere() {
+  const L = sLine(), b = SIM.beat, n = L.beats.length;
+  if (L.main && b >= 0 && b < n) { const C = L.chs[L.beats[b].ch], A = SACTS[C.act]; return ['Act ' + A[0] + ' · ' + A[1], C.t === A[1] ? A[2].replace(/^./, c => c.toUpperCase()) : C.t]; }
+  if (L.main) return ['Guide', b < 0 ? 'The machinery' : 'The whole machine'];
+  if (L.gnd) return ['Foundations', 'The basics']; if (L.pre) return ['Fluent', 'First principles'];
+  if (L.ep) return ['Episode', L.ep.s];
+  return ['Mechanism', PSH[L.play] || L.t];
+}
 function simBar() {
   const host = $('s2bar'); if (!host || !RT) return;
   const L = sLine(), b = SIM.beat, n = L.beats.length, on = SIM.mode === 'story', stage = $('cock');
@@ -7987,7 +8075,7 @@ function simBar() {
     RT.render(host, { id: 'sim', label: 'Scott Bessent Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
       next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : SIM.ph === 'ask' ? 'your call after step ' + (b + 1) : SIM.ph ? 'the other path after step ' + (b + 1) : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
       line: null, segs: [], controls: simTabsHTML() + `<button type="button" class="tw-gsb" id="isx-gsb" data-gsteps aria-expanded="false" aria-controls="isx-gsteps"><span aria-hidden="true">≡</span>Guide steps</button>`,
-      note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick a play above: it runs move by move on the map, with a card for each move.' });
+      note: SIM.ftab === 'levers' ? 'Pull a lever above: what it moves lights up and a card explains it. Pull several to see them together.' : 'Pick an episode above: it runs step by step on the map, with a card for each step.' });
     return;
   }
   const guide = !!(L.main || L.pre || L.gnd), P = SLINES[SPI], G = SLINES[0], Q = SLINES[SGI];
@@ -8007,7 +8095,7 @@ function simBar() {
       .concat(L.pre || !(L.gnd || stGet(SWAY) === 'ground') ? [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }] : [])
       .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.flatMap(i => mk(0, i)) }; }));
     segs.push({ label: '', colour: SMAIN.c, current: !!L.main && b >= n, grow: 2, cls: 'end', marks: [{ kind: 'end', state: L.main && b >= n ? 'cur' : '', target: '0:' + G.beats.length, title: 'The whole machine' }] });
-  } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
+  } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat(L.ep ? [] : [{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
   let nx;
   const DD = dk ? SDEC[dk] : null;
   if (SIM.ph === 'ask') nx = { kind: 'hold', kicker: 'Your call', title: 'Choose on the card', ptitle: 'Choose' };
@@ -8016,13 +8104,14 @@ function simBar() {
   else if (b < 0) nx = L.main ? (stGet(SWAY) === 'ground' ? { kicker: 'Start · Foundations', title: Q.s, pkicker: 'Start', ptitle: 'Foundations' } : { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' }) : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
   else if (b >= n) nx = L.gnd ? { kicker: 'Next · the guide', title: G.beats[0].t, pkicker: 'Next', ptitle: 'The guide' } : L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % PLAYS.length + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
   else if (sNextFork()) nx = { kicker: 'Next · your call', title: SDEC[sNextFork()].nt, pkicker: 'Next', ptitle: 'Your call' };
+  else if (L.ep && b >= n - 1) { const r = SIM.epRet || { l: 0, b: sEpHome(L.ep) }; nx = { kind: 'return', kicker: 'Back to the guide', title: 'Step ' + (r.b + 1) + ' · ' + SLINES[r.l].beats[r.b].t, pkicker: 'Back to', ptitle: 'the guide' }; }
   else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : L.gnd ? 'The ground is laid' : 'Mechanism complete', ptitle: 'Next' };
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
   const cs = segs.find(s => s.current);
-  RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : 'Mechanism: steps', stage,
-    back: { enabled: b >= 0, label: SIM.ph === 'ask' ? 'Back: ' + L.beats[b].t : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
+  RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : L.ep ? 'Episode: steps' : 'Mechanism: steps', stage,
+    back: { enabled: b >= 0, label: L.ep && b === 0 && SIM.epRet && !SIM.ph ? 'Back to the guide' : SIM.ph === 'ask' ? 'Back: ' + L.beats[b].t : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
     next: nx,
-    line: { kicker: guide ? 'Guide' : 'Mechanism', title: guide ? 'The machinery' : PSH[L.play] || L.t, attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
+    line: { kicker: sWhere()[0], title: sWhere()[1], attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
     segs, controls: simTabsHTML(),
     ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The machinery' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
 }
@@ -8041,7 +8130,7 @@ function simNav(ev) {
   if (SIM.ph === 'ask') { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
   if (SIM.ph) { simNext(); return; }
   if (b < 0) { simGo(L.main ? (stGet(SWAY) === 'ground' && SGI >= 0 ? SGI : SPI) : SIM.line, 0, 'focus'); return; }
-  if (b >= n) { if (L.pre || L.gnd) simGo(0, 0, 'focus'); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
+  if (b >= n) { if (L.pre || L.gnd) simGo(0, 0, 'focus'); else if (L.ep) simEpBack(); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
   simNext();
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
@@ -8059,6 +8148,11 @@ function simTrays() {
   emit('simtray', t);
 }
 function simTray(t) { SIM.tray = SIM.tray === t ? null : t; simTrays(); }
+/* clarity build: the chapter in hand as a short outline (in “The mechanism”): what came, where the visitor is, what is still to come */
+function sOutHTML(L, b) {
+  const B = L.beats[b], C = L.chs[B.ch], idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === B.ch);
+  return `<div class="cl-out" aria-label="This chapter, step by step"><span>${L.main ? 'Act ' + SACTS[C.act][0] + ' · ' + fe(C.t) : 'Episode · ' + fe(C.t)}</span><ol>${idx.map(i => i === b ? `<li class="cur"><b aria-current="step">${fe(L.beats[i].t)}</b></li>` : i < b ? `<li class="done"><button type="button" data-sb="${i}">${fe(L.beats[i].t)}</button></li>` : `<li>${fe(L.beats[i].t)}</li>`).join('')}</ol></div>`;
+}
 function simTriHTML(B) {
   const L = sLine(), idx = L.beats.map((x, i) => i).filter(i => L.beats[i].ch === B.ch);
   return `<div class="sn-tri" aria-label="This chapter: problem, what was done, consequence">${['p', 'd', 'c'].map(r => { const list = idx.filter(i => L.beats[i].r === r); const fb = (L.chs[B.ch].tri || {})[r]; return `<div class="r" style="--rc:${SROLE[r][1]}"><span>${SROLE[r][0]}</span><div>${!list.length && fb ? `<span class="c fb">${fe(fb)}</span>` : list.length ? list.map(i => i === SIM.beat ? `<b class="c cur" aria-current="step">${fe(L.beats[i].t)}</b>` : i < SIM.beat ? `<button type="button" class="c done" data-sb="${i}">${fe(L.beats[i].t)}</button>` : `<span class="c">${fe(L.beats[i].t)}</span>`).join('') : '<span class="c">none in this thread</span>'}</div></div>`; }).join('')}</div>`;
@@ -8124,7 +8218,8 @@ function gstepsHTML() {
   const pre = [Q ? ['The basics', SLINES.indexOf(Q), Q] : null, ['First principles', SPI, P]].filter(Boolean);
   return `<div class="tw-gsh"><h3 id="isx-gs-h">Guide steps</h3><p>Open any step in the guide; its card carries a way back to the full map.</p><button type="button" class="dx" data-gsx aria-label="Close">×</button></div>`
     + `<details class="tw-gspre"><summary>Before the guide: ${pre.map(([t, , L]) => fe(t) + ' (' + L.beats.length + ')').join(' · ')}</summary><div class="tw-gsg">${pre.map(([t, l, L]) => `<section><h4>${fe(t)}</h4><ol>${L.beats.map((B, i) => li(l, i, B)).join('')}</ol></section>`).join('')}</div></details>`
-    + `<div class="tw-gsg">${G.chs.map((C, ci) => `<section style="--rc:${SCHC[ci]}"><h4><span>${ci + 1}</span>${fe(C.t)}</h4><ol>${G.beats.map((B, i) => B.ch === ci ? li(0, i, B) : '').join('')}</ol></section>`).join('')}</div>`;
+    + `<div class="tw-gsg">${G.chs.map((C, ci) => `<section style="--rc:${SCHC[ci]}"><h4><span>${SACTS[C.act][0]}</span>${fe(C.t)}</h4><ol>${G.beats.map((B, i) => B.ch === ci ? li(0, i, B) : '').join('')}</ol></section>`).join('')}</div>`
+    + `<details class="tw-gspre cl-gse"><summary>Episodes: ${SLINES.filter(X => X.ep).map(X => fe(X.ep.s)).join(' · ')}</summary><div class="tw-gsg">${SLINES.map((X, l) => X.ep ? `<section style="--rc:${X.c}"><h4>${fe(X.t)}</h4><ol>${X.beats.map((B, i) => li(l, i, B)).join('')}</ol></section>` : '').join('')}</div></details>`;
 }
 function gsOpen(on, from) {
   const g = $('gsteps'); if (!g) return;
@@ -8177,6 +8272,30 @@ function sTips(arr) {
     return out;
   });
 }
+/* clarity build (17 Nov 2026): “New here”. A term is defined on the card where the visitor's route first uses it, in the glossary's own
+   wording (one wording per definition), two terms a card at most; any others keep their dotted tip. The route is what came before: the
+   primer or first principles (whichever the way in was), then the guide's cards up to this one; in an episode, the guide up to the step it
+   opened from. On the Fluent way only the plumbing's own words are spelled out (SPLUMB): that reader knows what a bill or a yield is. */
+const SPLUMB = new Set(['rrp', 'srf', 'tga', 'reserves', 'repo', 'haircut', 'basis', 'swapspread', 'eslr', 'pb', 'margin', 'clearing', 'fima', 'esf', 'swapline', 'qt', 'tqe', 'debtlimit', 'buyback', 'move', 'spv', 'privcredit', 'cover', 'forward', 'tpu', 'hierdollar', 'underclass', 'fip', 'carry', 'fxint', 'genius', 'termprem', 'safepremium']);
+const sKeysOf = (...ts) => { const ks = []; ts.join(' ').replace(/\{\{(\w+)\|/g, (m, k) => { if (DEFS[k] && !ks.includes(k)) ks.push(k); return m; }); return ks; };
+/* what a step's card shows: the plain first line (if it leads), the sentences on the card, the rest for “The mechanism” */
+function sCardTx(L, b) {
+  const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null, lead = !!(B.why && (P || B.ld) && (sOne(B.x) || B.ld));
+  const [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x), [tw, tx1] = sTips([lead ? B.why : '', x1]);
+  return { lead, tw, tx1, x2 };
+}
+const sSurf = (L, b) => { if (!L._sf) L._sf = []; if (!L._sf[b]) { const B = L.beats[b], T = L.gnd ? { tw: '', tx1: [B.x].concat((B.more || []).map(t => Array.isArray(t) ? t.join(' ') : t)).join(' ') } : L.pre ? { tw: '', tx1: [B.x].concat(B.d || []).join(' ') } : sCardTx(L, b); L._sf[b] = sKeysOf(T.tw, T.tx1); } return L._sf[b]; };
+function sNewTerms(L, b) {
+  const way = stGet(SWAY), seen = new Set(), add = (X, to) => { for (let i = 0; i < to; i++) sSurf(X, i).forEach(k => seen.add(k)); };
+  const pre = SLINES[way === 'ground' && SGI >= 0 ? SGI : SPI]; add(pre, pre.beats.length);
+  if (L.ep) { const r = SIM.epRet || { l: 0, b: sEpHome(L.ep) }; add(SLINES[r.l], r.b + 1); }
+  add(L, b);
+  return sSurf(L, b).filter(k => !seen.has(k) && (way === 'ground' || SPLUMB.has(k))).slice(0, 2);
+}
+const sNewHTML = ks => ks.length ? `<dl class="cl-new"><span class="cl-nk">New here</span>${ks.map(k => `<div><dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd></div>`).join('')}</dl>` : '';
+/* an episode offered on a core card: a door to its own steps, or (a single dated paragraph) a fold in the card itself */
+const sEpDoor = id => { const L = SLINES[sEpLine(id)], X = L.ep; return `<button type="button" class="cl-ep${SIM.epSeen.has(id) ? ' seen' : ''}" data-ep="${id}" style="--ec:${X.c}"><span>Episode</span><b>${fe(X.t)}</b><small>${fe(X.w)} · ${L.beats.length} steps${SIM.epSeen.has(id) ? ' · seen' : ''}</small><i aria-hidden="true">›</i></button>`; };
+const sEpFold = X => `<details class="cl-epi"><summary><span>Episode</span><b>${fe(X.t)}</b><small>${fe(X.w)}</small></summary><div>${X.x.map(t => `<p>${ft(t)}</p>`).join('')}${X.src ? `<div class="lsrc">Sources: ${fe(X.src)}</div>` : ''}</div></details>`;
 /* the thesis echo: one line under a card's two sentences (spec §1.1); the class is the marker the check lists */
 const sEcho = t => t ? `<p class="thesis-echo">${ft(t)}</p>` : '';
 /* the terms a primer screen defines, listed in its fold (spec §5) */
@@ -8264,7 +8383,8 @@ function sEntryHTML() {
 const SFIG = { gbp: { v: '47%', k: 'Hyperscalers’ share of sterling corporate bond issuance', d: '2026 to early September', src: 'Bank of England Financial Policy Committee record, 25 Sep 2026 (data round F6, section 3)' } };
 const sAiPct = k => { const r = AIR(k); return r && r.gdp ? Math.round(r.x / r.gdp * 100) : null; };
 function simBodyHTML() {
-  const h = simBodyHTML0();
+  const L0 = sLine(), r = L0.ep ? SIM.epRet || { l: 0, b: sEpHome(L0.ep) } : null;
+  const h = (r && SIM.beat >= 0 && SIM.beat < L0.beats.length ? `<p class="tw-ret cl-ret"><button type="button" class="s2lnk" data-epback>← Back to the guide · step ${r.b + 1}</button></p>` : '') + simBodyHTML0();
   return SIM.ret === 'full' && SIM.mode === 'story' ? `<p class="tw-ret"><button type="button" class="s2lnk" data-twret>← Back to the full map</button></p>` + h : h;
 }
 function simBodyHTML0() {
@@ -8273,6 +8393,9 @@ function simBodyHTML0() {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
     if (L.main) return sEntryHTML();
+    if (L.ep) return `<div class="s2k" style="--rc:${L.c}"><i></i>Episode<em>${fe(L.ep.w)}</em><span class="sn-cnt">${n} steps</span></div><h3>${fe(L.t)}</h3>${L.ep.warn ? `<p class="cb-warn">${fe(L.ep.warn)}</p>` : ''}<p class="s2p">${ft(sTips([lede])[0])}</p>`
+      + `<p class="cl-epn">An episode is a dated moment when the machine was used or strained. The guide does not need it; it opens from “${fe(SLINES[0].beats[sEpHome(L.ep)].t)}”, step ${sEpHome(L.ep) + 1}.</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-epback>Back to the guide</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.pre ? 'Start here · ' + n + ' reveals' : L.gnd ? 'Foundations · ' + n + ' screens' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
       + (`<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${L.gnd ? SPI : 0}" data-sb="${L.gnd ? 0 : -1}">${L.pre || L.gnd ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
       + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.pre ? `<p>About ${sMins(['pre'])} minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting, and an author’s reading carries the author’s name.</p>` : L.gnd ? `<p>About ${sMins(['gnd'])} minutes. Each screen lights the part of the map it is about, and every term is defined where it first appears: hover or tap a dotted word. Then the guide; first principles are offered at the end, as the same ground in the words of mechanism.</p>` : '')
@@ -8282,11 +8405,12 @@ function simBodyHTML0() {
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
     if (L.gnd) return `<div class="s2k" style="--rc:${L.c}"><i></i>The basics · ${n} screens</div><h3>The ground is laid.</h3>`
-      + `<p class="s2p">You know why the world holds American claims, why the state issues most of them, and why the AI trade now carries them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
+      + `<p class="s2p">You know why the world holds American claims, why the state issues most of them, and why the AI trade now carries them. The guide starts with the loop the money runs in, from the American shopper to the exporters and back to Wall Street.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">Start the guide ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${SPI}" data-sb="0">First principles: the same ground, as mechanism</button></div>`;
+    if (L.ep) return `<div class="s2k" style="--rc:${L.c}"><i></i>Episode<em>${fe(L.ep.w)}</em></div><h3>${fe(L.t)}: the end</h3><p class="s2p">The guide picks up where it left off.</p><div class="s2acts"><button type="button" class="sn-go" data-epback>Back to the guide ${sArrR}</button></div>`;
     const nxt = L.main ? null : SLINES[SIM.line % PLAYS.length + 1];
     if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
-      + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
+      + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts with the loop the money runs in, then puts you in the chair of the one who has to fund it.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">The imperial machinery ${sArrR}</button></div>`
       + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
@@ -8308,15 +8432,18 @@ function simBodyHTML0() {
   const nw = [...bN(B)].filter(x => !prevN.has(x)).sort((a, c) => FN[a][1] - FN[c][1]);
   /* the step a decision leads to: once the visitor has made a call, the card says what happened and how the call compares */
   const wk = B.fork && SIM.pick[B.fork] ? B.fork : null, WD = wk ? SDEC[wk] : null;
-  const lead = !!(B.why && (P || B.ld) && (sOne(B.x) || B.ld)), [x1, x2] = B.ld && lead ? sSplit(B.x, 1) : sSplit(B.x), [tw, tx1] = sTips([lead ? B.why : '', x1]);
-  let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : R[1]}"><i></i>${WD ? 'What happened' : R[0]}${B.w ? `<em>${fe(B.w)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
-    + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + `<h3>${fe(B.t)}</h3>`
+  const { lead, tw, tx1, x2 } = sCardTx(L, b), core = L.main || L.ep;
+  /* clarity build: on a step of the guide the kicker carries the date (the act and chapter are in the bar, the question is the heading); its colour is the chapter's */
+  const kl = WD ? 'What happened' : L.ep ? 'Episode · ' + fe(L.ep.s) : L.main ? (B.r === 'k' ? 'How it works' : fe(B.w || 'Step')) : R[0], kd = WD || L.ep || !L.main ? B.w : '';
+  let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : L.main ? SCHC[B.ch] : L.ep ? L.c : R[1]}"><i></i>${kl}${kd ? `<em>${fe(kd)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
+    + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + (core && B.q ? `<h3 class="cl-q">${fe(B.q)}</h3><p class="cl-a">${fe(B.t)}</p>` : `<h3>${fe(B.t)}</h3>`) + (L.ep && L.ep.warn ? `<p class="cb-warn">${fe(L.ep.warn)}</p>` : '')
     + (lead ? `<p class="s2why">${ft(tw)}</p>` : '') + `<p class="s2p">${ft(tx1)}</p>` + sEcho(B.ech) + (B.nt ? `<p class="sn-note cb-nt${B.ntEcho ? ' thesis-echo' : ''}">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
+  if (core) h += sNewHTML(sNewTerms(L, b)) + (L.main ? (B.epi || []).map(sEpFold).join('') + B.eps.map(sEpDoor).join('') : '');
   if (WD && !SIM.seenAlt.has(wk)) h += `<p class="dfine"><button type="button" class="s2lnk" data-dgo="alt">See the other path</button></p>`;
   h += sDeep((x2 ? `<p>${ft(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${ft(t)}</p>`).join('') : '') + sXlHTML(B.xl) + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + sSrcLinks(B.sl) + (B.lk ? sLinksHTML(B.lk) : '')
     + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${ft(B.why)}</p>` : ''}</div>` : '')
-    + (L.pre ? '' : simTriHTML(B))
+    + (L.pre ? '' : core ? sOutHTML(L, b) : simTriHTML(B))
     + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : ''));
   return h;
 }
@@ -8361,10 +8488,26 @@ function simApply(anim, fwd) {
   simBar(); simTrays();
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
-  try { stSet(SKEY.pos, JSON.stringify(SIM.ph ? { l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c } : { l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
+  try { stSet(SKEY.pos, JSON.stringify(Object.assign(SIM.ph ? { l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c } : { l: SIM.line, b: SIM.beat }, SIM.epRet ? { r: [SIM.epRet.l, SIM.epRet.b] } : {})), true); } catch (e) { /* ignore */ }
   emit('sim', { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph });   /* round 5b: where the Simulator stands now */
 }
+/* clarity build: episodes. Opened from a core step (ret: back to that step), from the bar's list or from the full view (back to the step
+   the episode belongs to). The guide never stops for one: it is offered on the card and returns where it was left. */
+const sEpLine = id => SLINES.findIndex(L => L.ep && L.ep.id === id);
+const sEpHome = X => Math.max(0, SLINES[0].beats.findIndex(B => B.k === X.from));
+function simEp(id, ret) {
+  const li = sEpLine(id); if (li < 0) return;
+  if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
+  SIM.epRet = ret && SLINES[SIM.line].main && SIM.beat >= 0 ? { l: SIM.line, b: SIM.beat } : null;
+  simGo(li, ret ? 0 : -1, 'focus');
+}
+function simEpBack() {
+  const L = sLine(); if (!L.ep) return;
+  const r = SIM.epRet || { l: 0, b: sEpHome(L.ep) }; SIM.epSeen.add(L.ep.id); SIM.epRet = null;
+  simGo(r.l, r.b, 'focus');
+}
 function simGo(line, beat, how) {
+  if (!SLINES[line].ep) SIM.epRet = null;
   const fwd = line === SIM.line && beat === SIM.beat + 1 && SIM.ph !== 'chain';
   SIM.line = line; SIM.beat = beat; SIM.ph = null; SIM.c = 0; if (SIM.tray === 'pick') SIM.tray = null; clearSel();
   simApply(true, fwd);
@@ -8389,6 +8532,7 @@ function simNext() {
   if (SIM.ph === 'crisis') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }   /* back to what happened */
   if (SIM.beat >= n) return;
   if (sNextFork()) { simPhase(SIM.line, SIM.beat, 'ask'); return; }
+  if (L.ep && SIM.beat === n - 1) { simEpBack(); return; }
   simGo(SIM.line, SIM.beat + 1, 'focus');
 }
 function simBack() {
@@ -8397,6 +8541,7 @@ function simBack() {
   if (SIM.ph === 'chain') { if (SIM.c > 0) simPhase(SIM.line, SIM.beat, 'chain', SIM.c - 1); else simPhase(SIM.line, SIM.beat, 'ask'); return; }
   if (SIM.ph === 'ask') { simGo(SIM.line, SIM.beat, 'focus'); return; }
   if (SIM.beat < 0) return;
+  if (sLine().ep && SIM.beat === 0 && SIM.epRet) { simEpBack(); return; }
   const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask'); return; }   /* the step a decision leads to goes back to the decision */
   simGo(SIM.line, SIM.beat - 1, 'focus');
 }
@@ -8475,6 +8620,9 @@ function simMount() {
       if (d.way === 'map') { simSetMode('full'); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
       else { const g = SLINES.findIndex(L => L.gnd); simGo(d.way === 'ground' && g >= 0 ? g : SPI, 0, 'focus'); }
       return; }
+    if (d.ep) { simEp(d.ep, !!t.closest('#isx-sn-body')); return; }
+    if (d.epback != null) { simEpBack(); return; }
+    if (d.act != null) { simGo(0, SLINES[0].first[SLINES[0].chs.findIndex(C => C.act === +d.act)], 'focus'); return; }
     if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
     if (d.dgo === 'real') { simNext(); return; }   /* the crisis card's one button */
@@ -8508,7 +8656,7 @@ function simMount() {
 let simRT = 0;
 window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); levRove(); } }, 120); });
 /* a play in full view can be followed as a thread */
-ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.ph = null; clearSel(); simApply(true); });
+ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b || !RUNS[+b.dataset.pl]) return; clearSel(); simEp(RUNS[+b.dataset.pl].ep, false); });
 
 initIntro(); buildResbar(); buildMapModes(); bootGlobe(); buildArm(); renderFirms();
 $('t-prev').addEventListener('click', () => stepBy(-1)); $('t-next').addEventListener('click', () => stepBy(1));
@@ -8578,7 +8726,7 @@ window.ISX = {
     .map(e => ({ d: e.d.slice(0, 7), dl: e.dl, who: e.who, a: e.a, q: !!e.q, s: e.s })),
   dealsCut: '8 Nov 2026',
   /* content build: a view can start a play or pull a lever on the map behind it */
-  simPlay(i) { if (!PLAYS[i] || !$('cock')) return; SIM.ftab = 'plays'; if (SIM.mode !== 'full') simSetMode('full'); clearSel(); fplay = i; fpstep = 0; simBar(); simTrays(); styleRmap(); renderSide(); },
+  simPlay(i) { if (typeof i === 'string') i = RUNS.findIndex(P => P.ep === i); if (!RUNS[i] || !$('cock')) return; SIM.ftab = 'plays'; if (SIM.mode !== 'full') simSetMode('full'); clearSel(); fplay = i; fpstep = 0; simBar(); simTrays(); styleRmap(); renderSide(); },
   simLever(i) { if (!LEVERS[i] || !$('cock')) return; SIM.ftab = 'levers'; if (SIM.mode !== 'full') simSetMode('full'); simBar(); simTrays(); const lv = $('cock').querySelector(`.lv[data-l="${i}"]`); if (lv && !flev.has(i)) lv.click(); },
   get stackOpen() { return STACK_OPEN; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k) || !fmOK(k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
