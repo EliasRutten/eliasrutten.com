@@ -47,7 +47,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 2. the Simulator: first principles, ladder, sectors, backstop ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
-  ok('guide: the opening offers first principles and the plumbing (tiers build A: the guide door, beside the full map)', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles/.test(b.querySelector('[data-way="guide"]').textContent) && !!b.querySelector('[data-way="map"]') && /52 steps/.test(b.textContent); }));
+  ok('guide: the entry offers first principles and the guide (guide build, 16 Nov: the level “Fluent”, beside the full map as “Expert”)', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles, then the guide/.test(b.querySelector('[data-way="guide"]').textContent) && !!b.querySelector('[data-way="map"]') && ISX.sim.lines[0].steps.length === 52; }));
   await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
   let n = 0, worst = 0, deepOk = true, kinds = [];
   for (let i = 0; i < 20; i++) {
@@ -56,10 +56,10 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     if (/^(\d+)\/\1$/.test(r.cnt)) break;
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(150);
   }
-  ok('first principles: eight reveals (tiers build B: R4 and R6 split, R7 removed), each at most two sentences, with depth and actors lit', n === 8 && worst <= 2 && deepOk, { n, worst, deepOk });
-  ok('first principles: identity first, then mechanism, the accounting of the US side, history, consequence', kinds.join(' ') === 'Identity Mechanism Mechanism Identity Mechanism History Consequence Consequence', kinds);
+  ok('first principles: ten reveals (guide build, 16 Nov: “Deficits become profits” and “Why the dollar needs the AI trade” appended), each at most two sentences, with depth and actors lit', n === 10 && worst <= 2 && deepOk, { n, worst, deepOk });
+  ok('first principles: identity first, then mechanism, the accounting of the US side, history, consequence', kinds.join(' ') === 'Identity Mechanism Mechanism Identity Mechanism History Consequence Consequence Identity History', kinds);
   /* B1: first principles is the first segment of the guide's one route */
-  ok('first principles: the first segment of the route, eight marks, the one in hand', await p.evaluate(() => { const s = document.querySelectorAll('#isx-s2bar .rt-s')[0]; return s.querySelectorAll('.rt-m').length === 8 && s.classList.contains('cur') && /First principles/i.test(s.textContent) && /Guide/.test(document.getElementById('isx-sn-pickb').textContent); }));
+  ok('first principles: the first segment of the route, ten marks, the one in hand', await p.evaluate(() => { const s = document.querySelectorAll('#isx-s2bar .rt-s')[0]; return s.querySelectorAll('.rt-m').length === 10 && s.classList.contains('cur') && /First principles/i.test(s.textContent) && /Guide/.test(document.getElementById('isx-sn-pickb').textContent); }));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350);
   ok('first principles: the close hands over to the guide', await p.evaluate(() => /Now the plumbing/.test(document.getElementById('isx-sn-body').textContent) && !!document.querySelector('#isx-sn-body .sn-go[data-sl="0"][data-sb="0"]')));
   await p.click('#isx-sn-body .sn-go'); await p.waitForTimeout(350);

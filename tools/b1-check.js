@@ -91,7 +91,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const first = { pre: {}, main: {} };
       const rows = await walk(p, s => { if (s.ph) return; const k = s.pre ? 'pre' : s.main ? 'main' : null; if (!k) return; Object.keys(s.vals).forEach(id => { if (s.vals[id] && s.vals[id] !== '?' && first[k][id] == null) first[k][id] = s.beat + 1; }); });
       const n = { reveals: rows.filter(r => /^reveal/.test(r.tag)).length, steps: rows.filter(r => /^step/.test(r.tag)).length, asks: rows.filter(r => /^decision/.test(r.tag)).length, links: rows.filter(r => /^link/.test(r.tag)).length, crises: rows.filter(r => /^crisis/.test(r.tag)).length };
-      ok(`walk (${w} px): 8 reveals, 52 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 8 && n.steps === 52 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
+      ok(`walk (${w} px): 10 reveals, 52 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 10 && n.steps === 52 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
       if (want(2)) {
         const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);
         ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.length} cards (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });

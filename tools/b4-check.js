@@ -201,7 +201,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         /* exceptions (the handoff's and this round's): strip tabs (38), the Simulator's opening door cards, map nodes, the route's
            marks and step names, the bar's own segments (the bar is checked at 56), Scenarios' rail thumbnails, the key-figure
            tiles, inline text links, tray chips of the Simulator's full map */
-        const skip = '.er-home, .rt-ctl *, .seg button, .strip3 *, .mswitch button, .tw-door, svg *, .rt-ms *, .rt-chain *, .rt-sl, .rt > *, .rt .dock6 *, .b3chip, .res, .sc3lnk, .shpop *, .pchip, .lv, .sn-why button, .pips *, .pdots *';
+        const skip = '.er-home, .rt-ctl *, .seg button, .strip3 *, .mswitch button, .tw-door, .ge-way, svg *, .rt-ms *, .rt-chain *, .rt-sl, .rt > *, .rt .dock6 *, .b3chip, .res, .sc3lnk, .shpop *, .pchip, .lv, .sn-why button, .pips *, .pdots *';
         const bad = [];
         document.querySelectorAll('#isx-frame button, #isx-frame summary, #isx-frame a[href]').forEach(e => {
           if (!vis(e) || e.matches(skip) || e.closest('svg') || getComputedStyle(e).display === 'inline') return;

@@ -247,12 +247,13 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
   /* ================= 6. the tutorial line, and what it promises ================= */
   if (want(6)) {
     let p = await page('#simulator', { pos: '{"l":0,"b":-1}' });
-    let r = await js(p, () => { const e = document.querySelector('#isx-sn-body .ifx-click'), c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-snarr').getBoundingClientRect(); return { line: e ? e.textContent.trim() : null, vis: !!e && e.getClientRects().length > 0, fits: card.bottom <= bar.top + 1 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
-    ok('tutorial: the guide’s opening card carries the line', r.vis && LINE.test(r.line) && r.fits, r);
+    /* guide build (16 Nov 2026): the entry replaces the opening card. Its row “How the guide works” says how the guide is used (dotted words first); the line about clicking the map stays in the tour and on the primer's last screen */
+    let r = await js(p, () => { const e = document.querySelector('#isx-sn-body .ge-how'), c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-gentry').getBoundingClientRect(); return { line: e ? e.textContent.trim() : null, vis: !!e && e.getClientRects().length > 0, fits: card.bottom <= bar.top + 1 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
+    ok('tutorial: the guide’s entry says how the guide works, dotted words first', r.vis && /Dotted words carry a definition: hover or tap\./.test(r.line) && r.fits, r);
     await p.context().close();
     p = await page('#simulator', { w: 1280, h: 760, pos: '{"l":0,"b":-1}' });
-    r = await js(p, () => { const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-snarr').getBoundingClientRect(), box = document.getElementById('isx-sn-in'), e = document.querySelector('#isx-sn-body .ifx-click'); return { vis: !!e && e.getClientRects().length > 0, card: card.top >= 0 && card.bottom <= bar.top + 1, inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
-    ok('tutorial: at 1280×760 the opening card still fits one screen with the line on it', Object.values(r).every(Boolean), r);
+    r = await js(p, () => { const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-gentry').getBoundingClientRect(), box = document.getElementById('isx-sn-in'), e = document.querySelector('#isx-sn-body .ge-how'); return { vis: !!e && e.getClientRects().length > 0, card: card.top >= 0 && card.bottom <= bar.top + 1, inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
+    ok('tutorial: at 1280×760 the entry still fits one screen with the row on it', Object.values(r).every(Boolean), r);
     await p.context().close();
     p = await page('#simulator', { ls: { 'isx-sim-mode': 'full' } });
     /* “How to use the simulator” has had no button on the page since the Simulator moved onto the stage; the card is opened here the way its button did */

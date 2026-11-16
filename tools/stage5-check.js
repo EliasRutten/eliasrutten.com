@@ -196,11 +196,12 @@ const AUDITOR = () => {
     const p = await page({}, { w, h, touch }), rows = [], leaks = [];
     const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line === 13 ? 'the basics ' : a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
     await take();
-    /* tiers build B: the route from the ground up, so the primer's eight screens are audited too; the hand-over card is passed */
+    /* tiers build B: the route from the ground up, so the primer's screens are audited too. guide build (16 Nov 2026): twelve screens; the
+       hand-over leads to the guide (route A), so first principles are opened from its quiet second button and their ten reveals audited */
     await click(p, '#isx-sn-body [data-way="ground"]'); await p.waitForTimeout(350);
-    for (let i = 0; i < 8; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
-    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(900);   /* the primer's relations fade out over a quarter of a second, as the guide's do */
-    for (let i = 0; i < 8; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
+    for (let i = 0; i < 12; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
+    await click(p, '#isx-sn-body .sn-q2'); await p.waitForTimeout(900);   /* the primer's relations fade out over a quarter of a second, as the guide's do */
+    for (let i = 0; i < 10; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
     let seenSteps = 0;
     for (let i = 0; i < 52; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
@@ -272,11 +273,11 @@ const AUDITOR = () => {
   {
     const p = await page();
     /* tiers build A (15 Nov 2026): the two buttons and the skip link became three equal doors; the guide is the gold one */
-    const card = await js(p, () => { const d = [...document.querySelectorAll('#isx-sn-body .tw-door')], r = d.map(x => x.getBoundingClientRect()), cs = d.map(x => getComputedStyle(x));
+    const card = await js(p, () => { const d = [...document.querySelectorAll('#isx-sn-body .ge-way')], r = d.map(x => x.getBoundingClientRect()), cs = d.map(x => getComputedStyle(x));
       return { n: d.length, ways: d.map(x => x.dataset.way).join(), sameRow: r.every(q => Math.abs(q.top - r[0].top) < 1 && Math.abs(q.height - r[0].height) < 1), order: r.every((q, i) => !i || q.left > r[i - 1].right), w: Math.round(r[2].width), h: Math.round(r[2].height),
-        text: d[2].querySelector('b').textContent, gold: /gradient/.test(cs[1].backgroundImage) && d[1].classList.contains('gold'), plain: !d[2].classList.contains('gold') && cs[2].borderTopWidth === '1px', skip: !document.querySelector('#isx-sn-body .s4skip'), group: d[0].parentNode.getAttribute('role') === 'group' }; });
-    ok('opening card: three doors side by side, the same height: “From the ground up”, “The guide”, “The full map”', card.n === 3 && card.ways === 'ground,guide,map' && card.sameRow && card.order && card.w >= 180 && card.h >= 56 && card.text === 'The full map', card);
-    ok('opening card: the guide is the gold door, the full map is outlined; the doors are one labelled group; no skip link', card.gold && card.plain && card.skip && card.group, card);
+        text: d[2].querySelector('b').textContent, gold: cs[1].borderTopColor === 'rgb(255, 181, 71)' && d[1].classList.contains('sug'), plain: !d[2].classList.contains('sug') && cs[2].borderTopWidth === '1px', skip: !document.querySelector('#isx-sn-body .s4skip'), group: d[0].parentNode.getAttribute('role') === 'group' }; });
+    ok('the entry: three levels side by side, the same height: Foundations, Fluent, Expert', card.n === 3 && card.ways === 'ground,guide,map' && card.sameRow && card.order && card.w >= 180 && card.h >= 56 && card.text === 'Expert', card);
+    ok('the entry: Fluent has the gold outline, Expert is outlined in steel; the levels are one labelled group; no skip link', card.gold && card.plain && card.skip && card.group, card);
     await p.focus('#isx-sn-body [data-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
     const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
     ok('opening card: “The full map” opens the full view (37 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && /rt-swb/.test(full.focus), full);

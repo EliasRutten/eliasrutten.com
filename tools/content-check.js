@@ -1,7 +1,7 @@
 /* Content build: checks on what the round added (14 Nov 2026).
    Usage: node tools/content-check.js [baseUrl]   — needs `python3 -m http.server 8731` at the repo root. Exits 1 on a failed check.
    1 counts · 2 every relation id resolves · 3 nothing shown before its step · 4 every figure has a date and a source ·
-   5 every flare direction matches its gauge · 6 the doors open and close by keyboard and by touch · 7 the tour runs and restarts ·
+   5 every flare direction matches its gauge · 6 the doors open and close by keyboard and by touch · 7 the tour runs (from the entry's pill) and restarts ·
    8 the locks · 9 (tiers build B) the copy round's three rules: a term is defined where each route first uses it, each primer screen and
    reveal stands alone, no “map’s reading” hedges or intent disclaimers. */
 const { chromium } = require('playwright');
@@ -32,7 +32,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
       badNode: S.relations.filter(r => !nodes.includes(r[0]) || !nodes.includes(r[1])).length, badInd: S.decisions.flatMap(d => d.chain.flatMap(c => Object.keys(c.fl))).filter(id => !S.indicators.some(I => I.id === id)).length,
       lines: S.lines.length, emptyChain: S.decisions.flatMap(d => d.chain).filter(c => !c.e.length && !c.off.length).length }; });
   console.log('counts  ' + JSON.stringify(C));
-  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 11, steps: 52, pre: 8, gnd: 8, decisions: 7, links: 37, crises: 7, views: 3 };
+  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 11, steps: 52, pre: 10, gnd: 12, decisions: 7, links: 37, crises: 7, views: 3 };
   Object.keys(EXP).forEach(k => ok(C[k] === EXP[k], 'count ' + k, C[k] + ' (expected ' + EXP[k] + ')'));
   ok(!C.badRel && !C.badNode && !C.badInd && !C.emptyChain, 'every relation, actor and indicator id in a chain resolves', JSON.stringify([C.badRel, C.badNode, C.badInd, C.emptyChain]));
   ok(!p._errs.some(e => /unknown relation/.test(e)), 'no “unknown relation” in the console', p._errs.join(' | '));
@@ -174,11 +174,14 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
 
   /* ---------- 7: the tour ---------- */
   p = await mk({}, 'story', true);
-  await p.waitForFunction(() => ISX.simtour.on, null, { timeout: 15000 }).catch(() => {});
-  ok(await p.evaluate(() => ISX.simtour.on), 'the tour starts on a first visit to the Simulator');
+  /* guide build (16 Nov 2026, entry spec §2): the tour no longer starts by itself; the entry's “Tour” pill opens the first card of the level and runs it there */
+  await p.waitForTimeout(3500);
+  ok(await p.evaluate(() => !ISX.simtour.on && ISX.sim.beat === -1 && !!document.querySelector('#isx-gentry .ge-foot [data-simtour]')), 'the tour does not start by itself on a first visit; the entry carries its “Tour” pill');
+  await p.click('#isx-gentry .ge-foot [data-simtour]'); await p.waitForFunction(() => ISX.simtour.on, null, { timeout: 5000 }).catch(() => {});
+  ok(await p.evaluate(() => ISX.simtour.on && ISX.sim.beat === 0 && ISX.sim.lines[ISX.sim.line].pre), 'the entry’s “Tour” opens the first card of the suggested level and starts the tour there');
   const txt = []; for (let i = 0; i < 8; i++) { const t = await p.evaluate(() => { const x = document.getElementById('isx-simtour'); return x && !x.hidden && ISX.simtour.on ? x.querySelector('h3').textContent + ' | ' + x.querySelector('p').textContent : null; }); if (!t) break; txt.push(t); await p.click('#isx-simtour .tgo'); await p.waitForTimeout(200); }
   ok(txt.length >= 4 && txt.some(t => t.includes('Click any actor or line for what it does and its sources.')), 'the tour runs to its end and keeps the line about clicking', txt.length + ' notes');
-  ok(await p.evaluate(() => !ISX.simtour.on && localStorage.getItem('isx-simtour') === 'off' && ISX.sim.beat === 0), 'its last button starts the guide, and the tour is not shown again');
+  ok(await p.evaluate(() => !ISX.simtour.on && localStorage.getItem('isx-simtour') === 'off' && ISX.sim.beat === 0), 'its last button ends it on that first card, and the tour is marked as seen');
   await p.click('#isx-simtour-b'); await p.waitForTimeout(200); ok(await p.evaluate(() => ISX.simtour.on), 'the “Tour” button starts it again');
   await p.keyboard.press('Escape'); await p.waitForTimeout(150); ok(!(await p.evaluate(() => ISX.simtour.on)), 'Esc ends the tour');
   ok(!(await p.evaluate(() => !!document.getElementById('isx-stips'))), 'the old card “How to use the simulator” is gone');
