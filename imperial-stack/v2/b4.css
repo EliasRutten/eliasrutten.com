@@ -226,3 +226,73 @@
 @media (max-width: 760px) { #isx-root #isx-v-crisis { display: none; } }
 /* focus: one ring */
 #isx-root .b4card button:focus-visible, #isx-root .b4card summary:focus-visible, #isx-root .b4sheet button:focus-visible, #isx-root .b3 button:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+
+/* ---------- 4. essay, support and “See a mistake?” (S4 §4) ---------- */
+/* the essay: the dock's first segment, Substack orange with dark text and the logo */
+#isx-root .dock6 .dk-es { display: inline-flex; align-items: center; gap: 9px; width: auto; max-width: 270px; padding: 0 14px; border-color: #ff6719; background: #ff6719; color: #1a0d05; text-decoration: none; }
+#isx-root .dock6 .dk-es .ssl { flex: none; color: #1a0d05; width: 15px; height: 15px; }
+#isx-root .dock6 .dk-es:hover, #isx-root .dock6 .dk-es:focus-visible { background: #ff7a38; border-color: #ff7a38; }
+#isx-root .dock6 .dk-es .et { display: grid; min-width: 0; text-align: left; }
+#isx-root .dock6 .dk-es small { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; white-space: nowrap; }
+#isx-root .dock6 .dk-es b { min-width: 0; font-family: var(--display); font-weight: 700; font-size: 14px; letter-spacing: .03em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .dock6 .dk-es .ts { display: none; }
+#isx-root .rt-host .rt .dock6 .dk-es { width: auto; background: #ff6719; color: #1a0d05; }
+#isx-root .rt-host .rt .dock6 .dk-es:hover { background: #ff7a38; }
+@media (max-width: 1439px) { #isx-root .dock6 .dk-es { max-width: 210px; } #isx-root .dock6 .dk-es small { display: none; } }
+@media (max-width: 1179px) { #isx-root .dock6 .dk-es { max-width: none; } #isx-root .dock6 .dk-es .tt { display: none; } #isx-root .dock6 .dk-es .ts { display: block; } }
+@media (max-width: 1000px) { #isx-root .dock6 .dk-es { padding: 0 10px; gap: 6px; } #isx-root .dock6 .dk-es .ts { font-size: 12.5px; } }
+/* the coffee: quiet, in the page's gold */
+#isx-root .dock6 .dk-bmc { border-color: color-mix(in srgb, #ffd27a 40%, #2a3a4a); color: #ffd27a; }
+#isx-root .dock6 .dk-bmc:hover, #isx-root .dock6 .dk-bmc:focus-visible { border-color: #ffd27a; box-shadow: 0 0 14px rgba(255, 210, 122, .2); }
+#isx-root .bmc6.big { background: linear-gradient(180deg, #ffe2a6, #ffc35c); border-color: #ffd27a; color: #1d1406; }
+#isx-root .bmc6.big:hover { background: #ffe2a6; color: #1d1406; }
+#isx-root .ctarow6 .cta-cup { border-color: color-mix(in srgb, #ffd27a 45%, #2a3a4a); }
+/* the pill beside “About this map” */
+#isx-root .b4mis { display: inline-flex; align-items: center; gap: 6px; height: 24px; margin-left: 8px; padding: 0 10px; border-radius: 999px; border: 1px solid #3a4c5e; background: rgba(10, 18, 27, .6); font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); cursor: pointer; vertical-align: middle; white-space: nowrap; }
+#isx-root .b4mis:hover, #isx-root .b4mis[aria-expanded="true"] { border-color: #8fa3b6; color: #fff; }
+#isx-root .b4mis:focus-visible, #isx-root .b4mbtn:focus-visible, #isx-root .b4mlink:focus-visible, #isx-root .b4es:focus-visible, #isx-root .b4cup:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+/* the phone row: essay · coffee · mistake, under the card */
+#isx-root .b4row { display: none; }
+@media (max-width: 760px) {
+  #isx-root .b4mis { display: none; }
+  #isx-root .b4row { order: 5; display: grid; grid-template-columns: minmax(0, 1fr) 44px auto; gap: 8px; margin: 14px 16px 0; }
+  #isx-root .dock6 .dk-es, #isx-root .dock6 .dk-bmc { display: none; }
+}
+#isx-root .b4es { min-width: 0; min-height: 44px; display: flex; align-items: center; gap: 9px; padding: 4px 12px; border-radius: 12px; background: #ff6719; color: #1a0d05; text-decoration: none; }
+#isx-root .b4es .ssl { flex: none; color: #1a0d05; }
+#isx-root .b4es > span { display: grid; min-width: 0; }
+#isx-root .b4es small { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+#isx-root .b4es b { min-width: 0; font-family: var(--display); font-weight: 700; font-size: 13.5px; letter-spacing: .03em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .b4cup { height: 44px; display: grid; place-items: center; border-radius: 12px; border: 1px solid rgba(255, 210, 122, .4); background: #0f1922; color: #ffd27a; font-size: 17px; text-decoration: none; }
+#isx-root .b4mbtn { height: 44px; display: inline-flex; align-items: center; gap: 7px; padding: 0 12px; border-radius: 12px; border: 1px solid #3a4c5e; background: #0b131b; color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+/* the support box: its line opens the same panel */
+#isx-root .b4mlink { height: 36px; display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 0 14px; border-radius: 12px; border: 1px solid #3a4c5e; background: rgba(10, 18, 27, .6); color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+#isx-root .b4mlink:hover { border-color: #8fa3b6; }
+#isx-root .sup6x { position: relative; }
+/* the panel */
+#isx-root .b4mpanel { position: absolute; z-index: 30; width: min(380px, calc(100% - 24px)); padding: 14px 16px 16px; border-radius: 14px; border: 1px solid #2a3a4a; background: #091017; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); color: var(--ink); }
+#isx-root .b4mpanel[hidden] { display: none; }
+#isx-root .b4mpanel.dock { right: 16px; left: auto !important; bottom: 80px; top: auto !important; }
+#isx-root .b4mpanel.below { position: absolute; left: auto; right: 16px; bottom: 16px; top: auto; }
+#isx-root .b4mpanel .b4x { position: absolute; top: 10px; right: 10px; }
+#isx-root .b4mpanel h3 { margin: 4px 40px 6px 0; font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.15; letter-spacing: .05em; text-transform: uppercase; }
+#isx-root .b4mpanel p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink2); }
+#isx-root .b4ref { margin: 0 0 10px; padding: 9px 10px; border-radius: 10px; border: 1px solid #22313f; background: #060b10; font: 12px/1.5 var(--mono); color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+#isx-root .b4mrow { display: flex; flex-wrap: wrap; gap: 8px; }
+#isx-root .b4cp { height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255, 210, 122, .55); background: rgba(255, 210, 122, .08); color: #ffd27a; font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+#isx-root .b4go { height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 12px; background: #ff6719; color: #1a0d05; text-decoration: none; font-family: var(--display); font-weight: 700; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; }
+#isx-root .b4go .ssl { color: #1a0d05; }
+#isx-root .b4go:hover { background: #ff7a38; }
+#isx-root .b4mpanel .b4fine { margin: 10px 0 0; font-size: 12px; color: var(--ink3); }
+#isx-root .b4mpanel .dl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 760px) {
+  #isx-root .b4mpanel:not(.below) { position: fixed; left: 12px !important; right: 12px; top: auto !important; bottom: 86px; width: auto; }
+}
+#isx-root .rt-host .rt .dock6 .dk.dk-es:not(.dk-fs), #isx-root .rt-host .rt.cp .dock6 .dk.dk-es:not(.dk-fs) { width: auto; height: 40px; margin-right: 4px; border-radius: 999px; padding: 0 16px 0 13px; background: #ff6719; color: #1a0d05; box-shadow: 0 0 18px -6px #ff6719; }
+#isx-root .rt-host .rt .dock6 .dk.dk-es:not(.dk-fs):hover { background: #ff7a38; }
+#isx-root .rt-host .rt.cp .dock6 .dk.dk-es:not(.dk-fs) { padding: 0 11px 0 9px; }
+/* the Circuit's route names every step: its essay segment takes less room below 1680 px */
+@media (max-width: 1679px) { #isx-root .rt-host .rt[data-id="circuit"] .dock6 .dk.dk-es:not(.dk-fs) { max-width: 176px; } #isx-root .rt-host .rt[data-id="circuit"] .dock6 .dk-es small { display: none; } }
+/* below 1440 px the header has no room to spare: the pill keeps its flag, its name moves to the label and the tooltip */
+@media (min-width: 761px) { #isx-root .brand .er-ps { display: none; } }   /* the header has no room to spare; Pax Silica stays in About */
+@media (min-width: 761px) and (max-width: 1439px) { #isx-root .b4mis { width: 24px; padding: 0; justify-content: center; margin-left: 6px; } #isx-root .b4mis span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }

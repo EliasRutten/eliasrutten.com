@@ -2372,7 +2372,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the imperial arm, the imperial machinery and scenarios">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><button type="button" class="b4mis" id="isx-mis" data-mis aria-label="See a mistake? Copy a reference and message me on Substack" data-tip="<b>See a mistake?</b><p>Copy a reference to this view and message me on Substack.</p>" aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Mistake?</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
@@ -2447,9 +2447,11 @@ button.res:hover { transform: none; box-shadow: none; }
     <nav class="tabs-bottom" id="isx-tabs" aria-label="Steps"></nav>
     <div class="b4scrim" id="isx-ascrim" hidden></div>
     <aside class="b4sheet" id="isx-asheet" role="dialog" aria-modal="false" aria-labelledby="isx-ash-t" hidden inert><div class="b4sh-h"><div><div class="b4k" id="isx-ash-k"></div><h3 id="isx-ash-t"></h3></div><button type="button" class="b4x" data-ash="x" aria-label="Close">×</button></div><div class="b4sh-b" id="isx-ash-b"></div></aside>
-    <div class="dock6" id="isx-dock" role="group" aria-label="Thesis, support, share and full screen">
-      <a class="dk dk-th" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener" aria-label="Read the thesis, coming soon" data-tip="<b>Read the thesis · coming soon</b><p>One essay explaining the whole map: how the dollar system rebuilt itself around US profits, and why the AI boom is its newest form. Subscribe to get it.</p>"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg></a>
-      <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map" data-tip="<b>Support this free map</b><p>It is free and has no ads. A coffee keeps it going.</p>"><span class="cup" aria-hidden="true">☕</span></a>
+    <div class="b4row" id="isx-b4row" role="group" aria-label="Essay, support and corrections"><a class="b4es" id="isx-b4es" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg><span><small>Essay · Substack</small><b></b></span></a><a class="b4cup" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map on Buy Me a Coffee: 151 supporters, as of 14 November 2026">☕</a><button type="button" class="b4mbtn" data-mis aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Mistake?</span></button></div>
+    <div class="b4mpanel" id="isx-mpanel" role="dialog" aria-modal="false" aria-labelledby="isx-mp-t" hidden><button type="button" class="b4x" data-mis-x aria-label="Close">×</button><div class="b4k">See a mistake?</div><h3 id="isx-mp-t">Tell me on Substack</h3><p>Copy this reference, then message me on Substack: open my profile and press Message (Substack asks you to sign in). Paste it with what you saw.</p><pre class="b4ref" id="isx-mp-ref" tabindex="0" aria-label="The reference to copy"></pre><div class="b4mrow"><button type="button" class="b4cp" id="isx-mp-copy">Copy reference</button><a class="b4go" href="https://substack.com/@eliasrutten" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>Open Substack</a></div><p class="b4fine">No form and no tracking on this page; the message goes through Substack.</p><span class="dl" id="isx-mp-live" role="status" aria-live="polite"></span></div>
+    <div class="dock6" id="isx-dock" role="group" aria-label="Essay, support, share and full screen">
+      <a class="dk dk-es" id="isx-dk-es" href="https://eliasrutten.substack.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg><span class="et"><small>Essay<span class="ed"></span></small><b class="tt"></b><b class="ts">Substack</b></span></a>
+      <a class="dk dk-bmc" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener" aria-label="Support this free map on Buy Me a Coffee: 151 supporters, as of 14 November 2026" data-tip="<b>Support this free map</b><p>It is free and has no ads. 151 supporters so far (14 Nov 2026).</p>"><span class="cup" aria-hidden="true">☕</span></a>
       <button type="button" class="dk dk-sh" id="isx-share" aria-label="Share this view" aria-expanded="false" aria-controls="isx-sharepop" data-tip="<b>Share this view</b><p>Copy a link that opens the map exactly as you see it now, or post it.</p>"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v6.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V12"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></button>
       <div class="shpop" id="isx-sharepop" role="group" aria-label="Share this view"><div class="shk">Share this view</div><div class="shn" id="isx-sh-name"></div><button type="button" class="shi" id="isx-sh-copy" data-sx=""><span class="sl">Copy link</span><span class="sx" aria-hidden="true"></span></button><a class="shi" id="isx-sh-x" href="https://x.com/intent/tweet" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Post on X</span><span class="sx" aria-hidden="true">↗</span></a><a class="shi" id="isx-sh-li" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer" data-sx="↗"><span class="sl">Share on LinkedIn<small>The text is copied, to paste into your post</small></span><span class="sx" aria-hidden="true">↗</span></a><div class="shu" id="isx-sh-url"></div><span class="dl" id="isx-sh-live" role="status" aria-live="polite"></span></div>
       <button type="button" class="dk dk-fs" id="isx-fs"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="fs-in" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fs-out" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span class="fsl">Full screen</span></button>
@@ -2500,12 +2502,12 @@ button.res:hover { transform: none; box-shadow: none; }
       <h2>Keep this map free</h2>
       <p>This map took years of study, months of thinking and weeks of building, with every figure checked against its source. It stays free so that anyone can learn from it. If it changed how you see the dollar or the AI boom, please consider supporting it: I can only keep doing this with your help.</p>
       <div class="sup-pays"><span>Your support pays for</span><b>monthly data checks</b><b>new tabs: minerals, a crisis simulator</b><b>the essays behind the map</b></div>
-      <div class="sup-row"><a class="bmc6 big" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">☕ Buy me a coffee</a><span class="sup-note">One-off · no account needed · opens Buy Me a Coffee</span></div>
+      <div class="sup-row"><a class="bmc6 big" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">☕ Buy me a coffee</a><span class="sup-note">One-off · no account needed · opens Buy Me a Coffee · 151 supporters (14 Nov 2026)</span></div>
       <div class="sup-prog" id="isx-supprog"></div>
     </div>
     <div class="sup-b">
       <a class="theory" href="https://eliasrutten.substack.com/subscribe" target="_blank" rel="noopener"><span class="tk2"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg> Thesis essay coming soon · subscribe to get it</span><span class="tt2">Read the theory behind this map</span><span class="ts2">How the dollar system has rebuilt itself since 1944, and why the AI boom is its newest form. Join 4,000+ readers in 100 countries of Power · Profit · Politics.</span></a>
-      <p class="fb">Spotted an error, or have a better source? Message me on <a href="https://eliasrutten.substack.com" target="_blank" rel="noopener">Substack</a> or reply to any newsletter. Every correction makes the map better.</p>
+      <p class="fb">Spotted an error, or have a better source? Message me on <a href="https://substack.com/@eliasrutten" target="_blank" rel="noopener">Substack</a> or reply to any newsletter. Every correction makes the map better.</p><button type="button" class="b4mlink" data-mis data-mis-from="page/support" aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>See a mistake? Copy a reference</span></button>
     </div>
   </section>
 
@@ -3508,7 +3510,73 @@ document.addEventListener('fullscreenchange', () => setTimeout(armLayout, 60));
 /* the header can grow after the first layout (the strip is built later, fonts load): the stage follows it */
 if ('ResizeObserver' in window) { let rq = 0; new ResizeObserver(() => { cancelAnimationFrame(rq); rq = requestAnimationFrame(() => { if (view === 'arm') armLayout(); }); }).observe(document.querySelector('#isx-root .hud-top')); }
 
-function dockEssay() { /* B4-4 fills the dock's essay segment */ }
+/* ---------- B4-4: the essay for the section in hand (S4 §4.2), read by the dock and the phone row ----------
+   One table; Elias changes any row. Each value is a key of ESSAYS. */
+const SECTION_ESSAY = {
+  circuit: 'grandma', circuitClose: 'bubble', minerals: 'oil200',
+  arm: { all: 'grandma', contract: 'palantir', control: 'palantir', personnel: 'palantir', data: 'palantir', debt: 'crypto', displace: 'crypto', alliance: 'bubble', invest: 'bubble', rent: 'bubble' },
+  revenue: 'bubble',
+  simulator: 'house', simChapter: { 'Data centre': 'bubble', Consumer: 'bubble', Savings: 'grandma', Oil: 'oil', 'If it breaks': 'oil200' }, simYen: 'japan2', simStable: 'dollar20',
+  capitalStack: 'grandma',
+  scenarios: 'oil200', scenario: { kenya: 'dollar20', garantex: 'dollar20', maven: 'palantir', border: 'palantir' },
+};
+function essayKey() {
+  const E = SECTION_ESSAY;
+  if (view === 'map') return circMode === 'min' ? E.minerals : (ringOn || step >= 8) ? E.circuitClose : E.circuit;
+  if (view === 'arm') return armMode === 'rev' ? E.revenue : E.arm[armFilter] || E.arm.all;
+  if (view === 'story') { const S = STORIES[storyIdx]; return (S && E.scenario[S.id]) || E.scenarios; }
+  if (view === 'fin') {
+    if (finMode === 'stack') return E.capitalStack;
+    try {
+      const L = sLine(), B = L && SIM.beat >= 0 ? L.beats[SIM.beat] : null, dk = sDecK();
+      if (dk === '5-3') return E.simYen;
+      if (B) { const tx = [B.t, B.x, B.bs].filter(Boolean).join(' ');
+        if (/\byen\b/i.test(tx)) return E.simYen;
+        if (/stablecoin/i.test(tx)) return E.simStable;
+        if (L.main) { const C = SLINES[0].chs[B.ch]; if (C && E.simChapter[C.s]) return E.simChapter[C.s]; } }
+    } catch (e) { /* the default */ }
+    return E.simulator;
+  }
+  return E.circuit;
+}
+function dockEssay() {
+  const k = essayKey(), X = ESSAYS[k] || ESSAYS.grandma, lab = 'Related essay on Substack: ' + X[0] + ' (' + X[2] + ')';
+  const d = $('dk-es'); if (d) { d.href = X[1]; d.setAttribute('aria-label', lab); d.dataset.tip = `<b>${esc(X[0])}</b><p>Essay on Substack · ${esc(X[2])}</p>`; d.querySelector('.ed').textContent = ' · ' + X[2]; d.querySelector('.tt').textContent = X[0]; d.dataset.k = k; }
+  const r = $('b4es'); if (r) { r.href = X[1]; r.setAttribute('aria-label', lab); r.querySelector('b').textContent = X[0]; r.dataset.k = k; }
+}
+/* the reference “See a mistake?” copies (S4 §4.3): the tab, a human label, and a slug that reopens the view */
+function whereNow(from) {
+  const pad = n => String(n).padStart(2, '0');
+  if (from) return { tab: 'Below the map', where: from === 'page/support' ? 'The support and feedback box' : from, slug: from };
+  const base = hashFor();
+  if (view === 'map') { const t = STEPS[step]; return { tab: 'Circuit · ' + (circMode === 'min' ? 'the other stack' : 'the dollar loop'), where: ringOn ? 'The ring, after step 10' : step ? 'Step ' + t.n + ' · ' + t.t + (selIso && CTY[selIso] ? ' · ' + CTY[selIso].name : '') : 'Overview' + (selIso && CTY[selIso] ? ' · ' + CTY[selIso].name : ''), slug: base }; }
+  if (view === 'arm' && armMode === 'rev') return { tab: 'Arm · revenue map', where: revSec === 'all' ? 'All sectors' : REV.sectors[revSec][0], slug: base };
+  if (view === 'arm') { const n = armSel ? NODE[armSel] : null; return { tab: 'Arm · the machine', where: (n ? n.label + ' (' + (n.layer === 'sector' ? 'sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'real economy' : 'firm, ' + NODE[n.sector].label) + ')' : '') + (n && armFilter !== 'all' ? ' · ' : '') + (armFilter !== 'all' ? 'relation ' + ATYPE[armFilter].name : n ? '' : 'The whole machine'), slug: base }; }
+  if (view === 'story') {
+    const S = STORIES[storyIdx], n = S.steps.length;
+    if (storyStep < 0) return { tab: 'Scenarios', where: S.h + ' · the gallery', slug: 'scenarios/' + S.id };
+    if (storyStep >= n) return { tab: 'Scenarios', where: S.h + ' · the close', slug: 'scenarios/' + S.id + '/close' };
+    const st = S.steps[storyStep]; return { tab: 'Scenarios', where: S.h + ' · step ' + (storyStep + 1) + ' of ' + n + (st && st.t ? ' · ' + st.t : ''), slug: 'scenarios/' + S.id + '/' + pad(storyStep + 1) };
+  }
+  if (view === 'fin' && finMode === 'stack') return { tab: 'The imperial machinery · the capital stack', where: 'The capital stack', slug: 'capital-stack' };
+  if (view === 'fin') {
+    const L = sLine(), b = SIM.beat, n = L.beats.length;
+    if (SIM.mode === 'full') { const bits = []; let sl = 'simulator/full';
+      if (fplay != null) { bits.push('play ' + PLAYS[fplay].t); sl += '/play=' + (fplay + 1); }
+      else if (flev.size) { bits.push('lever ' + [...flev].map(i => i + 1).join(', ')); sl += '/lever=' + [...flev].map(i => i + 1).join(','); }
+      else if (fsel) { bits.push(FN[fsel] ? FN[fsel][3] : fsel); sl += '/actor=' + String(fsel).toLowerCase(); }
+      else if (fedge != null) { bits.push('a line on the map'); sl += '/line=' + fedge; }
+      return { tab: 'Scott Bessent Simulator · full map', where: bits.join(' · ') || 'The full map', slug: sl }; }
+    const ln = L.gnd ? 'basics' : L.pre ? 'first-principles' : L.main ? 'guide' : 'mechanism-' + SIM.line;
+    let sl = 'simulator/' + ln, wh = L.gnd ? 'The basics' : L.pre ? 'First principles' : L.main ? 'The guide' : 'Mechanism · ' + L.t;
+    if (b < 0) wh += ' · the opening card'; else if (b >= n) { wh += ' · the close'; sl += '/close'; }
+    else { wh += ' · step ' + (b + 1) + ' of ' + n + ' · ' + L.beats[b].t; sl += '/' + (b + 1); }
+    const dk = sDecK(); if (dk) { const D = SDEC[dk]; if (SIM.ph === 'ask') { wh += ' · your call: ' + D.nt; sl += '/ask/' + dk; } else if (SIM.ph === 'chain') { wh += ' · other path, link ' + (SIM.c + 1) + ': ' + D.chain[SIM.c].t; sl += '/chain/' + dk + '/' + (SIM.c + 1); } else if (SIM.ph === 'crisis') { wh += ' · where it leads: ' + D.crisis.t; sl += '/crisis/' + dk; } }
+    return { tab: 'Scott Bessent Simulator · guide', where: wh, slug: sl };
+  }
+  return { tab: 'The Imperial Stack', where: '', slug: base };
+}
+on('view', dockEssay); on('step', dockEssay); on('card', dockEssay); on('narr', dockEssay); on('story', dockEssay);
 /* ---------- hint lines: true for the pointer in hand (S4 §3, rule 11), shown until the first interaction ---------- */
 const HINTS = {
   map: ['Drag to turn the globe · click a country · ← → to step', 'Swipe the globe to turn it · tap a country · use the bar to step'],
@@ -3914,7 +3982,15 @@ const ESSAYS = {
   grandma: ['How Grandma is Funding the Imperial Stack', SUBSTACK + '/p/how-grandma-is-funding-the-imperial', 'Jun 2026'],
   crypto: ['Trump’s Crypto Dollar Offensive', SUBSTACK + '/p/crypto-came-to-kill-the-dollar-the', 'Jul 2026'],
   bubble: ['When the Bubble Pops', SUBSTACK + '/p/when-the-bubble-pops', 'Jun 2026'],
+  /* B4: six more, each opened before it was added (S4 §4.2); the Japan pieces carry the names the page gives them */
+  japan1: ['Japanese economic history', SUBSTACK + '/p/japans-economic-miracle-is-also-its', 'May 2026'],
+  japan2: ['Current Japanese financial dynamics', SUBSTACK + '/p/will-japan-cause-a-global-debt-crisis', 'May 2026'],
+  oil: ['Why Oil Falls When Pipelines Burn', SUBSTACK + '/p/why-oil-falls-when-pipelines-burn', 'Nov 2026'],
+  oil200: ['$200 Oil and World War Four', SUBSTACK + '/p/200-oil-and-world-war-four', 'Oct 2026'],
+  palantir: ['Palantir pilots its way into Dutch air force', SUBSTACK + '/p/palantir-pilots-its-way-into-dutch', 'Oct 2026'],
+  dollar20: ['Dollarization 2.0: Stablecoins, Trump, and the Future of Global Finance', SUBSTACK + '/p/dollarization-20-stablecoins-trump', 'Aug 2025'],
 };
+ESSAYS.house[2] = 'Sep 2026 · paid';
 
 /* Definitions: one wording, used everywhere a term appears. {{key|shown text}} in any text marks a term. */
 const DEFS = {
@@ -7856,6 +7932,7 @@ if (RT) {
     else if (ev.id === 'sim') simNav(ev);
     else if (ev.id === 'arm' || ev.id === 'revenue') armNav(ev);
   });
+  RT.on(() => setTimeout(dockEssay, 0));   /* B4: the essay follows the step in every tab */
   RT.swipe($('scene-arm'), 'arm', '.b4sheet');
   RT.swipe($('tournarr'), 'circuit'); RT.swipe($('sc3'), 'scenarios', '.b3rail, .b3sheet, .b3strip');
 }
@@ -7876,7 +7953,7 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
 window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP, route: RT,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
-  get finMode() { return finMode; }, get armMode() { return armMode; }, get armRel() { return armFilter; }, get armSel() { return armSel; }, get armLay() { return armLay; }, get revSec() { return revSec; }, setArmRel: k => { if (AORD.includes(k) || k === 'all' || REVSEC.includes(k)) armSetRel(k); }, setArmSel: id => { if (!id || NODE[id]) { if ((id || null) !== armSel) armSelect(id || null); } }, armEdges: () => ARM.edges.map(e => ({ from: e.from, to: e.to, type: e.type, fb: aBox(e.from), tb: aBox(e.to) })), armOrder: AORD, get ring() { return ringOn; }, setRing: ringSet,
+  get finMode() { return finMode; }, get armMode() { return armMode; }, whereNow, copyText, essayKey, essays: ESSAYS, sectionEssay: SECTION_ESSAY, get armRel() { return armFilter; }, get armSel() { return armSel; }, get armLay() { return armLay; }, get revSec() { return revSec; }, setArmRel: k => { if (AORD.includes(k) || k === 'all' || REVSEC.includes(k)) armSetRel(k); }, setArmSel: id => { if (!id || NODE[id]) { if ((id || null) !== armSel) armSelect(id || null); } }, armEdges: () => ARM.edges.map(e => ({ from: e.from, to: e.to, type: e.type, fb: aBox(e.from), tb: aBox(e.to) })), armOrder: AORD, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */
@@ -7945,6 +8022,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/scenes.js"></script>
 <script defer src="/imperial-stack/v2/tour.js"></script>
 <script defer src="/imperial-stack/v2/simtour.js"></script>
+<script defer src="/imperial-stack/v2/mistake.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">
