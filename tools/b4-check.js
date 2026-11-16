@@ -177,7 +177,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
           if (e instanceof SVGElement && e.closest('#isx-rmap, .b3sc, .b3map, svg[aria-hidden="true"]')) return;   /* the Simulator's and Scenarios' maps: labels drawn to the map's own scale */
           const t = [...e.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).length; if (!t || !vis(e)) return;
           let fs = parseFloat(getComputedStyle(e).fontSize); if (e instanceof SVGElement) { const m = e.getScreenCTM(); if (m) fs *= Math.hypot(m.a, m.b); }
-          const route = !!e.closest('.rt-ms, .rt-sl, .rt-pl, .rt-chain'), soon = !!e.closest('.soon, .wip') && /soon/i.test(e.textContent);
+          const route = !!e.closest('.rt-ms, .rt-sl, .rt-pl, .rt-chain, .b3gl'), soon = !!e.closest('.soon, .wip') && /soon/i.test(e.textContent);
           if (fs < 10.45 && !soon && !(route && fs >= 9.95)) small.push(e.tagName + '.' + [...e.classList].join('.') + ' ' + fs.toFixed(1) + ' “' + e.textContent.trim().slice(0, 24) + '”');
         });
         const titles = [...document.querySelectorAll('.b4t, .cmd6 .tournarr h3, .s2 .s2body h3')].filter(vis).map(e => [e.className || e.tagName, parseFloat(getComputedStyle(e).fontSize)]);

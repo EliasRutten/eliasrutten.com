@@ -199,7 +199,7 @@
 #isx-root .rt-host .rt .rt-nx small, #isx-root .rt-host .rt .rt-line small { font-size: 10.5px; }
 #isx-root #isx-resbar .res .k, #isx-root #isx-resbar .res .rd6, #isx-root .tp small, #isx-root .dir, #isx-root .legbox2 .lgt span, #isx-root .legbox2 .lw { font-size: 10.5px; }
 #isx-root .s2 .s2ttl .fk, #isx-root .s2 .tw-k, #isx-root #isx-cock.s2 .s2card .tw-door .tw-m, #isx-root .s2 .s2thesis > span, #isx-root .s2 .sn-why > span, #isx-root .s2 .r > span, #isx-root .s2 .s2card em { font-size: 10.5px; }
-#isx-root .b3 .b3gl, #isx-root .b3 .b3sw { font-size: 10.5px; }
+#isx-root .b3 .b3sw { font-size: 10.5px; }   /* the rail’s group labels stay at 10 px, as route labels */
 /* rule 2 · one kicker: mono 10.5, caps, .14em */
 #isx-root .cmd6 .tournarr .tk { font-size: 10.5px; letter-spacing: .14em; }
 /* rule 3 · one primary: gold fill, dark text. Scenarios’ red primaries go gold; red stays the colour of a switch */
