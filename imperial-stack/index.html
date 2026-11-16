@@ -6053,13 +6053,13 @@ function renderFin() {
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: Foundations, Fluent, Expert"><span aria-hidden="true">↩</span>Three ways in</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: Foundations, Fluent, Expert"><span aria-hidden="true">↩</span>Three ways in</button><button type="button" class="cb-tourb cl-keyb" id="isx-cl-keyb" data-cl-key aria-expanded="false" aria-controls="isx-cl-key" aria-label="Key to the map: boxes, lines, colours and gauges"><span aria-hidden="true">◐</span>Key</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
-      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
+      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><aside class="cl-key" id="isx-cl-key" role="dialog" aria-labelledby="isx-cl-key-h" hidden>${keyHTML()}</aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
       + simNarrHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
-      + `<div class="s2low" id="isx-s2low"><div class="tw-keyw"><button type="button" class="tw-keyb" data-twkey aria-expanded="false" aria-controls="isx-tw-key">Key</button><p class="tw-key" id="isx-tw-key">${fe(SKEYLINE)}</p></div><div class="rkey s2key" aria-label="Line colours">${Object.values(FT).map(([c, t]) => `<span><i style="background:${c}"></i>${fe(t)}</span>`).join('')}<span class="k3s" aria-hidden="true"></span>${RORD.map(r => `<span class="k3"><i class="t3" style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}</span>`).join('')}</div><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
+      + `<div class="s2low" id="isx-s2low"><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
       + `<div class="s2tray tr-lev" id="isx-s2tray-lev" hidden>${levBarHTML()}</div>`
       + `<nav class="s2bar" id="isx-s2bar" aria-label="Guide: chapters and trays"></nav></div>`
@@ -6122,7 +6122,7 @@ function ePath(a, b, i) {
 }
 function drawRmap() {
   const svg = $('rmap'); if (!svg) return;
-  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '<marker id="isx-fa-ch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="#ff8a5c"/></marker></defs>';
+  let h = '<defs>' + Object.entries(FT).map(([k, [c]]) => `<marker id="isx-fa-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="${c}"/></marker>`).join('') + '<marker id="isx-fa-ch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="#ff8a5c"/></marker><marker id="isx-fa-rest" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L8,4L0,8z" fill="#8597a6"/></marker></defs>';   /* clarity build: -rest, the arrowhead of a line that is not in focus */
   h += FZ.map(Z => { const [x, y, w, hh] = zoneRect(Z); return `<g class="fzg" data-z="${Z[0]}" style="--zc:${Z[2]}"><rect class="fz" x="${x}" y="${y}" width="${w}" height="${hh}" rx="12"/><rect class="fzb" x="${x + 12}" y="${y + .5}" width="${w - 24}" height="2" rx="1"/>${(k => k ? `<g class="fzk" data-sec="${k}" role="button" tabindex="0" aria-label="${fe(Z[1])}: the balance sheet of this sector (${fe(SECT[k][0].toLowerCase())}), coming soon"><rect class="fzkh" x="${x + 4}" y="${y + 5}" width="${w - 8}" height="22" rx="7"/><text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text><g class="fzl" transform="translate(${x + w - 24},${y + 9})"><rect x="1.5" y="5.5" width="9" height="6.5" rx="1.5"/><path d="M3.5 5.5V3.8a2.5 2.5 0 0 1 5 0v1.7"/></g></g>` : `<text class="fzt" x="${x + 12}" y="${y + 19}">${fe(Z[1]).toUpperCase()}</text>`)(Object.keys(SECT).find(k => SECT[k][1] === Z[0]))}${Z[7] ? `<text class="fzs" x="${CX.finL}" y="${y + hh - 7}" text-anchor="middle">SHORT-TERM MONEY</text><text class="fzs" x="${CX.finR}" y="${y + hh - 7}" text-anchor="middle">LONG-TERM MONEY, PRICES</text>` : ''}</g>`; }).join('');
   FE.forEach(([a, b, ty, lab], i) => {
     const d = ePath(a, b, i);
@@ -8020,10 +8020,10 @@ function drawOn(p, delay) {
   clearTimeout(p._dt);   /* a relation drawn again before its first draw has finished is not cut short by the first one's clean-up */
   if (p.classList.contains('rule') || p.classList.contains('sig') || p.classList.contains('ch') || p.classList.contains('off')) { if (p.animate) p.animate([{ opacity: 0 }, {}], { duration: 700, delay, easing: 'ease', fill: 'backwards' }); return; }
   const L = p.getTotalLength(), mk = p._mk || p.getAttribute('marker-end'); p._mk = mk;   /* content build: remembered, so a second draw that starts before the first has ended still gives the arrowhead back */
-  p.removeAttribute('marker-end'); p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
+  p.removeAttribute('marker-end'); p.style.markerEnd = 'none'; p.style.transition = 'none'; p.style.strokeDasharray = L + ' ' + L; p.style.strokeDashoffset = L;
   void p.getBBox();
   p.style.transition = `stroke-dashoffset .8s cubic-bezier(.45,.05,.25,1) ${delay}ms, opacity .25s, stroke-width .25s`; p.style.strokeDashoffset = '0';
-  p._dt = setTimeout(() => { p.style.transition = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); p._mk = null; }, delay + 850);
+  p._dt = setTimeout(() => { p.style.transition = ''; p.style.markerEnd = ''; p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; if (mk) p.setAttribute('marker-end', mk); p._mk = null; }, delay + 850);
 }
 
 /* ---------- camera: frames what the story has introduced (phones: the step in hand) ---------- */
@@ -8068,7 +8068,10 @@ function simCamTarget() {
     /* B1-4: a chain frames its links so far and the decision's subject; a decision card keeps the step before it */
     const dk = sDecK(), subj = dk ? Object.keys(SDEC[dk].sus).map(id => INDX[id].n) : [];
     const set = dk && SIM.ph !== 'ask' ? new Set([...enodes(sLinks().flatMap(sChE)), ...subj, 'TSY']) : new Set([...bN(B), ...(P ? bN(P) : []), ...subj]);
-    box = simBox(set); box[0] -= 26; box[2] += 26; box[1] -= 44; box[3] += 26; cap = 1.3;
+    box = simBox(set);
+    if (P && !(dk && SIM.ph !== 'ask') && Math.min(Math.max(200, W - iL - iR) / (box[2] - box[0] + 52), Math.max(160, H - iT - iB) / (box[3] - box[1] + 70)) < .86) box = simBox(new Set([...bN(B), ...subj]));   /* clarity build: never so far out that the names cannot be read */
+    box[0] -= 26; box[2] += 26; box[1] -= 44; box[3] += 26; cap = 1.05;   /* clarity build: was 1.3; the step in hand keeps more of the map around it */
+    if (Math.min(Math.max(200, W - iL - iR) / MAPW, Math.max(160, H - iT - iB) / MAPH) >= .92) { box = [0, 0, MAPW, MAPH]; cap = 1.5; }   /* and where the whole map fits beside the card, it stays whole and still */
   } else { box = [0, 0, MAPW, MAPH]; cap = 1.5; }
   const aw = Math.max(200, W - iL - iR), ah = Math.max(160, H - iT - iB), bw = box[2] - box[0], bh = box[3] - box[1];
   const k = Math.min(aw / bw, ah / bh, cap);
@@ -8277,7 +8280,11 @@ function sCrisisHTML(k) {
 }
 /* tiers build A (15 Nov 2026): expert mode (spec §2). The full view as it is, plus a one-line key, an index of the guide's steps in the bar,
    and an “In the guide” row in every dossier. All computed from SLINES[0], so they follow any reorder. */
-const SKEYLINE = 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources; a gold tab means more inside. The layout is part of the thesis: read it and the argument can be pieced together; where it is unclear, the guide explains.';
+const SKEYLINE = 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. A line is grey until it is in focus: select an actor, follow the guide or pull a lever, and its lines take their colour. Click any actor or line for what it does and its sources; a gold tab means more inside. The layout is part of the thesis: read it and the argument can be pieced together; where it is unclear, the guide explains.';
+/* clarity build (17 Nov 2026): the key, on demand (opened by “Key”, beside “Tour”; v2/clarity.js). It was a paragraph and two rows under the map */
+const keyHTML = () => `<button type="button" class="dx" data-cl-keyx aria-label="Close the key">×</button><h3 id="isx-cl-key-h">Key</h3><p class="cl-kp">${fe(SKEYLINE)}</p>`
+  + `<div class="cl-kg"><span class="cl-kh">A line in focus, by kind</span>${Object.entries(FT).map(([k, [c, t]]) => `<span class="cl-kl"><svg viewBox="0 0 36 8" width="36" height="8" aria-hidden="true"><path class="${k}" d="M1 4H28" stroke="${c}"/><path d="M28 1l7 3-7 3z" fill="${c}"/></svg>${fe(t)}</span>`).join('')}</div>`
+  + `<div class="cl-kg"><span class="cl-kh">An indicator, by role</span>${RORD.map(r => `<span class="cl-kl"><i style="background:${ROLE[r][3]}"></i>${fe(ROLE[r][0])}<em>${fe(ROLE[r][2])}</em></span>`).join('')}</div>`;
 function guideRefs(n, ei) {
   const G = SLINES[0]; return G.beats.map((B, i) => i).filter(i => ei != null ? G.beats[i].e.includes(ei) : bN(G.beats[i]).has(n));
 }
@@ -8366,6 +8373,7 @@ function sNewTerms(L, b) {
   const pre = SLINES[way === 'ground' && SGI >= 0 ? SGI : SPI]; add(pre, pre.beats.length);
   if (L.ep) { const r = SIM.epRet || { l: 0, b: sEpHome(L.ep) }; add(SLINES[r.l], r.b + 1); }
   add(L, b);
+  if (L.beats[b].r === 'k') return [];   /* a plumbing reveal is itself the definition */
   return sSurf(L, b).filter(k => !seen.has(k) && (way === 'ground' || SPLUMB.has(k))).slice(0, 2);
 }
 const sNewHTML = ks => ks.length ? `<dl class="cl-new"><span class="cl-nk">New here</span>${ks.map(k => `<div><dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd></div>`).join('')}</dl>` : '';
@@ -8488,17 +8496,17 @@ function simBodyHTML0() {
     if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
       + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts with the loop the money runs in, then puts you in the chair of the one who has to fund it.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">The imperial machinery ${sArrR}</button></div>`
-      + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
+      + `<div class="s2more"><button type="button" data-sp="1">Acts and episodes</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
       + (L.main ? `<p class="s2p">${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.</p>`
         /* tiers build B: the close pays off the thesis (spec §1.1 rule 5, copy Part D); its four verbs answer the four echoes */
         + sEcho('A price manipulated, buyers captured, rules shaped, dollars rationed: those are the valves, and you have seen who holds them.')
         + `<p class="s2p s2pay">That is why the dollar needs the AI trade: it is where the world’s savings now land, and every valve you have seen keeps them landing there.</p>`
         + `<p class="s2p s2close">${ft(`The system also holds because others are bought in. In 2025 Taiwan’s exports of ICT goods and components were about half its GDP, and Malaysia’s and Singapore’s {{gross|gross}} AI-hardware exports about ${sAiPct('MYS')}% and ${sAiPct('SGP')}%. Economies that grow like this cannot step out of the trade without giving up growth. At home they are crowded out: the hyperscalers also borrow in the allies’ own currencies, and took ${SFIG.gbp.v} of sterling corporate bond issuance in ${SFIG.gbp.d}, so local firms compete with them for their own savers.`)}</p>`
-        + `<p class="s2p">Open the full view to run the plays, pull any lever and click anything. Scenarios shows the same power being exercised.</p>`
-        : `<p class="s2p">${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine. Open the full view to run the plays, pull any lever and click anything.</p>`)
+        + `<p class="s2p">Open the full view to run the episodes, pull any lever and click anything. Scenarios shows the same power being exercised.</p>`
+        : `<p class="s2p">${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine. Open the full view to run the episodes, pull any lever and click anything.</p>`)
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
-      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button>${L.main ? '<button type="button" data-remind>Plan the next session</button>' : ''}</div>`
+      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">Acts and episodes</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button>${L.main ? '<button type="button" data-remind>Plan the next session</button>' : ''}</div>`
       + sDeep((L.main ? `<p class="lsrc s2closen">Gross exports include imported parts, so for the re-export hubs Singapore and Malaysia they overstate what is earned at home. Taiwan: the broader ICT category. Source: as stored on the Circuit’s exposure chart, 2025 (step 06, layer “Hardware exports”). Sterling: ${fe(SFIG.gbp.src)}, ${fe(SFIG.gbp.k.toLowerCase())}, ${fe(SFIG.gbp.d)}: a high share of a small market, and not comparable with another currency’s share, because each has a different base.</p>` : '') + (L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : ''), L.main ? 'Sources, and what the guide left out' : 'Not in the guide');
   }
   const dk = sDecK();
@@ -8512,7 +8520,7 @@ function simBodyHTML0() {
   /* clarity build: on a step of the guide the kicker carries the date (the act and chapter are in the bar, the question is the heading); its colour is the chapter's */
   const kl = WD ? 'What happened' : L.ep ? 'Episode · ' + fe(L.ep.s) : L.main ? (B.r === 'k' ? 'How it works' : fe(B.w || 'Step')) : R[0], kd = WD || L.ep || !L.main ? B.w : '';
   let h = `<div class="s2k" style="--rc:${WD ? '#ffd27a' : L.main ? SCHC[B.ch] : L.ep ? L.c : R[1]}"><i></i>${kl}${kd ? `<em>${fe(kd)}</em>` : ''}<span class="sn-cnt">${String(b + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}</span></div>`
-    + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + (L.main && L.first[B.ch] === b && (B.ch === 0 || L.chs[B.ch - 1].act !== L.chs[B.ch].act) ? (A => `<p class="cl-act"><b>Act ${A[0]} · ${fe(A[1])}</b> ${fe(A[2])}</p>`)(SACTS[L.chs[B.ch].act]) : '')
+    + (WD ? `<p class="dyou"><span>You chose <b>${fe(WD[SIM.pick[wk]][0])}</b></span><span>${fe(WD.after[SIM.pick[wk]])}</span></p>` : '') + (L.main && L.first[B.ch] === b && (B.ch === 0 || L.chs[B.ch - 1].act !== L.chs[B.ch].act) ? (A => `<p class="cl-act"><b>Act ${A[0]} · ${fe(A[1])}</b> ${fe(A[2].replace(/^./, c => c.toUpperCase()))}.</p>`)(SACTS[L.chs[B.ch].act]) : '')
     + (core && B.q ? `<h3 class="cl-q">${fe(B.q)}</h3><p class="cl-a">${fe(B.t)}</p>` : `<h3>${fe(B.t)}</h3>`) + (L.ep && L.ep.warn ? `<p class="cb-warn">${fe(L.ep.warn)}</p>` : '')
     + (lead ? `<p class="s2why">${ft(tw)}</p>` : '') + `<p class="s2p">${ft(tx1)}</p>` + sEcho(B.ech) + (B.nt ? `<p class="sn-note cb-nt${B.ntEcho ? ' thesis-echo' : ''}">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
@@ -8694,7 +8702,7 @@ function simMount() {
     if (d.gdt != null) { const g = t.closest('.gd'), on = t.getAttribute('aria-pressed') !== 'true'; t.setAttribute('aria-pressed', String(on)); t.textContent = on ? 'View as diagram' : 'View as table'; g.querySelector('.gd-pic').hidden = on; g.querySelector('.gd-tbl').hidden = !on; g.querySelector('.gd-foot .gd-edge').hidden = on; return; }
     if (d.gefull != null) { const f = $('ge-full'), on = f.hidden; f.hidden = !on; t.setAttribute('aria-expanded', String(on)); $('gentry').classList.toggle('full', on); return; }
     if (d.way) { if (t.getAttribute('aria-disabled') === 'true') return; stSet(SWAY, d.way); track('Way', { way: d.way });
-      if (d.way === 'map') { simSetMode('full'); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
+      if (d.way === 'map') { simSetMode('full'); emit('key', true); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
       else { const g = SLINES.findIndex(L => L.gnd); simGo(d.way === 'ground' && g >= 0 ? g : SPI, 0, 'focus'); }
       return; }
     if (d.ep) { simEp(d.ep, !!t.closest('#isx-sn-body')); return; }

@@ -104,4 +104,53 @@
 #isx-root .s2 .cl-ep i, #isx-root .s2 .cl-epi > summary::after { grid-area: i; }
 #isx-root .s2 .cl-act { margin: 9px 0 0; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--rc, #ffd27a) 9%, transparent); font-size: 12.5px; line-height: 1.35; color: #c9d4de; }
 #isx-root .s2 .cl-act b { margin-right: 6px; font: 600 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--rc, #ffd27a); }
-#isx-root .s2 .cl-act::first-letter { text-transform: uppercase; }
+
+/* ---------- lines: grey at rest, colour in focus ---------- */
+/* Every line is thin and grey with its arrow, so any of them can still be traced. A selected actor, the guide's step or a pulled lever
+   gives its own lines their colour (the relation's kind); hovering a line colours it too, with its label. Dashes still say rule or signal. */
+#isx-root #isx-cock.s2 .fe:not(.on):not(.ch):not(.off) { stroke: #8597a6; stroke-width: 1.15; opacity: .52; marker-end: url(#isx-fa-rest); }
+#isx-root #isx-cock.s2 .fe.thick:not(.on):not(.ch):not(.off) { stroke-width: 1.7; }
+#isx-root #isx-cock.s2 .fe.dim:not(.on):not(.ch):not(.off) { opacity: .2; }
+#isx-root #isx-cock.s2.st .fe.dim:not(.on):not(.ch):not(.off) { opacity: .3; }
+#isx-root #isx-cock.s2.st .fe.dim.tr:not(.on):not(.ch):not(.off) { opacity: .6; }
+#isx-root #isx-cock.s2 .fe.on { opacity: 1; stroke-width: 2.4; }
+#isx-root #isx-cock.s2 .fe.debt:has(+ .feh:hover) { stroke: #ffd27a; marker-end: url(#isx-fa-debt); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.cash:has(+ .feh:hover) { stroke: #ffb547; marker-end: url(#isx-fa-cash); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.eq:has(+ .feh:hover) { stroke: #d78bff; marker-end: url(#isx-fa-eq); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.rule:has(+ .feh:hover) { stroke: #e4ebf1; marker-end: url(#isx-fa-rule); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.goods:has(+ .feh:hover) { stroke: #44d7ec; marker-end: url(#isx-fa-goods); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.sell:has(+ .feh:hover) { stroke: #ff5a4e; marker-end: url(#isx-fa-sell); opacity: 1; }
+#isx-root #isx-cock.s2 .fe.sig:has(+ .feh:hover) { stroke: #c3d0db; marker-end: url(#isx-fa-sig); opacity: 1; }
+/* ---------- the key, on demand ---------- */
+#isx-root .cl-keyb[aria-expanded="true"] { color: #ffd27a; border-color: #4a3b1c; }
+#isx-root .cl-key { position: absolute; z-index: 9; left: 22px; top: 158px; width: min(400px, calc(100% - 44px)); max-height: calc(100% - 260px); overflow-y: auto; padding: 14px 18px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(8, 13, 20, .96); box-shadow: 0 18px 50px rgba(0, 0, 0, .5); scrollbar-width: thin; }
+#isx-root .cl-key[hidden] { display: none; }
+#isx-root .cl-key h3 { margin: 0; font: 600 15px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: #f3f6f9; }
+#isx-root .cl-key .dx { position: absolute; right: 10px; top: 8px; }
+#isx-root .cl-key .cl-kp { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: #c3d0db; text-wrap: pretty; }
+#isx-root .cl-key .cl-kg { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #1b2733; }
+#isx-root .cl-key .cl-kh { grid-column: 1 / -1; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8fa3b6; }
+#isx-root .cl-key .cl-kl { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 12px; line-height: 1.3; color: #dbe4ec; }
+#isx-root .cl-key .cl-kl svg { flex: none; overflow: visible; } #isx-root .cl-key .cl-kl svg path:first-child { fill: none; stroke-width: 2; }
+#isx-root .cl-key .cl-kl svg path.rule { stroke-dasharray: 5 4; } #isx-root .cl-key .cl-kl svg path.sig { stroke-dasharray: 2 4; }
+#isx-root .cl-key .cl-kl i { flex: none; width: 3px; height: 13px; border-radius: 1.5px; }
+#isx-root .cl-key .cl-kl em { font-style: normal; font-size: 10.5px; color: #8fa3b6; }
+#isx-root .cl-key .cl-kg + .cl-kg .cl-kl { flex-wrap: wrap; row-gap: 0; }
+#isx-root .s2.s4open .cl-keyb, #isx-root .vw-on .cl-key { display: none; }
+@media (max-width: 760px) { #isx-root .cl-key { position: fixed; left: 12px; right: 12px; top: auto; bottom: 12px; width: auto; max-height: 70vh; z-index: 60; } }
+/* the bar says where the visitor is on its line button (act and chapter, in full); the route keeps its marks and drops the cut-off labels */
+@media (min-width: 761px) {
+  #isx-root #isx-cock.s2 #isx-s2bar .rt-s .rt-sl { display: none; }
+  #isx-root #isx-cock.s2 #isx-s2bar .rt .rt-s { grid-template-rows: 1fr; align-items: center; }
+  #isx-root #isx-cock.s2 #isx-s2bar .rt .rt-ms { grid-row: 1; padding-top: 0; align-items: center; }
+  #isx-root #isx-cock.s2 #isx-s2bar .rt-line { min-width: 172px; }
+}
+/* the picker in the bar: two ways in, three acts, the episodes; a name with its line under it, so nothing wraps mid-word */
+#isx-root .s2 .sn-pick .pk-acts .pk-l, #isx-root .s2 .sn-pick .pk-eps .pk-l { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "i b" "i s"; align-items: center; column-gap: 9px; row-gap: 1px; min-height: 0; padding: 6px 10px; text-align: left; }
+#isx-root .s2 .sn-pick .pk-acts .pk-l i, #isx-root .s2 .sn-pick .pk-eps .pk-l i { grid-area: i; }
+#isx-root .s2 .sn-pick .pk-acts .pk-l b, #isx-root .s2 .sn-pick .pk-eps .pk-l b { grid-area: b; }
+#isx-root .s2 .sn-pick .pk-acts .pk-l small, #isx-root .s2 .sn-pick .pk-eps .pk-l small { grid-area: s; margin: 0; text-align: left; white-space: normal; }
+#isx-root .s2 .sn-pick .pk-eps .pk-ms { grid-template-columns: 1fr 1fr; }
+#isx-root .s2.tray-on .cl-nums.up { visibility: hidden; }
+#isx-root .cl-nums.up { background: rgba(8, 13, 20, .93); }
+#isx-root .s2.st .tr-pick { background: rgba(8, 13, 20, .97); }

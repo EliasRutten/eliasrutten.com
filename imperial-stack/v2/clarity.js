@@ -141,6 +141,7 @@
   root.addEventListener('keydown', function (e) { var hd = e.target.closest ? e.target.closest('.cl-nums.fold .cl-nh') : null; if (hd && e.target === hd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hd.click(); } });
   root.addEventListener('keydown', function (e) { var pop = $('cl-key'); if (e.key === 'Escape' && pop && !pop.hidden) { e.preventDefault(); e.stopPropagation(); pop.hidden = true; var kb = root.querySelector('[data-cl-key]'); if (kb) { kb.setAttribute('aria-expanded', 'false'); kb.focus({ preventScroll: true }); } } }, true);
 
+  X.on('key', function (on) { var pop = $('cl-key'), kb = root.querySelector('[data-cl-key]'); if (!pop) return; pop.hidden = !on; if (kb) kb.setAttribute('aria-expanded', String(!!on)); });
   X.clarity = { draw: draw, get where() { return el ? (el.classList.contains('up') ? 'up' : 'in') : null; }, get data() { return cur; } };
   if ($('sn-body') && $('sn-body').childElementCount) draw();
 })();

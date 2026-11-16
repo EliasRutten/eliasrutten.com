@@ -269,7 +269,7 @@
     return '<div class="vw-desks" data-rel="TSY~FED"><div class="dk tsy"><div class="pk">Desk one</div><h4>US Treasury</h4><p>Decides what debt to sell: bills or bonds, and which bonds to buy back.</p></div>'
       + '<div class="dline"><span class="pk">Coordination: contested.</span><span>Central-bank independence is the question.</span></div>'
       + '<div class="dk fed"><div class="pk">Desk two</div><h4>Federal Reserve</h4><p>Sets the policy rate, buys bills to keep reserves ample, and stands behind repo.</p>' + fig('Fed balance sheet', '$6.76tn', '11 Nov 2026', 'Fed H.4.1 via FRED (data round)') + '</div></div>'
-      + '<button type="button" class="vw-go play" data-vplay="10">Run the play “Coordinate with the Fed” ›<small>Speculative: its links are connections, not a recorded plan.</small></button>'
+      + '<button type="button" class="vw-go play" data-vplay="door">Run the episode “The revolving door” ›<small>Speculative: its links are connections, not a recorded plan.</small></button>'
       + '<section class="vw-p ops"><div class="pk">The operations · each is a lever on the map, dated</div><ul class="vw-ops">' + OPS.map(function (o) { return '<li><button type="button" class="vw-lev" data-vlev="' + o[4] + '"><b>' + e(o[0]) + '</b><span>' + e(o[1]) + '</span></button><p>' + e(o[2]) + '</p>' + src(o[3]) + '</li>'; }).join('') + '</ul></section>'
       + '<div class="vw-rds">'
       + reading('RD-M1', 'Held below the market’s own price', 'The operations hold long yields and the cost of long-term borrowing below what the market alone would set. Michael Howell calls it yield-curve control by stealth. Measured beside it: the 10-year still touched 5.33% intraday in October 2026.', 'Michael Howell, shared by Elias Rutten.')
@@ -371,7 +371,7 @@
         out.innerHTML = '<h5>' + e(k[0]) + '</h5><p>' + e(k[2]) + '</p><p>' + e(k[3]) + '</p><div class="vw-fig' + (k[1] === '–' ? ' slot' : '') + '"><span class="fk">US holdings</span><p>' + e(k[4]) + '</p></div>' + who('measured, where a figure is given');
         return;
       }
-      if (d.vplay != null && X.simPlay) { close(); X.simPlay(+d.vplay); return; }
+      if (d.vplay != null && X.simPlay) { close(); X.simPlay(isNaN(+d.vplay) ? d.vplay : +d.vplay); return; }
       if (d.vlev != null && X.simLever) { close(); X.simLever(+d.vlev); return; }
     });
     box.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); close(); } });
