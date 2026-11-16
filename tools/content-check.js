@@ -32,7 +32,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
       badNode: S.relations.filter(r => !nodes.includes(r[0]) || !nodes.includes(r[1])).length, badInd: S.decisions.flatMap(d => d.chain.flatMap(c => Object.keys(c.fl))).filter(id => !S.indicators.some(I => I.id === id)).length,
       lines: S.lines.length, emptyChain: S.decisions.flatMap(d => d.chain).filter(c => !c.e.length && !c.off.length).length }; });
   console.log('counts  ' + JSON.stringify(C));
-  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 11, steps: 52, pre: 10, gnd: 12, decisions: 7, links: 37, crises: 7, views: 3 };
+  const EXP = { actors: 29, gauges: 8, relations: 75, levers: 17, indicators: 24, plays: 6, steps: 43, pre: 10, gnd: 12, decisions: 7, links: 37, crises: 7, views: 3 };
   Object.keys(EXP).forEach(k => ok(C[k] === EXP[k], 'count ' + k, C[k] + ' (expected ' + EXP[k] + ')'));
   ok(!C.badRel && !C.badNode && !C.badInd && !C.emptyChain, 'every relation, actor and indicator id in a chain resolves', JSON.stringify([C.badRel, C.badNode, C.badInd, C.emptyChain]));
   ok(!p._errs.some(e => /unknown relation/.test(e)), 'no “unknown relation” in the console', p._errs.join(' | '));
@@ -81,7 +81,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
   }
   /* the play that lives in a view, and the lever cards' link to the house reading */
   await p.evaluate(() => ISX.views.open('desks')); await p.click('#isx-vw [data-vplay]'); await p.waitForTimeout(250);
-  ok(await p.evaluate(() => !ISX.views.on && /Coordinate with the Fed/.test(document.querySelector('#isx-rside').textContent) && /Speculative: the links below are connections, not a recorded plan\./.test(document.querySelector('#isx-rside').textContent)), 'the play “Coordinate with the Fed” runs from the view, with its caution first');
+  ok(await p.evaluate(() => !ISX.views.on && /The revolving door/.test(document.querySelector('#isx-rside').textContent) && /Speculative: the links below are connections, not a recorded plan\./.test(document.querySelector('#isx-rside').textContent)), 'the episode “The revolving door” runs from the view, with its caution first (clarity build: the play “Coordinate with the Fed” is that episode)');
   await p.evaluate(() => ISX.simLever(0)); await p.waitForTimeout(200);
   ok(await p.evaluate(() => { const d = document.querySelector('#isx-rside .cb-door'); if (!d) return false; d.click(); return ISX.views.on === 'desks' && !!document.querySelector('#isx-vw-house.hl'); }), 'a lever card opens “The house always prints”');
   await p.evaluate(() => ISX.views.close());
@@ -105,15 +105,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
   const walk = await p.evaluate(async () => {
     const S0 = ISX.sim, M = S0.lines[0], out = { early: [], fl: [], states: 0, seen: [] }, wait = ms => new Promise(r => setTimeout(r, ms));
     const dn = ['capex', 'shr', 'ai', 'con', 'off', 'save'], up = ['y10', 'mtg', 'haircut', 'brent', 'pce', 'diesel'];
-    for (let g = 0; g < 400; g++) {
-      const S = ISX.sim, L = S.lines[S.line], h = (document.querySelector('#isx-sn-body h3') || {}).textContent || ''; out.states++;
-      if (S.line === 0 && S.beat >= 0 && S.beat < L.steps.length && !S.ph) {
-        const reached = new Set(L.steps[S.beat].e), shown = [...document.querySelectorAll('#isx-rmap .fe:not(.gh)')].map(e => +e.dataset.e).filter(i => !reached.has(i));
-        if (shown.length) out.early.push('step ' + (S.beat + 1) + ': relations ' + shown.join(','));
-        S.indicators.forEach(I => { const ok = I.at && I.at.main != null ? S.beat + 1 >= I.at.main : I.rel.some(i => reached.has(i)), el = document.querySelector(`#isx-rmap [data-gv="${I.id}"]`);
-          if (!ok && el && el.textContent.trim()) out.early.push('step ' + (S.beat + 1) + ': ' + I.k + ' shows ' + el.textContent.trim()); });
-        const nodes = new Set(L.steps[S.beat].n); document.querySelectorAll('#isx-rmap .fn:not(.s4dim)').forEach(e => { if (!nodes.has(e.dataset.n)) out.early.push('step ' + (S.beat + 1) + ': actor ' + e.dataset.n); });
-      }
+    const links = (S, h) => {
       if (S.ph === 'chain') { const D = S.decisions.find(d => d.k === S.dec), C = D.chain[S.c]; out.seen.push(D.k + ':' + S.c);
         Object.entries(C.fl).forEach(([id, a]) => { if (a !== '▲' && a !== '▼') out.fl.push(h + ': ' + id + ' has no direction'); if (dn.includes(id) && a !== '▼') out.fl.push(h + ': ' + id + ' should press down'); if (up.includes(id) && a !== '▲') out.fl.push(h + ': ' + id + ' should press up'); });
         if (D.k === '5-3') { const want = S.c === 0 ? '▲' : S.c <= 2 ? '▼' : null, g2 = document.querySelector('#isx-rmap .gn[data-n="YEN"]'), lab = g2.getAttribute('aria-label') || '', arr = g2.querySelector('.garr').textContent;
@@ -123,13 +115,29 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
         const nt = document.querySelector('#isx-sn-body .cb-nt'); if (nt && /map’s reading/.test(nt.textContent)) out.fl.push(h + ': a “map’s reading” note'); }   /* tiers build B: a link's note credits an author or a measurement, or is gone (copy Part H) */
       if (S.ph === 'ask' && S.dec === '5-3') { const g2 = document.querySelector('#isx-rmap .gn[data-n="YEN"]'); if (g2.querySelector('[data-gv="yen"]').textContent !== '?' || g2.querySelector('.garr').textContent !== '▲') out.fl.push('the yen decision: the gauge should read “?” with ▲'); }
       if (S.ph === 'crisis' && S.dec === '5-3') out.rail = document.querySelectorAll('#isx-sn-body .cb-rail li').length + ':' + !!document.querySelector('#isx-sn-body .cb-shows');
+    };
+    for (let g = 0; g < 400; g++) {
+      const S = ISX.sim, L = S.lines[S.line], h = (document.querySelector('#isx-sn-body h3') || {}).textContent || ''; out.states++;
+      if (S.line === 0 && S.beat >= 0 && S.beat < L.steps.length && !S.ph) {
+        const reached = new Set(L.steps[S.beat].e), shown = [...document.querySelectorAll('#isx-rmap .fe:not(.gh)')].map(e => +e.dataset.e).filter(i => !reached.has(i));
+        if (shown.length) out.early.push('step ' + (S.beat + 1) + ': relations ' + shown.join(','));
+        S.indicators.forEach(I => { const ok = I.at && I.at.main != null ? S.beat + 1 >= I.at.main : I.rel.some(i => reached.has(i)), el = document.querySelector(`#isx-rmap [data-gv="${I.id}"]`);
+          if (!ok && el && el.textContent.trim()) out.early.push('step ' + (S.beat + 1) + ': ' + I.k + ' shows ' + el.textContent.trim()); });
+        const nodes = new Set(L.steps[S.beat].n); document.querySelectorAll('#isx-rmap .fn:not(.s4dim)').forEach(e => { if (!nodes.has(e.dataset.n)) out.early.push('step ' + (S.beat + 1) + ': actor ' + e.dataset.n); });
+      }
+      links(S, h);
       if (S.line === 0 && S.beat >= L.steps.length) break;
       if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click();
       await wait(40);
     }
+    /* clarity build: three of the seven decisions sit in episodes; each episode is walked from its first step to its return to the guide */
+    for (const E of S0.lines.filter(x => x.ep)) { const t = document.createElement('button'); t.dataset.ep = E.ep; t.hidden = true; document.getElementById('isx-sn-body').appendChild(t); t.click(); await wait(120);
+      if (ISX.sim.beat < 0) { ISX.route.next('sim').click(); await wait(60); }
+      for (let g = 0; g < 60; g++) { const S = ISX.sim; if (!S.lines[S.line].ep) break; out.states++; links(S, (document.querySelector('#isx-sn-body h3') || {}).textContent || '');
+        if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click(); await wait(40); } }
     return out; });
   ok(!walk.early.length, 'nothing is shown before its step (' + walk.states + ' states walked)', walk.early.slice(0, 6).join('; '));
-  ok(walk.seen.length === 37, 'all 37 chain links were walked', String(walk.seen.length));
+  ok(walk.seen.length === 37, 'all 37 chain links were walked (22 in the guide, 15 in its episodes)', String(walk.seen.length));
   ok(!walk.fl.length, 'every flare direction matches its gauge; no link carries a “map’s reading” note', walk.fl.slice(0, 6).join('; '));
   ok(walk.rail === '7:true', 'the yen card has its history rail (7 rows) and “What it shows”', walk.rail);
   ok(!p._errs.length, 'no page errors (guide)', p._errs.join(' | '));
@@ -157,8 +165,9 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
           if (S.line === 0 && S.beat >= Ln.steps.length) break;
           if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click(); await w(35); }
         return out; };
+      const ALT = { deficit: ['ca'] };   /* clarity build: the primer now starts from the deficit with the world, whose tip is the current account's */
       const first = (cards, list, fold) => list.map(([k, re]) => { const i = cards.findIndex(c => re.test(c.vis) || (fold && re.test(c.fold))); if (i < 0) return null; const c = cards[i];
-        return (re.test(c.vis) ? c.kv.has(k) : c.kf.has(k)) ? null : k + ' first used at ' + c.at + ' (“' + c.h + '”) without its tip'; }).filter(Boolean);
+        const has = K => K.has(k) || (ALT[k] || []).some(a => K.has(a)); return (re.test(c.vis) ? has(c.kv) : has(c.kf)) ? null : k + ' first used at ' + c.at + ' (“' + c.h + '”) without its tip'; }).filter(Boolean);
       localStorage.setItem('isx-way', 'ground'); const ground = await walk(gi); localStorage.setItem('isx-way', 'guide'); const guide = await walk(pi);
       const BACK = /\b(as above|see above|as before|the (previous|last|next) (screen|card|reveal)|the (screen|card|reveal) before|as we saw|as you saw)\b/i;
       return { n: [ground.length, guide.length], g1: first(ground, TW, false), g2: first(guide, TW, false), plain: first(ground.filter(c => c.line === gi || c.line === pi), PL, true),

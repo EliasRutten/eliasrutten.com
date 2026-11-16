@@ -235,7 +235,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         return { small: [...new Set(small)], titles, kick };
       });
       ok(`7 · ${hash}: no visible text under 10.5 px (the “soon” badge and route labels at 10 px excepted)`, !r.small.length, r.small);
-      ok(`7 · ${hash}: step-card titles 24 px`, r.titles.every(([, s]) => Math.abs(s - 24) < .2), r.titles);
+      ok(`7 · ${hash}: step-card titles 24 px (clarity build: a guide step is headed by its question, in sentence case at 19.5 px)`, r.titles.every(([c, s]) => /cl-q/.test(c) ? Math.abs(s - 19.5) < .2 : Math.abs(s - 24) < .2), r.titles);
       ok(`7 · ${hash}: kickers 10.5 px at .14em`, r.kick.every(([s, l]) => Math.abs(s - 10.5) < .1 && Math.abs(l - .14) < .015), r.kick);
       await done(p);
     }

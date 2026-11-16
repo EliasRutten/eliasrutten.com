@@ -40,7 +40,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     ok('one row of about 66 px, pills 30 px, nothing under 10.5 px', Math.abs(r.h - 66) <= 2 && r.chips.join() === '30' && r.type >= 10.5, [r.h, r.chips, r.type]);
     ok('1440 px: the row fits without scrolling, Release at its end', r.sw <= r.cw && r.relIn, [r.sw, r.cw, r.relIn]);
     ok('the row is a toolbar with one stop in the tab order; Release is off while nothing is pulled', r.role === 'toolbar' && r.stops === 1 && r.rel, [r.role, r.stops, r.rel]);
-    ok('the key line under the stage no longer lies over the map (entry spec §6)', r.keyOver != null && r.keyOver <= 2, r.keyOver);
+    ok('nothing of the key lies under the stage: it is on demand (clarity build; was the key line of entry spec §6)', r.keyOver == null && !(await p.evaluate(() => !!document.querySelector('#isx-cock .s2key'))), r.keyOver);
     await p.focus('#isx-levbar .lv[data-l="0"]'); await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowRight');
     r = await p.evaluate(() => ({ at: document.activeElement.dataset.l, stops: [...document.querySelectorAll('#isx-levbar .lv, #isx-levbar .lv-rel')].filter(b => b.tabIndex === 0).length, hov: [...document.querySelectorAll('#isx-rmap .fn.lvhv')].map(g => g.dataset.n) }));
     ok('← → move between the levers (Bills → Buybacks → Swap lines), still one tab stop', r.at === '11' && r.stops === 1, r);
@@ -112,7 +112,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     r = await p.evaluate(() => { const on = ISX.hints.on; const g = document.querySelector('#isx-rmap .fn.hn-on'); if (g) g.dispatchEvent(new MouseEvent('click', { bubbles: true })); return { on, picked: !!g }; }); await p.waitForTimeout(300);
     ok('the map: picking the outlined actor ends it', r.on === 'map' && r.picked && !(await p.evaluate(() => ISX.hints.on)), r);
     await done(p);
-    p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' }, pos: { l: 0, b: 25, ph: 'ask' } });
+    p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' }, pos: { l: 0, b: 9, ph: 'ask' } });   /* clarity build: the first call follows step 10 */
     await p.waitForFunction(() => ISX.hints.on === 'call', null, { timeout: 8000 }).catch(() => {});
     r = await hintOf(p); ok('a decision carries “No right answer, no score…” before anything else', r.on === 'call' && r.text === LINES.call, r);
     await p.evaluate(() => document.querySelector('#isx-sn-body .sn-opt').click()); await p.waitForTimeout(300); ok('choosing ends it', (await p.evaluate(() => ISX.hints.on)) !== 'call');

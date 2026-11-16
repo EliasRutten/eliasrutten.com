@@ -7754,7 +7754,7 @@ const SGND = {
       more: ['Whoever buys one lends to the US government and is paid interest for it.',
         'Bills are the short end. Banks, {{mmf|money funds}} and the issuers of dollar tokens hold them almost as if they were cash. Bonds are the long end. Pension funds and insurers hold them for decades, because they owe pensions decades from now.',
         'Every week the Treasury holds {{auction|auctions}}. It sells to the bidders who ask the lowest interest, until the whole issue is sold. When buyers are plentiful the interest is low; when they hold back, the Treasury has to offer more.',
-        'Treasuries are the safest dollar asset in the world, so they are also its {{collateral|collateral}}: banks lend against them every night. The state’s debt is the floor the private financial system stands on.'],
+        'Treasuries are the safest dollar asset in the world, so they are also its {{collateral|collateral}}: banks lend against them every night. The state’s {{debt|debt}} is the floor the private financial system stands on.'],
       map: 'Two lines run from the US Treasury, to Money funds and to Dealer banks. Hover a line for what flows along it.',
       alt: () => 'On the map: two lines run from the US Treasury, to Money funds and to Dealer banks: the debt going out to its first buyers.' },
     { id: 'P3', t: 'The yield is the price of borrowing', bs: 'The yield', e: E('TSY>Y10'),
@@ -8369,7 +8369,7 @@ function sCardTx(L, b) {
 }
 const sSurf = (L, b) => { if (!L._sf) L._sf = []; if (!L._sf[b]) { const B = L.beats[b], T = L.gnd ? { tw: '', tx1: [B.x].concat((B.more || []).map(t => Array.isArray(t) ? t.join(' ') : t)).join(' ') } : L.pre ? { tw: '', tx1: [B.x].concat(B.d || []).join(' ') } : sCardTx(L, b); L._sf[b] = sKeysOf(T.tw, T.tx1); } return L._sf[b]; };
 function sNewTerms(L, b) {
-  const way = stGet(SWAY), seen = new Set(), add = (X, to) => { for (let i = 0; i < to; i++) sSurf(X, i).forEach(k => seen.add(k)); };
+  const way = stGet(SWAY), seen = new Set(), add = (X, to) => { for (let i = 0; i < Math.min(to, X.beats.length); i++) sSurf(X, i).forEach(k => seen.add(k)); };
   const pre = SLINES[way === 'ground' && SGI >= 0 ? SGI : SPI]; add(pre, pre.beats.length);
   if (L.ep) { const r = SIM.epRet || { l: 0, b: sEpHome(L.ep) }; add(SLINES[r.l], r.b + 1); }
   add(L, b);
@@ -8583,7 +8583,7 @@ const sEpHome = X => Math.max(0, SLINES[0].beats.findIndex(B => B.k === X.from))
 function simEp(id, ret) {
   const li = sEpLine(id); if (li < 0) return;
   if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
-  SIM.epRet = ret && SLINES[SIM.line].main && SIM.beat >= 0 ? { l: SIM.line, b: SIM.beat } : null;
+  SIM.epRet = ret && SLINES[SIM.line].main && SIM.beat >= 0 && SIM.beat < SLINES[SIM.line].beats.length ? { l: SIM.line, b: SIM.beat } : null;
   simGo(li, ret ? 0 : -1, 'focus');
 }
 function simEpBack() {
