@@ -7344,6 +7344,65 @@ const SQ = {
   '8-4': 'How much did new shares raise?', '8-5': 'What ties the two together?',
   '10-0': 'What do the two desks do?', '10-1': 'Who sits at them?', '10-2': 'Who moved between them?', '10-3': 'What does that add up to?',
 };
+/* clarity build (17 Nov 2026): this step in numbers. Above the card (in it, on phones and where there is no room) the guide shows what the
+   step in hand is about, as numbers: up to three tiles, a few bars, or one chart; nothing where no number is relevant. Every figure is
+   one the page already carries, with its date; its source is the step's own (B.src) unless `s` names another. Keyed like the questions.
+   t: tiles. ['i', id] is an indicator (value, date and source from IND; shown only once the guide has reached it, like the gauge).
+      { v, k, d, s } is a figure from the step's text. b: bars { k, d, r: [[label, number, text], …], n: note }.
+   c: a chart of a stored monthly series (data/bond-panel.json): [series, from, marks [[month, label], …]]. */
+const SN_BEA = 'BEA, annual update of 24 June 2026; the Circuit', SN_TIC = 'US Treasury TIC (Aug 2026)', SN_FIL = 'Company filings, as listed in “Shares and bonds sold”', SN_NO = 'As stored on this step; link not stored';
+const SN_MOVE = [['2020-03', 'March 2020'], ['2025-04', 'April 2025'], ['2026-10', 'Oct 2026']];
+const SNUM = {
+  '4-2': { t: [['i', 'con'], { v: '≈0.9%', k: 'of world GDP: the US deficit with the world', d: 'IMF, July 2026', s: 'IMF (July 2026), as stored on the Exporters card' }, { v: '$1.18tn', k: 'the US deficit with the world', d: '2025', s: SN_BEA }] },
+  '2-2': { b: { k: 'At most about a quarter*', d: 'the two windows differ', r: [['Foreigners bought, US securities · 12 months to Aug 2026', 1880, '$1.88tn'], ['The build-out sold, shares and bonds · 12 months to 8 Nov 2026', ISUM.s + ISUM.b, bn0(ISUM.s + ISUM.b)]], n: '*Derived: an upper bound.' } },
+  '8-1': { b: { k: 'Raised by the firms in the build-out', d: '12 months to 8 November 2026', r: [['New bonds', ISUM.b, bn0(ISUM.b)], ['New shares', ISUM.s, bn0(ISUM.s)]] }, s: SN_FIL },
+  '8-2': { t: [['i', 'capex']] },
+  '1-3': { t: [{ v: '$601bn', k: 'a year of computer imports, at an annual rate', d: 'Q2 2026', s: 'As stored on the Fabs and tools card; link not stored' }] },
+  '4-3': { t: [{ v: '$1.18tn', k: 'out: the US deficit with the world', d: '2025', s: SN_BEA }, { v: '$1.88tn', k: 'back: what foreigners bought of US securities', d: '12 months to Aug 2026', s: SN_TIC }] },
+  '0-0': { t: [['i', 'off'], { v: '47% → 30%', k: 'of US federal debt held by foreigners', d: '2014 → 2025', s: 'As stored at the Circuit, step 00' }, { v: '$40.25tn', k: 'gross federal debt', d: 'October 2026', s: 'The Circuit, step 08' }] },
+  '0-1': { t: [['i', 'bills']] },
+  '0-2': { b: { k: 'Cash parked at the Fed’s reverse repo', d: '', r: [['30 Dec 2022', 2550, '$2.55tn'], ['20 Dec 2024', 100, 'under $100bn']] } },
+  '0-9': { t: [{ v: '$12.6tn', k: 'of repo outstanding in the US each day; 69% backed by Treasuries', d: 'Q3 2025', s: 'Office of Financial Research, as stored in the glossary' }] },
+  '0-3': { b: { k: 'The Treasury’s account at the Fed', d: '', r: [['Early July 2025', 313, '$313bn'], ['30 Oct 2025', 1000, '$1tn']] }, t: [{ v: '$2.93tn', k: 'bank reserves', d: 'week to 22 Oct 2025' }, { v: '$50.35bn', k: 'record use of the Fed’s standing repo', d: '31 Oct 2025' }], s: 'US Treasury (2025); TBAC minutes (4 Nov 2025); Fed H.4.1 via Bloomberg (23 Oct 2025); Reuters via StreetInsider (29 Dec 2025)' },
+  '0-7': { t: [{ v: '$500bn', k: 'cap on the Fed’s standing repo, removed', d: '10 Dec 2025' }, { v: '≈$40bn', k: 'of bills a month, bought by the Fed', d: 'from Dec 2025' }, { v: '$571bn', k: 'the Fed’s bill holdings', d: '28 Oct 2026' }] },
+  '0-5': { t: [{ v: '+$245bn', k: 'of Treasuries added in seven financial centres', d: 'year to Aug 2026' }] },
+  '9-0': { b: { k: 'Treasuries held by hedge funds in the Cayman Islands', d: 'end-2024', r: [['Fed staff estimate', 1850, '≈$1.85tn'], ['Official count', 450, '≈$0.45tn*']], n: '*Derived from the $1.4tn gap.' }, t: [{ v: '37%', k: 'of net new notes and bonds, absorbed by these funds', d: '2022 to 2024', f: .37 }] },
+  '9-2': { t: [['i', 'repo'], ['i', 'basis']] },
+  '0-4': { t: [{ v: '28%', k: 'cut in tier 1 requirements at the largest banks’ deposit-taking arms: $219bn', d: 'in force from 1 Apr 2026' }] },
+  '9-8': { c: ['move', '2016-04', SN_MOVE] },
+  '9-1': { t: [{ v: '90%', k: 'of hedge funds’ Treasury positions are held by fifty funds', d: 'Fed staff, 22 Jun 2026', f: .9 }] },
+  '8-0': { c: ['y10baa', '2016-04', [['2026-10', 'Oct 2026']]] },
+  '7-0': { b: { k: 'What the same month cost', d: '', r: [['10-year Treasury · Oct 2026 average', 5.13, '5.13%'], ['30-year mortgage · week to 29 Oct 2026', 7.24, '7.24%']] }, s: 'FRED, series DGS10; Freddie Mac' },
+  '0-6': { c: ['y10', '2023-01', [['2026-09', 'Sep 2026: larger buybacks'], ['2026-10', '']]] },
+  '5-0': { t: [{ v: '$60bn', k: 'a foreign central bank can borrow, for seven days, against its Treasuries', d: 'as of Aug 2026', s: 'As stored on the Federal Reserve card; link not stored' }] },
+  '5-1': { t: [{ v: '$20bn', k: 'swap framework with Argentina’s central bank', d: 'October 2025', s: SN_NO }] },
+  '5-6': { t: [['i', 'stb']] },
+  '5-8': { t: [{ v: '4.3%', k: 'of GDP: stablecoin purchases in Turkey', d: '2023–24' }] },
+  '1-0': { t: [{ v: '≈$200bn', k: 'of Google’s TPU contracts depend on Anthropic’s lease payments', d: '2026', s: SN_NO }] },
+  '1-1': { b: { k: 'Borrowed by vehicles, off the balance sheet', d: 'Oct 2025 and Jun 2026', r: [['Meta’s Hyperion, bond', 27.3, '$27.3bn'], ['TPU vehicle for Anthropic', 35, '$35bn']] }, s: SN_NO },
+  '1-2': { t: [{ v: '$85.2bn', k: 'of AI-linked investments held by US life insurers', d: 'end of June 2026', s: 'As stored on the Insurers card; link not stored' }] },
+  '3-0': { t: [{ v: '≈$50bn', k: 'OpenAI’s annualised revenue, about $20bn short of what it had signalled', d: 'October 2026', s: SN_NO }] },
+  '3-1': { b: { k: 'Cover ratios on hyperscaler bonds', d: 'Feb to Jul 2026', r: [['From', 5, 'nearly 5×'], ['To', 2, 'under 2×']] }, s: SN_NO },
+  '3-3': { c: ['move', '2016-04', SN_MOVE] },
+  '4-0': { t: [{ v: '≈$350bn', k: 'of tax refunds, about $55bn more than in 2025', d: '2026', s: SN_NO }] },
+  '7-1': { t: [['i', 'save'], { v: '+0.2% · +0.5%', k: 'income and spending, on the month', d: 'September 2026', s: 'BEA (29 Oct 2026)' }] },
+  /* episodes */
+  '6-0': { t: [{ v: '≈$118', k: 'Brent at its peak', d: 'late March 2026', s: 'Trading Economics, as stored on the Brent crude card' }, { v: 'a fifth', k: 'of world oil supply passes the Strait of Hormuz, shut', d: 'from 28 Feb 2026', s: SN_NO }] },
+  '6-1': { t: [{ v: '400m', k: 'barrels released through the IEA, 172m of them American', d: 'March 2026', s: SN_NO }] },
+  '6-2': { t: [{ v: '≈−6%', k: 'oil, on the day a Saudi pipeline fire was reported', d: '9 Nov 2026' }] },
+  '6-3': { t: [['i', 'diesel'], ['i', 'pce']] },
+  '6-4': { t: [['i', 'ffr'], { v: '5.33%', k: '10-year yield, intraday high', d: 'October 2026', s: 'Cboe (19 Oct 2026)' }] },
+  '4-4': { t: [['i', 'diesel']] },
+  '9-6': { c: ['move', '2016-04', SN_MOVE] }, '9-4': { c: ['move', '2016-04', SN_MOVE] },
+  '5-2': { t: [{ v: '160', k: 'yen to the dollar, passed', d: '30 April 2026' }, { v: '¥11.7tn', k: 'spent by Tokyo pulling the yen back from 160', d: 'April and May 2026' }] },
+  '5-3': { t: [['i', 'yen'], { v: '$1.14tn', k: 'of Treasuries held by Japan', d: 'end of May 2026', s: 'TIC via FRED (May 2026)' }] },
+  '5-4': { b: { k: 'Investment pledged with the 15% tariff deals', d: 'Jul to Nov 2025', r: [['Japan', 550, '$550bn'], ['South Korea', 350, '$350bn']] }, s: SN_NO },
+  '5-5': { t: [{ v: '$127–191bn', k: 'what Japan loses in present value, 3.2–4.8% of its GDP, on the St. Louis Fed’s assumptions', d: '24 Nov 2025' }] },
+  '5-7': { t: [{ v: '$36bn', k: 'the first three projects, approved', d: 'February 2026' }] },
+  '8-4': { b: { k: 'New shares, ' + bn0(ISUM.s) + ' in all', d: '12 months to 8 November 2026', r: [['SpaceX', 75, '$75.0bn'], ['Alphabet', 44.75, '$44.75bn'], ['Meta', 37.5, '$37.5bn'], ['Oracle', 34.9, '$34.9bn']] }, s: SN_FIL },
+  '8-5': { c: ['y10', '2023-01', [['2026-09', 'Sep 2026: the Fed raises rates'], ['2026-10', '']]] },
+  '10-0': { t: [['i', 'bills'], { v: '$571bn', k: 'the Fed’s bill holdings', d: '28 Oct 2026' }] },
+};
 /* clarity build: the episodes. Dated moments when the machine was used or strained; each opens from the core step where it fits (from)
    and returns there. b: its steps, like a chapter's. Two more are folded into their core step (the step's own `ep`): Silicon Valley Bank
    (March 2023) and the debt-limit summer (2025). */
@@ -7860,6 +7919,18 @@ const sDecK = () => SIM.ph ? sNextFork() : null;   /* the decision in hand */
 const sInChain = () => !!sDecK() && SIM.ph !== 'ask';
 const sLinks = () => { const k = sDecK(); return k && SIM.ph !== 'ask' ? SDEC[k].chain.slice(0, SIM.ph === 'crisis' ? SDEC[k].chain.length : SIM.c + 1) : []; };   /* the chain so far */
 const sChE = C => [...C.e, ...C.off];
+/* clarity build: the numbers of the step in hand, resolved (v2/clarity.js draws them). Nothing on a decision, a chain or a crisis card:
+   a number there would answer the question before it is asked. */
+function sNums() {
+  if (!simOn() || SIM.ph) return null;
+  const L = sLine(), B = sCur(); if (!B || !(L.main || L.ep) || !SNUM[B.k]) return null;
+  const N = SNUM[B.k], st = indStates(null), src = N.s || B.src || 'As stored on this step; link not stored';
+  const tiles = (N.t || []).map(T => { if (!Array.isArray(T)) return Object.assign({ s: src }, T);
+    const I = INDX[T[1]]; if (!I || !st[I.id].reached) return null;
+    return { v: indVal(I), k: I.k, d: I.g.delta || I.sub || '', s: I.g.src || 'link not stored', m: TMEAN[I.k] || '', band: I.band || '', ind: I.id }; }).filter(Boolean);
+  const o = { key: B.k, name: B.t, tiles, bars: N.b ? Object.assign({ s: src }, N.b) : null, chart: N.c ? { id: N.c[0], from: N.c[1], marks: N.c[2] } : null };
+  return o.tiles.length || o.bars || o.chart ? o : null;
+}
 /* clarity build: an episode opened from a step of the guide keeps on the map what the guide had reached by then */
 const sEpBase = () => { const L = sLine(), r = SIM.epRet, G = L.ep && r && SLINES[r.l]; return G && r.b >= 0 ? G.cum[Math.min(r.b, G.beats.length - 1)] : null; };
 const sUni = (a, b) => b ? { n: new Set([...b.n, ...a.n]), e: new Set([...b.e, ...a.e]), l: new Set([...b.l, ...a.l]) } : a;
@@ -8721,6 +8792,7 @@ window.ISX = {
   get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */
   get primerIds() { return SGND.b.map(B => B.id); },
+  stepNums: () => sNums(), get acts() { return SACTS.map(A => A.slice()); }, get episodes() { return SEPI.map(X => ({ id: X.id, t: X.t, w: X.w, from: X.from, n: X.b.length })); }, get numKeys() { return Object.keys(SNUM); },   /* clarity build, for v2/clarity.js and the checks */
   get figs() { return JSON.parse(JSON.stringify(SFIGN)); },   /* guide build: the figures this round stored, for checks */
   get mins() { return { ground: sMins(['gnd', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
@@ -8792,6 +8864,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/mistake.js"></script>
 <script defer src="/imperial-stack/v2/remind.js"></script>
 <script defer src="/imperial-stack/v2/hints.js"></script>
+<script defer src="/imperial-stack/v2/clarity.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">
