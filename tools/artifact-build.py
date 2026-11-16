@@ -17,10 +17,11 @@ def rep(old, new):
     n = s.count(old); assert n == 1, f'expected 1 match, found {n}: {old[:80]!r}'
     s = s.replace(old, new)
 
-# 1. the library: an inline script in place of the async tag; then the same load event the site listens for
+# 1. the library: an inline script in place of the async tag; then the same load event the site listens for.
+#    window.ISX_ART marks the artifact build: the reminder hides its .ics file there (an artifact blocks downloads)
 tag = re.search(r'<script async src="/imperial-stack/vendor/globe\.gl-2\.41\.4\.min\.js"[^>]*></script>', s)
 assert tag, 'globe script tag not found'
-s = s.replace(tag.group(0), '<script>' + lib + '\n</script>\n<script>window.__isxGlib="ok";window.dispatchEvent(new Event("isx-glib"));</script>')
+s = s.replace(tag.group(0), '<script>' + lib + '\n</script>\n<script>window.__isxGlib="ok";window.ISX_ART=true;window.dispatchEvent(new Event("isx-glib"));</script>')
 # 2. the texture as a data URI
 rep('const TEX = "/imperial-stack/vendor/earth-night.jpg";',
     'const TEX = "data:image/jpeg;base64,' + base64.b64encode(tex).decode() + '";')

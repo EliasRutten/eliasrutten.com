@@ -1,9 +1,12 @@
 /* The Imperial Stack v2 · simtour.js (content build, 14 Nov 2026)
    The first-visit tour of the Scott Bessent Simulator, built the way the Circuit's tour is (v2/tour.js): a few notes, each beside the
    thing it names, never blocking the map. It replaces the old card “How to use the simulator”, and keeps its one line:
-   “Click any actor or line for what it does and its sources.” It starts once, on the guide's opening card; Skip, Esc, × or the last
-   button end it for good. The button “Tour” beside the title (and “Take the tour” in the ⋯ menu) starts it again.
-   Storage: isx-simtour ('off' once seen). The old switch isx-tips-sim = 'off' also keeps it from starting by itself. */
+   “Click any actor or line for what it does and its sources.” Skip, Esc, × or the last button end it. The button “Tour” beside the
+   title (and “Take the tour” in the ⋯ menu) starts it again.
+   guide build (16 Nov 2026, entry spec §2): the tour no longer starts by itself. The guide's entry says how the guide works and carries
+   a “Tour” pill; the notes point at the card, the map and the bar, which the entry covers, so a tour started from the entry first opens
+   the first card of the visitor's level (the one used last time, else the suggested one) and runs there.
+   Storage: isx-simtour ('off' once seen). */
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
@@ -16,7 +19,7 @@
   function stops() {
     var tap = U.COARSE ? 'Tap' : 'Click', ph = phone();
     var all = [
-      { t: '#isx-snarr', side: 'right', h: 'The guide', p: 'This card takes you through how the plumbing was built, one step at a time. At seven moments you sit in the chair and choose before you see what happened; either way, you can walk the other path.' },
+      { t: '#isx-snarr', side: 'right', h: 'The guide', p: 'The guide takes you through the imperial machinery, one step at a time. At seven moments you sit in the chair and choose before you see what happened; either way, you can walk the other path.' },
       { t: '#isx-rmap', side: 'in', h: 'The map', p: tap + ' any actor or line for what it does and its sources. Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. The guide lights each part as it gets there.' },
       { t: '#isx-s2bar', side: 'top', h: 'The route', p: ph ? 'Back and Next in this bar move through the guide; a swipe on the card does the same. Guide · Plays · Levers switches between the route, Washington’s moves one by one, and its tools.' : 'Back and Next sit at the left of this bar; each mark is a step, and a diamond is a decision. ← → on your keyboard work too. Guide · Plays · Levers switches between the route, Washington’s moves one by one, and its tools.' },
       { t: '#isx-b1ind', side: 'bottom', h: 'Indicators', p: 'Every figure is dated and sourced. This opens all of them by role: what Washington sets, the prices it passes through, the stress gauges and the outcomes.' },
@@ -73,6 +76,10 @@
   function open(user) {
     if (X.view !== 'fin' || X.finMode !== 'plumb' || X.intro || !$('cock')) return false;
     if (X.views && X.views.on) X.views.close();
+    if (onCard()) {   /* the entry is open: leave it for the first card of the visitor's level, then start */
+      var lv = root.querySelector('#isx-sn-body [data-way="' + (U.stGet('isx-way') === 'ground' ? 'ground' : 'guide') + '"]');
+      if (lv) { lv.click(); setTimeout(function () { if (!onCard()) open(user); }, X.reduce ? 60 : 420); return true; }
+    }
     var c = $('snarr'); if (c && c.classList.contains('folded')) { var f = $('s2fold'); if (f) f.click(); }
     if (!box || !box.isConnected) build();
     at = 0; live = true; box.hidden = false; render(!!user);
@@ -89,21 +96,8 @@
   }
   X.simtour = { open: open, close: close, get on() { return live; }, get at() { return at; }, get n() { return stops().length; } };
   window.addEventListener('resize', function () { if (live) render(false); });
-  X.on('view', function () { if (live && X.view !== 'fin') close(); auto(); });
-  X.on('fin', function () { if (live && (X.finMode !== 'plumb' || !box.isConnected)) { live = false; mark(null); } auto(); });
+  X.on('view', function () { if (live && X.view !== 'fin') close(); });
+  X.on('fin', function () { if (live && (X.finMode !== 'plumb' || !box.isConnected)) { live = false; mark(null); } });
   root.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-simtour]'); if (b) { e.preventDefault(); var m = $('b1more'); if (m) m.hidden = true; open(true); } });
 
-  /* first visit to the Simulator: once the stage has settled, and only on the guide's opening card */
-  var pending = 0;
-  function auto() {
-    if (pending || live || U.stGet(KEY) === 'off' || U.stGet('isx-tips-sim') === 'off' || X.view !== 'fin' || X.finMode !== 'plumb') return;
-    var tries = 0; pending = setInterval(function () {
-      if (++tries > 40 || U.stGet(KEY) === 'off' || X.view !== 'fin' || X.finMode !== 'plumb') { clearInterval(pending); pending = 0; return; }
-      if (root.classList.contains('booting') || X.intro || !$('cock') || tries < 3) return;
-      clearInterval(pending); pending = 0;
-      if (!onCard() || (X.views && X.views.on) || document.hidden) return;   /* already exploring: no tour today */
-      open(false);
-    }, 500);
-  }
-  auto();
 })();

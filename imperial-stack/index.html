@@ -2368,6 +2368,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/b3.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b4.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b6.css">
+<link rel="stylesheet" href="/imperial-stack/v2/entry.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -4081,6 +4082,14 @@ const DEFS = {
   sp500: ['S&P 500', 'An index of 500 large US companies, the benchmark for US shares.'],
   cover: ['Cover ratio', 'Bids received at a bond sale divided by the amount sold: 5× means five dollars bid for every dollar sold.'],
   reservecur: ['Reserve currency', 'The currency central banks hold to pay abroad and to steady their own money. The dollar is the main one.'],
+  /* guide build (16 Nov 2026): seven terms for the primer's new screens and first principles (guide spine §5) */
+  claims: ['Claims', 'Anything that promises its holder a payment later, or a share in profits: a deposit, a bond, a mortgage-backed security, a share. Foreigners who save dollars hold them as claims on the US.'],
+  hierarchy: ['Hierarchy of money', 'The ranking of IOUs by how close they are to cash: cash and bank reserves at the base, then bank deposits, dollar tokens, money funds, bills, long bonds, company bonds and, at the top, shares. Each layer is a promise to pay in the layer beneath it (Perry Mehrling).'],
+  agency: ['Agency bonds', 'Bonds of the US mortgage agencies, Fannie Mae and Freddie Mac. Many buyers treated them as nearly as safe as Treasuries; in September 2008 the state took the agencies over.'],
+  mbs: ['Mortgage-backed security', 'A bond built from many home loans: the homeowners’ payments are passed on to whoever holds the bond.'],
+  fed: ['The Fed', 'The Federal Reserve, the US central bank. It sets the short-term interest rate and alone creates dollar cash and bank reserves. It is separate from the Treasury, the finance ministry.'],
+  profiteq: ['Profit equation', 'An accounting identity: profits equal net investment plus government borrowing, minus household saving and the deficit with the world, plus dividends. Worked out by Jerome Levy and Michał Kalecki.'],
+  aitrade: ['The AI trade', 'Investors’ bet on the AI build-out: buying the shares and bonds of the firms that build and use AI data centres, chips and power.'],
   bw: ['Bretton Woods', 'The post-war system of 1944 that tied currencies to the dollar and the dollar to gold. It ended in the early 1970s.'],
   petrodollar: ['Petrodollar', 'Oil exporters’ dollar earnings, recycled into US assets.'],
   inflow: ['Capital inflow', 'Money from abroad buying a country’s shares, bonds, firms or property.'],
@@ -5643,7 +5652,7 @@ function renderFin() {
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: from the ground up, the guide, the full map"><span aria-hidden="true">↩</span>Three ways in</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: Foundations, Fluent, Expert"><span aria-hidden="true">↩</span>Three ways in</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
       + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
@@ -6870,8 +6879,8 @@ const SMETA = [
 ];
 /* the main story: chapters of play steps [play, step, link override] in causal order */
 const SMAIN = {
-  t: 'How the plumbing was built', c: '#ffd27a',
-  lede: 'The US runs the deficit that absorbs the world’s surpluses, and those surpluses come back as claims on the US. For decades foreign central banks held them as Treasuries; now they are stepping back, just as the AI build-out needs cheap money.',
+  t: 'The imperial machinery', c: '#ffd27a',
+  lede: 'The world saves in dollars, and the US has to produce claims for those savings to land in. For decades the claims were Treasuries held by central banks; now they are shares and bonds tied to the AI build-out, and Washington works to keep the savings landing there.',
   /* tiers build A (15 Nov 2026): the map's thesis, Elias Rutten's wording (spec §1.1). Stated in full once, here; elsewhere at most one-sentence echoes */
   thesis: 'Economic theory has come far in recognizing {{imbalance|global trade imbalances}}, and the {{hotmoney|hot money}} flows that follow them, as persistently distorting and destabilizing. What it still misses is that the instability is manufactured: it is there on purpose, to be weaponized for {{geoecon|geoeconomic}} ends. That is the thesis of the author, Elias Rutten. The United States and China are both leading powers in this weaponized system. Follow the plumbing and you can see who holds the valves.',
   /* tiers build A (15 Nov 2026): the guide follows the money before the plumbing: where it lands, where it comes from, what squeezes it,
@@ -7092,9 +7101,36 @@ function sBeat(p, s, ch, why, ld) {
    t = title, bs = short name in the bar, r = kind (SROLE), w = date label, x = the reveal (two sentences at most),
    d = depth (paragraphs behind “The mechanism”), e = relations lit, lev = levers introduced. */
 Object.assign(SROLE, { i: ['Identity', '#e4ebf1'], m: ['Mechanism', '#44d7ec'], h: ['History', '#ffd27a'], a: ['Amplifier', '#d78bff'] });
+/* guide build (16 Nov 2026): the figures this round adds, each with its value, what it measures, its date and its source (guide spine §3,
+   §4, §8). `star` marks a figure that is derived, secondary or not yet checked against a primary series: it keeps its asterisk wherever
+   it is shown, until a data round has checked it. The copy below reads its numbers from here, so each has one wording. */
+const NIPA = 'BEA NIPA flat files of 4 Nov 2026, as computed in round S2a';
+const SFIGN = {
+  sndr: { v: '0.38%', k: 'National rate on savings deposits, average', d: 'October 2026', src: 'FDIC national rate via FRED, series SNDR (round S2a, M3)' },
+  fedb0013: { v: '4.5%', k: 'Federal net borrowing, average a year, % of GDP', d: '2000 to 2013', src: NIPA + ' (P2): 4.48' },
+  fedb1425: { v: '6.3%', k: 'Federal net borrowing, average a year, % of GDP', d: '2014 to 2025', src: NIPA + ' (P2): 6.33' },
+  npi1425: { v: '4.5%', k: 'Net private investment, average a year, % of GDP', d: '2014 to 2025', src: NIPA + ' (P2): 4.45' },
+  fedb25: { v: '6.3%', k: 'Federal net borrowing, % of GDP', d: '2025', src: NIPA + ' (P1): 6.26' },
+  npi25: { v: '4.4%', k: 'Net private investment, % of GDP', d: '2025', src: NIPA + ' (P1): 4.35' },
+  pat25: { v: '$3.39tn', k: 'Corporate profits after tax, national basis', d: '2025', src: NIPA + ' (P1): $3,386bn' },
+  patg25: { v: '11.0%', k: 'Corporate profits after tax, % of GDP', d: '2025', src: NIPA + ' (P1): 10.97' },
+  div25: { v: '7.0', k: 'Net dividends, % of GDP', d: '2025', src: NIPA + ' (P1): 7.00' },
+  hhs25: { v: '4.0', k: 'Household saving, % of GDP', d: '2025', src: NIPA + ' (P1): 4.02' },
+  cad25: { v: '3.8', k: 'Deficit with the world (NIPA current account), % of GDP', d: '2025', src: NIPA + ' (P1): 3.78' },
+  oth25: { v: '1.2', k: 'State and local net borrowing, government capital transfers and the statistical discrepancy, % of GDP', d: '2025', src: NIPA + ' (Chart B): 1.03, −0.02 and 0.15' },
+  goda: { v: 'about $970bn to $5.2tn by mid-2008', star: true, k: 'Dollar assets held by foreign governments', d: '1997 to mid-2008', src: 'Klein and Pettis (2020) and Elias Rutten’s own essay, as listed in the research axioms (§3.1); not yet checked against a primary series' },
+  plmbs: { v: 'about $2.5tn', star: true, k: 'Private-label mortgage-backed securities issued', d: '2001 to 2007', src: 'Klein and Pettis (2020) and Elias Rutten’s own essay, as listed in the research axioms (§3.1); not yet checked against a primary series' },
+  surp: { v: '1998 to 2001', k: 'Federal budget in surplus', d: 'fiscal years 1998 to 2001', src: 'OMB Historical Table 1.1 via FRED, series FYFSD' },
+  agency: { v: '7 September 2008', k: 'Fannie Mae and Freddie Mac taken into conservatorship', d: '2008', src: 'FHFA (round S2a, §15.6)' },
+  ai49: { v: '49%', k: 'Share of the S&P 500’s market value in 41 AI-related stocks', d: 'October 2026', src: 'JPMorgan, as stored in the money-loop view' },
+  x0409: { v: '4 Sep 2026', k: 'Exchange on X between Adam Tooze, Michael Pettis and Elias Rutten', d: '4 Sep 2026', src: 'https://x.com/adam_tooze/status/2095856985652568305 (text supplied by Elias Rutten, 16 Nov 2026)' },
+};
+const sStar = k => SFIGN[k].v + (SFIGN[k].star ? '*' : '');
+const SXL = ['Is it chance that US deficits and Chinese development policy fit together? Adam Tooze and Michael Pettis on which way causation runs, with a thread by Elias Rutten (X, ' + SFIGN.x0409.v + ').', 'https://x.com/adam_tooze/status/2095856985652568305'];
+const SL_BEA = ['BEA, NIPA flat files', 'https://apps.bea.gov/national/Release/TXT/NipaDataA.txt'], SL_TOOZE = ['Tooze, Chartbook 457 (8 Jul 2026)', 'https://adamtooze.substack.com/p/chartbook-457-the-metamorphoses-of'], SL_LEVY = ['Levy Forecasting Center, Where Profits Come From (2008)', 'https://www.levyforecast.com/assets/Profits.pdf'];
 const SPRE = {
   t: 'First principles: where the dollars come from', s: 'First principles', c: '#44d7ec',
-  lede: 'Before the plumbing, the ground it stands on. Why the US runs a deficit with the world, why the world’s savings come back as claims on the US, and why that has meant rising debt for half a century.',
+  lede: 'Before the plumbing, the ground it stands on. Why the US runs a deficit with the world, why the world’s savings come back as claims on the US, and why those claims are now tied to the AI trade.',
   b: [
     { t: 'Every deficit is someone’s surplus', bs: 'The identity', r: 'i', w: '2025', e: E('CON>EXP'),
       x: 'The world’s {{ca|current accounts}} add up to zero: every deficit is another economy’s surplus. The US deficit was $1.18tn in 2025, the mirror of surpluses elsewhere: that pairing is the {{imbalance|global imbalance}}.',
@@ -7105,7 +7141,8 @@ const SPRE = {
     { t: 'The claims are taken in dollars', bs: 'Into dollars', r: 'm', w: 'Mid-2026', e: E('SAV>SPX', 'CEN>HYP', 'EXP>OFF'), n: ['TSY'],
       ech: 'Most accounts treat the global imbalance as a flaw to be fixed. The map’s thesis is that it is also a tool: made on purpose, and used.',
       x: 'The dollar is the {{reservecur|reserve currency}} and US markets are deep and open, so a large share of those claims is taken in US assets. Foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
-      d: ['No other market takes savings on this scale: China’s bloc offers no open, deep market in which to park them (Circuit, step 06).', 'So the US deficit is structural. It is the counterpart of the rest of the world’s wish to hold dollar claims, and not chiefly the result of Americans consuming too much.', 'That direction of causation, from the capital account to the trade account, is Klein and Pettis’s reading. The accounting itself is silent on it.'] },
+      d: ['Any tier of the {{hierarchy|hierarchy of money}} will do: deposits, bills, bonds, mortgages or shares. Which tier the world takes decides who in the US issues the {{claims|claim}}, and so who carries the debt.',
+        'No other market takes savings on this scale: China’s bloc offers no open, deep market in which to park them (Circuit, step 06).', 'So the US deficit is structural. It is the counterpart of the rest of the world’s wish to hold dollar claims, and not chiefly the result of Americans consuming too much.', 'That direction of causation, from the capital account to the trade account, is Klein and Pettis’s reading. The accounting itself is silent on it.'] },
     /* tiers build B (15 Nov 2026): R4 split in two (spec §3.1) */
     { t: 'The US spends more than it earns', bs: 'Above its income', r: 'i', w: '', e: E('CON>EXP'),
       x: 'A deficit with the world means the US spends more than it earns, by exactly what foreigners add to their US claims.',
@@ -7114,10 +7151,17 @@ const SPRE = {
     { t: 'Jobs or debt', bs: 'Debt, not jobs', r: 'm', w: 'Sep and Oct 2026', e: E('SVR>CON', 'MTG>CON', 'CGR>CON'),
       x: 'If investment does not rise to match, saving has to fall: through lost output and jobs, or through more borrowing. For decades the US has chosen debt.',
       d: ['Imports take the place of demand for home production. Left alone, that shows up as unemployment, which lowers income and with it saving. The other way is to replace the lost demand with borrowed spending: by households, or by the government.', 'The personal saving rate was 3.8% in September 2026, and gross federal debt passed $40tn in October.'] },
-    { t: 'Built over half a century', bs: 'Since the 1970s', r: 'h', w: '1944 to 2026', e: E('EXP>OFF'), n: ['PET', 'TSY'],
-      x: 'Since {{bw|Bretton Woods}} ended in the early 1970s the US has run the deficits that absorb others’ surpluses: first the oil exporters’ (the {{petrodollar|petrodollar}}), then East Asia’s and Germany’s, then China’s. Since about 2014 the claims have come back less as central-bank reserves held in Treasuries and more as private purchases of US shares.',
-      nt: 'Elias Rutten’s thesis: the dollar system is moving “from a state-centric, public-reserve hegemony to an asset-driven, private-capital network”.', ntEcho: 1,
-      d: ['From 1944 to the early 1970s it ran the other way: the US recycled its own surpluses to Europe and Japan through aid, loans and investment (Circuit, step 06).', 'Foreigners held 47% of US federal debt in 2014 and 30% in 2025.', 'The retreat has sped up. Foreign central banks stopped adding to their Treasuries after 2014 and sold $164bn in the year to August 2026. The premium the world pays to hold Treasuries is eroding too: against corporate bonds, the 10-year’s fell from about 60 to about 10 basis points between 2023 and October 2026 (Chumbo and Krishnamurthy, VoxEU, 3 Nov 2026).'] },
+    /* guide build (16 Nov 2026): R5 rewritten (guide spine §4.2). The old card dated the surplus-absorbing deficits to the early 1970s; they
+       begin in the early 1980s. The eras are named in the primer's words (P11). Elias Rutten's abstract moves to R8, where it pays off */
+    { t: 'Built over half a century', bs: 'Since 1944', r: 'h', w: '1944 to 2026', e: E('EXP>OFF'), n: ['PET', 'TSY'],
+      x: 'Each era produced different claims for the world to hold: dollars tied to gold until 1971, oil money recycled through banks after 1974, mortgages before 2008, then the government’s own debt. Since about 2014 the claims have come back less as central-bank reserves held in Treasuries and more as private purchases of US shares.',
+      d: ['From 1944 to the early 1970s the US ran surpluses and recycled them to Europe and Japan through aid, loans and investment (Circuit, step 06).',
+        'Deficits that absorb other countries’ surpluses begin in the early 1980s. In the 1970s the oil exporters’ dollars were recycled through private banks, at Washington’s insistence (Peter Gowan), and a secret agreement of 1974 put Saudi oil revenue into Treasuries.',
+        'The budget surpluses of 1998 to 2001 left few new Treasuries, so buyers took the bonds of the mortgage {{agency|agencies}} and {{mbs|mortgage-backed securities}}: households issued the claims. After 2008 the federal deficit took over.',
+        'Foreigners held 47% of US federal debt in 2014 and 30% in 2025.',
+        'The retreat has sped up. Foreign central banks stopped adding to their Treasuries after 2014 and sold $164bn in the year to August 2026. The premium the world pays to hold Treasuries is eroding too: against corporate bonds, the 10-year’s fell from about 60 to about 10 basis points between 2023 and October 2026 (Chumbo and Krishnamurthy, VoxEU, 3 Nov 2026).'],
+      xl: SXL,
+      src: `Recycling through private banks: Peter Gowan, The Global Gamble (1999), and the 1974 Saudi agreement: Wong (2016), both as cited in Elias Rutten’s master’s thesis (§5.1; links not stored). Budget surpluses, ${SFIGN.surp.v}: ${SFIGN.surp.src}. Foreign share of federal debt: the Circuit, step 00. Official sales: TIC, year to August 2026.` },
     /* tiers build B (15 Nov 2026): R6 split in two; R7 (“Rules widen the channel”) removed as a repeat of “The regulators help”: its bank-money
        point went to that step's mechanism, its stablecoin point to “Bills, not bonds” (spec §3.1) */
     { t: 'Money into assets', bs: 'Into assets', r: 'c', w: 'Oct 2026', e: E('SPX>TOP', 'TOP>HYP', 'TOP>CON'),
@@ -7126,18 +7170,36 @@ const SPRE = {
     { t: 'Lower yields, higher prices', bs: 'In the markets', r: 'c', w: 'Oct 2026', e: E('HYP>SPX'),
       x: 'Yields are lower and asset prices higher than they would otherwise be, and finance grows. Investment gathers where the valuations are: the AI build-out.',
       d: ['Lower than otherwise, not low: the 10-year yield averaged 5.13% in October 2026.', 'The state steers credit towards the build-out: {{fip|financialised industrial policy}}.'] },
+    /* guide build (16 Nov 2026): R7 and R8 (guide spine §4.3, §4.4), so the guide's route, which skips the primer, leaves with the bridge too */
+    { t: 'Deficits become profits', bs: 'Profits', r: 'i', w: '2025', e: E('CGR>CON', 'HYP>SPX'), lev: [9, 5],
+      x: `Profits equal what firms invest plus what the government borrows, minus what households and the rest of the world save, plus dividends. Since 2014 the federal deficit has added ${SFIGN.fedb1425.v} of GDP a year to US profits, against ${SFIGN.npi1425.v} from net private investment.`,
+      nt: 'This is accounting: it holds by definition and says nothing about which term moves first.',
+      d: [`This is the {{profiteq|profit equation}} of Jerome Levy and Michał Kalecki. In 2025 US firms kept ${SFIGN.pat25.v} after tax, ${SFIGN.patg25.v} of GDP: the federal deficit supplied ${SFIGN.fedb25.v.replace('%', '')} points, net private investment ${SFIGN.npi25.v.replace('%', '')}, dividends ${SFIGN.div25.v}; household saving took away ${SFIGN.hhs25.v} and the deficit with the world ${SFIGN.cad25.v}. State and local borrowing and the statistical discrepancy make up the rest, about ${SFIGN.oth25.v} points.`,
+        'The deficit with the world subtracts from profits, but the money comes back another way: as foreign purchases of US shares, which lift valuations and pay for the build-out. Adam Tooze calls this the {{profitdollar|profit dollar}}.',
+        'A tax cut or a larger interest bill widens the deficit, and in the accounts profits rise with it. Tariff refunds do not count: the national accounts book them as a transfer, not as profit from production.'],
+      src: `${NIPA} (P1, P2, P3; Chart B for the last term). A. Tooze, Chartbook 457 (8 Jul 2026). Levy Forecasting Center, Where Profits Come From (2008). BEA FAQ 1488 (refunds as a capital transfer).`,
+      sl: [SL_BEA, SL_TOOZE, SL_LEVY, ['BEA FAQ 1488', 'https://www.bea.gov/help/faq/1488']] },
+    { t: 'Why the dollar needs the AI trade', bs: 'The AI trade', r: 'h', w: 'Since 2014', e: E('SAV>SPX', 'HYP>SPX', 'SPX>ISS', 'BND>HYP'),
+      x: 'The world’s savings now go less into Treasuries and more into claims on US profits, and the AI build-out is where those profits and claims are concentrated. So the {{aitrade|AI trade}} has become the main way the dollar system absorbs the world’s savings.',
+      nt: 'Elias Rutten’s thesis: the dollar system is moving “from a state-centric, public-reserve hegemony to an asset-driven, private-capital network”.', ntEcho: 1,
+      d: ['In the year to August 2026 foreign investors put $1.01tn into US shares, while foreign central banks sold $164bn of Treasuries.',
+        `What they buy is a claim on the worldwide profits of US-listed firms. In October 2026, 41 AI-related stocks made up ${SFIGN.ai49.v} of the S&P 500’s value, and the build-out firms sold ${bn0(ISUM.s)} of new shares and ${bn0(ISUM.b)} of new bonds in the 12 months to 8 November 2026.`,
+        'The build-out does two jobs: it gives the world’s savings a home, and it gives Washington the industry it wants. If it falters, the claims lose their pull, and the US needs another way to absorb those savings.'],
+      src: `Foreign purchases of US shares, $1.01tn, and official sales of Treasuries, $164bn, 12 months to August 2026 (US Treasury TIC; the Circuit). ${SFIGN.ai49.k}, ${SFIGN.ai49.v}, ${SFIGN.ai49.d} (${SFIGN.ai49.src}). New shares and bonds: company filings, the page’s list, 12 months to 8 November 2026.` },
   ],
 };
-/* tiers build B (15 Nov 2026): the beginner primer, “The basics” (spec §4, copy Part A, trial text §5). Eight screens that assume nothing,
-   then first principles, then the guide. A line of its own, appended after first principles, so stored places keep their numbers.
+/* tiers build B (15 Nov 2026): the beginner primer, “The basics” (spec §4, copy Part A, trial text §5). Screens that assume nothing.
+   guide build (16 Nov 2026, guide spine §3): twelve screens in a new order. P6 (“The twin deficit”) retires: its card sentence is in P1's
+   fold and the rest moved to P9. P9 to P13 are new. Ids stay with their cards. The route is primer, then the guide; first principles are
+   offered on the hand-over card, not imposed (Elias, 16 Nov: route A). A line of its own, appended after first principles, so stored places keep their numbers.
    Each screen lights real parts of the map, shows two sentences, keeps “Say more” behind a fold, carries a hidden text alternative and a
    quiet way up to the guide. Every figure is one the page already carries, with its date and source. */
 Object.assign(SROLE, { b: ['The basics', '#e4ebf1'] });
 const SGND = {
   t: 'The basics: deficits, bonds and yields', s: 'The basics', c: '#e4ebf1',
-  lede: 'Eight short screens that assume nothing: what the US borrows, from whom, at what price, and why that price matters now.',
+  lede: 'Twelve short screens that assume nothing: why the world holds American IOUs, which ones, at what price, and why the AI trade now carries them.',
   b: [
-    { t: 'The US spends more than it collects', bs: 'The deficit', n: ['CGR', 'TSY'], e: [],
+    { id: 'P1', t: 'The US spends more than it collects', bs: 'The deficit', n: ['CGR', 'TSY'], e: [],
       x: 'Year after year the US government spends more than it collects in taxes, and borrows the difference: that gap is the {{deficit|deficit}}. The borrowing piles up as {{debt|debt}}, which passed $40tn in October 2026.',
       more: ['Debt is not paid off; it is {{rollover|rolled over}}. When a loan falls due, the Treasury repays it by borrowing again, at whatever {{rate|interest rate}} the market asks that day.',
         'A household that borrowed like this would be cut off. A state that borrows in its own money, which is also the world’s money, is not: the lenders come to it.',
@@ -7147,17 +7209,59 @@ const SGND = {
       src: 'Gross federal debt, $40.25tn, October 2026 (the Circuit, step 08).',
       map: 'Congress and the US Treasury are lit. Click either for what it does.',
       alt: () => 'On the map: Congress and the US Treasury are lit; everything else waits in outline.' },
-    { t: 'It borrows by selling IOUs', bs: 'IOUs', e: E('TSY>MMF', 'TSY>BNK'),
-      x: 'To borrow, the Treasury sells IOUs called {{treasuries|Treasuries}}. {{bills|Bills}} are repaid within a year; notes and {{bond|bonds}} run for up to thirty years.',
+    /* guide build (16 Nov 2026): P9, the step before the IOUs (guide spine §3.2). It takes over the retired “The twin deficit” (P6) */
+    { id: 'P9', t: 'The US adjusts by producing claims', bs: 'Claims', e: E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>SPX', 'SAV>Y10'),
+      x: 'The US buys more from the world than it sells: its {{ca|deficit with the world}} was $1.18tn in 2025. The world saves the dollars it earns, so the US has to adjust by producing {{claims|claims}} on itself for those savings to sit in.',
+      more: ['Americans pay for imports in dollars. The exporters who earn those dollars do not spend them all on American goods. What is left over is saved.',
+        'In the big exporting countries, wages and household spending are held down. So more of what they make is sold abroad, and more of the income is saved.',
+        'Saved dollars have to be held as something: a bank deposit, a {{bond|bond}}, a share. Each of these is a claim, a promise that someone in the US will pay later.',
+        'That is bookkeeping, not theory. A country that buys more than it sells hands over claims on itself to cover the gap. Every deficit with the world is someone else’s {{surplus|surplus}}, and someone else’s claim. Economists call this pairing the {{imbalance|global imbalance}}.',
+        'So the US has to adjust. Someone in the US must issue the claims the world wants to hold: the government, the banks, households or firms.',
+        'The claims pile up. Foreigners held about $22tn of US shares and $9.3tn of {{treasuries|Treasuries}} in mid-2026.',
+        'Which comes first, the American buying or the foreign saving, is argued over. Either way, the claims have to be produced.'],
+      src: 'US current-account deficit, $1.18tn, 2025 (BEA, annual update of 24 June 2026; the Circuit). Foreign holdings, mid-2026: as stored at first principles, “The claims are taken in dollars”, and the Circuit’s opening card.',
+      map: 'A loop is lit, from consumers to exporters, on to their central banks and savers, and back into AI stocks and the 10-year. Follow it by its arrows.',
+      alt: () => 'On the map: a loop is lit: consumers to exporters, exporters to their central banks, the chip makers to allied savers, and the savers back into AI stocks and the 10-year.' },
+    /* P10, the hierarchy of money (guide spine §3.3): one screen and a diagram. The pyramid is round S2a's (shares at the apex), with tokens
+       in a tier of their own beyond deposits (Elias, 16 Nov 2026); the idea is Perry Mehrling's and is credited to him */
+    { id: 'P10', t: 'A pyramid of IOUs', bs: 'The pyramid', n: ['FED', 'BNK', 'MMF', 'TSY', 'BND', 'SPX', 'DUA'], e: [], dg: 'pyr',
+      x: 'Foreigners can hold any IOU on the {{hierarchy|hierarchy of money}}, from cash at the base to shares at the top. The closer a claim is to cash, the safer it is and the less it pays.',
+      more: ['An IOU is a promise to pay. Some promises are almost as good as cash, and some are far from it.',
+        'At the base sit cash and bank deposits: they pay little or nothing, but they can be spent today. Just above them sit {{stablecoin|dollar tokens}}. They promise a dollar, but how good that promise is depends on the token and how the rules are read. Then come {{mmf|money funds}} and {{bills|Treasury bills}}, which turn back into cash within months.',
+        'Higher up are long Treasury bonds, then company and mortgage bonds, and at the top shares. Each pays more, because its price can fall further before the holder gets money back. A share is no promise to repay at all: it is a claim on a firm’s future profits.',
+        'Each layer is a promise to pay in the layer beneath it: a bond pays out in deposits, a deposit in cash. The economist Perry Mehrling named this the hierarchy of money.',
+        `In October 2026 a savings deposit paid ${SFIGN.sndr.v} on average, and the 10-year Treasury 5.13%.`,
+        'In a panic, everyone runs down towards cash, and only the central bank can create the base. Whom it lends to decides who is rescued.',
+        'Which tier foreigners buy matters at home. It decides who in the US issues the claim, and so who carries the debt: the state, households or firms.'],
+      src: `P. Mehrling, “The inherent hierarchy of money”, in L. Taylor, A. Rezai and T. Michl (eds), Social Fairness and Economics (Routledge, 2013), pp. 394–404 (link not stored). ${SFIGN.sndr.k}, ${SFIGN.sndr.v}, ${SFIGN.sndr.d} (${SFIGN.sndr.src}). 10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10).`,
+      map: 'The issuers are lit: the Federal Reserve, Dealer banks, Money funds, the US Treasury, New bonds and AI stocks, with Dollar users abroad for the tokens. Click any of them.',
+      alt: () => 'A pyramid of eight tiers, from cash and bank reserves at the base, through bank deposits, dollar tokens, money funds, Treasury bills, long Treasury bonds and company and mortgage bonds, to shares at the top. Lower tiers are safer and pay less; higher tiers are riskier and pay more. On the map the issuers of each tier are lit.' },
+    /* P11, the eras of adjustment (guide spine §3.4): four bands, each ending in the break that forced the next; the fifth is lit on P13 */
+    { id: 'P11', t: 'Which claims, when', bs: 'The eras', n: ['OFF', 'PET', 'TSY', 'MTG'], e: E('EXP>OFF', 'OFF>TSY', 'MTG>CON'), dg: 'eras',
+      x: 'Each way of giving the world its claims solved the last crisis and built the next one: gold until 1971, oil money until the debt crisis of 1982, mortgages until 2008, then the government’s own debt. Central banks were the steady buyers for most of that time, and their appetite moved with politics, not by economic law.',
+      more: ['The world has always needed somewhere to keep its dollars. What changes is which American IOU it buys, and who in the US issues it. Each answer worked for a while, piled up its own strains, and broke; the fix for the break became the next answer.',
+        ['1944 to 1971: dollars tied to gold.', 'Under {{bw|Bretton Woods}} the US sold more than it bought. It sent dollars abroad through aid, loans, investment and its military bases, and foreign central banks held them as reserves they could swap for gold. In August 1971 President Nixon ended that swap.'],
+        ['1974 to 1982: oil money.', 'When oil prices quadrupled, the oil exporters earned more dollars than they could spend. Washington insisted the money be recycled through private banks, not the IMF. In 1974 Saudi Arabia agreed in secret to put oil revenue into Treasuries. The banks lent the rest to Latin America, until the debt crisis of 1982.'],
+        'The 1980s showed another route. Large government deficits drew in Japanese savings, and the US began to run deficits with the world that absorbed other countries’ surpluses.',
+        ['1997 to 2008: American mortgages.', `After the Asian crisis of 1997, central banks in Asia and the oil states piled up dollars. Government dollar assets grew from ${sStar('goda')}. The federal budget was in surplus from 1998 to 2001, so new Treasuries ran short. Buyers turned to the bonds of the mortgage {{agency|agencies}} and to {{mbs|mortgage-backed securities}}, ${sStar('plmbs')} of private ones in 2001 to 2007. American households issued the claims, by borrowing against their homes.`],
+        ['From 2008: the government’s own debt.', `When house prices fell, the private route broke, and households paid down debt. The federal deficit took over as the main source of claims. In the national accounts it averaged ${SFIGN.fedb0013.v} of GDP a year in 2000 to 2013, and ${SFIGN.fedb1425.v} in 2014 to 2025. Central banks bought the Treasuries, until about 2014.`],
+        'Their appetite was never set by economics alone. Countries chose to build surpluses inside the system the US had built: after the Asian crisis of 1997, many piled up dollars as insurance against ever needing the IMF. Official buying stalled in 2014, the year of the first sanctions on Russia; the data cannot show whether that was distrust or something else.'],
+      xl: SXL,
+      src: `Bretton Woods and 1971: stable history, no figure. Recycling through private banks and the US refusal of IMF recycling: Peter Gowan, The Global Gamble (1999), as cited in Elias Rutten’s master’s thesis (§5.1). The 1974 Saudi agreement: Wong (2016), from declassified Treasury documents, as cited in the same thesis (link not stored). * ${SFIGN.goda.k}, ${SFIGN.goda.v}, and ${SFIGN.plmbs.k.toLowerCase()}, ${SFIGN.plmbs.v}, ${SFIGN.plmbs.d}: ${SFIGN.goda.src}. Budget surpluses, ${SFIGN.surp.v}: ${SFIGN.surp.src}. Federal net borrowing, average % of GDP: ${NIPA} (P2). The point that countries built surpluses after 1997 to avoid the IMF is Elias Rutten’s and Klein and Pettis’s. The exchange on X: ${SFIGN.x0409.d}.`,
+      map: 'Central banks, the Oil exporters, the US Treasury and the 30-year mortgage are lit: the buyers and the issuers across the eras.',
+      alt: () => 'A timeline in five bands, each ending in a crisis. 1944 to 1971: dollar reserves tied to gold, until Nixon ended convertibility. 1974 to 1982: oil money, recycled through banks, until the debt crisis. 1997 to 2008: American mortgages, sold as bonds, until the financial crisis. 2008 to 2014: the government’s own debt, bought by central banks, until official buying stalled. Since 2014: still to come. On the map, central banks, the oil exporters, the Treasury and the mortgage gauge are lit.' },
+    { id: 'P2', t: 'It borrows by selling IOUs', bs: 'IOUs', e: E('TSY>MMF', 'TSY>BNK'),
+      x: 'Today the main issuer of claims is the government. To borrow, the Treasury sells IOUs called {{treasuries|Treasuries}}: {{bills|bills}} are repaid within a year, and notes and {{bond|bonds}} run for up to thirty years.',
       more: ['Whoever buys one lends to the US government and is paid interest for it.',
         'Bills are the short end. Banks, {{mmf|money funds}} and the issuers of dollar tokens hold them almost as if they were cash. Bonds are the long end. Pension funds and insurers hold them for decades, because they owe pensions decades from now.',
         'Every week the Treasury holds {{auction|auctions}}. It sells to the bidders who ask the lowest interest, until the whole issue is sold. When buyers are plentiful the interest is low; when they hold back, the Treasury has to offer more.',
         'Treasuries are the safest dollar asset in the world, so they are also its {{collateral|collateral}}: banks lend against them every night. The state’s debt is the floor the private financial system stands on.'],
       map: 'Two lines run from the US Treasury, to Money funds and to Dealer banks. Hover a line for what flows along it.',
       alt: () => 'On the map: two lines run from the US Treasury, to Money funds and to Dealer banks: the debt going out to its first buyers.' },
-    { t: 'The yield is the price of borrowing', bs: 'The yield', e: E('TSY>Y10'),
-      x: 'A {{yield|yield}} is the price of borrowing money, and it changes with the length of the loan. The {{curve|yield curve}} shows how: short loans follow the Fed’s rate, and longer loans cost more, by a {{termprem|term premium}}.',
+    { id: 'P3', t: 'The yield is the price of borrowing', bs: 'The yield', e: E('TSY>Y10'),
+      x: 'A {{yield|yield}} is the price of borrowing money, and it changes with the length of the loan. The {{curve|yield curve}} shows how: short loans follow {{fed|the Fed}}’s rate, and longer loans cost more, by a {{termprem|term premium}}.',
       more: ['Plot yields against the length of the loan, from three months to thirty years, and you get the yield curve.',
+        'A bond’s payments are fixed when it is sold. If its price on the market falls, the same payments cost less to buy, so its yield rises. Selling pushes yields up; buying pushes them down.',
         'The short end is set by policy. The Fed sets the {{policyrate|policy rate}}, the rate for overnight money, and short yields follow it.',
         'The rest is the term premium: what lenders ask on top for tying up their money for longer. Many things set it: how the market is built, guidance from policy, and now geopolitics too. Above all it depends on who buys, and the buyers can be arranged.',
         'That price is set in a political context. As the guide will show, it is a manipulated indicator, and the manipulation is on purpose. Institutions with mandates, such as the Fed and the Treasury, make it work the way politics finds useful.',
@@ -7166,7 +7270,7 @@ const SGND = {
       src: '10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10).',
       map: 'The 10-year gauge is lit. Click it for its date and source; the gold tab “MORE INSIDE ›” opens the yield curve.',
       alt: () => 'On the map: the 10-year gauge is lit: ' + indVal(INDX.y10) + ', ' + INDX.y10.sub + '.' },
-    { t: 'The 10-year prices everything else', bs: 'The 10-year', e: E('Y10>MTG', 'Y10>BND', 'Y10>PCR'),
+    { id: 'P4', t: 'The 10-year prices everything else', bs: 'The 10-year', e: E('Y10>MTG', 'Y10>BND', 'Y10>PCR'),
       x: 'Historically the {{y10|10-year yield}} has been the benchmark price of long-term money: corporate bonds and mortgages are priced over it. When it rises, a mortgage, a company loan and a data centre all cost more.',
       more: ['For decades markets treated the yield on US government debt as the rate to price everything else against. Every other borrower paid that rate plus something on top. The something is the {{spread|spread}}: what a lender asks for the extra risk.',
         'So the ten-year yield works as a floor under other prices. Raise the floor and everything built on it rises too.',
@@ -7176,7 +7280,7 @@ const SGND = {
       src: '10-year Treasury yield, 5.13%, October 2026 average (FRED, series DGS10); 30-year fixed mortgage, 7.24%, week to 29 October 2026 (Freddie Mac).',
       map: 'Lines run from the 10-year gauge to the mortgage gauge, to New bonds and to Private credit. Compare the two gauges.',
       alt: () => 'On the map: lines run from the 10-year gauge to the mortgage gauge (' + indVal(INDX.mtg) + ', ' + INDX.mtg.sub + '), to New bonds and to Private credit.' },
-    { t: 'Who lends to Washington', bs: 'The lenders', e: E('OFF>TSY', 'TSY>MMF', 'TSY>BNK', 'TSY>CEN', 'TSY>HFD', 'SAV>Y10'),
+    { id: 'P5', t: 'Who lends to Washington', bs: 'The lenders', e: E('OFF>TSY', 'TSY>MMF', 'TSY>BNK', 'TSY>CEN', 'TSY>HFD', 'SAV>Y10'),
       x: 'The US borrows from foreign central banks, {{mmf|money funds}}, banks, pension funds, insurers and {{hedgefund|hedge funds}}. The central banks were the anchor for decades and cut their Treasuries by $164bn in the year to August 2026 ({{tic|TIC}}); hedge funds, helped by the state, now take a large share of the new long bonds.',
       more: ['Each lender wants something different.',
         'Foreign {{official|central banks}} hold Treasuries as reserves. They buy to hold, not to trade. For decades that made them the anchor.',
@@ -7188,34 +7292,52 @@ const SGND = {
       src: 'Foreign official holders cut $164bn of Treasuries in the year to August 2026 (TIC, major foreign holders; the indicator “Official Treasuries”). The subsidy and the officials’ careers: as stored at “Calm is a subsidy” and “Few funds, close to power” (BCBS–CPMI–IOSCO, Sep 2022; US Treasury biography of Bessent; CBS on Warsh).',
       map: 'Six buyers are lit, each with a line to the Treasury’s debt; the line from Central banks is marked as selling. Click each buyer.',
       alt: () => 'On the map: six buyers are lit, each with a line to the Treasury’s debt; the line from Central banks is marked as selling.' },
-    { t: 'The twin deficit', bs: 'Twin deficit', e: E('CON>EXP', 'EXP>OFF', 'CHP>SAV', 'SAV>SPX', 'SAV>Y10'),
-      x: 'The US also runs a deficit with the world, $1.18tn in 2025 (the Circuit), and with the government’s deficit it forms the {{twin|twin deficit}}. The dollars the world earns by selling to the US come back to buy US shares and bonds, and part of them funds the government.',
-      more: ['The government’s deficit is the one you met first. The other half is the country’s: the US buys more from the world than it sells to it.',
-        'Americans pay for imports in dollars. The exporters who earn those dollars do not spend them all. What is left is saved, and the savings are held as American assets: Treasuries, company bonds, shares.',
-        'That part is bookkeeping, not theory. A country that buys more than it sells hands over claims on itself to cover the gap. Every {{ca|deficit with the world}} is someone else’s {{surplus|surplus}}, and someone else’s claim. Economists call this pairing of deficits and surpluses the {{imbalance|global imbalance}}.',
-        'So the two halves meet. The dollars that leave through trade come back through the markets. Some of them lend to the government. Even more sit in shares: foreigners held about $22tn of US shares and $9.3tn of Treasuries in mid-2026.',
-        'Which side moves first, the buying or the saving, is argued over. First principles take that up.'],
-      src: 'US current-account deficit, $1.18tn, 2025 (BEA, annual update of 24 June 2026; the Circuit). Foreign holdings, mid-2026: as stored at first principles, “The claims are taken in dollars”, and the Circuit’s opening card.',
-      map: 'A loop is lit, from consumers to exporters, on to their central banks and savers, and back into AI stocks and the 10-year. Follow it by its arrows.',
-      alt: () => 'On the map: a loop is lit: consumers to exporters, exporters to their central banks, the chip makers to allied savers, and the savers back into AI stocks and the 10-year.' },
-    { t: 'Why it matters now', bs: 'Why now', e: E('OFF>TSY', 'Y10>BND', 'BND>HYP'),
+    /* P12, deficits become profits (guide spine §3.7): the profit equation in plain words. The tariff refunds are left out on purpose (the
+       national accounts book them as a capital transfer). No levers here: the primer has no lever tray; first principles carry them (R7) */
+    { id: 'P12', t: 'Deficits become profits', bs: 'Profits', n: ['CGR', 'CON', 'SPX'], e: E('CGR>CON', 'HYP>SPX'),
+      x: `When the government spends more than it collects, the difference lands as income in the private sector, and much of it ends up as company profits. In 2025 the federal deficit added ${SFIGN.fedb25.v} of GDP to US profits, more than firms’ own net investment did (${SFIGN.npi25.v}).`,
+      more: ['Firms as a whole are paid whatever everyone spends on what they make. They pay part of it out as wages. What is left is profit.',
+        'So profits rise when others spend more than they earn. Firms building new data centres and machines is one source. A government deficit is another: the state spends money it does not take back in tax.',
+        'Profits fall when others save. Households who save take money out of firms’ sales. So does the rest of the world, which sells more to the US than it buys.',
+        'This is the {{profiteq|profit equation}}, first worked out by Jerome Levy and Michał Kalecki. It holds by definition. It says what profits are made of, not which part moves first.',
+        `Since 2014 the federal deficit has supplied more than firms’ own investment: ${SFIGN.fedb1425.v} of GDP a year, against ${SFIGN.npi1425.v} from net investment. In 2025 US firms kept ${SFIGN.pat25.v} after tax, ${SFIGN.patg25.v} of GDP.`,
+        'Policy moves the numbers. A tax cut or a larger interest bill widens the deficit, and in the accounts profits rise with it.',
+        'Adam Tooze calls the result the {{profitdollar|profit dollar}}: deficits lift US profits, and those profits draw the world’s savings into US shares.'],
+      soon: 'The full account, every year since 1960: Firms profitability view · coming soon.',
+      src: `Profits after tax $3,386bn, 10.97% of GDP; federal net borrowing 6.26% and net private investment 4.35% of GDP, 2025; averages 2014 to 2025, 6.33% and 4.45% (${NIPA}, P1 and P2). A. Tooze, Chartbook 457 (8 Jul 2026). Levy Forecasting Center, Where Profits Come From (2008). M. Kalecki, “A theory of profits”, Economic Journal 52 (1942), link not stored.`,
+      sl: [SL_BEA, SL_TOOZE, SL_LEVY],
+      map: 'Congress’s line to consumers and the hyperscalers’ line to AI stocks are lit: spending in, valuations out.',
+      alt: () => 'On the map: Congress’s line to all consumers and the hyperscalers’ line to AI stocks are lit: government spending going in, and share prices coming out.' },
+    { id: 'P7', t: 'Why it matters now', bs: 'Why now', e: E('OFF>TSY', 'Y10>BND', 'BND>HYP'),
       x: 'The old buyers stopped adding to their Treasuries after 2014, and now they are selling. The {{safepremium|premium}} the world once paid to hold Treasuries is eroding too, just as the AI build-out needs cheap long-term money.',
       ech: 'The map’s thesis is that this instability is not an accident: it is made, and it is used on purpose.',
       more: ['Foreigners held 47% of US federal debt in 2014 and 30% in 2025. In the year to August 2026 foreign central banks cut their Treasuries by $164bn.',
         'A Treasury is more than a loan. It is the asset the world can sell in a hurry or pledge as collateral, and for that safety and ease investors accepted a lower yield. That is the safe-asset premium.',
-        'A VoxEU column by Miguel Chumbo and Arvind Krishnamurthy (3 November 2026) measures it. Against corporate bonds, the 10-year Treasury’s premium fell from about 60 to about 10 {{bp|basis points}} between 2023 and October 2026, while the premium on {{repo|repo}} stayed near 90. Repo, not the Treasury, is now the dollar safe asset the world pays most for. Against euro safe assets the premium has shrunk to near zero.',
-        'Their rough calculation: if only bills and repo count as safe, the supply of public dollar safe assets fell from 70% of GDP in 2019 to 20% in 2025, even though more than $10tn of Treasuries were issued in between. The authors say the comparison overstates the fall, and the direction is the point.',
-        'So the state has to find new lenders and keep them. Washington works the levers that keep lenders coming, and that keep money cheap for the industry it wants built. The guide follows that work in four parts.'],
+        'Investors used to accept a lower yield for the safety of Treasuries. Against company bonds that extra has almost gone: a VoxEU column by Miguel Chumbo and Arvind Krishnamurthy put it at about 10 {{bp|basis points}} in October 2026, down from about 60 in 2023.'],
+      src: 'Foreign holders’ share of US federal debt and official holders’ $164bn cut, as stored at first principles (“Built over half a century”) and in TIC, year to August 2026. Safe-asset premium: Chumbo and Krishnamurthy, “Repo is the new dollar safe asset”, VoxEU (CEPR), 3 Nov 2026, Figures 1 and 2 and text.',
+      sl: [['Chumbo and Krishnamurthy, VoxEU (3 Nov 2026)', 'https://cepr.org/voxeu/columns/repo-new-dollar-safe-asset']],
+      map: 'The line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.',
+      alt: () => 'On the map: the line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.' },
+    /* P13, the crucial insight (guide spine §3.9): the timeline's fifth band lights; the four parts of the guide move here from P7 */
+    { id: 'P13', t: 'Why the dollar needs the AI trade', bs: 'The AI trade', n: ['SAV', 'SPX', 'HYP'], e: E('SAV>SPX', 'HYP>SPX', 'SPX>ISS', 'ISS>HYP', 'BND>HYP'), dg: 'eras5',
+      x: 'Since 2014 the world’s savings have gone less into Treasuries and more into claims on US profits. The AI build-out supplies those claims, new shares and bonds and the profits behind them, so the dollar now needs the {{aitrade|AI trade}}.',
+      ech: 'Elias Rutten calls the arrangement “a new superstructure that sustains the dollar system and US hegemony”.',
+      more: ['Go back to the claims. The world still saves dollars, and the US still has to produce claims for it to hold. The question is which ones.',
+        'Treasuries are losing their pull. Foreigners held 47% of US federal debt in 2014 and 30% in 2025, and the premium for holding Treasuries has almost gone.',
+        'Shares have taken their place. In the year to August 2026 foreign investors put $1.01tn into US shares, while foreign central banks sold $164bn of Treasuries.',
+        'Those shares are worth buying because US firms earn high profits, and deficits help keep them high. Buyers get a share in the profits of American firms, wherever those profits are earned.',
+        `The AI build-out is where those profits and the new claims are now concentrated. In October 2026, 41 AI-related stocks made up ${SFIGN.ai49.v} of the {{sp500|S&P 500}}’s value. In the 12 months to 8 November 2026, the firms building the data centres sold ${bn0(ISUM.s)} of new shares and ${bn0(ISUM.b)} of new bonds.`,
+        'So the build-out does two jobs at once. It gives the world’s savings a home, and it gives the US the industry it wants. Washington works the levers that keep both going: cheap long-term money, a calm bond market, and buyers for its debt.',
+        'Like every fix before it, this one builds its own strains: debt piled on the build-out, savers tied to a few firms, a bond market that needs calm. If the AI trade falters, the claims lose their pull, and the US needs yet another way to absorb the world’s savings. The guide follows the machine that keeps it going, in four parts, and ends where it could break.'],
       parts: [['Where the money lands.', 'A data centre has to be paid for: with bonds, with shares, and with loans kept off the books.'],
         ['Where it comes from.', 'The savings of America’s allies, and the spending of the American consumer.'],
         ['What squeezes it.', 'Oil, then the Fed, then long yields.'],
         ['Who lends to the state.', 'At those yields: which buyers, on how much borrowed money, and under whose rules.']],
       after: 'Two shorter parts close the guide: how the dollar is backed abroad, and what happens if it breaks.',
-      src: 'Foreign holders’ share of US federal debt and official holders’ $164bn cut, as stored at first principles (“Built over half a century”) and in TIC, year to August 2026. Safe-asset premium: Chumbo and Krishnamurthy, “Repo is the new dollar safe asset”, VoxEU (CEPR), 3 Nov 2026, Figures 1 and 2 and text.',
-      lk: [['Chumbo and Krishnamurthy, VoxEU (3 Nov 2026)', 'https://cepr.org/voxeu/columns/repo-new-dollar-safe-asset']],
-      map: 'The line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.',
-      alt: () => 'On the map: the line from Central banks to the Treasury dims; the 10-year’s line to New bonds and Hyperscalers is lit.' },
-    { t: 'How to read the map', bs: 'Reading the map', e: [],
+      src: `Foreign share of US federal debt, 47% (2014) and 30% (2025): as stored at the Circuit, step 00. Foreign purchases of US shares, $1.01tn, and official sales of Treasuries, $164bn, 12 months to August 2026 (US Treasury TIC; the Circuit). Safe-asset premium: Chumbo and Krishnamurthy, VoxEU (CEPR), 3 Nov 2026. ${SFIGN.ai49.k}, ${SFIGN.ai49.v}, ${SFIGN.ai49.d} (${SFIGN.ai49.src}). New shares and bonds: company filings, the page’s list, 12 months to 8 November 2026. Elias Rutten’s words: 5 November 2026.`,
+      map: 'The savers’ line into AI stocks is lit, and from there the money into new shares and new bonds for the hyperscalers.',
+      alt: () => 'The timeline’s fifth band is lit: since 2014, claims on US profits, the AI trade, issued by firms. On the map: allied savers’ line into AI stocks, and from AI stocks into new shares and new bonds for the hyperscalers.' },
+    { id: 'P8', t: 'How to read the map', bs: 'Reading the map', e: [],
       x: 'Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices. Click any actor or line for what it does and its sources.',
       more: ['A line’s colour says what kind of relation it is. The key under the map lists them.',
         'A gauge shows one price, with its date and its source.',
@@ -7225,6 +7347,7 @@ const SGND = {
         'At seven points the guide stops and asks what you would do. Then it shows what happened, and where the other choice leads. Nothing is scored.'],
       map: 'The whole map is shown in outline, with the key below it. Try one click.',
       alt: () => 'On the map: the whole map is shown in outline, with the key below it.' },
+  
   ],
 };
 const SLINES = (() => {
@@ -7232,7 +7355,7 @@ const SLINES = (() => {
   SMAIN.ch.forEach((C, ci) => C.b.forEach(([p, s, why, ld]) => L[0].beats.push(sBeat(p, s, ci, why, ld))));
   PLAYS.forEach((P, i) => L.push({ id: 'play' + i, t: P.t, c: P.c, play: i, lede: P.lede, chs: [{ t: P.t, w: '', tri: i === 5 ? (SMAIN.ch.find(C => C.tri) || {}).tri : null }], beats: (P.ord || P.steps.map((x, s) => s)).map(s => sBeat(i, s, 0)) }));
   /* first principles: the last line in the list (so stored places in the guide and the mechanisms keep their numbers), shown first */
-  L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, nt: B.nt, ntEcho: B.ntEcho, ech: B.ech, why: '', lev: B.lev || [], fork: null, ld: false })) });
+  L.push({ id: 'pre', t: SPRE.t, s: SPRE.s, c: SPRE.c, pre: true, lede: SPRE.lede, chs: [{ t: SPRE.t, w: '' }], beats: SPRE.b.map(B => ({ p: -1, s: -1, ch: 0, t: B.t, bs: B.bs, x: B.x, d: B.d, e: B.e, n: B.n, r: B.r, w: B.w, nt: B.nt, ntEcho: B.ntEcho, ech: B.ech, src: B.src, sl: B.sl, xl: B.xl, why: '', lev: B.lev || [], fork: null, ld: false })) });
   /* tiers build B: the primer, appended last so every stored place keeps its number */
   L.push({ id: 'gnd', t: SGND.t, s: SGND.s, c: SGND.c, gnd: true, lede: SGND.lede, chs: [{ t: SGND.t, w: '' }], beats: SGND.b.map(B => Object.assign({ p: -1, s: -1, ch: 0, d: null, n: B.n || [], r: 'b', w: '', why: '', lev: [], fork: null, ld: false }, B)) });
   L.forEach(l => {
@@ -7489,7 +7612,7 @@ function simBar() {
   let segs;
   if (guide) {
     segs = (L.gnd || stGet(SWAY) === 'ground' ? [{ label: Q.s, colour: Q.c, current: !!L.gnd && b >= 0 && b <= n, target: SGI + ':0', title: Q.t, sub: Q.beats.length + ' screens', marks: Q.beats.flatMap((B, i) => mk(SGI, i)) }] : [])
-      .concat([{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }])
+      .concat(L.pre || !(L.gnd || stGet(SWAY) === 'ground') ? [{ label: P.s, colour: P.c, current: !!L.pre && b >= 0 && b < n, target: SPI + ':0', title: P.t, sub: P.beats.length + ' reveals', marks: P.beats.flatMap((B, i) => mk(SPI, i)) }] : [])
       .concat(G.chs.map((C, ci) => { const idx = G.beats.map((x, i) => i).filter(i => G.beats[i].ch === ci); return { label: C.s || C.t, colour: SCHC[ci], current: !!L.main && b >= 0 && b < n && G.beats[b].ch === ci, target: '0:' + G.first[ci], title: C.t, sub: C.w + ' · ' + idx.length + ' steps', marks: idx.flatMap(i => mk(0, i)) }; }));
     segs.push({ label: '', colour: SMAIN.c, current: !!L.main && b >= n, grow: 2, cls: 'end', marks: [{ kind: 'end', state: L.main && b >= n ? 'cur' : '', target: '0:' + G.beats.length, title: 'The whole machine' }] });
   } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat([{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
@@ -7498,8 +7621,8 @@ function simBar() {
   if (SIM.ph === 'ask') nx = { kind: 'hold', kicker: 'Your call', title: 'Choose on the card', ptitle: 'Choose' };
   else if (SIM.ph === 'chain') nx = { kind: 'branch', kicker: 'Next in the chain', title: SIM.c < DD.chain.length - 1 ? DD.chain[SIM.c + 1].t : DD.crisis.t, pkicker: 'Chain', ptitle: 'Next' };
   else if (SIM.ph === 'crisis') nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
-  else if (b < 0) nx = L.main ? { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' } : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
-  else if (b >= n) nx = L.gnd ? { kicker: 'Next · first principles', title: P.beats[0].t, pkicker: 'Next', ptitle: 'First principles' } : L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % PLAYS.length + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
+  else if (b < 0) nx = L.main ? (stGet(SWAY) === 'ground' ? { kicker: 'Start · Foundations', title: Q.s, pkicker: 'Start', ptitle: 'Foundations' } : { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' }) : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
+  else if (b >= n) nx = L.gnd ? { kicker: 'Next · the guide', title: G.beats[0].t, pkicker: 'Next', ptitle: 'The guide' } : L.pre ? { kicker: 'Next · the plumbing', title: G.beats[0].t, pkicker: 'Next', ptitle: 'Plumbing' } : L.main ? { enabled: false, kicker: 'Guide complete', title: 'The whole machine', pkicker: 'Guide', ptitle: 'Complete' } : { kicker: 'Next mechanism', title: SLINES[SIM.line % PLAYS.length + 1].t, pkicker: 'Next', ptitle: 'Mechanism' };
   else if (sNextFork()) nx = { kicker: 'Next · your call', title: SDEC[sNextFork()].nt, pkicker: 'Next', ptitle: 'Your call' };
   else if (b === n - 1) nx = { kicker: 'Next', title: L.main ? 'The whole machine' : L.pre ? 'On to the plumbing' : L.gnd ? 'The ground is laid' : 'Mechanism complete', ptitle: 'Next' };
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
@@ -7507,9 +7630,9 @@ function simBar() {
   RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : 'Mechanism: steps', stage,
     back: { enabled: b >= 0, label: SIM.ph === 'ask' ? 'Back: ' + L.beats[b].t : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
     next: nx,
-    line: { kicker: guide ? 'Guide' : 'Mechanism', title: guide ? 'The plumbing' : PSH[L.play] || L.t, attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
+    line: { kicker: guide ? 'Guide' : 'Mechanism', title: guide ? 'The machinery' : PSH[L.play] || L.t, attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
     segs, controls: simTabsHTML(),
-    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The plumbing' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
+    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The machinery' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
 }
 /* Back, Next, the marks, ← → and the swipe all come through here */
 function simNav(ev) {
@@ -7525,8 +7648,8 @@ function simNav(ev) {
   /* a choice is made on the card, never by Next, → or a swipe: they move focus to the first option */
   if (SIM.ph === 'ask') { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
   if (SIM.ph) { simNext(); return; }
-  if (b < 0) { simGo(L.main ? SPI : SIM.line, 0, 'focus'); return; }
-  if (b >= n) { if (L.pre) simGo(0, 0, 'focus'); else if (L.gnd) simGo(SPI, 0, 'focus'); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
+  if (b < 0) { simGo(L.main ? (stGet(SWAY) === 'ground' && SGI >= 0 ? SGI : SPI) : SIM.line, 0, 'focus'); return; }
+  if (b >= n) { if (L.pre || L.gnd) simGo(0, 0, 'focus'); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
   simNext();
 }
 /* which trays are open: in the guide one at a time, opened from the bar; in full view the plays and levers are pinned */
@@ -7615,27 +7738,19 @@ function gsOpen(on, from) {
   else { g.hidden = true; g.innerHTML = ''; const f = g._from || $('gsb'); g._from = null; if (f && f.isConnected && f.getClientRects().length && f.focus) f.focus({ preventScroll: true }); }
   ROOT.querySelectorAll('[data-gsteps][aria-expanded]').forEach(b => b.setAttribute('aria-expanded', String(!!on)));
 }
-/* tiers build A (15 Nov 2026): three ways in, named by what each route assumes (spec §1). The house pattern for three equal doors is the
-   Circuit ring's “Where next”; the guide is the gold one. The ground-up route (the primer) is built in the next round: until then its door
-   is shown locked, “coming soon”, like the capital stack. The door used last time is marked in words. One key: isx-way. */
-const SWAY = 'isx-way', SGND_OPEN = () => SLINES.some(L => L.gnd);
-const sWords = t => String(t || '').replace(/\{\{\w+\|([^}]+)\}\}/g, '$1').split(/\s+/).filter(Boolean).length;
-/* minutes from the text itself: words at 200 a minute plus 8 seconds a card; each decision, one walk of its other path and its crisis card counted once */
+/* tiers build A (15 Nov 2026): three ways in, named by what each route assumes (spec §1). The way used last time is marked in words. One
+   key: isx-way. guide build (16 Nov 2026): the three doors are drawn by the entry (sEntryHTML) as the levels Foundations, Fluent, Expert. */
+const SWAY = 'isx-way';
+const sWords = t => (Array.isArray(t) ? t.join(' ') : String(t || '')).replace(/\{\{\w+\|([^}]+)\}\}/g, '$1').split(/\s+/).filter(Boolean).length;
+/* minutes from the text itself: words at 200 a minute plus 8 seconds a card; each decision, one walk of its other path and its crisis card counted once.
+   guide build (16 Nov 2026, guide spine §6.1): on the ground line the folds count too (“Say more”, the parts, the closing line), because that
+   is where the primer teaches and a beginner reads them; elsewhere “The mechanism” is opened on demand and stays uncounted. */
 function sMins(ids) {
   let w = 0, c = 0;
   ids.forEach(id => { const L = SLINES.find(l => l.id === id); if (!L) return; L.beats.forEach(B => { w += sWords(B.t) + sWords(B.why) + sWords(B.x); c++;
+    if (L.gnd) w += (B.more || []).reduce((a, t) => a + sWords(t), 0) + (B.parts || []).reduce((a, t) => a + sWords(t), 0) + sWords(B.after);
     if (B.fork) { const D = SDEC[B.fork]; w += sWords(D.q) + sWords(D.ctx && D.ctx.x) + sWords(D.real.join(' ')) + sWords(D.alt.join(' ')) + sWords(D.crisis.t) + sWords(D.crisis.x); c += 2 + D.chain.length; D.chain.forEach(C => { w += sWords(C.t) + sWords(C.x); }); } }); });
   return Math.max(1, Math.round(w / 200 + c * 8 / 60));
-}
-function sDoorsHTML() {
-  const last = stGet(SWAY), gnd = SGND_OPEN();
-  const D = [
-    { k: 'ground', t: 'From the ground up', a: 'Assumes nothing. Eight short screens on deficits, bonds and yields, then the guide.', m: gnd ? 'about ' + sMins(['gnd', 'pre', 'main']) + ' minutes' : 'coming soon', off: !gnd },
-    { k: 'guide', t: 'The guide', a: 'Assumes you know what a Treasury yield is. First principles, ' + SLINES[0].chs.length + ' chapters, ' + SLINES[0].beats.filter(B => B.fork).length + ' calls.', m: 'about ' + sMins(['pre', 'main']) + ' minutes', gold: true },
-    { k: 'map', t: 'The full map', a: 'Assumes you know the plumbing. The layout is part of the thesis, so you can piece it together from the map alone. Where it isn’t clear, the guide explains.', m: 'every figure lit · any step one click away' },
-  ];
-  return `<div class="tw-in"><div class="tw-k" id="isx-tw-k">Three ways in</div><div class="tw-doors" role="group" aria-labelledby="isx-tw-k">${D.map(d => `<button type="button" class="tw-door${d.gold ? ' gold' : ''}${d.off ? ' off' : ''}" data-way="${d.k}" aria-describedby="isx-tw-${d.k}"${d.off ? ' aria-disabled="true"' : ''}>`
-    + `<b>${fe(d.t)}</b>${last === d.k && !d.off ? '<small class="tw-last">Last time</small>' : ''}<span id="isx-tw-${d.k}"><span class="tw-a">${fe(d.a)}</span> <em class="tw-m">${d.off ? LOCK3 : ''}${fe(d.m)}</em></span>${d.off ? '' : '<i aria-hidden="true">→</i>'}</button>`).join('')}</div></div>`;
 }
 /* tiers build B (15 Nov 2026): term tips at first use on a card (spec §4.3 and §7 G; copy rule 1: a term is defined where each route first
    uses it). The primer and first principles carry their tips in the text; on every card the first use of a technical term below is tipped
@@ -7646,7 +7761,7 @@ const TIPW = [['srf', /\bstanding repo\b/], ['rrp', /\breverse repo\b/], ['swaps
   ['tga', /Treasury’s account|its account at the Fed/], ['reserves', /(?<!central-)\b[Bb]ank reserves\b|\bReserves\b/], ['debtlimit', /\bdebt limit\b/], ['buyback', /\bbuybacks?\b/],
   ['bills', /\b[Bb]ills\b/], ['mmf', /\b[Mm]oney funds?\b/], ['dealer', /\b[Dd]ealer banks?\b|\b[Dd]ealers\b/], ['hedgefund', /\b[Hh]edge funds?\b/],
   ['genius', /\bGENIUS Act\b/], ['stablecoin', /\b[Ss]tablecoins?\b/], ['swapline', /\bswap lines?\b|\bswap framework\b/], ['esf', /Exchange Stabilization Fund/],
-  ['fima', /\bFIMA\b/], ['fxint', /\bintervened\b|\bcurrency intervention\b/], ['carry', /\bcarry trades?\b/], ['brent', /\bBrent\b/], ['pce', /\bPCE\b/],
+  ['fima', /\bFIMA\b/], ['fed', /\bthe Fed\b/], ['mbs', /\bmortgage-backed securit(?:y|ies)\b/], ['aitrade', /\bAI trade\b/], ['fxint', /\bintervened\b|\bcurrency intervention\b/], ['carry', /\bcarry trades?\b/], ['brent', /\bBrent\b/], ['pce', /\bPCE\b/],
   ['hyperscalers', /\b[Hh]yperscalers\b/], ['sp500', /S&P 500/], ['cover', /\bcover ratios?\b/], ['spv', /\b[Ss]pecial-purpose vehicles?\b|\bSPVs?\b/],
   ['privcredit', /\b[Pp]rivate credit\b/], ['capex', /\bcapex\b/], ['forward', /\bforward sale\b/], ['tpu', /\bTPUs?\b/], ['underwrite', /\bunderwrite\b/],
   ['coupon', /\bcoupons?\b/], ['spread', /\bspread(?= over)/], ['y10', /\b10-year (Treasury )?yield\b|\bthe 10-year\b/], ['termprem', /\bterm premium\b/], ['curve', /\byield curve\b/],
@@ -7672,15 +7787,84 @@ function sTips(arr) {
 const sEcho = t => t ? `<p class="thesis-echo">${ft(t)}</p>` : '';
 /* the terms a primer screen defines, listed in its fold (spec §5) */
 const sTermsHTML = (...ts) => { const ks = []; ts.join(' ').replace(/\{\{(\w+)\|/g, (m, k) => { if (DEFS[k] && !ks.includes(k)) ks.push(k); return m; }); return ks.length ? `<div class="gnd-terms"><b>Terms on this screen</b><dl>${ks.map(k => `<dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd>`).join('')}</dl></div>` : ''; };
-/* a primer screen: the kicker, two sentences, the echo where there is one, what is lit (hidden line), a quiet way up, and “Say more” */
+/* guide build (16 Nov 2026): the primer's three diagrams (guide spine §3.3, §3.4, §3.9), in the card's grammar: mono labels, hairlines,
+   steel, and gold only for what is lit. Each has a table view (the same content as a table, one click away) and a text alternative (the
+   screen's hidden line). The pyramid is round S2a's, apex first here: shares at the top, cash at the base. */
+const PYR = [['Shares', 'firms', 'firms (a claim on profits, with no promise to repay)'], ['Company and mortgage bonds', 'firms, households', 'firms; households, through banks'], ['Long Treasury bonds', 'the government'], ['Treasury bills', 'the government'],
+  ['Money funds', 'fund managers'], ['Dollar tokens (stablecoins)', 'token issuers'], ['Bank deposits', 'banks'], ['Cash and bank reserves', 'the Fed']];
+const ERAS = [
+  { k: 'Gold', y: '1944–1971', ys: '1944–71', c: 'dollar reserves, convertible into gold', by: 'the US state, sending dollars abroad', br: 'Nixon ends gold convertibility, 1971' },
+  { k: 'Oil money', y: '1974–1982', ys: '1974–82', c: 'bank deposits and loans; Treasuries for Saudi Arabia', by: 'Wall Street and offshore banks', br: 'Latin American debt crisis, 1982' },
+  { k: 'Mortgages', y: '1997–2008', ys: '1997–2008', c: 'agency bonds and mortgage-backed securities', by: 'households, through banks and the agencies', br: 'the financial crisis, 2008' },
+  { k: 'The government’s debt', y: '2008–2014', ys: '2008–14', c: 'Treasuries, bought by central banks', by: 'the federal government', br: 'official buying stalls, 2014' },
+  { k: 'The AI trade', y: 'since 2014', ys: 'since 2014', c: 'claims on US profits: the AI trade', by: 'firms', br: 'open: the guide’s last chapter, “If it breaks”' }];
+function sDiagHTML(k) {
+  if (!k) return '';
+  let pic, tbl, foot;
+  if (k === 'pyr') {
+    pic = `<div class="gd-edge">Further from cash · riskier · pays more</div><ol class="gd-tiers">${PYR.map(([c, by], i) => `<li style="--w:${Math.round(16 + i * 12)}%"><i></i><b>${fe(c)}</b><em>${fe(by)}</em></li>`).join('')}</ol>`; foot = 'Closer to cash · safer · pays less';
+    tbl = `<table><caption>The hierarchy of money, from the apex to the base. Each tier is a promise to pay in the tier beneath it.</caption><thead><tr><th scope="col">Tier</th><th scope="col">Claim</th><th scope="col">Issued by</th></tr></thead><tbody>${PYR.map(([c, by, full], i) => `<tr><td>${8 - i}</td><th scope="row">${fe(c)}</th><td>${fe(full || by)}</td></tr>`).join('')}</tbody></table>`;
+  } else {
+    const lit = k === 'eras5', rows = lit ? ERAS : ERAS.slice(0, 4);
+    pic = `<ol class="gd-eras${lit ? ' lit' : ''}">${ERAS.map((E5, i) => i < 4 ? `<li><span>${fe(E5.ys)}</span><i></i><b>${fe(E5.k)}</b></li>` : lit ? `<li class="on"><span>${fe(E5.ys)}</span><i></i><b>${fe(E5.k)}</b></li>` : `<li class="open"><span>${fe(E5.ys)}</span><i></i><b>?</b></li>`).join('')}</ol>`
+; foot = `<span class="gd-dm"></span>the break that forced the next${lit ? ' · <span class="gd-dm q"></span>open' : ''}`;
+    tbl = `<table><caption>How the US gave the world its claims, era by era. Each ended in the break that forced the next.</caption><thead><tr><th scope="col">Era</th><th scope="col">Claim the world held</th><th scope="col">Issued by</th><th scope="col">Broke at</th></tr></thead><tbody>${rows.map(E5 => `<tr><th scope="row">${fe(E5.k)}<small>${fe(E5.y)}</small></th><td>${fe(E5.c)}</td><td>${fe(E5.by)}</td><td>${fe(E5.br)}</td></tr>`).join('')}`
+      + (lit ? '' : `<tr><th scope="row">?<small>since 2014</small></th><td colspan="3">still to come on this route</td></tr>`) + `</tbody></table>`;
+  }
+  return `<div class="gd" data-gd="${k}"><div class="gd-pic" aria-hidden="true">${pic}</div><div class="gd-tbl" hidden>${tbl}</div><div class="gd-foot"><span class="gd-edge" aria-hidden="true">${foot}</span><button type="button" class="s2lnk gd-tg" data-gdt aria-pressed="false">View as table</button></div></div>`;
+}
+/* plain source links (a source is not an essay: the orange Substack button stays for essays), and the one link line to the exchange on X */
+const sSrcLinks = ls => ls && ls.length ? `<div class="lsrc gs-lks">${ls.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fe(t)}</a>`).join(' · ')}</div>` : '';
+const sXlHTML = xl => xl ? `<p class="gs-xl"><a href="${xl[1]}" target="_blank" rel="noopener">${fe(xl[0])}</a></p>` : '';
+/* a primer screen: the kicker, two sentences, the echo where there is one, the diagram where there is one, what is lit (hidden line), a
+   quiet way up, and “Say more” */
 function sGndHTML(L, b) {
-  const B = L.beats[b], n = L.beats.length, more = B.more || [];
+  const B = L.beats[b], n = L.beats.length, more = B.more || [], flat = more.map(t => Array.isArray(t) ? t.join(' ') : t);
   return `<div class="s2k" style="--rc:${L.c}"><i></i>The basics<span class="sn-cnt">${b + 1} of ${n}</span></div><h3>${fe(B.t)}</h3><p class="s2p">${ft(B.x)}</p>${sEcho(B.ech)}`
+    + sDiagHTML(B.dg)
     + `<p class="vh">${fe(B.alt ? B.alt() : '')}</p>`
     + `<p class="gnd-map"><span>On the map</span> ${fe(B.map)}</p>`
     + `<p class="gnd-know"><button type="button" class="s2lnk" data-sl="${SPI}" data-sb="0">I know this: go to the guide</button></p>`
-    + sDeep(more.map(t => `<p>${ft(t)}</p>`).join('') + (B.parts ? `<dl class="gnd-parts">${B.parts.map(([h, t]) => `<dt>${fe(h)}</dt><dd>${fe(t)}</dd>`).join('')}</dl>` : '') + (B.after ? `<p>${fe(B.after)}</p>` : '')
-      + `<div class="lsrc cb-src">${B.src ? 'Source: ' + fe(B.src) : 'Source: no figure on this screen.'}</div>` + (B.lk ? sLinksHTML(B.lk) : '') + sTermsHTML(B.x, ...more), 'Say more');
+    + sDeep(more.map(t => Array.isArray(t) ? `<p><b class="gd-ld">${fe(t[0])}</b> ${ft(t[1])}</p>` : `<p>${ft(t)}</p>`).join('') + sXlHTML(B.xl) + (B.parts ? `<dl class="gnd-parts">${B.parts.map(([h, t]) => `<dt>${fe(h)}</dt><dd>${fe(t)}</dd>`).join('')}</dl>` : '') + (B.after ? `<p>${fe(B.after)}</p>` : '')
+      + (B.soon ? `<p class="gs-soon">${LOCK3}${fe(B.soon)}</p>` : '')
+      + `<div class="lsrc cb-src">${B.src ? 'Source: ' + fe(B.src) : 'Source: no figure on this screen.'}</div>` + sSrcLinks(B.sl) + (B.lk ? sLinksHTML(B.lk) : '') + sTermsHTML(B.x, ...flat), 'Say more');
+}
+/* guide build (16 Nov 2026): the guide's entry (spec guide-entry-16-nov §1, words from guide spine §2). It replaces the opening card “How
+   the plumbing was built”: the title, the promise, then one glass card with the thesis in plain words (the full wording one click away),
+   what this part shows, three levels and how the guide works. Time and difficulty are bars; the minutes live in each level's accessible
+   name. The levels keep the keys of the three doors (ground, guide, map) and the one storage key, isx-way. */
+const SENTRY = { k: 'Scott Bessent Simulator', q: 'Why does the dollar need the AI trade?', p: 'By the end you will know, and you will know who keeps it going.',
+  th: ['Most economists treat the world’s trade imbalances, and the {{hotmoney|hot money}} that follows them, as a fault to be fixed. Elias Rutten’s thesis is that the instability is ', 'made on purpose and used as a weapon', ', by the United States and by China.'],
+  rem: 'Understanding the mechanics takes time. If you can’t finish today, set a reminder.' };
+const SWAYS = [
+  { k: 'ground', t: 'Foundations', a: 'I know the US has a debt problem, but not why.', ids: ['gnd', 'main'], lv: 1, al: 'the basics, then the guide', as: 'Assumes nothing' },
+  { k: 'guide', t: 'Fluent', a: 'I know how the dollar system works.', ids: ['pre', 'main'], lv: 2, al: 'first principles, then the guide', as: 'Assumes you know what a Treasury yield is', sug: true },
+  { k: 'map', t: 'Expert', a: 'I know the cogs. Show me the thesis on the map.', ids: null, lv: 3, al: 'the full map, every figure lit, any step of the guide one click away', as: 'Assumes you know the plumbing' }];
+const sWayMins = W => W.ids ? sMins(W.ids) : null;
+function sEntryHTML() {
+  const last = stGet(SWAY), G = SLINES[0], mins = SWAYS.map(sWayMins), top = Math.max(...mins.filter(Boolean)), scale = top > 60 ? top * 1.1 : 60;
+  const nInd = IND.filter(I => !I.slot).length, nDec = Object.keys(SDEC).length, word = n => sWord(n);
+  const way = (W, i) => { const m = mins[i], tag = last === W.k ? '<small class="ge-tag last">Last time</small>' : !last && W.sug ? '<small class="ge-tag">Suggested</small>' : '';
+    /* the minutes and what the route is live in the level's accessible name only: a hidden line after the visible words (the bars are for the eye) */
+    const more = `${W.al.replace(/^./, c => c.toUpperCase())}. ${m ? 'About ' + m + ' minutes' : 'At your own pace'}. ${W.as}.`;
+    return `<button type="button" class="ge-way${W.sug ? ' sug' : ''}" data-way="${W.k}"><span class="ge-wt"><b>${fe(W.t)}</b> ${tag} <i aria-hidden="true">→</i></span> <span class="ge-wa">${fe(W.a)}</span> <span class="vh">${fe(more)}</span>`
+      + `<span class="ge-bars" aria-hidden="true"><span class="ge-bl">Time</span><span class="ge-tb${m ? '' : ' pace'}">${m ? `<i style="width:${Math.min(100, Math.round(m / scale * 100))}%"></i>` : '<em>your pace</em>'}</span><span class="ge-bl">Difficulty</span><span class="ge-db">${[1, 2, 3].map(j => `<i${j <= W.lv ? ' class="on"' : ''}></i>`).join('')}</span></span></button>`; };
+  return `<div class="ge" id="isx-gentry"><div class="ge-head"><div class="ge-k">${fe(SENTRY.k)}</div><h3 class="ge-t">The imperial <span>machinery</span></h3><i class="ge-hr" aria-hidden="true"></i><p class="ge-pr"><b>${fe(SENTRY.q)}</b> ${fe(SENTRY.p)}</p></div>`
+    + `<div class="ge-card"><span class="ge-br" aria-hidden="true"></span>`
+    + `<section class="ge-sec ge-th s2thesis"><span class="ge-lab"><i aria-hidden="true">◆</i>The thesis</span><div class="ge-thx"><p>${ft(SENTRY.th[0])}<em>${fe(SENTRY.th[1])}</em>${fe(SENTRY.th[2])}</p><button type="button" class="ge-pill" data-gefull aria-expanded="false" aria-controls="isx-ge-full">Full thesis <span aria-hidden="true">›</span></button></div>`
+    + `<div class="ge-full" id="isx-ge-full" hidden><p>${richText(fe(SMAIN.thesis))}</p></div></section>`
+    + `<section class="ge-sec ge-shows" aria-labelledby="isx-ge-sh"><span class="ge-lab" id="isx-ge-sh">What this part shows</span><ol>`
+    + `<li class="c1"><span>01 · Every cog</span><p><b>${Object.keys(FN).length}</b> actors and gauges, <b>${FE.length}</b> relations and <b>${nInd}</b> dated indicators.</p></li>`
+    + `<li class="c2"><span>02 · How Washington works it</span><p><b>${LEVERS.length}</b> levers, and <b>${word(nDec)}</b> points where you take the decision yourself.</p></li>`
+    + `<li class="c3"><span>03 · Where it could break</span><p><b>${word(nDec).replace(/^./, c => c.toUpperCase())}</b> chain reactions toward a crisis, each anchored in a real precedent.</p></li></ol></section>`
+    + `<section class="ge-sec ge-ways"><span class="ge-lab" id="isx-tw-k">Choose your way in</span><div class="ge-wg" role="group" aria-labelledby="isx-tw-k">${SWAYS.map(way).join('')}</div></section>`
+    + `<section class="ge-sec ge-how" aria-labelledby="isx-ge-hw"><span class="ge-lab" id="isx-ge-hw">How the guide works</span><ul>`
+    + `<li><span class="g g-dw" aria-hidden="true">word</span>Dotted words carry a definition: hover or tap.</li>`
+    + `<li><span class="g g-dm" aria-hidden="true">◆</span>${word(nDec).replace(/^./, c => c.toUpperCase())} calls are yours: choose, then see what happened.</li>`
+    + `<li><span class="g g-mi" aria-hidden="true">More inside ›</span>A gold tab opens a deeper view.</li>`
+    + `<li><span class="g g-ar" aria-hidden="true">← →</span>${COARSE ? 'Swipe the card, or tap Next.' : 'Next and Back, or the arrow keys.'}</li></ul></section></div>`
+    + `<div class="ge-foot"><p class="ge-rem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>${fe(SENTRY.rem)}</span><button type="button" class="ge-pill sm" data-remind>Set a reminder</button></p>`
+    + `<button type="button" class="ge-pill" data-simtour aria-label="Take the tour of the Scott Bessent Simulator">Tour</button></div></div>`;
 }
 /* the figure the closing card needs and the page did not carry: stored here with its source (copy Part F, point 2) */
 const SFIG = { gbp: { v: '47%', k: 'Hyperscalers’ share of sterling corporate bond issuance', d: '2026 to early September', src: 'Bank of England Financial Policy Committee record, 25 Sep 2026 (data round F6, section 3)' } };
@@ -7694,33 +7878,33 @@ function simBodyHTML0() {
   if (b < 0) {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
-    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide · ' + L.chs.length + ' chapters · ' + n + ' steps' : L.pre ? 'Start here · ' + n + ' reveals' : L.gnd ? 'From the ground up · ' + n + ' screens' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
-      + (L.main && SMAIN.thesis ? `<div class="s2thesis"><span>The map’s thesis</span><p>${richText(fe(SMAIN.thesis))}</p></div>` : '')
-      + (L.main ? sDoorsHTML() + `<p class="ifx-click"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5l12.5 6.2-5.6 1.9-2.1 5.9z"/><path d="M13 12l5.5 5.5"/></svg>${sClickLine()}</p>`
-        : `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${L.gnd ? SPI : 0}" data-sb="${L.gnd ? 0 : -1}">${L.pre || L.gnd ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
-      + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.main ? `<p>About ${sMins(['main'])} minutes. Each step lights the actors and relations it is about; the rest of the machine waits in outline. Jump to any chapter from the bar below.</p>` : L.pre ? `<p>About ${sMins(['pre'])} minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting, and an author’s reading carries the author’s name.</p>` : L.gnd ? `<p>About ${sMins(['gnd'])} minutes. Each screen lights the part of the map it is about, and every term is defined where it first appears: hover or tap a dotted word. Then first principles, then the guide.</p>` : '')
+    if (L.main) return sEntryHTML();
+    return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.pre ? 'Start here · ' + n + ' reveals' : L.gnd ? 'Foundations · ' + n + ' screens' : 'Mechanism · ' + n + ' steps'}</div><h3>${fe(L.t)}</h3><p class="s2p">${ft(l1)}</p>`
+      + (`<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${L.gnd ? SPI : 0}" data-sb="${L.gnd ? 0 : -1}">${L.pre || L.gnd ? 'Skip to the guide' : 'Back to the guide'}</button></div>`)
+      + sDeep((l2 ? `<p>${ft(l2)}</p>` : '') + (L.pre ? `<p>About ${sMins(['pre'])} minutes. Each reveal lights the part of the machine it is about. Accounting is marked as accounting, and an author’s reading carries the author’s name.</p>` : L.gnd ? `<p>About ${sMins(['gnd'])} minutes. Each screen lights the part of the map it is about, and every term is defined where it first appears: hover or tap a dotted word. Then the guide; first principles are offered at the end, as the same ground in the words of mechanism.</p>` : '')
         + (forks ? `<p>At ${['', 'one moment', 'two moments', 'three moments'][forks] || forks + ' moments'} you sit in Bessent’s chair and choose before you see what happened. Either way, you can walk the other path.</p>` : '')
-        + (L.main ? `<ol class="s2chl">${L.chs.map((C, ci) => `<li><button type="button" data-sb="${L.first[ci]}"><span>${ci + 1}</span><b>${fe(C.t)}</b><em>${fe(C.w)}</em></button></li>`).join('')}</ol>` : ''), L.main || L.pre || L.gnd ? 'How the guide works' : 'The mechanism');
+, L.pre || L.gnd ? 'How the guide works' : 'The mechanism');
   }
   if (b >= n) {
     const rest = L.main ? SREST.map(i => `<li><i style="background:${FT[FE[i][2]][0]}"></i><span><b>${fe(FN[FE[i][0]][3])} → ${fe(FN[FE[i][1]][3])}</b> ${fe(FE[i][3])}</span></li>`).join('') : '';
     if (L.gnd) return `<div class="s2k" style="--rc:${L.c}"><i></i>The basics · ${n} screens</div><h3>The ground is laid.</h3>`
-      + `<p class="s2p">You have the words the guide uses: deficit, Treasuries, yield, the 10-year, the twin deficit. Next comes the question under all of them: why the world’s savings come to the US at all.</p>`
-      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="${SPI}" data-sb="0">First principles: why the world’s savings come to the US ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="0" data-sb="0">Straight to the guide</button></div>`;
+      + `<p class="s2p">You know why the world holds American claims, why the state issues most of them, and why the AI trade now carries them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">Start the guide ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-sl="${SPI}" data-sb="0">First principles: the same ground, as mechanism</button></div>`;
     const nxt = L.main ? null : SLINES[SIM.line % PLAYS.length + 1];
     if (L.pre) return `<div class="s2k" style="--rc:${L.c}"><i></i>First principles · ${n} reveals</div><h3>Now the plumbing</h3>`
       + `<p class="s2p">You can now read the map from its source: the deficit, the claims that mirror it, and the debt that makes room for them. The guide starts where the money lands: a data centre that has to be paid for.</p>`
-      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">How the plumbing was built ${sArrR}</button></div>`
+      + `<div class="s2acts"><button type="button" class="sn-go" data-sl="0" data-sb="0">The imperial machinery ${sArrR}</button></div>`
       + `<div class="s2more"><button type="button" data-sp="1">One mechanism at a time</button><button type="button" data-sm="full">The full view</button><button type="button" data-sg="restart">Start again</button></div>`;
     return `<div class="s2k" style="--rc:${L.c}"><i></i>${L.main ? 'Guide complete' : n + ' steps'}</div><h3>${L.main ? 'The whole machine' : 'Mechanism complete'}</h3>`
       + (L.main ? `<p class="s2p">${Object.keys(FN).length} actors, ${FE.length} relations and ${LEVERS.length} levers, all on the map now.</p>`
         /* tiers build B: the close pays off the thesis (spec §1.1 rule 5, copy Part D); its four verbs answer the four echoes */
         + sEcho('A price manipulated, buyers captured, rules shaped, dollars rationed: those are the valves, and you have seen who holds them.')
+        + `<p class="s2p s2pay">That is why the dollar needs the AI trade: it is where the world’s savings now land, and every valve you have seen keeps them landing there.</p>`
         + `<p class="s2p s2close">${ft(`The system also holds because others are bought in. In 2025 Taiwan’s exports of ICT goods and components were about half its GDP, and Malaysia’s and Singapore’s {{gross|gross}} AI-hardware exports about ${sAiPct('MYS')}% and ${sAiPct('SGP')}%. Economies that grow like this cannot step out of the trade without giving up growth. At home they are crowded out: the hyperscalers also borrow in the allies’ own currencies, and took ${SFIG.gbp.v} of sterling corporate bond issuance in ${SFIG.gbp.d}, so local firms compete with them for their own savers.`)}</p>`
         + `<p class="s2p">Open the full view to run the plays, pull any lever and click anything. Scenarios shows the same power being exercised.</p>`
         : `<p class="s2p">${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine. Open the full view to run the plays, pull any lever and click anything.</p>`)
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
-      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button></div>`
+      + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">One mechanism at a time</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button>${L.main ? '<button type="button" data-remind>Plan the next session</button>' : ''}</div>`
       + sDeep((L.main ? `<p class="lsrc s2closen">Gross exports include imported parts, so for the re-export hubs Singapore and Malaysia they overstate what is earned at home. Taiwan: the broader ICT category. Source: as stored on the Circuit’s exposure chart, 2025 (step 06, layer “Hardware exports”). Sterling: ${fe(SFIG.gbp.src)}, ${fe(SFIG.gbp.k.toLowerCase())}, ${fe(SFIG.gbp.d)}: a high share of a small market, and not comparable with another currency’s share, because each has a different base.</p>` : '') + (L.main && SREST.length ? `<p>${SREST.length === 1 ? 'One relation was' : sWord(SREST.length).replace(/^./, c => c.toUpperCase()) + ' relations were'} not part of the guide; ${SREST.length === 1 ? 'it is' : 'they are'} lit now:</p><ul class="sn-rest">${rest}</ul>` : ''), L.main ? 'Sources, and what the guide left out' : 'Not in the guide');
   }
   const dk = sDecK();
@@ -7736,7 +7920,7 @@ function simBodyHTML0() {
     + (lead ? `<p class="s2why">${ft(tw)}</p>` : '') + `<p class="s2p">${ft(tx1)}</p>` + sEcho(B.ech) + (B.nt ? `<p class="sn-note cb-nt${B.ntEcho ? ' thesis-echo' : ''}">${ft(B.nt)}</p>` : '') + (B.vw ? doorBtn(B.vw, B.vr) : '')
     + (B.lev.length ? `<div class="sn-new lvx"><span>New lever${B.lev.length > 1 ? 's' : ''}</span>${B.lev.map(i => `<button type="button" class="sn-chip lv2" data-slv="${i}" style="--nc:${LEVERS[i].c}"><span aria-hidden="true">${LEVERS[i].ic}</span>${fe(LSH[i])}</button>`).join('')}</div>` : '');
   if (WD && !SIM.seenAlt.has(wk)) h += `<p class="dfine"><button type="button" class="s2lnk" data-dgo="alt">See the other path</button></p>`;
-  h += sDeep((x2 ? `<p>${ft(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${ft(t)}</p>`).join('') : '') + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + (B.lk ? sLinksHTML(B.lk) : '')
+  h += sDeep((x2 ? `<p>${ft(x2)}</p>` : '') + (B.d ? B.d.map(t => `<p>${ft(t)}</p>`).join('') : '') + sXlHTML(B.xl) + (B.src ? `<div class="lsrc cb-src">Sources: ${fe(B.src)}</div>` : '') + sSrcLinks(B.sl) + (B.lk ? sLinksHTML(B.lk) : '')
     + (P ? `<div class="sn-why" style="--rc:${R[1]}"><span>Follows from</span> <button type="button" data-sb="${b - 1}">${fe(P.t)}</button>${B.why && !lead ? `<p>${ft(B.why)}</p>` : ''}</div>` : '')
     + (L.pre ? '' : simTriHTML(B))
     + (nw.length ? `<div class="sn-new"><span>New on the map</span>${nw.map(sChip).join('')}</div>` : ''));
@@ -7769,7 +7953,7 @@ function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); { const st = $('stage'); if (st) st.inert = on && SIM.beat < 0 && !!sLine().main; } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
@@ -7887,6 +8071,8 @@ function simMount() {
     if (d.gs) { const q = d.gs.split(':'); gsOpen(false); SIM.ret = 'full'; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.tray = null; if (q[0] === 'd') simPhase(+q[1], +q[2], 'ask'); else simGo(+q[0], +q[1]); focusIn($('snarr'), '[data-twret]'); return; }
     if (d.twret != null) { SIM.ret = null; simSetMode('full'); focusIn(cock, '#isx-gsb'); return; }
     if (d.twkey != null) { const o = t.getAttribute('aria-expanded') !== 'true'; t.setAttribute('aria-expanded', String(o)); t.parentNode.classList.toggle('open', o); return; }
+    if (d.gdt != null) { const g = t.closest('.gd'), on = t.getAttribute('aria-pressed') !== 'true'; t.setAttribute('aria-pressed', String(on)); t.textContent = on ? 'View as diagram' : 'View as table'; g.querySelector('.gd-pic').hidden = on; g.querySelector('.gd-tbl').hidden = !on; g.querySelector('.gd-foot .gd-edge').hidden = on; return; }
+    if (d.gefull != null) { const f = $('ge-full'), on = f.hidden; f.hidden = !on; t.setAttribute('aria-expanded', String(on)); $('gentry').classList.toggle('full', on); return; }
     if (d.way) { if (t.getAttribute('aria-disabled') === 'true') return; stSet(SWAY, d.way); track('Way', { way: d.way });
       if (d.way === 'map') { simSetMode('full'); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
       else { const g = SLINES.findIndex(L => L.gnd); simGo(d.way === 'ground' && g >= 0 ? g : SPI, 0, 'focus'); }
@@ -7967,7 +8153,9 @@ window.ISX = {
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */
-  get mins() { return { ground: sMins(['gnd', 'pre', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
+  get primerIds() { return SGND.b.map(B => B.id); },
+  get figs() { return JSON.parse(JSON.stringify(SFIGN)); },   /* guide build: the figures this round stored, for checks */
+  get mins() { return { ground: sMins(['gnd', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
     decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ id: L.id, main: !!L.main, pre: !!L.pre, gnd: !!L.gnd, steps: L.beats.map((B, i) => ({ t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
@@ -8033,6 +8221,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/tour.js"></script>
 <script defer src="/imperial-stack/v2/simtour.js"></script>
 <script defer src="/imperial-stack/v2/mistake.js"></script>
+<script defer src="/imperial-stack/v2/remind.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

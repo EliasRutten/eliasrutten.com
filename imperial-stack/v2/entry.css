@@ -1,0 +1,200 @@
+/* v2 guide build (16 Nov 2026): the guide's entry, the primer's diagrams, the reminder.
+   Spec: claude/specs/guide-entry-16-nov.md (§1, §3) and claude/content/guide-spine-16-nov.md (§3). Scoped under #isx-root, linked after b6.css.
+   The entry is drawn in the Circuit's grammar: a glass card with a gold corner bracket, mono kickers, condensed caps names, outlined pills.
+   One accent: gold only where something can be done or is lit. The older .tw-* rules stay until dead code is removed. */
+
+/* ---------- the entry: an overlay on the Simulator's stage ---------- */
+#isx-root #isx-cock.s2.s4open .s2stage::after { content: ""; position: absolute; inset: 0; z-index: 4; background: radial-gradient(ellipse at 50% 42%, rgba(5, 9, 15, .80), rgba(5, 9, 15, .94)); }
+#isx-root #isx-cock.s2.s4open .s2ttl { visibility: hidden; }
+#isx-root #isx-cock.s2.s4open #isx-s2bar .rt-line, #isx-root #isx-cock.s2.s4open #isx-s2bar .rt-segs, #isx-root #isx-cock.s2.s4open .s2key, #isx-root #isx-cock.s2.s4open .tw-keyw { visibility: hidden; }
+#isx-root #isx-cock.s2.s4open .s2card { left: 50%; top: 80px; bottom: 90px; width: min(1008px, calc(100% - 28px)); max-width: none; max-height: none; transform: translateX(-50%); justify-content: flex-start; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#isx-root #isx-cock.s2.s4open .s2card::before, #isx-root #isx-cock.s2.s4open .s2card::after { display: none; }
+/* centred while it fits; in a window too small for it, it scrolls from its top (auto margins, not justify-content, so nothing is cut off) */
+#isx-root #isx-cock.s2.s4open .s2in { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; padding: 0 4px; overflow-y: auto; scrollbar-width: thin; }
+#isx-root #isx-cock.s2.s4open .s2in > #isx-sn-body { margin: auto 0; padding: 3px 0; }
+#isx-root .s2 .ge { display: flex; flex-direction: column; align-items: stretch; gap: 14px; color: #c9d4de; }
+#isx-root .s2 .ge-head { text-align: center; }
+#isx-root .s2 .ge-k { font: 10.5px/1 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root #isx-cock.s2.s4open .s2card h3.ge-t { margin: 12px 0 0; font: 400 31px/1.15 var(--title); letter-spacing: .04em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .s2 .ge-t span { color: #ffb547; }
+#isx-root .s2 .ge-hr { display: block; width: 64px; height: 1px; margin: 14px auto 0; background: #ffb547; opacity: .8; }
+#isx-root .s2 .ge-pr { margin: 13px auto 0; max-width: 900px; font: 300 16px/1.45 var(--sans); color: #dfe7ee; }
+#isx-root .s2 .ge-pr b { font-weight: 500; color: #ffe2a8; }
+#isx-root .s2 .ge-card { position: relative; border: 1px solid #253442; border-radius: 14px; background: rgba(10, 18, 27, .88); }
+#isx-root .s2 .ge-br { position: absolute; left: -1px; top: -1px; width: 26px; height: 26px; border-left: 1.5px solid #ffb547; border-top: 1.5px solid #ffb547; border-top-left-radius: 14px; pointer-events: none; }
+#isx-root .s2 .ge-sec { padding: 13px 20px; }
+#isx-root .s2 .ge-sec + .ge-sec { border-top: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .ge-lab { display: block; margin: 0 0 7px; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .ge-lab i { margin-right: 7px; font-style: normal; color: #ffb547; }
+/* the thesis: plain words first, the full wording one click away */
+#isx-root .s2 .ge .ge-th.s2thesis { margin: 0; border: 0; border-radius: 0; background: none; }
+#isx-root .s2 .ge-thx { display: flex; align-items: center; gap: 18px; }
+#isx-root .s2 .ge-thx p { flex: 1; margin: 0; font: 400 14.5px/1.5 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .ge .ge-thx em { font: inherit; font-style: normal; color: #ffd27a; }
+#isx-root .s2 .ge-full { margin: 10px 0 0; padding: 2px 0 2px 14px; border-left: 2px solid #ffb547; }
+#isx-root .s2 .ge-full p { margin: 0; font: 400 13px/1.5 var(--sans); color: #c9d4de; }
+#isx-root .s2 .ge-pill { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; height: 36px; padding: 0 15px; border: 1px solid #3a4c5d; border-radius: 999px; background: none; color: #e4ebf1; font: 600 12.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+#isx-root .s2 .ge-pill.sm { min-height: 24px; height: 24px; padding: 0 11px; font-size: 11.5px; }
+#isx-root .s2 .ge-pill:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .ge-pill:focus-visible, #isx-root .s2 .ge-way:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+/* what this part shows: three columns, the only place the node colours key anything */
+#isx-root .s2 .ge-shows ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 26px; margin: 0; padding: 0; list-style: none; }
+#isx-root .s2 .ge-shows li span { display: block; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+#isx-root .s2 .ge-shows .c1 span { color: #ffd27a; }
+#isx-root .s2 .ge-shows .c2 span { color: #6fe0d2; }
+#isx-root .s2 .ge-shows .c3 span { color: #b99cff; }
+#isx-root .s2 .ge-shows p { margin: 6px 0 0; font: 400 13px/1.45 var(--sans); color: #c9d4de; }
+#isx-root .s2 .ge-shows p b { font-weight: 600; color: #f1f5f8; }
+/* three levels */
+#isx-root .s2 .ge-wg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+#isx-root .s2 .ge .ge-way { display: flex; flex-direction: column; align-items: stretch; gap: 0; min-height: 0; height: auto; margin: 0; padding: 12px 14px 12px; border: 1px solid #33444f; border-radius: 12px; background: rgba(13, 22, 32, .6); box-shadow: none; color: #c9d4de; text-align: left; cursor: pointer; transition: border-color var(--mo-t, .2s) var(--mo, ease), background var(--mo-t, .2s) var(--mo, ease); }
+#isx-root .s2 .ge .ge-way.sug { border-color: #ffb547; background: rgba(255, 181, 71, .05); box-shadow: 0 0 22px -8px rgba(255, 181, 71, .45); color: #c9d4de; }
+#isx-root .s2 .ge .ge-way:hover { border-color: #ffd27a; background: rgba(255, 181, 71, .08); }
+#isx-root .s2 .ge-wt { display: flex; align-items: center; gap: 9px; }
+#isx-root .s2 .ge .ge-way .ge-wt b { font: 700 17px/1.1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .s2 .ge .ge-way.sug .ge-wt b { color: #ffd27a; }
+#isx-root .s2 .ge .ge-way .ge-wt > i { margin-left: auto; font-style: normal; font-size: 15px; line-height: 1; color: #8ea0b2; position: static; }
+#isx-root .s2 .ge .ge-way:hover .ge-wt > i, #isx-root .s2 .ge .ge-way.sug .ge-wt > i { color: #ffb547; }
+#isx-root .s2 .ge .ge-tag { position: static; margin: 0; padding: 0; border: 0; background: none; font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #ffb547; }
+#isx-root .s2 .ge .ge-tag::before { content: "● "; font-size: 8px; vertical-align: 1px; }
+#isx-root .s2 .ge .ge-tag.last { color: #6fe0d2; }
+#isx-root .s2 .ge-wa { display: block; margin: 7px 0 0; min-height: 2.9em; font: 400 13px/1.45 var(--sans); color: #c9d4de; }
+#isx-root .s2 .ge-bars { display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: 7px 10px; margin: 9px 0 0; }
+#isx-root .s2 .ge-bl { font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .ge-tb { position: relative; display: block; height: 3px; border-radius: 2px; background: repeating-linear-gradient(90deg, rgba(143, 163, 182, .3) 0, rgba(143, 163, 182, .3) calc(16.666% - 1px), rgba(143, 163, 182, .75) calc(16.666% - 1px), rgba(143, 163, 182, .75) 16.666%); }
+#isx-root .s2 .ge-tb i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: #9fb1c2; }
+#isx-root .s2 .ge-way.sug .ge-tb i, #isx-root .s2 .ge-way.sug .ge-db i.on { background: #ffb547; }
+#isx-root .s2 .ge-tb.pace { height: 0; border-top: 1px dashed rgba(143, 163, 182, .7); background: none; }
+#isx-root .s2 .ge-tb.pace em { position: absolute; right: 0; top: -7px; padding-left: 7px; background: #0d1620; font: normal 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .ge-db { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+#isx-root .s2 .ge-db i { display: block; height: 3px; border-radius: 2px; background: rgba(143, 163, 182, .3); }
+#isx-root .s2 .ge-db i.on { background: #9fb1c2; }
+/* how the guide works: one row of four */
+#isx-root .s2 .ge-how { display: flex; align-items: center; gap: 22px; }
+#isx-root .s2 .ge-how .ge-lab { flex: none; margin: 0; }
+#isx-root .s2 .ge-how ul { flex: 1; display: grid; grid-template-columns: 1fr 1.2fr 1.32fr .95fr; gap: 6px 20px; margin: 0; padding: 0; list-style: none; }
+#isx-root .s2 .ge-how li { display: flex; align-items: center; gap: 8px; font: 400 12px/1.35 var(--sans); color: #b4c2ce; }
+#isx-root .s2 .ge-how .g { flex: none; font: 10.5px/1 var(--mono); letter-spacing: .08em; color: #e4ebf1; white-space: nowrap; }
+#isx-root .s2 .ge-how .g-dw { font: 400 12.5px/1.2 var(--sans); letter-spacing: 0; border-bottom: 1px dotted #9fb1c2; }
+#isx-root .s2 .ge-how .g-dm { font-size: 12px; color: #ffd27a; }
+#isx-root .s2 .ge-how .g-mi { padding: 3px 6px; border: 1px solid #ffb547; border-radius: 5px; font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: #ffd27a; }
+/* the foot: the reminder hint, the tour */
+#isx-root .s2 .ge-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 4px; }
+#isx-root .s2 .ge-rem { display: flex; align-items: center; gap: 10px; margin: 0; font: 400 13px/1.4 var(--sans); color: #8ea0b2; }
+#isx-root .s2 .ge-rem svg { flex: none; color: #ffb547; }
+/* compact: a short window (1280 × 760 must fit without scroll) */
+@media (min-width: 761px) and (max-height: 820px) {
+  #isx-root #isx-cock.s2.s4open .s2card { top: 74px; bottom: 84px; }
+  #isx-root .s2 .ge { gap: 9px; }
+  #isx-root #isx-cock.s2.s4open .s2card h3.ge-t { margin-top: 7px; font-size: 24px; }
+  #isx-root .s2 .ge-hr { margin-top: 8px; }
+  #isx-root .s2 .ge-pr { margin-top: 8px; font-size: 14px; }
+  #isx-root .s2 .ge-sec { padding: 9px 18px; }
+  #isx-root .s2 .ge-lab { margin-bottom: 5px; }
+  #isx-root .s2 .ge-thx p { font-size: 13.5px; line-height: 1.42; }
+  #isx-root .s2 .ge-shows p { margin-top: 4px; font-size: 12.5px; line-height: 1.38; }
+  #isx-root .s2 .ge .ge-way { padding: 9px 13px 10px; }
+  #isx-root .s2 .ge-wa { margin-top: 4px; min-height: 0; font-size: 12.5px; }
+  #isx-root .s2 .ge-bars { margin-top: 7px; gap: 6px 10px; }
+  #isx-root .s2 .ge-how li { font-size: 11.5px; }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  #isx-root .s2 .ge-how { flex-direction: column; align-items: stretch; gap: 6px; }
+  #isx-root .s2 .ge-how ul { grid-template-columns: repeat(2, 1fr); }
+  #isx-root .s2 .ge-shows ol { gap: 4px 16px; }
+  #isx-root #isx-cock.s2.s4open .s2card h3.ge-t { font-size: 24px; }
+}
+/* below 1241 px the Simulator's own switch sits in the title row, which the entry hides; where the header strip wraps to two rows the entry starts lower */
+@media (min-width: 761px) and (max-width: 1240px) { #isx-root #isx-cock.s2.s4open .s2sw { visibility: hidden; } }
+@media (min-width: 761px) and (max-width: 1100px) { #isx-root #isx-cock.s2.s4open .s2card { top: 122px; } }
+/* phones: the levels first, then the thesis, how it works, what this part shows; the entry scrolls inside the page */
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2.s4open .s2stage { display: none; }
+  #isx-root #isx-cock.s2.s4open .s2ttl { display: none; }
+  #isx-root #isx-cock.s2.s4open .s2card { position: static; width: auto; transform: none; }
+  #isx-root #isx-cock.s2.s4open .s2in { padding: 4px 14px 14px; }
+  #isx-root .s2 .ge { gap: 12px; }
+  #isx-root .s2 .ge-head { text-align: left; }
+  #isx-root #isx-cock.s2.s4open .s2card h3.ge-t { margin-top: 8px; font-size: 21px; }
+  #isx-root .s2 .ge-hr { margin: 10px 0 0; }
+  #isx-root .s2 .ge-pr { margin: 10px 0 0; font-size: 14.5px; }
+  #isx-root .s2 .ge-card { display: flex; flex-direction: column; }
+  #isx-root .s2 .ge-sec { padding: 13px 14px; border-top: 1px solid rgba(143, 163, 182, .16); }
+  #isx-root .s2 .ge-ways { order: 1; border-top: 0; }
+  #isx-root .s2 .ge-th { order: 2; }
+  #isx-root .s2 .ge-how { order: 3; flex-direction: column; align-items: stretch; gap: 8px; }
+  #isx-root .s2 .ge-shows { order: 4; }
+  #isx-root .s2 .ge-wg, #isx-root .s2 .ge-shows ol, #isx-root .s2 .ge-how ul { grid-template-columns: 1fr; }
+  #isx-root .s2 .ge-shows ol { gap: 10px; }
+  #isx-root .s2 .ge-wa { min-height: 0; }
+  #isx-root .s2 .ge .ge-way { min-height: 44px; }
+  #isx-root .s2 .ge-thx { flex-direction: column; align-items: flex-start; gap: 10px; }
+  #isx-root .s2 .ge-foot { flex-direction: column; align-items: flex-start; }
+  #isx-root .s2 .ge-rem { flex-wrap: wrap; }
+  #isx-root .s2 .ge-pill, #isx-root .s2 .ge-pill.sm { min-height: 44px; height: 44px; }
+  #isx-root #isx-cock.s2.s4open .s2low { display: none; }
+}
+
+/* ---------- the closing card's payoff ---------- */
+#isx-root .s2 .s2pay { color: #ffe2a8; }
+
+/* ---------- the primer's diagrams ---------- */
+#isx-root .s2 .gd { margin: 9px 0 0; }
+#isx-root .s2 .gd-edge { font: 10.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .gd-tiers { display: grid; gap: 2px; margin: 5px 0; padding: 0; list-style: none; }
+#isx-root .s2 .gd-tiers li { display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 9px; min-height: 15px; }
+#isx-root .s2 .gd-tiers i { justify-self: center; display: block; width: var(--w); height: 9px; border: 1px solid #6f8396; border-radius: 1.5px; background: rgba(143, 163, 182, .22); }
+#isx-root .s2 .gd-tiers li:first-child i { border-color: #ffb547; background: rgba(255, 181, 71, .25); }
+#isx-root .s2 .gd-tiers b { font: 500 12px/1.2 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .gd-tiers em { font: normal 10.5px/1.2 var(--mono); letter-spacing: .04em; color: #9fb1c2; text-align: right; }
+#isx-root .s2 .gd-eras { display: grid; grid-template-columns: .8fr 1fr 1fr 1.3fr 1fr; gap: 5px; margin: 2px 0 4px; padding: 0; list-style: none; }
+#isx-root .s2 .gd-eras li { display: grid; grid-template-rows: auto 9px auto; gap: 4px; align-content: start; min-width: 0; }
+#isx-root .s2 .gd-eras span { font: 10.5px/1 var(--mono); letter-spacing: 0; color: #9fb1c2; white-space: nowrap; }
+#isx-root .s2 .gd-eras i { position: relative; display: block; height: 3px; margin: 3px 5px 3px 0; border-radius: 2px; background: #6f8396; }
+#isx-root .s2 .gd-eras i::after, #isx-root .s2 .gd-dm { content: ""; position: absolute; right: -5px; top: -2.5px; width: 6px; height: 6px; border: 1px solid #e4ebf1; background: #0b131c; transform: rotate(45deg); }
+#isx-root .s2 .gd-dm { position: static; display: inline-block; margin: 0 5px 0 2px; vertical-align: 1px; }
+#isx-root .s2 .gd-dm.q, #isx-root .s2 .gd-eras li.on i::after { border-style: dashed; border-color: #ffb547; }
+#isx-root .s2 .gd-eras b { font: 600 11px/1.15 var(--display); letter-spacing: .06em; text-transform: uppercase; color: #e4ebf1; overflow-wrap: anywhere; }
+#isx-root .s2 .gd-eras li.open i { height: 0; margin-top: 4px; border-top: 1px dashed #6f8396; background: none; }
+#isx-root .s2 .gd-eras li.open i::after { display: none; }
+#isx-root .s2 .gd-eras li.open b, #isx-root .s2 .gd-eras li.open span { color: #8ea0b2; }
+#isx-root .s2 .gd-eras.lit li:not(.on) { opacity: .62; }
+#isx-root .s2 .gd-eras li.on i { background: #ffb547; box-shadow: 0 0 8px rgba(255, 181, 71, .5); }
+#isx-root .s2 .gd-eras li.on b, #isx-root .s2 .gd-eras li.on span { color: #ffd27a; }
+#isx-root .s2 .gd-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 24px; }
+#isx-root .s2 .gd-foot .gd-edge[hidden] { display: inline; visibility: hidden; }
+#isx-root .s2 .gd .gd-tg { flex: none; min-height: 24px; margin-left: auto; font-size: 12px; }
+@media (min-width: 761px) and (max-height: 820px) { #isx-root .s2 .gd-tiers { gap: 0; margin: 3px 0 2px; } #isx-root .s2 .gd-tiers li { min-height: 14px; } #isx-root .s2 .gd-tiers b { font-size: 11.5px; line-height: 1.15; } #isx-root .s2 .gd { margin-top: 6px; } }
+#isx-root .s2 .gd-tbl table { width: 100%; border-collapse: collapse; font: 400 11.5px/1.35 var(--sans); color: #c9d4de; }
+#isx-root .s2 .gd-tbl caption { padding: 0 0 5px; text-align: left; font-size: 11.5px; color: #9fb1c2; }
+#isx-root .s2 .gd-tbl th, #isx-root .s2 .gd-tbl td { padding: 3px 6px 3px 0; border-top: 1px solid rgba(143, 163, 182, .2); text-align: left; vertical-align: top; font-weight: 400; }
+#isx-root .s2 .gd-tbl thead th { border-top: 0; font: 10.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .gd-tbl tbody th { font-weight: 600; color: #e4ebf1; }
+#isx-root .s2 .gd-tbl th small { display: block; font: 10.5px/1.3 var(--mono); font-weight: 400; color: #9fb1c2; }
+#isx-root .s2 .gd-ld { font-weight: 600; color: #e4ebf1; }
+#isx-root .s2 .gs-xl { margin: 8px 0; }
+#isx-root .s2 .gs-xl a, #isx-root .s2 .gs-lks a { color: #c9d4de; text-decoration: underline; text-decoration-color: rgba(154, 171, 186, .5); text-underline-offset: 3px; }
+#isx-root .s2 .gs-xl a:hover, #isx-root .s2 .gs-lks a:hover { color: #fff; }
+#isx-root .s2 .gs-xl a:focus-visible, #isx-root .s2 .gs-lks a:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; border-radius: 4px; }
+#isx-root .s2 .gs-lks { margin-top: 4px; }
+#isx-root .s2 .gs-soon { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8ea0b2; }
+
+/* ---------- the reminder ---------- */
+#isx-root .rm { position: absolute; z-index: 30; left: 50%; bottom: 150px; width: min(430px, calc(100% - 28px)); transform: translateX(-50%); padding: 14px 16px 14px; border: 1px solid #253442; border-top: 2px solid #ffb547; border-radius: 12px; background: rgba(9, 16, 24, .97); box-shadow: 0 22px 60px -18px rgba(0, 0, 0, .9); color: #c9d4de; font: 400 13px/1.45 var(--sans); }
+#isx-root .rm[hidden] { display: none; }
+#isx-root .rm h3 { margin: 0; font: 700 16px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .rm p { margin: 5px 0 0; }
+#isx-root .rm .rm-x { position: absolute; right: 8px; top: 7px; width: 24px; height: 24px; border: 0; border-radius: 6px; background: none; color: #9fb1c2; font-size: 17px; line-height: 1; cursor: pointer; }
+#isx-root .rm .rm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+#isx-root .rm .rm-chip, #isx-root .rm .rm-go { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; height: 36px; padding: 0 13px; border: 1px solid #3a4c5d; border-radius: 999px; background: none; color: #e4ebf1; font: 600 12.5px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; white-space: nowrap; cursor: pointer; }
+#isx-root .rm .rm-chip[aria-pressed="true"] { border-color: #ffb547; color: #ffd27a; }
+#isx-root .rm .rm-chip:hover, #isx-root .rm .rm-go:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root .rm label { display: flex; align-items: center; gap: 9px; margin: 10px 0 0; font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .rm input { flex: 1; min-height: 36px; padding: 0 9px; border: 1px solid #3a4c5d; border-radius: 8px; background: #0b131c; color: #e4ebf1; font: 400 13px var(--sans); color-scheme: dark; }
+#isx-root .rm .rm-sum { margin: 10px 0 0; color: #e4ebf1; }
+#isx-root .rm .rm-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 11px 0 0; }
+#isx-root .rm .rm-go.gold { border-color: #ffb547; color: #ffd27a; }
+#isx-root .rm :is(button, a, input):focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root .rm .rm-note { margin: 8px 0 0; font-size: 12px; color: #8ea0b2; }
+@media (max-width: 760px) { #isx-root .rm { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom)); } #isx-root .rm .rm-chip, #isx-root .rm .rm-go { min-height: 44px; height: 44px; } #isx-root .rm .rm-x { width: 44px; height: 44px; right: 0; top: 0; } }
+@media (prefers-reduced-motion: reduce) { #isx-root .s2 .ge .ge-way { transition: none; } }
