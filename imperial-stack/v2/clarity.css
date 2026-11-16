@@ -33,3 +33,75 @@
 #isx-root .s2 .cl-out li button { padding: 0; border: 0; background: none; font: inherit; color: #c3d0db; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: #3a4d5f; text-underline-offset: 3px; }
 #isx-root .s2 .cl-out li button:hover { color: #fff; text-decoration-color: #ffd27a; }
 @media (max-width: 760px) { #isx-root .s2 .s2body h3.cl-q { font-size: 18px; } }
+
+/* ---------- this step in numbers (v2/clarity.js) ---------- */
+#isx-root .cl-nums { --nk: #8fa3b6; font-family: var(--body, inherit); color: #dbe4ec; }
+#isx-root .cl-nums.up { position: absolute; left: 0; right: 0; bottom: calc(100% + 12px); padding: 11px 16px 12px; border-radius: 14px; border: 1px solid var(--line); background: rgba(9, 15, 22, .78); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+#isx-root .cl-nums.in { margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid #1b2733; }
+#isx-root #isx-cock.s2:not(.s4open) .s2card.cl-has { max-height: calc(100% - var(--it, 164px) - 90px - var(--cl-nh, 0px)); }
+#isx-root .cl-nh { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 16px; }
+#isx-root .cl-nh > span, #isx-root .cl-bk > span { font: 10.5px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--nk); }
+#isx-root .cl-bk { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 9px 0 6px; }
+#isx-root .cl-bk > span { color: #c9d4de; letter-spacing: .1em; }
+#isx-root .cl-bk em { font: normal 10.5px/1.2 var(--mono); letter-spacing: .06em; color: var(--nk); white-space: nowrap; }
+#isx-root .cl-lnk { flex: none; min-height: 24px; padding: 0 2px; border: 0; background: none; font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #b4c2ce; cursor: pointer; text-decoration: underline; text-decoration-color: #3a4d5f; text-underline-offset: 3px; }
+#isx-root .cl-lnk:hover { color: #fff; text-decoration-color: #ffd27a; }
+#isx-root .cl-lnk:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; border-radius: 4px; }
+/* tiles: a value, what it measures, its date */
+#isx-root .cl-nt { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 0 14px; margin-top: 9px; }
+#isx-root .cl-nt.n1 { --n: 1; } #isx-root .cl-nt.n2 { --n: 2; } #isx-root .cl-nt.n3 { --n: 3; }
+#isx-root .cl-t { display: flex; flex-direction: column; min-width: 0; padding-left: 10px; border-left: 2px solid #2a3b4b; }
+#isx-root .cl-t b { font: 600 22px/1.1 var(--display); letter-spacing: .01em; color: #f3f6f9; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#isx-root .cl-nt.n3 .cl-t b { font-size: 19px; }
+#isx-root .cl-t span { margin-top: 4px; font-size: 12px; line-height: 1.35; color: #c3d0db; }
+#isx-root .cl-t span small { display: block; font-size: 10.5px; color: var(--nk); }
+#isx-root .cl-t em { margin-top: 3px; font: normal 10.5px/1.3 var(--mono); letter-spacing: .04em; color: var(--nk); }
+#isx-root .cl-tf { display: block; width: 100%; max-width: 120px; height: 3px; margin-top: 6px; border-radius: 2px; background: #1c2a37; }
+#isx-root .cl-tf i { display: block; height: 100%; border-radius: 2px; background: #c9d4de; }
+/* bars: two to four values on one scale, each labelled at its end */
+#isx-root .cl-b { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "l l" "bar v"; align-items: center; gap: 2px 9px; margin: 0 0 7px; }
+#isx-root .cl-b span { grid-area: l; font-size: 11.5px; line-height: 1.3; color: #b4c2ce; }
+#isx-root .cl-b > i { grid-area: bar; display: block; height: 9px; border-radius: 2px; background: rgba(143, 163, 182, .1); }
+#isx-root .cl-b > i > i { display: block; height: 100%; border-radius: 2px; background: #c9d4de; }
+#isx-root .cl-b:first-of-type > i > i { background: #ffd27a; }
+#isx-root .cl-b b { grid-area: v; min-width: 74px; font: 600 15px/1 var(--display); letter-spacing: .02em; color: #f3f6f9; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+#isx-root .cl-bn, #isx-root .cl-cs { margin: 2px 0 0; font-size: 10.5px; line-height: 1.4; color: var(--nk); }
+/* the chart: hairlines, one or two lines labelled at their ends, the step's moments marked */
+#isx-root .cl-ch svg { display: block; width: 100%; height: auto; overflow: visible; }
+#isx-root .cl-ch.wait { height: 150px; }
+#isx-root .cl-ch .g { stroke: rgba(143, 163, 182, .16); stroke-width: 1; }
+#isx-root .cl-ch .tk { stroke: rgba(143, 163, 182, .4); stroke-width: 1; }
+#isx-root .cl-ch .ax { font: 10.5px var(--mono); fill: #8fa3b6; }
+#isx-root .cl-ch .ln { fill: none; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+#isx-root .cl-ch .lb { font: 600 10.5px var(--display); letter-spacing: .04em; }
+#isx-root .cl-ch .lv { fill: #f3f6f9; }
+#isx-root .cl-ch .mk { stroke: rgba(228, 235, 241, .45); stroke-width: 1; stroke-dasharray: 2 3; }
+#isx-root .cl-ch .mkd { fill: #0a1119; stroke: #e4ebf1; stroke-width: 1.4; }
+#isx-root .cl-ch .mkl { font: 10.5px var(--mono); letter-spacing: .02em; fill: #e4ebf1; }
+#isx-root .cl-tb table { width: 100%; border-collapse: collapse; font-size: 12px; color: #c9d4de; }
+#isx-root .cl-tb caption { margin-bottom: 6px; font-size: 11.5px; line-height: 1.4; color: var(--nk); text-align: left; }
+#isx-root .cl-tb th, #isx-root .cl-tb td { padding: 4px 8px 4px 0; border-bottom: 1px solid #1b2733; text-align: left; font-weight: 400; font-variant-numeric: tabular-nums; }
+#isx-root .cl-tb thead th { font: 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--nk); }
+#isx-root .cl-ns { display: grid; gap: 5px; margin: 10px 0 0; padding: 9px 0 0 16px; border-top: 1px solid #1b2733; font-size: 11.5px; line-height: 1.4; color: #b4c2ce; }
+#isx-root .cl-ns b { font-weight: 600; color: #e4ebf1; }
+#isx-root .cl-ns[hidden], #isx-root .cl-ch svg[hidden], #isx-root .cl-tb[hidden] { display: none; }
+@media (max-width: 1100px) { #isx-root .cl-nt.n3 { --n: 2; } #isx-root .cl-nt.n3 .cl-t:nth-child(3) { display: none; } }
+@media (max-height: 800px) and (min-width: 761px) { #isx-root .cl-nums.up .cl-nt.n3 { --n: 2; } #isx-root .cl-nums.up .cl-nt.n3 .cl-t:nth-child(3) { display: none; } #isx-root .cl-nums.up { padding: 9px 14px 10px; } }
+/* in the card on a desk: one row that opens, like “The mechanism” */
+#isx-root .cl-nums.in.fold { padding-top: 0; }
+#isx-root .cl-nums.in.fold .cl-nh { height: 36px; cursor: pointer; }
+#isx-root .cl-nums.in.fold .cl-nh > span { color: var(--ink2); }
+#isx-root .cl-nums.in.fold .cl-nh::after { content: ""; flex: none; width: 7px; height: 7px; margin-right: 4px; border-right: 1.5px solid #b4c2ce; border-top: 1.5px solid #b4c2ce; transform: rotate(45deg); }
+#isx-root .cl-nums.in.fold.open .cl-nh::after { transform: rotate(135deg); }
+#isx-root .cl-nums.in.fold .cl-nh:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; border-radius: 4px; }
+#isx-root .cl-nums.in.fold:not(.open) > :not(.cl-nh), #isx-root .cl-nums.in.fold:not(.open) [data-cl-src] { display: none; }
+#isx-root .cl-nums.in.fold.open { padding-bottom: 4px; }
+/* an episode door: its name on one line, its date and length under it */
+#isx-root .s2 .cl-ep, #isx-root .s2 .cl-epi > summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "k t i" "k s i"; align-items: center; column-gap: 10px; row-gap: 2px; padding: 7px 11px; }
+#isx-root .s2 .cl-ep span, #isx-root .s2 .cl-epi > summary span { grid-area: k; }
+#isx-root .s2 .cl-ep b, #isx-root .s2 .cl-epi > summary b { grid-area: t; }
+#isx-root .s2 .cl-ep small, #isx-root .s2 .cl-epi > summary small { grid-area: s; margin: 0; }
+#isx-root .s2 .cl-ep i, #isx-root .s2 .cl-epi > summary::after { grid-area: i; }
+#isx-root .s2 .cl-act { margin: 9px 0 0; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--rc, #ffd27a) 9%, transparent); font-size: 12.5px; line-height: 1.35; color: #c9d4de; }
+#isx-root .s2 .cl-act b { margin-right: 6px; font: 600 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--rc, #ffd27a); }
+#isx-root .s2 .cl-act::first-letter { text-transform: uppercase; }
