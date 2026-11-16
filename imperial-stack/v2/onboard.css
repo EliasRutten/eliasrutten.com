@@ -1,0 +1,133 @@
+/* v2 round 5b (16 Nov 2026): the lever row, the hints at first use, the two first openings.
+   Spec: claude/specs/guide-entry-16-nov.md (§5, §2, §4). Scoped under #isx-root, linked after entry.css.
+   Grammar: the bar's pills, the entry's glass and hairlines. Gold means something can be done or is pulled; teal means a hint. */
+
+/* ================= 1. the lever row (§5) ================= */
+/* one 66 px rail: five groups named by who pulls, 30 px outlined pills, a status dot that lights gold */
+#isx-root #isx-cock.s2 .s2tray.tr-lev { padding: 9px 12px 10px; border-radius: 14px; border: 1px solid #253442; }
+#isx-root #isx-cock.s2 .levbar.lv7 { position: relative; display: flex; flex-wrap: nowrap; align-items: flex-end; gap: 0 8px; margin: 0; }
+#isx-root #isx-cock.s2 .levbar.lv7::before { display: none; }
+#isx-root #isx-cock.s2 .lv7 .lv-sc { flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: nowrap; align-items: flex-end; gap: 0 8px; padding: 2px 2px 2px 0; margin: -2px 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; }
+#isx-root #isx-cock.s2 .lv7 .lv-sc::-webkit-scrollbar { display: none; }
+#isx-root #isx-cock.s2 .lv7 .lvg { flex: none; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+#isx-root #isx-cock.s2 .lv7 .lvg + .lvg { padding-left: 8px; border-left: 1px solid rgba(143, 163, 182, .16); }
+#isx-root #isx-cock.s2 .lv7 .lvh { display: block; height: 11px; font: 10.5px/11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8ea0b2; white-space: nowrap; transition: color var(--mo-t, .2s) ease; }
+#isx-root #isx-cock.s2 .lv7 .lvh::after { display: none; }
+#isx-root #isx-cock.s2 .lv7 .lvh b { font-weight: 400; }
+#isx-root #isx-cock.s2 .lv7 .lvg:hover .lvh, #isx-root #isx-cock.s2 .lv7 .lvg:focus-within .lvh, #isx-root #isx-cock.s2 .lv7 .lvg:has(.lv.on) .lvh { color: #ffd27a; }
+#isx-root #isx-cock.s2 .lv7 .lvr { display: flex; flex-wrap: nowrap; gap: 4px; }
+#isx-root #isx-cock.s2 .lv7 .lv { flex: none; flex-direction: row; align-items: center; justify-content: flex-start; gap: 5px; width: auto; min-width: 0; height: 30px; min-height: 30px; padding: 0 8px 0 7px; border-radius: 999px; border: 1px solid #3a4c5d; background: none; box-shadow: none; color: #e4ebf1; transform: none; transition: border-color var(--mo-t, .2s) ease, color var(--mo-t, .2s) ease, background var(--mo-t, .2s) ease; }
+#isx-root #isx-cock.s2 .lv7 .lv b { font: 600 10.5px/1 var(--display); letter-spacing: .035em; text-transform: uppercase; white-space: nowrap; overflow-wrap: normal; text-align: left; }
+#isx-root #isx-cock.s2 .lv7 .lv .lvd { flex: none; width: 5px; height: 5px; border-radius: 50%; background: #5d7083; transition: background var(--mo-t, .2s) ease, box-shadow var(--mo-t, .2s) ease; }
+#isx-root #isx-cock.s2 .lv7 .lv:hover { border-color: #ffb547; color: #ffd27a; transform: none; box-shadow: none; }
+#isx-root #isx-cock.s2 .lv7 .lv:active { transform: none; }
+#isx-root #isx-cock.s2 .lv7 .lv.on { border-color: #ffb547; background: rgba(255, 181, 71, .09); color: #ffe2a8; box-shadow: none; }
+#isx-root #isx-cock.s2 .lv7 .lv.on .lvd { background: #ffb547; box-shadow: 0 0 8px 1px rgba(255, 181, 71, .65); }
+#isx-root #isx-cock.s2 .lv7 .lv.on::after, #isx-root #isx-cock.s2 .lv7 .lv.fresh::before { display: none; }
+#isx-root #isx-cock.s2 .lv7 .lv.fresh { border-color: #6c8198; }
+#isx-root #isx-cock.s2 .lv7 .lv:focus-visible, #isx-root #isx-cock.s2 .lv7 .lv-rel:focus-visible, #isx-root .s2 .dossier .lv-relb:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+/* “Release” closes the rail: an outlined pill, live only while something is pulled */
+#isx-root #isx-cock.s2 .lv7 .lv-end { flex: 1 0 auto; display: flex; justify-content: flex-end; align-items: center; height: 30px; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel, #isx-root .s2 .dossier .lv-relb { display: inline-flex; align-items: center; gap: 7px; height: 24px; min-height: 24px; padding: 0 12px; border-radius: 999px; border: 1px solid #3a4c5d; background: none; color: #e4ebf1; font: 600 11.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: border-color var(--mo-t, .2s) ease, color var(--mo-t, .2s) ease, opacity var(--mo-t, .2s) ease; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel:hover, #isx-root .s2 .dossier .lv-relb:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel { gap: 5px; padding: 0 9px; font-size: 10.5px; letter-spacing: .06em; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel b { font: 10.5px/1 var(--mono); color: #ffd27a; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel b:empty { display: none; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel:disabled { border-color: #26343f; color: #8ea0b2; cursor: default; }
+/* narrower than the row: it scrolls sideways, and a fade says there is more */
+#isx-root #isx-cock.s2 .lv7 .lv-sc.more-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 46px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 46px), transparent); }
+#isx-root #isx-cock.s2 .lv7 .lv-sc.more-l { -webkit-mask-image: linear-gradient(270deg, #000 calc(100% - 46px), transparent); mask-image: linear-gradient(270deg, #000 calc(100% - 46px), transparent); }
+#isx-root #isx-cock.s2 .lv7 .lv-sc.more-l.more-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 46px, #000 calc(100% - 46px), transparent); mask-image: linear-gradient(90deg, transparent, #000 46px, #000 calc(100% - 46px), transparent); }
+/* the holder on the map: outlined while its group is hovered or focused; gold, with the number pulled, while a lever of its is */
+#isx-root #isx-rmap .fn.lvhv .fnr { stroke: #e4ebf1; stroke-width: 1.6; }
+#isx-root #isx-rmap .fn.lvo { opacity: 1; }
+#isx-root #isx-rmap .fn.lvo .fnr { stroke: #ffb547; stroke-width: 1.8; stroke-dasharray: none; filter: none; }
+#isx-root #isx-rmap .lvring { pointer-events: none; }
+#isx-root #isx-rmap .lvring circle { fill: #0b131b; stroke: #ffb547; stroke-width: 1.3; }
+#isx-root #isx-rmap .lvring text { fill: #ffd27a; font: 600 10.5px var(--mono); }
+/* the lever's card: the Circuit's card. A 2 px gold rule on the left, a mono kicker, a condensed caps title, Release in its foot */
+#isx-root .s2 .dossier.lvc { border-left: 2px solid #ffb547; }
+#isx-root #isx-cock.s2 .sn-det .dossier.lvc { padding-left: 14px; border-left: 2px solid #ffb547; }
+#isx-root .s2 .dossier.lvc .pk.lvk { color: #ffd27a; }
+#isx-root .s2 .dossier.lvc .lvfoot { display: flex; align-items: center; gap: 12px; margin: 12px 0 0; padding-top: 10px; border-top: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .dossier.lvc .lvfoot span { font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .dossier.lvc .lvfoot span b { font-weight: 400; color: #ffd27a; }
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2 .levbar.lv7 { flex-wrap: wrap; align-items: flex-start; gap: 12px 0; }
+  #isx-root #isx-cock.s2 .lv7 .lv-sc { flex: 1 1 100%; flex-wrap: wrap; align-items: flex-start; gap: 12px 0; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  #isx-root #isx-cock.s2 .lv7 .lvg { flex: 1 1 100%; }
+  #isx-root #isx-cock.s2 .lv7 .lvg + .lvg { padding-left: 0; border-left: 0; }
+  #isx-root #isx-cock.s2 .lv7 .lvr { flex-wrap: wrap; }
+  #isx-root #isx-cock.s2 .lv7 .lv { height: 36px; min-height: 36px; }
+  #isx-root #isx-cock.s2 .lv7 .lv-end { flex: 1 1 100%; justify-content: flex-start; padding-left: 0; }
+}
+
+/* ================= 2. hints at first use (§2) ================= */
+/* one line beside the control it names; teal, because gold means something can be done. Never over the card's text, never in the tab order's way */
+#isx-root .hn7 { position: absolute; z-index: 12; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 14px; width: max-content; max-width: 336px; padding: 9px 12px 9px 12px; border-radius: 12px; border: 1px solid rgba(111, 224, 210, .4); border-left: 2px solid #6fe0d2; background: rgba(8, 15, 22, .97); box-shadow: 0 16px 40px -22px #000; color: #dfe7ee; opacity: 0; translate: 0 4px; transition: opacity .22s ease, translate .22s ease; }
+#isx-root .hn7.in { opacity: 1; translate: 0 0; }
+#isx-root .hn7[hidden] { display: none; }
+#isx-root .hn7 .hn-k { grid-column: 1 / -1; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #6fe0d2; }
+#isx-root .hn7 .hn-t { grid-column: 1 / -1; margin: 0; font: 400 13px/1.45 var(--sans); color: #e4ebf1; }
+#isx-root .hn7 .hn-a { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; margin-top: 2px; }
+#isx-root .hn7 .hn-ok { display: inline-flex; align-items: center; height: 24px; min-height: 24px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(111, 224, 210, .6); background: none; color: #c8f4ee; font: 600 11.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+#isx-root .hn7 .hn-ok:hover { border-color: #6fe0d2; background: rgba(111, 224, 210, .1); }
+#isx-root .hn7 .hn-off { display: inline-flex; align-items: center; height: 24px; min-height: 24px; padding: 0; border: 0; background: none; color: #8ea0b2; font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+#isx-root .hn7 .hn-off:hover { color: #e4ebf1; }
+#isx-root .hn7 button:focus-visible { outline: 2px solid #6fe0d2; outline-offset: 2px; }
+/* the small pointer aims at the control */
+#isx-root .hn7 .hn-w { position: absolute; width: 9px; height: 9px; background: #08101a; border: 1px solid rgba(111, 224, 210, .5); rotate: 45deg; }
+#isx-root .hn7[data-side="top"] .hn-w { bottom: -5.5px; margin-left: -5px; border-top: 0; border-left: 0; }
+#isx-root .hn7[data-side="bottom"] .hn-w { top: -5.5px; margin-left: -5px; border-bottom: 0; border-right: 0; }
+#isx-root .hn7[data-side="card"] .hn-w { left: -6.5px; margin-top: -5px; border-top: 0; border-right: 0; border-left-color: #6fe0d2; border-bottom-color: #6fe0d2; }
+#isx-root .hn7[data-side="sheet"] .hn-w, #isx-root .hn7[data-side="free"] .hn-w, #isx-root .hn7[data-side="flow"] .hn-w { display: none; }
+/* the control a hint is about: a teal outline that breathes three times and then rests (not at all under reduced motion) */
+#isx-root .hn-on:not(svg *) { outline: 1px solid rgba(111, 224, 210, .85); outline-offset: 3px; animation: isx-hn 1.5s ease-in-out 3; }
+#isx-root dfn.df.hn-on { outline-offset: 2px; border-radius: 3px; }
+#isx-root #isx-rmap .fn.hn-on .fnr { stroke: #6fe0d2; stroke-width: 1.8; animation: isx-hn-s 1.5s ease-in-out 3; }
+#isx-root #isx-rmap .vdoor.hn-on rect { stroke: #6fe0d2; stroke-opacity: 1; stroke-width: 1.4; animation: isx-hn-s 1.5s ease-in-out 3; }
+@keyframes isx-hn { 0%, 100% { outline-color: rgba(111, 224, 210, .85); } 50% { outline-color: rgba(111, 224, 210, .25); } }
+@keyframes isx-hn-s { 0%, 100% { stroke-opacity: 1; } 50% { stroke-opacity: .35; } }
+#isx-root.rm .hn7 { transition: none; }
+#isx-root.rm .hn-on, #isx-root.rm #isx-rmap .fn.hn-on .fnr, #isx-root.rm #isx-rmap .vdoor.hn-on rect { animation: none; }
+@media (prefers-reduced-motion: reduce) { #isx-root .hn7 { transition: none; } #isx-root .hn-on, #isx-root #isx-rmap .fn.hn-on .fnr, #isx-root #isx-rmap .vdoor.hn-on rect { animation: none; } }
+@media (max-width: 760px) {
+  /* phones: a sheet at the top of the screen, clear of the card and the bar at its foot */
+  #isx-root .hn7 { position: fixed; z-index: 61; left: 10px; right: 10px; top: calc(10px + env(safe-area-inset-top)); bottom: auto; width: auto; max-width: none; }
+}
+
+/* ================= 3. the two first openings (§4) ================= */
+/* --- the Circuit. Before the opening's file takes over, and while it plays, the instruments wait and the globe's box is dark --- */
+#isx-root.op-c .resbar, #isx-root.op-c .vchip, #isx-root.op-c .cmd6, #isx-root.op-c .mstep, #isx-root.op-c .legbox2, #isx-root.op-c .zoom6, #isx-root.op-c .mapmodes,
+#isx-root.op-c .hint, #isx-root.op-c .mapnote, #isx-root.op-c .tabs-bottom, #isx-root.op-c .dock6, #isx-root.op-c .b4row, #isx-root.op-c .ins2, #isx-root.op-c .tour2 { opacity: 0; pointer-events: none; }
+#isx-root.op-c:not(.op-on) .globebox { opacity: 0; }
+#isx-root #isx-globe > .op-dark { position: absolute; inset: -14%; z-index: 2000; pointer-events: none; background: radial-gradient(closest-side, #04080d 0, #04080d 80%, rgba(4, 8, 13, 0) 100%); }
+#isx-root #isx-globe > .op-gl { position: absolute; inset: 0; z-index: 2001; pointer-events: none; }
+#isx-root .op-svg { position: absolute; left: 0; top: 0; overflow: visible; }
+#isx-root .op-svg .op-loop path { fill: none; stroke: #ffb547; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+#isx-root .op-svg .op-ring { fill: none; stroke: #ffb547; stroke-width: 1.1; }
+#isx-root .op-svg .op-mk circle { fill: #ffe2a8; }
+#isx-root .op-svg .op-pulse { fill: none; stroke: #ffd27a; stroke-width: 1.3; opacity: 0; }
+#isx-root .op-ttl { position: absolute; z-index: 6; display: grid; place-content: center; justify-items: center; text-align: center; pointer-events: none; }
+#isx-root .op-ttl .op-k { font: 10.5px/1 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .op-ttl .op-hr { display: block; width: 64px; height: 1px; margin: 15px 0 17px; background: #ffb547; }
+#isx-root .op-ttl .op-l1, #isx-root .op-ttl .op-l2 { display: block; font: 400 25px/1.35 var(--title); letter-spacing: .05em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .op-ttl .op-l2 { color: #ffb547; }
+#isx-root .op-skip { position: absolute; z-index: 13; right: 22px; bottom: 22px; display: inline-flex; align-items: center; gap: 6px; height: 24px; min-height: 24px; padding: 0 12px; border-radius: 999px; border: 1px solid #3a4c5d; background: rgba(6, 11, 17, .6); color: #c9d4de; font: 600 11.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; opacity: 0; }
+#isx-root #isx-cock > .op-skip { bottom: 96px; }
+/* --- the Simulator: a cover moved aside (never a mask), a quiet count, one gold line on the map's own relations --- */
+#isx-root .s2 .s2stage > .op-clip { position: absolute; inset: 0; z-index: 5; overflow: hidden; pointer-events: none; }
+#isx-root .s2 .op-cov { position: absolute; inset: 0; background: #05090f; }
+#isx-root .s2 .op-cov::before { content: ""; position: absolute; top: 0; bottom: 0; left: -200px; width: 200px; background: linear-gradient(90deg, rgba(5, 9, 15, 0), rgba(5, 9, 15, .8) 72%, #05090f); }
+#isx-root .s2 .op-cov::after { content: ""; position: absolute; top: 0; bottom: 0; left: -1px; width: 1px; background: linear-gradient(180deg, rgba(255, 181, 71, 0), #ffb547 16%, #ffb547 84%, rgba(255, 181, 71, 0)); }
+#isx-root #isx-cock > .op-cnt { position: absolute; z-index: 9; left: 0; right: 0; bottom: 100px; margin: 0; text-align: center; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8ea0b2; pointer-events: none; opacity: 0; }
+#isx-root #isx-cock > .op-cnt b { display: inline-block; min-width: 2ch; text-align: right; font-weight: 400; color: #ffd27a; }
+#isx-root #isx-cock > .op-cnt i { margin: 0 12px; font-style: normal; color: #5d7083; }
+#isx-root #isx-rmap .op-money path { fill: none; stroke: #ffb547; stroke-width: 2.2; stroke-linecap: round; }
+#isx-root #isx-rmap .op-money .op-dot { fill: #ffe2a8; }
+#isx-root #isx-cock.op-s .s2card { pointer-events: none; }
+@media (max-width: 760px) {
+  #isx-root .op-ttl .op-l1, #isx-root .op-ttl .op-l2 { font-size: 18px; }
+  #isx-root #isx-cock > .op-cnt { bottom: 84px; letter-spacing: .08em; }
+  #isx-root #isx-cock > .op-cnt i { margin: 0 6px; }
+}

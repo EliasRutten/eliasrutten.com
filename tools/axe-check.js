@@ -9,7 +9,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   const run = async (name, hash, ls, w, h, prep) => {
     if (process.env.ONLY && !new RegExp(process.env.ONLY).test(name)) return;   /* ONLY=<regex> reruns a group of states */
     const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-    await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-stack', 'open'); Object.keys(o).forEach(k => { if (k === '__pos') sessionStorage.setItem('isx-sim-pos', o[k]); else localStorage.setItem(k, o[k]); }); } catch (e) {} }, ls);
+    await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-stack', 'open'); Object.keys(o).forEach(k => { if (k === '__pos') sessionStorage.setItem('isx-sim-pos', o[k]); else if (o[k] === null) localStorage.removeItem(k); else localStorage.setItem(k, o[k]); }); } catch (e) {} }, ls);
     const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' });
     await p.waitForFunction(() => window.ISX && ISX.booted && ISX.globe && ISX.own && ISX.own.data, null, { timeout: 60000 });
     await p.waitForTimeout(2500); if (prep) await prep(p);
@@ -195,6 +195,24 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('guide build: first principles R7, the mechanism open', '#simulator', sim(8, 12), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('guide build: first principles R8', '#simulator', sim(9, 12), 1280, 760);
   await run('guide build: the guide’s close, the reminder open', '#simulator', sim(52), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
+  /* round 5b (16 Nov 2026): a hint shown, the lever row with two pulled, both first openings held at one moment.
+     The hints and the openings stay away while isx-tips-sim is 'off' (every other state here), so these states take it off. */
+  const first = { ...seen, 'isx-tips-sim': null, 'isx-simtour': 'off', 'isx-open-circuit': '1', 'isx-open-sim': '1' };
+  const hint = id => async p => { await p.waitForFunction(k => ISX.hints && ISX.hints.on === k, id, { timeout: 15000 }); await p.waitForTimeout(400); };
+  await run('round 5b: a hint shown (Next), first principles', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 0 }) }, 1440, 900, hint('next'));
+  await run('round 5b: a hint beside the card (a dotted word)', '#simulator', { ...first, 'isx-hints': 'next', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 2 }) }, 1440, 900, hint('term'));
+  await run('round 5b: a hint at a decision', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: 25, ph: 'ask' }) }, 1280, 760, hint('call'));
+  await run('round 5b, phone: a hint shown', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 13, b: 0 }) }, 390, 844, hint('next'));
+  const two = async p => { await p.evaluate(() => { ISX.simLever(0); ISX.simLever(14); }); await p.waitForTimeout(500); };
+  await run('round 5b: the lever row, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, two);
+  await run('round 5b: the lever row at 1280 × 760, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1280, 760, two);
+  await run('round 5b, phone: the lever row, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 390, 844, two);
+  const held = (name, t) => async p => { if (name === 'sim') { await p.evaluate(() => { ISX.opening.end(); document.getElementById('isx-v-fin').click(); }); await p.waitForTimeout(300); } await p.evaluate(([n, t]) => { if (ISX.opening.on !== n) throw new Error('the opening is not playing: ' + n); ISX.opening.seek(t); }, [name, t]); await p.waitForTimeout(700); };
+  const fresh = { 'isx-tips-sim': null, 'isx-insights': 'off' };
+  await run('round 5b: the Circuit’s opening, the title (1.8 s)', '', fresh, 1440, 900, held('circuit', 1.8));
+  await run('round 5b: the Circuit’s opening, the line and the ring (5.2 s)', '', fresh, 1440, 900, held('circuit', 5.2));
+  await run('round 5b: the Simulator’s opening, the sweep (3.8 s)', '', fresh, 1440, 900, held('sim', 3.8));
+  await run('round 5b, phone: the Circuit’s opening, the title (1.8 s)', '', fresh, 390, 844, held('circuit', 1.8));
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

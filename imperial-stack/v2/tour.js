@@ -109,6 +109,7 @@
     var tries = 0, ready = 0, tick = setInterval(function () {
       if (++tries > 60 || U.stGet(KEY) === 'off') { clearInterval(tick); return; }
       if (root.classList.contains('booting') || root.classList.contains('isx-quiet') || root.classList.contains('isx-settle') || X.intro) return;
+      if (root.classList.contains('op-c') || (X.opening && X.opening.on)) { tries = 0; ready = 0; t0 = Date.now(); return; }   /* round 5b: the first opening plays first */
       if (!ready) ready = Date.now();
       if (Date.now() - ready < 1500) return;   /* a moment to look at the map first */
       if (Date.now() - t0 < 6500 && root.querySelector('#isx-insight.in.first')) return;   /* the opening line gets its reading time */

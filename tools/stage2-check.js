@@ -105,7 +105,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:13"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-chip.lv2').click()); await p.waitForTimeout(300);
-  ok('guide: a lever opens its dossier in the card, without a tray', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever pulled/.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none' && document.getElementById('isx-s2tray-lev').hidden; }));
+  ok('guide: a lever opens its dossier in the card, without a tray', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever · /.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none' && document.getElementById('isx-s2tray-lev').hidden; }));
   await p.evaluate(() => document.getElementById('isx-dx').focus());
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok('guide: Esc closes the dossier', await p.evaluate(() => document.querySelector('#isx-rside').hidden && getComputedStyle(document.getElementById('isx-sn-body')).display !== 'none'));

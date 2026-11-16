@@ -2369,6 +2369,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/b4.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b6.css">
 <link rel="stylesheet" href="/imperial-stack/v2/entry.css">
+<link rel="stylesheet" href="/imperial-stack/v2/onboard.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2948,6 +2949,7 @@ function initGlobe() {
 }
 const globeDpr = () => Math.min(window.devicePixelRatio || 1, innerWidth < 761 ? Math.min(1.5, ISXP.k.dpr) : ISXP.k.dpr);
 const REVPOV = { lat: 22, lng: -35, altitude: 2.15 };
+function stepPov() { const s = STEPS[step], r = $('globe').getBoundingClientRect(), asp = r.width / Math.max(1, r.height), k = asp < .95 ? .95 / asp : 1; return { lat: s.pov.lat, lng: s.pov.lng, altitude: (1 + s.pov.altitude) * k * (view === 'map' && window.innerWidth > 760 ? 1.05 : 1) - 1 }; }
 function renderGlobe(move) {
   if (!globe) return;
   const revMode = view === 'arm' && armMode === 'rev';
@@ -4328,7 +4330,7 @@ function showTip(el) {
   if (tipEl && tipEl !== el && tipEl.classList.contains('df')) tipEl.removeAttribute('aria-describedby');
   if (tipEl !== el || TIP6.hidden) tipAt = performance.now();
   tipEl = el; TIP6.innerHTML = html; TIP6.hidden = false; TIP6.classList.toggle('df6', el.classList.contains('df'));
-  if (el.classList.contains('df')) el.setAttribute('aria-describedby', TIP6.id);
+  if (el.classList.contains('df')) { el.setAttribute('aria-describedby', TIP6.id); emit('tip', el.dataset.d); }
   const r = el.getBoundingClientRect(), w = TIP6.offsetWidth, h = TIP6.offsetHeight;
   const x = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
   let y = r.top - h - 9; if (y < 8) y = r.bottom + 9;
@@ -5634,9 +5636,30 @@ function ledgerHTML() {
 }
 
 /* ---------- plumbing text ---------- */
-const LGH = ['At home · the state', 'At home · households', 'Abroad', 'Oil'];
+/* round 5b (entry spec §5): the lever row. One row of pills in five groups, each named by the actor that pulls: the holder is a box on
+   the map, outlined while its group is hovered or focused and kept in gold, with the number pulled, while one of its levers is. The
+   row is one stop in the tab order (a roving tabindex): ← → move between the levers, Home and End jump to the ends. */
+const LHOLD = [['TSY', 'US Treasury', [0, 1, 11, 7, 12]], ['FED', 'Federal Reserve', [2, 5, 14]], ['REG', 'Regulators', [3, 16]], ['CGR', 'Congress', [4, 9]], ['WH', 'White House', [10, 13, 6, 8, 15]]];
+const lholdOf = i => LHOLD.find(H => H[2].includes(i));
+const LVSH = { 14: 'Repo' };   /* the row's own short name where the usual one is too long for a pill */
+let lhov = null;
 function levBarHTML() {
-  return `<div class="levbar" role="group" aria-label="Levers"><div class="s4pull"><b>Pull a lever</b><span>Its effects light up on the map. Pull again to release.</span></div>${LGROUPS.map(([g], gi) => `<div class="lvg" style="--gc:${LCOL[g]}"><div class="lvh"><b>${fe(LGH[gi])}</b></div><div class="lvr">${LEVERS.map((L, i) => [L, i]).filter(([L]) => L.g === g).map(([L, i]) => `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" style="--lc:${L.c}" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><span class="lvi">${L.ic}</span><b>${fe(LSH[i])}</b></button>`).join('')}</div></div>`).join('')}</div>`;
+  return `<div class="levbar lv7" id="isx-levbar" role="toolbar" aria-label="Levers, by who pulls them" aria-orientation="horizontal"><div class="lv-sc" id="isx-lvsc">${LHOLD.map(([n, t, ls]) => `<div class="lvg" role="group" data-h="${n}" aria-labelledby="isx-lvh-${n}"><div class="lvh" id="isx-lvh-${n}"><b>${fe(t)}</b></div><div class="lvr">${ls.map(i => { const L = LEVERS[i]; return `<button type="button" class="lv${flev.has(i) ? ' on' : ''}" data-l="${i}" tabindex="-1" aria-pressed="${flev.has(i)}" data-tip="<b>${fe(L.t)}</b><p>${fe(L.d)} · pulled by ${fe(L.who)}</p>"><i class="lvd" aria-hidden="true"></i><b>${fe(LVSH[i] || LSH[i])}</b></button>`; }).join('')}</div></div>`).join('')}</div><div class="lv-end"><button type="button" class="lv-rel" id="isx-lvrel" data-lvall tabindex="-1" disabled>Release<b></b></button></div></div>`;
+}
+/* the one lever that can take the focus by Tab: the one last used, else the first on show */
+function levRove(to) {
+  const bar = $('levbar'); if (!bar) return;
+  const all = [...bar.querySelectorAll('.lv, .lv-rel')], ok = all.filter(b => b.getClientRects().length && !b.disabled);
+  const cur = to && ok.includes(to) ? to : ok.find(b => b.tabIndex === 0) || ok[0];
+  all.forEach(b => { b.tabIndex = b === cur ? 0 : -1; });
+  if (bar._fade) bar._fade();   /* the fade at the row's edge follows what is on show */
+  return ok;
+}
+function levHover(n) {
+  if (lhov === n) return; lhov = n;
+  const svg = $('rmap'); if (!svg) return; const vis = simVis();
+  svg.querySelectorAll('.fn.lvhv').forEach(g => g.classList.remove('lvhv'));
+  if (n && vis(n)) { const g = svg.querySelector(`.fn[data-n="${n}"]`); if (g) g.classList.add('lvhv'); }
 }
 function playBarHTML() {
   return `<div class="pbar"><span class="pbl s4pl"><b>Run a play</b><span>Washington’s moves, one by one</span></span>${PLAYS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${P.steps.length} moves, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(PSH[i])}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
@@ -5685,13 +5708,22 @@ function renderFin() {
 
 /* ---------- selection state ---------- */
 function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); }
-function pickNode(n) { if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); }
+function pickNode(n) { if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); emit('simpick', { n: fsel }); }
 /* interface fixes: a line opens too. The tips and the opening card say “click any actor or line for what it does and its
    sources”; until now a line only showed a hover note. Its card names the two actors, what passes between them and, where a
    gauge sits on the line, that gauge with its date and source. In the guide a line opens once the guide has reached it. */
-function pickEdge(i) { if (simOn() && SIM.R && !SIM.R.e.has(i)) return; const same = fedge === i && !fsel && fplay == null && !flev.size; clearSel(); fedge = same ? null : i; styleRmap(); renderSide(); const dx = $('dx'); if (dx && fedge != null) dx.focus({ preventScroll: true }); /* a line cannot hold the focus itself: Esc then closes its card */ }
+function pickEdge(i) { if (simOn() && SIM.R && !SIM.R.e.has(i)) return; const same = fedge === i && !fsel && fplay == null && !flev.size; clearSel(); fedge = same ? null : i; styleRmap(); renderSide(); emit('simpick', { e: fedge }); const dx = $('dx'); if (dx && fedge != null) dx.focus({ preventScroll: true }); /* a line cannot hold the focus itself: Esc then closes its card */ }
 function wireCockpit(host) {
-  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; fedge = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); }));
+  host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; fedge = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); levRove(b); }));
+  const lb = $('levbar');
+  if (lb) {
+    lb.addEventListener('keydown', e => { if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return; const ok = levRove(document.activeElement), i = ok.indexOf(document.activeElement); if (i < 0) return; e.preventDefault(); e.stopPropagation(); const t = ok[e.key === 'Home' ? 0 : e.key === 'End' ? ok.length - 1 : Math.max(0, Math.min(ok.length - 1, i + (e.key === 'ArrowRight' ? 1 : -1)))]; levRove(t); t.focus({ preventScroll: true }); t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
+    lb.addEventListener('focusin', e => { const g = e.target.closest('.lvg'); levHover(g ? g.dataset.h : null); if (e.target.matches('.lv, .lv-rel')) levRove(e.target); });
+    lb.addEventListener('focusout', e => { if (!lb.contains(e.relatedTarget)) levHover(null); });
+    lb.querySelectorAll('.lvg').forEach(g => { g.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') levHover(g.dataset.h); }); g.addEventListener('pointerleave', () => { if (!g.contains(document.activeElement)) levHover(null); }); });
+    const sc = $('lvsc'), fade = () => { sc.classList.toggle('more-r', sc.scrollWidth - sc.clientWidth - sc.scrollLeft > 4); sc.classList.toggle('more-l', sc.scrollLeft > 4); };   /* Release stays at the rail's end; the levers scroll beside it */
+    sc.addEventListener('scroll', fade, { passive: true }); lb._fade = fade;
+  }
   host.querySelectorAll('.pchip').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.p; if (fplay === i) { clearSel(); } else { clearSel(); fplay = i; fpstep = 0; } styleRmap(); renderSide(); }));
   const clr = $('pclr'); if (clr) clr.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); });
 }
@@ -5722,7 +5754,8 @@ function drawRmap() {
   h += '<g id="isx-fpart"></g>';
   Object.keys(FN).forEach(k => { h += isG(k) ? gaugeNode(k) : plateNode(k); });
   h += '<g id="isx-gtags">' + IND.filter(I => I.tag).map(tagNode).join('') + '</g>';
-  h += '<g id="isx-vdoors">' + Object.keys(DOOR).map(vdoorNode).join('') + '</g>';   /* fix round: a small tab on each element with a deeper view */
+  h += '<g id="isx-vdoors">' + Object.keys(DOOR).map(vdoorNode).join('') + '</g>';
+  h += '<g id="isx-lvrings" aria-hidden="true"></g>';   /* round 5b: the count of pulled levers on their holder's corner */   /* fix round: a small tab on each element with a deeper view */
   svg.innerHTML = h;
   svg.querySelectorAll('.vdoor').forEach(d => {
     const go = e => { e.stopPropagation(); if (d.classList.contains('off')) return; viewOpen(d.dataset.vw, { from: d, origin: d.dataset.n }); };
@@ -5766,6 +5799,12 @@ function styleRmap() {
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
   svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  /* round 5b: a pulled lever keeps its holder outlined in gold, with the number of its levers pulled in a ring on the box's corner */
+  { const hc = {}; flev.forEach(i => { const H = lholdOf(i); if (H && vis(H[0])) hc[H[0]] = (hc[H[0]] || 0) + 1; });
+    svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('lvo', !!hc[n]); g.classList.toggle('lvhv', lhov === n && vis(n)); });
+    const rg = svg.querySelector('#isx-lvrings'); if (rg) rg.innerHTML = Object.keys(hc).map(n => { const x = FN[n][1] - NW / 2, y = FN[n][2] - PH / 2; return `<g class="lvring" transform="translate(${x},${y})"><circle r="8"/><text y="3.6" text-anchor="middle">${hc[n]}</text></g>`; }).join('');
+    const rel = $('lvrel'); if (rel) { const was = rel.disabled; rel.disabled = !flev.size; rel.querySelector('b').textContent = flev.size ? String(flev.size) : ''; rel.setAttribute('aria-label', flev.size ? `Release all ${flev.size} pulled lever${flev.size > 1 ? 's' : ''}` : 'Release: no lever is pulled'); if (was !== rel.disabled) levRove(); }
+    const lb = $('levbar'); if (lb && lb._fade) lb._fade(); }
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel || fedge != null;
   if (cnt) cnt.innerHTML = flev.size ? `<b>${flev.size}</b> of ${LEVERS.length} levers pulled · ` + (act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : '') : act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : `${FE.length} relations · ${Object.keys(FN).length} actors`;
@@ -5805,6 +5844,7 @@ function placeDossier() {
 }
 function renderSide(lev) {
   const s = $('rside'); if (!s) return;
+  s.classList.remove('lvc');
   const X = '<button type="button" class="dx" id="isx-dx" aria-label="Close">×</button>';
   const done = () => { const dx = $('dx'); if (dx) dx.addEventListener('click', () => { clearSel(); styleRmap(); renderSide(); }); };
   if (fplay != null) {
@@ -5816,9 +5856,10 @@ function renderSide(lev) {
     placeDossier(); done(); return;
   }
   if (lev != null && flev.has(lev)) {
-    const L = LEVERS[lev];
-    s.hidden = false; s.style.setProperty('--dc', L.c);
-    s.innerHTML = `${X}<div class="pk" style="color:${L.c}">Lever pulled · by ${fe(L.who)}</div><h4><span class="li">${L.ic}</span> ${fe(L.t)}</h4><div class="ld">${fe(L.d)}</div><ul class="lfx">${L.fx.map(([g, t]) => `<li class="${g === '+' ? 'up' : g === '−' ? 'dn' : 'eq'}"><b>${g === '=' ? '→' : g}</b>${fe(t)}</li>`).join('')}</ul><div class="lsrc">${fe(L.src)}</div>${lev < 4 ? doorBtn('desks', 'house', 'Elias Rutten’s reading: the house always prints') : ''}${lev < 6 ? (k => `<a class="pess" href="${ESSAYS[k][1]}" target="_blank" rel="noopener">${SSL}<span>Related essay: ${fe(ESSAYS[k][0])}</span></a>`)(lev === 4 ? 'crypto' : 'house') : ''}`;
+    const L = LEVERS[lev], H = lholdOf(lev);
+    s.hidden = false; s.style.setProperty('--dc', '#ffb547'); s.classList.add('lvc');
+    s.innerHTML = `${X}<div class="pk lvk">Lever · ${fe(H[1])}</div><h4>${fe(L.t)}</h4><div class="ld">${fe(L.d)} · pulled by ${fe(L.who)}</div><ul class="lfx">${L.fx.map(([g, t]) => `<li class="${g === '+' ? 'up' : g === '−' ? 'dn' : 'eq'}"><b>${g === '=' ? '→' : g}</b>${fe(t)}</li>`).join('')}</ul><div class="lsrc">${fe(L.src)}</div>${lev < 4 ? doorBtn('desks', 'house', 'Elias Rutten’s reading: the house always prints') : ''}${lev < 6 ? (k => `<a class="pess" href="${ESSAYS[k][1]}" target="_blank" rel="noopener">${SSL}<span>Related essay: ${fe(ESSAYS[k][0])}</span></a>`)(lev === 4 ? 'crypto' : 'house') : ''}`
+      + `<div class="lvfoot"><button type="button" class="lv-relb" data-lvrel="${lev}">Release</button><span><b>${flev.size}</b> of ${LEVERS.length} pulled</span></div>`;
     placeDossier(); done(); return;
   }
   if (flev.size) { const last = [...flev].pop(); renderSide(last); return; }
@@ -7663,6 +7704,8 @@ function simTrays() {
   const more = $('b1more'); if (more && t) more.hidden = true;
   cock.classList.toggle('led-open', t === 'read'); cock.classList.toggle('tray-on', !!t && t !== 'read');
   cock.querySelectorAll('[data-tray]').forEach(x => x.setAttribute('aria-expanded', String(x.dataset.tray === t)));
+  levRove();   /* round 5b: the lever row keeps one stop in the tab order */
+  emit('simtray', t);
 }
 function simTray(t) { SIM.tray = SIM.tray === t ? null : t; simTrays(); }
 function simTriHTML(B) {
@@ -7944,6 +7987,7 @@ function simNarr(anim) {
     }
     body.classList.remove('out'); if (anim && !reduce) { body.classList.remove('in'); void body.offsetWidth; body.classList.add('in'); }
     const ph = $('sn-pill'), ck = sInChain() ? sDecK() : null; if (ph) { ph.hidden = !ck; if (ck) ph.textContent = 'Other path · ' + SDEC[ck].alt[0]; }
+    emit('simcard');   /* round 5b: the card is on screen */
   };
   clearTimeout(SIM.nt);
   if (anim && !reduce && body.childElementCount) { body.classList.add('out'); SIM.nt = setTimeout(put, 150); } else put();
@@ -7967,6 +8011,7 @@ function simApply(anim, fwd) {
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
   try { stSet(SKEY.pos, JSON.stringify(SIM.ph ? { l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c } : { l: SIM.line, b: SIM.beat }), true); } catch (e) { /* ignore */ }
+  emit('sim', { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph });   /* round 5b: where the Simulator stands now */
 }
 function simGo(line, beat, how) {
   const fwd = line === SIM.line && beat === SIM.beat + 1 && SIM.ph !== 'chain';
@@ -8065,6 +8110,8 @@ function simMount() {
     if (d.led != null) { const lad = $('b1led'), was = t.getAttribute('aria-expanded') === 'true', tog = (x, o) => { x.setAttribute('aria-expanded', String(o)); const dd = document.getElementById(x.getAttribute('aria-controls')); if (dd) dd.hidden = !o; }; lad.querySelectorAll('.lrb[aria-expanded="true"]').forEach(x => tog(x, false)); if (!was) tog(t, true); return; }
     if (d.s5find) { SIM.tray = null; simTrays(); pickNode(d.s5find); return; }
     if (t.closest('#isx-b1led') && (d.sn || d.slv != null)) { SIM.tray = null; if (d.slv != null && SIM.mode === 'full' && SIM.ftab !== 'levers') { SIM.ftab = 'levers'; simBar(); } simTrays(); }   /* a figure in the ladder leads to its actor or its lever: the ladder steps aside */
+    if (d.lvrel != null) { const i = +d.lvrel; flev.delete(i); styleRmap(); renderSide(); const b = cock.querySelector(`.lv[data-l="${i}"]`); if (b && b.getClientRects().length && e.detail === 0) b.focus({ preventScroll: true }); return; }
+    if (d.lvall != null) { flev.clear(); styleRmap(); renderSide(); const ok = levRove(); if (ok && ok[0] && e.detail === 0) ok[0].focus({ preventScroll: true }); return; }
     if (d.s4tab) { simTab(d.s4tab); return; }
     if (d.gsteps != null) { const g = $('gsteps'); gsOpen(g && g.hidden, t); return; }
     if (d.gsx != null) { gsOpen(false); return; }
@@ -8108,7 +8155,7 @@ function simMount() {
 }
 /* B1: ← → and the swipe come from v2/route.js, through simNav() */
 let simRT = 0;
-window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); } }, 120); });
+window.addEventListener('resize', () => { clearTimeout(simRT); simRT = setTimeout(() => { if (view === 'fin' && finMode === 'plumb' && $('cock')) { simAspect(); simCam(false); levRove(); } }, 120); });
 /* a play in full view can be followed as a thread */
 ROOT.addEventListener('click', e => { const b = e.target.closest('[data-pl]'); if (!b) return; const i = +b.dataset.pl; SIM.mode = 'story'; stSet(SKEY.mode, 'story'); SIM.line = i + 1; SIM.beat = -1; SIM.ph = null; clearSel(); simApply(true); });
 
@@ -8134,12 +8181,23 @@ if (RT) {
 }
 if (location.hash === '#tour') ROOT.classList.add('tour');
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
-const R0 = routeOf(location.hash); if (R0) applyModes(R0);
+/* round 5b: “#replay” plays the two first openings again (v2/opening.js), for review and for anyone who wants to see them twice */
+const REPLAY = location.hash === '#replay';
+if (REPLAY) { stSet('isx-open-circuit', null); stSet('isx-open-sim', null); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address stays; the page still opens on the Circuit */ } }
+const R0 = REPLAY ? null : routeOf(location.hash); if (R0) applyModes(R0);
 const start = R0 ? R0[0] : 'map';
 setView(start); lastView = view;
-window.__isxHash0 = location.hash; /* v2: the link as it arrived, for v2/state.js to restore the state inside the tab */
+window.__isxHash0 = REPLAY ? '' : location.hash; /* v2: the link as it arrived, for v2/state.js to restore the state inside the tab */
 if (R0 && location.hash.replace(/^#\/?/, '').split('/')[0] !== slugOf(R0[0], R0[1])) { try { history.replaceState(null, '', '#' + slugOf(R0[0], R0[1]) + location.hash.replace(/^#\/?[^/]*/, '')); } catch (e) { /* ignore */ } } /* old and mixed-case hashes become the clean one */
 if (start === 'map') setStep(0);
+/* round 5b: the Circuit's first opening (v2/opening.js) is decided here, before the first paint, so the map never shows and then goes
+   dark. Once per browser, on a first visit without a link into the map, with motion allowed and a globe to show. The class only holds
+   the stage dark; if the opening's file never arrives, the class comes off by itself. */
+window.__isxReplay = REPLAY;
+if (start === 'map' && !reduce && hasWebGL() && stGet('isx-tips-sim') !== 'off' && (REPLAY || ((!location.hash || location.hash === '#') && stGet('isx-open-circuit') !== '1' && stGet('isx-first') !== 'off'))) {
+  ROOT.classList.add('op-c');
+  setTimeout(() => { if (!(window.ISX && ISX.opening && ISX.opening.on)) ROOT.classList.remove('op-c'); }, 6000);
+}
 if (location.hash === '#tour') setTimeout(play, 3500);
 document.addEventListener('visibilitychange', () => { if (!globe) return; if (document.hidden) globe.pauseAnimation(); else globeWake(); })
 
@@ -8169,6 +8227,7 @@ window.ISX = {
   simLever(i) { if (!LEVERS[i] || !$('cock')) return; SIM.ftab = 'levers'; if (SIM.mode !== 'full') simSetMode('full'); simBar(); simTrays(); const lv = $('cock').querySelector(`.lv[data-l="${i}"]`); if (lv && !flev.has(i)) lv.click(); },
   get stackOpen() { return STACK_OPEN; },
   setFin(k) { if (k === finMode || !FINM.some(m => m[0] === k) || !fmOK(k)) return; finMode = k; if (view !== 'fin') { setView('fin'); return; } routeSync(); buildTabs(); renderFin(); narrate(); renderFinCard(); },
+  flows: k => flowsFor(k).map(f => ({ from: f.from, to: f.to, k: f.k })), stepPov, get lhold() { return LHOLD.map(H => ({ n: H[0], t: H[1], l: H[2].slice() })); }, get levers() { return [...flev]; },
   get globe() { return globe; }, get reduce() { return reduce; }, get intro() { return !!introEl; }, get zoom() { return zLevel; }, get booted() { return isxBooted; },
   data: { CTY, FIRMS, LL, FLAG, C, HOLD5 },
   setView, setStep, stepBy, select, stopPlay, renderGlobe, repaint, renarrate: () => { narr6(); legend6(); }, recard: renderCountryCard, routeSync, introOpen, tipsOpen: () => { stSet(TKEY.globe, null, true); gtOpen(true); },
@@ -8211,6 +8270,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 })();
 </script>
 <script defer src="/imperial-stack/v2/state.js"></script>
+<script defer src="/imperial-stack/v2/opening.js"></script>
 <script defer src="/imperial-stack/v2/insight.js"></script>
 <script defer src="/imperial-stack/v2/own.js"></script>
 <script defer src="/imperial-stack/v2/chrome.js"></script>
@@ -8222,6 +8282,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/simtour.js"></script>
 <script defer src="/imperial-stack/v2/mistake.js"></script>
 <script defer src="/imperial-stack/v2/remind.js"></script>
+<script defer src="/imperial-stack/v2/hints.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

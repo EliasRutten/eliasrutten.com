@@ -74,7 +74,7 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
   for (let i = 0; i < np; i++) { await p.evaluate(k => document.querySelectorAll('#isx-fin .pchip')[k].click(), i); await p.waitForTimeout(300); await snap(p, 'sim/play' + i, '#isx-fin .dossier, #isx-fin .pbar'); }
   await p.evaluate(() => { const x = document.querySelector('#isx-fin .pclr'); if (x) x.click(); });
   const nl = res.counts['sim-levers'];
-  for (let i = 0; i < nl; i++) { await p.evaluate(k => document.querySelectorAll('#isx-fin .lv')[k].click(), i); await p.waitForTimeout(250); await snap(p, 'sim/lever' + i, '#isx-fin .dossier, #isx-fin .hud'); await p.evaluate(k => document.querySelectorAll('#isx-fin .lv')[k].click(), i); }
+  for (let i = 0; i < nl; i++) { await p.evaluate(k => document.querySelector('#isx-fin .lv[data-l="' + k + '"]').click(), i); await p.waitForTimeout(250); await snap(p, 'sim/lever' + i, '#isx-fin .dossier, #isx-fin .hud'); await p.evaluate(k => document.querySelector('#isx-fin .lv[data-l="' + k + '"]').click(), i); }   /* round 5b: by the lever's own number; the row is grouped by holder now */
   await p.evaluate(() => { const n = document.querySelector('#isx-rmap .fn'); if (n) n.dispatchEvent(new MouseEvent('click', { bubbles: true })); }); await p.waitForTimeout(300); await snap(p, 'sim/node', '#isx-fin .dossier');
   await p.close();
   p = await open(c, '#capital-stack', 'sim-stack'); await snap(p, 'sim/stack', '#isx-fin, #isx-narr'); await p.close();

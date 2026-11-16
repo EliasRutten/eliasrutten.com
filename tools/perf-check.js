@@ -35,5 +35,13 @@ const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null;
   await run('scenarios, entry (tier high)', '#scenarios', sc, '?tier=high', enter, 4500);
   const inCase = async p => { await sc(p); await p.evaluate(() => document.querySelector('#isx-sc3 .b3cta').click()); await p.waitForTimeout(7000); };
   await run('scenarios, a case (tier high)', '#scenarios', inCase, '?tier=high');
+  /* round 5b (16 Nov 2026): the two first openings, each measured from its first frame for 7 s, on the device's own tier and with
+     ?tier=high; beside them the same stage at rest, so the opening's own cost can be read off (the globe draws in software here). */
+  await run('circuit, first opening (own tier)', '#circuit', null, '', "ISX.opening.play('circuit')", 7000);
+  await run('circuit, first opening (tier high)', '#circuit', null, '?tier=high', "ISX.opening.play('circuit')", 7000);
+  const entry = async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-fin'); if (e) e.scrollIntoView({ block: 'center' }); const w = document.querySelector('#isx-cock [data-b1more="ways"]'); if (w) w.click(); }); await p.waitForTimeout(1500); };
+  await run('simulator, the entry at rest', '#simulator', entry, '', null, 7000);
+  await run('simulator, first opening (own tier)', '#simulator', entry, '', "ISX.opening.play('sim')", 7000);
+  await run('simulator, first opening (tier high)', '#simulator', entry, '?tier=high', "ISX.opening.play('sim')", 7000);
   await b.close();
 })().catch(e => { console.error(e); process.exit(1); });

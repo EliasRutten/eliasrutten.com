@@ -80,18 +80,21 @@
   var firstOn = false;
   function startFirst() {
     var f = D.first; if (!f || firstOn) return;
+    /* round 5b: on a first visit the Circuit's opening (v2/opening.js) plays first; the first line follows it, and the controls the
+       opening has just settled are not hidden again */
+    if (X.opening && X.opening.wait('circuit', startFirst)) return;
     if (U.stGet(KEY.first) === 'off' || X.deep || X.view !== 'map' || X.step !== 0 || X.intro) return;
     firstOn = true;
-    var still = X.reduce;
-    if (!still) root.classList.add('isx-quiet');
+    var still = X.reduce, after = !!(X.opening && X.opening.ran === 'circuit');
+    if (!still && !after) root.classList.add('isx-quiet');
     X.highlight(function (fl) { return fl.to === 'NYC' && fl.from !== 'PLAT' && fl.from !== 'DC'; });
     var aim = function () { var g = X.globe; if (!g || !firstOn) return false; try { g.pointOfView({ lat: f.pov[0], lng: f.pov[1], altitude: f.pov[2] }, still ? 0 : 1600); } catch (e) { /* ignore */ } return true; };
     if (!aim()) { var n = 0, t = setInterval(function () { if (aim() || ++n > 20) clearInterval(t); }, 400); }
-    setTimeout(function () { if (firstOn) show({ first: true, k: f.k, t: f.t, src: f.src, go: f.go }); }, still ? 0 : 900);
+    setTimeout(function () { if (firstOn) show({ first: true, k: f.k, t: f.t, src: f.src, go: f.go }); }, still ? 0 : after ? 500 : 900);
     /* the controls settle in on the first touch or key, or after a few seconds on their own */
     var wake = function () { settle(); };
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { window.addEventListener(ev, wake, { once: true, passive: true, capture: true }); });
-    quietT = setTimeout(settle, 4200);
+    if (!after) quietT = setTimeout(settle, 4200);
     X.on('step', function () { if (firstOn && X.step !== 0) { if (cur && cur.first) close(false); else endFirst(false); } });
     X.on('view', function () { if (firstOn && X.view !== 'map') { if (cur && cur.first) close(false); else endFirst(false); } });
     X.on('select', function () { if (firstOn && X.sel.iso) { if (cur && cur.first) close(false); else endFirst(false); } });
