@@ -13,7 +13,7 @@
     /* B4: the Arm holds its relation and selection, the Revenue map its sector */
     if (X.view === 'arm') {
       if (X.armMode === 'rev') return X.revSec && X.revSec !== 'all' ? '/sec=' + X.revSec : '';
-      return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '');
+      return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '') + (X.armLay === 'reach' && X.armView === 'orbit' ? '/v=orbit' : '');   /* round 6: the phone drawing, only when it is Orbit */
     }
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
@@ -28,7 +28,14 @@
       String(hash || '').replace(/^#\/?/, '').split('/').slice(1).forEach(function (p) {
         if (p.indexOf('rel=') === 0 || p.indexOf('sec=') === 0) X.setArmRel(p.slice(4));
         else if (p.indexOf('node=') === 0) X.setArmSel(p.slice(5).toUpperCase());
+        else if (p.indexOf('v=') === 0 && X.setArmView) X.setArmView(p.slice(2));
       });
+      return;
+    }
+    /* round 6: #scenarios/<id> opens a case's gallery card (the Arm's doors; whereNow writes the same slug), /NN a step, /close its close */
+    if (X.view === 'story' && X.openCase) {
+      var sp = String(hash || '').replace(/^#\/?/, '').split('/');
+      if (sp[1]) X.openCase(sp[1].toLowerCase(), sp[2] === 'close' ? 'close' : /^\d{1,2}$/.test(sp[2] || '') ? +sp[2] - 1 : null);
       return;
     }
     if (X.view !== 'map') return;

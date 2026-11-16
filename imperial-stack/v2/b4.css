@@ -1,5 +1,5 @@
 /* The Imperial Stack v2 · b4.css (round B4, 16 Nov 2026)
-   1. The Arm: the machine in two geometries, the bands, the card, the sheet (S4 §2)
+   1. The Arm: the machine in two geometries, the card, the sheet (S4 §2); round 6 replaced the bands with Reach and Orbit (reach.css)
    2. The Revenue map: its card and kicker on the stage (S4 §2.6)
    3. One look across all tabs (S4 §3)
    4. Essay, support and “See a mistake?” (S4 §4)
@@ -10,25 +10,25 @@
 #isx-root .b4kick { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #isx-root .b4hint { margin: 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink3); pointer-events: none; }
 #isx-root .b4hint[hidden] { display: none; }
-#isx-root #isx-scene-arm .abands { display: none; }
+#isx-root #isx-scene-arm .areach, #isx-root #isx-scene-arm .aview { display: none; }
 @media (min-width: 761px) {
-  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm { position: relative; }
-  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .b4kick, #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .b4hint { position: absolute; z-index: 5; max-width: calc(100% - 44px); }
-  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flat { position: absolute; padding: 0; margin: 0; max-width: none; }
-  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flatin { width: 100%; height: 100%; max-width: none; margin: 0; }
-  #isx-root.v-arm:not(.arm-bands) #isx-scene-arm .flat svg { width: 100%; height: 100%; }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm { position: relative; }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .b4kick, #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .b4hint { position: absolute; z-index: 5; max-width: calc(100% - 44px); }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .flat { position: absolute; padding: 0; margin: 0; max-width: none; }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .flatin { width: 100%; height: 100%; max-width: none; margin: 0; }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .flat svg { width: 100%; height: 100%; }
   #isx-root.v-arm .tabs-bottom.rt-host { left: 16px; right: 16px; bottom: 12px; }
-  /* bands on a tablet in portrait: the page scrolls under the bar, as on phones */
-  #isx-root.v-arm.arm-bands .tabs-bottom.rt-host { position: sticky; z-index: 12; bottom: 12px; margin: 14px 16px 12px; }
+  /* Reach and Orbit on a tablet in portrait (round 6): the page scrolls under the bar, as on phones */
+  #isx-root.v-arm.arm-reach .tabs-bottom.rt-host { position: sticky; z-index: 12; bottom: 12px; margin: 14px 16px 12px; }
 }
-#isx-root.v-arm.arm-bands #isx-scene-arm .flat { display: none; }
-#isx-root.v-arm.arm-bands #isx-scene-arm .abands { display: grid; padding: 0 16px; }
-#isx-root.v-arm.arm-bands #isx-scene-arm .b4kick { margin: 0 16px 6px; }
-#isx-root.v-arm.arm-bands #isx-scene-arm .b4hint { margin: 0 16px 10px; }
+#isx-root.v-arm.arm-reach #isx-scene-arm .flat { display: none; }
+#isx-root.v-arm.arm-reach #isx-scene-arm .areach { display: block; padding: 0 16px; }
+#isx-root.v-arm.arm-reach #isx-scene-arm .b4kick { margin: 0 16px 6px; }
+#isx-root.v-arm.arm-reach #isx-scene-arm .b4hint { margin: 0 16px 10px; }
 @media (min-width: 761px) {
-  #isx-root.v-arm.arm-bands #isx-scene-arm { padding-top: 132px; }
-  #isx-root.v-arm.arm-bands #isx-scene-arm .abands { padding: 0 22px; }
-  #isx-root.v-arm.arm-bands #isx-scene-arm .b4kick, #isx-root.v-arm.arm-bands #isx-scene-arm .b4hint { margin-left: 22px; margin-right: 22px; }
+  #isx-root.v-arm.arm-reach #isx-scene-arm { padding-top: 132px; }
+  #isx-root.v-arm.arm-reach #isx-scene-arm .areach { padding: 0 22px; }
+  #isx-root.v-arm.arm-reach #isx-scene-arm .b4kick, #isx-root.v-arm.arm-reach #isx-scene-arm .b4hint { margin-left: 22px; margin-right: 22px; }
 }
 @media (max-width: 760px) { #isx-root.v-arm #isx-scene-arm { padding-top: 14px; } }
 
@@ -50,35 +50,6 @@
 #isx-root #isx-arm .mnode:focus-visible rect, #isx-root #isx-arm .shead:focus-visible .sframe, #isx-root #isx-arm .frow:focus-visible .fbg { stroke: #ffd27a; stroke-width: 2; }
 #isx-root .atip .tk { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink3); margin-top: 3px; }
 
-/* the bands */
-#isx-root .abands { gap: 0; }
-#isx-root .aband { border: 1px solid var(--line); border-radius: 14px; background: rgba(12, 20, 29, .55); padding: 10px; }
-#isx-root .abh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 2px 8px; }
-#isx-root .abh .bl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink2); }
-#isx-root .abh .bn { font-family: var(--mono); font-size: 10.5px; color: var(--ink3); text-align: right; }
-#isx-root .achips { display: grid; gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-#isx-root .achips.st { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (min-width: 761px) { #isx-root .achips.st, #isx-root .achips.ec { grid-template-columns: repeat(5, minmax(0, 1fr)); } #isx-root .achips.sec { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-#isx-root .ach { position: relative; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px 6px 12px; border: 1px solid #22313f; border-radius: 10px; background: #0b131b; color: var(--ink); text-align: left; cursor: pointer; transition: opacity var(--mo-t, .4s) var(--mo, ease), border-color .3s, background .3s, box-shadow .3s; }
-#isx-root .ach .cn { min-width: 0; font-family: var(--sans); font-weight: 500; font-size: 13px; line-height: 1.2; color: var(--ink); }
-#isx-root .ach.sc .cn { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .05em; text-transform: uppercase; }
-#isx-root .ach .cs { display: block; margin-top: 2px; font-family: var(--mono); font-size: 10.5px; font-weight: 400; letter-spacing: .04em; text-transform: none; color: var(--ink3); }
-#isx-root .ach .cc { flex: none; min-width: 2ch; text-align: right; font-family: var(--mono); font-size: 12px; color: var(--ink2); }
-#isx-root .ach.rl::before { content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--rc); }
-#isx-root .ach.ec { border-style: dashed; }
-#isx-root .ach.musk { border-color: rgba(255, 181, 71, .6); border-style: dashed; background: #15110a; }
-#isx-root .ach.musk .cn { color: #ffcf7a; }
-#isx-root .ach.dim { opacity: .32; }
-#isx-root .ach.lit { border-color: var(--lc); background: color-mix(in srgb, var(--lc) 9%, #0b131b); }
-#isx-root .ach.sel { border-color: #fff; box-shadow: 0 0 0 1px #fff, 0 0 16px rgba(255, 255, 255, .18); }
-#isx-root .ach:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
-#isx-root .agut { display: flex; align-items: center; gap: 10px; padding: 8px 6px; }
-#isx-root .agut .gl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink3); white-space: nowrap; }
-#isx-root .agut .gl b { font-weight: 400; color: var(--ink); }
-#isx-root .agut .ar { color: var(--ink3); font-size: 12px; }
-#isx-root .agut .gbar { flex: 1; display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: #0f1821; }
-#isx-root .agut .gbar i { display: block; height: 100%; }
-@media (max-width: 420px) { #isx-root .agut .gl { white-space: normal; } }
 
 /* the card on the stage: one glass card, the same anatomy as every tab (rule 7) */
 #isx-root .b4card { box-sizing: border-box; z-index: 6; background: rgba(10, 18, 27, .86); border: 1px solid #1a2631; border-radius: 14px; padding: 16px 18px 14px; color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
@@ -135,9 +106,9 @@
 #isx-root .b4sheet { position: absolute; z-index: 14; left: 16px; bottom: 80px; width: min(440px, calc(100% - 32px)); max-height: 60%; display: flex; flex-direction: column; background: #091017; border: 1px solid #2a3a4a; border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity var(--mo-t, .4s) var(--mo, ease), transform var(--mo-t, .4s) var(--mo, ease); }
 #isx-root .b4sheet[hidden] { display: none; }
 #isx-root .b4sheet.on { opacity: 1; transform: none; pointer-events: auto; }
-#isx-root.v-arm.arm-bands .b4sheet { position: fixed; left: 50%; bottom: 84px; width: min(620px, calc(100vw - 32px)); max-height: 56vh; transform: translate(-50%, 12px); }
-#isx-root.v-arm.arm-bands .b4sheet[data-kind="sel"] { max-height: 46vh; }
-#isx-root.v-arm.arm-bands .b4sheet.on { transform: translate(-50%, 0); }
+#isx-root.v-arm.arm-reach .b4sheet { position: fixed; left: 50%; bottom: 84px; width: min(620px, calc(100vw - 32px)); max-height: 56vh; transform: translate(-50%, 12px); }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"] { max-height: 46vh; }
+#isx-root.v-arm.arm-reach .b4sheet.on { transform: translate(-50%, 0); }
 #isx-root .b4sh-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--line); }
 #isx-root .b4sh-h h3 { margin: 4px 0 0; font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.15; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
 #isx-root .b4x { flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid #2a3a4a; background: none; color: var(--ink2); font-size: 18px; line-height: 1; cursor: pointer; }
@@ -147,10 +118,10 @@
 #isx-root .b4scrim { position: fixed; inset: 0; z-index: 13; background: rgba(2, 4, 7, .45); }
 #isx-root .b4scrim[hidden] { display: none; }
 @media (max-width: 760px) {
-  #isx-root .b4sheet, #isx-root.v-arm.arm-bands .b4sheet { position: fixed; left: 0; right: 0; bottom: 0; width: auto; max-height: 72vh; border-radius: 18px 18px 0 0; border-width: 1px 0 0; transform: translateY(102%); opacity: 1; }
-  #isx-root .b4sheet[data-kind="sel"], #isx-root.v-arm.arm-bands .b4sheet[data-kind="sel"] { max-height: 54vh; }
+  #isx-root .b4sheet, #isx-root.v-arm.arm-reach .b4sheet { position: fixed; left: 0; right: 0; bottom: 0; width: auto; max-height: 72vh; border-radius: 18px 18px 0 0; border-width: 1px 0 0; transform: translateY(102%); opacity: 1; }
+  #isx-root .b4sheet[data-kind="sel"], #isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"] { max-height: 54vh; }
   #isx-root.v-arm #isx-scene-arm .b4kick { white-space: normal; line-height: 1.6; }
-  #isx-root .b4sheet.on, #isx-root.v-arm.arm-bands .b4sheet.on { transform: none; }
+  #isx-root .b4sheet.on, #isx-root.v-arm.arm-reach .b4sheet.on { transform: none; }
   #isx-root .b4sh-b { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
 /* the bar: a gap between the relation groups on phones */
@@ -221,7 +192,7 @@
 #isx-root .dock6 .dk { height: 44px; }
 #isx-root .zoom6 #isx-fs { height: 36px; }
 /* rule 15 · one motion curve; reduced motion cuts transitions */
-@media (prefers-reduced-motion: reduce) { #isx-root .b4card *, #isx-root .b4sheet, #isx-root .ach, #isx-root #isx-arm * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { #isx-root .b4card *, #isx-root .b4sheet, #isx-root #isx-arm * { transition: none !important; } }
 /* rule 17 · the phone strip fits: Crisis is not wired and leaves it below 761 px (About lists it) */
 @media (max-width: 760px) { #isx-root #isx-v-crisis { display: none; } }
 /* focus: one ring */

@@ -2370,6 +2370,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/b6.css">
 <link rel="stylesheet" href="/imperial-stack/v2/entry.css">
 <link rel="stylesheet" href="/imperial-stack/v2/onboard.css">
+<link rel="stylesheet" href="/imperial-stack/v2/reach.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2404,7 +2405,8 @@ button.res:hover { transform: none; box-shadow: none; }
         <canvas id="isx-cv-arm"></canvas>
         <div class="atip" id="isx-atip" role="tooltip" hidden></div>
       </div></div>
-      <div class="abands" id="isx-abands" role="group" aria-label="The imperial arm in three layers"></div>
+      <div class="aview" id="isx-aview" role="group" aria-label="Two ways to draw the Arm" hidden><button type="button" data-aview="reach" aria-pressed="true">Reach</button><button type="button" data-aview="orbit" aria-pressed="false">Orbit</button></div>
+      <div class="areach" id="isx-areach"></div>
       <article class="b4card acard" id="isx-acard" aria-live="polite"></article>
     </div>
     <div class="scene" id="isx-scene-chain" hidden>
@@ -3031,10 +3033,10 @@ function renderGlobe(move) {
 }
 
 /* ================= the imperial arm: sectors, firms and the state ================= */
-/* ================= the imperial arm (B4): one machine in two geometries, bands on narrow screens =================
+/* ================= the imperial arm (B4; round 6): one machine in two geometries, Reach and Orbit on narrow screens =================
    The rule (S4 §2.1): the richest layout whose smallest text stays at 11 px or more. The machine with its firms listed
-   (full, 1040 × 640), then the machine with sector plates (compact, 1040 × 470), then the three layers as bands (HTML;
-   phones and tablets in portrait). armLayout() picks the layout from the room the stage leaves and runs again on resize,
+   (full, 1040 × 640), then the machine with sector plates (compact, 1040 × 470), then the layout called reach (phones and
+   tablets in portrait), drawn as Reach or Orbit (round 6). armLayout() picks the layout from the room the stage leaves and runs again on resize,
    never on hover. Hover and focus show a tooltip only; a click, a tap, Enter or Space selects; Esc clears. */
 const AGW = 1040, AGH = { full: 640, compact: 470 };
 const arm = $('arm'), pArm = Particles($('cv-arm'), AGW, AGH.full);
@@ -3150,6 +3152,10 @@ function buildArm() {
   G.bands.forEach(([lab, y, h]) => { el('rect', { x: 2, y: y + 1, width: AGW - 4, height: h - 2, rx: 14, class: 'band' }, arm); el('text', { x: 16, y: y + 19, class: 'bandlab' }, arm).textContent = lab; });
   const gE = el('g', { id: 'isx-armedges' }, arm), gN = el('g', {}, arm);
   ARM.edges.forEach((e, ix) => { e.geom = G.eg[ix]; e.path = el('path', { d: cpath(e.geom), class: 'medge', stroke: ATYPE[e.type].c, 'stroke-dasharray': ADASH[e.type] || 'none' }, gE); });
+  /* round 6: a Control line that a Scenario plays carries a small switch at its midpoint (no animation) */
+  const gM = el('g', { class: 'aswm', 'aria-hidden': 'true' }, arm);
+  ARM.edges.forEach(e => { e.mark = null; if (e.type !== 'control' || !e.cases.length) return; const g = e.geom, x = (g.a.x + 3 * g.c.x + 3 * g.c2.x + g.b.x) / 8, y = (g.a.y + 3 * g.c.y + 3 * g.c2.y + g.b.y) / 8;
+    const m = el('g', { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})` }, gM); el('rect', { x: -6, y: -3.5, width: 12, height: 7, rx: 3.5 }, m); el('circle', { cx: 2.4, cy: 0, r: 1.9 }, m); e.mark = m; });
   const btn = (id, cls, parent) => { const g = el('g', { class: cls, 'data-a': id, tabindex: 0, role: 'button' }, parent); ABT[id] = g; return g; };
   ARM.state.concat(ARM.econ).forEach(([id, label]) => {
     const n = G.P[id], ec = NODE[id].layer === 'econ', g = btn(id, 'mnode ' + NODE[id].layer, gN); AEL[id] = g;
@@ -3197,11 +3203,11 @@ arm.addEventListener('keydown', e => { const g = e.target.closest('[data-a]'); i
 
 /* the state of every node under the relation in hand and the selection */
 function armState() {
-  const sel = armSel, lit = sel ? aLinked(sel) : null, sb = sel ? aBox(sel) : null, out = {};
+  const sel = armSel, lit = sel ? aLinked(sel) : null, sb = sel ? aBox(sel) : null, far = sel ? armReach(sel).lit : null, out = {};
   Object.keys(NODE).forEach(id => {
     const n = NODE[id], c = aLinks(id).length, firm = n.layer === 'firm';
     const isSel = sel === id, isLit = !firm && !!lit && lit.has(id);
-    const dim = firm ? (!sel && armFilter !== 'all' && !c) : sel ? !(id === sb || isLit) : armFilter !== 'all' && !c;
+    const dim = firm ? (!sel && armFilter !== 'all' && !c) : sel ? !(id === sb || isLit || far.has(id)) : armFilter !== 'all' && !c;
     out[id] = { c, sel: isSel, lit: isLit, dim, own: !!sel && !isSel && id === sb };
   });
   return out;
@@ -3209,15 +3215,17 @@ function armState() {
 /* the accessible name holds what the node shows (the plate's own line, “5 firms · 22 links”), then what it means */
 const aLab = (id, c) => { const n = NODE[id], rel = armFilter !== 'all', sec = n.layer === 'sector'; return esc(n.label) + ': ' + (sec ? aPl(n.firms.length, 'firm') + ' · ' : '') + (c ? aPl(c, 'link') + (rel ? ' of this kind' : '') : (sec ? '–, ' : '') + 'no link of this kind'); };
 function renderArm() {
-  const parts = [], sel = armSel, col = aCol(armFilter);
+  if (armLay === 'reach') { pArm.set([]); renderReach(); return; }   /* round 6: on phones the machine is not drawn; Reach or Orbit is */
+  const parts = [], sel = armSel, col = aCol(armFilter), R2 = sel ? armReach(sel).second : null;
   ARM.edges.forEach(e => {
     if (!e.path) return;
-    const on = aOn(e), touch = !!sel && aTouch(e, sel), strong = on && (sel ? touch : armFilter !== 'all');
-    e.path.setAttribute('stroke-width', strong ? 1.8 : .9);
-    e.path.setAttribute('opacity', !on ? .04 : sel ? (touch ? .9 : .05) : strong ? .85 : .2);
+    const on = aOn(e), touch = !!sel && aTouch(e, sel), strong = on && (sel ? touch : armFilter !== 'all'), two = !!R2 && !touch && R2.has(e);   /* round 6: the second links, at lower strength */
+    e.path.setAttribute('stroke-width', strong ? 1.8 : two ? 1.1 : .9);
+    const op = !on ? .04 : sel ? (touch ? .9 : two ? .38 : .05) : strong ? .85 : .2;
+    e.path.setAttribute('opacity', op); if (e.mark) e.mark.setAttribute('opacity', Math.min(1, op + .1));
     if (on && (!sel || touch)) parts.push({ a: e.geom.a, b: e.geom.b, c: e.geom.c, c2: e.geom.c2, color: ATYPE[e.type].c, n: strong ? 4 : 1, r: strong ? 2.5 : 1.5, alpha: 1, speed: 46 });
   });
-  pArm.set(parts);
+  pArm.set(armLay === 'reach' ? [] : parts);   /* round 6: the phone drawings carry no particles */
   const S = armState();
   Object.keys(AEL).forEach(id => {
     const g = AEL[id], s = S[id], b = ABT[id];
@@ -3227,40 +3235,345 @@ function renderArm() {
     if (b) { b.setAttribute('aria-label', aLab(id, s.c)); b.setAttribute('aria-pressed', String(s.sel)); }
     const sub = b && b.querySelector('.ssub'); if (sub) sub.textContent = aPl(NODE[id].firms.length, 'firm') + ' · ' + (s.c ? aPl(s.c, 'link') : '–');
   });
-  if (armLay === 'bands') renderBands();
+  if (armLay === 'reach') renderReach();
 }
 function armSelect(id) {
   armSel = id && armSel !== id ? id : null; armList = false;
   $('atip').hidden = true;
   renderArm(); renderArmCard();
-  if (armSel && armLay === 'bands') {
-    const c = document.querySelector(`#isx-abands [data-anode="${armSel}"]`);
-    if (c) { const r = c.getBoundingClientRect(); if (r.bottom > innerHeight * .42 || r.top < 70) window.scrollBy({ top: r.top - innerHeight * .18, behavior: reduce ? 'auto' : 'smooth' }); }
-    ashOpen('sel', c || ABT[armSel]);
+  if (armSel && armLay === 'reach') {
+    /* round 6: the sheet peeks with the figures; the node stays in view above it */
+    const c = RG.nodes[aBox(armSel)];
+    if (c) { const r = c.getBoundingClientRect(), lim = innerHeight - 136 - 24; if (r.bottom > lim || r.top < 70) window.scrollBy({ top: r.top - Math.min(innerHeight * .3, lim - 60), behavior: reduce ? 'auto' : 'smooth' }); }
+    if (ashKind === 'sel') { ashFill(); armBar(); } else { ashTall = false; ashOpen('sel', c || ABT[armSel]); }
   }
   else if (ashKind === 'sel' || ashKind === 'links') { if (armSel && ashKind === 'links') ashFill(); else if (!armSel) ashClose(); }
-  routeSync(); dockEssay();
+  routeSync(); dockEssay(); armEmit(armSel ? 'pick' : null);
 }
 function armSetRel(k) {
   if (armMode === 'rev') { revSec = k; ashClose(true); armBar(); narrate(); renderRevCard(); renderGlobe(false); routeSync(); dockEssay(); return; }
-  armFilter = k; armSel = null; armList = false; ashClose(true);
-  renderArm(); armBar(); narrate(); renderArmCard(); routeSync(); dockEssay();
+  armFilter = k; armSel = null; armList = false; armTile = null; ashClose(true);
+  renderArm(); armBar(); narrate(); renderArmCard(); routeSync(); dockEssay(); armEmit(null);
 }
 
-/* ---------- the bands: the three layers on phones and tablets in portrait (S4 §2.4) ---------- */
-function renderBands() {
-  const host = $('abands'); if (!host) return;
-  const S = armState(), rc = armFilter === 'all' ? null : aCol(armFilter), lc = aCol(armFilter);
-  const chip = (id, cls, sub) => { const s = S[id], n = NODE[id];
-    return `<button type="button" class="ach ${cls}${s.dim ? ' dim' : ''}${s.lit ? ' lit' : ''}${s.sel ? ' sel' : ''}${rc && s.c ? ' rl' : ''}" data-anode="${id}" style="--lc:${lc}${rc ? ';--rc:' + rc : ''}" aria-pressed="${s.sel}"><span class="cn">${esc(n.label)}${sub ? `<span class="b4sr">, </span><span class="cs">${esc(sub)}</span>` : ''}</span><span class="cc"><span class="b4sr">: </span>${s.c ? s.c + `<span class="b4sr"> link${s.c === 1 ? '' : 's'}${armFilter === 'all' ? '' : ' of this kind'}</span>` : '–<span class="b4sr"> no link of this kind</span>'}</span></button>`; };
-  const gut = (a, b, lab, extra) => { const es = aBetween(a, b), by = {}; es.forEach(e => { by[e.type] = (by[e.type] || 0) + 1; });
-    return `<div class="agut" role="note" aria-label="${es.length} links cross between these layers${extra ? '; ' + extra : ''}"><span class="ar" aria-hidden="true">↕</span><span class="gl"><b>${es.length}</b> ${lab}${extra ? ' · ' + extra : ''}</span><span class="gbar" aria-hidden="true">${AORD.slice(1).filter(k => by[k]).map(k => `<i style="flex:${by[k]};background:${ATYPE[k].c}"></i>`).join('')}</span></div>`; };
-  const se = aBetween('state', 'econ').length;
-  host.innerHTML = `<section class="aband" aria-label="US state"><div class="abh"><span class="bl">US state</span><span class="bn">${ARM.state.length} bodies</span></div><div class="achips st">${ARM.state.map(([id]) => chip(id, 'st')).join('')}</div></section>`
-    + gut('state', 'arm', 'state ↔ arm')
-    + `<section class="aband" aria-label="The arm"><div class="abh"><span class="bl">The arm</span><span class="bn">${ARM.sectors.length} sectors · ${NFIRMS} firms · ${aBetween('arm', 'arm').length} inside</span></div><div class="achips sec">${ARM.sectors.map(([id, , , , f]) => chip(id, NODE[id].musk ? 'sc musk' : 'sc', aPl(f.length, 'firm'))).join('')}</div></section>`
-    + gut('arm', 'econ', 'arm ↔ economy', se ? se + ' state ↔ economy' : '')
-    + `<section class="aband" aria-label="The real economy"><div class="abh"><span class="bl">The real economy</span><span class="bn">${aPl(ARM.econ.length, 'group')}</span></div><div class="achips ec">${ARM.econ.map(([id]) => chip(id, 'ec')).join('')}</div></section>`;
+/* ---------- round 6 (arm rethink §1–§6): the handles, read as paths ----------
+   The Arm shows the handles: every documented tie by which the US state owns, buys from, staffs or licenses a firm, and by
+   which a firm takes rents and data from the economy abroad. The unit of reading is a path (state → tie → firm → tie →
+   economy). On phones and tablets in portrait the machine is drawn twice, as Reach (three rails, every name readable) and as
+   Orbit (the state at the centre, the economy on the rim); one selection, one sheet and one relation serve both. The Control
+   relation becomes a switchboard. Every count below is derived from ARM at render; nothing is typed. */
+const AQ = 'Who in Washington has a hand on the services you use, through which firm, and by what tie?';
+/* the links a Scenario plays (from STORIES and data/switches.json; spec §5): case → links */
+const ARMX_LINKS = { ukr: ['IC>MIL', 'MUSK>MIL', 'PENT>SPX', 'MIL>MUSK'], mh17: ['JUST>CLOUD'], protest: ['STATE>USER', 'DHS>PLTR'], border: ['DHS>BIZ', 'DHS>AWS'],
+  icc: ['TREA>MSFT', 'RAILS>BIZ'], kenya: ['SAVE>TETH', 'TETH>TREA', 'CANT>TETH', 'CANT>COMM', 'TETH>INV'], nexperia: ['COMM>FAB'], huawei: ['COMM>GOOG'],
+  russia: ['TREA>RAILS'], nayara: ['AZR>BIZ'], maven: ['PENT>PLTR', 'MIL>PLTR', 'IC>PLTR'], ice: ['BROK>DHS', 'BROK>JUST', 'BROK>IC', 'USER>BROK', 'USER>PLTR'],
+  gaza: ['AZR>MIL', 'MIL>CLOUD'], garantex: ['TREA>TETH'] };
+/* Control links that exist as a rule and have not been used on a named target in the page's record (spec §3): Ready. The rest are Pulled. */
+const AREADY = new Set(['COMM>NVDA', 'COMM>TOOL', 'COMM>CLOUD', 'JUST>CLOUD', 'TREA>CRCL', 'STATE>BIZ', 'DHS>BIZ']);
+ARM.edges.forEach(e => { e.key = e.from + '>' + e.to; e.cases = []; });
+Object.keys(ARMX_LINKS).forEach(c => ARMX_LINKS[c].forEach(k => { const e = ARM.edges.find(x => x.key === k); if (e) e.cases.push(c); }));
+/* “Elsewhere on the map”: the Circuit step (index into the dollar loop) and the Simulator actor that tell the same part.
+   Each door was checked against the step's and the actor's own text; a door that did not hold was left out (change note). */
+const AELSE = { RAILS: { c: 1 }, STABLE: { c: 8, s: 'STB' }, ASSET: { c: 7, s: 'MMF' }, PLAT: { c: 1, s: 'HYP' }, CLOUD: { c: 2, s: 'HYP' }, LABS: { s: 'LAB' },
+  CHIP: { c: 4, s: 'CHP' }, TOOL: { c: 3, s: 'CHP' }, TREA: { c: 8, s: 'TSY' }, FED: { c: 8, s: 'FED' }, WH: { s: 'WH' }, COMM: { c: 3, s: 'WH' },
+  SAVE: { s: 'DUA' }, BANK: { c: 7, s: 'OFF' }, FAB: { c: 4, s: 'CHP' }, BIZ: { c: 1 }, USER: { c: 1 }, MERCH: { c: 1 }, ADV: { c: 1 } };
+/* short names on phones (spec §2.1); full names stay in the sheet */
+const ASHORT = { FED: 'The Fed', JUST: 'Justice · FBI', IC: 'Intelligence', DHS: 'Homeland Sec.', STATE: 'State Dept',
+  INV: 'Stakes abroad', SAVE: 'Savers abroad', BANK: 'Banks abroad', MERCH: 'Merchants', ADV: 'Advertisers', USER: 'Users', BIZ: 'Firms, govts', MIL: 'Militaries', TEL: 'Telecoms', FAB: 'Fabs, mines',
+  ASSET: 'Asset managers', CLOUD: 'Hyperscale cloud', LABS: 'AI labs', POWER: 'Minerals, power' };
+let armView = stGet('isx-arm-view') === 'orbit' ? 'orbit' : 'reach', armTile = null, ashTall = false, aCat = null;
+const aStory = c => STORIES.find(s => s.id === c);
+/* the cases a node's links are played in, in the gallery's order */
+const aCases = id => { const s = new Set(); ARM.edges.forEach(e => { if (aTouch(e, id)) e.cases.forEach(c => s.add(c)); }); return STORIES.map(S => S.id).filter(c => s.has(c)); };
+/* the kind of coercion of a case (round 1's switches.json CAT), loaded once */
+function aCatLoad() {
+  if (aCat) return; aCat = {};
+  try { window.ISX.load('switches').then(d => { Object.keys(d.CAT || {}).forEach(k => (d.CAT[k].cases || []).forEach(c => { aCat[c] = d.CAT[k].s; })); if (view === 'arm' && armMode !== 'rev') { if (armFilter === 'control') { renderArmCard(); if (armLay === 'reach') renderReach(); if (ashKind) ashFill(); } } }).catch(() => {}); } catch (e) { /* the kinds stay off */ }
+}
+const PLAY = '<svg viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg>';
+const aDoor = c => { const S = aStory(c); return S ? `<button type="button" class="adoor" data-scen="${c}" aria-label="Open in Scenarios: ${esc(S.t)}">${PLAY}<span>Scenarios · ${esc(S.t)}</span></button>` : ''; };
+const aDoors = e => e.cases.length ? `<span class="adoors">${e.cases.map(aDoor).join('')}</span>` : '';
+
+/* a node's reach: its own links, then, for a state body or an economy group, the links from the sectors it reaches to the far
+   layer (the second links). Box level: a firm's links count for its sector. */
+function armReach(id) {
+  const n = NODE[id], own = aLinks(id), far = n.layer === 'state' ? 'econ' : n.layer === 'econ' ? 'state' : null;
+  const mids = new Set(), reach = new Set(), second = new Set(), lit = new Set([aBox(id)]);
+  own.forEach(e => { const o = aBox(aOther(e, id)); lit.add(aBox(e.from)); lit.add(aBox(e.to)); if (aLay(o) === 'arm') mids.add(o); else if (far && aLay(o) === far) reach.add(o); });
+  if (far) ARM.edges.forEach(e => { if (!aOn(e)) return; const a = aBox(e.from), b = aBox(e.to); [[a, b], [b, a]].forEach(([m, o]) => { if (mids.has(m) && aLay(o) === far) { second.add(e); reach.add(o); lit.add(a); lit.add(b); } }); });
+  reach.delete(aBox(id));
+  return { own, second, reach, far, lit };
+}
+/* the two figures of a selection (spec §2.3) */
+function armFigs(id) {
+  const n = NODE[id], R = armReach(id), rel = armFilter !== 'all', k = R.own.length;
+  const a = { b: String(k), t: rel ? (k === 1 ? 'link of this kind' : 'links of this kind') : k === 1 ? 'link' : 'links' };
+  let b, say;
+  if (n.layer === 'state') { b = { b: R.reach.size + ' of ' + ARM.econ.length, t: 'groups in the economy it reaches', s: 'groups it reaches' }; say = 'reaches ' + R.reach.size + ' of ' + ARM.econ.length + ' groups in the economy'; }
+  else if (n.layer === 'econ') { b = { b: R.reach.size + ' of ' + ARM.state.length, t: 'state bodies that reach it', s: 'state bodies reach it' }; say = 'reached by ' + R.reach.size + ' of ' + ARM.state.length + ' state bodies'; }
+  else if (n.layer === 'sector') { b = { b: String(n.firms.length), t: n.firms.length === 1 ? 'firm' : 'firms' }; say = aPl(n.firms.length, 'firm'); }
+  else { const t = aLinked(id).size; b = { b: String(t), t: t === 1 ? 'part of the machine tied to it' : 'parts of the machine tied to it', s: t === 1 ? 'part tied to it' : 'parts tied to it' }; say = 'in ' + NODE[n.sector].label; }
+  return { a, b, say, R };
+}
+const aFigHTML = (F, extra, short) => `<div class="arfig"><div><b>${esc(F.a.b)}</b><span>${esc(F.a.t)}</span></div><div><b>${esc(F.b.b)}</b><span>${esc(short && F.b.s || F.b.t)}</span></div>${extra || ''}</div>`;
+/* the whole machine's figures (spec §2.3): how many state bodies reach users, and the links across the layers */
+function armWhole() {
+  const u = armReach('USER');
+  return { u: u.reach.size, sa: aBetween('state', 'arm').length, ae: aBetween('arm', 'econ').length, se: aBetween('state', 'econ').length };
+}
+/* “Elsewhere on the map”: up to three doors, the Circuit step, the Simulator actor and the Scenarios cases */
+function armElse(id) {
+  const n = NODE[id], X = AELSE[boxOf(n).id] || {}, cs = aCases(id), rows = [];
+  if (X.c != null && STEPS_D[X.c]) rows.push(`<button type="button" class="aels" data-ago="c:${X.c}"><small>Circuit</small><span>${STEPS_D[X.c].n} · ${esc(STEPS_D[X.c].t)}</span>${CHR}</button>`);
+  if (X.s && FN[X.s]) rows.push(`<button type="button" class="aels" data-ago="s:${X.s}"><small>Simulator</small><span>${esc(FN[X.s][3])}</span>${CHR}</button>`);
+  if (cs.length) rows.push(`<div class="aels sc"><small>Scenarios</small><span class="acs">${cs.slice(0, 3).map(aDoor).join('')}${cs.length > 3 ? `<i>+${cs.length - 3} more in the links below</i>` : ''}</span></div>`);
+  return rows.length ? `<div class="aelse" role="group" aria-label="Elsewhere on the map"><div class="b4lk">Elsewhere on the map</div>${rows.join('')}</div>` : '';
+}
+/* every link of a node, by relation group (the sheet on phones and tablets) */
+function armLinksBy(id) {
+  const ls = aLinks(id); if (!ls.length) return '<p class="b4empty">No link of this kind.</p>';
+  const me = NODE[id];
+  return AGRP.map(g => g.keys.map(k => {
+    const es = ls.filter(e => e.type === k); if (!es.length) return '';
+    return `<div class="b4lk"><i class="dot" style="background:${ATYPE[k].c}"></i>${esc(ATYPE[k].name)} · ${es.length}</div>` + es.map(e => {
+      const fromMe = me.layer === 'sector' ? aBox(e.from) === id : e.from === id, o = NODE[fromMe ? e.to : e.from], via = me.layer === 'sector' && NODE[fromMe ? e.from : e.to].layer === 'firm' ? NODE[fromMe ? e.from : e.to].label + ' ' : '';
+      return `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${esc(via)}${fromMe ? '→' : '←'} ${esc(o.label)}</b> · ${esc(e.text)}${aDoors(e)}</div></div>`;
+    }).join('');
+  }).join('')).join('');
+}
+
+/* ---------- the switchboard: the Control relation (spec §3) ---------- */
+const MONTHS = 'January|February|March|April|May|June|July|August|September|October|November|December';
+function aDate(t) {
+  const p = t.match(/\(([^()]*\b\d{4}\b[^()]*)\)/); if (p) return p[1];
+  const d = t.match(new RegExp('(by )?\\b(\\d{1,2} )?(' + MONTHS + ') \\d{4}\\b')); return d ? d[0] : '';
+}
+const aToggle = on => `<svg class="atg" viewBox="0 0 30 16" width="30" height="16" aria-hidden="true"><rect x=".75" y=".75" width="28.5" height="14.5" rx="7.25"/><circle cx="${on ? 22 : 8}" cy="8" r="4.6"/></svg>`;
+function armSwitches() {
+  const ctl = ARM.edges.filter(e => e.type === 'control'), by = {};
+  ctl.forEach(e => { (by[e.from] = by[e.from] || []).push(e); });
+  const st = id => NODE[id].layer === 'state', sOrd = id => ARM.state.findIndex(s => s[0] === id);
+  const hold = Object.keys(by).sort((a, b) => (st(a) ? 0 : 1) - (st(b) ? 0 : 1) || by[b].length - by[a].length || sOrd(a) - sOrd(b));
+  return { ctl, by, hold, pulled: ctl.filter(e => !AREADY.has(e.key)).length, played: ctl.filter(e => e.cases.length).length, st };
+}
+function armBoardHTML(where) {
+  aCatLoad();
+  const W = armSwitches(), ready = W.ctl.length - W.pulled;
+  let h = `<div class="aboard ${where}" role="group" aria-label="Who can switch off what"><p class="abh2">Who can switch off what. <b>${W.ctl.length}</b> control links: <b>${W.pulled}</b> pulled against a named party, <b>${ready}</b> ready. <b>${W.played}</b> are played in Scenarios.</p>`
+    + `<p class="abkey"><span><b>Pulled</b> a power Washington or a firm has used against a named firm, person or country, with a date.</span><span><b>Ready</b> a power that exists as a rule, not yet used on a named target.</span></p>`;
+  let firms = false;
+  W.hold.forEach(hid => {
+    if (!W.st(hid) && !firms) { firms = true; h += '<div class="abgrp f">Held by firms</div>'; }
+    const es = W.by[hid];
+    h += `<div class="abhold"><b>${esc(NODE[hid].label)}</b><span>${aPl(es.length, 'switch').replace('switchs', 'switches')}</span></div><div class="abgrid">`;
+    es.forEach(e => {
+      const on = !AREADY.has(e.key), open = armTile === e.key, kind = e.cases.map(c => aCat && aCat[c]).filter(Boolean)[0], dt = aDate(e.text);
+      h += `<div class="asw${on ? ' on' : ''}${open ? ' open' : ''}"><button type="button" class="asw-b" data-atile="${e.key}" aria-expanded="${open}"><span class="b4sr">${esc(NODE[e.from].label)}: </span>`
+        + `<span class="asw-t">${aToggle(on)}<span class="asw-s">${on ? 'Pulled' : 'Ready'}</span></span>`
+        + `<span class="asw-g">→ ${esc(NODE[e.to].label)}</span>${dt || kind ? `<span class="asw-d">${esc(dt)}${dt && kind ? ' · ' : ''}${kind ? `<span class="asw-k">${esc(kind)}</span>` : ''}</span>` : ''}</button>`
+        + `<p class="asw-x"${open ? '' : ' hidden'}>${esc(e.text)}</p>${aDoors(e)}</div>`;
+    });
+    h += '</div>';
+  });
+  return h + '</div>';
+}
+
+/* ---------- Reach and Orbit: the two drawings on phones and tablets in portrait (spec §2, §6) ---------- */
+const RG = { W: 0, v: null, f: null, lines: [], nodes: {}, labs: null, say: {}, sayK: null };
+let aMeasure = null;
+function aTextW(s, px, wt) { if (!aMeasure) aMeasure = document.createElement('canvas').getContext('2d'); aMeasure.font = (wt || 400) + ' ' + px + 'px Saira, "Segoe UI", system-ui, sans-serif'; return aMeasure.measureText(s).width; }
+const aNm = (id, short) => short ? ASHORT[id] || NODE[id].label : NODE[id].label;
+/* a rim name on a phone may take two lines, split at the space nearest its middle */
+const aSplit2 = s => { if (s.length < 10 || s.indexOf(' ') < 0) return [s]; let best = -1; for (let i = 0; i < s.length; i++) if (s[i] === ' ' && (best < 0 || Math.abs(i - s.length / 2) < Math.abs(best - s.length / 2))) best = i; return [s.slice(0, best), s.slice(best + 1)]; };
+/* each outer node sits at the mean row of the sectors it is tied to (fewer crossings), kept apart by a minimum gap */
+function armRail(ids, yOf, lo, hi, gap) {
+  const row = {}; ARM.sectors.forEach(([id], i) => { row[id] = i; });
+  const want = ids.map((id, k) => { const rs = []; ARM.edges.forEach(e => { const a = aBox(e.from), b = aBox(e.to); if (a === id && row[b] != null) rs.push(row[b]); if (b === id && row[a] != null) rs.push(row[a]); }); return { id, k, y: yOf(rs.length ? rs.reduce((p, q) => p + q, 0) / rs.length : 6.5) }; });
+  want.sort((p, q) => p.y - q.y || p.k - q.k);
+  const n = want.length, ys = want.map(w => w.y);
+  for (let it = 0; it < 4; it++) {
+    for (let i = 0; i < n; i++) ys[i] = Math.max(ys[i], i ? ys[i - 1] + gap : lo);
+    for (let i = n - 1; i >= 0; i--) ys[i] = Math.min(ys[i], i < n - 1 ? ys[i + 1] - gap : hi);
+  }
+  const out = {}; want.forEach((w, i) => { out[w.id] = ys[i]; }); return out;
+}
+function reachGeo(W) {
+  const short = W < 600, fN = short ? 11.2 : 12.5, fP = short ? 11.5 : 12.5, m = short ? 2 : 12;
+  const wL = Math.max(...ARM.state.map(([id]) => aTextW(aNm(id, short), fN))), wR = Math.max(...ARM.econ.map(([id]) => aTextW(aNm(id, short), fN)));
+  const wT = Math.max(...ARM.sectors.map(([id]) => aTextW(aNm(id, short), fP, 500))), room = W - 2 * m - wL - wR - 28;
+  const wP = wT + Math.max(8, Math.min(20, room - wT - 48));   /* the pills keep their text; the gutters give way first, down to 24 px */
+  const g = Math.max(24, Math.min(short ? 60 : 150, (room - wP) / 2));
+  const tot = wL + 14 + g + wP + g + 14 + wR, sx = Math.max(m, (W - tot) / 2);
+  const XS = sx + wL + 9, PL = XS + 5 + g, PR = PL + wP, XE = PR + g + 5;
+  const rowH = short ? 39 : 44, top = 44, Y = {};
+  ARM.sectors.forEach(([id], i) => { Y[id] = top + i * rowH; });
+  const lo = top, hi = top + (ARM.sectors.length - 1) * rowH, yOf = r => top + r * rowH;
+  Object.assign(Y, armRail(ARM.state.map(s => s[0]), yOf, lo, hi, short ? 30 : 34), armRail(ARM.econ.map(s => s[0]), yOf, lo, hi, short ? 30 : 34));
+  return { W, H: hi + 30, short, fN, fP, XS, PL, PR, XE, Y, m, sx, ph: short ? 26 : 30 };
+}
+/* the ellipse, sampled; n points at equal arc length from the top, clockwise, starting at fraction f0 */
+function ellAt(rx, ry, cx, cy) {
+  const K = 720, pts = [], cum = [0];
+  for (let i = 0; i <= K; i++) { const t = -Math.PI / 2 + i / K * Math.PI * 2; pts.push([cx + rx * Math.cos(t), cy + ry * Math.sin(t)]); if (i) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); }
+  const L = cum[K];
+  return f => { f = ((f % 1) + 1) % 1; const d = f * L; let i = 1; while (i < K && cum[i] < d) i++; const u = (d - cum[i - 1]) / ((cum[i] - cum[i - 1]) || 1); return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u, L]; };
+}
+function orbitGeo(W) {
+  const short = W < 600, fN = short ? 11.2 : 12.5, cx = W / 2;
+  const lines = id => short ? aSplit2(aNm(id, true)) : [aNm(id, false)];
+  const wE = Math.max(...ARM.econ.map(([id]) => Math.max(...lines(id).map(t => aTextW(t, fN)))));
+  const rx = Math.max(80, Math.min(cx - 6 - wE - 10, 280)), ry = Math.min(short ? 176 : 270, rx * 1.7), cy = 44 + ry, H = cy + ry + 34;
+  const P = {}, secF = {};
+  const ring = (ids, k, f0) => { const at = ellAt(rx * k, ry * k, cx, cy); ids.forEach((id, i) => { const f = f0 + i / ids.length, p = at(f); P[id] = { x: p[0], y: p[1], f, k, gap: p[2] / ids.length }; }); };
+  ring(ARM.sectors.map(s => s[0]), .64, .5 / ARM.sectors.length);
+  ARM.sectors.forEach(([id]) => { secF[id] = P[id].f; });
+  /* the state bodies and the economy groups take the slots nearest the sectors they are tied to */
+  const place = (ids, k) => {
+    const want = ids.map(id => { let sx = 0, sy = 0; ARM.edges.forEach(e => { const a = aBox(e.from), b = aBox(e.to), o = a === id ? b : b === id ? a : null; if (o && secF[o] != null) { sx += Math.cos(secF[o] * 2 * Math.PI); sy += Math.sin(secF[o] * 2 * Math.PI); } }); let f = Math.atan2(sy, sx) / (2 * Math.PI); if (f < 0) f += 1; return { id, f }; }).sort((p, q) => p.f - q.f);
+    const n = want.length, cd = (a, b) => { const d = Math.abs(a - b) % 1; return Math.min(d, 1 - d); };
+    let best = 0, bc = 1e9; for (let s = 0; s < 240; s++) { const o = s / 240 / n; let c = 0; want.forEach((w, i) => { c += cd(o + i / n, w.f) ** 2; }); if (c < bc) { bc = c; best = o; } }
+    const at = ellAt(rx * k, ry * k, cx, cy); want.forEach((w, i) => { const f = best + i / n, p = at(f); P[w.id] = { x: p[0], y: p[1], f, k, gap: p[2] / n }; });
+  };
+  place(ARM.state.map(s => s[0]), .34); place(ARM.econ.map(s => s[0]), 1);
+  return { W, H, short, fN, cx, cy, rx, ry, P, lines };
+}
+/* one path per link, box to box */
+function reachPath(G, e) {
+  const a = aBox(e.from), b = aBox(e.to), la = aLay(a), lb = aLay(b), Y = G.Y;
+  if (la === 'arm' && lb === 'arm') { if (a === b) return null; const y1 = Y[a], y2 = Y[b], k = Math.min(G.short ? 34 : 46, 8 + Math.abs(y2 - y1) * .16); return { d: `M${G.PR},${y1} C${G.PR + k},${y1} ${G.PR + k},${y2} ${G.PR},${y2}`, inner: true }; }
+  const X = l => l === 'state' ? G.XS + 5 : G.XE - 5;
+  if (la !== 'arm' && lb !== 'arm') {
+    if (la === lb) { if (a === b) return null; const x = X(la), s = la === 'state' ? 1 : -1, k = 26; return { d: `M${x},${Y[a]} C${x + s * k},${Y[a]} ${x + s * k},${Y[b]} ${x},${Y[b]}` }; }
+    const p = la === 'state' ? a : b, q = la === 'state' ? b : a, mx = (G.PL + G.PR) / 2;
+    return { d: `M${X('state')},${Y[p]} C${mx},${Y[p]} ${mx},${Y[q]} ${X('econ')},${Y[q]}`, across: true };
+  }
+  const out = la === 'arm' ? b : a, mid = la === 'arm' ? a : b, ym = Y[mid], yo = Y[out];
+  if (aLay(out) === 'state') { const x0 = X('state'), d = (G.PL - x0) * .55; return { d: `M${x0},${yo} C${x0 + d},${yo} ${G.PL - d},${ym} ${G.PL},${ym}` }; }
+  const x1 = X('econ'), d = (x1 - G.PR) * .55; return { d: `M${G.PR},${ym} C${G.PR + d},${ym} ${x1 - d},${yo} ${x1},${yo}` };
+}
+function orbitPath(G, e) {
+  const a = aBox(e.from), b = aBox(e.to); if (a === b) return null;
+  const p = G.P[a], q = G.P[b], k = .5, mx = G.cx + ((p.x + q.x) / 2 - G.cx) * k, my = G.cy + ((p.y + q.y) / 2 - G.cy) * k;
+  return { d: `M${p.x.toFixed(1)},${p.y.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${q.x.toFixed(1)},${q.y.toFixed(1)}`, inner: aLay(a) === 'arm' && aLay(b) === 'arm' };
+}
+const aNodeIds = () => [...ARM.state.map(s => s[0]), ...ARM.sectors.map(s => s[0]), ...ARM.econ.map(s => s[0])];
+function buildReach(host, W) {
+  const orbit = armView === 'orbit', G = orbit ? orbitGeo(W) : reachGeo(W);
+  const svg = el('svg', { viewBox: `0 0 ${W} ${G.H.toFixed(0)}`, width: W, height: G.H.toFixed(0), class: 'arsvg ' + armView, role: 'group', 'aria-label': orbit ? 'Orbit: the US state at the centre, the fourteen sectors of the arm around it, the ten groups of the economy on the rim' : 'Reach: the US state on the left, the fourteen sectors of the arm in the middle, the ten groups of the economy on the right' });
+  RG.W = W; RG.v = armView; RG.lines = []; RG.nodes = {}; RG.G = G;
+  if (orbit) {
+    [.34, .64, 1].forEach(k => el('ellipse', { cx: G.cx, cy: G.cy, rx: (G.rx * k).toFixed(1), ry: (G.ry * k).toFixed(1), class: 'oring' }, svg));
+  } else {
+    const hy = 18;
+    [['US state', (G.sx + G.XS) / 2, 'middle'], ['The arm', (G.PL + G.PR) / 2, 'middle'], ['The economy', (G.XE + W - G.sx) / 2, 'middle']].forEach(([t, x, a]) => { el('text', { x: x.toFixed(1), y: hy, 'text-anchor': a, class: 'rcap', 'aria-hidden': 'true' }, svg).textContent = t; });
+  }
+  const gl = el('g', { class: 'rlines', 'aria-hidden': 'true' }, svg), gn = el('g', { class: 'rnodes' }, svg), gt = el('g', { class: 'rlabs', 'aria-hidden': 'true' }, svg);
+  ARM.edges.forEach(e => { const P = orbit ? orbitPath(G, e) : reachPath(G, e); if (!P) return; const p = el('path', { d: P.d, stroke: ATYPE[e.type].c, 'stroke-dasharray': ADASH[e.type] || 'none', class: 'rl' }, gl); RG.lines.push({ e, p, inner: !!P.inner }); });
+  aNodeIds().forEach(id => {
+    const L = aLay(id), g = el('g', { class: 'rn ' + L + (NODE[id].musk ? ' musk' : ''), 'data-anode': id, tabindex: 0, role: 'button' }, gn);
+    if (orbit) {
+      const p = G.P[id], r = L === 'arm' ? 5 : L === 'econ' ? 4.6 : 4.2, hr = Math.max(12, Math.min(22, p.gap / 2 - 1));
+      el('circle', { cx: p.x.toFixed(1), cy: p.y.toFixed(1), r: hr.toFixed(1), class: 'hit' }, g);
+      el('circle', { cx: p.x.toFixed(1), cy: p.y.toFixed(1), r, class: 'dot' }, g);
+    } else if (L === 'arm') {
+      const y = G.Y[id];
+      el('rect', { x: G.PL, y: y - 19, width: G.PR - G.PL, height: 38, class: 'hit' }, g);
+      el('rect', { x: G.PL, y: y - G.ph / 2, width: G.PR - G.PL, height: G.ph, rx: 6, class: 'pill' }, g);
+      el('text', { x: ((G.PL + G.PR) / 2).toFixed(1), y: (y + G.fP * .36).toFixed(1), 'text-anchor': 'middle', class: 'pn', 'font-size': G.fP, 'aria-hidden': 'true' }, g).textContent = aNm(id, G.short);
+    } else {
+      const st = L === 'state', x = st ? G.XS : G.XE, y = G.Y[id];
+      el('rect', { x: st ? G.sx - 4 : x - 12, y: y - 15, width: st ? x + 12 - G.sx + 4 : W - (x - 12) - 2, height: 30, class: 'hit' }, g);
+      el('circle', { cx: x, cy: y, r: 4.5, class: 'dot' }, g);
+      el('text', { x: st ? x - 9 : x + 9, y: (y + G.fN * .36).toFixed(1), 'text-anchor': st ? 'end' : 'start', class: 'nn', 'font-size': G.fN, 'aria-hidden': 'true' }, g).textContent = aNm(id, G.short);
+    }
+    RG.nodes[id] = g;
+  });
+  if (orbit) {
+    /* the rim carries its names; each half reads outwards and no two overlap */
+    const side = { l: [], r: [] }, lh = G.fN * 1.18; RG.boxes = [];
+    ARM.econ.forEach(([id]) => { const p = G.P[id], r = p.x >= G.cx, ls = G.lines(id); side[r ? 'r' : 'l'].push({ id, x: p.x, y: p.y, r, ls, h: ls.length * lh }); });
+    Object.values(side).forEach(list => { list.sort((a, b) => a.y - b.y); list.forEach((o, i) => { o.ty = i ? Math.max(o.y, list[i - 1].ty + (list[i - 1].h + o.h) / 2 + 2) : o.y; }); });
+    [...side.l, ...side.r].forEach(o => {
+      const x = o.x + (o.r ? 9 : -9), t = el('text', { x: x.toFixed(1), y: (o.ty - o.h / 2 + G.fN * .86).toFixed(1), 'text-anchor': o.r ? 'start' : 'end', class: 'nn', 'font-size': G.fN, 'aria-hidden': 'true' }, RG.nodes[o.id]);
+      o.ls.forEach((ln, i) => { el('tspan', { x: x.toFixed(1), dy: i ? lh.toFixed(1) : 0 }, t).textContent = (i ? ' ' : '') + ln; });
+      const w = Math.max(...o.ls.map(ln => aTextW(ln, G.fN))); RG.boxes.push([o.r ? x : x - w, o.ty - o.h / 2, o.r ? x + w : x, o.ty + o.h / 2]);
+    });
+    ARM.state.concat(ARM.econ).forEach(([id]) => { const p = G.P[id]; RG.boxes.push([p.x - 5, p.y - 5, p.x + 5, p.y + 5]); });
+    [['US state', G.cy + 4], ['The arm', G.cy - G.ry * .64 - 10], ['The economy', G.cy - G.ry - 14]].forEach(([t, y]) => { el('text', { x: G.cx, y: y.toFixed(1), 'text-anchor': 'middle', class: 'rcap', 'aria-hidden': 'true' }, gt).textContent = t; });
+    RG.labs = el('g', { class: 'olabs', 'aria-hidden': 'true' }, svg);
+  } else RG.labs = null;
+  host.innerHTML = ''; host.appendChild(svg);
+}
+/* the state of every line and node under the relation and the selection (both drawings) */
+function styleReach() {
+  if (RG.sayK !== armFilter) { RG.say = {}; RG.sayK = armFilter; }
+  const sel = armSel, R = sel ? armReach(sel) : null, sb = sel ? aBox(sel) : null, rel = armFilter, innerOn = ['alliance', 'invest', 'network'].includes(rel);
+  RG.lines.forEach(L => {
+    const e = L.e, on = aOn(e); let o, w = 1.1;
+    if (!on) o = 0;
+    else if (!R) o = L.inner ? (innerOn ? .75 : 0) : rel === 'all' ? .3 : .78;
+    else if (R.own.includes(e)) { o = .95; w = 1.8; }
+    else if (R.second.has(e) && !L.inner) o = .42;
+    else o = .04;
+    L.p.setAttribute('opacity', o); L.p.setAttribute('stroke-width', w);
+  });
+  Object.keys(RG.nodes).forEach(id => {
+    const g = RG.nodes[id], c = aLinks(id).length, isSel = sb === id, lit = R ? R.lit.has(id) : true;
+    const dim = R ? !lit : rel !== 'all' && !c;
+    g.classList.toggle('sel', isSel); g.classList.toggle('lit', !!R && lit && !isSel); g.classList.toggle('dim', dim); g.classList.toggle('firm', isSel && sel !== sb);
+    g.style.setProperty('--lc', aCol(rel));
+    const F = RG.say[id] || (RG.say[id] = armFigs(id));   /* the figures depend on the relation only: kept until it changes */
+    const shown = aNm(id, RG.G && RG.G.short);   /* the name read out begins with the name shown */
+    g.setAttribute('aria-label', shown + (shown !== NODE[id].label ? ' (' + NODE[id].label + ')' : '') + ': ' + (c ? aPl(c, 'link') + (rel !== 'all' ? ' of this kind' : '') : 'no link of this kind') + '; ' + F.say);
+    g.setAttribute('aria-pressed', String(sel === id));
+  });
+  if (RG.labs) orbitLabels(R, sb);
+}
+/* Orbit names its selection and the nodes tied to it: at most 14 on the inner rings, each in the first free place beside
+   its dot (right, left, above, below), clear of the rim's names and of each other */
+function orbitLabels(R, sb) {
+  const host = RG.labs, G = RG.G; host.innerHTML = ''; RG.more = 0;
+  host.parentNode.classList.toggle('picked', !!R); if (!R) return;
+  const ids = [...R.lit].filter(id => aLay(id) !== 'econ' && (id === sb || R.own.some(e => aBox(e.from) === id || aBox(e.to) === id)));
+  ids.sort((a, b) => (b === sb) - (a === sb) || aLinks(b).length - aLinks(a).length);
+  const shown = ids.slice(0, 14); RG.more = ids.length - shown.length;
+  const taken = RG.boxes.slice(), h = G.fN * 1.2, hit = b => b[0] < 2 || b[2] > G.W - 2 || taken.some(t => b[0] < t[2] && t[0] < b[2] && b[1] < t[3] && t[1] < b[3]);
+  shown.forEach(id => { const p = G.P[id]; taken.push([p.x - 6, p.y - 6, p.x + 6, p.y + 6]); });
+  shown.forEach(id => {
+    const p = G.P[id], name = aNm(id, G.short), w = aTextW(name, G.fN, id === sb ? 500 : 400) + 2, out = p.x >= G.cx ? 1 : -1;
+    const at = (x0, y0) => [x0, y0, x0 + w, y0 + h];
+    const cand = [at(out > 0 ? p.x + 8 : p.x - 8 - w, p.y - h / 2), at(out > 0 ? p.x - 8 - w : p.x + 8, p.y - h / 2), at(p.x - w / 2, p.y - 7 - h), at(p.x - w / 2, p.y + 7),
+      at(out > 0 ? p.x + 8 : p.x - 8 - w, p.y - h / 2 - 11), at(out > 0 ? p.x + 8 : p.x - 8 - w, p.y - h / 2 + 11), at(p.x - w / 2, p.y - 18 - h), at(p.x - w / 2, p.y + 18)];
+    const b = cand.find(c => !hit(c)) || cand[0]; taken.push(b);
+    el('text', { x: b[0].toFixed(1), y: (b[1] + h * .78).toFixed(1), class: 'olab' + (id === sb ? ' me' : ''), 'font-size': G.fN }, host).textContent = name;
+  });
+}
+function renderReach() {
+  const host = $('areach'), tg = $('aview'); if (!host) return;
+  const board = armFilter === 'control';
+  if (tg) { tg.hidden = board; tg.querySelectorAll('[data-aview]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.aview === armView))); }
+  host.classList.toggle('board', board); host.classList.toggle('orbit', !board && armView === 'orbit');
+  if (board) { host.innerHTML = armBoardHTML('stage'); RG.W = 0; RG.v = null; return; }
+  const cs = getComputedStyle(host), W = Math.round((host.clientWidth || 390) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+  if (RG.W !== W || RG.v !== armView || !host.querySelector('svg.arsvg')) buildReach(host, W);
+  styleReach();
+}
+/* the names are measured: once the web fonts arrive, the drawing is measured again */
+try { if (document.fonts) { const again = () => { RG.W = 0; if (view === 'arm' && armLay === 'reach') renderReach(); }; document.fonts.ready.then(again); document.fonts.addEventListener('loadingdone', again); } } catch (e) { /* the first measure stands */ }
+function armSetView(v, act) {
+  v = v === 'orbit' ? 'orbit' : 'reach'; if (v === armView) return;
+  armView = v; stSet('isx-arm-view', v);
+  if (armLay === 'reach') { renderReach(); renderArmCard(); }
+  routeSync(); armEmit(act ? 'view' : null);
+}
+/* the Arm tells the hints what it shows (round 5b's bus) */
+function armEmit(act) { emit('arm', { lay: armLay, v: armView, rel: armFilter, sel: armSel, sheet: ashKind, tall: ashTall, act: act || null }); }
+/* the doors: a case in Scenarios (its gallery card), a Circuit step, a Simulator actor in the full view */
+function armToCase(c) { const i = STORIES.findIndex(S => S.id === c); if (i < 0) return; armEmit('door'); ashClose(true); setView('story'); pickStory(i); }
+function armGo(t) {
+  const [k, v] = String(t).split(':'); armEmit('door'); ashClose(true);
+  if (k === 'c') { setView('map'); setStep(+v); }
+  else if (k === 's') { finMode = 'plumb'; setView('fin'); try { simSetMode('full'); } catch (e) { /* the Simulator opens as it was */ } setTimeout(() => { try { if (FN[v] && fsel !== v) pickNode(v); } catch (e) { /* the actor stays unselected */ } }, 60); }
 }
 
 /* ---------- the card on the stage (S4 §2.5) ---------- */
@@ -3271,28 +3584,35 @@ function relListHTML(cur) {
   return `<ul class="arl" aria-label="Relations">${AORD.slice(1).map(k => { const T = ATYPE[k]; return `<li><button type="button" data-arel="${k}"${k === cur ? ' aria-current="true"' : ''}><span class="sw" style="background:${T.c}"></span><span class="rx"><span class="rn">${esc(T.name)}</span><span class="rt">${esc(T.t)}</span></span><span class="rc">${ARM.edges.filter(e => e.type === k).length}</span></button></li>`; }).join('')}</ul>`;
 }
 function armCardHTML(strip) {
-  const i = AORD.indexOf(armFilter), cnt = `<span class="cnt">${i + 1} / ${AORD.length}</span>`;
-  if (armSel) {
-    const n = NODE[armSel], ls = aLinks(armSel), tied = aLinked(armSel).size, rel = armFilter !== 'all';
+  const i = AORD.indexOf(armFilter), cnt = `<span class="cnt">${i + 1} / ${AORD.length}</span>`, reach = armLay === 'reach';
+  if (armSel && !reach) {   /* round 6: on phones and tablets in portrait the selection lives in the sheet */
+    const n = NODE[armSel], ls = aLinks(armSel), rel = armFilter !== 'all', F = armFigs(armSel);
     const kick = n.layer === 'sector' ? 'Sector · ' + aPl(n.firms.length, 'firm') : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm · ' + NODE[n.sector].label;
     const sub = n.layer === 'sector' ? n.firms.map(f => f.label).join(' · ') : n.sub;
     const acts = `<div class="b4acts"><button type="button" class="b4b2" data-acard="links" aria-expanded="${armList && !strip ? 'true' : 'false'}">Its ${aPl(ls.length, 'link')} ${CHR}</button><button type="button" class="b4b2" data-acard="clear">Whole machine</button></div>`;
     return `<div class="b4k"><span>${esc(kick)}</span>${rel ? `<span><i class="dot" style="background:${aCol(armFilter)}"></i>${esc(aName(armFilter))}</span>` : ''}</div><h3 class="b4t">${esc(n.label)}</h3>`
-      + (strip ? `<div class="b4sl"><p>${esc(sub)}</p><div class="b4fig"><b>${ls.length}</b><span>${rel ? 'links of this kind' : 'documented links'}, tied to ${aPl(tied, 'other part')} of the machine</span></div></div>${acts}`
-        : `<p>${esc(sub)}</p><div class="b4fig"><b>${ls.length}</b><span>${rel ? 'links of this kind' : 'documented links'}, tied to ${aPl(tied, 'other part')} of the machine</span></div>${acts}${armList ? `<div class="b4list">${armDossier(armSel)}</div>` : ''}`);
+      + (strip ? `<div class="b4sl af"><p>${esc(sub)}</p>${aFigHTML(F, '', true)}</div>${acts}`
+        : `<p>${esc(sub)}</p>${aFigHTML(F)}${armElse(armSel)}${acts}${armList ? `<div class="b4list">${armDossier(armSel)}</div>` : ''}`);
   }
   if (armFilter === 'all') {
-    const [rv, mech] = sSplit(ARMX);
+    const [rv, mech] = sSplit(ARMX), Wh = armWhole();
     const fig = `<div class="b4fig"><b>${ARM.edges.length}</b><span>documented links between ${ARM.state.length} state bodies, ${NFIRMS} firms in ${ARM.sectors.length} sectors and the real economy</span></div>`;
+    if (reach) {
+      const tap = armView === 'orbit' ? 'Nine state bodies at the centre, fourteen sectors around them, ten groups of the economy on the rim. Tap a dot to name it and see its ties.' : 'Tap a state body to see whom it reaches through the firms, or a group on the right to see who in Washington reaches it.';
+      return `<div class="b4k"><span>Whole machine · ${ARM.edges.length} links</span>${cnt}</div><h3 class="b4t">Who reaches whom</h3><p class="aq">${esc(AQ)}</p>`
+        + `<div class="arfig w3"><div><b>${Wh.u} of ${ARM.state.length}</b><span>state bodies reach users</span></div><div><b>${Wh.sa}</b><span>state ↔ arm</span></div><div><b>${Wh.ae}</b><span>arm ↔ economy</span></div></div>`
+        + `<p class="atap">${esc(tap)}</p>${mechHTML(esc(rv) + (mech ? ' ' + esc(mech) : ''))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}<p class="awide">Every firm in one picture: open the Arm on a wider screen.</p>`;
+    }
     return `<div class="b4k"><span>The imperial arm</span>${cnt}</div><h3 class="b4t">The whole machine</h3>`
-      + (strip ? `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-ash="pick">Relations ${CHR}</button>${mech ? '<button type="button" class="b4b2 q" data-acard="mech">The mechanism</button>' : ''}</div>`
-        : `<p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}`);
+      + (strip ? `<div class="b4sl"><p class="aq">${esc(AQ)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-ash="pick">Relations ${CHR}</button><button type="button" class="b4b2 q" data-acard="mech">The mechanism</button></div>`
+        : `<p class="aq">${esc(AQ)}</p><p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}`);
   }
-  const T = ATYPE[armFilter], [rv, mech] = sSplit(T.x), n = ARM.edges.filter(e => e.type === armFilter).length;
+  const T = ATYPE[armFilter], [rv, mech] = sSplit(T.x), n = ARM.edges.filter(e => e.type === armFilter).length, board = armFilter === 'control';
   const fig = `<div class="b4fig"><b>${n}</b><span>${esc(T.t.charAt(0).toLowerCase() + T.t.slice(1))}</span></div>`;
+  const every = board && reach ? '' : `<button type="button" class="b4b2" data-acard="links"${strip ? '' : ` aria-expanded="${armList ? 'true' : 'false'}"`}>${board ? 'The switchboard' : 'Every link'} · ${n} ${CHR}</button>`;
   return `<div class="b4k"><span><i class="dot" style="background:${T.c}"></i>${esc(aGrp(armFilter).label)}</span>${cnt}</div><h3 class="b4t">${esc(T.name)}</h3>`
-    + (strip ? `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-acard="links">Every link · ${n} ${CHR}</button>${mech ? '<button type="button" class="b4b2 q" data-acard="mech">The mechanism</button>' : ''}</div>`
-      : `<p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4acts"><button type="button" class="b4b2" data-acard="links" aria-expanded="${armList ? 'true' : 'false'}">Every link · ${n} ${CHR}</button></div>${armList ? `<div class="b4list">${armEvery()}</div>` : ''}`);
+    + (strip ? `<div class="b4sl"><p>${esc(rv)}</p>${fig}</div><div class="b4acts">${every}${mech ? '<button type="button" class="b4b2 q" data-acard="mech">The mechanism</button>' : ''}</div>`
+      : `<p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}${every ? `<div class="b4acts">${every}</div>` : ''}${armList ? `<div class="b4list">${armEvery()}</div>` : ''}`);
 }
 function renderArmCard() {
   const c = $('acard'); if (!c || view !== 'arm' || armMode === 'rev') return;
@@ -3306,7 +3626,7 @@ function renderArmCard() {
 /* every link of a node: the dossier (the old phone list's markup, now the sheet's body) */
 function armDossier(id) {
   const n = NODE[id], ls = aLinks(id);
-  const lk = (e, me) => { const out = e.from === me, o = NODE[out ? e.to : e.from]; return `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${out ? '→' : '←'} ${esc(o.label)}</b> · ${esc(e.text)}</div></div>`; };
+  const lk = (e, me) => { const out = e.from === me, o = NODE[out ? e.to : e.from]; return `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${out ? '→' : '←'} ${esc(o.label)}</b> · ${esc(e.text)}${aDoors(e)}</div></div>`; };
   if (!ls.length) return '<p class="b4empty">No link of this kind.</p>';
   if (n.layer !== 'sector') return ls.map(e => lk(e, id)).join('');
   let h = '';
@@ -3317,9 +3637,10 @@ function armDossier(id) {
 }
 /* every link of a relation, grouped by where it starts */
 function armEvery() {
+  if (armFilter === 'control') return armBoardHTML('card');   /* round 6: Control's every link is the switchboard */
   const ls = ARM.edges.filter(aOn), g = {};
   ls.forEach(e => { const b = aBox(e.from); (g[b] = g[b] || []).push(e); });
-  return Object.keys(g).map(b => `<div class="fname">${esc(NODE[b].label)}</div>` + g[b].map(e => `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${esc(NODE[e.from].label)} → ${esc(NODE[e.to].label)}</b> · ${esc(e.text)}</div></div>`).join('')).join('');
+  return Object.keys(g).map(b => `<div class="fname">${esc(NODE[b].label)}</div>` + g[b].map(e => `<div class="lk"><i style="background:${ATYPE[e.type].c}"></i><div><b>${esc(NODE[e.from].label)} → ${esc(NODE[e.to].label)}</b> · ${esc(e.text)}${aDoors(e)}</div></div>`).join('')).join('');
 }
 
 /* revenue map (arm view, map mode) */
@@ -3400,14 +3721,24 @@ function ashHTML(kind) {
   if (kind === 'firms') return { k: 'Revenue map · every firm', t: revSec === 'all' ? 'All five sectors' : REV.sectors[revSec][0], b: revTableHTML() };
   if (kind === 'mech') {
     if (rev) { const [, m] = sSplit(revText()); return { k: 'The mechanism', t: revSec === 'all' ? 'Where the revenue comes from' : REV.sectors[revSec][0], b: `<p>${esc((m ? m + ' ' : '') + REVMECH)}</p>` }; }
-    const [, m] = sSplit(armFilter === 'all' ? ARMX : ATYPE[armFilter].x); return { k: 'The mechanism', t: armFilter === 'all' ? 'The whole machine' : ATYPE[armFilter].name, b: `<p>${esc(m)}</p>` };
+    const [, m] = sSplit(armFilter === 'all' ? ARMX : ATYPE[armFilter].x); return { k: 'The mechanism', t: armFilter === 'all' ? 'The whole machine' : ATYPE[armFilter].name, b: `<p>${esc(armFilter === 'all' ? ARMX : m)}</p>` };   /* round 6: the strip shows the question, so the whole description sits here */
   }
-  if (armSel) { const n = NODE[armSel], ls = aLinks(armSel); return { k: (n.layer === 'sector' ? 'Sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm') + ' · ' + aPl(ls.length, 'link'), t: n.label, b: armDossier(armSel) }; }
+  if (armSel) {
+    const n = NODE[armSel], ls = aLinks(armSel), F = armFigs(armSel), k = n.layer === 'sector' ? 'Sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm · ' + NODE[n.sector].label;
+    if (kind === 'sel') {   /* round 6: the sheet of a selection on phones and tablets in portrait (spec §2.3) */
+      const sub = n.layer === 'sector' ? '' : `<p class="asub">${esc(n.sub)}</p>`;
+      const firms = n.layer === 'sector' ? `<div class="b4lk">Its firms</div><div class="afirms">${n.firms.map(f => `<button type="button" class="afirm" data-anode="${f.id}"><b>${esc(f.label)}</b><span>${esc(f.sub)}</span></button>`).join('')}</div>` : '';
+      const more = RG.more ? `<p class="amore">+${RG.more} more tied to it, not named on the drawing.</p>` : '';
+      return { k: k + (armFilter !== 'all' ? ' · ' + aName(armFilter) : ''), t: n.label, b: aFigHTML(F, `<button type="button" class="b4b2 aevery" data-ash="tall" aria-expanded="${ashTall}">${ashTall ? 'Less' : 'Every link'}</button>`) + sub + armElse(armSel) + firms + `<div class="alinks">${armLinksBy(armSel)}</div>` + more };
+    }
+    return { k: k + ' · ' + aPl(ls.length, 'link'), t: n.label, b: aFigHTML(F) + armElse(armSel) + armDossier(armSel) };
+  }
   return { k: aName(armFilter) + ' · ' + aPl(ARM.edges.filter(aOn).length, 'link'), t: armFilter === 'all' ? 'The whole machine' : ATYPE[armFilter].name, b: armEvery() };
 }
 function ashFill() {
   if (!ashKind) return;
   const S = ashHTML(ashKind); $('ash-k').textContent = S.k; $('ash-t').textContent = S.t; const b = $('ash-b'); b.innerHTML = S.b; b.scrollTop = 0;
+  const sh = $('asheet'), peek = ashKind === 'sel' && armLay === 'reach'; sh.classList.toggle('peek', peek && !ashTall); sh.classList.toggle('tall', peek && ashTall);
 }
 function ashOpen(kind, from) {
   const sh = $('asheet'); if (!sh) return;
@@ -3416,16 +3747,23 @@ function ashOpen(kind, from) {
   $('ascrim').hidden = !(PHONE() && kind !== 'sel');
   void sh.offsetWidth; sh.classList.add('on');
   setTimeout(() => { const x = sh.querySelector('.b4x'); if (x && ashKind) x.focus({ preventScroll: true }); }, 40);
-  armBar();
+  armBar(); armEmit(null);
+}
+/* round 6: “Every link” opens the peeking sheet to 64% of the screen, “Less” brings it back */
+function ashGrow(on) {
+  ashTall = on; const sh = $('asheet'); if (!sh || ashKind !== 'sel') return;
+  sh.classList.toggle('tall', on); sh.classList.toggle('peek', !on);
+  const b = sh.querySelector('[data-ash="tall"]'); if (b) { b.textContent = on ? 'Less' : 'Every link'; b.setAttribute('aria-expanded', String(on)); }
+  $('ash-b').scrollTop = 0; armEmit(on ? 'sheet' : null);
 }
 function ashClose(quiet) {
   const sh = $('asheet'); if (!sh) return;
-  const open = ashKind != null; ashKind = null;
-  sh.classList.remove('on'); $('ascrim').hidden = true; sh.setAttribute('inert', '');
+  const open = ashKind != null; ashKind = null; ashTall = false;
+  sh.classList.remove('on', 'tall'); $('ascrim').hidden = true; sh.setAttribute('inert', '');
   setTimeout(() => { if (!ashKind) sh.hidden = true; }, reduce ? 0 : 320);
   if (open && !quiet && ashFrom && ashFrom.isConnected) ashFrom.focus({ preventScroll: true });
   ashFrom = null;
-  if (open && view === 'arm') armBar();
+  if (open && view === 'arm') { armBar(); armEmit(null); }
 }
 
 /* ---------- the shared bar: the Arm follows relations, the Revenue map sectors (S4 §0, item 2) ---------- */
@@ -3482,24 +3820,26 @@ function armLayout() {
     if (card.className !== was) renderRevCard();
     return;
   }
-  let mode = 'bands', L = null;
+  let mode = 'reach', L = null;
   if (!ph) {
     const barTop = Hm - 68;
     /* the hint line sits inside the map, in the economy band's empty foot, so it takes no room of its own.
        The card takes the left column where that still leaves a readable machine, else a strip under the map. */
-    const fit = L0 => { const kf = Math.min(L0.mw / AGW, L0.mh / AGH.full), kc = Math.min(L0.mw / AGW, L0.mh / AGH.compact); L0.mode = 12.5 * kf >= 11.2 ? 'full' : 13.5 * kc >= 11 ? 'compact' : 'bands'; L0.k = L0.mode === 'full' ? kf : kc; return L0; };
+    const fit = L0 => { const kf = Math.min(L0.mw / AGW, L0.mh / AGH.full), kc = Math.min(L0.mw / AGW, L0.mh / AGH.compact); L0.mode = 12.5 * kf >= 11.2 ? 'full' : 13.5 * kc >= 11 ? 'compact' : 'reach'; L0.k = L0.mode === 'full' ? kf : kc; return L0; };
     const ct = barTop - 8 - ASTRIP, LS = fit({ mx: padL, mw: W - padL - padR, mt: cTop, mh: ct - 8 - cTop, barTop, ct, col: false });
-    if (col) { const mx = padL + 340 + 16, LC = fit({ mx, mw: W - mx - padR, mt: cTop, mh: barTop - 14 - cTop, barTop, col: true }); L = LC.mode !== 'bands' || LS.mode === 'bands' ? LC : LS; }
+    if (col) { const mx = padL + 340 + 16, LC = fit({ mx, mw: W - mx - padR, mt: cTop, mh: barTop - 14 - cTop, barTop, col: true }); L = LC.mode !== 'reach' || LS.mode === 'reach' ? LC : LS; }
     else L = LS;
     mode = L.mode; col = L.col;
   }
-  armLay = mode;
-  ['full', 'compact', 'bands'].forEach(m => ROOT.classList.toggle('arm-' + m, m === mode));
-  if (mode === 'bands') {
+  const was0 = armLay; armLay = mode;
+  ['full', 'compact', 'reach'].forEach(m => ROOT.classList.toggle('arm-' + m, m === mode));
+  if (mode === 'reach') {
     sc.style.height = ''; card.className = 'b4card acard flow';
     [card, flat, kick, $('ahint')].forEach(e => e && place(e));
-    renderBands();
+    renderReach();
+    if (was0 !== 'reach') { renderArm(); renderArmCard(); if (ashKind) ashFill(); }
   } else {
+    if (was0 === 'reach') { if (ashKind === 'sel') ashClose(true); renderArm(); }
     sc.style.height = Hm + 'px';
     if (armGeoMode !== mode) { armGeoMode = mode; buildArm(); renderArm(); }
     const ww = AGW * L.k, hh = AGEO[mode].H * L.k, fx = L.mx + (L.mw - ww) / 2, fy = L.mt + Math.max(0, (L.mh - hh) / 2);
@@ -3597,7 +3937,7 @@ const hintKey = () => view === 'arm' ? (armMode === 'rev' ? 'rev' : 'arm') : vie
 function hints() {
   const k = hintKey(), done = k && stGet('isx-hint-' + k, true) === '1', c = COARSE ? 1 : 0;
   const t = $('hint-t'); if (t && (k === 'map' || k === 'rev')) { t.textContent = HINTS[k][c]; t.hidden = done; }
-  const a = $('ahint'); if (a) { a.textContent = HINTS.arm[c]; a.hidden = k !== 'arm' || done; }
+  const a = $('ahint'); if (a) { a.textContent = HINTS.arm[c]; a.hidden = k !== 'arm' || done || armLay === 'reach'; }   /* round 6: on phones the card carries the line */
 }
 function hintDone() {
   const k = hintKey(); if (!k || stGet('isx-hint-' + k, true) === '1') return;
@@ -3605,11 +3945,21 @@ function hintDone() {
 }
 /* the card, the bands and the sheet answer one listener; Esc closes the sheet, then clears the selection */
 ROOT.addEventListener('click', e => {
-  const t = e.target.closest('[data-arel], [data-acard], [data-ash], [data-anode]'); if (!t || view !== 'arm') return;
+  const t = e.target.closest('[data-arel], [data-acard], [data-ash], [data-anode], [data-scen], [data-ago], [data-atile], [data-aview]'); if (!t || view !== 'arm') return;
   const d = t.dataset;
+  if (d.scen != null) { armToCase(d.scen); return; }
+  if (d.ago != null) { armGo(d.ago); return; }
+  if (d.aview != null) { armSetView(d.aview, true); return; }
+  if (d.atile != null) {   /* a switch opens to its full row; one at a time */
+    armTile = armTile === d.atile ? null : d.atile;
+    const box = t.closest('.aboard');
+    if (box) box.querySelectorAll('.asw').forEach(w => { const b = w.querySelector('[data-atile]'), on = b.dataset.atile === armTile; w.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on)); w.querySelector('.asw-x').hidden = !on; });
+    if (armTile) armEmit('tile'); return;
+  }
   if (d.arel != null) { hintDone(); armSetRel(d.arel); return; }
   if (d.anode != null) { hintDone(); armSelect(d.anode); return; }
-  if (d.ash === 'x') { ashClose(); return; }
+  if (d.ash === 'tall') { ashGrow(!ashTall); return; }
+  if (d.ash === 'x') { if (ashKind === 'sel' && armLay === 'reach' && armSel) { const f = armSel; armSelect(null); const b = RG.nodes[aBox(f)]; if (b && b.isConnected) b.focus({ preventScroll: true }); } else ashClose(); return; }
   if (d.ash === 'pick') { if (ashKind === 'pick') ashClose(); else ashOpen('pick', t); return; }
   if (d.acard === 'clear') { armSel = null; armList = false; ashClose(true); armSetRel('all'); return; }
   if (d.acard === 'mech' || d.acard === 'firms') { ashOpen(d.acard, t); return; }
@@ -3619,11 +3969,12 @@ ROOT.addEventListener('click', e => {
   }
 });
 $('ascrim').addEventListener('click', () => ashClose());
-document.addEventListener('pointerdown', e => { if (ashKind && view === 'arm' && !PHONE() && !e.target.closest('#isx-asheet, [data-ash], [data-acard], [data-anode], [data-a], .rt')) ashClose(true); });
+$('areach').addEventListener('keydown', e => { const g = e.target.closest('[data-anode]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hintDone(); armSelect(g.dataset.anode); } });
+document.addEventListener('pointerdown', e => { if (ashKind && view === 'arm' && !PHONE() && !(ashKind === 'sel' && armLay === 'reach') && !e.target.closest('#isx-asheet, [data-ash], [data-acard], [data-anode], [data-a], .rt')) ashClose(true); });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape' || view !== 'arm' || e.defaultPrevented) return;
   if (ashKind) { e.preventDefault(); ashClose(); return; }
-  if (armSel) { e.preventDefault(); const f = armSel; armSelect(null); const b = ABT[f] || document.querySelector(`#isx-abands [data-anode="${f}"]`); if (b && b.isConnected) b.focus({ preventScroll: true }); }
+  if (armSel) { e.preventDefault(); const f = armSel; armSelect(null); const b = armLay === 'reach' ? RG.nodes[aBox(f)] : ABT[f]; if (b && b.isConnected) b.focus({ preventScroll: true }); }
 });
 
 /* ================= chains of action ================= */
@@ -6545,7 +6896,7 @@ function setView(v) {
   else if (v === 'fin') { renderFin(); renderFinCard(); }
   else if (v === 'story') { storyStep = -1; renderStoryCard(); scSync({ instant: true }); }
   else { pCh.size(); renderChain(); pCh.start(); renderChainCard(); }
-  if (v !== 'arm') { ashClose(true); ['full', 'compact', 'bands'].forEach(m => ROOT.classList.remove('arm-' + m)); ROOT.classList.remove('rev-col'); }
+  if (v !== 'arm') { ashClose(true); ['full', 'compact', 'reach'].forEach(m => ROOT.classList.remove('arm-' + m)); ROOT.classList.remove('rev-col'); }
   ROOT.classList.toggle('arm-rev', v === 'arm' && armMode === 'rev');
   fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync(); hints();
   emit('view', view); ISXP.sync();
@@ -8207,7 +8558,11 @@ document.addEventListener('visibilitychange', () => { if (!globe) return; if (do
 window.ISX = {
   version: '2.0', root: ROOT, $, on, emit, perf: ISXP, route: RT,
   get view() { return view; }, get step() { return step; }, get steps() { return STEPS; }, get sel() { return { iso: selIso, firm: selFirm }; },
-  get finMode() { return finMode; }, get armMode() { return armMode; }, whereNow, copyText, essayKey, essays: ESSAYS, sectionEssay: SECTION_ESSAY, get armRel() { return armFilter; }, get armSel() { return armSel; }, get armLay() { return armLay; }, get revSec() { return revSec; }, setArmRel: k => { if (AORD.includes(k) || k === 'all' || REVSEC.includes(k)) armSetRel(k); }, setArmSel: id => { if (!id || NODE[id]) { if ((id || null) !== armSel) armSelect(id || null); } }, armEdges: () => ARM.edges.map(e => ({ from: e.from, to: e.to, type: e.type, fb: aBox(e.from), tb: aBox(e.to) })), armOrder: AORD, get ring() { return ringOn; }, setRing: ringSet,
+  get finMode() { return finMode; }, get armMode() { return armMode; }, whereNow, copyText, essayKey, essays: ESSAYS, sectionEssay: SECTION_ESSAY, get armRel() { return armFilter; }, get armSel() { return armSel; }, get armLay() { return armLay; }, get armView() { return armView; }, setArmView: v => armSetView(v), get armTall() { return ashTall; },
+  armReachOf: id => { if (!NODE[id]) return null; const R = armReach(id); return { own: R.own.length, reach: R.reach.size, second: R.second.size }; },
+  armBoard: () => { const W = armSwitches(); return { n: W.ctl.length, pulled: W.pulled, played: W.played, ready: [...AREADY], holders: W.hold }; },
+  armPlayed: () => ARM.edges.filter(e => e.cases.length).map(e => ({ key: e.key, type: e.type, cases: e.cases.slice() })), armCases: id => NODE[id] ? aCases(id) : [], armElse: AELSE,
+  openCase: (c, st) => { const i = STORIES.findIndex(S => S.id === c); if (i < 0) return; if (i === storyIdx && st == null && storyStep < 0) return; pickStory(i, st == null ? undefined : { step: st === 'close' ? STORIES[i].steps.length : st }); }, get revSec() { return revSec; }, setArmRel: k => { if (AORD.includes(k) || k === 'all' || REVSEC.includes(k)) armSetRel(k); }, setArmSel: id => { if (!id || NODE[id]) { if ((id || null) !== armSel) armSelect(id || null); } }, armEdges: () => ARM.edges.map(e => ({ from: e.from, to: e.to, type: e.type, fb: aBox(e.from), tb: aBox(e.to) })), armOrder: AORD, get ring() { return ringOn; }, setRing: ringSet,
   /* stage 5, read-only: where the Simulator's guide stands and what each of its steps has reached (tools/stage5-check.js reads it) */
   get tipw() { return TIPW.map(([k, re]) => [k, re.source, re.flags]); },   /* tiers build B: the terms tipped at first use on a card, for checks */
   get defs() { return Object.fromEntries(Object.entries(DEFS).map(([k, v]) => [k, v.slice()])); },   /* tiers build A: the glossary, read-only, for checks */

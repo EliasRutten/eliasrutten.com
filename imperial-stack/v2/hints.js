@@ -5,19 +5,27 @@
    “Hide hints” ends them for good. Teal, because gold means something can be done.
    Storage: isx-hints (the ids already shown, comma-separated), isx-hints-off ('1': none are shown; the check scripts set it).
    The page tells this file what happened through the bus: sim (where the Simulator stands), simcard (a card is on screen),
-   simpick (an actor or line was opened), simtray (a tray opened), tip (a term's definition opened), views (a deeper view). */
+   simpick (an actor or line was opened), simtray (a tray opened), tip (a term's definition opened), views (a deeper view).
+   Round 6 (the Arm rethought, spec §7): the same box, storage and rules serve six hints in the Arm; the page tells this file
+   where the Arm stands through the event arm (layout, drawing, relation, selection, sheet, and the visitor's act). */
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
   var U = X.util, root = X.root, $ = X.$, KEY = 'isx-hints', OFF = 'isx-hints-off';
   var seen = {}; (U.stGet(KEY) || '').split(',').forEach(function (k) { if (k) seen[k] = 1; });
-  var box = null, cur = null, anchor = null, S = { mode: null, line: 0, beat: -1, ph: null }, at = '', shownAt = '', timer = 0, kinds = null;
+  var box = null, cur = null, anchor = null, S = { mode: null, line: 0, beat: -1, ph: null }, A = {}, at = '', shownAt = '', timer = 0, kinds = null;
   var phone = function () { return window.innerWidth <= 760; };
   var vis = function (e) { return !!e && e.getClientRects().length > 0; };
   var q = function (s) { return root.querySelector(s); };
   var off = function () { return U.stGet(OFF) === '1' || U.stGet('isx-tips-sim') === 'off'; };   /* the second is the check scripts' switch for “not a first visit” */
   var kind = function () { if (!kinds) kinds = X.sim.lines.map(function (l) { return { main: l.main, pre: l.pre, gnd: l.gnd, n: l.steps.length }; }); return kinds[S.line] || { n: 0 }; };
   var inStep = function () { return S.mode === 'story' && S.beat >= 0 && S.beat < kind().n; };
+  /* which tab's hints may show: the Simulator's guide ('fin') or the Arm's machine ('arm') */
+  var tabNow = function () { return X.view === 'arm' && X.armMode !== 'rev' ? 'arm' : X.view === 'fin' && X.finMode === 'plumb' ? 'fin' : null; };
+  var hostOf = function (t) { return t === 'arm' ? $('scene-arm') : $('cock'); };
+  var inView = function (e) { if (!vis(e)) return false; var r = e.getBoundingClientRect(); return r.bottom > 40 && r.top < window.innerHeight - 40; };
+  var firstIn = function (sel) { return [].slice.call(root.querySelectorAll(sel)).filter(inView)[0] || null; };
+  var reach = function () { return X.armLay === 'reach'; };
 
   /* in order of precedence: the one moment a hint belongs to comes first, then the ones any step can carry */
   var HINTS = [
@@ -34,13 +42,27 @@
     { id: 'door', side: 'node', line: function () { return 'A deeper view of this part. Close it to come back here.'; },
       when: function () { return inStep() ? [].slice.call(root.querySelectorAll('#isx-rmap .vdoor:not(.off)')).filter(vis)[0] || null : null; } },
     { id: 'fold', side: 'card', line: function () { return 'More on this step is folded under “The mechanism”.'; },
-      when: function () { if (!inStep() || S.ph) return null; var s = q('#isx-sn-body details.s2deep:not([open]) > summary'); return s && vis(s) && /The mechanism/.test(s.textContent) ? s : null; } }
+      when: function () { if (!inStep() || S.ph) return null; var s = q('#isx-sn-body details.s2deep:not([open]) > summary'); return s && vis(s) && /The mechanism/.test(s.textContent) ? s : null; } },
+    /* the Arm (round 6) */
+    { id: 'arm-view', tab: 'arm', side: 'below', line: function () { return 'Two ways to read this: Reach follows the paths, Orbit shows the whole shape. Switch any time.'; },
+      when: function () { return reach() && X.armRel !== 'control' ? firstIn('#isx-aview:not([hidden])') : null; } },
+    { id: 'arm-pick', tab: 'arm', side: 'node', line: function () { var t = phone() || U.COARSE ? 'Tap' : 'Click'; return t + ' a state body to see whom it reaches, or a group ' + (!reach() ? 'at the bottom' : X.armView === 'orbit' ? 'on the rim' : 'on the right') + ' to see who reaches it.'; },
+      when: function () { if (X.armSel || X.armRel === 'control') return null; return reach() ? firstIn('#isx-areach .rn.state:not(.dim)') : firstIn('#isx-arm .mnode.state:not(.dim)'); } },
+    { id: 'arm-sheet', tab: 'arm', side: 'top', line: function () { return '“Every link” opens the panel to all its ties, with their sources.'; },
+      when: function () { return reach() && X.armSel && !X.armTall ? firstIn('#isx-asheet.on [data-ash="tall"]') : null; } },
+    { id: 'arm-switch', tab: 'arm', side: 'node', line: function () { return 'Each tile is a power Washington holds. Pulled means it has been used on a named target; Ready means it exists as a rule. ' + (phone() || U.COARSE ? 'Tap' : 'Click') + ' to read it.'; },
+      when: function () { return X.armRel === 'control' ? firstIn('.aboard .asw-b') : null; } },
+    { id: 'arm-door', tab: 'arm', side: 'card', line: function () { return 'Gold buttons open the case where this power was used.'; },
+      when: function () { return firstIn('#isx-scene-arm .adoor, #isx-asheet.on .adoor'); } },
+    { id: 'arm-else', tab: 'arm', side: 'card', line: function () { return 'The same thing in the Circuit and the Simulator.'; },
+      when: function () { return firstIn('#isx-scene-arm button.aels, #isx-asheet.on button.aels'); } }
   ];
+  HINTS.forEach(function (H) { H.tab = H.tab || 'fin'; });
 
-  function quiet() {
-    return off() || X.view !== 'fin' || X.finMode !== 'plumb' || !$('cock') || X.intro || document.hidden
-      || (X.simtour && X.simtour.on) || (X.views && X.views.on) || (X.remind && X.remind.on) || (X.opening && X.opening.on)
-      || !!q('#isx-cock.s4open');   /* the entry says how the guide works; hints start on the first card */
+  function quiet(t) {
+    if (off() || !t || X.intro || document.hidden || (X.remind && X.remind.on) || (X.opening && X.opening.on) || (X.views && X.views.on)) return true;
+    if (t === 'arm') return !$('scene-arm');
+    return !$('cock') || (X.simtour && X.simtour.on) || !!q('#isx-cock.s4open');   /* the entry says how the guide works; hints start on the first card */
   }
   function build() {
     box = document.createElement('div');
@@ -57,18 +79,21 @@
   function mark(el) {
     root.querySelectorAll('.hn-on').forEach(function (e) { e.classList.remove('hn-on'); });
     if (el) el.classList.add('hn-on');
+    [].slice.call(root.classList).forEach(function (c) { if (c.indexOf('hn-live-') === 0) root.classList.remove(c); });
+    if (el && cur) root.classList.add('hn-live-' + cur.id);   /* round 6: a hint may stand in for a line it repeats */
   }
   function place() {
     if (!box || !cur || !anchor || !anchor.isConnected || !vis(anchor)) { close(false); return; }
     if (phone()) { box.style.left = box.style.top = ''; box.dataset.side = 'sheet'; return; }   /* phones: a sheet at the top of the screen, clear of the card and the bar at its foot */
-    var host = $('cock'), fr = host.getBoundingClientRect(), r = anchor.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight, g = 12, x, y, side = cur.side;
-    var card = $('snarr'), cr = card && vis(card) ? card.getBoundingClientRect() : null;
+    var host = hostOf(cur.tab), fr = host.getBoundingClientRect(), r = anchor.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight, g = 12, x, y, side = cur.side;
+    var card = cur.tab === 'arm' ? $('acard') : $('snarr'), cr = card && vis(card) ? card.getBoundingClientRect() : null;
+    if (side === 'below') { side = 'bottom'; x = r.left; y = r.bottom + g; }
     if (side === 'card' && (!cr || cr.right + g + w > fr.right - 12)) side = 'top';
     if (side === 'free' && cr && cr.right + g + w <= fr.right - 12) { x = cr.right + g; y = cr.bottom - h; }   /* Next sits under the card: the hint stands beside the card's foot, and Next itself is outlined */
     else if (side === 'free') { side = 'top'; x = r.left + Math.min(r.width / 2 - w / 2, 24); y = r.top - g - h; }
     else if (side === 'card') { x = cr.right + g; y = r.top + r.height / 2 - h / 2; }
     else if (side === 'node') { side = r.top - fr.top > h + 90 ? 'top' : 'bottom'; x = r.left + r.width / 2 - w / 2; y = side === 'top' ? r.top - g - h : r.bottom + g; }
-    else if (side === 'bottom') { x = r.right - w; y = r.bottom + g; }
+    else if (side === 'bottom') { if (x == null) { x = r.right - w; y = r.bottom + g; } }
     else { x = r.left + Math.min(r.width / 2 - w / 2, 24); y = r.top - g - h; }
     x = Math.max(fr.left + 12, Math.min(x, fr.right - w - 12)); y = Math.max(fr.top + 12, Math.min(y, fr.bottom - h - 12));
     box.style.left = Math.round(x - fr.left) + 'px'; box.style.top = Math.round(y - fr.top) + 'px'; box.dataset.side = side;
@@ -77,7 +102,7 @@
     else { wd.style.top = ''; wd.style.left = Math.round(Math.max(14, Math.min(w - 14, r.left + r.width / 2 - x))) + 'px'; }
   }
   function show(H, el) {
-    var host = $('cock'); if (!host) return;
+    var host = hostOf(H.tab); if (!host) return;
     if (!box) build();
     if (box.parentNode !== host) host.appendChild(box);
     cur = H; anchor = el; shownAt = at;
@@ -90,18 +115,20 @@
   function close(byUser) {
     clearTimeout(timer);
     if (!box || !cur) return;
-    var had = box.contains(document.activeElement);
+    var had = box.contains(document.activeElement), anchorWas = anchor;
     cur = null; anchor = null; mark(null);
     box.classList.remove('in');
     var el = box; setTimeout(function () { if (!cur) el.hidden = true; }, X.reduce ? 0 : 220);
-    if (had && byUser) { var n = X.route && X.route.next('sim'); if (n && vis(n)) n.focus({ preventScroll: true }); }
+    if (had && byUser && el.dataset.id && el.dataset.id.indexOf('arm-') === 0) { if (anchorWas && anchorWas.isConnected && vis(anchorWas) && anchorWas.focus) anchorWas.focus({ preventScroll: true }); }
+    else if (had && byUser) { var n = X.route && X.route.next('sim'); if (n && vis(n)) n.focus({ preventScroll: true }); }
   }
   /* a step may carry one hint: the first one due that has not been shown */
   function consider() {
     clearTimeout(timer);
-    if (cur || quiet() || shownAt === at) return;
+    var t = tabNow();
+    if (cur || quiet(t) || shownAt === at) return;
     for (var i = 0; i < HINTS.length; i++) {
-      var H = HINTS[i]; if (seen[H.id]) continue;
+      var H = HINTS[i]; if (seen[H.id] || H.tab !== t) continue;
       var el = H.when(); if (el && vis(el)) { show(H, el); return; }
     }
   }
@@ -118,16 +145,28 @@
   X.on('simpick', function (d) { if (!cur || (d.n == null && d.e == null)) return; if (cur.id === 'map' || (cur.id === 'gauge' && d.n)) close(false); });
   X.on('simtray', function (t) { if (cur && (t === 'read' ? cur.id === 'gauge' : !!t)) close(false); });
   X.on('views', function (id) { if (cur && id) close(false); });
-  X.on('view', function () { if (cur && X.view !== 'fin') close(false); });
+  X.on('view', function () { if (cur && cur.tab !== tabNow()) close(false); if (tabNow() === 'arm') { at = 'arm:' + X.armRel + ':' + (X.armSel || '') + ':' + X.armLay; later(1300); } });
+  /* the Arm: a hint ends when the visitor does what it says; a new state may carry the next one */
+  var ENDS = { 'arm-view': 'view', 'arm-pick': 'pick', 'arm-sheet': 'sheet', 'arm-switch': 'tile', 'arm-door': 'door', 'arm-else': 'door' };
+  X.on('arm', function (d) {
+    A = d || {};
+    if (cur && cur.tab === 'arm' && ENDS[cur.id] === A.act) close(false);
+    var now = 'arm:' + A.rel + ':' + (A.sel || '') + ':' + A.lay + ':' + A.v + ':' + (A.sheet || '') + ':' + (A.tall ? 1 : 0);
+    if (now !== at) { at = now; if (cur && cur.tab === 'arm') close(false); }
+    later(900);
+  });
+  X.on('card', function () { if (tabNow() === 'arm' && !cur) later(1000); });
+  window.addEventListener('scroll', function () { if (cur && cur.tab === 'arm' && phone()) return; if (!cur && tabNow() === 'arm') later(700); }, { passive: true });
   X.on('fin', function () { if (cur) close(false); at = ''; });
   root.addEventListener('toggle', function (e) { if (cur && cur.id === 'fold' && e.target.matches && e.target.matches('details.s2deep') && e.target.open) close(false); }, true);
   window.addEventListener('resize', function () { if (cur) place(); });
 
   /* the page drew the Simulator before this file loaded (a link straight to the tab, or a reload inside the guide): start from where it stands */
+  if (tabNow() === 'arm') { at = 'arm:boot'; later(1600); }
   if (X.view === 'fin' && X.finMode === 'plumb' && $('cock')) { var s0 = X.sim; S = { mode: s0.mode, line: s0.line, beat: s0.beat, ph: s0.ph }; at = S.mode + ':' + S.line + ':' + S.beat + ':' + (S.ph || ''); later(1600); }
 
   X.hints = {
-    get on() { return cur ? cur.id : null; }, get seen() { return Object.keys(seen); }, ids: HINTS.map(function (H) { return H.id; }),
+    get on() { return cur ? cur.id : null; }, get seen() { return Object.keys(seen); }, ids: HINTS.map(function (H) { return H.id; }), tabs: HINTS.reduce(function (o, H) { o[H.id] = H.tab; return o; }, {}),
     lines: function () { var o = {}; HINTS.forEach(function (H) { o[H.id] = H.line(); }); return o; },
     close: function () { close(false); }, check: consider,
     reset: function () { seen = {}; U.stSet(KEY, null); U.stSet(OFF, null); shownAt = ''; }

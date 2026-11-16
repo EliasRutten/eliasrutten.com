@@ -1,0 +1,135 @@
+/* The Imperial Stack v2 · reach.css (round 6, the Arm rethought, 16 Nov 2026; spec claude/specs/arm-rethink-16-nov.md)
+   1. Reach and Orbit: the two drawings on phones and tablets in portrait, and the toggle between them
+   2. The card's new parts: the question, the figures, “Elsewhere on the map”, the doors to Scenarios
+   3. The sheet of a selection: a peek of 136 px, “Every link” opens it to 64%
+   4. The switchboard: the Control relation
+   5. The machine: switch marks on the Control lines a Scenario plays
+   Scoped under #isx-root; linked after onboard.css. Gold is for actions only (the doors); the toggle and a selection are white. */
+
+/* ---------- 1. Reach and Orbit ---------- */
+#isx-root.v-arm.arm-reach #isx-scene-arm .aview:not([hidden]) { display: inline-flex; }
+#isx-root .aview { gap: 0; margin: 2px 16px 10px; padding: 0; border: 1px solid #22313f; border-radius: 10px; background: rgba(10, 18, 27, .6); overflow: hidden; }
+#isx-root .aview button { height: 36px; min-width: 88px; padding: 0 16px; border: 1px solid transparent; border-radius: 9px; background: none; color: var(--ink2); font: 600 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+#isx-root .aview button:hover { color: var(--ink); }
+#isx-root .aview button[aria-pressed="true"] { border-color: #e4ebf1; color: #fff; background: rgba(228, 235, 241, .06); }
+#isx-root .aview button:focus-visible { outline: 2px solid #ffd27a; outline-offset: -2px; }
+@media (min-width: 761px) { #isx-root .aview { margin: 2px 22px 12px; } }
+#isx-root .areach svg.arsvg { display: block; max-width: 100%; height: auto; overflow: visible; }
+#isx-root .areach .rcap { font: 10.5px var(--mono); letter-spacing: .16em; text-transform: uppercase; fill: #7f91a0; }
+#isx-root .areach .oring { fill: none; stroke: #16222c; stroke-width: 1; }
+#isx-root .areach .rl { fill: none; transition: opacity var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .areach .rn { cursor: pointer; outline: none; transition: opacity var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .areach .rn .hit { fill: transparent; stroke: none; }
+#isx-root .areach .rn .dot { fill: #0c1620; stroke: #9fb0bd; stroke-width: 1; }
+#isx-root .areach .rn.arm .dot { fill: #13212c; }
+#isx-root .areach .rn .pill { fill: #0c1620; stroke: #2a3a47; stroke-width: 1; }
+#isx-root .areach .rn.musk .pill { stroke: rgba(255, 181, 71, .6); stroke-dasharray: 4 3; fill: #15110a; }
+#isx-root .areach .rn .nn, #isx-root .areach .rn .pn { fill: #e4ebf1; font-family: var(--sans); pointer-events: none; }
+#isx-root .areach .rn .pn { font-weight: 500; }
+#isx-root .areach .rn.musk .pn { fill: #ffcf7a; }
+#isx-root .areach .rn.dim { opacity: .28; }
+#isx-root .areach .rn.lit .dot, #isx-root .areach .rn.lit .pill { stroke: var(--lc, #e4ebf1); stroke-width: 1.4; }
+#isx-root .areach .rn.sel .dot, #isx-root .areach .rn.sel .pill { stroke: #fff; stroke-width: 2; }
+#isx-root .areach .rn.sel.firm .pill { stroke-dasharray: 3 2; }
+#isx-root .areach .rn:focus-visible .dot, #isx-root .areach .rn:focus-visible .pill { stroke: #ffd27a; stroke-width: 2; }
+#isx-root .areach .orbit .rn .nn { fill: #c4cfd8; }
+#isx-root .areach .olab { fill: #e4ebf1; font-family: var(--sans); paint-order: stroke; stroke: #04070b; stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
+#isx-root .areach .olab.me { fill: #fff; font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { #isx-root .areach .rl, #isx-root .areach .rn { transition: none; } }
+#isx-root.rm .areach .rl, #isx-root.rm .areach .rn { transition: none; }
+
+/* ---------- 2. the card ---------- */
+#isx-root .b4card p.aq { margin: 2px 0 8px; padding-left: 12px; border-left: 2px solid #e4ebf1; font-size: 15px; line-height: 1.45; color: #fff; }
+#isx-root .b4card.strip .b4sl p.aq { padding-left: 10px; font-size: 14px; }
+#isx-root .arfig { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) auto; align-items: start; gap: 6px 16px; margin: 12px 0 2px; padding-top: 10px; border-top: 1px dashed #233243; }
+#isx-root .arfig.w3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#isx-root .arfig > div { min-width: 0; }
+#isx-root .arfig b { display: block; font-family: var(--mono); font-weight: 400; font-size: 22px; line-height: 1.1; color: var(--sc, var(--ink)); white-space: nowrap; }
+#isx-root .arfig span { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.3; color: var(--ink2); }
+#isx-root .b4card.strip .b4sl .arfig { margin: 0; padding: 0 0 0 14px; border-top: 0; border-left: 1px dashed #233243; }
+#isx-root .b4card p.atap { margin-top: 12px; font: 11px/1.5 var(--mono); letter-spacing: .03em; color: var(--ink2); }
+#isx-root .b4card p.awide { margin-top: 14px; font-size: 12.5px; color: var(--ink3); }
+/* “Elsewhere on the map”: up to three doors, 44 px rows */
+#isx-root .aelse { margin-top: 4px; }
+#isx-root .aels { width: 100%; min-height: 44px; display: grid; grid-template-columns: 78px minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 6px; padding: 6px 12px; border-radius: 10px; border: 1px solid #22313f; background: rgba(255, 255, 255, .02); color: var(--ink); font: 400 13.5px/1.3 var(--sans); text-align: left; cursor: pointer; box-sizing: border-box; }
+#isx-root button.aels:hover { border-color: #3a4c5c; background: rgba(255, 255, 255, .05); }
+#isx-root button.aels:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .aels small { font: 10.5px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .aels svg { color: var(--ink3); }
+#isx-root .aels.sc { cursor: default; grid-template-columns: 78px minmax(0, 1fr); border-color: rgba(255, 210, 122, .28); }
+#isx-root .aels.sc small { color: #ffd27a; }
+#isx-root .acs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#isx-root .acs i { font: 11px var(--mono); font-style: normal; color: var(--ink3); }
+/* a door to a case in Scenarios: gold, because it is an action */
+#isx-root .adoors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+#isx-root .adoor { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid rgba(255, 210, 122, .5); background: rgba(255, 210, 122, .08); color: #ffd27a; font: 500 12px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+#isx-root .adoor:hover { background: rgba(255, 210, 122, .16); border-color: #ffd27a; }
+#isx-root .adoor:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+
+/* ---------- 3. the sheet of a selection ---------- */
+#isx-root .b4sh-b .arfig { margin-top: 2px; padding-top: 0; border-top: 0; }
+#isx-root .b4sh-b .arfig .aevery { height: 36px; padding: 0 14px; align-self: center; }
+#isx-root .b4sh-b p.asub { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink2); }
+#isx-root .b4sh-b .lk .adoors { margin-top: 6px; }
+#isx-root .afirms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+#isx-root .afirm { min-height: 44px; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 6px 10px; border-radius: 10px; border: 1px solid #22313f; background: rgba(255, 255, 255, .02); color: var(--ink); text-align: left; cursor: pointer; }
+#isx-root .afirm b { font: 500 13px/1.25 var(--sans); }
+#isx-root .afirm span { font-size: 11.5px; line-height: 1.3; color: var(--ink3); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#isx-root .afirm:hover { border-color: #3a4c5c; }
+#isx-root .afirm:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .b4sh-b p.amore { margin-top: 10px; font-size: 12.5px; color: var(--ink3); }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"].peek { height: 136px; max-height: none; }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"].peek .b4sh-b { overflow: hidden; }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"].peek .b4sh-h { border-bottom-color: transparent; padding-bottom: 4px; }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"].tall { height: 64vh; max-height: none; }
+#isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"] { transition: opacity var(--mo-t, .4s) var(--mo, ease), transform var(--mo-t, .4s) var(--mo, ease), height var(--mo-t, .4s) var(--mo, ease); }
+@media (prefers-reduced-motion: reduce) { #isx-root.v-arm.arm-reach .b4sheet[data-kind="sel"] { transition: none; } }
+#isx-root.rm.v-arm.arm-reach .b4sheet[data-kind="sel"] { transition: none; }
+
+/* ---------- 4. the switchboard ---------- */
+#isx-root .areach.board { padding-bottom: 8px; }
+#isx-root .aboard p.abh2 { margin: 0 0 6px; font-size: 14px; line-height: 1.5; color: var(--ink); }
+#isx-root .aboard p.abh2 b { font-family: var(--mono); font-weight: 400; color: #fff; }
+#isx-root .aboard p.abkey { display: grid; gap: 4px; margin: 0 0 10px; font-size: 12.5px; line-height: 1.45; color: var(--ink2); }
+#isx-root .aboard p.abkey b { margin-right: 6px; font: 10.5px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+#isx-root .abgrp { margin: 18px 2px 0; font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .abhold { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 12px 2px 6px; }
+#isx-root .abhold b { font: 600 14px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+#isx-root .abhold span { font: 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .abgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+#isx-root .asw { display: flex; flex-direction: column; min-width: 0; border: 1px solid #22313f; border-radius: 10px; background: rgba(255, 255, 255, .015); }
+#isx-root .asw.open { grid-column: 1 / -1; border-color: #4a5a67; background: rgba(228, 235, 241, .04); }
+#isx-root .asw-b { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-height: 76px; padding: 8px 10px 8px; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; border-radius: 10px; }
+#isx-root .asw-b:focus-visible { outline: 2px solid #ffd27a; outline-offset: 1px; }
+#isx-root .asw-t { display: flex; align-items: center; gap: 7px; min-width: 0; }
+#isx-root .atg rect { fill: none; stroke: #627483; stroke-width: 1.2; }
+#isx-root .atg circle { fill: #627483; }
+#isx-root .asw.on .atg rect { fill: rgba(228, 235, 241, .14); stroke: #e4ebf1; }
+#isx-root .asw.on .atg circle { fill: #e4ebf1; }
+#isx-root .asw-s { font: 10.5px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8b9aa8; }
+#isx-root .asw.on .asw-s { color: #e4ebf1; }
+#isx-root .asw-k { color: var(--ink); }
+#isx-root .asw-g { font: 500 13px/1.3 var(--sans); color: var(--ink); }
+#isx-root .asw-d { font: 10.5px var(--mono); color: var(--ink2); }
+#isx-root .asw-x { margin: 0; padding: 0 10px 8px; font-size: 13px; line-height: 1.5; color: var(--ink2); }
+#isx-root .asw-x[hidden] { display: none; }
+#isx-root .asw > .adoors { margin: 0; padding: 0 10px 10px; }
+#isx-root .aboard.card .abgrid { gap: 5px; }
+#isx-root .aboard.card .asw-b { min-height: 70px; padding: 7px 8px; }
+@media (min-width: 761px) { #isx-root .aboard.stage .abgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ---------- 5. the machine: switch marks ---------- */
+#isx-root #isx-arm .aswm { pointer-events: none; }
+#isx-root #isx-arm .aswm rect { fill: #04070b; stroke: #e4ebf1; stroke-width: 1.1; }
+#isx-root #isx-arm .aswm circle { fill: #e4ebf1; }
+
+/* a hint for the Arm stands in for the line under the machine while it shows */
+#isx-root.hn-live-arm-pick #isx-ahint { visibility: hidden; }
+@media (max-width: 760px) { #isx-root.v-arm.arm-reach #isx-scene-arm .areach { padding-left: 0; padding-right: 0; } }
+#isx-root.v-arm.arm-reach #isx-scene-arm .areach.board { padding-left: 16px; padding-right: 16px; }
+#isx-root .areach .arsvg .rcap { transition: opacity var(--mo-t, .4s) var(--mo, ease); }
+#isx-root .areach .arsvg.picked .rlabs .rcap { opacity: 0; }
+@media (min-width: 761px) { #isx-root.v-arm.arm-reach #isx-scene-arm { position: relative; } }
+/* the strip card (761 to 1179 px): the two figures take a wider column and one line each */
+#isx-root .b4card.strip > .b4sl.af { grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); }
+#isx-root .b4card.strip .arfig span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
