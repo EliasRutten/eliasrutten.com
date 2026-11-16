@@ -11,9 +11,9 @@ const rate = +(process.argv[3] || 4);
 const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null;
 (async () => {
   const b = await chromium.launch();
-  const run = async (name, hash, prep, q, act, ms) => {
+  const run = async (name, hash, prep, q, act, ms, vp) => {
     if (ONLY && !ONLY.test(name)) return;
-    const c = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+    const c = await b.newContext(vp ? { viewport: vp, deviceScaleFactor: 3, isMobile: true, hasTouch: true } : { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
     await c.addInitScript(() => { try { ['isx-tips-globe', 'isx-tips-sim', 'isx-first', 'isx-insights', 'isx-intro', 'isx-tour'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-sim-mode', 'full'); } catch (e) {} });
     const p = await c.newPage(); await p.goto(base + (q || '') + hash, { waitUntil: 'load' }); await p.waitForTimeout(7000);
     if (prep) await prep(p);
@@ -28,6 +28,12 @@ const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null;
   await run('circuit, the ring (own tier)', '#circuit/10', ring);
   await run('circuit, the ring (tier high)', '#circuit/10', ring, '?tier=high');
   await run('simulator, full view', '#simulator', async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-fin'); if (e) e.scrollIntoView({ block: 'center' }); }); await p.waitForTimeout(1500); });
+  /* round 6 (16 Nov 2026): the Arm on a phone (390 × 844), measured for 3 s from a tap on Commerce (the selection and the sheet) and
+     from the switch to the other drawing; the baseline (bands) has the same tap on its Commerce chip. */
+  const ph = { width: 390, height: 844 }, tapC = "const g = document.querySelector('#isx-areach [data-anode=\"COMM\"], #isx-abands [data-anode=\"COMM\"]'); g.dispatchEvent(new MouseEvent('click', { bubbles: true }))";
+  await run('arm, phone, a tap on Commerce', '#arm', null, '', tapC, 3000, ph);
+  await run('arm, phone, Reach to Orbit', '#arm', null, '', "const b = document.querySelector('#isx-aview [data-aview=\"orbit\"]'); if (b) b.click()", 3000, ph);
+  await run('arm, phone, Orbit, a tap on Commerce', '#arm/v=orbit', null, '', tapC, 3000, ph);
   await run('arm', '#arm', async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-arm'); if (e) e.scrollIntoView({ block: 'center' }); }); await p.waitForTimeout(1500); });
   const sc = async p => { await p.evaluate(() => { const e = document.getElementById('isx-sc3'); if (e) e.scrollIntoView({ block: 'start' }); }); await p.waitForTimeout(1500); };
   const enter = "document.querySelector('#isx-sc3 .b3cta').click()";

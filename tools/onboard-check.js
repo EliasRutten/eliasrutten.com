@@ -1,6 +1,6 @@
 /* Round 5b (16 Nov 2026): checks for the lever row, the hints at first use and the two first openings.
    Spec: claude/specs/guide-entry-16-nov.md §5, §2, §4.
-   Usage: node tools/onboard-check.js [baseUrl] [--only=1,2,3]   (1 the lever row, 2 the hints, 3 the openings)
+   Usage: node tools/onboard-check.js [baseUrl] [--only=1,2,3,4]   (1 the lever row, 2 the hints, 3 the openings, 4 the Arm's hints, round 6)
    Start `python3 -m http.server 8731` at the repo root first. Run it alone: section 3 reads the clock. */
 const { chromium } = require('playwright');
 const base = (process.argv.slice(2).find(a => !a.startsWith('--')) || 'http://127.0.0.1:8731/imperial-stack/');
@@ -84,7 +84,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
       gauge: 'A new indicator: its figure, date and source. All of them sit under Indicators.', door: 'A deeper view of this part. Close it to come back here.', fold: 'More on this step is folded under “The mechanism”.' };
     const hintOf = p => p.evaluate(() => { const b = document.getElementById('isx-hint7'); return { on: ISX.hints.on, shown: !!b && !b.hidden && b.classList.contains('in'), text: b ? b.querySelector('.hn-t').textContent : '', role: b ? b.getAttribute('role') : '', focusIn: !!b && b.contains(document.activeElement), marks: document.querySelectorAll('.hn-on').length }; });
     let p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' } });
-    let r = await p.evaluate(() => ({ ids: ISX.hints.ids.slice().sort(), lines: ISX.hints.lines(), on: ISX.hints.on, entry: document.getElementById('isx-cock').classList.contains('s4open') }));
+    let r = await p.evaluate(() => ({ ids: ISX.hints.ids.filter(k => ISX.hints.tabs[k] === 'fin').sort(), lines: ISX.hints.lines(), on: ISX.hints.on, entry: document.getElementById('isx-cock').classList.contains('s4open') }));
     ok('seven hints, with the spec’s lines word for word', r.ids.join() === Object.keys(LINES).sort().join() && Object.keys(LINES).every(k => r.lines[k] === LINES[k]), r.lines);
     ok('none on the entry (it says how the guide works itself)', r.entry && !r.on, r);
     await p.evaluate(() => document.querySelector('#isx-gentry [data-way="guide"]').click());
@@ -136,6 +136,54 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     p = await page('#simulator', { w: 390, h: 844, touch: true, ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' }, pos: { l: 13, b: 0 }, wait: 3800 });
     r = await p.evaluate(() => { const b = document.getElementById('isx-hint7'), c = document.getElementById('isx-snarr'); const x = b.getBoundingClientRect(), y = c.getBoundingClientRect(); return { on: ISX.hints.on, text: b.querySelector('.hn-t').textContent, side: b.dataset.side, clear: x.bottom <= y.top || x.top >= y.bottom, w: Math.round(x.width) }; });
     ok('phone: “Swipe the card, or tap Next.” as a sheet clear of the card', r.on === 'next' && r.text === 'Swipe the card, or tap Next.' && r.side === 'sheet' && r.clear, r);
+    await done(p);
+  }
+
+  /* ---------- 4. the Arm's hints (round 6, arm spec §7): the same box, storage and rules ---------- */
+  if (want(4)) {
+    console.log('4 · the Arm’s hints');
+    const on = p => p.evaluate(() => ISX.hints.on), wait = (p, id) => p.waitForFunction(i => ISX.hints.on === i, id, { timeout: 9000 }).catch(() => {});
+    const AL = { 'arm-view': 'Two ways to read this: Reach follows the paths, Orbit shows the whole shape. Switch any time.', 'arm-door': 'Gold buttons open the case where this power was used.', 'arm-else': 'The same thing in the Circuit and the Simulator.' };
+    /* a phone: the toggle first, then the pick, then the sheet */
+    let p = await page('#arm', { w: 390, h: 844, touch: true, ls: { ...QUIET, ...SEEN } });
+    let r = await p.evaluate(() => ({ ids: ISX.hints.ids.filter(k => ISX.hints.tabs[k] === 'arm'), lines: ISX.hints.lines() }));
+    ok('six Arm hints; three lines word for word from the spec', r.ids.length === 6 && Object.keys(AL).every(k => r.lines[k] === AL[k]), r);
+    await wait(p, 'arm-view');
+    r = await p.evaluate(() => { const b = document.getElementById('isx-hint7'); return { on: ISX.hints.on, side: b.dataset.side, role: b.getAttribute('role'), focus: b.contains(document.activeElement), mark: !!document.querySelector('#isx-aview.hn-on') }; });
+    ok('phone: “Two ways to read this” first, as a sheet, outlining the toggle; it takes no focus', r.on === 'arm-view' && r.side === 'sheet' && r.role === 'status' && !r.focus && r.mark, r);
+    await p.tap('#isx-aview [data-aview="orbit"]'); await p.waitForTimeout(300);
+    ok('using the toggle ends it', (await on(p)) !== 'arm-view');
+    await wait(p, 'arm-pick'); r = await p.evaluate(() => ({ on: ISX.hints.on, text: document.querySelector('#isx-hint7 .hn-t').textContent }));
+    ok('then the pick, worded for Orbit (“a group on the rim”)', r.on === 'arm-pick' && /on the rim/.test(r.text), r);
+    await p.tap('#isx-areach [data-anode="COMM"] .hit'); await p.waitForTimeout(300);
+    ok('a selection ends it', (await on(p)) !== 'arm-pick');
+    await wait(p, 'arm-sheet');
+    ok('the first selection on a phone: the hint names “Every link”', (await on(p)) === 'arm-sheet');
+    await p.tap('#isx-asheet [data-ash="tall"]'); await p.waitForTimeout(300);
+    ok('opening “Every link” ends it', (await on(p)) !== 'arm-sheet');
+    await done(p);
+    /* desktop: the pick, then the door and “Elsewhere on the map” */
+    p = await page('#arm', { ls: { ...QUIET, ...SEEN } });
+    await wait(p, 'arm-pick');
+    r = await p.evaluate(() => ({ on: ISX.hints.on, text: document.querySelector('#isx-hint7 .hn-t').textContent, line: getComputedStyle(document.getElementById('isx-ahint')).visibility }));
+    ok('desktop: “Click a state body … a group at the bottom …”, and the line under the machine steps aside', r.on === 'arm-pick' && /^Click a state body/.test(r.text) && /at the bottom/.test(r.text) && r.line === 'hidden', r);
+    await p.evaluate(() => document.querySelector('#isx-arm [data-a="COMM"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(200);
+    await wait(p, 'arm-door'); r = await p.evaluate(() => ({ on: ISX.hints.on, mark: !!document.querySelector('.adoor.hn-on') }));
+    ok('a gold door on screen carries its hint', r.on === 'arm-door' && r.mark, r);
+    await p.evaluate(() => document.querySelector('#isx-hint7 [data-hn="ok"]').click()); await p.waitForTimeout(300);
+    ok('“Got it” ends it', !(await on(p)));
+    await p.evaluate(() => ISX.setArmSel('TREA')); await wait(p, 'arm-else');
+    ok('the next state carries “Elsewhere on the map”', (await on(p)) === 'arm-else');
+    await p.evaluate(() => ISX.setArmRel('control')); await p.waitForTimeout(400);
+    await p.evaluate(() => document.querySelector('#isx-acard [data-acard="links"]').click()); await wait(p, 'arm-switch');
+    ok('Control with the switchboard open: the switch hint', (await on(p)) === 'arm-switch');
+    await p.evaluate(() => document.querySelector('.aboard [data-atile]').click()); await p.waitForTimeout(300);
+    ok('opening a tile ends it', (await on(p)) !== 'arm-switch');
+    r = await p.evaluate(() => (localStorage.getItem('isx-hints') || '').split(','));
+    ok('each shown once and stored (isx-hints)', ['arm-pick', 'arm-door', 'arm-else', 'arm-switch'].every(k => r.includes(k)), r);
+    await done(p);
+    p = await page('#arm', { ls: { ...QUIET, ...SEEN, 'isx-hints-off': '1' } });
+    ok('“Hide hints” (isx-hints-off) keeps the Arm’s away too', !(await on(p)));
     await done(p);
   }
 

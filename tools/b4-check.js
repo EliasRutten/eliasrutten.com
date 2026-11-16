@@ -29,13 +29,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- 1. the layout rule ---------- */
   if (want(1)) {
-    const exp = [[1920, 1080, 'full'], [1440, 900, 'full'], [1280, 760, 'compact'], [1280, 800, 'compact'], [1024, 768, 'compact'], [768, 1024, 'bands'], [390, 844, 'bands']];
+    const exp = [[1920, 1080, 'full'], [1440, 900, 'full'], [1280, 760, 'compact'], [1280, 800, 'compact'], [1024, 768, 'compact'], [768, 1024, 'reach'], [390, 844, 'reach']];
     for (const [w, h, m] of exp) {
       const p = await page('#arm', { w, h, touch: w <= 768 });
       const r = await p.evaluate(() => {
         const lay = ISX.armLay; let min = 99, at = '';
-        if (lay !== 'bands') document.querySelectorAll('#isx-arm text').forEach(t => { if (!t.getClientRects().length || !t.textContent.trim()) return; const m = t.getScreenCTM(), fs = parseFloat(getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b); if (fs < min) { min = fs; at = t.textContent; } });
-        else document.querySelectorAll('#isx-abands .ach .cn, #isx-abands .ach .cc').forEach(t => { const fs = parseFloat(getComputedStyle(t).fontSize); if (fs < min) { min = fs; at = t.textContent; } });
+        document.querySelectorAll(lay !== 'reach' ? '#isx-arm text' : '#isx-areach svg .rn text').forEach(t => { if (!t.getClientRects().length || !t.textContent.trim()) return; const m = t.getScreenCTM(), fs = parseFloat(getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b); if (fs < min) { min = fs; at = t.textContent; } });
         return { lay, min: Math.round(min * 100) / 100, at };
       });
       ok(`1 · ${w}×${h}: the Arm is ${m}`, r.lay === m, r);
@@ -133,35 +132,86 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     ok('5 · ← → step through the marks', seq.join() === [ORD[1], ORD[2], ORD[3], ORD[2]].join(), seq);
     await done(p);
     const q = await page('#arm', { w: 390, h: 844, touch: true });
-    const sw = async dx => { await q.evaluate(d => { const el = document.getElementById('isx-abands'), r = el.getBoundingClientRect(), x = r.left + 200, y = r.top + 120, t = (cx) => new Touch({ identifier: 1, target: el, clientX: cx, clientY: y }); el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [t(x)], changedTouches: [t(x)] })); el.dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [], changedTouches: [t(x + d)] })); }, dx); await sleep(300); return q.evaluate(() => ISX.armRel); };
+    const sw = async dx => { await q.evaluate(d => { const el = document.getElementById('isx-areach'), r = el.getBoundingClientRect(), x = r.left + 200, y = r.top + 120, t = (cx) => new Touch({ identifier: 1, target: el, clientX: cx, clientY: y }); el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [t(x)], changedTouches: [t(x)] })); el.dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [], changedTouches: [t(x + d)] })); }, dx); await sleep(300); return q.evaluate(() => ISX.armRel); };
     const s1 = await sw(-120), s2 = await sw(-120), s3 = await sw(120);
     ok('5 · at 390 a swipe left is Next and a swipe right is Back', s1 === ORD[1] && s2 === ORD[2] && s3 === ORD[1], [s1, s2, s3]);
     await done(q);
   }
 
-  /* ---------- 6. phone bands ---------- */
+  /* ---------- 6. phones and tablets in portrait: Reach and Orbit (round 6, spec §2, §6) ---------- */
   if (want(6)) {
     const p = await page('#arm', { w: 390, h: 844, touch: true });
+    await p.evaluate(() => localStorage.removeItem('isx-arm-view'));
     const E = await p.evaluate(() => ISX.armEdges()), lay = id => /^(WH|FED|TREA|JUST|IC|PENT|DHS|STATE|COMM)$/.test(id) ? 'state' : /^(INV|SAVE|BANK|MERCH|ADV|USER|BIZ|MIL|TEL|FAB)$/.test(id) ? 'econ' : 'arm';
     const btw = (a, c) => E.filter(e => (lay(e.fb) === a && lay(e.tb) === c) || (lay(e.fb) === c && lay(e.tb) === a)).length;
     const want6 = { sa: btw('state', 'arm'), ae: btw('arm', 'econ'), se: btw('state', 'econ'), aa: btw('arm', 'arm') };
-    const r = await p.evaluate(() => {
-      const ch = [...document.querySelectorAll('#isx-abands .ach')], g = [...document.querySelectorAll('#isx-abands .agut .gl')].map(e => e.textContent);
-      return { n: ch.length, minH: Math.min(...ch.map(e => e.getBoundingClientRect().height)), g, inside: document.querySelectorAll('#isx-abands .abh .bn')[1].textContent };
+    ok('6 · on the base data: 48, 41, 6 and 40 links between the layers', want6.sa === 48 && want6.ae === 41 && want6.se === 6 && want6.aa === 40, want6);
+    /* the reach of a node, computed here from the edges: own links, then the far layer through the sectors */
+    const reachOf = id => { const L = lay(id), far = L === 'state' ? 'econ' : 'state', own = E.filter(e => e.fb === id || e.tb === id), mids = new Set(), R = new Set();
+      own.forEach(e => { const o = e.fb === id ? e.tb : e.fb; if (lay(o) === 'arm') mids.add(o); else if (lay(o) === far) R.add(o); });
+      E.forEach(e => { if (mids.has(e.fb) && lay(e.tb) === far) R.add(e.tb); if (mids.has(e.tb) && lay(e.fb) === far) R.add(e.fb); }); R.delete(id); return { own: own.length, reach: R.size }; };
+    const cm = reachOf('COMM'), us = reachOf('USER');
+    ok('6 · Commerce: 8 own links and reaches 8 of 10 groups (computed from the edges)', cm.own === 8 && cm.reach === 8, cm);
+    ok('6 · Users: 12 links and reached by 8 of 9 state bodies (computed from the edges)', us.own === 12 && us.reach === 8, us);
+    let r = await p.evaluate(() => {
+      const n = [...document.querySelectorAll('#isx-areach [data-anode]')], cls = k => n.filter(e => e.classList.contains(k)).length;
+      const hit = n.map(e => { const h = e.querySelector('.hit').getBoundingClientRect(); return Math.min(h.width, h.height); });
+      return { view: ISX.armView, st: cls('state'), arm: cls('arm'), ec: cls('econ'), order: n.map(e => e.classList[1]).join(','), minHit: Math.min(...hit), tg: !document.getElementById('isx-aview').hidden, lines: document.querySelectorAll('#isx-areach .rl').length };
     });
-    ok('6 · 33 chips, each at least 44 px tall', r.n === 33 && r.minH >= 44, r);
-    ok(`6 · gutters say the computed crossings (${want6.sa}, ${want6.ae}, ${want6.se}; ${want6.aa} inside)`, r.g[0].startsWith(want6.sa + ' ') && r.g[1].startsWith(want6.ae + ' ') && r.g[1].includes(want6.se + ' state') && r.inside.includes(want6.aa + ' inside'), { r, want6 });
-    ok('6 · on the base data: 48, 41, 6 and 40', want6.sa === 48 && want6.ae === 41 && want6.se === 6 && want6.aa === 40, want6);
-    const open = () => p.evaluate(() => { const s = document.getElementById('isx-asheet'); return !s.hidden && s.classList.contains('on'); });
-    await p.tap('#isx-abands [data-anode="CLOUD"]'); await sleep(450);
-    ok('6 · a tap opens the dossier sheet', await open() && (await p.evaluate(() => document.getElementById('isx-ash-t').textContent)) === 'Hyperscale cloud');
-    await p.tap('#isx-asheet .b4x'); await sleep(450);
-    ok('6 · × closes it', !(await open()));
-    await p.tap('#isx-abands [data-anode="CLOUD"]'); await sleep(450);
-    ok('6 · a second tap on the selected tile clears and closes', !(await open()) && !(await p.evaluate(() => ISX.armSel)));
-    await p.tap('#isx-abands [data-anode="PENT"]'); await sleep(450); await p.keyboard.press('Escape'); await sleep(450);
+    ok('6 · Reach is the default: 9 state bodies, 14 sectors, 10 groups; tab order state → arm → economy', r.view === 'reach' && r.st === 9 && r.arm === 14 && r.ec === 10 && /^(state,){9}(arm,){14}(econ,?){10}$/.test(r.order), r);
+    ok('6 · every node has a tap area of at least 30 px; the toggle shows', r.minHit >= 30 && r.tg, r);
+    const fig = () => p.evaluate(() => [...document.querySelectorAll('#isx-asheet .arfig b')].map(b => b.textContent));
+    const open = () => p.evaluate(() => { const s = document.getElementById('isx-asheet'); return !s.hidden && s.classList.contains('on') ? (s.classList.contains('tall') ? 'tall' : s.classList.contains('peek') ? 'peek' : 'on') : ''; });
+    await p.tap('#isx-areach [data-anode="COMM"] .hit'); await sleep(500);
+    ok('6 · a tap selects and the sheet peeks with the two figures (8 · 8 of 10)', (await open()) === 'peek' && (await fig()).join() === '8,8 of 10', [await open(), await fig()]);
+    const hp = await p.evaluate(() => Math.round(document.getElementById('isx-asheet').getBoundingClientRect().height));
+    ok('6 · the peek is 136 px', Math.abs(hp - 136) <= 2, hp);
+    await p.tap('#isx-asheet [data-ash="tall"]'); await sleep(500);
+    const ht = await p.evaluate(() => [Math.round(document.getElementById('isx-asheet').getBoundingClientRect().height), innerHeight, document.querySelectorAll('#isx-asheet .lk').length, !!document.querySelector('#isx-asheet .aelse')]);
+    ok('6 · “Every link” opens it to 64%, with every link and “Elsewhere on the map”', (await open()) === 'tall' && Math.abs(ht[0] - .64 * ht[1]) <= 3 && ht[2] === 8 && ht[3], ht);
+    await p.tap('#isx-aview [data-aview="orbit"]'); await sleep(600);
+    r = await p.evaluate(() => ({ view: ISX.armView, st: localStorage.getItem('isx-arm-view'), sel: ISX.armSel, osel: !!document.querySelector('#isx-areach svg.orbit [data-anode="COMM"].sel'), hash: location.hash, sheet: document.getElementById('isx-asheet').classList.contains('on'), labs: [...document.querySelectorAll('#isx-areach .olab')].map(t => t.textContent) }));
+    ok('6 · the toggle switches to Orbit, stores it and keeps the selection and the sheet', r.view === 'orbit' && r.st === 'orbit' && r.sel === 'COMM' && r.osel && r.sheet && /\/v=orbit$/.test(r.hash), r);
+    ok('6 · Orbit names the selection and what it is tied to (at most 14)', r.labs.includes('Commerce') && r.labs.length >= 5 && r.labs.length <= 14, r.labs);
+    const ov = await p.evaluate(() => { const b = [...document.querySelectorAll('#isx-areach .olab, #isx-areach svg.orbit .rn.econ text')].map(t => t.getBoundingClientRect()); let n = 0; for (let i = 0; i < b.length; i++) for (let j = i + 1; j < b.length; j++) { const a = b[i], c = b[j]; if (a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1) n++; } return n; });
+    ok('6 · no two names overlap in Orbit', ov === 0, ov);
+    await p.tap('#isx-asheet .b4x'); await sleep(500);
+    ok('6 · × closes the sheet and clears the selection', !(await open()) && !(await p.evaluate(() => ISX.armSel)));
+    await p.tap('#isx-areach [data-anode="USER"] .hit'); await sleep(500);
+    ok('6 · Users in Orbit: 12 links, reached by 8 of 9', (await fig()).join() === '12,8 of 9', await fig());
+    await p.tap('#isx-areach [data-anode="USER"] .hit'); await sleep(500);
+    ok('6 · a second tap clears and closes', !(await open()) && !(await p.evaluate(() => ISX.armSel)));
+    await p.tap('#isx-areach [data-anode="PENT"] .hit'); await sleep(450); await p.keyboard.press('Escape'); await sleep(450);
     ok('6 · Esc closes it', !(await open()));
+    await p.evaluate(() => ISX.setArmView('reach')); await sleep(300);
+    /* the switchboard */
+    await p.evaluate(() => ISX.setArmRel('control')); await sleep(500);
+    const ctl = E.filter(e => e.type === 'control').length, B = await p.evaluate(() => ISX.armBoard()), pl = await p.evaluate(() => ISX.armPlayed());
+    r = await p.evaluate(() => ({ tiles: document.querySelectorAll('#isx-areach .aboard .asw').length, doors: document.querySelectorAll('#isx-areach .aboard .adoor').length, pulled: document.querySelectorAll('#isx-areach .aboard .asw.on').length, head: document.querySelector('#isx-areach .abh2').textContent, tg: document.getElementById('isx-aview').hidden }));
+    ok(`6 · Control on a phone: the switchboard fills the stage, ${ctl} tiles, ${B.played} doors, the toggle hidden`, r.tiles === ctl && ctl === 19 && r.doors === 13 && B.played === 13 && r.tg, r);
+    ok('6 · 12 pulled, 7 ready, and the header says so', r.pulled === 12 && B.ready.length === 7 && r.head === 'Who can switch off what. 19 control links: 12 pulled against a named party, 7 ready. 13 are played in Scenarios.', r);
+    const cases = new Set(pl.flatMap(x => x.cases));
+    ok('6 · 31 links are played in Scenarios and every one of the 14 cases has at least one', pl.length === 31 && cases.size === 14, { n: pl.length, cases: [...cases] });
+    await p.tap('#isx-areach [data-atile="COMM>FAB"]'); await sleep(300);
+    r = await p.evaluate(() => { const t = document.querySelector('#isx-areach [data-atile="COMM>FAB"]'); return { ex: t.getAttribute('aria-expanded'), x: !t.parentNode.querySelector('.asw-x').hidden }; });
+    ok('6 · a tile opens to its full row', r.ex === 'true' && r.x, r);
+    ok('6 · no page errors', !p._errs.length, p._errs);
     await done(p);
+    /* the switchboard on desktop, and a door */
+    const d = await page('#arm/rel=control');
+    await d.click('#isx-acard [data-acard="links"]'); await sleep(400);
+    r = await d.evaluate(() => ({ tiles: document.querySelectorAll('#isx-acard .aboard .asw').length, cols: getComputedStyle(document.querySelector('#isx-acard .abgrid')).gridTemplateColumns.split(' ').length, marks: document.querySelectorAll('#isx-arm .aswm g').length }));
+    ok('6 · desktop: the card\'s switchboard has 19 tiles in two columns; 13 switch marks on the machine', r.tiles === 19 && r.cols === 2 && r.marks === 13, r);
+    await d.click('#isx-acard [data-scen="huawei"]'); await sleep(900);
+    r = await d.evaluate(() => ({ v: ISX.view, where: ISX.whereNow().slug }));
+    ok('6 · a gold door opens the case in Scenarios', r.v === 'story' && r.where === 'scenarios/huawei', r);
+    await d.goBack(); await sleep(900);
+    ok('6 · Back returns to the Arm as it was', await d.evaluate(() => ISX.view === 'arm' && ISX.armRel === 'control'));
+    await d.evaluate(() => ISX.setArmSel('COMM')); await sleep(300);
+    r = await d.evaluate(() => [...document.querySelectorAll('#isx-acard .aelse .aels small')].map(e => e.textContent));
+    ok('6 · Commerce: “Elsewhere on the map” has a Circuit, a Simulator and a Scenarios row', r.join() === 'Circuit,Simulator,Scenarios', r);
+    ok('6 · no page errors on desktop', !d._errs.length, d._errs);
+    await done(d);
   }
 
   /* ---------- 7. the type scale ---------- */
