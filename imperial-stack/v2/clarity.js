@@ -24,7 +24,7 @@
   };
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var mlab = function (m) { return MON[+m.slice(5) - 1] + ' ' + m.slice(0, 4); };
-  var BP = null, bpAsked = false, el = null, cur = null, tblOn = false, srcOn = false, foldOn = false;
+  var keyAt = 0, BP = null, bpAsked = false, el = null, cur = null, tblOn = false, srcOn = false, foldOn = false;
   var phone = function () { return U.PHONE ? U.PHONE() : window.innerWidth <= 760; };
   var fmt = function (v, S) { return v.toFixed(S.dp) + S.unit; };
 
@@ -136,12 +136,13 @@
     var b = e.target.closest ? e.target.closest('[data-cl-key]') : null, pop = $('cl-key');
     if (!pop) return;
     if (b) { var on = pop.hidden; pop.hidden = !on; b.setAttribute('aria-expanded', String(on)); if (on) { var x = pop.querySelector('.dx'); if (x && e.detail === 0) x.focus({ preventScroll: true }); } return; }
-    if (!pop.hidden && (e.target.closest('[data-cl-keyx]') || !e.target.closest('#isx-cl-key'))) { pop.hidden = true; var kb = root.querySelector('[data-cl-key]'); if (kb) { kb.setAttribute('aria-expanded', 'false'); if (e.target.closest('[data-cl-keyx]')) kb.focus({ preventScroll: true }); } }
+    if (!pop.hidden && Date.now() - keyAt > 250 && (e.target.closest('[data-cl-keyx]') || !e.target.closest('#isx-cl-key'))) { pop.hidden = true; var kb = root.querySelector('[data-cl-key]'); if (kb) { kb.setAttribute('aria-expanded', 'false'); if (e.target.closest('[data-cl-keyx]')) kb.focus({ preventScroll: true }); } }
   });
   root.addEventListener('keydown', function (e) { var hd = e.target.closest ? e.target.closest('.cl-nums.fold .cl-nh') : null; if (hd && e.target === hd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hd.click(); } });
   root.addEventListener('keydown', function (e) { var pop = $('cl-key'); if (e.key === 'Escape' && pop && !pop.hidden) { e.preventDefault(); e.stopPropagation(); pop.hidden = true; var kb = root.querySelector('[data-cl-key]'); if (kb) { kb.setAttribute('aria-expanded', 'false'); kb.focus({ preventScroll: true }); } } }, true);
 
-  X.on('key', function (on) { var pop = $('cl-key'), kb = root.querySelector('[data-cl-key]'); if (!pop) return; pop.hidden = !on; if (kb) kb.setAttribute('aria-expanded', String(!!on)); });
+  /* the click that opened the key from elsewhere (the Expert way in) must not also close it: keyAt */
+  X.on('key', function (on) { var pop = $('cl-key'), kb = root.querySelector('[data-cl-key]'); if (!pop) return; pop.hidden = !on; keyAt = on ? Date.now() : 0; if (kb) kb.setAttribute('aria-expanded', String(!!on)); });
   X.clarity = { draw: draw, get where() { return el ? (el.classList.contains('up') ? 'up' : 'in') : null; }, get data() { return cur; } };
   if ($('sn-body') && $('sn-body').childElementCount) draw();
 })();
