@@ -37,7 +37,7 @@ const probe = () => {
   st.querySelectorAll('button, a[href], [tabindex]').forEach(e => { if (e.tabIndex < 0 || e.closest('[inert]') || !e.getClientRects().length || getComputedStyle(e).visibility === 'hidden') return; if (world.contains(e)) o.tab.push('scene'); if (e.classList.contains('rt-sp') && +e.dataset.rtT > n) o.tab.push('strip step ' + (+e.dataset.rtT + 1)); });
   o.same = getComputedStyle(document.getElementById('isx-b3-map')).transform === getComputedStyle(world).transform;
   const tex = document.getElementById('isx-b3-tex'), w = ISX.scenes.sw ? ISX.scenes.sw.SW.find(q => q.case === S.id && q.step === n + 1) : null;
-  o.tex = tex.dataset.t; o.texBg = getComputedStyle(tex).backgroundImage !== 'none'; o.instr = w ? w.instr : null; o.choke = n < N && !!S.steps[n].choke; o.link = n < N ? S.steps[n].link || 'data' : 'end';
+  o.tex = tex.dataset.t; o.texBg = getComputedStyle(tex).backgroundImage !== 'none' || getComputedStyle(tex, '::before').backgroundImage !== 'none';   /* Scenarios polish: the pattern is drawn on ::before */ o.instr = w ? w.instr : null; o.choke = n < N && !!S.steps[n].choke; o.link = n < N ? S.steps[n].link || 'data' : 'end';
   o.title = (cardEl.querySelector('h2') || {}).textContent; o.wantTitle = n < N ? S.steps[n].title : null; o.cap = (cardEl.querySelector('.b3cap') || {}).textContent || '';
   o.tgOn = world.querySelectorAll('.tg.on').length; o.tgAll = world.querySelectorAll('.tg').length;
   o.bk = (r => [r.left, r.top, r.width, r.height].map(v => Math.round(v * 10) / 10))(bar.querySelector('.rt-bk').getBoundingClientRect()); o.nx = (r => [r.left, r.top, r.width, r.height].map(v => Math.round(v * 10) / 10))(bar.querySelector('.rt-nx').getBoundingClientRect());

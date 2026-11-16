@@ -12,6 +12,58 @@
   "market": "Market-access condition",
   "datadem": "Data-access demand"
  },
+ "CAT": {
+  "defence": {
+   "n": "Defence and intelligence",
+   "s": "Defence",
+   "cases": [
+    "ukr",
+    "mh17",
+    "maven",
+    "gaza"
+   ]
+  },
+  "finance": {
+   "n": "Finance and payments",
+   "s": "Finance",
+   "cases": [
+    "russia",
+    "kenya",
+    "garantex"
+   ]
+  },
+  "tech": {
+   "n": "Technology and trade",
+   "s": "Technology",
+   "cases": [
+    "huawei",
+    "nexperia"
+   ]
+  },
+  "cloud": {
+   "n": "Data and cloud",
+   "s": "Data and cloud",
+   "cases": [
+    "nayara",
+    "ice"
+   ]
+  },
+  "borders": {
+   "n": "Borders and visas",
+   "s": "Borders",
+   "cases": [
+    "protest",
+    "border"
+   ]
+  },
+  "law": {
+   "n": "Law and courts",
+   "s": "Law",
+   "cases": [
+    "icc"
+   ]
+  }
+ },
  "SW": [
   {
    "id": "ukr-1",
@@ -22,6 +74,7 @@
    "type": "private",
    "origin": "US",
    "instr": "service",
+   "cat": "defence",
    "cut": "Starlink coverage for one operation",
    "target": "A Ukrainian drone attack on the Russian fleet near Crimea",
    "span": "One operation, near Crimea",
@@ -39,6 +92,7 @@
    "type": "state",
    "origin": "US",
    "instr": "intel",
+   "cat": "defence",
    "cut": "US intelligence sharing, and Maxar imagery bought through the NGA’s GEGD contract",
    "target": "Ukraine",
    "span": "Six days; lifted after Ukraine accepted a US ceasefire proposal in Jeddah",
@@ -58,6 +112,7 @@
    "type": "joint",
    "origin": "mixed",
    "instr": "access",
+   "cat": "defence",
    "cut": "Starlink links for terminals not on a whitelist of verified ones",
    "target": "Russian units using smuggled terminals",
    "span": "Along the front, from February 2026",
@@ -75,6 +130,7 @@
    "type": "state",
    "origin": "US",
    "instr": "intel",
+   "cat": "defence",
    "cut": "US satellite data on the launch",
    "target": "The investigation and the court in The Hague",
    "span": "Never released; briefed confidentially to Dutch prosecutors",
@@ -92,6 +148,7 @@
    "type": "state",
    "origin": "US",
    "instr": "entry",
+   "cat": "borders",
    "cut": "Her student visa",
    "target": "A Tufts student",
    "span": "Revoked without notice",
@@ -110,6 +167,7 @@
    "type": "state",
    "origin": "US",
    "instr": "datadem",
+   "cat": "borders",
    "cut": "Visa-free travel, unless US officers may query police databases",
    "target": "The Netherlands and other visa-waiver countries",
    "span": "Deadline 31 December 2026",
@@ -127,6 +185,7 @@
    "type": "state",
    "origin": "US",
    "instr": "entry",
+   "cat": "borders",
    "cut": "Entry to the United States",
    "target": "A French scientist",
    "span": "Sent back on arrival",
@@ -144,6 +203,7 @@
    "type": "state",
    "origin": "US",
    "instr": "sanction",
+   "cat": "law",
    "cut": "The prosecutor’s Microsoft email",
    "target": "The International Criminal Court’s prosecutor",
    "span": "From May 2025",
@@ -163,6 +223,7 @@
    "type": "state",
    "origin": "US",
    "instr": "sanction",
+   "cat": "law",
    "cut": "Cards and accounts: Visa, Mastercard, Amex, Amazon, Airbnb, PayPal, Expedia",
    "target": "Judge Nicolas Guillou",
    "span": "From August 2025",
@@ -181,6 +242,7 @@
    "type": "private",
    "origin": "other",
    "instr": "token",
+   "cat": "finance",
    "cut": "Any USDT address",
    "target": "A Kenyan saver, or any holder",
    "span": "Not used here; used against Garantex in March 2025",
@@ -199,6 +261,7 @@
    "type": "state",
    "origin": "US",
    "instr": "market",
+   "cat": "tech",
    "cut": "Access to the US market, unless the Chinese chief executive is replaced",
    "target": "Nexperia and the Dutch government",
    "span": "Stated as a condition in meeting minutes",
@@ -216,6 +279,7 @@
    "type": "state",
    "origin": "US",
    "instr": "export",
+   "cat": "tech",
    "cut": "US technology for firms at least 50% owned by a blacklisted firm",
    "target": "Nexperia",
    "span": "From 29 September 2025; paused after the November deal",
@@ -234,6 +298,7 @@
    "type": "state",
    "origin": "other",
    "instr": "export",
+   "cat": "tech",
    "cut": "Exports from Nexperia’s Chinese unit, about 70% of output",
    "target": "Nexperia, and car plants downstream",
    "span": "From 4 October 2025",
@@ -251,6 +316,7 @@
    "type": "state",
    "origin": "US",
    "instr": "export",
+   "cat": "tech",
    "cut": "US technology without a licence (entity list)",
    "target": "Huawei",
    "span": "From 16 May 2019",
@@ -268,6 +334,7 @@
    "type": "state",
    "origin": "US",
    "instr": "export",
+   "cat": "tech",
    "cut": "Google’s apps on new Huawei phones abroad",
    "target": "Huawei",
    "span": "From 2019",
@@ -286,6 +353,7 @@
    "type": "state",
    "origin": "US",
    "instr": "export",
+   "cat": "tech",
    "cut": "Manufacture of Huawei’s own chip designs",
    "target": "Huawei",
    "span": "From 2020",
@@ -305,6 +373,7 @@
    "type": "state",
    "origin": "mixed",
    "instr": "freeze",
+   "cat": "finance",
    "cut": "Roughly half of the Bank of Russia’s reserves of more than $600bn",
    "target": "The Bank of Russia",
    "span": "From February 2022",
@@ -322,6 +391,7 @@
    "type": "state",
    "origin": "other",
    "instr": "payments",
+   "cat": "finance",
    "cut": "SWIFT messaging for seven Russian banks",
    "target": "Seven Russian banks",
    "span": "From 12 March 2022",
@@ -341,6 +411,7 @@
    "type": "private",
    "origin": "US",
    "instr": "payments",
+   "cat": "finance",
    "cut": "Card payments in and out of Russia",
    "target": "Russian cardholders and foreign cards in Russia",
    "span": "From 5 March 2022",
@@ -359,6 +430,7 @@
    "type": "state",
    "origin": "other",
    "instr": "freeze",
+   "cat": "finance",
    "cut": "€210bn of Russian state assets in the EU, €185bn at Euroclear",
    "target": "The Bank of Russia",
    "span": "Open-ended from 12 December 2025",
@@ -377,6 +449,7 @@
    "type": "private",
    "origin": "US",
    "instr": "service",
+   "cat": "cloud",
    "cut": "Outlook, Teams, Office and data on Microsoft’s servers",
    "target": "Nayara Energy (49% Rosneft)",
    "span": "Eight days; restored before the Delhi High Court hearing",
@@ -395,6 +468,7 @@
    "type": "private",
    "origin": "other",
    "instr": "service",
+   "cat": "cloud",
    "cut": "Support for the refinery’s enterprise software",
    "target": "Nayara Energy",
    "span": "Until an Indian court ordered service restored",
@@ -412,6 +486,7 @@
    "type": "private",
    "origin": "US",
    "instr": "service",
+   "cat": "cloud",
    "cut": "Services some Israeli defence-ministry accounts used for surveillance",
    "target": "A unit of Israel’s defence ministry",
    "span": "From September 2025",
@@ -429,6 +504,7 @@
    "type": "joint",
    "origin": "mixed",
    "instr": "token",
+   "cat": "finance",
    "cut": "About $27m of USDT in Garantex wallets",
    "target": "Garantex",
    "span": "From March 2025",

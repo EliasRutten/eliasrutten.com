@@ -34,7 +34,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
     const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     const tabs = document.getElementById('isx-tabs'), tr = tabs.getBoundingClientRect(), tb = tabs && !tabs.classList.contains('rt-host') && tabs.getClientRects().length ? [...tabs.querySelectorAll('.tb')].map(t => { const q = t.getBoundingClientRect(); return { left: Math.max(q.left, tr.left), right: Math.min(q.right, tr.right), top: q.top, bottom: q.bottom }; }).filter(q => q.right > q.left) : [];   /* the row scrolls: only the part of a tab inside the row counts */
     return { n: all.length, vis: v(f) && v(lab), text: lab.textContent.trim(), labW: Math.round(lr.width), labH: Math.round(lr.height), aria: f.getAttribute('aria-label'), fontPx: parseFloat(getComputedStyle(lab).fontSize),
-      inZoom: zoom.contains(f), inBar: !!f.closest('.rt'), inDock: !!f.closest('#isx-dock'), zoomVis: v(zoom) && v(plus), sameRow: Math.abs((r.top + r.height / 2) - (pr.top + pr.height / 2)) < 2, gap: Math.round(pr.left - r.right),
+      inZoom: zoom.contains(f), inBar: !!f.closest('.rt'), inDock: !!f.closest('#isx-dock'), inScene: !!f.closest('#isx-sc3 .b3nav, #isx-sc3 .b3deep'), zoomVis: v(zoom) && v(plus), sameRow: Math.abs((r.top + r.height / 2) - (pr.top + pr.height / 2)) < 2, gap: Math.round(pr.left - r.right),
       onTop: !!hit && f.contains(hit), inView: r.left >= 0 && r.right <= innerWidth + 1 && r.width > 0, box: [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)],
       clearOfTabs: tb.every(t => t.right <= r.left + 1 || t.left >= r.right - 1 || t.bottom <= r.top || t.top >= r.bottom), dockLabel: document.getElementById('isx-dock').getAttribute('aria-label'), zoomLabel: zoom.getAttribute('aria-label') };
   });
@@ -51,7 +51,8 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
         if (name === 'Circuit') ok(`${tag}: beside the zoom buttons, on their row, directly before +`, r.inZoom && r.zoomVis && r.sameRow && r.gap >= 0 && r.gap <= 12 && /full screen/i.test(r.zoomLabel) && !/full screen/i.test(r.dockLabel), r);
         else if (name === 'Arm') ok(`${tag}: in the dock, clear of the Arm’s tabs`, r.inDock && !r.inZoom && r.clearOfTabs && /full screen/i.test(r.dockLabel), r);
         /* B3: the Scenarios gallery has no bar and a case plays with the strip skin, so the dock (with “Full screen”) keeps its own corner there, as in the Arm */
-        else if (name === 'Scenarios') ok(`${tag}: in the dock, in its corner of the stage` + (touch ? ' (under the stage on a phone)' : ''), r.inDock && !r.inZoom && !r.inBar && /full screen/i.test(r.dockLabel), r);
+        /* Scenarios polish (16 Nov): on a wide screen it stands in the stage's top right group (beside “All switches”); on a phone it keeps the dock */
+        else if (name === 'Scenarios') ok(`${tag}: ` + (w <= 760 ? 'in the dock, under the stage on a phone' : 'in the stage’s top right group, beside “All switches”'), w <= 760 ? r.inDock && !r.inZoom && !r.inBar && /full screen/i.test(r.dockLabel) : r.inScene && !r.inDock && !r.inZoom && !/full screen/i.test(r.dockLabel), r);
         else ok(`${tag}: ` + (touch ? 'in the dock under the stage' : 'the last segment of the bar'), r.inDock && !r.inZoom && (touch || r.inBar) && /full screen/i.test(r.dockLabel), r);
         ok(`${tag}: no page errors`, p._errs.length === 0, p._errs);
         await p.context().close();

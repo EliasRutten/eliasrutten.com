@@ -2367,6 +2367,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/tiers.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b3.css">
 <link rel="stylesheet" href="/imperial-stack/v2/b4.css">
+<link rel="stylesheet" href="/imperial-stack/v2/b6.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -2425,6 +2426,7 @@ button.res:hover { transform: none; box-shadow: none; }
         <div class="b3hud" id="isx-b3-hud" role="region" aria-label="Scenario, step by step">
           <button type="button" class="b3back" data-b3="leave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg><span>All cases</span></button>
           <div class="b3deep" id="isx-b3-deep"></div>
+          <div class="b6date" id="isx-b6-date" aria-hidden="true"><small></small><b></b></div>
           <article class="b3card" id="isx-b3-card" aria-live="polite"><div class="b3in"></div></article>
           <nav class="sc3bar b3strip" id="isx-sc-bar" aria-label="Scenario steps"></nav>
         </div>
@@ -3716,8 +3718,8 @@ const ICON = {
   server: '<rect x="4" y="3.5" width="16" height="7" rx="1.5"/><rect x="4" y="13.5" width="16" height="7" rx="1.5"/><path d="M7.5 7h.01M7.5 17h.01M11 7h5M11 17h5"/>',
   gavel: '<rect x="10" y="3" width="10" height="5" rx="1" transform="rotate(45 15 5.5)"/><path d="M11.5 11.5L4 19M3 21.5h9"/>',
 };
-const KIND = { usfirm: { c: '#5aa9ff', n: 'US firm' }, usstate: { c: '#ffb547', n: 'US state' }, foreign: { c: '#cfd8e3', n: 'Others' }, target: { c: '#ff8a5c', n: 'Target' }, issuer: { c: '#d78bff', n: 'Dollar issuer' }, choke: { c: '#ff3b5c', n: 'Chokepoint' } };
-const LINK = { data: { c: '#44d7ec', n: 'Data and connectivity' }, kinetic: { c: '#ff8a5c', n: 'Force' }, control: { c: '#ff3b5c', n: 'Control: a switch or a sanction' }, money: { c: '#ffb547', n: 'Money' }, legal: { c: '#c9b6ff', n: 'Law and courts' }, people: { c: '#f2a3ff', n: 'People moving between firm and state' } };
+const KIND = { usfirm: { c: '#5aa9ff', n: 'US firm' }, usstate: { c: '#ffb547', n: 'US state' }, foreign: { c: '#cfd8e3', n: 'Others' }, target: { c: '#ff8a5c', n: 'Target' }, issuer: { c: '#d78bff', n: 'Dollar issuer' }, choke: { c: '#d0506a', n: 'Chokepoint' } };
+const LINK = { data: { c: '#44d7ec', n: 'Data and connectivity' }, kinetic: { c: '#ff8a5c', n: 'Force' }, control: { c: '#d0506a', n: 'Control: a switch or a sanction' }, money: { c: '#ffb547', n: 'Money' }, legal: { c: '#c9b6ff', n: 'Law and courts' }, people: { c: '#f2a3ff', n: 'People moving between firm and state' } };
 /* B3: Scenarios in three depths (gallery, scene, depth) are drawn by v2/scenes.js. This script keeps the state: which case
    (storyIdx) and where in it (storyStep: -1 the gallery, 0 to n-1 a step, n the close), and the setters every control goes through.
    Cases followed to the end are remembered on this device (localStorage isx-scen-seen). */
@@ -4678,11 +4680,14 @@ $('fs').addEventListener('click', () => {
    (the dock). It is one element, moved, never rebuilt, so its id, its handler and the focus stay. */
 function fsPlace() {
   const b = $('fs'), z = $('zoom'), d = $('dock'); if (!b || !z || !d) return;
-  const onMap = FSOK && view === 'map' && !ringOn && !ROOT.classList.contains('no-gl'), home = onMap ? z : d;
-  if (b.parentNode !== home) { const had = document.activeElement === b; if (onMap) z.insertBefore(b, z.firstChild); else d.appendChild(b); if (had) b.focus({ preventScroll: true }); if (RT && isxBooted) RT.place(true); }
+  /* Scenarios polish: in Scenarios on a wide screen it stands in the stage's top right corner, beside “All switches” in the
+     gallery and beside “Read · All switches” in a case (v2/scenes.js says which group holds it) */
+  const onMap = FSOK && view === 'map' && !ringOn && !ROOT.classList.contains('no-gl');
+  const sc = !onMap && FSOK && view === 'story' && window.ISX && ISX.scenes && ISX.scenes.fsHome ? ISX.scenes.fsHome() : null, home = onMap ? z : sc || d;
+  if (b.parentNode !== home) { const had = document.activeElement === b; if (onMap) z.insertBefore(b, z.firstChild); else home.appendChild(b); if (had) b.focus({ preventScroll: true }); if (RT && isxBooted) RT.place(true); }
   z.setAttribute('aria-label', onMap ? 'Full screen and zoom' : 'Zoom the globe');
-  d.setAttribute('aria-label', onMap || !FSOK ? 'Thesis, support and share' : 'Thesis, support, share and full screen');
-  ROOT.classList.toggle('fs-map', onMap);
+  d.setAttribute('aria-label', onMap || sc || !FSOK ? 'Thesis, support and share' : 'Thesis, support, share and full screen');
+  ROOT.classList.toggle('fs-map', onMap); ROOT.classList.toggle('fs-sc', !!sc);
 }
 on('view', fsPlace); on('ring', fsPlace);
 $('zoom').addEventListener('click', e => {
@@ -7987,7 +7992,7 @@ window.ISX = {
   hashDetail: null, applyDetail: null, viewName: null,
   /* B3: the Scenarios data and state for v2/scenes.js; it draws, the setters here keep the state */
   sc: { STORIES, SMAPS, ICON, KIND, LINK, SLAY, SORDER, get idx() { return storyIdx; }, get step() { return storyStep; }, set: storySet, nav: scNav, pick: pickStory, seen: scSeen, group: scGroup, order: scOrder, layers: scLayers },
-  scenes: null,
+  scenes: null, fsPlace: () => fsPlace(),
   load(name) {
     const el = document.getElementById('isx-data-' + name);
     if (el) { try { return Promise.resolve(JSON.parse(el.textContent)); } catch (e) { return Promise.reject(e); } }

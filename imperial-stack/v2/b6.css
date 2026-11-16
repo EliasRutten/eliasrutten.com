@@ -1,0 +1,93 @@
+/* The Imperial Stack v2 · b6.css (Scenarios polish, 16 Nov 2026)
+   Linked after b4.css; every rule starts with #isx-root. Scenarios only.
+   1. “Full screen” in the stage's top right group (gallery and case), the corner buttons on the 44 px height
+   2. the step's date at the top of the stage; the outlined date behind the map quieter
+   3. one calmer red (#d0506a, LINK.control): the switch moment, the red edge, the cut links, the toggles
+   4. the entry: the map fades out under the iris and takes the case's framing while dark (no glide, no filter change);
+      the texture round the node holds still and comes in after the landing
+   5. the ledger: a second filter, by kind of coercion, and the kind on each switch */
+
+/* ---------- 1. Full screen ---------- */
+#isx-root .b3 #isx-fs { display: inline-flex; align-items: center; gap: 9px; width: auto; height: 44px; margin: 0; padding: 0 16px 0 13px; border-radius: 12px; border: 1px solid #2a3b4a; background: rgba(8, 14, 20, .6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font: 500 12.5px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: #b4c2cf; box-shadow: none; transition: border-color .25s, color .25s; }
+#isx-root .b3 #isx-fs svg { flex: none; width: 15px; height: 15px; color: #ffd27a; }
+#isx-root .b3 #isx-fs:hover { border-color: #ffd27a; color: #ffd27a; }
+#isx-root .b3 #isx-fs[hidden] { display: none; }
+#isx-root .b3 .b3back, #isx-root .b3 .b3deep button { height: 44px; }
+#isx-root .b3 .b3deep { align-items: center; }
+
+/* ---------- 2. the date ---------- */
+#isx-root .b3 .b3hud > .b6date { left: 50%; top: var(--b3top); transform: translateX(-50%); width: max-content; max-width: calc(100% - 2 * var(--b6side, 430px)); min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; pointer-events: none; }
+#isx-root .b3 .b6date small { display: flex; align-items: center; gap: 9px; max-width: 100%; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #9aabba; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 10px #04070b; }
+#isx-root .b3 .b6date small::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--b3gc); }
+#isx-root .b3 .b6date b { display: block; max-width: 100%; font: 600 26px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 16px #04070b, 0 0 2px #04070b; }
+@media (max-width: 1365px) and (min-width: 761px) { #isx-root .b3 .b3hud > .b6date { --b6side: 410px; } #isx-root .b3 .b6date b { font-size: 22px; } }
+@media (max-width: 1100px) and (min-width: 761px) { #isx-root .b3 .b3hud > .b6date { --b6side: 400px; } #isx-root .b3 .b6date small { display: none; } #isx-root .b3 .b6date b { font-size: 19px; } }
+/* the card's kicker keeps the date for screen readers; on a phone, where the top of the stage belongs to the case's nodes,
+   the date shows there instead of above */
+#isx-root .b3 .b3kk em.b6cd { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 760px) { #isx-root .b3 .b3hud > .b6date { display: none; } #isx-root .b3 .b3kk em.b6cd { position: static; width: auto; height: auto; overflow: visible; clip-path: none; color: #e4ebf1; } }
+/* the outlined date behind the map stays as texture, quieter */
+#isx-root .b3 .b3wm { -webkit-text-stroke-color: rgba(160, 200, 240, .055); }
+#isx-root .b3 .b3wm[data-tone="red"] { -webkit-text-stroke-color: rgba(208, 80, 106, .1); }
+#isx-root .b3 .b3wm[data-tone="warn"] { -webkit-text-stroke-color: rgba(255, 181, 71, .08); }
+
+/* ---------- 3. the calmer red ---------- */
+#isx-root .b3 .b3kick i { background: linear-gradient(90deg, #d0506a, transparent); }
+#isx-root .b3 .b3sw { color: #d0506a; }
+#isx-root .b3 .b3world .nd.chk .bd { fill: #1f0f16; }
+#isx-root .b3 .b3world .fl.glow.on.cur { opacity: .2; }
+#isx-root .b3 .b3world .brk circle { fill: rgba(208, 80, 106, .12); stroke: #d0506a; stroke-width: 1.4; }
+#isx-root .b3 .b3world .tg[data-st="off"] .tr { fill: rgba(208, 80, 106, .18); stroke: #d0506a; }
+#isx-root .b3 .b3world .tg[data-st="off"] .kn { fill: #d0506a; }
+#isx-root .b3 .b3world .shock { stroke: #d0506a; stroke-width: 1.8; }
+#isx-root .b3 .b3grade { background: radial-gradient(900px 620px at var(--b3gx, 60%) var(--b3gy, 50%), color-mix(in srgb, var(--b3gc) 16%, transparent), transparent 70%), radial-gradient(700px 500px at 100% 100%, color-mix(in srgb, var(--b3hc, transparent) 12%, transparent), transparent 70%); }
+#isx-root .b3 .b3redv { box-shadow: inset 0 0 140px 6px rgba(208, 80, 106, .2); }
+#isx-root .b3 .b3redv[data-tone="warn"] { box-shadow: inset 0 0 140px 6px rgba(255, 181, 71, .14); }
+#isx-root .b3 .b3flash { background: radial-gradient(circle at var(--b3gx, 60%) var(--b3gy, 50%), rgba(208, 80, 106, .26), rgba(208, 80, 106, 0) 58%); }
+#isx-root .b3 .b3card[data-tone="chk"] { border-color: rgba(208, 80, 106, .38); box-shadow: 0 24px 70px -20px rgba(0, 0, 0, .8), 0 0 50px -20px rgba(208, 80, 106, .3); }
+#isx-root .b3 .b3card[data-tone="warn"] { border-color: rgba(255, 181, 71, .36); box-shadow: 0 24px 70px -20px rgba(0, 0, 0, .8), 0 0 50px -20px rgba(255, 181, 71, .25); }
+#isx-root .b3 .b3kk i { box-shadow: 0 0 8px var(--kc); }
+#isx-root .b3 .b3chk { background: rgba(208, 80, 106, .16); border-color: rgba(208, 80, 106, .55); }
+#isx-root .b3 .b3dl { border-color: rgba(208, 80, 106, .26); background: rgba(208, 80, 106, .04); }
+#isx-root .b3 .b3sl em { color: #e07a8c; }
+#isx-root .b3 .b3strip .rt-lk.k { background: repeating-linear-gradient(90deg, rgba(208, 80, 106, .35) 0 4px, transparent 4px 7px); }
+#isx-root .b3 .b3strip .rt-lk.k.d { background: repeating-linear-gradient(90deg, #d0506a 0 4px, transparent 4px 7px); }
+#isx-root .b3 .b3strip .rt-sp.c { box-shadow: 0 0 14px -4px var(--kc); }
+/* one primary, gold (B4 rule 3): the close card's “Next case” follows the gallery's button */
+#isx-root .b3 .b3btn.pri { border-color: #ffd27a; background: linear-gradient(180deg, #ffe2a6, #ffc35c); color: #1d1406; }
+#isx-root .b3 .b3btn.pri:hover { color: #1d1406; border-color: #ffe2a6; }
+
+/* ---------- 4. the entry ---------- */
+#isx-root .b3[data-mode="entering"] .b3map { opacity: 0; filter: saturate(.9) brightness(.82); transition: opacity .6s ease; }
+#isx-root .b3[data-mode="entering"] .b3world { transition: none; }
+#isx-root .b3 .b3gal.out *, #isx-root .b3[data-mode="entering"] .b3nb, #isx-root .b3[data-mode="entering"] #isx-fs { backdrop-filter: none; -webkit-backdrop-filter: none; }
+/* the title card settles by transform and opacity (no tracking change, which re-lays the line out every frame) */
+#isx-root .b3 .b3tc .h { letter-spacing: .14em; text-shadow: 0 0 40px rgba(120, 190, 255, .28); transform: scale(1.06); transition: transform 1.6s var(--b3o); }
+#isx-root .b3 .b3tc.show .h { transform: none; }
+#isx-root .b3 .b3tc .rule { width: min(520px, 70vw); transform: scaleX(0); transition: transform 1.3s var(--b3o); }
+#isx-root .b3 .b3tc.show .rule { transform: none; }
+@media (max-width: 760px) { #isx-root .b3 .b3tc .h, #isx-root .b3 .b3tc.show .h { letter-spacing: .08em; } }
+
+/* ---------- 5. the ledger: two filters, and the kind on each switch ---------- */
+#isx-root .b3 .b6fl { display: grid; gap: 10px; margin-bottom: 22px; }
+#isx-root .b3 .b6fl .b3fch { margin: 0; align-items: center; }
+#isx-root .b3 .b6fk { width: 64px; font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8a9bab; }
+#isx-root .b3 .b3lc .b6k { display: block; margin-bottom: 8px; font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #9aabba; }
+@media (max-width: 760px) { #isx-root .b3 .b6fk { width: 100%; } }
+
+/* ---------- 4b. the texture round the node holds still: a drifting pattern under a round mask was repainted every frame
+   (about 20 frames a second in a case under 4× CPU throttling; still, 60). It comes in once the case has landed ---------- */
+#isx-root .b3 .b3tex[data-t] { background-image: none; animation: none; overflow: hidden; }
+#isx-root .b3[data-mode="scene"] .b3tex { transition: opacity .9s ease 1s; }
+#isx-root .b3 .b3tex::before { content: ""; position: absolute; inset: -60px; }
+#isx-root .b3 .b3tex[data-t="data"]::before { background-image: radial-gradient(color-mix(in srgb, var(--b3tc) 40%, transparent) 1px, transparent 1.4px); background-size: 22px 22px; }
+#isx-root .b3 .b3tex[data-t="kinetic"]::before { background-image: repeating-radial-gradient(circle at calc(var(--b3gx, 60%) + 60px) calc(var(--b3gy, 50%) + 60px), transparent 0 46px, color-mix(in srgb, var(--b3tc) 22%, transparent) 46px 47px); }
+#isx-root .b3 .b3tex[data-t="money"]::before { background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--b3tc) 18%, transparent) 0 1px, transparent 1px 9px); }
+#isx-root .b3 .b3tex[data-t="legal"]::before, #isx-root .b3 .b3tex[data-t="people"]::before { background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--b3tc) 16%, transparent) 0 1px, transparent 1px 30px); }
+#isx-root .b3 .b3tex[data-t="control"]::before { background-image: repeating-linear-gradient(-45deg, rgba(208, 80, 106, .08) 0 1px, transparent 1px 12px); }
+#isx-root .b3 .b3tex[data-t="service"]::before, #isx-root .b3 .b3tex[data-t="access"]::before { background-image: repeating-linear-gradient(0deg, rgba(208, 80, 106, .1) 0 1px, transparent 1px 5px); }
+#isx-root .b3 .b3tex[data-t="intel"]::before { background-image: linear-gradient(rgba(208, 80, 106, .1) 1px, transparent 1px), linear-gradient(90deg, rgba(208, 80, 106, .1) 1px, transparent 1px); background-size: 34px 34px; }
+#isx-root .b3 .b3tex[data-t="sanction"]::before, #isx-root .b3 .b3tex[data-t="freeze"]::before, #isx-root .b3 .b3tex[data-t="payments"]::before, #isx-root .b3 .b3tex[data-t="token"]::before { background-image: repeating-linear-gradient(45deg, rgba(208, 80, 106, .1) 0 2px, transparent 2px 14px); }
+#isx-root .b3 .b3tex[data-t="export"]::before, #isx-root .b3 .b3tex[data-t="market"]::before, #isx-root .b3 .b3tex[data-t="entry"]::before, #isx-root .b3 .b3tex[data-t="datadem"]::before { background-image: radial-gradient(rgba(208, 80, 106, .24) 1.4px, transparent 1.8px); background-size: 16px 16px; }
+#isx-root .b3 .b3lc[hidden] { display: none; }   /* a filtered ledger shows only the switches that pass both filters */

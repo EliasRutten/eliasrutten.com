@@ -8,7 +8,12 @@
    icons through ISX.sc and never changes them. Holders, instruments and the one-line captions come from data/switches.json.
    Rules kept here: nothing of a later step is visible before its step; no class is added and then removed within a step
    (what plays once, plays as a Web Animation); hover lights nothing; what loops is registered with the loop registry;
-   under reduced motion the scene cuts from state to state. */
+   under reduced motion the scene cuts from state to state.
+   Scenarios polish (16 Nov 2026): “Full screen” stands in the top right group of the gallery and of a case (fsHome); the
+   step's date reads at the top of the stage (#isx-b6-date) and the outlined date behind the map is quieter; the entry fades
+   the map out under the iris and sets the case's framing while it is dark, so nothing is redrawn at a new scale while the
+   title card plays; one calmer red (LINK.control); every switch carries a kind of coercion (switches.json CAT), and the
+   ledger filters by kind beside the holder. */
 (function () {
   'use strict';
   var X = window.ISX; if (!X || !X.sc) return;
@@ -155,7 +160,7 @@
     var xs = all.map(function (p) { return p[0]; }), ys = all.map(function (p) { return p[1]; });
     var x0 = Math.min.apply(0, xs) - 50, x1 = Math.max.apply(0, xs) + 50, y0 = Math.min.apply(0, ys) - 60, y1 = Math.max.apply(0, ys) + 60;
     var cw = P ? 0 : Math.min(440, window.innerWidth * .38);
-    var R = P ? { x0: 20, x1: W - 20, y0: (S.top || 12) + 108, y1: H * .5 } : { x0: Math.max(cw + 60, W * .35), x1: W - 40, y0: (S.top || 96) + 54, y1: H - 120 };
+    var R = P ? { x0: 20, x1: W - 20, y0: (S.top || 12) + 108, y1: H * .5 } : { x0: Math.max(cw + 60, W * .35), x1: W - 40, y0: (S.top || 96) + 80, y1: H - 120 };
     var z = clamp(Math.min((R.x1 - R.x0) / ((x1 - x0) * s0), (R.y1 - R.y0) / ((y1 - y0) * s0)), P ? .5 : .55, 2.2);
     return { c: c, W: W, H: H, P: P, s0: s0, z: z, ids: ids, pts: pts, P0: [(x0 + x1) / 2, (y0 + y1) / 2], A: [(R.x0 + R.x1) / 2, (R.y0 + R.y1) / 2], R: R, cw: cw, k: 1 / (s0 * z), r: Math.round((P ? 20 : 27) * clamp(s0 * z / 1.05, .72, 1)) };
   }
@@ -168,7 +173,7 @@
     if (n >= N || n < 0) pose = { P: G.P0.slice(), z: G.z };
     else { var p = nodePos(G.c, G.c.steps[n].n), f = G.P ? .75 : .12; pose = { P: [G.P0[0] + (p[0] - G.P0[0]) * f, G.P0[1] + (p[1] - G.P0[1]) * f], z: G.z * (G.P ? 1.25 : 1.06) }; }
     if (!G.P) {
-      var r = G.r + 4, lim = { x0: G.cw + 20 + r + 10, x1: G.W - r - 10, y0: (S.top || 96) + r + 6, y1: G.H - 76 - r - 30 };
+      var r = G.r + 4, lim = { x0: G.cw + 20 + r + 10, x1: G.W - r - 10, y0: (S.top || 96) + 64 + r, y1: G.H - 76 - r - 30 };
       for (var pass = 0; pass < 2; pass++) {
         var sc = G.pts.map(function (q) { return toScreen(q, pose); });
         var a = Math.min.apply(0, sc.map(function (q) { return q[0]; })), b = Math.max.apply(0, sc.map(function (q) { return q[0]; })), t = Math.min.apply(0, sc.map(function (q) { return q[1]; })), u = Math.max.apply(0, sc.map(function (q) { return q[1]; }));
@@ -279,13 +284,21 @@
      outline behind everything. Arriving at a switch plays the one loud moment of the scene, as Web Animations: a flash at
      the node, a shockwave ring, and the toggle, live for a second and a half, flips off. A threatened switch keeps its
      toggle live with a dashed outline, in amber and without flash or ring; a standing one has no moment at all. */
-  var tex = id('b3-tex'), wm = id('b3-wm'), redv = id('b3-redv'), flash = id('b3-flash'), OUT = 'cubic-bezier(.16, 1, .3, 1)';
+  var tex = id('b3-tex'), wm = id('b3-wm'), dl = id('b6-date'), redv = id('b3-redv'), flash = id('b3-flash'), OUT = 'cubic-bezier(.16, 1, .3, 1)';
   function texFor(stp, w) { return !stp ? 'end' : w ? w.instr : stp.choke ? 'control' : (LINK[stp.link] ? stp.link : 'data'); }
   function scenery(c, n, stp, w, col, fwd) {
     var N = c.steps.length, stt = w ? w.status : stp && stp.choke ? 'thrown' : '', tone = !stp || !stp.choke ? '' : stt === 'threatened' ? 'warn' : stt === 'standing' ? '' : 'red';
     var t = texFor(stp, w); if (tex && tex.dataset.t !== t) tex.dataset.t = t;
     st.style.setProperty('--b3tc', col); st.style.setProperty('--b3hc', w ? hcol(w) : 'transparent');
     if (redv && redv.dataset.tone !== tone) redv.dataset.tone = tone;
+    if (dl) {
+      var dk = n >= N ? c.t + ' · the whole case' : c.t + ' · ' + c.when, dd = n >= N ? c.when : dshort(stp.date), db = dl.querySelector('b');
+      if (db.textContent !== dd || S.dlc !== c.id) {
+        var was = db.textContent; dl.querySelector('small').textContent = dk; db.textContent = dd; S.dlc = c.id;
+        if (was && !still() && db.animate && S.mode === 'scene') db.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: OUT });
+      }
+      if (dl.dataset.tone !== tone) dl.dataset.tone = tone;
+    }
     if (wm) {
       var wt = n >= N ? c.t : dshort(stp.date);
       if (wm.textContent !== wt) { wm.textContent = wt; if (!still() && wm.animate && S.mode === 'scene') wm.animate([{ opacity: 0, transform: 'translate(60px, -50%)' }, { opacity: 1, transform: 'translate(0, -50%)' }], { duration: 1400, easing: OUT }); }
@@ -297,8 +310,8 @@
     if (sh && sh.animate) sh.animate([{ transform: 'scale(.2)', opacity: .9 }, { transform: 'scale(7)', opacity: 0 }], { duration: 1400, delay: 500, easing: OUT });
     if (tg && tg.animate) {
       var o = { duration: 550, delay: 1500, easing: OUT, fill: 'backwards' };
-      tg.querySelector('.kn').animate([{ transform: 'translateX(10px)', fill: '#44d7ec' }, { transform: 'translateX(-10px)', fill: '#ff3b5c' }], o);
-      tg.querySelector('.tr').animate([{ fill: 'rgba(68, 215, 236, .12)', stroke: '#44d7ec' }, { fill: 'rgba(255, 59, 92, .22)', stroke: '#ff3b5c' }], o);
+      tg.querySelector('.kn').animate([{ transform: 'translateX(10px)', fill: '#44d7ec' }, { transform: 'translateX(-10px)', fill: RED }], o);
+      tg.querySelector('.tr').animate([{ fill: 'rgba(68, 215, 236, .12)', stroke: '#44d7ec' }, { fill: 'rgba(208, 80, 106, .18)', stroke: RED }], o);
     }
   }
 
@@ -317,7 +330,7 @@
       var stp = c.steps[s], lay = (SLAY.filter(function (l) { return l[0] === c.nodes[stp.n].lay; })[0] || ['', ''])[1];
       h += '<div class="b3kk" style="--kc:' + (stp.choke ? RED : lc(stp.link)) + '"><i></i>' + pad(s + 1) + ' / ' + pad(N) + ' · ' + esc(stp.date) + '</div><h2>' + esc(stp.title) + '</h2>'
         + (lay ? '<p class="b3lay">Layer of the stack <b>' + esc(lay) + '</b></p>' : '') + '<h3>The step</h3><p>' + esc(stp.text) + '</p>' + srcHTML(stp);
-      if (w) h += '<h3>The switch in plain terms</h3><dl class="b3dl"><dt>Instrument</dt><dd data-f="instr">' + esc(S.sw.INSTR[w.instr] || w.instr) + '</dd><dt>Held by</dt><dd data-f="holder">' + glyph(w, 12, w.status === 'thrown') + ' ' + esc(w.holder) + '<small>' + HT[w.type] + ' · ' + OR[w.origin] + '</small></dd>'
+      if (w) h += '<h3>The switch in plain terms</h3><dl class="b3dl">' + (catName(w) ? '<dt>Kind</dt><dd data-f="cat">' + esc(catName(w)) + '</dd>' : '') + '<dt>Instrument</dt><dd data-f="instr">' + esc(S.sw.INSTR[w.instr] || w.instr) + '</dd><dt>Held by</dt><dd data-f="holder">' + glyph(w, 12, w.status === 'thrown') + ' ' + esc(w.holder) + '<small>' + HT[w.type] + ' · ' + OR[w.origin] + '</small></dd>'
         + (w.via ? '<dt>Through</dt><dd>' + esc(w.via) + '</dd>' : '') + '<dt>What it cuts</dt><dd data-f="cut">' + esc(w.cut) + '</dd><dt>Target</dt><dd>' + esc(w.target) + '</dd><dt>How long</dt><dd>' + esc(w.span) + '</dd>'
         + (w.restored ? '<dt>Restored</dt><dd>' + esc(w.restored) + '</dd>' : '') + '<dt>Their way out</dt><dd' + (w.exit ? '' : ' class="none"') + '>' + (w.exit ? esc(w.exit) : 'Not on the page') + '</dd></dl>';
       else if (stp.choke) h += '<p class="b3src">' + (S.swErr ? 'The switch list could not load.' : 'The switch list is loading.') + '</p>';
@@ -326,16 +339,21 @@
     drawer.innerHTML = h;
   }
   var FCH = [['all', 'All'], ['usstate', 'US state'], ['usfirm', 'US firms'], ['other', 'Others'], ['joint', 'Joint']];
+  /* the kinds of coercion (switches.json CAT, in its order; a new kind is one entry there and one key on its switches) */
+  function cats() { var C = (S.sw && S.sw.CAT) || {}; return [['all', 'All']].concat(Object.keys(C).map(function (k) { return [k, C[k].s || C[k].n]; })); }
+  function cpass(w, k) { return k === 'all' || w.cat === k; }
+  function catName(w) { var C = S.sw && S.sw.CAT; return C && w.cat && C[w.cat] ? C[w.cat].n : ''; }
   function fpass(w, f) { return f === 'all' || (f === 'usstate' && w.type === 'state' && w.origin === 'US') || (f === 'usfirm' && w.type === 'private' && w.origin === 'US') || (f === 'other' && w.origin === 'other') || (f === 'joint' && (w.type === 'joint' || w.origin === 'mixed')); }
   function drawLedger() {
     if (!S.sw) { ledger.innerHTML = XB + '<h2>All switches</h2><p class="b3lead">' + (S.swErr ? 'The switch list could not load.' : 'The switch list is loading.') + '</p>'; return; }
-    var f = S.filt || 'all', ci = function (k) { return STORIES.findIndex(function (x) { return x.id === k; }); };
+    var f = S.filt || 'all', g = S.cfilt || 'all', ci = function (k) { return STORIES.findIndex(function (x) { return x.id === k; }); };
     var rows = S.sw.SW.filter(function (w) { return ci(w['case']) >= 0; }).sort(function (a, b) { return ORD.indexOf(ci(a['case'])) - ORD.indexOf(ci(b['case'])) || a.step - b.step; });
     ledger.innerHTML = XB + '<h2>All ' + rows.length + ' switches</h2><p class="b3lead">Every chokepoint in the ' + STORIES.length + ' cases, with who holds it. Pick one to be thrown into the case at that step.</p>'
-      + '<div class="b3fch" role="group" aria-label="Held by">' + FCH.map(function (k) { return '<button type="button" data-b3f="' + k[0] + '" aria-pressed="' + (f === k[0]) + '">' + k[1] + ' <b>' + rows.filter(function (w) { return fpass(w, k[0]); }).length + '</b></button>'; }).join('') + '</div>'
+      + '<div class="b6fl"><div class="b3fch" role="group" aria-label="Held by"><span class="b6fk" aria-hidden="true">Held by</span>' + FCH.map(function (k) { return '<button type="button" data-b3f="' + k[0] + '" aria-pressed="' + (f === k[0]) + '">' + k[1] + ' <b>' + rows.filter(function (w) { return fpass(w, k[0]) && cpass(w, g); }).length + '</b></button>'; }).join('') + '</div>'
+      + (S.sw.CAT ? '<div class="b3fch b6fc" role="group" aria-label="Kind of coercion"><span class="b6fk" aria-hidden="true">Kind</span>' + cats().map(function (k) { return '<button type="button" data-b6c="' + k[0] + '" aria-pressed="' + (g === k[0]) + '">' + esc(k[1]) + ' <b>' + rows.filter(function (w) { return cpass(w, k[0]) && fpass(w, f); }).length + '</b></button>'; }).join('') + '</div>' : '') + '</div>'
       + '<div class="b3lg">' + rows.map(function (w) {
-        var i = ci(w['case']), c = STORIES[i], stp = c.steps[w.step - 1], on = fpass(w, f);
-        return '<button type="button" class="b3lc" data-b3j="' + i + ':' + (w.step - 1) + '" data-sw="' + w.id + '"' + (on ? '' : ' disabled') + '><span class="a">' + glyph(w, 14, w.status === 'thrown') + esc(hname(w)) + '</span><span class="b">' + esc(w.cut) + '</span><span class="c">' + esc(c.t) + ' · ' + esc(dshort(stp ? stp.date : w.date)) + '</span></button>';
+        var i = ci(w['case']), c = STORIES[i], stp = c.steps[w.step - 1], on = fpass(w, f) && cpass(w, g), cn = catName(w);
+        return '<button type="button" class="b3lc" data-b3j="' + i + ':' + (w.step - 1) + '" data-sw="' + w.id + '"' + (on ? '' : ' disabled hidden') + '>' + (cn ? '<span class="b6k">' + esc(cn) + '</span>' : '') + '<span class="a">' + glyph(w, 14, w.status === 'thrown') + esc(hname(w)) + '</span><span class="b">' + esc(w.cut) + '</span><span class="c">' + esc(c.t) + ' · ' + esc(dshort(stp ? stp.date : w.date)) + '</span></button>';
       }).join('') + '</div>';
   }
   /* the ledger covers the whole frame: what lies under it (the site's header, the dock) is out of reach while it is open */
@@ -374,7 +392,7 @@
       var stp = c.steps[s], w = swOf(c, s), stt = w ? w.status : stp.choke ? 'thrown' : '', cap = capFor(c, s);
       var chip = !stp.choke ? '' : '<span class="b3chk' + (stt === 'threatened' ? ' warn' : stt === 'standing' ? ' idle' : '') + '">' + (stt === 'threatened' ? 'Threatened' : stt === 'standing' ? 'Can be thrown any day' : 'Switch') + '</span>';
       tone = !stp.choke ? '' : stt === 'threatened' ? 'warn' : stt === 'standing' ? '' : 'chk';
-      h = '<div class="b3kk"><i></i>' + chip + '<em>' + esc(dshort(stp.date)) + '</em><span>' + pad(s + 1) + ' / ' + pad(N) + '</span></div><h2>' + esc(stp.title) + '</h2><p class="b3cap">' + esc(cap || stp.text) + '</p>';
+      h = '<div class="b3kk"><i></i>' + chip + '<em class="b6cd">' + esc(dshort(stp.date)) + '</em><span>' + pad(s + 1) + ' / ' + pad(N) + '</span></div><h2>' + esc(stp.title) + '</h2><p class="b3cap">' + esc(cap || stp.text) + '</p>';
       if (w) h += '<div class="b3who">' + glyph(w, 16, stt === 'thrown') + '<div><small>Held by</small><b>' + esc(hname(w)) + '</b><span class="t">' + HT[w.type] + ' · ' + OR[w.origin] + '</span></div></div>';
       h += moreHTML(!!w);
       card.style.setProperty('--kc', stp.choke ? (stt === 'threatened' ? '#ffb547' : RED) : lc(stp.link));
@@ -415,7 +433,10 @@
     X.root.classList.toggle('b3-in', m === 'scene'); X.root.classList.toggle('b3-ent', m === 'entering');
     gal.inert = m !== 'gallery'; hud.inert = m !== 'scene'; if (lede) lede.inert = m !== 'gallery';
     if (PF) PF.sync();
+    if (X.fsPlace) X.fsPlace();
   }
+  /* where “Full screen” stands in Scenarios: the top right group of the gallery or of a case; on a phone it keeps the dock */
+  function fsHome() { if (phone()) return null; var f = document.getElementById('isx-fs'); return S.mode === 'gallery' ? gal.querySelector('.b3nav') : S.mode === 'scene' ? id('b3-deep') : (f && st.contains(f) ? f.parentNode : id('b3-deep')); }
   function land(n) {   /* the end state of an entry, however it was reached */
     gal.classList.add('gone'); setMode('scene');
     S.cur = -2; setStep(n, { fresh: true, instant: S.skip || still() });
@@ -425,13 +446,16 @@
   function enter(i, n) {
     S.busy = true; S.skip = false; var c = STORIES[i];
     if (S.shown !== i) showCase(i, true);
-    buildScene(i); card.querySelector('.b3in').innerHTML = '';
+    card.querySelector('.b3in').innerHTML = '';
     var settle = function () { veil.classList.remove('on'); tc.className = 'b3tc'; st.style.setProperty('--b3iris', '120%'); S.busy = false; if (st.dataset.cut) uncut(); };
-    if (still()) { gal.classList.add('out'); land(n); settle(); return Promise.resolve(); }
+    if (still()) { buildScene(i); gal.classList.add('out'); land(n); settle(); return Promise.resolve(); }
     setMode('entering'); gal.classList.add('out');
-    var p = poseFor(n); mapAt(p.P, S.G.A, p.z);                 /* the map glides to the case's framing while the title card plays */
+    /* the map fades out under the iris (b6.css: in this mode it carries only an opacity transition); its framing for the case
+       is set once it is dark, so no frame redraws the map at a new scale while the title card plays */
+    S.G = geom(c); var p = poseFor(n);                          /* the framing needs only the geometry; the scene is built once it is dark */
     veil.classList.add('on'); st.style.setProperty('--b3iris', '120%'); void veil.offsetWidth; st.style.setProperty('--b3iris', '30%');
     return sleep(650).then(function () {
+      buildScene(i); mapAt(p.P, S.G.A, p.z);
       tc.querySelector('.k').textContent = D.group(c.id) + ' · ' + c.when; tc.querySelector('.h').textContent = c.t; tc.querySelector('.s').textContent = heroTitle(c)[1];
       tc.className = 'b3tc'; void tc.offsetWidth; tc.classList.add('show');
       return sleep(2000);
@@ -494,6 +518,7 @@
     if (S.sheet === 'drawer' && e.target === st) { closeSheets(); return; }   /* a click on the dark sheet beside the drawer closes it */
     var g = e.target.closest('[data-b3go]'); if (g) { D.set(+g.dataset.b3go); var f = drawer.querySelector('[aria-current="step"]'); if (f) f.focus({ preventScroll: true }); return; }
     var fl = e.target.closest('[data-b3f]'); if (fl) { S.filt = fl.dataset.b3f; drawLedger(); var b = ledger.querySelector('[data-b3f="' + S.filt + '"]'); if (b) b.focus({ preventScroll: true }); return; }
+    var fc = e.target.closest('[data-b6c]'); if (fc) { S.cfilt = fc.dataset.b6c; drawLedger(); var bc = ledger.querySelector('[data-b6c="' + S.cfilt + '"]'); if (bc) bc.focus({ preventScroll: true }); return; }
     var j = e.target.closest('[data-b3j]'); if (j) { var q = j.dataset.b3j.split(':'); closeSheets(true); D.pick(+q[0], { step: +q[1], jump: true }); }
   });
   document.addEventListener('keydown', function (e) {
@@ -518,7 +543,7 @@
     clearTimeout(rz); rz = setTimeout(function () {
       if (X.view !== 'story') return;
       if (S.busy) doSkip();
-      topFit();
+      topFit(); if (X.fsPlace) X.fsPlace();
       if (S.mode === 'scene' && S.built >= 0) { var n = S.cur; buildScene(S.built); setStep(n, { instant: true }); }
       else if (S.mode === 'gallery') cut(galPose);
     }, 150);
@@ -537,6 +562,7 @@
     if (X.view === 'story' && S.mode === 'scene' && S.built >= 0) { drawCard(false); if (S.sheet === 'drawer') drawDrawer(); }
     if (S.sheet === 'ledger') drawLedger();
   }).catch(function () { S.swErr = true; if (S.sheet === 'ledger') drawLedger(); });
-  X.scenes = { sync: sync, build: function (i, lbl) { S.lbl = lbl || null; buildScene(i); S.lbl = null; }, skip: doSkip, get mode() { return S.mode; }, get busy() { return S.busy || !!S.sheet; }, get sheet() { return S.sheet; }, get geom() { return S.G; }, pose: function (n) { return S.G ? poseFor(n == null ? S.cur : n) : null; }, pos: function (k) { return S.G ? nodePos(S.G.c, k) : null; }, get sw() { return S.sw; }, get swErr() { return S.swErr; } };
+  X.scenes = { sync: sync, fsHome: fsHome, build: function (i, lbl) { S.lbl = lbl || null; buildScene(i); S.lbl = null; }, skip: doSkip, get mode() { return S.mode; }, get busy() { return S.busy || !!S.sheet; }, get sheet() { return S.sheet; }, get geom() { return S.G; }, pose: function (n) { return S.G ? poseFor(n == null ? S.cur : n) : null; }, pos: function (k) { return S.G ? nodePos(S.G.c, k) : null; }, get sw() { return S.sw; }, get swErr() { return S.swErr; } };
   if (X.view === 'story') sync({ instant: true });
+  if (X.fsPlace) X.fsPlace();
 })();
