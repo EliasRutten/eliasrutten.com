@@ -308,3 +308,6 @@
 @media (max-width: 1679px) { #isx-root .rt-host .rt[data-id="circuit"] .dock6 .dk.dk-es:not(.dk-fs) { width: 176px; } }
 #isx-root .tournarr.ringc .b4mech { display: none; }
 @media (max-height: 820px) and (min-width: 761px) { #isx-root .b3 .b3cta { height: 44px; } }   /* a short stage: the gallery keeps its room above the rail */
+/* Scenarios: the dock keeps its corner (B3); there the essay shows as “Essay” with the logo, its title in its name and tooltip, and the rail ends before the wider dock */
+@media (min-width: 761px) { #isx-root :not(.rt) > .dock6 .dk-es { max-width: none; } #isx-root :not(.rt) > .dock6 .dk-es small, #isx-root :not(.rt) > .dock6 .dk-es .tt { display: none; } #isx-root :not(.rt) > .dock6 .dk-es .ts { display: block; font-size: 13px; } }
+@media (min-width: 901px) { #isx-root .b3 .b3rail { right: 340px; } }
