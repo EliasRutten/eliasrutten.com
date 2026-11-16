@@ -126,7 +126,7 @@ const AUDITOR = () => {
     };
     const key = k => () => p.keyboard.press(k);
     await step('opening card → first principles', () => click(p, '#isx-sn-body [data-way="guide"]'), 2100);
-    for (let i = 2; i <= 8; i++) await step('first principles ' + i, key('ArrowRight'), 2100);
+    for (let i = 2; i <= 10; i++) await step('first principles ' + i, key('ArrowRight'), 2100);   /* ten reveals since the guide build (16 Nov 2026) */
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
     ok(`flicker (${tag}): the guide is at step 1 of 52`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 52; }));
@@ -207,7 +207,7 @@ const AUDITOR = () => {
     for (let i = 0; i < 52; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
-    ok(`no early reveal (${w} px): opening card, 8 primer screens, 8 reveals of first principles and all 52 steps audited`, rows.length === 70 && seenSteps === 52, { rows: rows.length, seenSteps });
+    ok(`no early reveal (${w} px): opening card, 12 primer screens, 10 reveals of first principles and all 52 steps audited`, rows.length === 76 && seenSteps === 52, { rows: rows.length, seenSteps });   /* round 5b: the count follows the guide build's 12 and 10 (it still said 8 and 8) */
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
     ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
     ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);

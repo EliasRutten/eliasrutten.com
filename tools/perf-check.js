@@ -37,6 +37,7 @@ const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null;
   await run('scenarios, a case (tier high)', '#scenarios', inCase, '?tier=high');
   /* round 5b (16 Nov 2026): the two first openings, each measured from its first frame for 7 s, on the device's own tier and with
      ?tier=high; beside them the same stage at rest, so the opening's own cost can be read off (the globe draws in software here). */
+  await run('circuit, overview at rest (tier high)', '#circuit', null, '?tier=high', null, 7000);
   await run('circuit, first opening (own tier)', '#circuit', null, '', "ISX.opening.play('circuit')", 7000);
   await run('circuit, first opening (tier high)', '#circuit', null, '?tier=high', "ISX.opening.play('circuit')", 7000);
   const entry = async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-fin'); if (e) e.scrollIntoView({ block: 'center' }); const w = document.querySelector('#isx-cock [data-b1more="ways"]'); if (w) w.click(); }); await p.waitForTimeout(1500); };
