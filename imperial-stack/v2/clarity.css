@@ -155,3 +155,7 @@
 #isx-root .cl-nums.up { background: rgba(8, 13, 20, .93); }
 #isx-root .s2.st .tr-pick { background: rgba(8, 13, 20, .97); }
 #isx-root .s2 .cl-epi .lsrc { font-size: 10.5px; }
+/* a narrow bar: the route never paints over the tabs beside it */
+@media (min-width: 761px) { #isx-root #isx-cock.s2 #isx-s2bar .rt-route { overflow: hidden; } }
+/* under 1180 px there is no room for both: the words stay (act and chapter, in full), the marks go; the card carries the count */
+@media (min-width: 761px) and (max-width: 1180px) { #isx-root #isx-cock.s2.st #isx-s2bar .rt-route { display: none; } #isx-root #isx-cock.s2.st #isx-s2bar .rt-line { flex: 1 1 auto; min-width: 0; max-width: none; } }
