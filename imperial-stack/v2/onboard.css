@@ -30,7 +30,7 @@
 #isx-root #isx-cock.s2 .lv7 .lv-end { flex: 1 0 auto; display: flex; justify-content: flex-end; align-items: center; height: 30px; }
 #isx-root #isx-cock.s2 .lv7 .lv-rel, #isx-root .s2 .dossier .lv-relb { display: inline-flex; align-items: center; gap: 7px; height: 24px; min-height: 24px; padding: 0 12px; border-radius: 999px; border: 1px solid #3a4c5d; background: none; color: #e4ebf1; font: 600 11.5px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: border-color var(--mo-t, .2s) ease, color var(--mo-t, .2s) ease, opacity var(--mo-t, .2s) ease; }
 #isx-root #isx-cock.s2 .lv7 .lv-rel:hover, #isx-root .s2 .dossier .lv-relb:hover { border-color: #ffb547; color: #ffd27a; }
-#isx-root #isx-cock.s2 .lv7 .lv-rel { gap: 5px; padding: 0 9px; font-size: 10.5px; letter-spacing: .06em; }
+#isx-root #isx-cock.s2 .lv7 .lv-rel { position: relative; gap: 5px; padding: 0 9px; font-size: 10.5px; letter-spacing: .06em; }
 #isx-root #isx-cock.s2 .lv7 .lv-rel b { font: 10.5px/1 var(--mono); color: #ffd27a; }
 #isx-root #isx-cock.s2 .lv7 .lv-rel b:empty { display: none; }
 #isx-root #isx-cock.s2 .lv7 .lv-rel:disabled { border-color: #26343f; color: #8ea0b2; cursor: default; }

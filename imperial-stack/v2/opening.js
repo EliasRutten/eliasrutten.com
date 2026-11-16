@@ -138,21 +138,23 @@
     tl.a(ttl.querySelector('.op-l2'), rise(), 1.4, .9);
     tl.a(ttl, [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 -6px' }], 2.5, .6, { easing: 'ease-in' });
     tl.a(skip, [{ opacity: 0 }, { opacity: 1 }], .5, .4); tl.a(skip, [{ opacity: 1 }, { opacity: 0 }], 5.3, .3, { fill: 'forwards' });
-    /* dawn, with a slow push-in: the cover lifts and the globe's box comes from 110% to its own size */
+    /* dawn, with a slow push-in: the cover lifts while the camera comes in by a tenth (below). The globe's box is never scaled: the
+       page sizes the canvas from that box, and would size it wrong */
     tl.a(dark, [{ opacity: 1 }, { opacity: 0 }], 3.1, 2.5, { easing: 'cubic-bezier(.3,.2,.3,1)' });
-    tl.a(gb, [{ scale: '1.1' }, { scale: '1' }], 3.1, 2.5);
     /* the instruments settle, 150 ms apart: figures, card, legend and controls, the step bar */
     var settle = [['.resbar', '.vchip'], ['.cmd6', '.mstep'], ['.legbox2', '.zoom6', '.mapmodes', '.hint', '.mapnote'], ['.tabs-bottom', '.dock6', '.b4row']];
     var all = settle.reduce(function (a, b) { return a.concat(b); }, []).join(', ');
     settle.forEach(function (grp, i) { grp.forEach(function (sel) { root.querySelectorAll('#isx-frame ' + sel).forEach(function (el) { if (el.parentElement && el.parentElement.closest(all)) return;   /* one that sits inside another settles with it */
       tl.a(el, [{ opacity: 0 }, { opacity: 1 }], 5.4 + i * .15, .75); }); }); });
     /* the line: drawn in the dark, on the place the globe's own arcs take once the dawn has come */
-    var built = false, tries = 0;
+    var built = false, tries = 0, pov = null, aimedAt = 0, aimedTicks = 0, lineSvg = null, lastA = null;
+    /* first hold the globe still on the step's own view; the camera takes its place when the globe next draws, so the line is
+       measured a few frames later, never in the same breath */
+    function aim() { var g = X.globe; if (!g || !gb.classList.contains('gl-ready')) return false; try { g.controls().autoRotate = false; pov = X.stepPov(); g.pointOfView(pov, 0); } catch (e) { return false; } aimedAt = performance.now(); aimedTicks = 0; return true; }
     function build() {
-      var g = X.globe; if (built || !g || !gb.classList.contains('gl-ready')) return false;
-      var pov; try { g.controls().autoRotate = false; pov = X.stepPov(); g.pointOfView(pov, 0); } catch (e) { return false; }
+      var g = X.globe; if (built || !g || !pov) return false;
       var box = $('globe').getBoundingClientRect(), w = box.width, h = box.height; if (!w || !h) return false;
-      var svg = sv('svg', { 'class': 'op-svg', viewBox: '0 0 ' + w + ' ' + h, width: w, height: h }); gl.appendChild(svg);
+      var svg = sv('svg', { 'class': 'op-svg', viewBox: '0 0 ' + w + ' ' + h, width: w, height: h }); gl.appendChild(svg); lineSvg = svg;
       var paths = []; try { paths = loopPaths(g, pov); } catch (e) { paths = []; }
       var lens = paths.map(function (p) { var L = 0; for (var i = 1; i < p.length; i++) L += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]); return L; }), sum = lens.reduce(function (a, b) { return a + b; }, 0) || 1;
       var t0 = 2.9, span = 2.3, at = t0, grp = sv('g', { 'class': 'op-loop' }); svg.appendChild(grp);
@@ -167,6 +169,7 @@
       var th = Math.acos(1 / (1 + pov.altitude)) / rad, c0 = null, c1 = null;
       try { c0 = g.getScreenCoords(pov.lat, pov.lng, -1); } catch (e) { c0 = null; }   /* the globe's own centre on the screen: the camera may sit off the box's centre */
       var cx = c0 && isFinite(c0.x) ? c0.x : w / 2, cy = c0 && isFinite(c0.y) ? c0.y : h / 2;
+      svg.style.transformOrigin = cx.toFixed(1) + 'px ' + cy.toFixed(1) + 'px';
       try { c1 = g.getScreenCoords(pov.lat + th > 88 ? pov.lat - th : pov.lat + th, pov.lng, 0); } catch (e) { c1 = null; }
       var R = c1 ? Math.hypot(c1.x - cx, c1.y - cy) : 0;
       if (R > 40) {
@@ -184,7 +187,22 @@
       }
       built = true; return true;
     }
-    tl.tick(function (t) { if (!built && t >= 2.4 && t < 4.4 && tries++ < 240) build(); });   /* the globe may still be loading under the title: try until it is there */
+    aim();
+    tl.tick(function (t) {   /* the globe may still be loading under the title: try until it is there */
+      if (built || t < 2.2 || t >= 4.4 || tries++ > 400) return;
+      if (!aimedAt || t < 2.3) { aim(); return; }
+      if (++aimedTicks >= 3 && performance.now() - aimedAt > 120) build();
+    });
+    /* the push-in: the camera starts a tenth further out and comes in as the cover lifts; the line, measured on the view it ends on,
+       is scaled about the globe's centre by the same amount (one transform), so it stays on the arcs while the globe grows */
+    var app = function (a) { return Math.tan(Math.asin(1 / (1 + a))); };
+    tl.tick(function (t) {
+      if (!built || !pov) return;
+      var k = Math.max(0, Math.min(1, (t - 3.1) / 2.5)), a = (1 + pov.altitude) * (1 + .1 * Math.pow(1 - k, 3)) - 1;
+      if (a === lastA) return; lastA = a;
+      try { X.globe.pointOfView({ lat: pov.lat, lng: pov.lng, altitude: a }, 0); } catch (e) { /* ignore */ }
+      if (lineSvg) lineSvg.style.transform = 'scale(' + (app(a) / app(pov.altitude)).toFixed(4) + ')';
+    });
     tl.undo.push(function () { if (X.view === 'map') X.renderGlobe(true); });   /* the step's own view, and its slow turn, come back */
     start(tl); return true;
   }

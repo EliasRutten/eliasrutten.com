@@ -50,7 +50,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     r = await p.evaluate(() => { const d = document.getElementById('isx-rside'); return { on: ISX.levers, out: [...document.querySelectorAll('#isx-rmap .fn.lvo')].map(g => g.dataset.n).sort(), rings: [...document.querySelectorAll('#isx-rmap .lvring text')].map(t => t.textContent), rel: document.getElementById('isx-lvrel').textContent, relOff: document.getElementById('isx-lvrel').disabled,
       k: d.querySelector('.pk').textContent, foot: d.querySelector('.lvfoot').textContent.replace(/\s+/g, ' '), lvc: d.classList.contains('lvc'), dots: [...document.querySelectorAll('#isx-levbar .lv.on .lvd')].map(e => getComputedStyle(e).backgroundColor) }; });
     ok('two pulled: both holders keep a gold outline with the number pulled', r.out.join() === 'FED,TSY' && r.rings.join() === '1,1', r);
-    ok('the row’s Release shows the count; the status dots are gold', r.rel === 'Release2' && !r.relOff && r.dots.every(c => c === 'rgb(255, 181, 71)'), [r.rel, r.dots]);
+    ok('the row’s Release shows the count; the status dots are gold', /^Release 2 pulled levers: release them all$/.test(r.rel) && !r.relOff && r.dots.every(c => c === 'rgb(255, 181, 71)'), [r.rel, r.dots]);
     ok('the lever’s card: kicker “Lever · Federal Reserve”, Release and “2 of 17 pulled” in its foot', r.lvc && r.k === 'Lever · Federal Reserve' && /Release\s*2 of 17 pulled/.test(r.foot), [r.k, r.foot]);
     await p.evaluate(() => document.querySelector('#isx-rside [data-lvrel]').click()); await p.waitForTimeout(300);
     r = await p.evaluate(() => ({ on: ISX.levers, k: (document.querySelector('#isx-rside .pk') || {}).textContent })); ok('the card’s Release lets go of that lever only; the card turns to the one still pulled', r.on.join() === '0' && r.k === 'Lever · US Treasury', r);
@@ -143,7 +143,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
   if (want(3)) {
     console.log('3 · the first openings');
     const PROPS = ['opacity', 'transform', 'translate', 'scale', 'strokeDashoffset'];
-    const props = p => p.evaluate(P => { const bad = new Set(); document.getAnimations().forEach(a => { const el = a.effect && a.effect.target; if (!el || !(el.closest('.op-ttl, .op-svg, .op-dark, .op-clip, .op-cnt, .op-skip, #isx-op-g, #isx-gentry, .globebox, #isx-stage') || el.matches('.resbar, .cmd6, .tabs-bottom, .legbox2, .zoom6, .mapmodes, .hint, .mapnote, .vchip, .mstep, .dock6, .b4row'))) return;
+    const props = p => p.evaluate(P => { const bad = new Set(); document.getAnimations().forEach(a => { const el = a.effect && a.effect.target; if (!el || !(el.closest('.op-ttl, .op-svg, .op-dark, .op-clip, .op-cnt, .op-skip, #isx-op-g, #isx-gentry, #isx-stage') || el.matches('.resbar, .cmd6, .tabs-bottom, .legbox2, .zoom6, .mapmodes, .hint, .mapnote, .vchip, .mstep, .dock6, .b4row'))) return;
       a.effect.getKeyframes().forEach(k => Object.keys(k).forEach(n => { if (!['offset', 'easing', 'composite', 'computedOffset'].includes(n) && !P.includes(n)) bad.add(n); })); }); return [...bad]; }, PROPS);
     let p = await page('', { ls: { 'isx-tour': 'off', 'isx-simtour': 'off', 'isx-insights': 'off' }, wait: 0 });
     const t0 = Date.now();
@@ -161,8 +161,8 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     await p.waitForFunction(() => !ISX.opening.on, null, { timeout: 30000 }); const took = (Date.now() - t0) / 1000;
     ok('it runs about 6.6 s', took > 5.6 && took < 9.5, took);   /* the page booted a moment before the clock here started; headless frames are slow */
     await p.waitForTimeout(1600);
-    r = await p.evaluate(() => ({ left: document.querySelectorAll('.op-ttl, .op-svg, .op-dark, .op-gl, .op-skip').length, cls: document.getElementById('isx-root').className, inst: ['.resbar', '.cmd6', '.tabs-bottom', '.legbox2'].map(s => +getComputedStyle(document.querySelector('#isx-frame ' + s)).opacity), seen: localStorage.getItem('isx-open-circuit'), first: !!document.querySelector('#isx-insight.in.first'), quiet: document.getElementById('isx-root').classList.contains('isx-quiet'), scale: getComputedStyle(document.querySelector('.globebox')).scale }));
-    ok('after it: nothing of it is left, the instruments are in, and it is stored (isx-open-circuit)', r.left === 0 && !/\bop-/.test(r.cls) && r.inst.every(v => v === 1) && r.seen === '1' && (r.scale === 'none' || r.scale === '1'), r);
+    r = await p.evaluate(() => ({ left: document.querySelectorAll('.op-ttl, .op-svg, .op-dark, .op-gl, .op-skip').length, cls: document.getElementById('isx-root').className, inst: ['.resbar', '.cmd6', '.tabs-bottom', '.legbox2'].map(s => +getComputedStyle(document.querySelector('#isx-frame ' + s)).opacity), seen: localStorage.getItem('isx-open-circuit'), first: !!document.querySelector('#isx-insight.in.first'), quiet: document.getElementById('isx-root').classList.contains('isx-quiet'), scale: getComputedStyle(document.querySelector('.globebox')).scale + getComputedStyle(document.querySelector('.globebox')).transform }));
+    ok('after it: nothing of it is left, the instruments are in, and it is stored (isx-open-circuit)', r.left === 0 && !/\bop-/.test(r.cls) && r.inst.every(v => v === 1) && r.seen === '1' && r.scale === 'nonenone', r);
     ok('the first line follows it, and does not hide the instruments again', r.first && !r.quiet, r);
     /* the Simulator's, on the first entry into its tab */
     await p.evaluate(() => document.getElementById('isx-v-fin').click()); const t1 = Date.now();
