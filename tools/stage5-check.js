@@ -1,7 +1,7 @@
 /* Stage 5 checks for the Simulator: nothing flickers, nothing is shown before the guide reaches it, the opening card
    offers the full map as a real choice, the indicators sit on the map at every width (B1-3: gauge nodes and tags; an in-play strip on phones), the role ledger
    shows one line per indicator.
-   Usage: node tools/stage5-check.js [baseUrl] [--audit]   — needs `python3 -m http.server 8731` at the repo root.
+   Usage: node tools/stage5-check.js [baseUrl] [--audit] [--only=1,2] [--pointer=off|rest]   — needs `python3 -m http.server 8731` at the repo root.
    --audit prints, for every step of first principles and of the guide, what the step has reached and what is on screen.
    Exits 1 on a failed check.
 
@@ -13,6 +13,10 @@
    opacity turns round (up then down, or down then up). The card's own text swap (.s2body out / in) is not in scope. */
 const { chromium } = require('playwright');
 const args = process.argv.slice(2), AUDIT = args.includes('--audit');
+/* --only=1,4 runs only those sections (1 flicker, 2 no early reveal, 3 the opening card, 4 the indicators, 5 the ledger, 6 counts); --pointer=off|rest runs
+   one of the two flicker passes. The whole run takes about an hour; the cloud environment can restart within that, so a section can be rerun on its own */
+const ONLY = (args.find(a => /^--only=/.test(a)) || '').slice(7).split(',').filter(Boolean).map(Number), want = n => !ONLY.length || ONLY.includes(n);
+const PT = (args.find(a => /^--pointer=/.test(a)) || '').slice(10);
 const base = args.find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 let fails = 0;
 const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && (!cond || AUDIT) ? '  → ' + JSON.stringify(extra).slice(0, 600) : '')); };
@@ -115,7 +119,8 @@ const AUDITOR = () => {
   const fwd = async p => { const picked = await p.evaluate(() => { const o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'); if (o) { o.click(); return true; } return false; }); if (!picked) await p.keyboard.press('ArrowRight'); };
 
   /* ================= 1. flicker ================= */
-  for (const rest of [false, true]) {
+  if (want(1)) {
+  for (const rest of [false, true].filter(r => !PT || (PT === 'rest') === r)) {
     const p = await page({}, { motion: true }), tag = rest ? 'pointer resting on the map' : 'pointer off the map';
     await js(p, RECORDER);
     if (rest) { await p.mouse.move(755, 475); await p.mouse.move(760, 480); }
@@ -205,7 +210,9 @@ const AUDITOR = () => {
     ok('fast stepping (20 steps, 140 ms apart, one back and forth): settles in the same state as opening step ' + (at.beat + 1) + ' directly', at.beat === 20 && diff.length === 0, { beat: at.beat, diff: diff.slice(0, 4) });
   }
 
+  }
   /* ================= 2. nothing is shown before the guide reaches it ================= */
+  if (want(2)) {
   for (const [w, h, touch] of [[1440, 900, false], [1024, 768, false], [390, 844, true]]) {
     const p = await page({}, { w, h, touch }), rows = [], leaks = [];
     const take = async () => { const a = await js(p, AUDITOR); rows.push(a); a.leaks.forEach(x => leaks.push((a.line === 13 ? 'the basics ' : a.line ? 'first principles ' : 'step ') + (a.beat + 1) + ': ' + x)); return a; };
@@ -283,7 +290,9 @@ const AUDITOR = () => {
     } else { ok(`no page errors (reveal, ${w} px)`, p._errs.length === 0, p._errs); await p.context().close(); }
   }
 
+  }
   /* ================= 3. the opening card and the way back ================= */
+  if (want(3)) {
   {
     const p = await page();
     /* tiers build A (15 Nov 2026): the two buttons and the skip link became three equal doors; the guide is the gold one */
@@ -308,7 +317,9 @@ const AUDITOR = () => {
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
+  }
   /* ================= 4. the indicators: on the map at every width; an in-play strip on phones ================= */
+  if (want(4)) {
   const onMap = () => { const v = e => e.getClientRects().length > 0, c = document.getElementById('isx-cock'), b = c.querySelector('#isx-b1ind'), led = document.getElementById('isx-b1led'), sr = document.getElementById('isx-b1play'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), br = b.getBoundingClientRect(), card = document.getElementById('isx-snarr');
     const hits = (a, r) => !!r && a.left < r.right && a.right > r.left && a.top < r.bottom && a.bottom > r.top, cr = card && v(card) ? card.getBoundingClientRect() : null;
     return { live: c.querySelectorAll('#isx-rmap .fn.gn:not(.sock)').length, sockets: c.querySelectorAll('#isx-rmap .fn.gn.sock').length, tags: [...c.querySelectorAll('#isx-rmap .gt')].filter(v).length, btn: b.querySelector('b').textContent, btnShown: v(b), btnClear: !v(b) || (br.right <= innerWidth && br.top >= 0 && br.bottom <= bar.top && !hits(br, cr)), strip: v(sr), old: c.querySelectorAll('.s4ri, .tile, .s5strip, #isx-s5lad, .s2rdb, .s4lad').length, led: !led.hidden && v(led), rows: led.querySelectorAll('.lr.ind').length, scrollY: (c => c.getBoundingClientRect().bottom > innerHeight + 1 || c.scrollHeight > c.clientHeight + 1)(c) }; };
@@ -352,7 +363,9 @@ const AUDITOR = () => {
     ok('no page errors (390 px)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
+  }
   /* ================= 5. the role ledger ================= */
+  if (want(5)) {
   {
     const p = await page({ 'isx-sim-mode': 'full' });
     await click(p, '#isx-b1ind'); await p.waitForTimeout(350);
@@ -378,14 +391,17 @@ const AUDITOR = () => {
     await q.context().close();
   }
 
+  }
   /* ================= 6. counts ================= */
+  if (want(6)) {
   {
     const p = await page({ 'isx-sim-mode': 'full' });
     const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.indicators.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length, c.querySelectorAll('#isx-rmap .fn.pl').length, c.querySelectorAll('#isx-rmap .fn.gn').length, c.querySelectorAll('#isx-rmap .gt').length]; });
     ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 6 episodes in the tray, 43 guide steps', n.join() === '37,75,17,24,6,43,29,8,15', n); await p.context().close();
   }
 
+  }
   await b.close();
-  console.log(fails ? `\n${fails} check(s) failed` : '\nall stage 5 checks pass');
+  console.log(fails ? `\n${fails} check(s) failed` : ONLY.length || PT ? '\nthe chosen stage 5 checks pass' : '\nall stage 5 checks pass');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

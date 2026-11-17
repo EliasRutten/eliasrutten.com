@@ -108,20 +108,22 @@
 
 /* ---------- lines: grey at rest, colour in focus ---------- */
 /* Every line is thin and grey with its arrow, so any of them can still be traced. A selected actor, the guide's step or a pulled lever
-   gives its own lines their colour (the relation's kind); hovering a line colours it too, with its label. Dashes still say rule or signal. */
+   gives its own lines their colour (the relation's kind). In the full view, hovering a line colours it too, with its label; in the guide the step
+   in hand owns the lighting (stage 5's rule): there the camera slides the map under a resting pointer, and a line passing under it must not
+   light up (found by the stage 5 check, pointer resting on the map). Dashes still say rule or signal. */
 #isx-root #isx-cock.s2 .fe:not(.on):not(.ch):not(.off) { stroke: #8597a6; stroke-width: 1.15; opacity: .52; marker-end: url(#isx-fa-rest); }
 #isx-root #isx-cock.s2 .fe.thick:not(.on):not(.ch):not(.off) { stroke-width: 1.7; }
 #isx-root #isx-cock.s2 .fe.dim:not(.on):not(.ch):not(.off) { opacity: .2; }
 #isx-root #isx-cock.s2.st .fe.dim:not(.on):not(.ch):not(.off) { opacity: .3; }
 #isx-root #isx-cock.s2.st .fe.dim.tr:not(.on):not(.ch):not(.off) { opacity: .6; }
 #isx-root #isx-cock.s2 .fe.on { opacity: 1; stroke-width: 2.4; }
-#isx-root #isx-cock.s2 .fe.debt:has(+ .feh:hover) { stroke: #ffd27a; marker-end: url(#isx-fa-debt); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.cash:has(+ .feh:hover) { stroke: #ffb547; marker-end: url(#isx-fa-cash); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.eq:has(+ .feh:hover) { stroke: #d78bff; marker-end: url(#isx-fa-eq); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.rule:has(+ .feh:hover) { stroke: #e4ebf1; marker-end: url(#isx-fa-rule); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.goods:has(+ .feh:hover) { stroke: #44d7ec; marker-end: url(#isx-fa-goods); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.sell:has(+ .feh:hover) { stroke: #ff5a4e; marker-end: url(#isx-fa-sell); opacity: 1; }
-#isx-root #isx-cock.s2 .fe.sig:has(+ .feh:hover) { stroke: #c3d0db; marker-end: url(#isx-fa-sig); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.debt:has(+ .feh:hover) { stroke: #ffd27a; marker-end: url(#isx-fa-debt); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.cash:has(+ .feh:hover) { stroke: #ffb547; marker-end: url(#isx-fa-cash); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.eq:has(+ .feh:hover) { stroke: #d78bff; marker-end: url(#isx-fa-eq); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.rule:has(+ .feh:hover) { stroke: #e4ebf1; marker-end: url(#isx-fa-rule); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.goods:has(+ .feh:hover) { stroke: #44d7ec; marker-end: url(#isx-fa-goods); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.sell:has(+ .feh:hover) { stroke: #ff5a4e; marker-end: url(#isx-fa-sell); opacity: 1; }
+#isx-root #isx-cock.s2:not(.st) .fe.sig:has(+ .feh:hover) { stroke: #c3d0db; marker-end: url(#isx-fa-sig); opacity: 1; }
 /* ---------- the key, on demand ---------- */
 #isx-root .cl-keyb[aria-expanded="true"] { color: #ffd27a; border-color: #4a3b1c; }
 #isx-root .cl-key { position: absolute; z-index: 9; left: 22px; top: 158px; width: min(400px, calc(100% - 44px)); max-height: calc(100% - 260px); overflow-y: auto; padding: 14px 18px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(8, 13, 20, .96); box-shadow: 0 18px 50px rgba(0, 0, 0, .5); scrollbar-width: thin; }
