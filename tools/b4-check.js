@@ -322,7 +322,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   if (want(11)) {
     const p = await page('#arm', { w: 390, h: 844, touch: true });
     const r = await p.evaluate(() => { const s = document.querySelector('.seg'), R = s.getBoundingClientRect(); const t = [...s.querySelectorAll('button')].filter(b => b.getClientRects().length && getComputedStyle(b).display !== 'none'); return { n: t.length, clipped: t.filter(b => { const r = b.getBoundingClientRect(); return r.left < R.left - .5 || r.right > R.right + .5 || r.right > innerWidth; }).map(b => b.textContent.trim()) }; });
-    ok('11 · at 390 the strip shows four tabs, none clipped', r.n === 4 && !r.clipped.length, r);
+    ok('11 · at 390 the strip shows five tabs, none clipped (profit tab build 1 added the profit dollar)', r.n === 5 && !r.clipped.length, r);
     await done(p);
   }
 

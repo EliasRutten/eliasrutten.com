@@ -52,7 +52,7 @@
 #isx-root .pf-reading { margin: 0; min-height: 21px; color: var(--ink2); font-size: 13.5px; }
 #isx-root .pf-reading b { color: var(--ink); font-weight: 500; }
 #isx-root .pf-fig { position: relative; min-width: 0; margin: 0; height: clamp(300px, calc(100vh - 414px), 640px); }
-#isx-root .pf-board.has-tiles .pf-fig { height: clamp(290px, calc(100vh - 484px), 600px); }
+#isx-root .pf-board.has-tiles .pf-fig { height: clamp(250px, calc(100vh - 497px), 600px); }
 #isx-root .pf-fig svg { display: block; width: 100%; height: 100%; touch-action: pan-y; overflow: visible; }
 #isx-root .pf-fig svg text { font-family: var(--mono); font-size: 10.5px; fill: #7f91a0; }
 #isx-root .pf-fig svg text.lb { font-family: var(--sans); font-size: 12px; fill: #9aabba; paint-order: stroke; stroke: #0a131d; stroke-width: 3px; stroke-linejoin: round; }
@@ -124,7 +124,12 @@
 #isx-root .pf-in a i { font-style: normal; font-size: 14px; line-height: 1; }
 /* the ring's four doors */
 #isx-root .rgdoors:has(> .rgdoor:nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-#isx-root .rgdoors:has(> .rgdoor:nth-child(4)) .rgdoor { min-height: 0; padding-bottom: 12px; }
+#isx-root .rgdoors:has(> .rgdoor:nth-child(4)) { grid-auto-rows: 1fr; gap: 7px; }
+#isx-root .tournarr .rgdoors:has(> .rgdoor:nth-child(4)) .rgdoor { grid-template-rows: auto 1fr; grid-template-columns: minmax(0, 1fr); row-gap: 3px; min-height: 0; padding: 9px 11px 9px; }
+#isx-root .tournarr .rgdoors:has(> .rgdoor:nth-child(4)) .rgdoor i { display: none; }
+#isx-root .tournarr .rgdoors:has(> .rgdoor:nth-child(4)) .rgdoor b::after { content: " →"; font-family: var(--sans); font-weight: 400; opacity: .8; }
+/* on a short screen the card must stay clear of the key numbers: the line under the doors goes (the ring's own stars still mark the figures under review) */
+@media (min-width: 761px) and (max-height: 800px) { #isx-root .tournarr:has(.rgdoor:nth-child(4)) .rgfine { display: none; } }
 
 /* ---------- narrower screens ---------- */
 @media (max-width: 1180px) {

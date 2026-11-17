@@ -21,7 +21,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 1. the strip and the Circuit ---------- */
   let p = await page('#circuit');
-  ok('strip: one bar holds the tabs and the Circuit’s pills', await p.evaluate(() => { const s = document.getElementById('isx-strip'); return !!s && s.querySelectorAll('.seg button').length === 5 && !!s.querySelector('#isx-tp-firms') && !!s.querySelector('#isx-tp-layers') && s.getBoundingClientRect().height <= 50; }));
+  ok('strip: one bar holds the tabs and the Circuit’s pills', await p.evaluate(() => { const s = document.getElementById('isx-strip'); return !!s && s.querySelectorAll('.seg button').length === 6 && !!s.querySelector('#isx-tp-firms') && !!s.querySelector('#isx-tp-layers') && s.getBoundingClientRect().height <= 50; }));
   ok('strip: the marker sits under the open tab', await p.evaluate(() => { const i = document.querySelector('.st-ind').getBoundingClientRect(), t = document.getElementById('isx-v-map').getBoundingClientRect(); return Math.abs(i.left - t.left) < 2 && Math.abs(i.width - t.width) < 2; }));
   await p.click('#isx-v-arm'); await p.waitForTimeout(500);
   ok('strip: it follows a tab change, and the Arm’s switch is in the bar', await p.evaluate(() => { const i = document.querySelector('.st-ind').getBoundingClientRect(), t = document.getElementById('isx-v-arm').getBoundingClientRect(), m = document.getElementById('isx-mswitch'); return Math.abs(i.left - t.left) < 2 && !!m.closest('#isx-strip') && !m.hidden && document.getElementById('isx-strip').dataset.v === 'arm'; }));

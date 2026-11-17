@@ -87,7 +87,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
 
   /* ================= 2. three doors at the end of the ring ================= */
   if (want(2)) {
-    const DOORS = [['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#arm', 'The imperial arm', 'See the internal structure of dominant American capital', 'arm'], ['#scenarios', 'Scenarios', 'How Washington leverages the stack internationally', 'story']];
+    const DOORS = [['#profit', 'The profit dollar', 'Whose profits the world’s savings buy', 'profit'], ['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#arm', 'The imperial arm', 'See the internal structure of dominant American capital', 'arm'], ['#scenarios', 'Scenarios', 'How Washington leverages the stack internationally', 'story']];
     for (const [w, h, touch] of [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]]) {
       const p = await page('#circuit/ring', { w, h, touch, wait: 2200 });
       const r = await js(p, () => { const d = [...document.querySelectorAll('#isx-tournarr a.rgdoor')], bar = document.getElementById('isx-tabs').getBoundingClientRect(), card = document.getElementById('isx-tournarr').getBoundingClientRect(), rb = document.getElementById('isx-resbar'), rbr = rb && rb.getClientRects().length && getComputedStyle(rb).visibility !== 'hidden' ? rb.getBoundingClientRect() : null;
@@ -95,8 +95,8 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
           old: document.querySelectorAll('#isx-tournarr .rggo, #isx-tournarr [data-ring="sim"]').length, again: !!document.querySelector('#isx-tournarr [data-ring="again"]'), phone: innerWidth <= 760,
           fit: innerWidth <= 760 || (card.top >= 0 && card.bottom <= bar.top + 1 && scrollY === 0 && (!rbr || card.top >= rbr.bottom - 1 || card.left >= rbr.right)), cardTop: Math.round(card.top), rb: rbr && Math.round(rbr.bottom) }; });
       const d = r.doors, tag = `doors (${w}×${h})`;
-      ok(`${tag}: three doors, in order, with their titles and subtitles; the single Simulator button is gone`, d.length === 3 && d.every((x, i) => x.href === DOORS[i][0] && x.t === DOORS[i][1] && x.s === DOORS[i][2] && x.vis) && r.old === 0 && r.again, r);
-      ok(`${tag}: equal weight: the same size, border and type for all three`, d.length === 3 && d.every(x => Math.abs(x.w - d[0].w) <= 1 && Math.abs(x.h - d[0].h) <= 1 && x.bw === d[0].bw && x.fs === d[0].fs && x.fw === d[0].fw), d);
+      ok(`${tag}: four doors, in order, with their titles and subtitles; the single Simulator button is gone (profit tab build 1: the profit dollar is the first door)`, d.length === 4 && d.every((x, i) => x.href === DOORS[i][0] && x.t === DOORS[i][1] && x.s === DOORS[i][2] && x.vis) && r.old === 0 && r.again, r);
+      ok(`${tag}: equal weight: the same size, border and type for all four`, d.length === 4 && d.every(x => Math.abs(x.w - d[0].w) <= 1 && Math.abs(x.h - d[0].h) <= 1 && x.bw === d[0].bw && x.fs === d[0].fs && x.fw === d[0].fw), d);
       ok(`${tag}: the card with the doors fits its place (above the bar, clear of the key numbers)`, r.fit, r);
       await p.context().close();
       for (const [href, , , view] of DOORS) {

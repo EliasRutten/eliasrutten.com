@@ -243,6 +243,21 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('clarity: the full view at rest, lines in grey', '#simulator', fullv, 1280, 760);
   await run('clarity, phone: a step with its numbers in the card', '#simulator', cl(12), 390, 844);
   await run('clarity: 1280 × 760, tiles above the card', '#simulator', cl(9), 1280, 760);
+  /* profit tab build 1: the profit dollar's stations, views, a table, the text under the board, a hint, and the ring's four doors */
+  const pf = (i, v, t) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };
+  for (const [i, v] of [[0, 'pic'], [0, 'nat'], [0, 'own'], [0, 'roc'], [1, 'hold'], [1, 'flow'], [1, 'list'], [1, 'home'], [1, 'pay'], [2, 'all'], [2, 'sum'], [2, 'pos'], [2, 'ord'], [3, 'wt'], [3, 'capex'], [3, 'ni'], [3, 'why']])
+    await run('profit: view ' + v, '#profit', seen, 1440, 900, pf(i, v));
+  await run('profit: the ideal types as a table', '#profit', seen, 1440, 900, pf(2, 'ord', true));
+  await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(2, 'all', true));
+  await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(2, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });
+  await run('profit: 1024 wide', '#profit/claims', seen, 1024, 768, pf(1, 'list'));
+  await run('profit, phone: station 3', '#profit/regime', seen, 390, 844, pf(2, 'all'));
+  await run('profit, phone: two orders', '#profit/regime/ord', seen, 390, 844, pf(2, 'ord'));
+  await run('profit, phone: station 4, its doors', '#profit/ai', seen, 390, 844, async p => { await pf(3, 'wt')(p); await p.evaluate(() => document.querySelector('#isx-pf-text .pf-side').scrollIntoView()); await p.waitForTimeout(300); });
+  await run('profit: a hint (the tiles)', '#profit/regime', { ...first, 'isx-hints': 'pf-table' }, 1440, 900, async p => { await p.waitForFunction(() => ISX.hints && ISX.hints.on === 'pf-tile', null, { timeout: 15000 }); });
+  await run('profit: the ring with four doors', '#circuit/ring', seen, 1440, 900);
+  await run('profit, phone: the ring with four doors', '#circuit/ring', seen, 390, 844);
+  await run('profit: a link from the primer', '#simulator', { ...seen, __pos: JSON.stringify({ l: 13, b: 9 }) }, 1440, 900, async p => { await p.evaluate(() => { const d = document.querySelector('#isx-cock details.s2deep'); if (d) d.open = true; }); await p.waitForTimeout(300); });
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);
