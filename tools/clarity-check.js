@@ -11,7 +11,12 @@
    5 episodes: a door opens the episode and its last step returns to the step it came from; the fold opens in the card;
      the full view's tray runs the six episodes; the decision inside an episode works
    6 the bar and the camera: the act and the chapter in full on the line button; the zoom capped; the whole map on a wide screen
-   7 type floor on the round's own elements; no page errors anywhere above */
+   7 type floor on the round's own elements; no page errors anywhere above
+   8 clarity patch (17 Nov 2026, claude/specs/clarity-patch-17-nov.md): every call is a full screen over the dimmed, inert map, with its
+     setup pages first (two for the first call, redated to January 2025; one for each other call), Next and Back through them, the page
+     kept in the stored place; the call page carries three or four dated, sourced tiles (the bond-panel ones checked against the file),
+     the Substack pieces and the quiet support row; choosing works as before; it fits at 1440 × 900, 1280 × 760 and 1024 × 768 and is a
+     page in the card on phones; the inflows reveal is rewritten; “Show hints again” brings hints back */
 const { chromium } = require('playwright');
 const base = process.argv.slice(2).find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 const only = (process.argv.slice(2).find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean).map(Number);
@@ -127,6 +132,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     ok(tb.rows >= 4 && tb.hid && tb.pressed === 'true' && /MOVE/.test(tb.src), 'the chart has a table view with its source', tb);
     /* nothing on a decision, a chain or a crisis card */
     const fi = info.lines[0].k.indexOf('0-1'); await go(p, 0, fi - 1); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
+    for (let i = 0; i < 3; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }   /* clarity patch: past the call's setup pages */
     const a1 = await p.evaluate(() => [ISX.sim.ph, !!document.getElementById('isx-cl-nums')]);
     await p.click('.dopt[data-fk="alt"]'); await p.waitForTimeout(300);
     const a2 = await p.evaluate(() => [ISX.sim.ph, !!document.getElementById('isx-cl-nums')]);
@@ -180,6 +186,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     ok(e1.ep === 'oil' && e1.beat === 0 && new RegExp('step ' + (from + 1)).test(e1.ret) && /Episode/i.test(e1.k) && /EPISODE/i.test(e1.where), 'it opens at its first step, with the way back to the step it came from', e1);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '6-1'), 'the oil call sits inside the episode');
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* clarity patch: past its setup page */
     await p.click('.dopt[data-fk="real"]'); await p.waitForTimeout(300);
     for (let i = 0; i < 4; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
     const e2 = await p.evaluate(() => ({ beat: ISX.sim.beat, n: ISX.sim.lines[ISX.sim.line].steps.length, next: document.querySelector('#isx-s2bar').innerText.replace(/\s+/g, ' ').slice(0, 80) }));
@@ -222,6 +229,114 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const small = await p.evaluate(() => [...document.querySelectorAll('#isx-cl-nums *, #isx-sn-body .cl-q, #isx-sn-body .cl-a, #isx-sn-body .cl-epi *, #isx-sn-body .cl-new *')].filter(e => e.children.length === 0 && e.textContent.trim() && e.getClientRects().length && parseFloat(getComputedStyle(e).fontSize) < 10.5).map(e => e.className + ':' + getComputedStyle(e).fontSize));
     ok(!small.length, 'nothing in the round’s own elements is under 10.5 px', small.slice(0, 6));
     await p.context().close();
+  }
+
+  /* ---------- 8 the call screens (clarity patch) ---------- */
+  if (want(8)) {
+    const BP = await (async () => { const q = await open(800, 600, {}, {}); const j = await q.evaluate(async () => (await fetch('data/bond-panel.json')).json()); await q.context().close(); return j; })();
+    const p = await open(1440, 900, { 'isx-way': 'guide' }, at(0, 0));
+    const I = await p.evaluate(() => ({ calls: ISX.calls, sim: ISX.sim, ess: ISX.essays }));
+    const where = k => { for (const [l, L] of I.sim.lines.entries()) { if (!L.main && !L.ep) continue; const i = L.steps.findIndex(x => x.fk === k); if (i > 0) return [l, i - 1]; } return null; };
+    const D = I.sim.decisions.map(x => x.k);
+    ok(D.length === 7 && D.every(k => I.calls[k]), 'every one of the seven calls has its screen', D.filter(k => !I.calls[k]));
+    ok(I.calls['0-1'].pg.length === 2 && D.filter(k => k !== '0-1').every(k => I.calls[k].pg.length === 1), 'two setup pages before the first call, one before each other call', D.map(k => k + ':' + I.calls[k].pg.length));
+    const tl = D.map(k => [k, I.calls[k].tiles.length]); ok(tl.every(t => t[1] >= 3 && t[1] <= 4), 'three or four figure tiles on every call', tl);
+    const bad = []; D.forEach(k => I.calls[k].tiles.forEach(T => { if (!T.v || !T.k || !T.d || !T.s) bad.push([k, T.v, 'unsourced or undated']); if (T.bp) { const i = BP.m.indexOf(T.bp[1]), v = i < 0 ? null : BP[T.bp[0]][i], txt = String(T.v).replace(/[%≈$]/g, ''); if (v == null || Math.abs(+txt - v) > 0.006) bad.push([k, T.v, T.bp, v]); } }));
+    ok(!bad.length, 'every tile is dated and sourced; every monthly average matches data/bond-panel.json', bad);
+    ok(D.every(k => I.calls[k].ess.length >= 1 && I.calls[k].ess.every(e => I.ess[e])), 'every call names at least one Substack piece the page lists', D.map(k => k + ':' + I.calls[k].ess));
+    /* the first call: redated, its two pages, the verified quotation and sources */
+    const D1 = I.sim.decisions.find(x => x.k === '0-1');
+    const seat = I.calls['0-1'].pg[1], txt1 = seat.p.join(' ') + seat.g.map(g => g.join(' ')).join(' ');
+    ok(/28 January 2025/.test(txt1) && /“departed from norms regarding the issuance profile of Treasury debt”/.test(txt1) && /activist Treasury issuance/.test(txt1) && /Miran and Nouriel Roubini/.test(txt1), 'the seat page: Bessent’s warning, quoted, and the critique he amplified', txt1.slice(0, 200));
+    ok(seat.turn === 'But you are now confronted with a buyers’ strike, problems in the debt market and, most importantly, an AI build-out to fund.', 'the turn, close to Elias’s words', seat.turn);
+    ok(seat.sl.some(s => /manhattan\.institute/.test(s[1])) && seat.sl.some(s => /hudsonbaycapital\.com/.test(s[1])), 'the quotation and the paper are linked', seat.sl.map(s => s[1]));
+    ok(seat.g.map(g => g[0]).join() === 'Bills and bonds,Why sell either,Where the line blurs', 'bills and bonds, why sell either, where the line blurs', seat.g.map(g => g[0]));
+    /* walk the first call from step 10 */
+    const [l1, b1] = where('0-1'); await go(p, l1, b1);
+    const pages = [];
+    for (let i = 0; i < 4; i++) {
+      await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350);
+      pages.push(await p.evaluate(() => { const c = document.getElementById('isx-cock'), st = document.getElementById('isx-stage'), i = document.getElementById('isx-sn-in'); return { ph: ISX.sim.ph, dp: ISX.sim.dp, np: ISX.sim.np, dcall: c.classList.contains('dcall'), inert: !!st && st.inert, fits: i.scrollHeight <= i.clientHeight + 1, h3: document.querySelector('#isx-sn-body h3').textContent, kick: document.querySelector('#isx-sn-body .s2k').textContent, opts: document.querySelectorAll('#isx-sn-body .sn-opt').length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent.replace(/\s+/g, ' ').trim(), pos: JSON.parse(sessionStorage.getItem('isx-sim-pos')), cur: (document.querySelector('#isx-sn-body .dc-steps [aria-current="step"]') || {}).textContent }; }));
+    }
+    ok(pages[0].ph === 'ask' && pages[0].dp === 0 && pages[0].np === 3 && /The old buyers/.test(pages[0].h3) && /January 2025/.test(pages[0].kick) && !pages[0].opts, 'Next from step 10 opens the call on its first setup page, dated January 2025, with no options yet', pages[0]);
+    ok(pages[1].dp === 1 && /Scott Bessent’s chair/.test(pages[1].h3) && /Your seat/i.test(pages[1].cur), 'Next turns to “Your seat”', pages[1]);
+    ok(pages[2].dp === 2 && /You’re at Treasury\./.test(pages[2].h3) && pages[2].opts === 2 && /Choose/i.test(pages[2].nx), 'then the call itself, Next held', pages[2]);
+    ok(pages[3].dp === 2, 'Next on the call does not leave it', pages[3]);
+    ok(pages.every(x => x.dcall && x.inert && x.fits), 'every page is a full screen over an inert map, with no scroll at 1440 × 900', pages.map(x => [x.dcall, x.inert, x.fits]));
+    ok(pages.slice(0, 3).every((x, i) => x.pos.ph === 'ask' && x.pos.dp === i), 'the stored place carries the page', pages.map(x => x.pos));
+    const call = await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return { tiles: [...b.querySelectorAll('.dc-tl')].map(t => t.getAttribute('aria-label')), ess: [...b.querySelectorAll('.dc-es a.dss')].map(a => [a.href, !!a.querySelector('svg')]), cal: !!b.querySelector('.dc-sup [data-remind]'), tip: (b.querySelector('.dc-tip') || {}).textContent, bmc: (b.querySelector('.dc-sup a[href*="buymeacoffee"]') || {}).href, ss: (b.querySelector('.dc-sup a.dc-ss') || {}).href, heading: !!b.querySelector('.dc-sup h4, .dc-sup b') }; });
+    ok(call.tiles.length === 3 && call.tiles.every(t => /\d{4}/.test(t) && /Source:/.test(t)), 'the call’s tiles say their date and source in their accessible name', call.tiles);
+    ok(call.ess.length === 2 && call.ess.every(e => /substack\.com\/p\//.test(e[0]) && e[1]), 'the Substack pieces, each with the logo', call.ess);
+    ok(call.cal && call.tip === 'Want to come back later? Set a reminder.' && /buymeacoffee\.com/.test(call.bmc || '') && /substack\.com/.test(call.ss || '') && !call.heading, 'the support row: calendar, Buy Me a Coffee, Substack, with no heading', call);
+    await p.hover('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(250);
+    ok(await p.evaluate(() => getComputedStyle(document.querySelector('#isx-sn-body .dc-tip')).visibility === 'visible'), 'hovering the calendar shows the line');
+    await p.click('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => !!(ISX.remind && ISX.remind.on)), 'the calendar opens the reminder panel');
+    await p.keyboard.press('Escape'); await p.waitForTimeout(250);
+    const rl0 = await open(1440, 900, { 'isx-way': 'guide' }, {});   /* no stored place in the init script, so a reload keeps the one the page wrote */
+    await rl0.evaluate(([l, bb]) => { sessionStorage.setItem('isx-sim-pos', JSON.stringify({ l, b: bb })); }, [l1, b1]); await rl0.reload(); await rl0.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await rl0.waitForTimeout(900);
+    await rl0.keyboard.press('ArrowRight'); await rl0.waitForTimeout(300); await rl0.keyboard.press('ArrowRight'); await rl0.waitForTimeout(300);
+    await rl0.reload(); await rl0.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await rl0.waitForTimeout(1200);
+    ok(await rl0.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 1), 'a reload returns to the same page of the call');
+    await rl0.context().close();
+    await p.evaluate(() => { if (ISX.remind && ISX.remind.on) document.querySelector('.rm .rm-x') && document.querySelector('.rm .rm-x').click(); }); await p.waitForTimeout(200);
+    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
+    const bk0 = await p.evaluate(() => [ISX.sim.ph, ISX.sim.dp]); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
+    const bk1 = await p.evaluate(() => [ISX.sim.ph, ISX.sim.beat, document.getElementById('isx-cock').classList.contains('dcall')]);
+    ok(bk0[0] === 'ask' && bk0[1] === 0 && bk1[0] === null && bk1[1] === b1 && !bk1[2], 'Back turns the pages back, then returns to step 10 and the map', [bk0, bk1]);
+    await p.evaluate(() => ISX.route.next('sim').click()); await p.waitForTimeout(300);
+    await p.click('#isx-sn-body [data-dcp="2"]'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => ISX.sim.dp === 2), 'the steps row opens a page');
+    await p.click('.dopt[data-fk="alt"]'); await p.waitForTimeout(350);
+    const ch = await p.evaluate(() => [ISX.sim.ph, ISX.sim.c, document.getElementById('isx-cock').classList.contains('dcall'), document.getElementById('isx-stage').inert]);
+    ok(ch[0] === 'chain' && ch[1] === 0 && !ch[2] && !ch[3], 'the other path goes back to the map for its chain reaction', ch);
+    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 2), 'Back from the chain returns to the call itself');
+    await p.click('.dopt[data-fk="real"]'); await p.waitForTimeout(350);
+    const rl = await p.evaluate(() => [ISX.sim.ph, ISX.sim.beat, (document.querySelector('#isx-sn-body .dyou') || {}).textContent || '']);
+    ok(rl[0] === null && rl[1] === b1 + 1 && /Bessent’s Treasury/.test(rl[2]), 'what happened goes to the next step, which says what Bessent’s Treasury did', rl);
+    await p.context().close();
+    /* every page of every call fits, at three desktop sizes; an old stored place opens on the call itself */
+    for (const [w, h] of [[1440, 900], [1280, 760], [1024, 768]]) {
+      const q = await open(w, h, { 'isx-way': 'guide' }, {}); const over = [];
+      for (const k of D) { const [l, bb] = where(k); for (let dp = 0; dp <= I.calls[k].pg.length; dp++) {
+        await q.evaluate(([l, bb, dp]) => sessionStorage.setItem('isx-sim-pos', JSON.stringify({ l, b: bb, ph: 'ask', dp })), [l, bb, dp]);
+        await q.reload(); await q.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await q.waitForTimeout(700);
+        const r = await q.evaluate(() => { const i = document.getElementById('isx-sn-in'), b = document.getElementById('isx-sn-body').getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); return { k: ISX.sim.dec, dp: ISX.sim.dp, s: i.scrollHeight - i.clientHeight, under: b.bottom <= bar.top + 1, small: [...document.querySelectorAll('#isx-sn-body .dc *')].filter(e => e.children.length === 0 && e.textContent.trim() && e.getClientRects().length && parseFloat(getComputedStyle(e).fontSize) < 10.5).map(e => e.textContent.trim().slice(0, 20)) }; });
+        if (r.k !== k || r.dp !== dp || r.s > 1 || !r.under || r.small.length) over.push(r);
+      } }
+      ok(!over.length, `${w} × ${h}: every page of every call fits above the bar, without scrolling, nothing under 10.5 px`, over.slice(0, 4));
+      await q.context().close();
+    }
+    const o = await open(1440, 900, { 'isx-way': 'guide' }, at(0, where('0-7')[1], { ph: 'ask' }));
+    ok(await o.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '0-7' && ISX.sim.dp === ISX.sim.np - 1), 'a place stored before the patch (no page) opens on the call itself');
+    await o.context().close();
+    /* phones */
+    const m = await open(390, 844, { 'isx-way': 'guide' }, at(0, b1, { ph: 'ask', dp: 2 }));
+    const mm = await m.evaluate(() => { const c = document.getElementById('isx-snarr'), st = document.querySelector('#isx-cock .s2stage'); return { pos: getComputedStyle(c).position, stage: getComputedStyle(st).display, wide: document.documentElement.scrollWidth <= innerWidth, opts: document.querySelectorAll('#isx-sn-body .sn-opt').length, tiles: document.querySelectorAll('#isx-sn-body .dc-tl').length }; });
+    ok(mm.pos === 'static' && mm.stage === 'none' && mm.wide && mm.opts === 2 && mm.tiles === 3, 'phones: the call is a page in the card, the map out of the way, nothing wider than the screen', mm);
+    await m.context().close();
+    /* the inflows reveal */
+    const f = await open(1440, 900, { 'isx-way': 'guide' }, {});
+    const rv = await f.evaluate(() => { const P = ISX.sim.lines.find(L => L.pre); return P.steps.map(x => x.t); });
+    ok(rv.includes('Inflows feed finance') && !rv.includes('Lower yields, higher prices'), 'first principles: “Inflows feed finance” replaces “Lower yields, higher prices”', rv);
+    const ri = await f.evaluate(() => ISX.sim.lines.findIndex(L => L.pre)), rj = rv.indexOf('Inflows feed finance');
+    await go(f, ri, rj); await f.waitForTimeout(300);
+    const rt = await f.evaluate(() => { const b = document.getElementById('isx-sn-body'); b.querySelectorAll('details').forEach(d => d.open = true); return b.textContent; });
+    ok(/Pettis/.test(rt) && /financialised industrial policy/.test(rt) && /whether AI will do that/.test(rt) && !/5\.13%/.test(rt), 'it credits Pettis, keeps the term, asks whether AI will do that, and drops the October yield', rt.slice(0, 300));
+    await f.context().close();
+    /* “Show hints again” */
+    const hn = await open(1440, 900, { 'isx-hints-off': '1', 'isx-sim-mode': 'story' }, at(0, -1));
+    const hv = await hn.evaluate(() => { const b = document.querySelector('#isx-sn-body .ge [data-b1more="hints"]'); return !!b && !b.hidden && b.getClientRects().length > 0; });
+    await hn.click('#isx-sn-body .ge [data-b1more="hints"]'); await hn.waitForTimeout(200);
+    ok(hv && await hn.evaluate(() => localStorage.getItem('isx-hints-off') !== '1' && document.activeElement && document.activeElement.hasAttribute('data-simtour')), 'the entry offers “Show hints again” once hints are hidden, and it brings them back', hv);
+    await hn.context().close();
+    const hp = await open(390, 844, { 'isx-hints-off': '1', 'isx-sim-mode': 'story' }, at(0, 4));
+    await hp.click('[data-s4more]'); await hp.waitForTimeout(200);
+    const hpv = await hp.evaluate(() => { const b = document.querySelector('#isx-b1more [data-b1more="hints"]'); return !!b && !b.hidden && b.getClientRects().length > 0; });
+    await hp.click('#isx-b1more [data-b1more="hints"]'); await hp.waitForTimeout(200);
+    ok(hpv && await hp.evaluate(() => localStorage.getItem('isx-hints-off') !== '1'), 'on phones the More menu offers it too', hpv);
+    await hp.context().close();
   }
   ok(!errs.length, 'no page errors', errs.slice(0, 4));
   console.log(`clarity-check: ${pass} passed, ${fail} failed`);
