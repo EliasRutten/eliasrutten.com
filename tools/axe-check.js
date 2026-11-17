@@ -30,6 +30,10 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('phone: first moment', '', {}, 390, 844);
   /* stage 2: the Circuit's trays and tour, and the Simulator on the stage */
   const click = sel => async p => { await p.evaluate(q => document.querySelector(q).click(), sel); await p.waitForTimeout(500); };
+  /* clarity build (17 Nov 2026): 43 steps in three acts, so every position below was set again. Counting from 0: the step before the call on funding
+     (0-1) is 9 and the step after it 10; “The Fed opens the tap” is 15; the step before the call on long yields (0-6) is 26; the Fed’s repo window is 28;
+     the close is 43. The yen call is in the episode “The yen action” (line 18, before its second step); the oil shock is line 14. The primer’s screens:
+     the pyramid 5, the eras 6, “Deficits become profits” 9, “Why the dollar needs the AI trade” 11. What follows is the older note, kept as history. */
   /* tiers build A (15 Nov 2026): positions moved with the chapter order (the step before decision 0-1 is 26, before 0-6 is 24, before the yen call 40; the backstop starts at 38).
      Tiers build B: the new step 30 moves what follows by one (the yen call after step 41, the backstop from 39, the close at 52); first principles close at 8 (guide build, 16 Nov: at 10) */
   const sim = (b, l) => ({ ...seen, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: l || 0, b }) });
@@ -41,12 +45,12 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('phone: tour', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.tour.open(true)); await p.waitForTimeout(500); });
   await run('simulator, guide: opening card', '#simulator', sim(-1), 1440, 900);
   await run('simulator, guide: a step, “The mechanism” open', '#simulator', sim(2), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
-  await run('simulator, guide: the step before a decision', '#simulator', sim(25), 1440, 900);
-  await run('simulator, guide: a new lever’s card, opened from the step', '#simulator', sim(26), 1440, 900, click('#isx-sn-body .sn-chip.lv2'));
+  await run('simulator, guide: the step before a decision', '#simulator', sim(9), 1440, 900);
+  await run('simulator, guide: a new lever’s card, opened from the step', '#simulator', sim(10), 1440, 900, click('#isx-sn-body .sn-chip.lv2'));
   await run('simulator, guide: Readings open', '#simulator', sim(20), 1440, 900, click('#isx-b1ind'));
   await run('simulator, guide: picker open', '#simulator', sim(23), 1440, 900, click('#isx-sn-pickb'));
-  await run('simulator, guide: a mechanism', '#simulator', sim(2, 7), 1440, 900);
-  await run('simulator, guide: the whole machine', '#simulator', sim(52), 1440, 900);
+  await run('simulator, guide: an episode’s step', '#simulator', sim(2, 14), 1440, 900);
+  await run('simulator, guide: the whole machine', '#simulator', sim(43), 1440, 900);
   await run('simulator, full view', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900);
   await run('simulator, full view: Readings open and an actor’s dossier', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, async p => { await p.evaluate(() => { document.getElementById('isx-b1ind').click(); document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true })); }); await p.waitForTimeout(500); });
   await run('simulator, full view: a play', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1280, 760, click('#isx-cock .pchip'));
@@ -60,7 +64,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('simulator, first principles: opening', '#simulator', sim(-1, 12), 1440, 900);
   await run('simulator, first principles: a reveal, “The mechanism” open', '#simulator', sim(6, 12), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('simulator, first principles: the close', '#simulator', sim(10, 12), 1440, 900);
-  await run('simulator, guide: backstop, first step', '#simulator', sim(38), 1440, 900);
+  await run('simulator, guide: backstop, first step', '#simulator', sim(28), 1440, 900);
   await run('simulator, full view: the ladder open', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, click('#isx-b1ind'));
   await run('simulator, full view: a sector card', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .fzk[data-sec="hh"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
   /* B3 (15 Nov 2026): Scenarios in three depths. The stepped card with “Read more”, “Layers used” and the picker are gone, and so
@@ -113,15 +117,15 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   /* B1-4: decisions, chain reactions, crisis cards */
   const ask = async p => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); };
   const chainTo = n => async p => { await ask(p); await p.evaluate(() => document.querySelector('#isx-sn-body [data-fk="alt"]').click()); await p.waitForTimeout(400); for (let i = 0; i < n; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); } };
-  await run('B1-4: a decision card (the yen), “More context” open', '#simulator', sim(40), 1440, 900, async p => { await ask(p); await p.click('#isx-sn-body .dmore'); await p.waitForTimeout(200); });
-  await run('B1-4: a decision card at 1280×760', '#simulator', sim(25), 1280, 760, ask);
-  await run('B1-4: a chain link, “The mechanism” open', '#simulator', sim(40), 1440, 900, async p => { await chainTo(1)(p); await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(200); });
-  await run('B1-4: a chain link with a relation that was not used', '#simulator', sim(23), 1440, 900, chainTo(0));
-  await run('B1-4: a crisis card with its precedent and sources', '#simulator', sim(23), 1440, 900, chainTo(6));
-  await run('B1-4: what happened, after the other path', '#simulator', sim(40), 1440, 900, chainTo(6));
-  await run('B1-4, phone: a decision card', '#simulator', sim(40), 390, 844, ask);
-  await run('B1-4, phone: a chain link and the strip', '#simulator', sim(40), 390, 844, chainTo(1));
-  await run('B1-4, phone: a crisis card', '#simulator', sim(25), 390, 844, chainTo(6));
+  await run('B1-4: a decision card (the yen), “More context” open', '#simulator', sim(0, 18), 1440, 900, async p => { await ask(p); await p.click('#isx-sn-body .dmore'); await p.waitForTimeout(200); });
+  await run('B1-4: a decision card at 1280×760', '#simulator', sim(9), 1280, 760, ask);
+  await run('B1-4: a chain link, “The mechanism” open', '#simulator', sim(0, 18), 1440, 900, async p => { await chainTo(1)(p); await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(200); });
+  await run('B1-4: a chain link with a relation that was not used', '#simulator', sim(26), 1440, 900, chainTo(0));
+  await run('B1-4: a crisis card with its precedent and sources', '#simulator', sim(26), 1440, 900, chainTo(6));
+  await run('B1-4: what happened, after the other path', '#simulator', sim(0, 18), 1440, 900, chainTo(6));
+  await run('B1-4, phone: a decision card', '#simulator', sim(0, 18), 390, 844, ask);
+  await run('B1-4, phone: a chain link and the strip', '#simulator', sim(0, 18), 390, 844, chainTo(1));
+  await run('B1-4, phone: a crisis card', '#simulator', sim(9), 390, 844, chainTo(6));
   /* interface fixes: “Full screen” beside the zoom buttons and in the bar, the ring with its three doors, a line's card, the Arm's dock */
   await run('interface: the Circuit, “Full screen” beside zoom', '#circuit/03', seen, 1440, 900);
   await run('interface: the ring with the three doors', '#circuit/ring', seen, 1280, 760);
@@ -141,7 +145,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('content build, phone: the bond screen, level 2', '#simulator', fullv, 390, 844, vw('bond', { level: 2 }));
   await run('content build, phone: the money loop', '#simulator', fullv, 390, 844, vw('loop'));
   await run('content build: a dossier with its door', '#simulator', fullv, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="SAV"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
-  await run('content build: the yen crisis card, its history rail open', '#simulator', sim(40), 1440, 900, async p => { await chainTo(5)(p); await p.evaluate(() => { const d = document.querySelector('#isx-sn-body .cb-rail'); if (d) d.open = true; }); await p.waitForTimeout(250); });
+  await run('content build: the yen crisis card, its history rail open', '#simulator', sim(0, 18), 1440, 900, async p => { await chainTo(5)(p); await p.evaluate(() => { const d = document.querySelector('#isx-sn-body .cb-rail'); if (d) d.open = true; }); await p.waitForTimeout(250); });
   await run('content build: the play “Coordinate with the Fed”', '#simulator', fullv, 1440, 900, async p => { await p.evaluate(() => ISX.simPlay(10)); await p.waitForTimeout(400); });
   await run('content build: the Simulator’s tour', '#simulator', sim(-1), 1440, 900, async p => { await p.evaluate(() => ISX.simtour.open(true)); await p.waitForTimeout(1200); });   /* guide build: from the entry the tour first opens the level's first card */
   await run('content build, phone: the Simulator’s tour', '#simulator', sim(-1), 390, 844, async p => { await p.evaluate(() => ISX.simtour.open(true)); await p.waitForTimeout(1200); });   /* guide build: from the entry the tour first opens the level's first card */
@@ -150,7 +154,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('fix round: level 2, cursor at May 2023, the MOVE chip pressed', '#simulator', fullv, 1440, 900, async p => { await vw('bond', { level: 2 })(p); await p.evaluate(() => { document.querySelector('#isx-vw [data-bxj="2023-05"]').click(); document.querySelector('#isx-vw .bx-chip[data-lane="move"]').click(); }); await p.waitForTimeout(200); });
   await run('fix round: level 2 as a table', '#simulator', fullv, 1280, 760, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
   await run('fix round, phone: level 2 as a table', '#simulator', fullv, 390, 844, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
-  await run('fix round: a chain borrows the 10-year; its dossier with figure and door row', '#simulator', sim(25), 1440, 900, async p => { await chainTo(3)(p); await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="Y10"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
+  await run('fix round: a chain borrows the 10-year; its dossier with figure and door row', '#simulator', sim(9), 1440, 900, async p => { await chainTo(3)(p); await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="Y10"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
   await run('fix round: the opening card with the thesis at 1280×760', '#simulator', sim(-1), 1280, 760);
   /* tiers build A: the door card, a term's tip, the index of guide steps, a dossier with “In the guide”, a step opened from the index */
   await run('tiers: the door card with a term tip open', '#simulator', sim(-1), 1440, 900, async p => { await p.focus('#isx-sn-body .s2thesis dfn.df'); await p.waitForTimeout(150); });
@@ -165,8 +169,8 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('tiers B: a primer screen, “Say more” open', '#simulator', sim(6, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('tiers B: the primer’s hand-over', '#simulator', sim(12, 13), 1440, 900);
   await run('tiers B, phone: a primer screen', '#simulator', sim(0, 13), 390, 844);
-  await run('tiers B: the new step “The Fed opens the tap”', '#simulator', sim(29), 1440, 900);
-  await run('tiers B: the guide’s close, its sources open', '#simulator', sim(52), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
+  await run('tiers B: the new step “The Fed opens the tap”', '#simulator', sim(15), 1440, 900);
+  await run('tiers B: the guide’s close, its sources open', '#simulator', sim(43), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   /* B4: the Arm in its three layouts, the sheets, the mistake panel */
   await run('B4: the Arm, full, Platforms selected', '#arm', seen, 1440, 900, async p => { await p.evaluate(() => ISX.setArmSel('PLAT')); await p.waitForTimeout(400); });
   await run('B4: the Arm, compact, a relation', '#arm', seen, 1280, 760, async p => { await p.evaluate(() => ISX.setArmRel('control')); await p.waitForTimeout(400); });
@@ -184,16 +188,16 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('guide build, phone: the entry, the reminder open', '#simulator', sim(-1), 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
   await run('guide build: the entry for a returning visitor (“Last time”)', '#simulator', { ...sim(-1), 'isx-way': 'ground' }, 1440, 900);
   await run('guide build, tablet: the entry', '#simulator', sim(-1), 1024, 768);
-  await run('guide build: the pyramid (P10)', '#simulator', sim(2, 13), 1440, 900);
-  await run('guide build: the pyramid as a table', '#simulator', sim(2, 13), 1280, 760, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body .gd-tg').click()); await p.waitForTimeout(250); });
-  await run('guide build: the eras (P11), “Say more” open', '#simulator', sim(3, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
-  await run('guide build: the fifth band lit (P13), as a table', '#simulator', sim(10, 13), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body .gd-tg').click()); await p.waitForTimeout(250); });
-  await run('guide build, phone: the eras (P11)', '#simulator', sim(3, 13), 390, 844);
-  await run('guide build: “Deficits become profits” (P12), “Say more” open', '#simulator', sim(8, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
+  await run('guide build: the pyramid (P10)', '#simulator', sim(5, 13), 1440, 900);
+  await run('guide build: the pyramid as a table', '#simulator', sim(5, 13), 1280, 760, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body .gd-tg').click()); await p.waitForTimeout(250); });
+  await run('guide build: the eras (P11), “Say more” open', '#simulator', sim(6, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
+  await run('guide build: the fifth band lit (P13), as a table', '#simulator', sim(11, 13), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body .gd-tg').click()); await p.waitForTimeout(250); });
+  await run('guide build, phone: the eras (P11)', '#simulator', sim(6, 13), 390, 844);
+  await run('guide build: “Deficits become profits” (P12), “Say more” open', '#simulator', sim(9, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('guide build: first principles R5, the mechanism open', '#simulator', sim(5, 12), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('guide build: first principles R7, the mechanism open', '#simulator', sim(8, 12), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('guide build: first principles R8', '#simulator', sim(9, 12), 1280, 760);
-  await run('guide build: the guide’s close, the reminder open', '#simulator', sim(52), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
+  await run('guide build: the guide’s close, the reminder open', '#simulator', sim(43), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
   /* round 5b (16 Nov 2026): a hint shown, the lever row with two pulled, both first openings held at one moment.
      The hints and the openings stay away while isx-tips-sim is 'off' (every other state here), so these states take it off. */
   const first = { ...seen, 'isx-tips-sim': null, 'isx-simtour': 'off', 'isx-open-circuit': '1', 'isx-open-sim': '1' };
