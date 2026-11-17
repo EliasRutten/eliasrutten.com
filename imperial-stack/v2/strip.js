@@ -12,7 +12,7 @@
   var root = X.root, $ = X.$, hud = root.querySelector('.hud-top'), seg = hud && hud.querySelector('.seg'), tgl = $('tgl'), msw = $('mswitch');
   if (!hud || !seg) return;
 
-  var HUE = { map: '#ffb547', arm: '#44d7ec', fin: '#ffd27a', story: '#e4ebf1', chain: '#e4ebf1' };
+  var HUE = { map: '#ffb547', profit: '#d78bff', arm: '#44d7ec', fin: '#ffd27a', story: '#e4ebf1', chain: '#e4ebf1' };
   var strip = document.createElement('div');
   strip.className = 'strip3'; strip.id = 'isx-strip';
   hud.insertBefore(strip, seg);

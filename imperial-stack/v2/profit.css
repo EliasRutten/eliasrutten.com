@@ -1,0 +1,167 @@
+/* The Imperial Stack v2 · profit.css (profit tab build 1, 17 Nov 2026). Linked after clarity.css; every rule starts with #isx-root.
+   The profit dollar's layout (Elias, 17 Nov): statistics and chart on top, at full width; the text under them; the page scrolls,
+   and the bar stays at the foot of the screen. Chart colours are set in v2/profit.js (the set checked on #0a131d). */
+
+/* ---------- the tab in the frame ---------- */
+#isx-root.v-profit .frame { overflow: visible; overflow: clip; background: radial-gradient(ellipse 90% 520px at 50% 300px, #0d1a29 0%, #070c14 62%, var(--bg) 100%); }
+#isx-root.v-profit #isx-cmd, #isx-root.v-profit #isx-mstep, #isx-root.v-profit #isx-vchip, #isx-root.v-profit #isx-rkick { display: none; }
+#isx-root.v-profit .below { display: none; }
+#isx-root #isx-scene-profit { padding: 96px 22px 16px; }
+#isx-root.v-profit #isx-tabs { position: sticky; inset: auto; bottom: 10px; z-index: 6; margin: 0 18px 12px; }
+#isx-root.v-profit #isx-tabs .rt { background: #0a121b; box-shadow: 0 -10px 26px 4px rgba(4, 7, 11, .92); }
+
+#isx-root .pf { display: flex; flex-direction: column; gap: 12px; --pi3: #8496a5; --pgold: #ffb547; }
+#isx-root .pf.loading .pf-fig::after { content: "Loading the figures"; position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--pi3); }
+
+/* ---------- the station's head: its question ---------- */
+#isx-root .pf-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; padding: 0 4px; }
+#isx-root .pf-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--pi3); }
+#isx-root .pf-k b { font-weight: 400; color: var(--pgold); }
+#isx-root .pf-k i { font-style: normal; margin: 0 3px; }
+#isx-root .pf-q { margin: 3px 0 0; font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1.08; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+#isx-root .pf-jump { display: flex; gap: 8px; padding-bottom: 3px; }
+#isx-root .pf-jump button { height: 32px; padding: 0 14px; border: 1px solid #2b3a49; border-radius: 999px; background: rgba(10, 18, 27, .6); color: var(--ink2); cursor: pointer; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; transition: color .18s, border-color .18s; }
+#isx-root .pf-jump button:hover { color: var(--ink); border-color: #4a6076; }
+#isx-root .pf-jump button span { color: var(--pgold); margin-left: 3px; }
+
+/* ---------- the board: views, tiles, one chart ---------- */
+#isx-root .pf-board { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; padding: 12px 16px 10px; background: #0a131d; border: 1px solid var(--line); border-radius: 14px 14px 8px 8px; box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .9); }
+#isx-root .pf-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+#isx-root .pf-chips .cl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--pi3); margin-right: 2px; }
+#isx-root .pf-chips .gap { width: 12px; }
+#isx-root .pf-chip { height: 30px; padding: 0 12px; border: 1px solid #253442; border-radius: 999px; background: transparent; color: var(--ink2); cursor: pointer; font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; white-space: nowrap; transition: background .18s, color .18s, border-color .18s; }
+#isx-root .pf-chip:hover { color: var(--ink); border-color: #3a4d5e; }
+#isx-root .pf-chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#isx-root .pf-bhead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 14px; margin-top: 2px; }
+#isx-root .pf-bhead h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+#isx-root .pf-unit { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--pi3); }
+#isx-root .pf-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; }
+#isx-root .pf-tiles:empty { display: none; }
+#isx-root .pf-tiles.eq { grid-template-columns: 1.35fr repeat(6, minmax(0, 1fr)); }
+#isx-root .pf-tile { position: relative; padding: 7px 10px 6px; border: 1px solid var(--line); border-radius: 9px; min-width: 0; }
+#isx-root .pf-tiles.eq .pf-tile { padding-left: 22px; }
+#isx-root .pf-tile .op { position: absolute; left: 8px; top: 9px; font-family: var(--mono); font-size: 13px; color: var(--pi3); }
+#isx-root .pf-tile .v { display: flex; align-items: center; gap: 7px; font-family: var(--display); font-weight: 600; font-size: 23px; letter-spacing: .02em; line-height: 1.1; color: var(--ink); white-space: nowrap; }
+#isx-root .pf-tile .sw { flex: none; width: 10px; height: 10px; border-radius: 2px; }
+#isx-root .pf-tile .sw.ln { height: 3px; width: 14px; border-radius: 1.5px; }
+#isx-root .pf-tile .k { margin-top: 2px; color: var(--ink2); font-size: 12px; line-height: 1.25; }
+#isx-root .pf-tile .d { color: var(--pi3); font-size: 10.5px; font-family: var(--mono); letter-spacing: .04em; }
+#isx-root .pf-tile.big .v { color: #fff; }
+#isx-root .pf-tile.empty { border-style: dashed; }
+#isx-root .pf-tile.empty .v { color: var(--pi3); }
+#isx-root .pf-reading { margin: 0; min-height: 21px; color: var(--ink2); font-size: 13.5px; }
+#isx-root .pf-reading b { color: var(--ink); font-weight: 500; }
+#isx-root .pf-fig { position: relative; min-width: 0; margin: 0; height: clamp(300px, calc(100vh - 414px), 640px); }
+#isx-root .pf-board.has-tiles .pf-fig { height: clamp(290px, calc(100vh - 484px), 600px); }
+#isx-root .pf-fig svg { display: block; width: 100%; height: 100%; touch-action: pan-y; overflow: visible; }
+#isx-root .pf-fig svg text { font-family: var(--mono); font-size: 10.5px; fill: #7f91a0; }
+#isx-root .pf-fig svg text.lb { font-family: var(--sans); font-size: 12px; fill: #9aabba; paint-order: stroke; stroke: #0a131d; stroke-width: 3px; stroke-linejoin: round; }
+#isx-root .pf-fig svg text.lv { font-family: var(--display); font-size: 15px; font-weight: 600; fill: #e4ebf1; paint-order: stroke; stroke: #0a131d; stroke-width: 4px; stroke-linejoin: round; }
+#isx-root .pf-fig svg text.big { font-family: var(--display); font-size: 38px; font-weight: 600; fill: #ffb547; }
+#isx-root .pf-fig svg text.rk { font-size: 9.5px; letter-spacing: .14em; fill: #7f91a0; paint-order: stroke; stroke: #0a131d; stroke-width: 4px; stroke-linejoin: round; }
+#isx-root .pf-fig svg .col { transition: opacity .2s; }
+#isx-root .pf-fig svg [tabindex]:focus-visible { outline: 2px solid var(--pgold); outline-offset: 2px; }
+#isx-root .pf-tw { position: absolute; inset: 0; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+#isx-root .pf-tw table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+#isx-root .pf-tw table + table { margin-top: 14px; }
+#isx-root .pf-tw caption { text-align: left; padding: 8px 10px; color: var(--ink2); font-size: 12px; }
+#isx-root .pf-tw th, #isx-root .pf-tw td { padding: 4px 9px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; color: var(--ink); }
+#isx-root .pf-tw thead th { position: sticky; top: 0; background: #0d1823; color: var(--ink2); font-weight: 500; font-size: 11px; white-space: normal; vertical-align: bottom; }
+#isx-root .pf-tw th:first-child, #isx-root .pf-tw td:first-child { text-align: left; color: var(--ink2); font-weight: 400; }
+#isx-root .pf-tw table.wrap td, #isx-root .pf-tw table.wrap th { white-space: normal; text-align: left; vertical-align: top; min-width: 120px; }
+#isx-root .pf-tw table.wrap tbody th { color: var(--ink); font-weight: 500; }
+#isx-root .pf-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; min-height: 30px; gap: 6px 14px; }
+#isx-root .pf-scrub { flex: 1 1 260px; display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--pi3); }
+#isx-root .pf-scrub:empty, #isx-root .pf-lg:empty { display: none; }
+#isx-root .pf-scrub input { flex: 1; min-width: 0; height: 24px; accent-color: #ffb547; }
+#isx-root .pf-lg { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink2); font-size: 12px; }
+#isx-root .pf-lg span { display: inline-flex; align-items: center; gap: 6px; }
+#isx-root .pf-lg i { width: 14px; height: 3px; border-radius: 1.5px; display: inline-block; flex: none; }
+#isx-root .pf-lg i.bx { width: 10px; height: 10px; border-radius: 2px; }
+#isx-root .pf-lg i.ol { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink2); }
+#isx-root .pf-lg i.dm { width: 9px; height: 9px; border-radius: 2px; transform: rotate(45deg); }
+#isx-root .pf-tbtn { height: 30px; padding: 0 13px; border: 1px solid #253442; border-radius: 999px; background: transparent; color: var(--ink2); cursor: pointer; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+#isx-root .pf-tbtn:hover { color: var(--ink); border-color: #3a4d5e; }
+#isx-root .pf-tbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#isx-root .pf-tip { position: absolute; z-index: 6; pointer-events: none; min-width: 180px; max-width: 290px; padding: 8px 10px; background: rgba(6, 11, 17, .97); border: 1px solid #253442; border-radius: 8px 8px 4px 4px; font-size: 12px; color: var(--ink2); box-shadow: 0 12px 30px -12px #000; }
+#isx-root .pf-tip b { display: block; color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+#isx-root .pf-tip div { display: flex; justify-content: space-between; gap: 14px; }
+#isx-root .pf-tip div span:last-child { color: var(--ink); white-space: nowrap; }
+#isx-root .pf-tip[hidden] { display: none; }
+
+/* ---------- the text under the board ---------- */
+#isx-root .pf-text { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr) minmax(0, .85fr); gap: 10px 34px; padding: 84px 8px 26px; scroll-margin-top: 14px; outline: none; }
+#isx-root .pf-ck { margin: 0 0 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--pgold); }
+#isx-root .pf-side .pf-ck:not(:first-child) { margin-top: 18px; }
+#isx-root .pf-text p { margin: 0 0 11px; }
+#isx-root .pf-x { font-size: 17px; line-height: 1.5; color: var(--ink); }
+#isx-root .pf-rd { padding-left: 12px; border-left: 2px solid var(--pgold); font-size: 15px; line-height: 1.5; color: var(--ink); }
+#isx-root .pf-why { padding: 9px 12px 10px; border: 1px solid #253442; border-radius: 10px; color: var(--ink2); font-size: 13.5px; line-height: 1.45; background: rgba(255, 181, 71, .04); }
+#isx-root .pf-why b { display: block; margin-bottom: 2px; font-family: var(--mono); font-weight: 400; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--pgold); }
+#isx-root .pf-nt { color: var(--ink2); font-size: 13px; }
+#isx-root .pf-mech p { font-size: 14.5px; line-height: 1.55; color: #c6d1db; }
+#isx-root .pf-src { font-size: 12px; line-height: 1.5; color: var(--pi3); }
+#isx-root .pf-src a { color: var(--ink2); text-underline-offset: 2px; }
+#isx-root .pf-src a:hover { color: var(--ink); }
+#isx-root .pf-doors { display: grid; gap: 8px; }
+#isx-root .pf-door { display: block; width: 100%; padding: 9px 13px 10px; border: 1px solid #2b3a49; border-radius: 12px; background: rgba(10, 18, 27, .6); color: var(--ink2); text-align: left; cursor: pointer; transition: border-color .18s, background .18s; }
+#isx-root .pf-door .dl { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+#isx-root .pf-door .dl b { font-weight: 600; margin-right: auto; }
+#isx-root .pf-door .dl i { font-style: normal; color: var(--pgold); font-size: 18px; line-height: 1; }
+#isx-root .pf-door small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.35; color: var(--ink2); }
+#isx-root button.pf-door:hover { border-color: #4a6076; background: rgba(16, 27, 39, .8); }
+#isx-root .pf-door.go { border-top: 2px solid var(--dc, #ffd27a); border-radius: 4px 4px 12px 12px; }
+#isx-root .pf-door.go .dl i { color: var(--dc, #ffd27a); }
+#isx-root .pf-door.lock { border-style: dashed; cursor: default; background: transparent; }
+#isx-root .pf-door.lock .dl { color: var(--ink2); }
+#isx-root .pf-door.lock .dl svg { flex: none; color: var(--pi3); }
+#isx-root .pf-door.lock .dl em { font-style: normal; font-family: var(--mono); font-weight: 400; font-size: 9px; letter-spacing: .12em; color: var(--pgold); border: 1px solid rgba(255, 181, 71, .45); border-radius: 999px; padding: 2px 7px 1px; white-space: nowrap; }
+
+/* a link from a card of the machinery into this tab */
+#isx-root .pf-in { margin: 10px 0 0; }
+#isx-root .pf-in a { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid rgba(215, 139, 255, .5); border-radius: 999px; color: #e7c9ff; text-decoration: none; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
+#isx-root .pf-in a:hover { background: rgba(215, 139, 255, .1); color: #fff; }
+#isx-root .pf-in a i { font-style: normal; font-size: 14px; line-height: 1; }
+/* the ring's four doors */
+#isx-root .rgdoors:has(> .rgdoor:nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#isx-root .rgdoors:has(> .rgdoor:nth-child(4)) .rgdoor { min-height: 0; padding-bottom: 12px; }
+
+/* ---------- narrower screens ---------- */
+@media (max-width: 1180px) {
+  #isx-root .pf-text { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #isx-root .pf-side { grid-column: 1 / 3; }
+  #isx-root .pf-side .pf-doors { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  #isx-root .pf-tiles.eq { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #isx-root .pf-tiles.eq .pf-tile.big { grid-column: 1 / 3; }
+  #isx-root .pf-board.has-tiles[data-st="regime"] .pf-fig { height: clamp(280px, calc(100vh - 546px), 580px); }
+}
+@media (max-width: 760px) {
+  #isx-root #isx-scene-profit { padding: 6px 10px 10px; }
+  #isx-root.v-profit #isx-tabs { margin: 0 8px 8px; bottom: 6px; }
+  #isx-root .pf { gap: 10px; }
+  #isx-root .pf-q { font-size: 23px; }
+  #isx-root .pf-jump { width: 100%; }
+  #isx-root .pf-jump button { flex: 1; padding: 0 8px; }
+  #isx-root .pf-board { padding: 11px 11px 10px; }
+  #isx-root .pf-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -11px; padding: 0 11px 2px; scrollbar-width: none; }
+  #isx-root .pf-chips::-webkit-scrollbar { display: none; }
+  #isx-root .pf-chip { height: 34px; flex: none; }
+  #isx-root .pf-chips .cl { flex: none; }
+  #isx-root .pf-bhead h3 { font-size: 18px; }
+  #isx-root .pf-tiles, #isx-root .pf-tiles.eq { grid-template-columns: 1fr 1fr; }
+  #isx-root .pf-tiles.eq .pf-tile.big { grid-column: 1 / 3; }
+  #isx-root .pf-tile .v { font-size: 25px; }
+  #isx-root .pf-reading { font-size: 14px; }
+  #isx-root .pf-fig, #isx-root .pf-board.has-tiles .pf-fig, #isx-root .pf-board.has-tiles[data-st="regime"] .pf-fig { height: 300px; }
+  #isx-root .pf-fig.tall { height: 360px; }
+  #isx-root .pf-fig[data-lens="pic"], #isx-root .pf-fig[data-lens="pos"] { height: 350px; }
+  #isx-root .pf-fig[data-lens="ord"] { height: 440px; }
+  #isx-root .pf-fig[data-lens="all"] { height: 380px; }
+  #isx-root .pf-fig[data-lens="sum"], #isx-root .pf-fig[data-lens="why"] { height: 500px; }
+  #isx-root .pf-foot { justify-content: space-between; }
+  #isx-root .pf-text { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 18px 4px 20px; }
+  #isx-root .pf-side { grid-column: auto; }
+  #isx-root .pf-x { font-size: 16px; }
+  #isx-root .rgdoors:has(> .rgdoor:nth-child(4)) { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .pf * { transition: none !important; } }
