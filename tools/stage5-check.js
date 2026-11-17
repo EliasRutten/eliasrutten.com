@@ -154,6 +154,7 @@ const AUDITOR = () => {
         ok(`flicker (${tag}): the episode “${D.ep}” opens from step ${D.from + 1} of the guide`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === 0, D.li)); inEp++;
       }
       await step(nm + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:${D.li}:${D.si - 1}"]`), 2100);
+      await step(nm + ': from its setup page to the call itself', () => js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }), 2100);   /* clarity patch: a call opens on its setup page */
       await step(nm + ': the other path', () => click(p, '#isx-sn-body [data-fk="alt"]'), 2100); links++;
       for (let i = 1; i < D.n; i++) { await step(nm + ': link ' + (i + 1), key('ArrowRight'), 2100); links++; }
       await step(nm + ': the crisis card', key('ArrowRight'), 2100);

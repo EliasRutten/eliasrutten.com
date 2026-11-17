@@ -122,6 +122,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(350);
   ok('guide: the step before a decision says so on Next', await p.evaluate(() => /Next · your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* clarity patch: past the call's setup page, to the call itself */
   ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at the White House/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
   await p.click('#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(300);
   const chain = [];

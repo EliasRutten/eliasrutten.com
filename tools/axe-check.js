@@ -243,6 +243,18 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('clarity: the full view at rest, lines in grey', '#simulator', fullv, 1280, 760);
   await run('clarity, phone: a step with its numbers in the card', '#simulator', cl(12), 390, 844);
   await run('clarity: 1280 × 760, tiles above the card', '#simulator', cl(9), 1280, 760);
+  /* clarity patch (17 Nov 2026): the calls as screens: the first call's three pages, a call's “More context” open, the calendar's line,
+     an episode's call with its way back, the page at 1024 and on a phone, and the entry with “Show hints again” */
+  const dc = (l, b2, dp) => ({ ...seen, 'isx-way': 'guide', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l, b: b2, ph: 'ask', dp }) });
+  await run('call: the first call, page 1 (the problem)', '#simulator', dc(0, 9, 0), 1440, 900);
+  await run('call: the first call, page 2 (your seat), its terms', '#simulator', dc(0, 9, 1), 1440, 900);
+  await run('call: the first call itself, tiles and Substack', '#simulator', dc(0, 9, 2), 1440, 900);
+  await run('call: More context open, the calendar’s line shown', '#simulator', dc(0, 14, 1), 1280, 760, async p => { await p.click('#isx-sn-body .dmore'); await p.focus('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(250); });
+  await run('call: an episode’s call (oil), with the way back', '#simulator', dc(14, 0, 1), 1280, 760);
+  await run('call: 1024 × 768, the yen call', '#simulator', dc(18, 0, 1), 1024, 768);
+  await run('call, phone: the first call itself', '#simulator', dc(0, 9, 2), 390, 844);
+  await run('call, phone: a setup page', '#simulator', dc(0, 19, 0), 390, 844);
+  await run('call: the entry with “Show hints again”', '#simulator', { ...seen, 'isx-sim-mode': 'story', 'isx-hints-off': '1', '__pos': JSON.stringify({ l: 0, b: -1 }) }, 1440, 900);
   /* profit tab build 1: the profit dollar's stations, views, a table, the text under the board, a hint, and the ring's four doors */
   const pf = (i, v, t) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };
   for (const [i, v] of [[0, 'pic'], [0, 'nat'], [0, 'own'], [0, 'roc'], [1, 'hold'], [1, 'flow'], [1, 'list'], [1, 'home'], [1, 'pay'], [2, 'all'], [2, 'sum'], [2, 'pos'], [2, 'ord'], [3, 'wt'], [3, 'capex'], [3, 'ni'], [3, 'why']])

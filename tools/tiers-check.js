@@ -49,6 +49,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
     const out = {}, go = async t => { document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(); await new Promise(r => setTimeout(r, 300)); return ((document.querySelector('#isx-sn-body .s2why') || {}).textContent || '') + ' ' + ((document.querySelector('#isx-sn-body .sn-why p') || {}).textContent || ''); };
     out.dc = await go('0:0'); out.who = await go('0:9'); out.yip = await go('0:20'); out.t25 = await go('0:25');
     document.querySelector(`#isx-s2bar [data-rt-t="0:26"]`).click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));   /* clarity patch: past the call's setup page */
     out.q06 = (document.querySelector('#isx-sn-body .dq') || {}).textContent || ''; out.ph = ISX.sim.ph; return out;
   });
   ok(/Start with the shopper\./.test(ledes.dc), 'chapter 1 opens with its lead line', ledes.dc);
@@ -297,7 +298,8 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
     for (const l of [pi, 0]) { const n = L[l].steps.length;
       for (let i = 0; i <= n; i++) { const t = document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`); if (!t) continue;
         const dk = document.querySelector(`#isx-s2bar [data-rt-t="d:${l}:${i - 1}"]`);
-        if (dk) { dk.click(); await w(60); out.cards.push(grab(l, i, 'ask')); document.querySelector('#isx-sn-body [data-fk="alt"]').click(); await w(60);
+        if (dk) { dk.click(); await w(60); const lp = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (lp) { lp.click(); await w(60); }   /* clarity patch: the call itself is the last page */
+          out.cards.push(grab(l, i, 'ask')); document.querySelector('#isx-sn-body [data-fk="alt"]').click(); await w(60);
           for (let c = 0; c < 9; c++) { out.cards.push(grab(l, i, ISX.sim.ph)); if (ISX.sim.ph === 'crisis') break; document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await w(60); } }
         document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`).click(); await w(80); out.cards.push(grab(l, i, i === n ? 'end' : 'step')); } }
     out.chOf = L[0].steps.map((s, i) => { const b = document.querySelector(`#isx-s2bar [data-rt-t="0:${i}"]`); return b ? [...document.querySelectorAll('#isx-s2bar .rt-segs > .rt-s')].findIndex(sg => sg.contains(b)) : -1; });

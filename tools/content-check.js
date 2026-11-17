@@ -127,14 +127,14 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
       }
       links(S, h);
       if (S.line === 0 && S.beat >= L.steps.length) break;
-      if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click();
+      if (S.ph === 'ask' && document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]')) document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click();   /* clarity patch: on a call's setup page Next turns the page */
       await wait(40);
     }
     /* clarity build: three of the seven decisions sit in episodes; each episode is walked from its first step to its return to the guide */
     for (const E of S0.lines.filter(x => x.ep)) { const t = document.createElement('button'); t.dataset.ep = E.ep; t.hidden = true; document.getElementById('isx-sn-body').appendChild(t); t.click(); await wait(120);
       if (ISX.sim.beat < 0) { ISX.route.next('sim').click(); await wait(60); }
       for (let g = 0; g < 60; g++) { const S = ISX.sim; if (!S.lines[S.line].ep) break; out.states++; links(S, (document.querySelector('#isx-sn-body h3') || {}).textContent || '');
-        if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click(); await wait(40); } }
+        if (S.ph === 'ask' && document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]')) document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click();   /* clarity patch: on a call's setup page Next turns the page */ await wait(40); } }
     return out; });
   ok(!walk.early.length, 'nothing is shown before its step (' + walk.states + ' states walked)', walk.early.slice(0, 6).join('; '));
   ok(walk.seen.length === 37, 'all 37 chain links were walked (22 in the guide, 15 in its episodes)', String(walk.seen.length));
@@ -163,7 +163,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
       const walk = async (start) => { const out = []; document.getElementById('isx-sn-pickb').click(); await w(80); document.querySelector(`#isx-sn-pick [data-sl="${start}"]`).click(); await w(120);
         for (let g = 0; g < 400; g++) { const S = ISX.sim, Ln = S.lines[S.line]; if (S.beat >= 0 && S.beat < Ln.steps.length || S.ph) out.push(Object.assign(card(), { at: (Ln.gnd ? 'basics ' : Ln.pre ? 'first principles ' : 'step ') + (S.beat + 1) + (S.ph ? ' ' + S.ph + (S.ph === 'chain' ? ' ' + (S.c + 1) : '') : ''), line: S.line }));
           if (S.line === 0 && S.beat >= Ln.steps.length) break;
-          if (S.ph === 'ask') document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click(); await w(35); }
+          if (S.ph === 'ask' && document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]')) document.querySelector('#isx-sn-body .sn-opt[data-fk="alt"]').click(); else ISX.route.next('sim').click();   /* clarity patch: on a call's setup page Next turns the page */ await w(35); }
         return out; };
       const ALT = { deficit: ['ca'] };   /* clarity build: the primer now starts from the deficit with the world, whose tip is the current account's */
       const first = (cards, list, fold) => list.map(([k, re]) => { const i = cards.findIndex(c => re.test(c.vis) || (fold && re.test(c.fold))); if (i < 0) return null; const c = cards[i];
