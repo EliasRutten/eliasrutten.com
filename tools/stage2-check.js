@@ -117,10 +117,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('guide: the picker lists the basics, first principles, the three acts and the six episodes (clarity build)', await p.evaluate(() => !document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-sn-pick .pk-l').length === 11));
   await p.evaluate(() => document.querySelectorAll('#isx-sn-pick .pk-l')[5].click()); await p.waitForTimeout(300);
   ok('guide: an episode opens with its steps in the bar (clarity build: the oil shock, six steps and one call)', await p.evaluate(() => document.getElementById('isx-s2tray-pick').hidden && document.querySelectorAll('#isx-s2bar .rt-s.wide .rt-m:not(.rt-e)').length === 6 && /Episode/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
-  await p.evaluate(() => document.querySelector('#isx-sn-body .sn-q2').click()); await p.waitForTimeout(300);
-  if (await p.$('#isx-sn-body [data-way="guide"]')) { await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(250);
-  /* B1-4: a decision is its own card between two steps; the other path is a chain of reveals that ends on a crisis card */
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:18"]').click()); await p.waitForTimeout(300); /* tiers A: the first decision now follows step 19 */
+  /* clarity build: the call on the oil price moved, with its chain, into the episode “The oil shock”; the episode's opening card starts it,
+     and its first step is the step before the call */
+  await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(350);
   ok('guide: the step before a decision says so on Next', await p.evaluate(() => /Next · your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
   ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at the White House/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
@@ -129,7 +128,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   for (let i = 0; i < 9; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
   ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 6 && chain.slice(0, 5).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[5].k) && /Back to\s*What happened/i.test(chain[5].nx), chain);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^20\/52$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Let the market price the war/.test(b.querySelector('.dyou').textContent) && /Washington added barrels and managed the news\./.test(b.querySelector('.dyou').textContent); }));
+  ok('guide: back on what happened, the card says how the call compares', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /What happened/.test(b.querySelector('.s2k').textContent) && /^02\/06$/.test(b.querySelector('.sn-cnt').textContent.replace(/\s+/g, '')) && /You chose Let the market price the war/.test(b.querySelector('.dyou').textContent) && /Washington added barrels and managed the news\./.test(b.querySelector('.dyou').textContent); }));
   await p.click('#isx-s2fold'); await p.waitForTimeout(250);
   ok('card: folds to its title', await p.evaluate(() => document.getElementById('isx-snarr').classList.contains('folded') && getComputedStyle(document.querySelector('#isx-sn-body .s2p')).display === 'none'));
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
@@ -137,7 +136,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   /* ---------- 4. the Simulator: full view, parity ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'full' });
   const par = await p.evaluate(() => { const c = document.getElementById('isx-cock'), v = s => [...c.querySelectorAll(s)].filter(x => x.getClientRects().length && !x.classList.contains('gh')).length; return { actors: v('#isx-rmap .fn'), relations: c.querySelectorAll('#isx-rmap .fe:not(.gh)').length, levers: v('.lv'), plays: v('.pchip'), card: v('.s2card'), bar: v('.s2bar') }; });
-  ok('full view: every node (29 actors, 8 gauge nodes), relation and play is on the stage; no card; the bar holds the switch', par.actors === 37 && par.relations === 75 && par.plays === 11 && par.card === 0 && par.bar === 1, par);
+  ok('full view: every node (29 actors, 8 gauge nodes), relation and episode is on the stage (clarity build: six episodes in the tray); no card; the bar holds the switch', par.actors === 37 && par.relations === 75 && par.plays === 6 && par.card === 0 && par.bar === 1, par);
   await p.evaluate(() => document.querySelector('[data-s4tab="levers"]').click()); await p.waitForTimeout(300);
   ok('full view: the Levers tab shows all 17 levers', await p.evaluate(() => [...document.querySelectorAll('#isx-s2tray-lev .lv')].filter(x => x.getClientRects().length).length === 17 && document.getElementById('isx-s2tray-play').hidden));
   await p.evaluate(() => document.querySelector('[data-s4tab="plays"]').click()); await p.waitForTimeout(300);
@@ -148,9 +147,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('full view: an actor opens a floating dossier, and its indicator shows in it', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && /Bills, share of marketable debt: 22\.2%/.test((d.querySelector('.dtile') || {}).textContent || '') && /Setting/.test(d.querySelector('.dtile .dr').textContent); }));
   await p.evaluate(() => document.querySelector('#isx-cock .dossier .dx').click());
   await p.evaluate(() => document.querySelectorAll('#isx-cock .pchip')[0].click()); await p.waitForTimeout(300);
-  ok('full view: a play runs in the dossier', await p.evaluate(() => /Play ·/.test(document.querySelector('#isx-cock > .dossier').textContent) && !!document.getElementById('isx-pn')));
+  ok('full view: an episode runs in the dossier', await p.evaluate(() => /Episode ·/.test(document.querySelector('#isx-cock > .dossier').textContent) && !!document.getElementById('isx-pn')));
   await p.evaluate(() => document.querySelector('.sn-asstory').click()); await p.waitForTimeout(400);
-  ok('full view: “Follow this play in the guide” opens it as a mechanism', await p.evaluate(() => document.getElementById('isx-cock').classList.contains('st') && /Mechanism/.test(document.querySelector('#isx-sn-body .s2k').textContent)));
+  ok('full view: “Follow this episode in the guide” opens the episode’s opening card', await p.evaluate(() => document.getElementById('isx-cock').classList.contains('st') && /Episode/.test(document.querySelector('#isx-sn-body .s2k').textContent) && ISX.sim.lines[ISX.sim.line].ep === 'oil' && ISX.sim.beat === -1));
   await p.evaluate(() => document.querySelector('.smode [data-sm="full"]').click()); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelector('.fsw [data-fm="stack"]').click()); await p.waitForTimeout(500);
   ok('the capital stack still opens, with the bottom tabs and the sales list', await p.evaluate(() => !!document.getElementById('isx-tower') && !!document.querySelector('#isx-fin #isx-issue') && document.getElementById('isx-finmore').innerHTML === '' && document.getElementById('isx-tabs').getClientRects().length > 0));

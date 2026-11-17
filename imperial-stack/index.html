@@ -5891,7 +5891,9 @@ function indStates(act) {
   });
   return out;
 }
-const indWhen = I => { const f = I.first || {}, L = sLine(), pre = simOn() && L.pre, gnd = simOn() && L.gnd; return gnd && f.gnd ? 'the basics ' + f.gnd : pre && f.pre ? 'first principles ' + f.pre : f.main ? 'step ' + f.main : f.pre ? 'first principles ' + f.pre : ''; };
+/* clarity build: an indicator the guide's own steps never move first moves in an episode; the ledger and the breakdown name the episode and its step */
+const indWhen = I => { const f = I.first || {}, L = sLine(), pre = simOn() && L.pre, gnd = simOn() && L.gnd, ep = f.main || f.pre ? null : (simOn() && L.ep && f[L.id] ? L : SLINES.find(l => l.ep && f[l.id]));
+  return gnd && f.gnd ? 'the basics ' + f.gnd : pre && f.pre ? 'first principles ' + f.pre : f.main ? 'step ' + f.main : f.pre ? 'first principles ' + f.pre : ep ? ep.s + ', step ' + f[ep.id] : ''; };
 /* the breakdown: role, value, what it measures, what moves it and what it moves (the relations the guide has reached), source */
 function indTip(I) {
   const on = simOn() && !!SIM.R, re = on ? SIM.R.re : SALL.e, n = I.n, g = I.g, rc = ROLE[I.role][3];
@@ -8105,7 +8107,7 @@ const SPI = SLINES.findIndex(L => L.pre), SGI = SLINES.findIndex(L => L.gnd);
 /* content build: “Tokyo’s trilemma” lights the yen’s lines one step before the decision on the yen. The gauge stays an empty socket until
    the step that decision leads to, so its dated value (after the intervention) cannot answer the question first. */
 SLINES.forEach(L => { if (!(L.main || L.ep)) return; const yb = L.beats.findIndex(B => B.e.includes(EIDX['TSY>YEN'])); if (yb >= 0) ['yen', 'dxy'].forEach(id => { (INDX[id].at = INDX[id].at || {})[L.id] = yb + 1; }); });
-IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ gnd: f(SLINES[SGI]), pre: f(SLINES[SPI]), main: f(SLINES[0]) }, I.at || {}); });
+IND.forEach(I => { const f = L => { const k = L.beats.findIndex(B => B.e.some(e => I.rel.includes(e))); return k < 0 ? null : k + 1; }; I.first = Object.assign({ gnd: f(SLINES[SGI]), pre: f(SLINES[SPI]), main: f(SLINES[0]) }, ...SLINES.filter(l => l.ep).map(l => ({ [l.id]: f(l) })), I.at || {}); });
 /* the mechanisms, by where they sit: what Washington sets, the markets that carry it, the economy it lands in */
 const STIER = [['up', 'Upstream · the state and the rules', [0, 5, 10]], ['mid', 'Intermediate · the markets that carry it', [9, 1, 8, 2]], ['down', 'Downstream · where it lands', [4, 7, 6, 3]]];
 function simPickHTML() {

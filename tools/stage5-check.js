@@ -5,8 +5,9 @@
    --audit prints, for every step of first principles and of the guide, what the step has reached and what is on screen.
    Exits 1 on a failed check.
 
-   Flicker. Every step of first principles and of the guide (37), a step back, chapter jumps, every move of the nine plays and
-   the fourteen levers on and off are run with motion on, once with the pointer parked off the map and once resting on it.
+   Flicker. Every step of first principles and of the guide, every decision’s other path (the guide’s four and the three inside
+   episodes, opened from the step that offers the episode), a step back, chapter jumps, every move of the six episodes in the full
+   view’s tray and the fourteen levers of the first groups on and off are run with motion on, once with the pointer parked off the map and once resting on it.
    A MutationObserver records every class change on actors, gauge nodes, tags, relations, zones, levers and plays; the computed
    opacity of each is sampled every frame. A step fails if an element gains and loses the same class within it, or if its
    opacity turns round (up then down, or down then up). The card's own text swap (.s2body out / in) is not in scope. */
@@ -49,7 +50,7 @@ const AUDITOR = () => {
   const fns = [...cock.querySelectorAll('#isx-rmap .fn')], fes = [...cock.querySelectorAll('#isx-rmap .fe')];
   /* B1-3. An indicator is reached at the first step whose relations touch it, or at the step its data names (spec S1 §4.6) */
   const inds = S.indicators, IX = Object.fromEntries(inds.map(I => [I.id, I]));
-  const reached = I => !cum || (L.main && I.at && I.at.main != null ? S.beat + 1 >= I.at.main : I.rel.some(i => E.has(i)));
+  const reached = I => !cum || (I.at && I.at[L.id] != null ? S.beat + 1 >= I.at[L.id] : I.rel.some(i => E.has(i)));   /* clarity build: a literal step is keyed by the line’s id */
   const txt = (g, sel) => [...g.querySelectorAll(sel)].map(x => x.textContent.trim()).join('');
   let vals = 0, onMap = 0;
   fns.forEach(g => {
@@ -129,32 +130,45 @@ const AUDITOR = () => {
     for (let i = 2; i <= 10; i++) await step('first principles ' + i, key('ArrowRight'), 2100);   /* ten reveals since the guide build (16 Nov 2026) */
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
-    ok(`flicker (${tag}): the guide is at step 1 of 52`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0 && S.lines[S.line].steps.length === 52; }));
-    for (let i = 2; i <= 52; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
-    ok(`flicker (${tag}): stepped through all 52`, (await where(p)).beat === 51);
+    /* clarity build (17 Nov 2026): 43 steps in three acts; the length is read from the page and checked once, in the counts */
+    const N = await js(p, () => ISX.sim.lines[0].steps.length);
+    ok(`flicker (${tag}): the guide is at step 1 of ${N}`, await js(p, () => { const S = ISX.sim; return S.lines[S.line].main && S.beat === 0; }) && N === 43);
+    for (let i = 2; i <= N; i++) { for (let k = 0; k < 4 && (await where(p)).beat < i - 1; k++) await step('guide step ' + i + (k ? ' (move ' + (k + 1) + ')' : ''), () => fwd(p), 2100); }
+    ok(`flicker (${tag}): stepped through all ${N}`, (await where(p)).beat === N - 1);
     /* B1-4: each decision's other path, link by link, to its crisis card and back to what happened */
-    let links = 0;
-    for (const D of await js(p, () => ISX.sim.decisions)) {
-      await step('decision before step ' + (D.at + 1) + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:0:${D.at - 1}"]`), 2100);
-      await step('decision before step ' + (D.at + 1) + ': the other path', () => click(p, '#isx-sn-body [data-fk="alt"]'), 2100); links++;
-      for (let i = 1; i < D.chain.length; i++) { await step('chain before step ' + (D.at + 1) + ': link ' + (i + 1), key('ArrowRight'), 2100); links++; }
-      await step('chain before step ' + (D.at + 1) + ': the crisis card', key('ArrowRight'), 2100);
-      await step('chain before step ' + (D.at + 1) + ': one link back', key('ArrowLeft'), 2100);
-      await step('chain before step ' + (D.at + 1) + ': the crisis card again', key('ArrowRight'), 2100);
-      await step('chain before step ' + (D.at + 1) + ': back to what happened', key('ArrowRight'), 2100);
-      ok(`flicker (${tag}): the other path before step ${D.at + 1} ends on what happened`, await js(p, at => { const S = ISX.sim; return S.beat === at && !S.ph; }, D.at));
+    let links = 0, inEp = 0;
+    /* clarity build: four decisions sit in the guide; three sit in episodes (the oil shock, when calm breaks, the yen action). An episode is
+       opened as a visitor opens it, from the door on the guide’s step that offers it, and left by “Back to the guide” */
+    const DEC = await js(p, () => { const S = ISX.sim; return S.decisions.map(D => { let li = 0, si = D.at, ep = null, from = -1; if (si < 0) S.lines.forEach((l, i) => { if (!l.ep) return; const k = l.steps.findIndex(s => s.fk === D.k); if (k >= 0) { li = i; si = k; ep = l.ep; from = S.lines[0].steps.findIndex(s => s.k === ISX.episodes.find(e => e.id === l.ep).from); } }); return { k: D.k, n: D.chain.length, li, si, ep, from }; }); });
+    for (const D of DEC) {
+      const nm = (D.ep ? 'episode “' + D.ep + '”, ' : '') + 'decision before step ' + (D.si + 1);
+      if (D.ep) {
+        await step('guide: jump to step ' + (D.from + 1), () => click(p, `#isx-s2bar [data-rt-t="0:${D.from}"]`), 2400);
+        await p.waitForFunction(id => !!document.querySelector(`#isx-sn-body .cl-ep[data-ep="${id}"]`), D.ep, { timeout: 8000 }).catch(() => {});
+        await step('episode “' + D.ep + '”: open from step ' + (D.from + 1), () => click(p, `#isx-sn-body .cl-ep[data-ep="${D.ep}"]`), 2400);
+        ok(`flicker (${tag}): the episode “${D.ep}” opens from step ${D.from + 1} of the guide`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === 0, D.li)); inEp++;
+      }
+      await step(nm + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:${D.li}:${D.si - 1}"]`), 2100);
+      await step(nm + ': the other path', () => click(p, '#isx-sn-body [data-fk="alt"]'), 2100); links++;
+      for (let i = 1; i < D.n; i++) { await step(nm + ': link ' + (i + 1), key('ArrowRight'), 2100); links++; }
+      await step(nm + ': the crisis card', key('ArrowRight'), 2100);
+      await step(nm + ': one link back', key('ArrowLeft'), 2100);
+      await step(nm + ': the crisis card again', key('ArrowRight'), 2100);
+      await step(nm + ': back to what happened', key('ArrowRight'), 2100);
+      ok(`flicker (${tag}): the other path of the ${nm} ends on what happened`, await js(p, ([li, si]) => { const S = ISX.sim; return S.line === li && S.beat === si && !S.ph; }, [D.li, D.si]));
+      if (D.ep) { await step('episode “' + D.ep + '”: back to the guide', () => click(p, '#isx-sn-body [data-epback]'), 2400); ok(`flicker (${tag}): “Back to the guide” returns to step ${D.from + 1}`, await js(p, b => ISX.sim.line === 0 && ISX.sim.beat === b && !ISX.sim.ph, D.from)); }
     }
-    ok(`flicker (${tag}): 7 decisions, ${links} chain links walked`, links === 37, links);
-    await step('guide: jump to the last step', () => click(p, '#isx-s2bar [data-rt-t="0:36"]'), 2400);
+    ok(`flicker (${tag}): 7 decisions (4 in the guide, ${inEp} in episodes), ${links} chain links walked`, DEC.length === 7 && inEp === 3 && links === 37, { links, inEp });
+    await step('guide: jump to the last step', () => click(p, `#isx-s2bar [data-rt-t="0:${N - 1}"]`), 2400);
     await step('guide: closing card', key('ArrowRight'), 2300);
     await step('guide: one step back', key('ArrowLeft'), 2100);
     await step('guide: jump to chapter 3', () => click(p, '#isx-s2bar .rt-s .rt-sl', 3), 2400);
     await step('guide: jump to chapter 6', () => click(p, '#isx-s2bar .rt-s .rt-sl', 6), 2400);
     await step('guide: select an actor', () => js(p, () => document.querySelector('#isx-rmap .fn:not(.s4dim)').dispatchEvent(new MouseEvent('click', { bubbles: true }))), 1200);
     await step('guide: release it', key('Escape'), 1200);
-    await step('→ Plays', () => click(p, '[data-s4tab="plays"]'), 2400);
-    let moves = 0;
-    for (let i = 0; i < 9; i++) {
+    await step('→ Episodes', () => click(p, '[data-s4tab="plays"]'), 2400);
+    let moves = 0; const runs = await js(p, () => document.querySelectorAll('#isx-cock .pchip').length);   /* clarity build: the tray runs the six episodes */
+    for (let i = 0; i < runs; i++) {
       await step('play ' + (i + 1) + ': start', () => click(p, '#isx-cock .pchip', i), 1100); moves++;
       for (let s = 0; s < 14; s++) { const more = await js(p, () => { const n = document.getElementById('isx-pn'); return !!n && !/Finish/.test(n.textContent); }); if (!more) break; await step('play ' + (i + 1) + ': move ' + (s + 2), () => click(p, '#isx-pn'), 1000); moves++; }
       await step('play ' + (i + 1) + ': finish', () => click(p, '#isx-pn'), 1100);
@@ -162,7 +176,7 @@ const AUDITOR = () => {
     await step('→ Levers', () => click(p, '[data-s4tab="levers"]'), 2000);
     for (let i = 0; i < 14; i++) { await step('lever ' + (i + 1) + ' pulled', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); await step('lever ' + (i + 1) + ' released', () => click(p, `#isx-s2tray-lev .lv[data-l="${i}"]`), 900); }
     await step('→ back to the guide', () => click(p, '[data-s4tab="guide"]'), 2400);
-    ok(`flicker (${tag}): ${total.steps} steps (8 first principles, 52 guide, 7 decisions with their 37 chain links, ${moves} play moves, 17 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500, bad.length ? bad.slice(0, 8) : total);
+    ok(`flicker (${tag}): ${total.steps} steps (10 first principles, ${N} guide, 7 decisions with their 37 chain links, ${runs} episodes in the tray with ${moves} moves, 14 levers on and off), no class gained and lost within a step, no opacity that turns round`, bad.length === 0 && total.changes > 500 && runs === 6, bad.length ? bad.slice(0, 8) : total);
     ok(`flicker (${tag}): no page errors`, p._errs.length === 0, p._errs);
     await p.context().close();
   }
@@ -203,14 +217,14 @@ const AUDITOR = () => {
     await click(p, '#isx-sn-body .sn-q2'); await p.waitForTimeout(900);   /* the primer's relations fade out over a quarter of a second, as the guide's do */
     for (let i = 0; i < 10; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(900);   /* the relations of first principles fade out over a quarter of a second; 350 ms was too short on a slow machine (interface fixes) */
-    let seenSteps = 0;
-    for (let i = 0; i < 52; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
+    let seenSteps = 0; const N = await js(p, () => ISX.sim.lines[0].steps.length);
+    for (let i = 0; i < N; i++) { const a = await take(); if (a.line === 0 && a.beat === i) seenSteps++; for (let k = 0; k < 4 && (await where(p)).beat === i; k++) { await fwd(p); await p.waitForTimeout(300); } }
     await p.waitForTimeout(350);   /* the last relations fade in over a quarter of a second */
     const end = await take();
-    ok(`no early reveal (${w} px): opening card, 12 primer screens, 10 reveals of first principles and all 52 steps audited`, rows.length === 76 && seenSteps === 52, { rows: rows.length, seenSteps });   /* round 5b: the count follows the guide build's 12 and 10 (it still said 8 and 8) */
+    ok(`no early reveal (${w} px): opening card, 12 primer screens, 10 reveals of first principles and all ${N} steps audited`, rows.length === 24 + N && seenSteps === N && N === 43, { rows: rows.length, seenSteps });   /* round 5b: the count follows the guide build's 12 and 10 (it still said 8 and 8) */
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
     ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
-    ok(`no early reveal (${w} px): at the end of the guide everything is shown (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);
+    ok(`no early reveal (${w} px): on the guide’s closing card everything is shown, the episodes’ relations and indicators with it (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);
     if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips === 0, rows.map(a => a.chips).join(''));
     if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: nodes, relations | values on the map | indicators: reached, later'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.indicators.join(', ')].join(' | '))); console.log(''); }
     if (w === 1440) {
@@ -290,7 +304,7 @@ const AUDITOR = () => {
     await click(p, '[data-s4tab="levers"]'); await p.waitForTimeout(400); await click(p, '#isx-s2tray-lev .lv', 3); await p.waitForTimeout(300);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
-    ok('back to the guide: after a play and a lever, the guide picks up at the step it was left on (12 of 52), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*52$/.test((res.cnt || '').trim()) && /step 12 of 52/.test(lab) && res.sel === 0, { res, lab });
+    ok('back to the guide: after an episode in the tray and a lever, the guide picks up at the step it was left on (12 of 43), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*43$/.test((res.cnt || '').trim()) && /step 12 of 43/.test(lab) && res.sel === 0, { res, lab });
     ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
@@ -304,7 +318,7 @@ const AUDITOR = () => {
     ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 24” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 24' && !o.btnShown && !o.strip && o.old === 0, o);
     await p.context().close(); p = await page({}, { w, h, pos: '{"l":0,"b":9}' });
     const g = await js(p, onMap);
-    ok(`${w} px, step 10: 1 gauge node carries its value, 4 tags hang under their actors, the button reads “5 / 24” (tiers build A: the new chapter order) and is clear of the card and the bar`, g.live === 1 && g.sockets === 7 && g.tags === 4 && g.btn === '5 / 24' && g.btnShown && g.btnClear && !g.strip, g);
+    ok(`${w} px, step 10: 1 gauge node carries its value, 6 tags hang under their actors, the button reads “7 / 24” (clarity build: the loop comes first) and is clear of the card and the bar`, g.live === 1 && g.sockets === 7 && g.tags === 6 && g.btn === '7 / 24' && g.btnShown && g.btnClear && !g.strip, g);
     ok(`${w} px: the view does not scroll vertically`, !g.scrollY, g);
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(700);
     const f = await js(p, onMap);
@@ -322,11 +336,14 @@ const AUDITOR = () => {
     ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 24”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 24/.test(o.all) && o.mapVals === 0 && !o.btn, o);
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
     const g = await js(p, strip), play10 = await js(p, () => { const S = ISX.sim, L = S.lines[0], now = new Set(L.steps[9].e), prev = new Set(L.steps[8].e), fresh = [...now].filter(i => !prev.has(i)); return S.indicators.filter(I => I.rel.some(i => fresh.includes(i))).map(I => I.id); });
-    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 5 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 5 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
+    ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 7 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 7 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);
     ok('390 px, step 10: the chips are the indicators in play, no fixed set', g.chips.map(c => c[0]).sort().join() === (await js(p, () => [...document.querySelectorAll('#isx-rmap .gn.play, #isx-rmap .gt.play')].flatMap(x => x.dataset.ind.split(' ')).sort().join())), { chips: g.chips, play10 });
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":21}' });
     const t = await js(p, strip);
-    ok('390 px, step 22: diesel arrives as “first moved here”, inflation is in play', t.chips.some(c => c[0] === 'diesel' && c[2] === 'first moved here') && t.chips.some(c => c[0] === 'pce') && /All 24 indicators|All \d+ of 24/.test(t.all), t);
+    ok('390 px, step 22: bond volatility arrives as “first moved here”, the basis trade is in play', t.chips.some(c => c[0] === 'move' && c[2] === 'first moved here') && t.chips.some(c => c[0] === 'basis') && /All 16 of 24/.test(t.all), t);
+    /* clarity build: diesel and inflation first move in the episode “The oil shock”, at its fourth and third step */
+    { const q = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":14,"b":3}' }), e = await js(q, strip);
+      ok('390 px, the oil shock, step 4: diesel arrives as “first moved here”, inflation is in play', await js(q, () => ISX.sim.lines[ISX.sim.line].ep === 'oil') && e.chips.some(c => c[0] === 'diesel' && c[2] === 'first moved here') && e.chips.some(c => c[0] === 'pce') && /All \d+ of 24/.test(e.all) && q._errs.length === 0, e); await q.context().close(); }
     await js(p, () => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(350);
     const sh = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => e.getClientRects().length > 0, r = l.getBoundingClientRect(); return { open: !l.hidden, tabs: [...l.querySelectorAll('.ltabs [data-ltab]')].filter(v).length, cols: [...l.querySelectorAll('.lcol')].filter(v).length, rows: l.querySelectorAll('.lr.ind').length, full: r.left <= 1 && r.right >= innerWidth - 1 && r.height > innerHeight * .7 }; });
     ok('390 px: “All … ›” opens the ledger as a sheet: the four roles as tabs, one role at a time, 24 rows in all', sh.open && sh.tabs === 4 && sh.cols === 1 && sh.rows === 24 && sh.full, sh);
@@ -340,10 +357,10 @@ const AUDITOR = () => {
     const p = await page({ 'isx-sim-mode': 'full' });
     await click(p, '#isx-b1ind'); await p.waitForTimeout(350);
     const L = await js(p, () => { const l = document.getElementById('isx-b1led'), v = e => !!e && e.getClientRects().length > 0 && (!e.checkVisibility || e.checkVisibility()), rows = [...l.querySelectorAll('.lr.ind')], bar = document.getElementById('isx-s2bar').getBoundingClientRect(), r = l.getBoundingClientRect();
-      return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.lcol')].map(g => g.querySelectorAll('.lr.ind').length), roles: [...l.querySelectorAll('.lcol h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.ln').textContent.length > 2 && /\d/.test(x.querySelector('.lrb > b').textContent) && /^(step|first principles) \d+/.test(x.querySelector('.lrb > em').textContent)).length, detailsShown: [...l.querySelectorAll('.ld')].filter(v).length, srcShown: v(l.querySelector('.lsrc3')), slots: l.querySelectorAll('.lr.slot').length, slotDigits: [...l.querySelectorAll('.lr.slot')].filter(x => !/not yet measured/.test(x.textContent) || /\d/.test(x.textContent)).length, figs: l.querySelectorAll('.lr.fig').length, sectors: l.querySelectorAll('.secb3').length, link: /Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings: inflation moved the policy rate on 16 September 2026\./.test(l.querySelector('.lfoot').textContent), source: !!l.querySelector('.lsrcd .lsrc3'), fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.top >= 0 && r.left >= 0 && r.right <= innerWidth };
+      return { open: !l.hidden, rows: rows.length, per: [...l.querySelectorAll('.lcol')].map(g => g.querySelectorAll('.lr.ind').length), roles: [...l.querySelectorAll('.lcol h4 b')].map(e => e.textContent), three: rows.filter(x => x.querySelector('.ln').textContent.length > 2 && /\d/.test(x.querySelector('.lrb > b').textContent) && /^(step|first principles) \d+|^[A-Z][a-z -]+, step \d+/.test(x.querySelector('.lrb > em').textContent)).length, detailsShown: [...l.querySelectorAll('.ld')].filter(v).length, srcShown: v(l.querySelector('.lsrc3')), slots: l.querySelectorAll('.lr.slot').length, slotDigits: [...l.querySelectorAll('.lr.slot')].filter(x => !/not yet measured/.test(x.textContent) || /\d/.test(x.textContent)).length, figs: l.querySelectorAll('.lr.fig').length, sectors: l.querySelectorAll('.secb3').length, link: /Settings move the conduits; conduits carry them to the outcomes; stress gauges say when a conduit can snap; outcomes feed back into the settings: inflation moved the policy rate on 16 September 2026\./.test(l.querySelector('.lfoot').textContent), source: !!l.querySelector('.lsrcd .lsrc3'), fit: l.scrollHeight <= l.clientHeight + 1, aboveBar: r.bottom <= bar.top + 1, inside: r.top >= 0 && r.left >= 0 && r.right <= innerWidth };
     });
     ok('ledger: all 24 indicators in four roles: Settings, Conduits, Stress gauges, Outcomes · balances (3, 8, 3, 10)', L.open && L.rows === 24 && L.per.join() === '3,8,3,10' && L.roles.join() === 'Settings,Conduits,Stress gauges,Outcomes · balances', L);
-    ok('ledger: each row shows a name, a value and its first step; breakdowns and the source layer are closed', L.three === 23 && L.detailsShown === 0 && !L.srcShown, L);
+    ok('ledger: each row shows a name, a value and its first step (a step of the guide, or an episode and its step); breakdowns and the source layer are closed', L.three === 23 && L.detailsShown === 0 && !L.srcShown, L);
     ok('ledger: nothing was dropped: 6 slots not yet measured (never a number), 8 figures from elsewhere, the source layer, 5 sectors, the link between the roles', L.slots === 6 && L.slotDigits === 0 && L.figs === 8 && L.sectors === 5 && L.link && L.source, L);
     ok('ledger: fits 1440×900 without scrolling, clear of the bar', L.fit && L.aboveBar && L.inside, L);
     await click(p, '#isx-b1led .lrb[data-led]', 4); await p.waitForTimeout(150);
@@ -365,7 +382,7 @@ const AUDITOR = () => {
   {
     const p = await page({ 'isx-sim-mode': 'full' });
     const n = await js(p, () => { const S = ISX.sim, c = document.getElementById('isx-cock'); return [c.querySelectorAll('#isx-rmap .fn').length, c.querySelectorAll('#isx-rmap .fe').length, c.querySelectorAll('.lv').length, S.indicators.length, c.querySelectorAll('.pchip').length, S.lines.find(l => l.main).steps.length, c.querySelectorAll('#isx-rmap .fn.pl').length, c.querySelectorAll('#isx-rmap .fn.gn').length, c.querySelectorAll('#isx-rmap .gt').length]; });
-    ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 11 plays, 52 guide steps', n.join() === '37,75,17,24,11,52,29,8,15', n); await p.context().close();
+    ok('counts: 29 actors + 8 gauge nodes (37 nodes), 75 relations, 17 levers, 24 indicators (15 of them tags), 6 episodes in the tray, 43 guide steps', n.join() === '37,75,17,24,6,43,29,8,15', n); await p.context().close();
   }
 
   await b.close();
