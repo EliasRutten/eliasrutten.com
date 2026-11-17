@@ -1,0 +1,150 @@
+/* clarity patch (17 Nov 2026): a call is a screen of its own. Spec: claude/specs/clarity-patch-17-nov.md §2. Scoped under #isx-root, linked after profit.css.
+   When the guide reaches a decision (SIM.ph === 'ask') the cockpit takes the class .dcall: the stage dims and goes inert, as under the entry
+   (.s4open, v2/entry.css), and the card becomes a wide screen between the title row and the bar. Its pages (the setup, then the call) are
+   stepped with the bar's Next and Back or the steps row. The grammar is the entry's: a mono kicker, condensed caps for the title, one glass
+   card with a gold corner bracket. Gold only where something can be done or is current. Nothing moves with the mouse. */
+
+/* ---------- the screen ---------- */
+#isx-root #isx-cock.s2.dcall .s2stage::after { content: ""; position: absolute; inset: 0; z-index: 4; background: radial-gradient(ellipse at 50% 42%, rgba(5, 9, 15, .82), rgba(5, 9, 15, .95)); }
+#isx-root #isx-cock.s2.dcall .s2ttl, #isx-root #isx-cock.s2.dcall .s2key, #isx-root #isx-cock.s2.dcall .tw-keyw { visibility: hidden; }
+#isx-root #isx-cock.s2.dcall .s2card { left: 50%; top: 80px; bottom: 90px; width: min(1060px, calc(100% - 28px)); max-width: none; max-height: none; transform: translateX(-50%); justify-content: flex-start; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#isx-root #isx-cock.s2.dcall .s2card::before, #isx-root #isx-cock.s2.dcall .s2card::after { display: none; }
+#isx-root #isx-cock.s2.dcall .s2fold, #isx-root #isx-cock.s2.dcall .sn-det, #isx-root #isx-cock.s2.dcall .sn-pill, #isx-root .s2.dcall .b1ind, #isx-root .s2.dcall .cl-keyb { display: none; }
+/* centred while it fits; in a window too small for it, it scrolls from its top */
+#isx-root #isx-cock.s2.dcall .s2in { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; padding: 0 4px; overflow-y: auto; scrollbar-width: thin; }
+#isx-root #isx-cock.s2.dcall .s2in > #isx-sn-body { margin: auto 0; padding: 3px 0; }
+
+#isx-root .s2 .dc { display: flex; flex-direction: column; gap: 14px; color: #c9d4de; }
+#isx-root .s2 .dc-top { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+#isx-root .s2 .dc .s2k { margin: 0; }
+/* the steps row: where you are inside the call; a page can be opened from here too */
+#isx-root .s2 .dc-steps { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
+#isx-root .s2 .dc-steps button { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 0 10px 0 6px; border: 0; border-bottom: 1.5px solid rgba(143, 163, 182, .25); border-radius: 0; background: none; color: #8ea0b2; font: 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+#isx-root .s2 .dc-steps button span { display: inline-grid; place-items: center; width: 17px; height: 17px; border: 1px solid #3a4c5d; border-radius: 50%; font-size: 9.5px; letter-spacing: 0; }
+#isx-root .s2 .dc-steps button:hover { color: #e4ebf1; }
+#isx-root .s2 .dc-steps button[aria-current="step"] { border-bottom-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .dc-steps button[aria-current="step"] span { border-color: #ffb547; }
+#isx-root .s2 .dc-steps button:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root #isx-cock.s2 .s2card h3.dc-t { margin: 0; font: 400 28px/1.15 var(--title); letter-spacing: .04em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root #isx-cock.s2 .s2card .dc .dq { margin: -4px 0 0; max-width: 62ch; font: 400 19px/1.42 var(--sans); color: #ffe2a8; }
+#isx-root .s2 .dc-card { position: relative; padding: 18px 22px 16px; border: 1px solid #253442; border-radius: 14px; background: rgba(10, 18, 27, .9); }
+
+/* ---------- a setup page ---------- */
+#isx-root .s2 .dc-ps p { margin: 0 0 10px; max-width: 78ch; font: 400 15px/1.55 var(--sans); color: #dfe7ee; }
+#isx-root .s2 .dc-ps p:last-child { margin-bottom: 0; }
+#isx-root .s2 .dc-ps.two { columns: 2; column-gap: 34px; }
+#isx-root .s2 .dc-ps.two p { break-inside: avoid; max-width: none; }
+#isx-root .s2 .dc-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 26px; margin: 15px 0 0; padding: 14px 0 0; border-top: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .dc-g b { display: block; margin: 0 0 6px; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .s2 .dc-g p { margin: 0; font: 400 13.5px/1.5 var(--sans); color: #c9d4de; }
+#isx-root .s2 .dc-turn { margin: 15px 0 0; padding: 2px 0 2px 14px; border-left: 2px solid #ffb547; font: 400 16px/1.5 var(--sans); color: #ffe2a8; }
+#isx-root .s2 .dc-src { margin-top: 12px; }
+
+/* ---------- the call ---------- */
+#isx-root .s2 .dc-ask .dc-card { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 0 26px; }
+#isx-root .s2 .dc-main { min-width: 0; display: flex; flex-direction: column; }
+#isx-root .s2 .dc .dctx { margin: 0 0 14px; }
+#isx-root .s2 .dc-main .dc-lab { margin-top: 2px; }
+#isx-root .s2 .dc .dctx p { font-size: 14px; }
+#isx-root .s2 .dc .dopts { grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+#isx-root .s2 .dc .sn-opt.dopt { padding: 13px 14px; }
+#isx-root .s2 .dc .dopt b { font-size: 17px; }
+#isx-root .s2 .dc-side { min-width: 0; display: flex; flex-direction: column; gap: 14px; padding-left: 24px; border-left: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .dc-lab { display: block; margin: 0 0 8px; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .dc-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; }
+#isx-root .s2 .dc-tl { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 9px 11px 10px; border: 1px solid #253442; border-radius: 10px; background: rgba(13, 22, 32, .6); }
+#isx-root .s2 .dc-tl b { font: 600 21px/1.05 var(--display); letter-spacing: .02em; color: #f1f5f8; }
+#isx-root .s2 .dc-tl span { font: 400 12px/1.35 var(--sans); color: #c9d4de; }
+#isx-root .s2 .dc-tl em { margin-top: auto; font: normal 10px/1.3 var(--mono); letter-spacing: .06em; color: #8ea0b2; }
+#isx-root .s2 .dc-at .dc-src { margin-top: 8px; }
+#isx-root .s2 .dc-es { display: flex; flex-direction: column; gap: 6px; }
+#isx-root .s2 .dc-es .dss { align-items: center; gap: 9px; min-height: 38px; padding: 5px 12px 5px 10px; white-space: normal; }
+#isx-root .s2 .dc-es .dss span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#isx-root .s2 .dc-es .dss b { font: 600 13px/1.2 var(--sans); }
+#isx-root .s2 .dc-es .dss small { font: 500 10.5px/1 var(--mono); letter-spacing: .06em; opacity: .78; }
+
+/* ---------- the foot: the fine print, and support, quietly ---------- */
+#isx-root .s2 .dc-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 34px; padding: 0 4px; }
+#isx-root .s2 .dc-foot .dfine { margin: 0; }
+#isx-root .s2 .dc-sup { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+#isx-root .s2 .dc-ib { position: relative; display: inline-flex; }
+#isx-root .s2 .dc-ic { display: inline-grid; place-items: center; width: 34px; height: 34px; min-height: 0; padding: 0; border: 1px solid #33444f; border-radius: 50%; background: none; color: #9fb1c2; font-size: 15px; line-height: 1; text-decoration: none; cursor: pointer; transition: border-color var(--mo-t, .2s) var(--mo, ease), color var(--mo-t, .2s) var(--mo, ease); }
+#isx-root .s2 .dc-ic svg { width: 16px; height: 16px; }
+#isx-root .s2 .dc-ic.dc-ss { color: #ff6719; }
+#isx-root .s2 .dc-ic:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .dc-ic.dc-ss:hover { border-color: #ff6719; color: #ff8a4c; }
+#isx-root .s2 .dc-ic:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root .s2 .dc-tip { position: absolute; right: -6px; bottom: calc(100% + 9px); z-index: 2; padding: 7px 11px; border: 1px solid #33444f; border-radius: 9px; background: #0b131c; color: #e4ebf1; font: 400 12.5px/1.3 var(--sans); white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .15s ease, visibility .15s; }
+#isx-root .s2 .dc-ib:hover .dc-tip, #isx-root .s2 .dc-ib:focus-within .dc-tip { opacity: 1; visibility: visible; }
+
+/* ---------- a short window (1280 × 760 must fit without scroll) ---------- */
+@media (min-width: 761px) and (max-height: 820px) {
+  #isx-root #isx-cock.s2.dcall .s2card { top: 74px; bottom: 84px; }
+  #isx-root .s2 .dc { gap: 10px; }
+  #isx-root #isx-cock.s2 .s2card h3.dc-t { font-size: 23px; }
+  #isx-root #isx-cock.s2 .s2card .dc .dq { font-size: 17px; }
+  #isx-root .s2 .dc-card { padding: 14px 20px 13px; }
+  #isx-root .s2 .dc-ps p { margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
+  #isx-root .s2 .dc-g { margin-top: 11px; padding-top: 11px; }
+  #isx-root .s2 .dc-g p { font-size: 13px; line-height: 1.45; }
+  #isx-root .s2 .dc-turn { margin-top: 11px; font-size: 15px; }
+  #isx-root .s2 .dc .dctx { margin-bottom: 10px; }
+  #isx-root .s2 .dc .sn-opt.dopt { padding: 10px 12px; }
+  #isx-root .s2 .dc-side { gap: 10px; }
+  #isx-root .s2 .dc-tl { padding: 8px 10px; }
+  #isx-root .s2 .dc-tl b { font-size: 19px; }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  #isx-root #isx-cock.s2.dcall .s2card { top: 122px; }
+  #isx-root .s2 .dc-g { gap: 0 18px; }
+  #isx-root .s2 .dc-side { padding-left: 18px; }
+  #isx-root .s2 .dc-ask .dc-card { gap: 0 18px; }
+  #isx-root .s2 .dc-tl b { font-size: 18px; }
+  #isx-root .s2 .dc-tiles { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 6px; }
+  #isx-root .s2 .dc-tl { padding: 7px 9px 8px; }
+  #isx-root .s2 .dc-tl span { font-size: 11.5px; }
+  #isx-root .s2 .dc { gap: 8px; }
+  #isx-root #isx-cock.s2 .s2card h3.dc-t { font-size: 23px; }
+  #isx-root #isx-cock.s2 .s2card .dc .dq { margin-top: -2px; font-size: 17px; }
+  #isx-root .s2 .dc-card { padding: 14px 18px 13px; }
+  #isx-root .s2 .dc-side { gap: 10px; }
+  #isx-root .s2 .dc .dctx { margin-bottom: 10px; }
+  #isx-root .s2 .dc .sn-opt.dopt { padding: 10px 12px; }
+  #isx-root .s2 .dc-ps p { font-size: 14px; line-height: 1.5; }
+}
+#isx-root #isx-cock.s2.dcall .s2body > .tw-ret { margin: 0 0 8px; }
+@media (min-width: 761px) and (max-width: 1100px) { #isx-root #isx-cock.s2.dcall .s2in > #isx-sn-body { padding: 0; } #isx-root #isx-cock.s2.dcall .s2body > .tw-ret { margin-bottom: 0; } #isx-root .s2 .dc-foot { min-height: 30px; } #isx-root .s2 .dc-ic { width: 30px; height: 30px; } }
+/* below 1241 px the Simulator's own switch sits where the call's steps row is; the call hides it, as the entry does */
+@media (min-width: 761px) and (max-width: 1240px) { #isx-root #isx-cock.s2.dcall .s2sw { visibility: hidden; } }
+@media (min-width: 761px) and (max-width: 900px) {
+  #isx-root .s2 .dc-ask .dc-card { grid-template-columns: 1fr; gap: 14px; }
+  #isx-root .s2 .dc-side { padding: 14px 0 0; border-left: 0; border-top: 1px solid rgba(143, 163, 182, .16); }
+  #isx-root .s2 .dc-side { flex-direction: row; }
+  #isx-root .s2 .dc-side > section { flex: 1; min-width: 0; }
+}
+
+/* ---------- phones: a page that scrolls in the card ---------- */
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2.dcall .s2stage { display: none; }
+  #isx-root #isx-cock.s2.dcall .s2card { position: static; width: auto; transform: none; }
+  #isx-root #isx-cock.s2.dcall .s2in { padding: 4px 14px 14px; overflow: visible; }
+  #isx-root .s2 .dc { gap: 12px; }
+  #isx-root .s2 .dc-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+  #isx-root .s2 .dc-steps { width: 100%; }
+  #isx-root .s2 .dc-steps li { flex: 1 1 auto; }
+  #isx-root .s2 .dc-steps button { width: 100%; min-height: 44px; padding: 0 4px 0 2px; gap: 5px; font-size: 10px; letter-spacing: .08em; white-space: nowrap; }
+  #isx-root #isx-cock.s2 .s2card h3.dc-t { font-size: 21px; }
+  #isx-root #isx-cock.s2 .s2card .dc .dq { font-size: 16.5px; }
+  #isx-root .s2 .dc-card { padding: 14px; }
+  #isx-root .s2 .dc-ps.two { columns: 1; }
+  #isx-root .s2 .dc-g, #isx-root .s2 .dc-ask .dc-card, #isx-root .s2 .dc .dopts { grid-template-columns: 1fr; }
+  #isx-root .s2 .dc-g { gap: 12px; }
+  #isx-root .s2 .dc-side { padding: 14px 0 0; border-left: 0; border-top: 1px solid rgba(143, 163, 182, .16); }
+  #isx-root .s2 .dc .dopts { margin-top: 0; }
+  #isx-root .s2 .dc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #isx-root .s2 .dc-foot { flex-direction: column; align-items: flex-start; }
+  #isx-root .s2 .dc-sup { margin-left: 0; }
+  #isx-root .s2 .dc-ic { width: 44px; height: 44px; }
+  #isx-root .s2 .dc-tip { right: auto; left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .s2 .dc-ic, #isx-root .s2 .dc-tip { transition: none; } }

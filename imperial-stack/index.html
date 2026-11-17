@@ -2373,6 +2373,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/reach.css">
 <link rel="stylesheet" href="/imperial-stack/v2/clarity.css">
 <link rel="stylesheet" href="/imperial-stack/v2/profit.css">
+<link rel="stylesheet" href="/imperial-stack/v2/call.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -7461,11 +7462,12 @@ const DSRC = {
   bis90: ['BIS Bulletin 90 (27 Aug 2024)', 'https://www.bis.org/publ/bisbull90.htm'],
 };
 const SDEC = {
-  '0-1': { when: '2023', nt: 'Funding the deficit', ord: ['alt', 'real'], sus: {},
+  /* clarity patch: redated from 2023 to January 2025, when Bessent took office (Elias, 17 Nov 2026); the situation is the one he found */
+  '0-1': { when: 'January 2025', nt: 'Funding the deficit', ord: ['alt', 'real'], sus: {},
     q: 'Central banks are no longer buying. How do you fund the deficit?',
     real: ['Sell more bills', 'short-term debt that money funds and banks treat as cash'], alt: ['Keep selling long bonds', 'and leave the market to find the buyers'],
-    ctx: { x: 'Foreign official holders cut $164bn of Treasuries in the year to August 2026. Gross federal debt passed $40tn in October.', more: [], s: 'Official holdings: TIC major foreign holders (the Official Treasuries indicator). Gross federal debt: $40.25tn in October 2026, from the Circuit, step 08.', links: [] },
-    after: { real: 'So did Washington.', alt: 'Washington sold more bills.' },
+    ctx: { x: 'Foreign central banks have stepped back, the deficit keeps growing, and old debt keeps coming due.', more: [], s: 'Foreign central banks: TIC major foreign holders (the Official Treasuries indicator).', links: [] },
+    after: { real: 'So did Bessent’s Treasury: it kept the bill-heavy funding it had criticised.', alt: 'Bessent’s Treasury sold more bills: it kept the bill-heavy funding it had criticised.' },
     chain: [
       { t: 'Every long bond needs a buyer', e: E('OFF>TSY'), off: [], fl: { off: '▼' }, n: 'Measured (TIC).',
         x: 'With central banks stepping back, every extra long bond needs a private buyer. Official holders cut $164bn of Treasuries in the year to August 2026.' },
@@ -7626,6 +7628,90 @@ const SDEC = {
       who: 'The 2022 figures are measured. Headlines did much of the work in 2026: Elias Rutten, “Why Oil Falls When Pipelines Burn” (10 Nov 2026).', links: [EL.oil] } },
 };
 
+/* clarity patch (17 Nov 2026): a call is a screen of its own over the dimmed map (Elias, 17 Nov: “a whole interface encompassing screen … giving you
+   the context and the options, key statistics of the date”). Pages: the setup pages below, then the call itself; Next and Back step through
+   them, SIM.dp is the page. pg: a setup page (s: its short name, for the bar and the steps row; t: its title; p: paragraphs; g: an optional row of
+   three [label, text]; turn: a closing line; src, sl: sources). tiles: figures the page already carries, dated at the call; bp marks a monthly
+   average from data/bond-panel.json (tools/clarity-check.js checks each against the file). more: false where the call's “More context”
+   paragraphs moved to a setup page or a tile. ess: the Substack pieces (ESSAYS keys). Every sentence here is a draft for Elias. */
+const SBP = 'FRED', SMV = 'ICE BofA MOVE Index via Yahoo Finance';   /* a bp tile is a monthly average of daily values; the screen says so once */
+const SCALL = {
+  '0-1': { ess: ['house', 'dollar20'],
+    pg: [{ s: 'The problem', t: 'The old buyers have stopped buying',
+        p: ['For decades foreign central banks funded much of the US deficit: they parked the dollars their economies earned in {{treasuries|Treasuries}}.',
+          'After 2014 they stopped adding to them. Foreigners held 47% of federal debt in 2014 and 30% in 2025, while the deficit kept growing.',
+          'Old debt keeps coming due as well. Every maturing bill or bond has to be {{rollover|rolled over}}: repaid by selling new debt, at the interest rate of the day.',
+          'So the question is not only how much to borrow, but in what form, and from whom.'],
+        src: 'Foreign share of federal debt: as stored at the Circuit, step 00.' },
+      { s: 'Your seat', t: 'You are in Treasury Secretary Scott Bessent’s chair',
+        p: ['He took office on 28 January 2025. Before that he warned against funding the deficit with short-term bills: in June 2024 he said Janet Yellen’s Treasury had “departed from norms regarding the issuance profile of Treasury debt”. A month later Stephen Miran and Nouriel Roubini named the practice {{ati|activist Treasury issuance}}, a critique Bessent supported and amplified.'],
+        g: [['Bills and bonds', 'A {{bills|bill}} is repaid within a year. Notes and bonds run from two to thirty years and pay interest along the way, the {{coupon|coupon}}.'],
+          ['Why sell either', 'Bills are cheap to sell, and {{mmf|money funds}} and banks treat them almost like cash, but they must be rolled over again and again, at whatever the rate is then. Long bonds lock in the rate for decades, but selling many of them pushes long yields up, and they need patient buyers.'],
+          ['Where the line blurs', 'Bills act like money, so the mix of bills and bonds does part of the Fed’s work: fewer long bonds on offer hold long yields down, as the Fed’s bond buying does. That blurring of fiscal and monetary policy is what the critique was about.']],
+        turn: 'But you are now confronted with a buyers’ strike, problems in the debt market and, most importantly, an AI build-out to fund.',
+        src: 'Scott Bessent, “The Fallacy of Bidenomics: A Return to Central Planning”, remarks at the Manhattan Institute (6 Jun 2024); Stephen Miran and Nouriel Roubini, “ATI: Activist Treasury Issuance and the Tug-of-War Over Monetary Policy”, Hudson Bay Capital (Jul 2024); Fortune (8 Aug 2026), for his support of the paper; Bloomberg (28 Jan 2025), for the day he took office.',
+        sl: [['Bessent, 6 Jun 2024', 'https://manhattan.institute/article/the-fallacy-of-bidenomics-a-return-to-central-planning'], ['Miran and Roubini, Jul 2024', 'https://www.hudsonbaycapital.com/documents/FG/hudsonbay/research/635102_Activist_Treasury_Issuance_-_Hudson_Bay_Capital_Research.pdf'], ['Fortune, 8 Aug 2026', 'https://fortune.com/2026/08/08/treasury-borrowing-tbac-145-trillion-shortfall-bessent-debt/'], ['Bloomberg, 28 Jan 2025', 'https://www.bloomberg.com/news/articles/2025-01-28/scott-bessent-is-sworn-in-as-79th-us-treasury-secretary']] }],
+    tiles: [{ v: '4.63%', k: 'the 10-year Treasury yield', d: 'Jan 2025 average', s: SBP + ' DGS10', bp: ['y10', '2025-01'] },
+      { v: '4.34%', k: 'the 3-month bill yield', d: 'Jan 2025 average', s: SBP + ' DGS3MO', bp: ['y3m', '2025-01'] },
+      { v: 'under $100bn', k: 'left in the Fed’s reverse repo, the cash that bought the bills of 2023–24 ($2.55tn at end-2022)', d: '20 Dec 2024', s: 'Reuters (30 Dec 2022); Bloomberg (20 Dec 2024)' }] },
+  '0-7': { ess: ['house', 'bubble'], more: false,
+    pg: [{ s: 'Where it binds', t: 'Two limits meet in repo',
+        p: ['You are at the Fed. A funding squeeze starts in repo, where two limits meet.'],
+        g: [['The leverage rules', 'The {{eslr|eSLR}} asks the largest banks to hold capital against all their assets, Treasuries and repo loans included. A dealer near its limit lends less in repo, so repo gets dearer just when cash is short.'],
+          ['Bond volatility', 'The {{move|MOVE index}} measures how far Treasury yields are expected to swing. Lenders set the {{margin|margins}} and {{haircut|haircuts}} of funds that borrow to buy Treasuries by recent volatility, so a jump forces those funds to sell.'],
+          ['For your call', 'The Fed’s own repo window, the {{srf|standing repo}}, lends at a set rate and so caps what repo can cost, up to $500bn. With reserves short and the dealers near their limits, that window decides what overnight money costs.']],
+        src: 'Wording from the glossary; the $500bn limit as stored on step 16, “The Fed opens the tap”.' }],
+    tiles: [{ v: '$50.35bn', k: 'record use of the Fed’s standing repo', d: '31 Oct 2025', s: 'Reuters via StreetInsider (29 Dec 2025)' },
+      { v: '$3.0tn', k: 'of repo borrowed by hedge funds, often at a zero haircut', d: 'Sep 2025', s: 'Monin, Fed FEDS Notes (22 Jun 2026)' },
+      { v: '76.1', k: 'bond volatility, the MOVE index', d: 'Nov 2025 average', s: SMV, bp: ['move', '2025-11'] }] },
+  '0-4': { ess: ['house'],
+    pg: [{ s: 'The bottleneck', t: 'Balance sheet is the bottleneck',
+        p: ['You are at the regulators’ table: the Fed, the FDIC and the OCC.',
+          'The {{dealer|dealer banks}} must bid at every Treasury auction, and the same banks lend to the hedge funds that buy the long bonds. Both take room on their balance sheets.',
+          'The {{eslr|eSLR}} asks the largest banks to hold capital against all their assets, Treasuries included. The more Treasuries and repo loans a dealer carries, the closer it comes to its limit.',
+          'Auctions keep growing, and in a shock the dealers are the ones meant to take the bonds the funds sell.'] }],
+    tiles: [{ v: '≈$1.85tn', k: 'Treasuries held by hedge funds in the Cayman Islands', d: 'end-2024, Fed staff estimate', s: 'Barth and others, Fed FEDS Notes (15 Oct 2025)' },
+      { v: '37%', k: 'of net new notes and bonds, taken by these funds', d: '2022 to 2024', s: 'Barth and others, Fed FEDS Notes (15 Oct 2025)' },
+      { v: '$3.0tn', k: 'of repo borrowed by hedge funds from the dealer banks', d: 'Sep 2025', s: 'Monin, Fed FEDS Notes (22 Jun 2026)' }] },
+  '0-6': { ess: ['house', 'grandma'],
+    pg: [{ s: 'The long end', t: 'The long end prices everything',
+        p: ['You are back at Treasury, and long yields are climbing.',
+          'The 10-year prices credit across this map: the build-out’s bonds, the loans behind its data centres, mortgages.',
+          'Much of the long end sits with funds that hold it on borrowed cash. Their margins and haircuts follow recent volatility, so when bond volatility spikes they have to sell, and their selling pushes yields higher still.',
+          'The Treasury still has to sell its debt. What it sells, and what it {{buyback|buys back}}, are the tools in your hands.'] }],
+    tiles: [{ v: '4.68%', k: 'the 10-year Treasury yield', d: 'Aug 2026 average', s: SBP + ' DGS10', bp: ['y10', '2026-08'] },
+      { v: '5.22%', k: 'the 30-year Treasury yield', d: 'Aug 2026 average', s: SBP + ' DGS30', bp: ['y30', '2026-08'] },
+      { v: '73.5', k: 'bond volatility, the MOVE index', d: 'Aug 2026 average', s: SMV, bp: ['move', '2026-08'] }] },
+  '9-4': { ess: ['bubble'],
+    pg: [{ s: 'The setting', t: 'Tariffs meet a leveraged bond market',
+        p: ['Five years after March 2020, the same funds hold the same kind of trades on borrowed money: the {{basis|basis trade}} and the {{swapspread|swap-spread trade}}.',
+          'Their lenders set margins by recent volatility, so when yields jump the trades unwind, and the selling feeds on itself.',
+          'On 2 April 2025 sweeping tariffs are announced, and the bond market starts to sell. The call is the White House’s.'] }],
+    tiles: [{ v: '120.1', k: 'bond volatility, the MOVE index (100.9 in March)', d: 'Apr 2025 average', s: SMV, bp: ['move', '2025-04'] },
+      { v: '4.71%', k: 'the 30-year Treasury yield (4.60% in March)', d: 'Apr 2025 average', s: SBP + ' DGS30', bp: ['y30', '2025-04'] },
+      { v: '≈$60bn', k: 'of swap-spread trades unwound', d: 'Apr 2025', s: 'Monin, Fed FEDS Notes (22 Jun 2026)' }] },
+  '5-3': { ess: ['japan1', 'japan2'], more: false,
+    pg: [{ s: 'The trilemma', t: 'Tokyo’s trilemma reaches Washington',
+        p: ['Japan cannot hold three things at once: cheap government borrowing, a defended yen and its new government’s spending. With bond yields held down, the strain shows in the currency.',
+          'To defend the yen alone, Tokyo sells dollar assets to buy yen, and Japan is the largest foreign holder of Treasuries.',
+          'Cheap yen also funds trades worldwide. When the yen jumps, those {{carry|carry trades}} unwind at once, and the selling spreads across markets.',
+          'In Tokyo on 12 May Bessent pledged “constant and robust” coordination and said he prefers a Bank of Japan that raises rates.'],
+        src: 'Reuters (20 May 2026), for the pledge; Elias Rutten, Current Japanese financial dynamics (13 May 2026), for the trilemma.' }],
+    tiles: [{ v: '2.5%', k: 'Japan’s 10-year yield, the highest since 1997', d: 'May 2026', s: 'Elias Rutten, Current Japanese financial dynamics (13 May 2026)' },
+      { v: '≈¥40tn', k: 'borrowed for carry trades ($250bn), a floor by the BIS’s count', d: '2024', s: 'BIS Bulletin 90 (27 Aug 2024)' },
+      { v: '5.10%', k: 'the US 30-year Treasury yield', d: 'Jul 2026 average', s: SBP + ' DGS30', bp: ['y30', '2026-07'] }] },
+  '6-1': { ess: ['oil', 'oil200'],
+    pg: [{ s: 'The shock', t: 'War reaches the oil market',
+        p: ['You are at the White House. War with Iran has closed the Strait of Hormuz since 28 February 2026.',
+          'Oil reaches this map through three doors: the pump, the price index and, through the Fed, long yields.',
+          'Higher long yields lower what shares are worth, and the build-out raises money by selling shares.',
+          'Washington’s tools are barrels from its reserve, waivers on sanctions, and what it says about the talks.'] }],
+    tiles: [{ v: 'about a fifth', k: 'of world oil supply, cut by the closure', d: 'from 28 Feb 2026', s: 'As stored on the step “A supply shock”; link not stored' },
+      { v: '4.25%', k: 'the 10-year Treasury yield (4.13% in February)', d: 'Mar 2026 average', s: SBP + ' DGS10', bp: ['y10', '2026-03'] },
+      { v: '89.4', k: 'bond volatility, the MOVE index (64.5 in February)', d: 'Mar 2026 average', s: SMV, bp: ['move', '2026-03'] }] },
+};
+const sCallN = k => (SCALL[k] ? SCALL[k].pg.length : 0) + 1;   /* pages in a call: its setup pages and the call itself */
+
 /* ---------- stories as data: beats, chapters and what each step has put on the map ---------- */
 const enodes = es => { const s = new Set(); es.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); return s; };
 const bN = B => { const s = enodes(B.e); (B.n || []).forEach(n => s.add(n)); return s; };   /* a beat's actors: those of its relations, plus any it names on its own */
@@ -7714,9 +7800,12 @@ const SPRE = {
     { t: 'Money into assets', bs: 'Into assets', r: 'c', w: 'Oct 2026', e: E('SPX>TOP', 'TOP>HYP', 'TOP>CON'),
       x: 'Abundant foreign money meets weak demand from wage earners, so it flows into financial assets more than into broad real investment.',
       d: ['The richest tenth of households own 88% of household stocks and do more than 45% of consumer spending, so spending rides on asset prices.'] },
-    { t: 'Lower yields, higher prices', bs: 'In the markets', r: 'c', w: 'Oct 2026', e: E('HYP>SPX'),
-      x: 'Yields are lower and asset prices higher than they would otherwise be, and finance grows. Investment gathers where the valuations are: the AI build-out.',
-      d: ['Lower than otherwise, not low: the 10-year yield averaged 5.13% in October 2026.', 'The state steers credit towards the build-out: {{fip|financialised industrial policy}}.'] },
+    /* clarity patch (17 Nov 2026): was “Lower yields, higher prices”, which implied that inflows lower yields (Elias's note, theory log 17 Nov 2026).
+       The 5.13% line went with the old claim it qualified */
+    { t: 'Inflows feed finance', bs: 'In the markets', r: 'c', w: '', e: E('HYP>SPX'),
+      x: 'Inflows do not necessarily lower yields: they can feed finance instead, with more assets and more debt, as Michael Pettis has shown. An economy that needs investment puts them into investment that generates growth and pays back the deficit; the question is whether AI will do that.',
+      d: ['Pettis: US investment is not held back by a lack of saving, so net foreign inflows show up as more consumption, more debt or more unemployment, not more investment.', 'The state steers credit towards the build-out: {{fip|financialised industrial policy}}. Whether the build-out earns enough to pay its way is where the machine could break (the guide, Act III).'],
+      src: 'Klein and Pettis, Trade Wars Are Class Wars (2020); Pettis, Carnegie (7 Jul 2025).' },
     /* guide build (16 Nov 2026): R7 and R8 (guide spine §4.3, §4.4), so the guide's route, which skips the primer, leaves with the bridge too */
     { t: 'Deficits become profits', bs: 'Profits', r: 'i', w: '2025', e: E('CGR>CON', 'HYP>SPX'), lev: [9, 5],
       x: `Profits equal what firms invest plus what the government borrows, minus what households and the rest of the world save, plus dividends. Since 2014 the federal deficit has added ${SFIGN.fedb1425.v} of GDP a year to US profits, against ${SFIGN.npi1425.v} from net private investment.`,
@@ -7922,14 +8011,16 @@ const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SL
 /* ---------- state ---------- */
 /* B1-4: ph is where a decision stands (null: a step; 'ask': the decision card; 'chain': link c of the other path; 'crisis': its end).
    While ph is set, beat stays on the step before the decision. pick: the visitor's latest call per decision; seenAlt: other paths walked. */
-const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, epRet: null, epSeen: new Set(), pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, dp: 0, epRet: null, epSeen: new Set(), pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
   try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0));
     const nb = SLINES[p.l].beats[SIM.beat + 1], dk = SIM.beat >= 0 && nb ? nb.fork : null;   /* a stored decision or chain position (old values carry no ph and load as before) */
     if (SLINES[p.l].ep && Array.isArray(p.r) && SLINES[p.r[0]] && SLINES[p.r[0]].main) SIM.epRet = { l: p.r[0], b: Math.max(0, Math.min(SLINES[p.r[0]].beats.length - 1, +p.r[1] || 0)) };
-    if (dk && ['ask', 'chain', 'crisis'].includes(p.ph)) { SIM.ph = p.ph; SIM.c = Math.max(0, Math.min(SDEC[dk].chain.length - 1, +p.c || 0)); if (p.ph !== 'ask') SIM.seenAlt.add(dk); } } } catch (e) { /* ignore */ }
+    if (dk && ['ask', 'chain', 'crisis'].includes(p.ph)) { SIM.ph = p.ph; SIM.c = Math.max(0, Math.min(SDEC[dk].chain.length - 1, +p.c || 0)); if (p.ph !== 'ask') SIM.seenAlt.add(dk);
+      /* clarity patch: the page of a call; a place stored before the patch carries none and opens on the call itself, as it did */
+      if (p.ph === 'ask') SIM.dp = p.dp == null ? sCallN(dk) - 1 : Math.max(0, Math.min(sCallN(dk) - 1, +p.dp || 0)); } } } catch (e) { /* ignore */ }
 })();
 const simOn = () => SIM.mode === 'story' && view === 'fin' && finMode === 'plumb' && !!$('snarr');
 /* stage 5: what the guide has put on the map. vis: shown (with the actors an other outcome borrows); got: reached by the guide itself. Outside the guide everything is. */
@@ -8200,7 +8291,9 @@ function simBar() {
   } else segs = [{ label: L.t, colour: L.c, current: true, wide: true, grow: 1, marks: L.beats.flatMap((B, i) => mk(SIM.line, i)).concat(L.ep ? [] : [{ kind: 'end', state: b >= n ? 'cur' : '', target: SIM.line + ':' + n, title: 'Mechanism complete' }]) }];
   let nx;
   const DD = dk ? SDEC[dk] : null;
-  if (SIM.ph === 'ask') nx = { kind: 'hold', kicker: 'Your call', title: 'Choose on the card', ptitle: 'Choose' };
+  const CP = SIM.ph === 'ask' ? (SCALL[dk] ? SCALL[dk].pg.map(P => P.s) : []).concat('The call') : null;   /* clarity patch: the pages of the call in hand */
+  if (SIM.ph === 'ask' && SIM.dp < CP.length - 1) nx = { kicker: 'Next · your call', title: CP[SIM.dp + 1], pkicker: 'Next', ptitle: CP[SIM.dp + 1] };
+  else if (SIM.ph === 'ask') nx = { kind: 'hold', kicker: 'Your call', title: 'Choose on the screen', ptitle: 'Choose' };
   else if (SIM.ph === 'chain') nx = { kind: 'branch', kicker: 'Next in the chain', title: SIM.c < DD.chain.length - 1 ? DD.chain[SIM.c + 1].t : DD.crisis.t, pkicker: 'Chain', ptitle: 'Next' };
   else if (SIM.ph === 'crisis') nx = { kind: 'return', kicker: 'Back to', title: 'What happened', pkicker: 'Back to what', ptitle: 'happened' };
   else if (b < 0) nx = L.main ? (stGet(SWAY) === 'ground' ? { kicker: 'Start · Foundations', title: Q.s, pkicker: 'Start', ptitle: 'Foundations' } : { kicker: 'Start the guide', title: P.s, pkicker: 'Start', ptitle: 'The guide' }) : { kicker: 'Start', title: L.beats[0].t, ptitle: 'Start' };
@@ -8211,11 +8304,11 @@ function simBar() {
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
   const cs = segs.find(s => s.current);
   RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : L.ep ? 'Episode: steps' : 'Mechanism: steps', stage,
-    back: { enabled: b >= 0, label: L.ep && b === 0 && SIM.epRet && !SIM.ph ? 'Back to the guide' : SIM.ph === 'ask' ? 'Back: ' + L.beats[b].t : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
+    back: { enabled: b >= 0, label: L.ep && b === 0 && SIM.epRet && !SIM.ph ? 'Back to the guide' : SIM.ph === 'ask' ? (SIM.dp > 0 ? 'Back: ' + CP[SIM.dp - 1] : 'Back: ' + L.beats[b].t) : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
     next: nx,
     line: { kicker: sWhere()[0], title: sWhere()[1], attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
     segs, controls: simTabsHTML(),
-    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The machinery' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
+    ph: { label: cs && cs.label ? cs.label : b < 0 ? (guide ? 'The machinery' : L.t) : guide ? 'The whole machine' : L.t, count: SIM.ph === 'ask' ? 'your call' + (CP.length > 1 ? ' · ' + (SIM.dp + 1) + ' / ' + CP.length : '') : SIM.ph === 'chain' ? 'other path ' + (SIM.c + 1) + ' / ' + DD.chain.length : SIM.ph === 'crisis' ? 'end of chain' : b >= 0 && b < n ? String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0') : b < 0 ? 'Start' : 'Done', colour: cs ? cs.colour : L.c, marks: cs && cs.label ? cs.marks : [] } });
 }
 /* Back, Next, the marks, ← → and the swipe all come through here */
 function simNav(ev) {
@@ -8229,7 +8322,7 @@ function simNav(ev) {
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (ev.nav === 'back') { if (b >= 0) simBack(); return; }
   /* a choice is made on the card, never by Next, → or a swipe: they move focus to the first option */
-  if (SIM.ph === 'ask') { const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
+  if (SIM.ph === 'ask') { if (SIM.dp < sCallN(sDecK()) - 1) { simNext(); return; } const o = ROOT.querySelector('#isx-sn-body .sn-opt'); if (o) o.focus({ preventScroll: true }); return; }
   if (SIM.ph) { simNext(); return; }
   if (b < 0) { simGo(L.main ? (stGet(SWAY) === 'ground' && SGI >= 0 ? SGI : SPI) : SIM.line, 0, 'focus'); return; }
   if (b >= n) { if (L.pre || L.gnd) simGo(0, 0, 'focus'); else if (L.ep) simEpBack(); else if (!L.main) simGo(SIM.line % PLAYS.length + 1, -1, 'focus'); return; }
@@ -8275,16 +8368,43 @@ const sSub = `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentCol
 const sGoHTML = g => `<p class="pf-in"><a href="#${g[0]}">${fe(g[1])} <i aria-hidden="true">›</i></a></p>`;   /* profit tab build 1: a link from a card into the profit dollar */
 const sLinksHTML = ls => ls.length ? `<div class="dlk">${ls.map(([t, u]) => `<a class="dss" href="${u}" target="_blank" rel="noopener">${sSub}${fe(t)}</a>`).join('')}</div>` : '';
 const sSrcHTML = ss => ss.length ? `<div class="lsrc">${ss.map(([t, u]) => u ? `<a href="${u}" target="_blank" rel="noopener">${fe(t)}</a>` : fe(t) + ' (link not stored)').join(' · ')}</div>` : '';
-/* the decision card: the question, the situation (one sentence, with more behind one click), two options in a fixed order.
-   Neither outcome is on the card. */
+/* the decision: clarity patch (17 Nov 2026), a screen of its own over the dimmed map. Setup pages first (SCALL), then the call: the question,
+   the situation (one sentence, more behind one click), the figures of the day, the two options in a fixed order, the Substack pieces.
+   Neither outcome is on any page. A support row sits quietly at the foot of every page. */
+const sCalIc = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+const sCallSup = () => `<div class="dc-sup" role="group" aria-label="Come back later, support the map, read the Substack">`
+  + `<span class="dc-ib"><button type="button" class="dc-ic" data-remind aria-describedby="isx-dc-tip"><span class="vh">Set a reminder</span>${sCalIc}</button><span class="dc-tip" id="isx-dc-tip" role="tooltip">Want to come back later? Set a reminder.</span></span>`
+  + `<a class="dc-ic" href="${BMC6}" target="_blank" rel="noopener" aria-label="Support this free map on Buy Me a Coffee"><span aria-hidden="true">☕</span></a>`
+  + `<a class="dc-ic dc-ss" href="${SUBSTACK}" target="_blank" rel="noopener" aria-label="Elias Rutten on Substack">${sSub}</a></div>`;
 function sAskHTML(k) {
-  const D = SDEC[k], was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', more = D.ctx.more.length || D.ctx.s || D.ctx.links.length, [tq, tx] = sTips([D.q, D.ctx.x]);
-  return `<div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call<em>${fe(D.when)}</em></div><h3>You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${ft(tq)}</p>`
+  const D = SDEC[k], C = SCALL[k] || { pg: [], tiles: [], ess: [] }, np = sCallN(k), dp = Math.max(0, Math.min(np - 1, SIM.dp || 0)), last = dp === np - 1;
+  const names = C.pg.map(P => P.s).concat('The call');
+  const head = `<div class="dc-top"><div class="s2k dk" style="--rc:#ffd27a"><i class="dia"></i>Your call · ${fe(D.nt)}<em>${fe(D.when)}</em></div>`
+    + (np > 1 ? `<ol class="dc-steps" aria-label="This call, in ${sWord(np)} parts">${names.map((s, i) => `<li><button type="button" data-dcp="${i}"${i === dp ? ' aria-current="step"' : ''}><span aria-hidden="true">${i + 1}</span>${fe(s)}</button></li>`).join('')}</ol>` : '') + `</div>`;
+  if (!last) {
+    const P = C.pg[dp], T = sTips([...P.p, ...(P.g || []).map(g => g[1]), P.turn || '']), np2 = P.p.length, ng = (P.g || []).length;
+    return `<div class="dc dc-set" data-dc="${k}" data-dp="${dp}">${head}<h3 class="dc-t">${fe(P.t)}</h3>`
+      + `<div class="dc-card"><span class="ge-br" aria-hidden="true"></span><div class="dc-ps${np2 > 2 && !ng ? ' two' : ''}">${T.slice(0, np2).map(t => `<p>${ft(t)}</p>`).join('')}</div>`
+      + (ng ? `<div class="dc-g">${P.g.map((g, i) => `<section><b>${fe(g[0])}</b><p>${ft(T[np2 + i])}</p></section>`).join('')}</div>` : '')
+      + (P.turn ? `<p class="dc-turn">${ft(T[np2 + ng])}</p>` : '')
+      + (P.src ? `<div class="lsrc dc-src">Sources: ${fe(P.src)}${(P.sl || []).length ? ' · ' + P.sl.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fe(t)}</a>`).join(' · ') : ''}</div>` : '') + `</div>`
+      + `<div class="dc-foot">${sCallSup()}</div></div>`;
+  }
+  const was = SIM.pick[k], open = stGet('isx-ctx', true) === 'open', [tq, tx] = sTips([D.q, D.ctx.x]);
+  const essU = new Set((C.ess || []).map(e => ESSAYS[e] && ESSAYS[e][1])), lks = D.ctx.links.filter(([, u]) => !essU.has(u)), mp = C.more === false ? [] : D.ctx.more;
+  const more = mp.length || D.ctx.s || lks.length;
+  const tiles = (C.tiles || []).map(T => `<div class="dc-tl" role="group" aria-label="${fe(T.v + ' ' + T.k + ', ' + T.d + '. Source: ' + T.s)}"><b>${fe(T.v)}</b><span>${fe(T.k)}</span><em>${fe(T.d)}</em></div>`).join('');
+  const srcs = [...new Set((C.tiles || []).map(T => T.s))], avg = (C.tiles || []).some(T => T.bp);
+  return `<div class="dc dc-ask" data-dc="${k}" data-dp="${dp}">${head}<h3 class="dc-t">You’re at ${fe(D.seat || 'Treasury')}.</h3><p class="s2p dq">${ft(tq)}</p>`
+    + `<div class="dc-card"><span class="ge-br" aria-hidden="true"></span><div class="dc-main">`
     + `<div class="dctx"><b>The situation</b><p>${ft(tx)}</p>`
-    + (more ? `<button type="button" class="dmore" data-dctx aria-expanded="${open}" aria-controls="isx-dctx">More context</button><div class="dmo" id="isx-dctx"${open ? '' : ' hidden'}>${D.ctx.more.map(t => `<p>${fe(t)}</p>`).join('')}${D.ctx.s ? `<div class="lsrc">${fe(D.ctx.s)}</div>` : ''}${sLinksHTML(D.ctx.links)}</div>` : '') + `</div>`
+    + (more ? `<button type="button" class="dmore" data-dctx aria-expanded="${open}" aria-controls="isx-dctx">More context</button><div class="dmo" id="isx-dctx"${open ? '' : ' hidden'}>${mp.map(t => `<p>${fe(t)}</p>`).join('')}${D.ctx.s ? `<div class="lsrc">${fe(D.ctx.s)}</div>` : ''}${sLinksHTML(lks)}</div>` : '') + `</div>`
     + `<div class="dopts" role="group" aria-label="Your call">${D.ord.map((o, i) => `<button type="button" class="sn-opt dopt${was === o ? ' was' : ''}" data-fk="${o}"><span class="dl" aria-hidden="true">${'AB'[i]}</span><b>${fe(D[o][0])}</b><span>${fe(D[o][1])}</span>${was === o ? '<em>your earlier call</em>' : ''}</button>`).join('')}</div>`
-    + `<p class="dfine">What happened opens after you choose; the other path stays open too.</p>`
-    + `<div class="s2deep lock"><span class="dlock" role="button" tabindex="0" aria-disabled="true">The mechanism <em>after you choose</em></span></div>`;
+    + `</div><div class="dc-side">`
+    + (tiles ? `<section class="dc-at" aria-labelledby="isx-dc-at"><span class="dc-lab" id="isx-dc-at">At the time</span><div class="dc-tiles">${tiles}</div><div class="lsrc dc-src">Sources: ${fe(srcs.join('; '))}.${avg ? ' An average is the month’s average of daily values.' : ''}</div></section>` : '')
+    + ((C.ess || []).length ? `<section class="dc-read" aria-labelledby="isx-dc-rd"><span class="dc-lab" id="isx-dc-rd">On the Substack</span><div class="dc-es">${C.ess.filter(e => ESSAYS[e]).map(e => `<a class="dss" href="${ESSAYS[e][1]}" target="_blank" rel="noopener">${sSub}<span><b>${fe(ESSAYS[e][0])}</b><small>${fe(ESSAYS[e][2])}</small></span></a>`).join('')}</div></section>` : '')
+    + `</div></div>`
+    + `<div class="dc-foot"><p class="dfine">What happened opens after you choose; the other path stays open too.</p>${sCallSup()}</div></div>`;
 }
 function sChainHTML(k) {
   const D = SDEC[k], C = D.chain[SIM.c], n = D.chain.length;
@@ -8584,7 +8704,7 @@ function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); { const st = $('stage'); if (st) st.inert = on && SIM.beat < 0 && !!sLine().main; } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); cock.classList.toggle('dcall', on && SIM.ph === 'ask'); { const st = $('stage'); if (st) st.inert = on && ((SIM.beat < 0 && !!sLine().main) || SIM.ph === 'ask'); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
@@ -8597,7 +8717,7 @@ function simApply(anim, fwd) {
   simBar(); simTrays();
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
-  try { stSet(SKEY.pos, JSON.stringify(Object.assign(SIM.ph ? { l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c } : { l: SIM.line, b: SIM.beat }, SIM.epRet ? { r: [SIM.epRet.l, SIM.epRet.b] } : {})), true); } catch (e) { /* ignore */ }
+  try { stSet(SKEY.pos, JSON.stringify(Object.assign(SIM.ph ? Object.assign({ l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c }, SIM.ph === 'ask' ? { dp: SIM.dp } : {}) : { l: SIM.line, b: SIM.beat }, SIM.epRet ? { r: [SIM.epRet.l, SIM.epRet.b] } : {})), true); } catch (e) { /* ignore */ }
   emit('sim', { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph });   /* round 5b: where the Simulator stands now */
 }
 /* clarity build: episodes. Opened from a core step (ret: back to that step), from the bar's list or from the full view (back to the step
@@ -8628,30 +8748,41 @@ function simPhase(line, beat, ph, c) {
   const L = SLINES[line], B = L && L.beats[beat + 1], k = beat >= 0 && B ? B.fork : null; if (!k) { simGo(line, beat); return; }
   const fwd = line === SIM.line && beat === SIM.beat && (ph === 'ask' ? !SIM.ph : ph === 'chain' ? (SIM.ph === 'ask' && !c) || (SIM.ph === 'chain' && c === SIM.c + 1) : SIM.ph === 'chain');
   SIM.line = line; SIM.beat = beat; SIM.ph = ph; SIM.c = ph === 'chain' ? Math.max(0, Math.min(SDEC[k].chain.length - 1, c || 0)) : 0;
+  /* clarity patch: a call opens on its first page; c names a page; without one, a call already made opens on the call itself */
+  if (ph === 'ask') SIM.dp = c == null ? (SIM.pick[k] ? sCallN(k) - 1 : 0) : Math.max(0, Math.min(sCallN(k) - 1, +c || 0));
   if (ph !== 'ask') SIM.seenAlt.add(k);
   if (SIM.tray === 'pick') SIM.tray = null; clearSel();
   simApply(true, fwd);
   track('Story', { story: sLine().id, step: beat + ':' + ph + (ph === 'chain' ? SIM.c : '') });
   simFocus();
 }
+/* clarity patch: the pages of a call (its setup, then the call itself); the map behind stays as it is */
+function simCallPage(dp) {
+  const k = SIM.ph === 'ask' ? sDecK() : null; if (!k) return;
+  dp = Math.max(0, Math.min(sCallN(k) - 1, dp)); if (dp === SIM.dp) return;
+  const fwd = dp > SIM.dp; SIM.dp = dp; clearSel();
+  simApply(true, fwd);
+  track('Story', { story: sLine().id, step: SIM.beat + ':ask' + dp });
+  simFocus();
+}
 function simNext() {
   const L = sLine(), n = L.beats.length, k = sDecK();
-  if (SIM.ph === 'ask') return;   /* held: the choice is made on the card */
+  if (SIM.ph === 'ask') { if (SIM.dp < sCallN(k) - 1) simCallPage(SIM.dp + 1); return; }   /* the last page holds: the choice is made on the screen */
   if (SIM.ph === 'chain') { if (SIM.c < SDEC[k].chain.length - 1) simPhase(SIM.line, SIM.beat, 'chain', SIM.c + 1); else simPhase(SIM.line, SIM.beat, 'crisis'); return; }
   if (SIM.ph === 'crisis') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }   /* back to what happened */
   if (SIM.beat >= n) return;
-  if (sNextFork()) { simPhase(SIM.line, SIM.beat, 'ask'); return; }
+  if (sNextFork()) { simPhase(SIM.line, SIM.beat, 'ask', 0); return; }
   if (L.ep && SIM.beat === n - 1) { simEpBack(); return; }
   simGo(SIM.line, SIM.beat + 1, 'focus');
 }
 function simBack() {
   const k = sDecK();
   if (SIM.ph === 'crisis') { simPhase(SIM.line, SIM.beat, 'chain', SDEC[k].chain.length - 1); return; }
-  if (SIM.ph === 'chain') { if (SIM.c > 0) simPhase(SIM.line, SIM.beat, 'chain', SIM.c - 1); else simPhase(SIM.line, SIM.beat, 'ask'); return; }
-  if (SIM.ph === 'ask') { simGo(SIM.line, SIM.beat, 'focus'); return; }
+  if (SIM.ph === 'chain') { if (SIM.c > 0) simPhase(SIM.line, SIM.beat, 'chain', SIM.c - 1); else simPhase(SIM.line, SIM.beat, 'ask', sCallN(k) - 1); return; }
+  if (SIM.ph === 'ask') { if (SIM.dp > 0) { simCallPage(SIM.dp - 1); return; } simGo(SIM.line, SIM.beat, 'focus'); return; }
   if (SIM.beat < 0) return;
   if (sLine().ep && SIM.beat === 0 && SIM.epRet) { simEpBack(); return; }
-  const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask'); return; }   /* the step a decision leads to goes back to the decision */
+  const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask', sCallN(B.fork) - 1); return; }   /* the step a decision leads to goes back to the decision */
   simGo(SIM.line, SIM.beat - 1, 'focus');
 }
 function simChoose(k) {
@@ -8734,6 +8865,7 @@ function simMount() {
     if (d.act != null) { simGo(0, SLINES[0].first[SLINES[0].chs.findIndex(C => C.act === +d.act)], 'focus'); return; }
     if (d.sm) { simSetMode(d.sm === 'full' ? 'full' : 'story'); if (d.sm === 'full' && e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); return; }
     if (d.fk) { simChoose(d.fk); return; }
+    if (d.dcp != null) { simCallPage(+d.dcp); return; }   /* clarity patch: a page of the call, from its steps row */
     if (d.dgo === 'real') { simNext(); return; }   /* the crisis card's one button */
     if (d.dgo === 'alt') { const B = sCur(); if (B && B.fork && SIM.beat > 0) simPhase(SIM.line, SIM.beat - 1, 'chain', 0); return; }   /* “See the other path” */
     if (d.dctx != null) { const o = t.getAttribute('aria-expanded') !== 'true', m = $('dctx'); t.setAttribute('aria-expanded', String(o)); if (m) m.hidden = !o; stSet('isx-ctx', o ? 'open' : 'shut', true); return; }
@@ -8826,9 +8958,10 @@ window.ISX = {
   get primerIds() { return SGND.b.map(B => B.id); },
   get chapters() { return SLINES[0].chs.map(C => ({ t: C.t, s: C.s, act: C.act })); }, get playKeys() { return PLAYS.flatMap((P, p) => P.steps.map((x, i) => p + '-' + i)); },
   stepNums: () => sNums(), get acts() { return SACTS.map(A => A.slice()); }, get episodes() { return SEPI.map(X => ({ id: X.id, t: X.t, w: X.w, from: X.from, n: X.b.length })); }, get numKeys() { return Object.keys(SNUM); },   /* clarity build, for v2/clarity.js and the checks */
-  get figs() { return JSON.parse(JSON.stringify(SFIGN)); },   /* guide build: the figures this round stored, for checks */
+  get figs() { return JSON.parse(JSON.stringify(SFIGN)); },
+  get calls() { return JSON.parse(JSON.stringify(SCALL)); },   /* clarity patch: the call screens' pages, tiles and pieces, for checks */   /* guide build: the figures this round stored, for checks */
   get mins() { return { ground: sMins(['gnd', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
-  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
+  get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dp: SIM.dp, np: SIM.ph === 'ask' && sDecK() ? sCallN(sDecK()) : 0, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
     decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ id: L.id, main: !!L.main, ep: L.ep ? L.ep.id : null, pre: !!L.pre, gnd: !!L.gnd, steps: L.beats.map((B, i) => ({ k: B.k || null, q: B.q || null, ch: B.ch, fk: B.fork || null, t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },
   fig: { shares: bn0(ISUM.s), bonds: bn0(ISUM.b) },
   /* fix round: the bond deals of the five technology firms in the page's filing list, for the bond screen's time axis. A row that
