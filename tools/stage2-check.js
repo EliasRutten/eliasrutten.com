@@ -83,7 +83,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
   const geo = await p.evaluate(() => { const c = document.getElementById('isx-cock').getBoundingClientRect(), s = document.getElementById('isx-rmap').getBoundingClientRect(), f = document.getElementById('isx-frame').getBoundingClientRect(); return { cock: [c.width, c.height], svg: [s.width, s.height], frame: [f.width, f.height], vh: innerHeight }; });
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
-  ok('simulator: card, bar with first principles and eight chapters; trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 9 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
+  ok('simulator: card, bar with first principles and seven chapters (clarity build); trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 8 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
   if (await p.$('#isx-sn-body [data-way="guide"]')) { await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(300);
   /* B1: → never chooses. At a choice the walk takes what happened on the card, then goes on with → */
@@ -96,7 +96,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     else await p.keyboard.press('ArrowRight');
     await p.waitForTimeout(120);
   }
-  ok('guide: all 52 steps are reachable with →, choosing on the card at each choice', n === 52, n);
+  ok('guide: all 43 steps are reachable with →, choosing on the card at each choice (clarity build: 43 steps)', n === 43, n);
   ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
   ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[8].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);

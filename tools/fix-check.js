@@ -62,7 +62,7 @@ const DOORS = { SAV: 'loop', Y10: 'bond', MOV: 'bond', BND: 'bond', TSY: 'desks'
   await p.context().close();
 
   /* ---------- 1, 2: a chain borrows gauges before the guide reaches them ---------- */
-  p = await mk({}, { mode: 'guide', pos: JSON.stringify({ l: 0, b: 25, ph: 'chain', c: 3 }) });
+  p = await mk({}, { mode: 'guide', pos: JSON.stringify({ l: 0, b: 9, ph: 'chain', c: 3 }) });
   const ch = await p.evaluate(() => ({ ph: ISX.sim.ph, c: ISX.sim.c, dec: ISX.sim.dec }));
   ok(ch.ph === 'chain' && ch.c === 3 && ch.dec === '0-1', 'the chain state loads (decision 0-1, link 4)', ch);
   for (const n of ['Y10', 'MOV', 'BND']) {

@@ -200,7 +200,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   const hint = id => async p => { await p.waitForFunction(k => ISX.hints && ISX.hints.on === k, id, { timeout: 15000 }); await p.waitForTimeout(400); };
   await run('round 5b: a hint shown (Next), first principles', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 0 }) }, 1440, 900, hint('next'));
   await run('round 5b: a hint beside the card (a dotted word)', '#simulator', { ...first, 'isx-hints': 'next', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 2 }) }, 1440, 900, hint('term'));
-  await run('round 5b: a hint at a decision', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: 25, ph: 'ask' }) }, 1280, 760, hint('call'));
+  await run('round 5b: a hint at a decision', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: 9, ph: 'ask' }) }, 1280, 760, hint('call'));
   await run('round 5b, phone: a hint shown', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 13, b: 0 }) }, 390, 844, hint('next'));
   const two = async p => { await p.evaluate(() => { ISX.simLever(0); ISX.simLever(14); }); await p.waitForTimeout(500); };
   await run('round 5b: the lever row, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, two);
@@ -226,6 +226,19 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('round 6: Elsewhere on the map (Commerce)', '#arm/node=comm', seen, 1440, 900);
   await run('round 6: a hint on the Arm (a gold door)', '#arm', { ...first, 'isx-hints': 'arm-pick' }, 1440, 900, async p => { await p.evaluate(() => ISX.setArmSel('COMM')); await hint('arm-door')(p); });
   await run('round 6, phone: a hint on the Arm (the toggle)', '#arm', first, 390, 844, hint('arm-view'));
+  /* clarity build (17 Nov 2026): the question card with its numbers (chart, table, tiles, bars, sources), “New here”, an episode as a fold
+     and as a run with its way back, the picker with acts and episodes, the key on demand, the map at rest in grey; phone and 1280 × 760 */
+  const cl = b2 => ({ ...seen, 'isx-way': 'ground', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: b2 }) });
+  await run('clarity: a step with its numbers above the card (a chart)', '#simulator', cl(21), 1440, 900, async p => { await p.waitForTimeout(500); });
+  await run('clarity: the chart as a table', '#simulator', cl(21), 1440, 900, async p => { await p.waitForTimeout(500); await p.click('#isx-cl-nums [data-cl-tbl]'); await p.waitForTimeout(250); });
+  await run('clarity: tiles, sources open', '#simulator', cl(9), 1440, 900, async p => { await p.click('#isx-cl-nums [data-cl-src]'); await p.waitForTimeout(250); });
+  await run('clarity: bars, “New here”, an episode folded open', '#simulator', cl(14), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body details.cl-epi summary').click()); await p.waitForTimeout(300); });
+  await run('clarity: an episode step with the way back', '#simulator', cl(27), 1440, 900, async p => { await p.click('#isx-sn-body .cl-ep'); await p.waitForTimeout(500); });
+  await run('clarity: the picker (acts and episodes)', '#simulator', cl(27), 1440, 900, async p => { await p.click('#isx-sn-pickb'); await p.waitForTimeout(300); });
+  await run('clarity: the key, open (full view)', '#simulator', fullv, 1440, 900, async p => { await p.click('[data-cl-key]'); await p.waitForTimeout(300); });
+  await run('clarity: the full view at rest, lines in grey', '#simulator', fullv, 1280, 760);
+  await run('clarity, phone: a step with its numbers in the card', '#simulator', cl(12), 390, 844);
+  await run('clarity: 1280 × 760, tiles above the card', '#simulator', cl(9), 1280, 760);
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

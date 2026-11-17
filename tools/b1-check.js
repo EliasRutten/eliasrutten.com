@@ -11,7 +11,8 @@ let fails = 0;
 const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && !cond ? '  → ' + JSON.stringify(extra).slice(0, 700) : '')); };
 
 /* the first step of every indicator, first principles and guide (spec S1 §4.6) */
-const FIRST = { ffr: [null, 24], res: [null, 29], bills: [null, 27], y10: [null, 4], mtg: [5, 17], yen: [null, 42], dxy: [null, 42], brent: [null, 19], move: [null, 25], off: [2, 8], stb: [null, 27], basis: [null, 32], repo: [null, 29], haircut: [null, 29], rrp: [null, 28], tga: [null, 28], capex: [null, 2], bnd: [null, 3], ai: [3, 9], shr: [null, 11], con: [1, 13], save: [5, 18], pce: [null, 21], diesel: [null, 22] };   /* tiers build A (15 Nov 2026): recomputed for the new chapter order (build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks).
+const FIRST = { ffr: [null, 28], res: [null, 15], bills: [null, 11], y10: [null, 3], mtg: [5, 27], yen: [null, null], dxy: [null, null], brent: [null, null], move: [null, 22], off: [2, 2], stb: [null, 11], basis: [null, 18], repo: [null, 15], haircut: [null, 15], rrp: [null, 12], tga: [null, 13], capex: [10, 7], bnd: [10, 6], ai: [3, 3], shr: [10, 5], con: [1, 1], save: [5, 42], pce: [null, null], diesel: [null, null] };   /* clarity build (17 Nov 2026): recomputed for the guide in three acts; the yen, Brent, inflation and diesel are first moved in episodes, not in the guide */
+/* was:   /* tiers build A (15 Nov 2026): recomputed for the new chapter order (build-out, savings, consumer, oil, who buys, bonds get yippy, backstop, if it breaks).
    Tiers build B: R7 is gone (bills and stablecoins first move in the guide), R4 split (mortgage and saving at reveal 5), the new step 30 moves the yen and the basis trade one step on */
 const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]];
 
@@ -44,7 +45,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   const walk = async (p, each) => {
     const out = []; const take = async tag => { const s = await state(p); s.tag = tag; out.push(s); if (each) await each(s); return s; };
     await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
-    for (let i = 0; i < 8; i++) { await take('reveal ' + (i + 1)); await right(p); }
+    for (let i = 0; i < 10; i++) { await take('reveal ' + (i + 1)); await right(p); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
     for (let guard = 0; guard < 120; guard++) {
       const s = await take('step'); s.tag = 'step ' + (s.beat + 1);
@@ -91,7 +92,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const first = { pre: {}, main: {} };
       const rows = await walk(p, s => { if (s.ph) return; const k = s.pre ? 'pre' : s.main ? 'main' : null; if (!k) return; Object.keys(s.vals).forEach(id => { if (s.vals[id] && s.vals[id] !== '?' && first[k][id] == null) first[k][id] = s.beat + 1; }); });
       const n = { reveals: rows.filter(r => /^reveal/.test(r.tag)).length, steps: rows.filter(r => /^step/.test(r.tag)).length, asks: rows.filter(r => /^decision/.test(r.tag)).length, links: rows.filter(r => /^link/.test(r.tag)).length, crises: rows.filter(r => /^crisis/.test(r.tag)).length };
-      ok(`walk (${w} px): 10 reveals, 52 steps, 7 decision cards, 37 chain links and 7 crisis cards`, n.reveals === 10 && n.steps === 52 && n.asks === 7 && n.links === 37 && n.crises === 7, n);
+      ok(`walk (${w} px): 10 reveals, 43 steps, 4 decision cards, 22 chain links and 4 crisis cards (clarity build: the other three decisions are in episodes)`, n.reveals === 10 && n.steps === 43 && n.asks === 4 && n.links === 22 && n.crises === 4, n);
       if (want(2)) {
         const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);
         ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.length} cards (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });
@@ -122,22 +123,22 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
 
   /* ================= 4. → never chooses; swipes; ← returns to the decision ================= */
   if (want(4)) {
-    const p = await page('#simulator', { pos: '{"l":0,"b":25}' });
+    const p = await page('#simulator', { pos: '{"l":0,"b":9}' });   /* clarity build: the first call follows step 10 */
     await right(p, 300);
     const a = await state(p); await right(p, 300); await right(p, 300);
     const c = await state(p), foc = await js(p, () => { const e = document.activeElement; return !!e && e.classList.contains('sn-opt') && e === document.querySelector('#isx-sn-body .sn-opt'); });
-    ok('decision: → on a decision card does not leave it; it moves focus to option A', a.ph === 'ask' && c.ph === 'ask' && c.beat === 25 && foc, { a: a.ph, c: c.ph, foc });
+    ok('decision: → on a decision card does not leave it; it moves focus to option A', a.ph === 'ask' && c.ph === 'ask' && c.beat === 9 && foc, { a: a.ph, c: c.ph, foc });
     await click(p, '#isx-s2bar .rt-nx'); await p.waitForTimeout(250);
     ok('decision: the held Next does the same (it is not a dead button)', (await state(p)).ph === 'ask' && await js(p, () => document.querySelector('#isx-s2bar .rt-nx').getAttribute('aria-disabled') === 'true'));
     await left(p, 300);
     const back = await state(p);
-    ok('decision: ← on a decision card goes back to the step before it', back.ph === null && back.beat === 25, back);
+    ok('decision: ← on a decision card goes back to the step before it', back.ph === null && back.beat === 9, back);
     await right(p, 300); await click(p, '#isx-sn-body [data-fk="real"]'); await p.waitForTimeout(300);
     const real = await state(p); await left(p, 300); const again = await state(p);
-    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 26 && real.ph === null && again.ph === 'ask' && again.beat === 25 && await js(p, () => { const o = document.querySelector('#isx-sn-body .sn-opt.was'); return !!o && o.dataset.fk === 'real' && /your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
+    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 10 && real.ph === null && again.ph === 'ask' && again.beat === 9 && await js(p, () => { const o = document.querySelector('#isx-sn-body .sn-opt.was'); return !!o && o.dataset.fk === 'real' && /your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
     ok('decision: no page errors', p._errs.length === 0, p._errs); await p.context().close();
     /* a phone: a swipe is Next or Back on a step, and never a choice on a decision card */
-    const q = await page('#simulator', { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
+    const q = await page('#simulator', { w: 390, h: 844, touch: true, pos: '{"l":0,"b":4}' });   /* clarity build: a step with no call after it */
     const swipe = (sel, dx) => js(q, ([s, d]) => { const el = document.querySelector(s), r = el.getBoundingClientRect(), y = Math.min(innerHeight - 140, Math.max(r.top + 30, 80)), x0 = d < 0 ? r.right - 40 : r.left + 40;
       const T = x => new Touch({ identifier: 1, target: el, clientX: x, clientY: y, pageX: x, pageY: y + scrollY });
       el.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [T(x0)], targetTouches: [T(x0)], changedTouches: [T(x0)] }));
@@ -145,15 +146,15 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const s1 = await state(q);
     await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const s2 = await state(q);
-    ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 10 && s2.beat === 9, [s1.beat, s2.beat]);
+    ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 5 && s2.beat === 4, [s1.beat, s2.beat]);
     await swipe('#isx-b1play', -120); await q.waitForTimeout(300);
-    ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 9);
-    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 33; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
+    ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 4);
+    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 70 && (await state(q)).beat < 19; i++) { if ((await state(q)).ph === 'ask') { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
     await right(q, 350); await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q);
-    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 33, [d0.ph, d1.ph, d1.beat]);
+    ok('swipe: on a decision card a swipe does not choose and does not leave', d0.ph === 'ask' && d1.ph === 'ask' && d1.beat === 19, [d0.ph, d1.ph, d1.beat]);
     await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const d2 = await state(q);
-    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 33, [d2.ph, d2.beat]);
+    ok('swipe: right on a decision card goes back to the step before', d2.ph === null && d2.beat === 19, [d2.ph, d2.beat]);
     ok('swipe: no page errors', q._errs.length === 0, q._errs); await q.context().close();
   }
 

@@ -21,7 +21,7 @@ let pass = 0, fail = 0;
 const ok = (c, t, x) => { if (c) pass++; else { fail++; console.log('FAIL  ' + t + (x !== undefined ? '  ' + (typeof x === 'string' ? x : JSON.stringify(x)).slice(0, 700) : '')); } };
 const OFF = ['isx-tips-globe', 'isx-tips-sim', 'isx-tour', 'isx-first', 'isx-insights', 'isx-simtour'];
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const ORDER = ['A data centre gets paid for', 'The allies’ savings come back', 'The consumer keeps it flowing', 'Oil squeezes the loop', 'Who buys the debt?', 'Bonds get yippy', 'Abroad: the dollar’s backstop', 'If it breaks'];
+const ORDER = ['The loop', 'Who buys the debt?', 'On borrowed money', 'The long end', 'The dollar abroad', 'Off the books', 'If it breaks'];   /* clarity build (17 Nov 2026): seven chapters in three acts */
 const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yield', 'y10', 'spread', 'coupon', 'bp', 'auction', 'collateral', 'mmf', 'underwrite', 'rrp', 'tga', 'debtlimit', 'qt', 'qe', 'policyrate', 'srf', 'haircut', 'leverage', 'hedgefund', 'basis', 'dealer', 'pb', 'margin', 'vol', 'swapspread', 'clearing', 'termprem', 'hyperscalers', 'sp500', 'cover', 'reservecur', 'bw', 'petrodollar', 'inflow', 'swapline', 'fima', 'esf', 'fxint', 'carry', 'brent', 'pce', 'genius', 'hierdollar', 'hotmoney', 'geoecon', 'underclass', 'fip', 'twin', 'curve', 'imbalance', 'safepremium', 'grossnet', 'tpu'];
 
 (async () => {
@@ -43,19 +43,19 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   let p = await mk();
   const ord = await js(p, () => { const L = ISX.sim.lines[0]; return { n: L.steps.length, first: L.steps[0].t, dec: ISX.sim.decisions.map(D => [D.k, D.at + 1]) }; });
   /* guide build (16 Nov 2026): the entry has no chapter list; the chapter order is checked on the index of guide steps (section 4) */
-  ok(ord.n === 52 && ord.first === 'A lab needs compute', 'the guide has 52 steps (49 and three new) and opens on “A lab needs compute”', ord);
-  ok(JSON.stringify(Object.fromEntries(ord.dec)) === JSON.stringify({ '0-1': 27, '0-7': 30, '0-4': 35, '0-6': 25, '9-4': 37, '5-3': 42, '6-1': 20 }), 'the seven decisions follow their steps: oil before 20, long yields before 25, funding before 27, the repo backstop (key 0-7) before 30, leverage before 35, tariffs before 37, the yen before 42', ord.dec);
+  ok(ord.n === 43 && ord.first === 'Spending becomes imports', 'the guide has 43 steps and opens on the shopper, “Spending becomes imports” (clarity build)', ord);
+  ok(JSON.stringify(Object.fromEntries(ord.dec)) === JSON.stringify({ '0-1': 11, '0-7': 16, '0-4': 21, '0-6': 28, '9-4': 0, '5-3': 0, '6-1': 0 }), 'the four core decisions follow their steps: funding before 11, the repo backstop before 16, leverage before 21, long yields before 28; the other three sit in episodes (clarity build)', ord.dec);
   const ledes = await js(p, async () => {
     const out = {}, go = async t => { document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(); await new Promise(r => setTimeout(r, 300)); return ((document.querySelector('#isx-sn-body .s2why') || {}).textContent || '') + ' ' + ((document.querySelector('#isx-sn-body .sn-why p') || {}).textContent || ''); };
-    out.dc = await go('0:0'); out.who = await go('0:25'); out.yip = await go('0:34'); out.t25 = await go('0:24');
-    document.querySelector(`#isx-s2bar [data-rt-t="0:23"]`).click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));
+    out.dc = await go('0:0'); out.who = await go('0:9'); out.yip = await go('0:20'); out.t25 = await go('0:25');
+    document.querySelector(`#isx-s2bar [data-rt-t="0:26"]`).click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));
     out.q06 = (document.querySelector('#isx-sn-body .dq') || {}).textContent || ''; out.ph = ISX.sim.ph; return out;
   });
-  ok(/The money that comes back to US markets meets a build-out that runs on credit\./.test(ledes.dc), 'chapter 1 opens with its lead line', ledes.dc);
+  ok(/Start with the shopper\./.test(ledes.dc), 'chapter 1 opens with its lead line', ledes.dc);
   ok(/All of this runs on borrowed money, and the state borrows most of all\./.test(ledes.who), 'chapter 5 (who buys the debt) opens with its lead line', ledes.who);
   ok(/One rule sets how much those banks can carry\./.test(ledes.yip), 'the leverage rule, now in “Bonds get yippy”, follows from the dealer banks', ledes.yip);
   ok(ledes.ph === 'ask' && /the Treasury still has to sell its debt/.test(ledes.q06), 'the call “Long yields climb” no longer assumes the leveraged funds of chapter 6', ledes);
-  ok(await js(p, async () => { const pl = ISX.sim.lines.findIndex(L => L.pre); document.querySelector(`#isx-s2bar [data-rt-t="${pl}:${ISX.sim.lines[pl].steps.length - 1}"]`).click(); await new Promise(r => setTimeout(r, 250)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return /starts where the money lands: a data centre that has to be paid for/.test(document.getElementById('isx-sn-body').textContent); }), 'first principles hand over to the build-out, not to the central banks');
+  ok(await js(p, async () => { const pl = ISX.sim.lines.findIndex(L => L.pre); document.querySelector(`#isx-s2bar [data-rt-t="${pl}:${ISX.sim.lines[pl].steps.length - 1}"]`).click(); await new Promise(r => setTimeout(r, 250)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return /starts with the loop the money runs in/.test(document.getElementById('isx-sn-body').textContent); }), 'first principles hand over to the loop (clarity build), not to the central banks');
   const raw = await js(p, async () => { const out = [], L = ISX.sim.lines, pre = L.findIndex(x => x.pre), gnd = L.findIndex(x => x.gnd); localStorage.setItem('isx-way', 'ground');
     document.getElementById('isx-sn-pickb').click(); await new Promise(r => setTimeout(r, 80)); document.querySelector(`#isx-sn-pick [data-sl="${gnd}"]`).click(); await new Promise(r => setTimeout(r, 80));
     for (const [l, n] of [[gnd, L[gnd].steps.length], [pre, L[pre].steps.length], [0, L[0].steps.length]]) {
@@ -89,7 +89,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(dc.sug.join() === 'false,true,false' && dc.tags.join('|') === '|Suggested|', 'Fluent is the suggested level (gold outline, “Suggested”) on a first visit', [dc.sug, dc.tags]);
   ok(dc.bars[0][0] === Math.min(100, Math.round(dc.mins.ground / 60 * 100)) && dc.bars[1][0] === Math.round(dc.mins.guide / 60 * 100) && dc.bars[2][0] === null && dc.bars.map(x => x[1]).join() === '1,2,3' && dc.bars.every(x => x[2] === 'true') && dc.mins.ground > dc.mins.guide, 'time and difficulty are bars: time is the route’s computed minutes over 60, Expert is “your pace”; difficulty 1, 2, 3', [dc.bars, dc.mins]);
   ok(!dc.minsText && dc.noLabel && dc.aria[0].includes('About ' + dc.mins.ground + ' minutes') && dc.aria[1].includes('About ' + dc.mins.guide + ' minutes') && /^Foundations/.test(dc.aria[0]) && /^Fluent Suggested → I know how the dollar system works\. First principles, then the guide\./.test(dc.aria[1]) && /Assumes you know what a Treasury yield is\./.test(dc.aria[1]) && /^Expert/.test(dc.aria[2]) && /At your own pace/.test(dc.aria[2]), 'minutes live only in each level’s accessible name: the visible words first, then a hidden line with the route, the minutes and what it assumes (no aria-label over visible text)', dc.aria);
-  ok(dc.mins.ground >= 45 && dc.mins.gnd >= 12 && dc.mins.ground - dc.mins.guide >= 8, 'guide spine §6.1: the ground route counts the primer’s folds, so the two routes differ honestly in length', dc.mins);
+  ok(dc.mins.ground >= 35 && dc.mins.gnd >= 12 && dc.mins.ground - dc.mins.guide >= 8, 'guide spine §6.1: the ground route counts the primer’s folds, so the two routes differ honestly in length', dc.mins);
   ok(dc.native && dc.group === 'Choose your way in' && !dc.old, 'native buttons in a group labelled “Choose your way in”; the old door card, its buttons and its chapter list are gone', dc);
   ok(dc.how.length === 4 && /Dotted words carry a definition: hover or tap\./.test(dc.how[0]) && /Seven calls are yours/.test(dc.how[1]) && /A gold tab opens a deeper view\./.test(dc.how[2]) && /arrow keys|Swipe the card/.test(dc.how[3]), '“How the guide works” is one row of four: dotted words, the calls, the gold tab, Next and Back', dc.how);
   ok(dc.rem === 'Understanding the mechanics takes time. If you can’t finish today, set a reminder.' && dc.remB && dc.tour, 'the foot: the reminder hint with its pill, and the tour', dc.rem);
@@ -108,7 +108,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(st.mode === 'story' && st.beat === -1 && st.last.join() === 'guide' && st.txt === 'Last time' && st.sugTag === 0 && /^Fluent\s+Last time/.test(st.aria), 'a returning visitor of the guide sees the entry again, Fluent marked “Last time” in words (and in its accessible name) in place of “Suggested”', st);
   await js(p, () => document.querySelector('#isx-sn-body [data-way="ground"]').click()); await p.waitForTimeout(400);
   st = await js(p, () => ({ way: localStorage.getItem('isx-way'), gnd: ISX.sim.lines[ISX.sim.line].gnd, beat: ISX.sim.beat, h3: document.querySelector('#isx-sn-body h3').textContent }));
-  ok(st.way === 'ground' && st.gnd && st.beat === 0 && st.h3 === 'The US spends more than it collects', 'Foundations opens the primer at screen 1; isx-way = ground', st);
+  ok(st.way === 'ground' && st.gnd && st.beat === 0 && st.h3 === 'How to read the map', 'Foundations opens the primer at screen 1; isx-way = ground', st);
   await js(p, () => { sessionStorage.setItem('isx-sim-pos', '{"l":0,"b":-1}'); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
   ok(await js(p, () => ISX.sim.beat === -1 && [...document.querySelectorAll('#isx-sn-body .ge-way')].filter(d => d.querySelector('.ge-tag.last')).map(d => d.dataset.way).join() === 'ground'), 'a returning visitor of the primer sees the entry again, Foundations marked');
   ok(await js(p, async () => { ISX.route.next('sim').click(); await new Promise(r => setTimeout(r, 300)); const r = ISX.sim.lines[ISX.sim.line].gnd && ISX.sim.beat === 0; document.querySelector('#isx-ways-b').click(); await new Promise(r => setTimeout(r, 300)); return r && ISX.sim.beat === -1; }), 'for a visitor of the primer the bar’s gold button starts Foundations, and “Three ways in” leads back to the entry');
@@ -138,28 +138,28 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
 
   /* ---------- 4. expert mode ---------- */
   p = await mk({}, { mode: 'full' });
-  let ex = await js(p, () => { const v = e => !!e && e.getClientRects().length > 0, k = document.getElementById('isx-tw-key'); return { key: v(k) && k.textContent, gsb: v(document.getElementById('isx-gsb')) && document.getElementById('isx-gsb').getAttribute('aria-controls') === 'isx-gsteps' }; });
-  ok(/^Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices\./.test(ex.key) && /a gold tab means more inside\./.test(ex.key) && /The layout is part of the thesis/.test(ex.key), 'full view: the one-line key, with the layout as part of the thesis', ex);
+  let ex = await js(p, () => { const v = e => !!e && e.getClientRects().length > 0, k = document.querySelector('#isx-cl-key .cl-kp'), kb = document.querySelector('[data-cl-key]'); return { key: v(kb) && document.getElementById('isx-cl-key').hidden && k.textContent, gsb: v(document.getElementById('isx-gsb')) && document.getElementById('isx-gsb').getAttribute('aria-controls') === 'isx-gsteps' }; });
+  ok(/^Boxes are actors, lines are the relations between them, and the gauges on the wires carry the prices\./.test(ex.key) && /a gold tab means more inside\./.test(ex.key) && /The layout is part of the thesis/.test(ex.key), 'full view: the key waits behind “Key” (clarity build), with the layout as part of the thesis', ex);
   ok(ex.gsb, 'full view: “Guide steps” in the bar, a disclosure button for the index');
   await p.focus('#isx-gsb'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
   ex = await js(p, () => { const g = document.getElementById('isx-gsteps'), sec = [...g.querySelectorAll(':scope > .tw-gsg > section')], pre = g.querySelector('.tw-gspre');
     return { open: !g.hidden, exp: document.getElementById('isx-gsb').getAttribute('aria-expanded'), ch: sec.map(s => s.querySelector('h4').textContent.replace(/^\d+/, '')), steps: g.querySelectorAll(':scope > .tw-gsg > section li:not(.dec)').length, dec: g.querySelectorAll(':scope > .tw-gsg > section li.dec').length, pre: pre && pre.querySelector('summary').textContent, preN: pre && pre.querySelectorAll('li').length, focus: g.contains(document.activeElement), label: g.getAttribute('role') === 'dialog' && document.getElementById(g.getAttribute('aria-labelledby')).textContent }; });
   ok(ex.open && ex.exp === 'true' && ex.focus && ex.label === 'Guide steps', 'Guide steps opens the index as a labelled dialog, focus inside', ex);
-  ok(ex.ch.join('|') === ORDER.join('|') && ex.steps === 52 && ex.dec === 7, 'the index: eight chapters in the new order, 52 steps, 7 calls marked “Your call”', ex);
+  ok(ex.ch.join('|') === ORDER.join('|') && ex.steps === 43 && ex.dec === 4, 'the index: seven chapters in the new order, 43 steps, 4 calls marked “Your call” (the episodes’ three are listed with the episodes)', ex);
   ok(/^Before the guide: The basics \(12\) · First principles \(10\)$/.test(ex.pre) && ex.preN === 22, 'the index: the basics and first principles folded on top', ex.pre);
   await p.keyboard.press('Escape'); await p.waitForTimeout(200);
   ok(await js(p, () => document.getElementById('isx-gsteps').hidden && document.activeElement && document.activeElement.id === 'isx-gsb' && ISX.sim.mode === 'full'), 'Esc closes the index and returns focus to its button; the full view stays');
   await js(p, () => document.getElementById('isx-gsb').click()); await p.waitForTimeout(250);
-  await js(p, () => document.querySelector('#isx-gsteps [data-gs="0:31"]').click()); await p.waitForTimeout(600);
+  await js(p, () => document.querySelector('#isx-gsteps [data-gs="0:18"]').click()); await p.waitForTimeout(600);
   ex = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, h3: document.querySelector('#isx-sn-body h3').textContent, ret: (document.querySelector('#isx-sn-body .tw-ret') || {}).textContent, focus: document.activeElement && document.activeElement.hasAttribute('data-twret') }));
-  ok(ex.mode === 'story' && ex.beat === 31 && ex.h3 === 'The largest holder nobody counts' && /Back to the full map/.test(ex.ret) && ex.focus, 'a step opened from the index: the guide at that step, with “Back to the full map”', ex);
+  ok(ex.mode === 'story' && ex.beat === 18 && ex.h3 === 'How much do these funds hold?' && /Back to the full map/.test(ex.ret) && ex.focus, 'a step opened from the index: the guide at that step, with “Back to the full map”', ex);
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
-  ok(await js(p, () => ISX.sim.beat === 32 && !!document.querySelector('#isx-sn-body .tw-ret')), 'the way back stays while the visitor walks on');
+  ok(await js(p, () => ISX.sim.beat === 19 && !!document.querySelector('#isx-sn-body .tw-ret')), 'the way back stays while the visitor walks on');
   await js(p, () => document.querySelector('#isx-sn-body [data-twret]').click()); await p.waitForTimeout(500);
   ok(await js(p, () => ISX.sim.mode === 'full' && ISX.sim.ret === null), '“Back to the full map” returns to the full view');
   await js(p, () => document.getElementById('isx-gsb').click()); await p.waitForTimeout(250);
   await js(p, () => document.querySelector('#isx-gsteps [data-gs^="d:0:"]').click()); await p.waitForTimeout(500);
-  ok(await js(p, () => ISX.sim.ph === 'ask' && ISX.sim.dec === '6-1' && !!document.querySelector('#isx-sn-body .tw-ret')), 'a call opened from the index: the decision card, with the way back');
+  ok(await js(p, () => ISX.sim.ph === 'ask' && ISX.sim.dec === '0-1' && !!document.querySelector('#isx-sn-body .tw-ret')), 'a call opened from the index: the decision card, with the way back');
   await js(p, () => document.querySelector('#isx-sn-body [data-twret]').click()); await p.waitForTimeout(500);
   /* “In the guide” in the dossiers */
   ex = await js(p, async () => {
@@ -171,14 +171,14 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
     const i = S.lines[0].steps[2].e.find(e => !S.lines[0].steps[1].e.includes(e)); document.querySelector(`#isx-rmap .feh[data-e="${i}"]`).dispatchEvent(new MouseEvent('click', { bubbles: true })); await w(250);
     const q = document.querySelector('#isx-rside .tw-ing'); out.edge = q && q.textContent; return out; });
   ok(/^In the guideFirst lit at step \d+, /.test(ex.node || '') && ex.btns[0] === '0:' + ex.first && ex.btns.length >= 2, 'an actor’s dossier says where the guide first lights it, and later steps, as buttons', ex);
-  ok(/First lit at step 3, Whose money/.test(ex.edge || ''), 'a relation’s dossier says the step that lights it', ex.edge);
+  ok(/First lit at step 3, Back to Wall Street/.test(ex.edge || ''), 'a relation’s dossier says the step that lights it', ex.edge);
   await js(p, () => document.querySelector('#isx-rside .tw-ing button').click()); await p.waitForTimeout(500);
   ok(await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === 2 && !!document.querySelector('#isx-sn-body .tw-ret')), 'its button opens that step in the guide, with the way back');
-  ok(await js(p, async () => { document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true })); await new Promise(r => setTimeout(r, 250)); const v = !!document.querySelector('#isx-rside .tw-ing'), k = document.getElementById('isx-tw-key').getClientRects().length > 0; return !v && !k; }), 'in the guide the dossier has no “In the guide” row and the key line waits');
+  ok(await js(p, async () => { document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true })); await new Promise(r => setTimeout(r, 250)); const v = !!document.querySelector('#isx-rside .tw-ing'), k = !document.getElementById('isx-cl-key').hidden; return !v && !k; }), 'in the guide the dossier has no “In the guide” row and the key waits');
   ok(!p._errs.length, 'no page errors (expert)', p._errs.join(' | '));
   await p.context().close();
   p = await mk({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }, { mode: 'full' });
-  ex = await js(p, async () => { const v = e => !!e && e.getClientRects().length > 0, kb = document.querySelector('[data-twkey]'), k = document.getElementById('isx-tw-key'), out = { btn: v(kb), shut: !v(k) };
+  ex = await js(p, async () => { const v = e => !!e && e.getClientRects().length > 0, kb = document.querySelector('[data-cl-key]'), k = document.getElementById('isx-cl-key'), out = { btn: v(kb), shut: !v(k) };
     kb.click(); await new Promise(r => setTimeout(r, 120)); out.open = v(k) && kb.getAttribute('aria-expanded') === 'true';
     document.querySelector('[data-s4more]').click(); await new Promise(r => setTimeout(r, 120)); const m = document.querySelector('#isx-b1more .tw-gsm'); out.menu = v(m); m.click(); await new Promise(r => setTimeout(r, 250));
     const g = document.getElementById('isx-gsteps'), r = g.getBoundingClientRect(); out.sheet = !g.hidden && r.left <= 1 && r.right >= innerWidth - 1; out.side = document.documentElement.scrollWidth <= innerWidth + 1; return out; });
