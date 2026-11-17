@@ -30,7 +30,7 @@
   /* in order of precedence: the one moment a hint belongs to comes first, then the ones any step can carry */
   var HINTS = [
     { id: 'call', side: 'card', line: function () { return 'No right answer, no score. Choose, then see what happened; the other path stays open.'; },
-      when: function () { return S.mode === 'story' && S.ph === 'ask' ? q('#isx-sn-body .dopts') : null; } },
+      when: function () { return S.mode === 'story' && S.ph === 'ask' ? q('#isx-sn-body .dc-opts') : null; } },
     { id: 'next', side: 'free', line: function () { return phone() || U.COARSE ? 'Swipe the card, or tap Next.' : 'Next, or → on your keyboard.'; },
       when: function () { return inStep() && !S.ph && X.route ? X.route.next('sim') : null; } },
     { id: 'term', side: 'card', line: function () { return 'Dotted words have a definition: hover, or tap.'; },
@@ -70,7 +70,7 @@
     if (off() || !t || X.intro || document.hidden || (X.remind && X.remind.on) || (X.opening && X.opening.on) || (X.views && X.views.on)) return true;
     if (t === 'arm') return !$('scene-arm');
     if (t === 'profit') return !$('scene-profit') || !X.profit || !X.profit.state.ready;
-    return !$('cock') || (X.simtour && X.simtour.on) || !!q('#isx-cock.s4open');   /* the entry says how the guide works; hints start on the first card */
+    return !$('cock') || (X.simtour && X.simtour.on) || !!q('#isx-cock.s4open') || !!q('#isx-cock.dcall');   /* the entry says how the guide works; hints start on the first card. Call screen round: a call covers the window and says on its own screen that there is no right answer, so no hint sits behind it */
   }
   function build() {
     box = document.createElement('div');
