@@ -76,7 +76,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.keyboard.press('Escape');
   /* B1-3: the ladder's three rungs became the role ledger's four roles */
   await p.evaluate(() => document.getElementById('isx-b1ind').click()); await p.waitForTimeout(250);
-  ok('ledger (guide): four roles, 24 rows; the source layer waits for the guide; the dated link is in by the backstop', await p.evaluate(() => { const l = document.getElementById('isx-b1led'); return !l.hidden && l.querySelectorAll('.lcol').length === 4 && l.querySelectorAll('.lr.ind').length === 24 && !l.querySelector('.lsrc3') && !!l.querySelector('.lwait') && /16 September/.test(l.querySelector('.lfoot').textContent); })); /* tiers A: the backstop is step 43 now, past the step that dates the link */
+  ok('ledger (guide): four roles, 24 rows; the source layer waits for the guide; the dated link waits for the oil episode, where the rate rise now sits (clarity build)', await p.evaluate(() => { const l = document.getElementById('isx-b1led'); return !l.hidden && l.querySelectorAll('.lcol').length === 4 && l.querySelectorAll('.lr.ind').length === 24 && !l.querySelector('.lsrc3') && !!l.querySelector('.lwait') && !/16 September/.test(l.querySelector('.lfoot').textContent); })); /* tiers A: the backstop is step 43 now, past the step that dates the link */
   ok('no page errors (guide)', p._errs.length === 0, p._errs); await p.context().close();
 
   p = await page('#simulator', { 'isx-sim-mode': 'full' });

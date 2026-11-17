@@ -7610,7 +7610,7 @@ const bN = B => { const s = enodes(B.e); (B.n || []).forEach(n => s.add(n)); ret
    decision, chain or crisis card (spec §1.1, copy Part D). Any can be cut here without touching a step; tools/tiers-check.js lists them. */
 const SECHO = {
   '6-2': 'The thesis at work: a price this important is not left to the market, it is manipulated.',
-  '0-5': 'When the old buyers step back, Washington does not wait for the market to find new ones: it builds them.',
+  '0-7': 'When the old buyers step back, Washington does not wait for the market to find new ones: it builds them.',   /* clarity build: was on 0-5, which now opens the chapter that also holds 9-3's echo; one echo a chapter */
   '9-3': 'Market rules are the instrument: change the rule, and the price of the state’s borrowing changes with it.',
   '5-1': 'A dollar shortage abroad is leverage for whoever can lend dollars.',
 };
@@ -8376,7 +8376,7 @@ function sNewTerms(L, b) {
   if (L.beats[b].r === 'k') return [];   /* a plumbing reveal is itself the definition */
   return sSurf(L, b).filter(k => !seen.has(k) && (way === 'ground' || SPLUMB.has(k))).slice(0, 2);
 }
-const sNewHTML = ks => ks.length ? `<dl class="cl-new"><span class="cl-nk">New here</span>${ks.map(k => `<div><dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd></div>`).join('')}</dl>` : '';
+const sNewHTML = ks => ks.length ? `<div class="cl-new"><span class="cl-nk">New here</span><dl>${ks.map(k => `<div><dt>${fe(DEFS[k][0])}</dt><dd>${fe(DEFS[k][1])}</dd></div>`).join('')}</dl></div>` : '';
 /* an episode offered on a core card: a door to its own steps, or (a single dated paragraph) a fold in the card itself */
 const sEpDoor = id => { const L = SLINES[sEpLine(id)], X = L.ep; return `<button type="button" class="cl-ep${SIM.epSeen.has(id) ? ' seen' : ''}" data-ep="${id}" style="--ec:${X.c}"><span>Episode</span><b>${fe(X.t)}</b><small>${fe(X.w)} · ${L.beats.length} steps${SIM.epSeen.has(id) ? ' · seen' : ''}</small><i aria-hidden="true">›</i></button>`; };
 const sEpFold = X => `<details class="cl-epi"><summary><span>Episode</span><b>${fe(X.t)}</b><small>${fe(X.w)}</small></summary><div>${X.x.map(t => `<p>${ft(t)}</p>`).join('')}${X.src ? `<div class="lsrc">Sources: ${fe(X.src)}</div>` : ''}</div></details>`;

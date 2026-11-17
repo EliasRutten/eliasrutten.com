@@ -5,7 +5,8 @@
 #isx-root .s2 .s2body:has(.cl-q) > .s2k + .dyou { margin-top: 8px; }
 #isx-root .s2 .cl-new { display: grid; gap: 4px; margin: 10px 0 0; padding: 8px 10px 9px; border-radius: 9px; border: 1px solid #1f2d3a; background: rgba(143, 216, 255, .045); }
 #isx-root .s2 .cl-new .cl-nk { font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8fd8ff; }
-#isx-root .s2 .cl-new div { font-size: 12.5px; line-height: 1.42; color: #c3d0db; }
+#isx-root .s2 .cl-new dl { display: grid; gap: 4px; margin: 0; }
+#isx-root .s2 .cl-new dl > div { font-size: 12.5px; line-height: 1.42; color: #c3d0db; }
 #isx-root .s2 .cl-new dt { display: inline; font-weight: 600; color: #eef3f7; }
 #isx-root .s2 .cl-new dt::after { content: ": "; }
 #isx-root .s2 .cl-new dd { display: inline; margin: 0; }

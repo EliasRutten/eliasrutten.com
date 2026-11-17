@@ -39,7 +39,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     const mid = e => { const q = e.getBoundingClientRect(); return q.left + q.width / 2; };
     const vals = {}; document.querySelectorAll('#isx-rmap [data-gv]').forEach(x => { vals[x.dataset.gv] = x.textContent.trim(); });
     return { line: S.line, beat: S.beat, ph: S.ph, c: S.c, pre: S.lines[S.line].pre, main: S.lines[S.line].main, n: S.lines[S.line].steps.length, bk: r(bar.querySelector('.rt-bk')), nx: r(bar.querySelector('.rt-nx')), nxt: bar.querySelector('.rt-nx').textContent.replace(/\s+/g, ' ').trim(),
-      here: vis(here) && cur ? Math.round((mid(here) - mid(cur)) * 10) / 10 : null, hereT: here ? getComputedStyle(here).transitionDuration : '', cur: !!cur, vals, h3: (document.querySelector('#isx-sn-body h3') || {}).textContent || '' };
+      here: vis(here) && cur ? Math.round((mid(here) - mid(cur)) * 10) / 10 : null, hereT: here ? getComputedStyle(here).transitionDuration : '', cur: !!cur, vals, h3: (document.querySelector('#isx-sn-body .cl-a') || document.querySelector('#isx-sn-body h3') || {}).textContent || '' };   /* clarity build: a guide step is known by its name; its heading is its question */
   });
   /* the whole guide: 7 reveals, 37 steps, and at each decision the card, the other path link by link, the crisis card */
   const walk = async (p, each) => {
@@ -100,7 +100,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       }
       if (want(3)) {
         const seen = rows.filter(r => r.here != null), off = seen.filter(r => Math.abs(r.here) > 2).map(r => [r.tag, r.here]);
-        ok(`lit marker (${w} px): under the current mark, within 2 px, on ${seen.length} of ${rows.length} cards`, seen.length === rows.length && off.length === 0 && rows.every(r => r.cur), { seen: seen.length, off: off.slice(0, 6), noCur: rows.filter(r => !r.cur).map(r => r.tag).slice(0, 4) });
+        ok(`lit marker (${w} px): under the current mark, within 2 px, on ${seen.length} of ${rows.length} cards (clarity build: between 761 and 1180 px the guide's bar keeps its words and drops the marks)`, (w > 760 && w <= 1180) || (seen.length === rows.length && off.length === 0 && rows.every(r => r.cur)), { seen: seen.length, off: off.slice(0, 6), noCur: rows.filter(r => !r.cur).map(r => r.tag).slice(0, 4) });
         ok(`lit marker (${w} px): cuts under reduced motion`, rows.every(r => r.hereT.split(',').every(t => parseFloat(t) === 0)), rows[0].hereT);
       }
       if (want(8) && w === 1440) {
@@ -161,8 +161,8 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   /* ================= 5, 6. decisions keep their outcome to themselves; chains keep the measured values ================= */
   if (want(5) || want(6)) {
     const p = await page('#simulator', { pos: '{"l":0,"b":0}' });
-    const DEC = await js(p, () => ISX.sim.decisions.map(D => Object.assign({}, D, { step: ISX.sim.lines[0].steps[D.at].t })));
-    ok('decisions: seven, before steps 20, 25, 27, 30, 35, 37 and 42 (tiers build B: the repo backstop now leads to the new step 30); 37 chain links in all', DEC.length === 7 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '20,25,27,30,35,37,42' && DEC.reduce((a, D) => a + D.chain.length, 0) === 37, DEC.map(D => [D.at + 1, D.chain.length]));
+    const DEC = await js(p, () => ISX.sim.decisions.filter(D => D.at >= 0).map(D => Object.assign({}, D, { step: ISX.sim.lines[0].steps[D.at].t })));   /* clarity build: the guide's own four; the three in episodes are walked by content-check and clarity-check */
+    ok('decisions in the guide: four, before steps 11, 16, 21 and 28 (clarity build); 22 chain links in all', DEC.length === 4 && DEC.map(D => D.at + 1).sort((a, b) => a - b).join() === '11,16,21,28' && DEC.reduce((a, D) => a + D.chain.length, 0) === 22, DEC.map(D => [D.at + 1, D.chain.length]));
     for (const D of DEC) {
       const tag = 'decision before step ' + (D.at + 1);
       await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), '0:' + (D.at - 1)); await p.waitForTimeout(350);
@@ -258,7 +258,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       await click(p, '#isx-b1ind'); await p.waitForTimeout(350);
       r = await fit(p); ok(`one screen (${w}×${h}): the ledger open`, all(r) && r.led === true, r);
       await p.keyboard.press('Escape'); await p.waitForTimeout(200);
-      for (const at of await js(p, () => ISX.sim.decisions.map(D => D.at))) {
+      for (const at of await js(p, () => ISX.sim.decisions.map(D => D.at).filter(a => a >= 0))) {
         await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), 'd:0:' + (at - 1)); await p.waitForTimeout(450);
         r = await fit(p); ok(`one screen (${w}×${h}): the decision before step ${at + 1}`, all(r), r);
         await click(p, '#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(450);

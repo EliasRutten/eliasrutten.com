@@ -98,11 +98,11 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   }
   ok('guide: all 43 steps are reachable with →, choosing on the card at each choice (clarity build: 43 steps)', n === 43, n);
   ok('guide: every reveal is at most two sentences, with the rest behind “The mechanism”', worst <= 2 && deepOk, { worst, deepOk });
-  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[8].classList.contains('cur')));
+  ok('guide: the bar follows the story (last chapter current)', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s:not(.end)')[7].classList.contains('cur')));
   await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].querySelector('.rt-sl').click()); await p.waitForTimeout(300);
-  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^13\/52$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
+  ok('guide: a chapter in the bar jumps to its first step', await p.evaluate(() => document.querySelectorAll('#isx-s2bar .rt-s')[3].classList.contains('cur') && /^17\/43$/.test(document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''))));
   /* B1: the “Levers so far” tray is gone. A new lever is announced on the card and opens its own card from there */
-  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:13"]').click()); await p.waitForTimeout(300);
+  await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:10"]').click()); await p.waitForTimeout(300);
   ok('guide: no “Levers so far” in the bar; the step names its new lever on the card', await p.evaluate(() => !document.querySelector('#isx-s2bar [data-tray="lev"]') && document.querySelectorAll('#isx-sn-body .sn-chip.lv2').length === 1));
   await p.evaluate(() => document.querySelector('#isx-sn-body .sn-chip.lv2').click()); await p.waitForTimeout(300);
   ok('guide: a lever opens its dossier in the card, without a tray', await p.evaluate(() => { const d = document.querySelector('#isx-sn-det .dossier'); return !!d && !d.hidden && /Lever · /.test(d.textContent) && getComputedStyle(document.getElementById('isx-sn-body')).display === 'none' && document.getElementById('isx-s2tray-lev').hidden; }));

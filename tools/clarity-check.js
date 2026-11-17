@@ -74,7 +74,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
       let acts = 0;
       for (let i = 0; i < info.n; i++) {
         await go(p, 0, i);
-        const c = await p.evaluate(() => { const bd = document.getElementById('isx-sn-body'), box = document.getElementById('isx-sn-in'); return { q: (bd.querySelector('h3.cl-q') || {}).textContent || '', a: (bd.querySelector('.cl-a') || {}).textContent || '', k: bd.querySelector('.s2k').innerText, nw: [...bd.querySelectorAll('.cl-new > div')].map(d => [d.querySelector('dt').textContent, d.querySelector('dd').textContent]), act: (bd.querySelector('.cl-act') || {}).textContent || '', fits: box.scrollHeight <= box.clientHeight + 1 }; });
+        const c = await p.evaluate(() => { const bd = document.getElementById('isx-sn-body'), box = document.getElementById('isx-sn-in'); return { q: (bd.querySelector('h3.cl-q') || {}).textContent || '', a: (bd.querySelector('.cl-a') || {}).textContent || '', k: bd.querySelector('.s2k').innerText, nw: [...bd.querySelectorAll('.cl-new dl > div')].map(d => [d.querySelector('dt').textContent, d.querySelector('dd').textContent]), act: (bd.querySelector('.cl-act') || {}).textContent || '', fits: box.scrollHeight <= box.clientHeight + 1 }; });
         if (!/\?$/.test(c.q) || !c.a) bad.q.push(i + 1);
         if (/Problem|What was done|Consequence/i.test(c.k)) bad.role.push(i + 1);
         if (!c.fits) bad.scroll.push(i + 1);
