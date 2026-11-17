@@ -115,7 +115,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('B1-3, phone: the ledger sheet, a role tab', '#simulator', sim(22), 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-b1play .ipc.all').click()); await p.waitForTimeout(300); await p.evaluate(() => document.querySelector('#isx-b1led [data-ltab="outcome"]').click()); await p.waitForTimeout(200); });
   await run('B1-3, phone: the “more” menu', '#simulator', sim(22), 390, 844, click('#isx-s2bar .rt-more'));
   /* B1-4: decisions, chain reactions, crisis cards */
-  const ask = async p => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); };
+  const ask = async p => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); await p.evaluate(() => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }); await p.waitForTimeout(400); };   /* clarity patch: to the call itself, past its setup pages */
   const chainTo = n => async p => { await ask(p); await p.evaluate(() => document.querySelector('#isx-sn-body [data-fk="alt"]').click()); await p.waitForTimeout(400); for (let i = 0; i < n; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); } };
   await run('B1-4: a decision card (the yen), “More context” open', '#simulator', sim(0, 18), 1440, 900, async p => { await ask(p); await p.click('#isx-sn-body .dmore'); await p.waitForTimeout(200); });
   await run('B1-4: a decision card at 1280×760', '#simulator', sim(9), 1280, 760, ask);
