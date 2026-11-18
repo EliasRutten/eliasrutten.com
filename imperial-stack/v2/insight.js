@@ -78,19 +78,25 @@
 
   /* ---------- the first moment ---------- */
   var firstOn = false;
-  function startFirst() {
-    var f = D.first; if (!f || firstOn) return;
+  function startFirst(now) {
+    var f = D.first; if (!f || firstOn) return false;
+    now = now === true;
     /* round 5b: on a first visit the Circuit's opening (v2/opening.js) plays first; the first line follows it, and the controls the
        opening has just settled are not hidden again */
-    if (X.opening && X.opening.wait('circuit', startFirst)) return;
-    if (U.stGet(KEY.first) === 'off' || X.deep || X.view !== 'map' || X.step !== 0 || X.intro) return;
+    if (!now && X.opening && X.opening.wait('circuit', startFirst)) return false;
+    /* first-visit welcome (18 Nov): while the welcome holds the bare map, the line waits; v2/welcome.js brings it in at the tour's
+       third stop, or with everything else (startFirst(true): at once, nothing hidden, whatever the address and the old key say) */
+    if (!now && root.classList.contains('wl-stage')) return false;
+    if (!now && (U.stGet(KEY.first) === 'off' || X.deep)) return false;
+    if (X.view !== 'map' || X.step !== 0 || X.intro) return false;
     firstOn = true;
-    var still = X.reduce, after = !!(X.opening && X.opening.ran === 'circuit');
+    var still = X.reduce || now, after = now || !!(X.opening && X.opening.ran === 'circuit');
     if (!still && !after) root.classList.add('isx-quiet');
     X.highlight(function (fl) { return fl.to === 'NYC' && fl.from !== 'PLAT' && fl.from !== 'DC'; });
     var aim = function () { var g = X.globe; if (!g || !firstOn) return false; try { g.pointOfView({ lat: f.pov[0], lng: f.pov[1], altitude: f.pov[2] }, still ? 0 : 1600); } catch (e) { /* ignore */ } return true; };
     if (!aim()) { var n = 0, t = setInterval(function () { if (aim() || ++n > 20) clearInterval(t); }, 400); }
-    setTimeout(function () { if (firstOn) show({ first: true, k: f.k, t: f.t, src: f.src, go: f.go }); }, still ? 0 : after ? 500 : 900);
+    var card = function () { if (firstOn) show({ first: true, k: f.k, t: f.t, src: f.src, go: f.go }); };
+    if (now) card(); else setTimeout(card, still ? 0 : after ? 500 : 900);
     /* the controls settle in on the first touch or key, or after a few seconds on their own */
     var wake = function () { settle(); };
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { window.addEventListener(ev, wake, { once: true, passive: true, capture: true }); });
@@ -98,7 +104,8 @@
     X.on('step', function () { if (firstOn && X.step !== 0) { if (cur && cur.first) close(false); else endFirst(false); } });
     X.on('view', function () { if (firstOn && X.view !== 'map') { if (cur && cur.first) close(false); else endFirst(false); } });
     X.on('select', function () { if (firstOn && X.sel.iso) { if (cur && cur.first) close(false); else endFirst(false); } });
-    setTimeout(function () { if (firstOn && cur && cur.first) close(false); }, 26000);
+    if (!now) setTimeout(function () { if (firstOn && cur && cur.first) close(false); }, 26000);
+    return true;
   }
   function settle() { clearTimeout(quietT); if (!root.classList.contains('isx-quiet')) return; root.classList.remove('isx-quiet'); root.classList.add('isx-settle'); setTimeout(function () { root.classList.remove('isx-settle'); }, 1400); }
   function endFirst() {
@@ -184,6 +191,9 @@
   X.load('insights').then(function (d) {
     D.first = d.first || null; D.insights = d.insights || []; D.notes = d.notes || {};
     if (X.view === 'map') { X.renderGlobe(false); X.recard(); X.emit('narr'); }
-    startFirst();
+    loaded = true; if (wantNow) { wantNow = false; startFirst(true); } else startFirst();
   }).catch(function () { /* without the data the map simply shows no insights */ });
+  /* first-visit welcome (18 Nov): the tour's third stop brings in the first line; if the data is not in yet, it comes when it is */
+  var loaded = false, wantNow = false;
+  X.insight = { first: function () { if (!loaded) { wantNow = true; return false; } return startFirst(true); }, get card() { return box && !box.hidden && box.classList.contains('in') ? box : null; }, get firstOn() { return firstOn; } };
 })();

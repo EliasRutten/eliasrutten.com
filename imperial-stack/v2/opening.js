@@ -42,7 +42,14 @@
     this.anims.forEach(function (an) { an.play(); });
     (function f(now) {
       if (self.done || self.held) return;
-      self.run(Math.min(self.dur, self.t + Math.max(0, now - last) / 1000 * self.rate)); last = now;
+      var nt = Math.min(self.dur, self.t + Math.max(0, now - last) / 1000 * self.rate);
+      /* a gate holds the clock (and everything on it) at one moment until it opens: the Circuit's waits there for the globe */
+      if (self.gate && self.rate === 1 && self.gate(nt)) {
+        if (!self.gated) { self.gated = true; var ms = self.t * 1000; self.anims.forEach(function (an) { try { an.pause(); an.currentTime = ms; } catch (e) { /* ignore */ } }); }
+        self.run(self.t); last = now; self.raf = requestAnimationFrame(f); return;   /* its ticks still run, at the held moment */
+      }
+      if (self.gated) { self.gated = false; self.anims.forEach(function (an) { try { an.play(); } catch (e) { /* ignore */ } }); }
+      self.run(nt); last = now;
       if (self.t >= self.dur) { self.end(); return; }
       self.raf = requestAnimationFrame(f);
     })(last);
@@ -50,6 +57,7 @@
   /* the rest in a quarter of a second */
   TL.prototype.skip = function () {
     if (this.done) return; if (!this.begun) { this.end(); return; }
+    if (this.gated) { this.gated = false; this.anims.forEach(function (an) { try { an.play(); } catch (e) { /* ignore */ } }); }
     var left = this.dur - this.t; if (left <= .25) return;
     this.rate = left / .25; var r = this.rate; this.anims.forEach(function (an) { try { an.updatePlaybackRate(r); } catch (e) { /* ignore */ } });
   };
@@ -92,7 +100,7 @@
     start: function () { if (live && !live.begun) live.begin(); },
     stop: function () { if (live && live.begun && !live.held && !live.done && (document.hidden || X.reduce)) live.end(); } });
 
-  /* ================= the Circuit: “The world's savings come home”, 6.6 s ================= */
+  /* ================= the Circuit: “The world's savings come home”, 6.6 s on its clock, 5 s seen ================= */
   var rad = Math.PI / 180;
   var vec = function (lat, lng) { var a = lat * rad, b = lng * rad; return [Math.cos(a) * Math.cos(b), Math.cos(a) * Math.sin(b), Math.sin(a)]; };
   var dot = function (a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; };
@@ -124,27 +132,21 @@
   function circuit() {
     var gb = root.querySelector('#isx-scene-map .globebox'), scene = $('scene-map'); if (!gb || !scene) return false;
     var tl = new TL('circuit', 6.6); tl.stage = scene;
-    /* the dark the title stands in: a plain cover laid over the globe (the canvas itself is never touched) */
-    var dark = mk('i', 'op-dark'), gl = mk('div', 'op-gl'), ttl = mk('div', 'op-ttl', '<span class="op-k">The dollar loop</span><i class="op-hr"></i><span class="op-l1">The world’s savings</span><span class="op-l2">come home</span>'), skip = mk('button', 'op-skip', 'Skip <span>›</span>');
-    skip.type = 'button'; skip.tabIndex = -1;
-    var gh = $('globe'); gh.appendChild(dark); gh.appendChild(gl); scene.appendChild(ttl); scene.appendChild(skip);   /* inside the globe's own box, so the line stays on the globe wherever the layout puts it */
-    var sr0 = scene.getBoundingClientRect(), gr0 = $('globe').getBoundingClientRect();   /* the title stands on the globe's own centre */
-    ttl.style.left = Math.round(gr0.left - sr0.left) + 'px'; ttl.style.top = Math.round(gr0.top - sr0.top) + 'px'; ttl.style.width = Math.round(gr0.width) + 'px'; ttl.style.height = Math.round(gr0.height) + 'px';
-    tl.undo.push(function () { [dark, gl, ttl, skip].forEach(function (e) { e.remove(); }); });
-    var rise = function (y) { return [{ opacity: 0, translate: '0 ' + (y || 8) + 'px' }, { opacity: 1, translate: '0 0' }]; };
-    tl.a(ttl.querySelector('.op-k'), rise(), .4, .9);
-    tl.a(ttl.querySelector('.op-hr'), [{ opacity: 0, scale: '0 1' }, { opacity: .8, scale: '1 1' }], .7, .8);
-    tl.a(ttl.querySelector('.op-l1'), rise(), .9, .9);
-    tl.a(ttl.querySelector('.op-l2'), rise(), 1.4, .9);
-    tl.a(ttl, [{ opacity: 1, translate: '0 0' }, { opacity: 0, translate: '0 -6px' }], 2.5, .6, { easing: 'ease-in' });
-    tl.a(skip, [{ opacity: 0 }, { opacity: 1 }], .5, .4); tl.a(skip, [{ opacity: 1 }, { opacity: 0 }], 5.3, .3, { fill: 'forwards' });
+    /* first-visit welcome (18 Nov): the motion stays, its title and its Skip button are gone (a click, a tap or any key still jumps to
+       the end, and the welcome card follows). The timeline keeps its clock but starts 1.6 s in, where the title used to give way, when
+       the line is laid; while the globe is still loading, the clock holds at 2.6 s (3 s at most), so the line is laid on its arcs. */
+    tl.t = 1.6;
+    /* the dark: a plain cover laid over the globe (the canvas itself is never touched) */
+    var dark = mk('i', 'op-dark'), gl = mk('div', 'op-gl');
+    var gh = $('globe'); gh.appendChild(dark); gh.appendChild(gl);   /* inside the globe's own box, so the line stays on the globe wherever the layout puts it */
+    tl.undo.push(function () { [dark, gl].forEach(function (e) { e.remove(); }); });
     /* dawn, with a slow push-in: the cover lifts while the camera comes in by a tenth (below). The globe's box is never scaled: the
        page sizes the canvas from that box, and would size it wrong */
     tl.a(dark, [{ opacity: 1 }, { opacity: 0 }], 3.1, 2.5, { easing: 'cubic-bezier(.3,.2,.3,1)' });
     /* the instruments settle, 150 ms apart: figures, card, legend and controls, the step bar */
     var settle = [['.resbar', '.vchip'], ['.cmd6', '.mstep'], ['.legbox2', '.zoom6', '.mapmodes', '.hint', '.mapnote'], ['.tabs-bottom', '.dock6', '.b4row']];
     var all = settle.reduce(function (a, b) { return a.concat(b); }, []).join(', ');
-    settle.forEach(function (grp, i) { grp.forEach(function (sel) { root.querySelectorAll('#isx-frame ' + sel).forEach(function (el) { if (el.parentElement && el.parentElement.closest(all)) return;   /* one that sits inside another settles with it */
+    if (!root.classList.contains('wl-stage')) settle.forEach(function (grp, i) { grp.forEach(function (sel) { root.querySelectorAll('#isx-frame ' + sel).forEach(function (el) { if (el.parentElement && el.parentElement.closest(all)) return;   /* one that sits inside another settles with it */
       tl.a(el, [{ opacity: 0 }, { opacity: 1 }], 5.4 + i * .15, .75); }); }); });
     /* the line: drawn in the dark, on the place the globe's own arcs take once the dawn has come */
     var built = false, tries = 0, pov = null, aimedAt = 0, aimedTicks = 0, lineSvg = null, lastA = null;
@@ -188,7 +190,8 @@
       built = true; return true;
     }
     aim();
-    tl.tick(function (t) {   /* the globe may still be loading under the title: try until it is there */
+    var gateT = 0; tl.gate = function (t) { if (t < 2.6 || built) return false; if (!gateT) gateT = performance.now(); return performance.now() - gateT < 3000; };
+    tl.tick(function (t) {   /* the globe may still be loading under the dark: try until it is there */
       if (built || t < 2.2 || t >= 4.4 || tries++ > 400) return;
       if (!aimedAt || t < 2.3) { aim(); return; }
       if (++aimedTicks >= 3 && performance.now() - aimedAt > 120) build();

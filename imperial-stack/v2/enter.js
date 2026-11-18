@@ -17,7 +17,10 @@
   'use strict';
   var X = window.ISX; if (!X) return;
   var U = X.util, root = X.root, $ = X.$, esc = U.esc, KEY = 'isx-enter-', SUB = 'https://eliasrutten.substack.com';
-  var off = function () { return U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off'; };
+  /* first-visit welcome (18 Nov): one key for every intro screen, isx-intro = 'off' once “Don’t show this again” is ticked here, on the
+     Circuit's welcome or at the tour's last stop */
+  var off = function () { return U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off' || U.stGet('isx-intro') === 'off'; };
+  var intro0 = null;
   var SSL = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>';
 
   /* ---------- the copy: one entry a tab (drafts for Elias; the machinery's is the preview's, approved 17 Nov) ---------- */
@@ -73,7 +76,7 @@
       + '<div class="en-b">' + c.b.map(function (b) { return '<section' + r() + '><h3>' + esc(b[0]) + '</h3><p>' + txt(b[1]) + '</p></section>'; }).join('') + '</div>'
       + '<div' + r().replace('en-r', 'en-r en-acts') + '>' + c.acts.map(function (a, j) { return '<button type="button" class="en-btn' + (j ? '' : ' pri') + '" data-en="' + a[0] + '"' + (a[0] === 'remind' ? ' data-remind="enter"' : '') + (a[0] === 'levels' || a[0] === 'stops' ? ' aria-expanded="false" aria-controls="isx-en-more"' : '') + '>' + esc(a[1]) + (j ? '' : ' <span aria-hidden="true">→</span>') + '</button>'; }).join('') + '</div>'
       + '<div class="en-more" id="isx-en-more" hidden></div>'
-      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. The <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg> at the top left opens this again.</span></p>'
+      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. The <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg> at the top left opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
       + '</div></div>';
     return h;
   }
@@ -93,6 +96,8 @@
     el.innerHTML = html(v); root.appendChild(el); live = v; hold(true);
     U.stSet(KEY + v, '1');
     el.addEventListener('click', onClick); el.addEventListener('keydown', onKey);
+    intro0 = U.stGet('isx-intro') === 'off' ? null : U.stGet('isx-intro');
+    el.addEventListener('change', function (e) { if (!e.target.matches('[data-en-off]')) return; U.stSet('isx-intro', e.target.checked ? 'off' : intro0); X.emit('intro', U.stGet('isx-intro')); });
     /* the first press shows the rest at once; a press outside the column leaves */
     el.addEventListener('pointerdown', function () { if (el) el.classList.add('en-all'); }, true);
     el.focus({ preventScroll: true });

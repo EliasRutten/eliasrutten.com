@@ -2378,12 +2378,13 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/printer.css">
 <link rel="stylesheet" href="/imperial-stack/v2/enter.css">
 <link rel="stylesheet" href="/imperial-stack/v2/arc.css">
+<link rel="stylesheet" href="/imperial-stack/v2/welcome.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
   <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the profit dollar, the elite network, the imperial machinery and the imperial arm">
     <div class="hud-top">
-      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><button type="button" class="b4mis" id="isx-mis" data-mis aria-label="See a mistake? Copy a reference and message me on Substack" data-tip="<b>See a mistake?</b><p>Copy a reference to this view and message me on Substack.</p>" aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Mistake?</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
+      <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><button type="button" class="wl-tb" id="isx-tourb" data-wl-tour aria-label="Tour: take the 1-minute tour of the map"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17.2v.01"/></svg><span>Tour</span></button><button type="button" class="b4mis" id="isx-mis" data-mis aria-label="See a mistake? Copy a reference and message me on Substack" data-tip="<b>See a mistake?</b><p>Copy a reference to this view and message me on Substack.</p>" aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Mistake?</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-profit" aria-pressed="false"><span class="lg">The profit dollar</span><span class="sm">Profits</span></button>
@@ -9276,7 +9277,7 @@ if (location.hash === '#tour') ROOT.classList.add('tour');
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
 /* round 5b: “#replay” plays the two first openings again (v2/opening.js), for review and for anyone who wants to see them twice */
 const REPLAY = location.hash === '#replay';
-if (REPLAY) { stSet('isx-open-circuit', null); stSet('isx-open-sim', null); ['profit', 'arm', 'fin', 'story'].forEach(k => stSet('isx-enter-' + k, null)); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address stays; the page still opens on the Circuit */ } }
+if (REPLAY) { stSet('isx-open-circuit', null); stSet('isx-open-sim', null); stSet('isx-intro', null); ['profit', 'arm', 'fin', 'story'].forEach(k => stSet('isx-enter-' + k, null)); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address stays; the page still opens on the Circuit */ } }
 const R0 = REPLAY ? null : routeOf(location.hash); if (R0) applyModes(R0);
 const start = R0 ? R0[0] : 'map';
 setView(start); lastView = view;
@@ -9287,7 +9288,16 @@ if (start === 'map') setStep(0);
    dark. Once per browser, on a first visit without a link into the map, with motion allowed and a globe to show. The class only holds
    the stage dark; if the opening's file never arrives, the class comes off by itself. */
 window.__isxReplay = REPLAY;
-if (start === 'map' && !reduce && hasWebGL() && stGet('isx-tips-sim') !== 'off' && (REPLAY || ((!location.hash || location.hash === '#') && stGet('isx-open-circuit') !== '1' && stGet('isx-first') !== 'off'))) {
+/* first-visit welcome (18 Nov 2026, spec claude/specs/first-visit-welcome-18-nov.md): one key, isx-intro. 'off' once the visitor ticks
+   “Don’t show this again”; 'toured' once the tour has been taken (Elias, 18 Nov: it stops after one tour). While it is unset, a visit to
+   the Circuit without a link into the map opens on the bare globe (class wl-stage, before the first paint, so nothing shows and then
+   hides) and v2/welcome.js takes it from there; a link into the map gets only the one-line offer of the tour. The old keys fold in once:
+   the old Circuit tour taken (isx-tour 'off') counts as the tour taken. The check scripts' switch isx-tips-sim = 'off' keeps it all away. */
+const INTRO0 = (() => { let v = stGet('isx-intro'); if (v !== 'off' && v !== 'toured' && stGet('isx-tour') === 'off') { v = 'toured'; stSet('isx-intro', v); } return v === 'off' || v === 'toured' ? v : null; })();
+const WL = stGet('isx-tips-sim') === 'off' || INTRO0 ? null : (start === 'map' && (REPLAY || !location.hash || location.hash === '#' || /^#\/?circuit\/?$/i.test(location.hash)) ? 'stage' : 'banner');
+window.__isxWelcome = WL;
+if (WL === 'stage') ROOT.classList.add('wl-stage');
+if (WL === 'stage' && !reduce && hasWebGL()) {
   ROOT.classList.add('op-c');
   setTimeout(() => { if (!(window.ISX && ISX.opening && ISX.opening.on)) ROOT.classList.remove('op-c'); }, 6000);
 }
@@ -9378,7 +9388,6 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/web.js"></script>
 <script defer src="/imperial-stack/v2/views.js"></script>
 <script defer src="/imperial-stack/v2/scenes.js"></script>
-<script defer src="/imperial-stack/v2/tour.js"></script>
 <script defer src="/imperial-stack/v2/simtour.js"></script>
 <script defer src="/imperial-stack/v2/mistake.js"></script>
 <script defer src="/imperial-stack/v2/remind.js"></script>
@@ -9386,6 +9395,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/clarity.js"></script>
 <script defer src="/imperial-stack/v2/profit.js"></script>
 <script defer src="/imperial-stack/v2/enter.js"></script>
+<script defer src="/imperial-stack/v2/welcome.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">
