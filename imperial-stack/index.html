@@ -6058,7 +6058,7 @@ function levHover(n) {
 function playBarHTML() {
   return `<div class="pbar"><span class="pbl s4pl"><b>Episodes</b><span>dated moments, step by step</span></span>${RUNS.map((P, i) => `<button type="button" class="pchip${fplay === i ? ' on' : ''}" data-p="${i}" style="--pc:${P.c}" aria-pressed="${fplay === i}" data-tip="<b>${fe(P.t)}</b><p>${fe(P.w)} · ${P.steps.length} steps, each lighting the relations behind it</p>">${svgIc(P.ic, 15)}<b>${fe(P.sh)}</b></button>`).join('')}<span class="pbsp"></span><span class="pcnt" id="isx-pcnt"></span><button type="button" class="pclr" id="isx-pclr">Clear</button></div>`;
 }
-function renderFin() {
+function renderFin() { dcSync();
   const host = $('fin'); if (!host) return;
   if (RT) RT.release();   /* B1: the dock leaves the bar before the stage is rebuilt */
   const head = (t, x) => `<header class="finhead cp"><div class="fhl"><div class="fk">The imperial machinery · financing the AI Manhattan Project · data as of ${fe(LIVE.asof || '')}</div><div class="fht"><h2>${t}</h2><p>${x}</p></div></div>${finSwitch()}</header>`;
@@ -6949,6 +6949,7 @@ function setView(v) {
   if (v !== 'arm') { ashClose(true); ['full', 'compact', 'reach'].forEach(m => ROOT.classList.remove('arm-' + m)); ROOT.classList.remove('rev-col'); }
   ROOT.classList.toggle('arm-rev', v === 'arm' && armMode === 'rev');
   fsPlace(); buildTabs(); narrate(); renderLegend(); after5(); routeSync(); hints();
+  dcSync();   /* call screen round: a call holds the window only while the Simulator is the view */
   emit('view', view); ISXP.sync();
 }
 ['map', 'profit', 'arm', 'fin', 'story'].forEach(k => $('v-' + k).addEventListener('click', () => setView(k)));
@@ -7649,7 +7650,7 @@ const SCALL = {
       fig: { lab: 'Foreign share of federal debt', rows: [['2014', '47%', 47], ['2025', '30%', 30, 1]], cap: 'The deficit grew all the while.' },
       src: 'Foreign share of federal debt: as stored at the Circuit, step 00. Scott Bessent, remarks at the Manhattan Institute (6 Jun 2024); Stephen Miran and Nouriel Roubini, “ATI: Activist Treasury Issuance and the Tug-of-War Over Monetary Policy”, Hudson Bay Capital (Jul 2024).',
       sl: [['Bessent, 6 Jun 2024', 'https://manhattan.institute/article/the-fallacy-of-bidenomics-a-return-to-central-planning'], ['Miran and Roubini, Jul 2024', 'https://www.hudsonbaycapital.com/documents/FG/hudsonbay/research/635102_Activist_Treasury_Issuance_-_Hudson_Bay_Capital_Research.pdf']] },
-    prim: { x: 'Bills and bonds are both Treasury debt. Different people buy them, with different money, so each one pushes on a different part of the system.',
+    prim: { x: 'Bills and bonds are both Treasury debt, but different people buy them with different money. More bills press on the money market, the cash in money funds and banks; more bonds press on long yields, which price the rest of the economy’s borrowing.',
       a: ['A bill', ['Repaid within a year', 'Bought with cash by money funds and banks', 'Treated almost like money']],
       b: ['A note or bond', ['Runs two to thirty years and pays a coupon', 'Bought by investors who carry its price risk for years', 'Sets the long rate the economy borrows at']] },
     vars: [
@@ -8515,7 +8516,7 @@ function sAskHTML(k) {
     body = `<div class="dc-grid"><div class="dc-txt">${T.map((t, i) => `<p${i ? '' : ' class="lead"'}>${ft(t)}</p>`).join('')}</div><div class="dc-fig">${dcFigHTML(P.fig)}</div></div>`
       + `<p class="dc-src">Sources: ${fe(P.src)}${(P.sl || []).length ? ' · ' + P.sl.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fe(t)}</a>`).join(' · ') : ''}</p>`;
     const ess = (C.ess || []).filter(e => ESSAYS[e]);
-    fl = (ess.length ? `<p class="dc-ess">${sSub}<span>Go deeper on the Substack:</span> ${ess.map(e => `<a href="${ESSAYS[e][1]}" target="_blank" rel="noopener">${fe(ESSAYS[e][0])}</a>`).join('<span class="sep" aria-hidden="true">·</span>')}</p>` : '');
+    fl = (ess.length ? `<p class="dc-ess">${sSub}<span>On the Substack:</span> ${ess.map(e => `<a href="${ESSAYS[e][1]}" target="_blank" rel="noopener">${fe(ESSAYS[e][0])}</a>`).join('<span class="sep" aria-hidden="true">·</span>')}</p>` : '');
     nav = back + next(0);
   } else if (dp === 1) {
     const seen = dcSeen(k), cur = DCX.v[k], nv = C.vars.length;
@@ -8558,6 +8559,28 @@ function dcCommit() {
   if (reduce) { go(); return; }
   cock.classList.add('dc-leave'); setTimeout(go, 460);
 }
+/* call screen round: the call holds the window only while it is the view; leaving the Simulator (an address, Back, a door) gives the page
+   back, and coming back to it takes the window again */
+function dcSync() {
+  try {
+    const cock = $('cock'); if (!cock) return;
+    const now = simOn() && SIM.ph === 'ask', was = cock.classList.contains('dcall');
+    if (now !== was) { cock.classList.toggle('dcall', now); dcHold(now); const st = $('stage'); if (st) st.inert = now || (simOn() && SIM.beat < 0 && !!sLine().main); }
+  } catch (e) { /* the Simulator is not built yet */ }
+}
+/* call screen round: the call's keys, wherever focus is while it is open. Esc leaves the call for the guide step before it; 1 to 4 weigh
+   a force; A and B choose. Returns true when it used the key. */
+function dcKeys(e) {
+  const cock = $('cock');
+  if (!cock || !cock.classList.contains('dcall') || SIM.ph !== 'ask' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || (e.target.closest && e.target.closest('input, textarea, select'))) return false;
+  if (ISX.remind && ISX.remind.on) return false;
+  const k = sDecK();
+  if (e.key === 'Escape') { e.preventDefault(); simGo(SIM.line, SIM.beat, 'focus'); return true; }
+  if (SIM.dp === 2 && /^[ab]$/i.test(e.key)) { const o = SDEC[k].ord['ab'.indexOf(e.key.toLowerCase())]; e.preventDefault(); dcSel(o); const b = ROOT.querySelector(`#isx-sn-body .dc-opt[data-dco="${o}"]`); if (b) b.focus({ preventScroll: true }); return true; }
+  if (SIM.dp === 1 && /^[1-9]$/.test(e.key) && SCALL[k].vars[+e.key - 1]) { e.preventDefault(); dcVar(+e.key - 1); const b = ROOT.querySelector(`#isx-sn-body .dc-var[data-dcv="${+e.key - 1}"]`); if (b) b.focus({ preventScroll: true }); return true; }
+  return false;
+}
+document.addEventListener('keydown', e => { if (!e.target.closest || !e.target.closest('#isx-cock')) dcKeys(e); });
 /* while a call is open it is the whole window: everything else is out of reach and the page does not scroll under it */
 function dcHold(on) {
   const cock = $('cock'), snarr = $('snarr'); if (!cock || !snarr) return;
@@ -9052,13 +9075,7 @@ function simMount() {
   });
   /* Esc: closes an open tray, then an open dossier, then leaves the guide for the full view */
   cock.addEventListener('keydown', e => {
-    /* call screen round: Esc leaves the call for the guide step before it; 1 to 4 weigh a force; A and B choose */
-    if (SIM.ph === 'ask' && simOn() && !e.defaultPrevented && !e.metaKey && !e.ctrlKey && !e.altKey && !(e.target.closest && e.target.closest('input, textarea, select'))) {
-      const k = sDecK();
-      if (e.key === 'Escape') { e.preventDefault(); simGo(SIM.line, SIM.beat, 'focus'); return; }
-      if (SIM.dp === 2 && /^[ab]$/i.test(e.key)) { const o = SDEC[k].ord['ab'.indexOf(e.key.toLowerCase())]; e.preventDefault(); dcSel(o); const b = ROOT.querySelector(`#isx-sn-body .dc-opt[data-dco="${o}"]`); if (b) b.focus({ preventScroll: true }); return; }
-      if (SIM.dp === 1 && /^[1-9]$/.test(e.key) && SCALL[k].vars[+e.key - 1]) { e.preventDefault(); dcVar(+e.key - 1); const b = ROOT.querySelector(`#isx-sn-body .dc-var[data-dcv="${+e.key - 1}"]`); if (b) b.focus({ preventScroll: true }); return; }
-    }
+    if (dcKeys(e)) return;
     if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.fzk')) { e.preventDefault(); const g = e.target.closest('.fzk'); simSector(g.dataset.sec, g); return; }
     if (e.key !== 'Escape' || e.defaultPrevented) return;
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }

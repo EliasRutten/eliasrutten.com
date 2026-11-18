@@ -12,11 +12,12 @@
      the full view's tray runs the six episodes; the decision inside an episode works
    6 the bar and the camera: the act and the chapter in full on the line button; the zoom capped; the whole map on a wide screen
    7 type floor on the round's own elements; no page errors anywhere above
-   8 clarity patch (17 Nov 2026, claude/specs/clarity-patch-17-nov.md): every call is a full screen over the dimmed, inert map, with its
-     setup pages first (two for the first call, redated to January 2025; one for each other call), Next and Back through them, the page
-     kept in the stored place; the call page carries three or four dated, sourced tiles (the bond-panel ones checked against the file),
-     the Substack pieces and the quiet support row; choosing works as before; it fits at 1440 × 900, 1280 × 760 and 1024 × 768 and is a
-     page in the card on phones; the inflows reveal is rewritten; “Show hints again” brings hints back */
+   8 the call screens. Call screen round (18 Nov 2026), replacing the clarity patch's pages: every call covers the whole window, the page
+     under it inert and hidden; three steps (the problem, what you weigh, your call), spoken to the reader, none naming what happened;
+     every figure dated and sourced (the bond-panel ones checked against the file); forces that say which option they pull toward;
+     options that say what argues for them and where they move the pressure; choose, then “Make this call”; keys, Esc, Back and reload;
+     it fits at 1440 × 900, 1280 × 720 and 1024 × 768 and scrolls on phones; the type is Saira Wide and Martian Mono. Also: the inflows
+     reveal (clarity patch) and “Show hints again” */
 const { chromium } = require('playwright');
 const base = process.argv.slice(2).find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 const only = (process.argv.slice(2).find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean).map(Number);
@@ -134,7 +135,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const fi = info.lines[0].k.indexOf('0-1'); await go(p, 0, fi - 1); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
     for (let i = 0; i < 3; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }   /* clarity patch: past the call's setup pages */
     const a1 = await p.evaluate(() => [ISX.sim.ph, !!document.getElementById('isx-cl-nums')]);
-    await p.click('.dopt[data-fk="alt"]'); await p.waitForTimeout(300);
+    await p.click('#isx-sn-body .dc-opt[data-dco="alt"]'); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(300);
     const a2 = await p.evaluate(() => [ISX.sim.ph, !!document.getElementById('isx-cl-nums')]);
     ok(a1[0] === 'ask' && !a1[1] && a2[0] === 'chain' && !a2[1], 'no numbers on a decision or a chain card', [a1, a2]);
     await p.context().close();
@@ -186,8 +187,8 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     ok(e1.ep === 'oil' && e1.beat === 0 && new RegExp('step ' + (from + 1)).test(e1.ret) && /Episode/i.test(e1.k) && /EPISODE/i.test(e1.where), 'it opens at its first step, with the way back to the step it came from', e1);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '6-1'), 'the oil call sits inside the episode');
-    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* clarity patch: past its setup page */
-    await p.click('.dopt[data-fk="real"]'); await p.waitForTimeout(300);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* call screen round: past the problem and what you weigh */
+    await p.click('#isx-sn-body .dc-opt[data-dco="real"]'); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(300);
     for (let i = 0; i < 4; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
     const e2 = await p.evaluate(() => ({ beat: ISX.sim.beat, n: ISX.sim.lines[ISX.sim.line].steps.length, next: document.querySelector('#isx-s2bar').innerText.replace(/\s+/g, ' ').slice(0, 80) }));
     ok(e2.beat === e2.n - 1 && /Back to the guide/i.test(e2.next), 'on its last step, Next reads “Back to the guide”', e2);
@@ -238,83 +239,115 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const I = await p.evaluate(() => ({ calls: ISX.calls, sim: ISX.sim, ess: ISX.essays }));
     const where = k => { for (const [l, L] of I.sim.lines.entries()) { if (!L.main && !L.ep) continue; const i = L.steps.findIndex(x => x.fk === k); if (i > 0) return [l, i - 1]; } return null; };
     const D = I.sim.decisions.map(x => x.k);
+    /* call screen round (18 Nov 2026): three steps, spoken to the reader; the data first */
     ok(D.length === 7 && D.every(k => I.calls[k]), 'every one of the seven calls has its screen', D.filter(k => !I.calls[k]));
-    ok(I.calls['0-1'].pg.length === 2 && D.filter(k => k !== '0-1').every(k => I.calls[k].pg.length === 1), 'two setup pages before the first call, one before each other call', D.map(k => k + ':' + I.calls[k].pg.length));
-    const tl = D.map(k => [k, I.calls[k].tiles.length]); ok(tl.every(t => t[1] >= 3 && t[1] <= 4), 'three or four figure tiles on every call', tl);
-    const bad = []; D.forEach(k => I.calls[k].tiles.forEach(T => { if (!T.v || !T.k || !T.d || !T.s) bad.push([k, T.v, 'unsourced or undated']); if (T.bp) { const i = BP.m.indexOf(T.bp[1]), v = i < 0 ? null : BP[T.bp[0]][i], txt = String(T.v).replace(/[%≈$]/g, ''); if (v == null || Math.abs(+txt - v) > 0.006) bad.push([k, T.v, T.bp, v]); } }));
-    ok(!bad.length, 'every tile is dated and sourced; every monthly average matches data/bond-panel.json', bad);
+    const shape = D.filter(k => { const C = I.calls[k]; return !(C.ask && C.prob && C.prob.t && C.prob.p.length >= 2 && C.prob.fig && C.prob.src && C.vars.length >= 3 && C.vars.length <= 4 && C.vars.every(V => V.n && V.v && V.t && (V.pull === 'real' || V.pull === 'alt' || V.pull === null) && (!V.big || V.bk)) && C.od && C.od.real && C.od.alt && C.pr && C.pr.real.length >= 2 && C.pr.alt.length >= 2); });
+    ok(!shape.length, 'every call has its problem (title, sentences, one figure, sources), three or four forces, the question, both options in the reader’s words and where each moves the pressure', shape);
+    const both = D.filter(k => !(I.calls[k].vars.some(V => V.pull === 'real') && I.calls[k].vars.some(V => V.pull === 'alt')));
+    ok(!both.length, 'on every call at least one force pulls toward each option', both);
+    const bad = []; D.forEach(k => { const C = I.calls[k]; [...C.vars, C.prob.fig].forEach(V => (V.bp || []).forEach(([txt, ser, mo]) => { const i = BP.m.indexOf(mo), v = i < 0 ? null : BP[ser][i], n = +String(txt).replace(/[%≈$]/g, ''); if (v == null || Math.abs(n - v) > 0.006) bad.push([k, txt, ser, mo, v]); })); });
+    ok(!bad.length, 'every monthly average a call shows matches data/bond-panel.json', bad);
+    const undated = []; D.forEach(k => I.calls[k].vars.forEach(V => { if (V.big && !/\d{4}/.test(V.bk)) undated.push([k, V.n]); }));
+    ok(!undated.length, 'every figure a force shows says its date', undated);
     ok(D.every(k => I.calls[k].ess.length >= 1 && I.calls[k].ess.every(e => I.ess[e])), 'every call names at least one Substack piece the page lists', D.map(k => k + ':' + I.calls[k].ess));
-    /* the first call: redated, its two pages, the verified quotation and sources */
-    const D1 = I.sim.decisions.find(x => x.k === '0-1');
-    const seat = I.calls['0-1'].pg[1], txt1 = seat.p.join(' ') + seat.g.map(g => g.join(' ')).join(' ');
-    ok(/28 January 2025/.test(txt1) && /“departed from norms regarding the issuance profile of Treasury debt”/.test(txt1) && /activist Treasury issuance/.test(txt1) && /Miran and Nouriel Roubini/.test(txt1), 'the seat page: Bessent’s warning, quoted, and the critique he amplified', txt1.slice(0, 200));
-    ok(seat.turn === 'But you are now confronted with a buyers’ strike, problems in the debt market and, most importantly, an AI build-out to fund.', 'the turn, close to Elias’s words', seat.turn);
-    ok(seat.sl.some(s => /manhattan\.institute/.test(s[1])) && seat.sl.some(s => /hudsonbaycapital\.com/.test(s[1])), 'the quotation and the paper are linked', seat.sl.map(s => s[1]));
-    ok(seat.g.map(g => g[0]).join() === 'Bills and bonds,Why sell either,Where the line blurs', 'bills and bonds, why sell either, where the line blurs', seat.g.map(g => g[0]));
-    /* walk the first call from step 10 */
+    const OUT = ['10 December', '25 November', '9 April', '172 million', '31 July', 'removed the $500bn cap', 'final rule', 'So did'];
+    const told = []; D.forEach(k => { const C = I.calls[k], t = [C.prob.t, ...C.prob.p, C.prob.src, ...C.vars.map(V => [V.n, V.t, V.bk || '', V.s || ''].join(' '))].join(' '); OUT.forEach(o => { if (t.includes(o)) told.push([k, o]); }); });
+    ok(!told.length, 'neither the problem nor the forces name what happened', told);
+    const second = D.filter(k => !/\b(You|you|your)\b/.test(I.calls[k].prob.p.join(' ')) || /\b(I|my)\b/.test(I.calls[k].prob.p.join(' ') + I.calls[k].vars.map(V => V.t).join(' ')));
+    ok(!second.length, 'every problem speaks to the reader (“you”), none in the first person', second);
+    const c1 = I.calls['0-1'];
+    ok(/“departed from norms regarding the issuance profile of Treasury debt”/.test(c1.prob.p.join(' ')) && c1.prob.sl.some(s => /manhattan\.institute/.test(s[1])) && c1.prob.sl.some(s => /hudsonbaycapital\.com/.test(s[1])), 'the first call keeps Bessent’s words, quoted and linked, and the paper', c1.prob.sl.map(s => s[1]));
+    ok(c1.prim && c1.prim.a[0] === 'A bill' && c1.prim.b[0] === 'A note or bond' && c1.prim.a[1].length === 3 && c1.prim.b[1].length === 3, 'the first call explains bills against bonds before any force is pressed', c1.prim);
+    /* walk the first call from step 10, with the keyboard */
     const [l1, b1] = where('0-1'); await go(p, l1, b1);
+    const look = () => p.evaluate(() => { const c = document.getElementById('isx-cock'), sn = document.getElementById('isx-snarr').getBoundingClientRect(), i = document.getElementById('isx-sn-in'), b = document.getElementById('isx-sn-body'), tb = document.getElementById('isx-tabs'), bar = document.getElementById('isx-s2low');
+      return { ph: ISX.sim.ph, dp: ISX.sim.dp, np: ISX.sim.np, dcall: c.classList.contains('dcall'), cover: sn.left <= 0 && sn.top <= 0 && sn.right >= innerWidth && sn.bottom >= innerHeight, lock: document.documentElement.classList.contains('isx-dclock'), held: !!tb && tb.inert && getComputedStyle(tb).visibility === 'hidden' && !!bar && bar.inert, stage: document.getElementById('isx-stage').inert, fits: i.scrollHeight <= i.clientHeight + 1,
+        h: (b.querySelector('.dc-h') || {}).textContent, kick: (b.querySelector('.dc-k') || {}).textContent, cur: (b.querySelector('.dc-steps [aria-current="step"]') || {}).textContent, vars: b.querySelectorAll('.dc-var').length, opts: b.querySelectorAll('.dc-opt').length, det: (b.querySelector('.dc-det') || {}).textContent || '', go: (b.querySelector('.dc-go') || {}).textContent || '', wait: !!b.querySelector('.dc-wait'), cnt: (b.querySelector('.dc-cnt') || {}).textContent || '', pos: JSON.parse(sessionStorage.getItem('isx-sim-pos')), focus: document.activeElement && document.activeElement.closest('#isx-snarr') ? document.activeElement.className : 'outside' }; });
     const pages = [];
-    for (let i = 0; i < 4; i++) {
-      await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350);
-      pages.push(await p.evaluate(() => { const c = document.getElementById('isx-cock'), st = document.getElementById('isx-stage'), i = document.getElementById('isx-sn-in'); return { ph: ISX.sim.ph, dp: ISX.sim.dp, np: ISX.sim.np, dcall: c.classList.contains('dcall'), inert: !!st && st.inert, fits: i.scrollHeight <= i.clientHeight + 1, h3: document.querySelector('#isx-sn-body h3').textContent, kick: document.querySelector('#isx-sn-body .s2k').textContent, opts: document.querySelectorAll('#isx-sn-body .sn-opt').length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent.replace(/\s+/g, ' ').trim(), pos: JSON.parse(sessionStorage.getItem('isx-sim-pos')), cur: (document.querySelector('#isx-sn-body .dc-steps [aria-current="step"]') || {}).textContent }; }));
-    }
-    ok(pages[0].ph === 'ask' && pages[0].dp === 0 && pages[0].np === 3 && /The old buyers/.test(pages[0].h3) && /January 2025/.test(pages[0].kick) && !pages[0].opts, 'Next from step 10 opens the call on its first setup page, dated January 2025, with no options yet', pages[0]);
-    ok(pages[1].dp === 1 && /Scott Bessent’s chair/.test(pages[1].h3) && /Your seat/i.test(pages[1].cur), 'Next turns to “Your seat”', pages[1]);
-    ok(pages[2].dp === 2 && /You’re at Treasury\./.test(pages[2].h3) && pages[2].opts === 2 && /Choose/i.test(pages[2].nx), 'then the call itself, Next held', pages[2]);
-    ok(pages[3].dp === 2, 'Next on the call does not leave it', pages[3]);
-    ok(pages.every(x => x.dcall && x.inert && x.fits), 'every page is a full screen over an inert map, with no scroll at 1440 × 900', pages.map(x => [x.dcall, x.inert, x.fits]));
-    ok(pages.slice(0, 3).every((x, i) => x.pos.ph === 'ask' && x.pos.dp === i), 'the stored place carries the page', pages.map(x => x.pos));
-    const call = await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return { tiles: [...b.querySelectorAll('.dc-tl')].map(t => t.getAttribute('aria-label')), ess: [...b.querySelectorAll('.dc-es a.dss')].map(a => [a.href, !!a.querySelector('svg')]), cal: !!b.querySelector('.dc-sup [data-remind]'), tip: (b.querySelector('.dc-tip') || {}).textContent, bmc: (b.querySelector('.dc-sup a[href*="buymeacoffee"]') || {}).href, ss: (b.querySelector('.dc-sup a.dc-ss') || {}).href, heading: !!b.querySelector('.dc-sup h4, .dc-sup b') }; });
-    ok(call.tiles.length === 3 && call.tiles.every(t => /\d{4}/.test(t) && /Source:/.test(t)), 'the call’s tiles say their date and source in their accessible name', call.tiles);
-    ok(call.ess.length === 2 && call.ess.every(e => /substack\.com\/p\//.test(e[0]) && e[1]), 'the Substack pieces, each with the logo', call.ess);
-    ok(call.cal && call.tip === 'Want to come back later? Set a reminder.' && /buymeacoffee\.com/.test(call.bmc || '') && /substack\.com/.test(call.ss || '') && !call.heading, 'the support row: calendar, Buy Me a Coffee, Substack, with no heading', call);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
+    ok(pages[0].ph === 'ask' && pages[0].dp === 0 && pages[0].np === 3 && /The old buyers have stopped buying/.test(pages[0].h) && /January 2025/.test(pages[0].kick) && /The problem/.test(pages[0].cur) && !pages[0].opts && !pages[0].vars, 'Next from step 10 opens the call on the problem, dated January 2025, with no options yet', pages[0]);
+    ok(pages[0].dcall && pages[0].cover && pages[0].lock && pages[0].held && pages[0].stage && pages[0].fits && pages[0].focus !== 'outside', 'the call covers the window: the page under it is out of reach and out of sight, it does not scroll, focus is on the screen', pages[0]);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
+    ok(pages[1].dp === 1 && /Four forces pull on this call/i.test(pages[1].h) && pages[1].vars === 4 && /A bill/.test(pages[1].det) && /A note or bond/.test(pages[1].det) && /0 of 4/.test(pages[1].cnt), 'Next turns to what you weigh: four forces, bills against bonds explained, none weighed yet', pages[1]);
+    await p.keyboard.press('1'); await p.waitForTimeout(250); pages.push(await look());
+    ok(/Pulls toward B · Sell more bills/.test(pages[2].det) && /4\.34%/.test(pages[2].det) && /Source:/.test(pages[2].det) && /1 of 4/.test(pages[2].cnt), 'a force says which option it pulls toward, with its dated figure and source', pages[2].det.slice(0, 300));
+    for (const n of ['2', '3', '4']) { await p.keyboard.press(n); await p.waitForTimeout(120); }
+    pages.push(await look());
+    ok(/4 of 4/.test(pages[3].cnt) && (await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-var .pk')].map(x => x.textContent).join(''))) === 'BBAA', 'every force weighed is marked with the option it pulls toward', pages[3].cnt);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
+    const opt = await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-opt')].map(o => [o.querySelector('.key').textContent, o.querySelector('.ot b').textContent, [...o.querySelectorAll('.ol i')].map(i => i.textContent), [...o.querySelectorAll('.ol em')].map(e => e.textContent + (e.classList.contains('w') ? '+' : ''))]));
+    ok(pages[4].dp === 2 && /How do you fund the deficit\?/.test(pages[4].h) && pages[4].opts === 2 && pages[4].wait && !pages[4].go, 'then your call: the question, two options, nothing made yet', pages[4]);
+    ok(opt[0][0] === 'A' && opt[0][1] === 'Keep selling long bonds' && opt[0][2].includes('10-year yield') && opt[0][2].includes('Hedge funds') && opt[1][0] === 'B' && opt[1][1] === 'Sell more bills' && opt[1][2].includes('Money funds') && opt[1][3].includes('What each costs today+'), 'each option says what argues for it (the forces you weighed marked) and where it moves the pressure, in the map’s own names', opt);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 2), 'Next on the call does not leave it');
+    await p.keyboard.press('b'); await p.waitForTimeout(250); pages.push(await look());
+    ok(pages[5].ph === 'ask' && /Make this call/.test(pages[5].go) && /B · Sell more bills/.test(pages[5].go) && (await p.evaluate(() => document.querySelector('#isx-sn-body .dc-opt[data-dco="real"]').getAttribute('aria-pressed'))) === 'true', 'choosing B marks it and offers “Make this call”, without making it', pages[5]);
+    ok(pages.slice(0, 2).every((x, i) => x.pos.ph === 'ask' && x.pos.dp === i), 'the stored place carries the step', pages.map(x => x.pos));
+    const call = await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return { cal: !!b.querySelector('.dc-sup [data-remind]'), tip: (b.querySelector('.dc-tip') || {}).textContent, bmc: (b.querySelector('.dc-sup a[href*="buymeacoffee"]') || {}).href, ss: (b.querySelector('.dc-sup a.dc-ss') || {}).href, fine: (b.querySelector('.dc-fine') || {}).textContent }; });
+    ok(call.cal && call.tip === 'Want to come back later? Set a reminder.' && /buymeacoffee\.com/.test(call.bmc || '') && /substack\.com/.test(call.ss || '') && /No right answer, no score/.test(call.fine || ''), 'the support row and the fine print on the call', call);
     await p.hover('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(250);
     ok(await p.evaluate(() => getComputedStyle(document.querySelector('#isx-sn-body .dc-tip')).visibility === 'visible'), 'hovering the calendar shows the line');
     await p.click('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => !!(ISX.remind && ISX.remind.on)), 'the calendar opens the reminder panel');
     await p.keyboard.press('Escape'); await p.waitForTimeout(250);
-    const rl0 = await open(1440, 900, { 'isx-way': 'guide' }, {});   /* no stored place in the init script, so a reload keeps the one the page wrote */
+    await p.evaluate(() => { if (ISX.remind && ISX.remind.on) document.querySelector('.rm .rm-x') && document.querySelector('.rm .rm-x').click(); }); await p.waitForTimeout(200);
+    /* the problem page: its essays; the type */
+    await p.click('#isx-sn-body [data-dcp="0"]'); await p.waitForTimeout(300);
+    const pg0 = await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), ff = s => getComputedStyle(b.querySelector(s)).fontFamily; return { ess: [...b.querySelectorAll('.dc-ess a')].map(a => a.href), src: (b.querySelector('.dc-src') || {}).textContent || '', fig: [...b.querySelectorAll('.dc-row b')].map(x => x.textContent), h: ff('.dc-h'), lab: ff('.dc-lab'), brand: getComputedStyle(document.querySelector('.brand h1')).fontFamily }; });
+    ok(pg0.ess.length === 2 && pg0.ess.every(u => /substack\.com\/p\//.test(u)) && /Sources:/.test(pg0.src) && pg0.fig.join() === '47%,30%', 'the problem: its figure, its sources and the Substack pieces', pg0);
+    ok(/^"?Saira Wide/.test(pg0.h) && /^"?Saira Wide/.test(pg0.brand) && /^"?Martian Mono/.test(pg0.lab), 'type: Saira Wide for the logo and the call titles, Martian Mono for the labels', [pg0.h, pg0.brand, pg0.lab]);
+    /* reload keeps the step; Back and Esc leave */
+    const rl0 = await open(1440, 900, { 'isx-way': 'guide' }, {});
     await rl0.evaluate(([l, bb]) => { sessionStorage.setItem('isx-sim-pos', JSON.stringify({ l, b: bb })); }, [l1, b1]); await rl0.reload(); await rl0.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await rl0.waitForTimeout(900);
     await rl0.keyboard.press('ArrowRight'); await rl0.waitForTimeout(300); await rl0.keyboard.press('ArrowRight'); await rl0.waitForTimeout(300);
     await rl0.reload(); await rl0.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await rl0.waitForTimeout(1200);
-    ok(await rl0.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 1), 'a reload returns to the same page of the call');
+    ok(await rl0.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 1), 'a reload returns to the same step of the call');
+    await rl0.keyboard.press('Escape'); await rl0.waitForTimeout(400);
+    const esc = await rl0.evaluate(() => [ISX.sim.ph, ISX.sim.beat, document.getElementById('isx-cock').classList.contains('dcall'), document.documentElement.classList.contains('isx-dclock'), document.querySelectorAll('[data-dcinert]').length, getComputedStyle(document.getElementById('isx-tabs')).visibility]);
+    ok(esc[0] === null && esc[1] === b1 && !esc[2] && !esc[3] && !esc[4] && esc[5] === 'visible', 'Esc leaves the call for step 10, and gives the page back', esc);
+    await rl0.keyboard.press('ArrowRight'); await rl0.waitForTimeout(300); await rl0.evaluate(() => { location.hash = '#circuit'; }); await rl0.waitForTimeout(700);
+    const away = await rl0.evaluate(() => [ISX.sim.ph, document.getElementById('isx-cock').classList.contains('dcall'), document.documentElement.classList.contains('isx-dclock'), document.querySelectorAll('[data-dcinert]').length, getComputedStyle(document.getElementById('isx-tabs')).visibility]);
+    await rl0.evaluate(() => { location.hash = '#simulator'; }); await rl0.waitForTimeout(700);
+    const back = await rl0.evaluate(() => [ISX.sim.ph, document.getElementById('isx-cock').classList.contains('dcall'), document.documentElement.classList.contains('isx-dclock')]);
+    ok(away[0] === 'ask' && !away[1] && !away[2] && !away[3] && away[4] === 'visible' && back[0] === 'ask' && back[1] && back[2], 'another tab gives the page back while the call waits; the Simulator takes the window again', [away, back]);
     await rl0.context().close();
-    await p.evaluate(() => { if (ISX.remind && ISX.remind.on) document.querySelector('.rm .rm-x') && document.querySelector('.rm .rm-x').click(); }); await p.waitForTimeout(200);
-    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
-    const bk0 = await p.evaluate(() => [ISX.sim.ph, ISX.sim.dp]); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
+    await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
     const bk1 = await p.evaluate(() => [ISX.sim.ph, ISX.sim.beat, document.getElementById('isx-cock').classList.contains('dcall')]);
-    ok(bk0[0] === 'ask' && bk0[1] === 0 && bk1[0] === null && bk1[1] === b1 && !bk1[2], 'Back turns the pages back, then returns to step 10 and the map', [bk0, bk1]);
+    ok(bk1[0] === null && bk1[1] === b1 && !bk1[2], 'Back from the problem returns to step 10 and the map', bk1);
     await p.evaluate(() => ISX.route.next('sim').click()); await p.waitForTimeout(300);
     await p.click('#isx-sn-body [data-dcp="2"]'); await p.waitForTimeout(300);
-    ok(await p.evaluate(() => ISX.sim.dp === 2), 'the steps row opens a page');
-    await p.click('.dopt[data-fk="alt"]'); await p.waitForTimeout(350);
-    const ch = await p.evaluate(() => [ISX.sim.ph, ISX.sim.c, document.getElementById('isx-cock').classList.contains('dcall'), document.getElementById('isx-stage').inert]);
-    ok(ch[0] === 'chain' && ch[1] === 0 && !ch[2] && !ch[3], 'the other path goes back to the map for its chain reaction', ch);
+    ok(await p.evaluate(() => ISX.sim.dp === 2), 'the steps row opens a step');
+    await p.click('#isx-sn-body .dc-opt[data-dco="alt"]'); await p.waitForTimeout(150); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(400);
+    const ch = await p.evaluate(() => [ISX.sim.ph, ISX.sim.c, document.getElementById('isx-cock').classList.contains('dcall'), document.getElementById('isx-stage').inert, document.documentElement.classList.contains('isx-dclock')]);
+    ok(ch[0] === 'chain' && ch[1] === 0 && !ch[2] && !ch[3] && !ch[4], 'making the other call goes back to the map for its chain reaction', ch);
     await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(300);
-    ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 2), 'Back from the chain returns to the call itself');
-    await p.click('.dopt[data-fk="real"]'); await p.waitForTimeout(350);
+    ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 2 && document.querySelector('#isx-sn-body .dc-opt[data-dco="alt"]').getAttribute('aria-pressed') === 'true'), 'Back from the chain returns to the call, the choice still marked');
+    await p.click('#isx-sn-body .dc-opt[data-dco="real"]'); await p.waitForTimeout(150); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(400);
     const rl = await p.evaluate(() => [ISX.sim.ph, ISX.sim.beat, (document.querySelector('#isx-sn-body .dyou') || {}).textContent || '']);
-    ok(rl[0] === null && rl[1] === b1 + 1 && /Bessent’s Treasury/.test(rl[2]), 'what happened goes to the next step, which says what Bessent’s Treasury did', rl);
+    ok(rl[0] === null && rl[1] === b1 + 1 && /Bessent’s Treasury/.test(rl[2]), 'making what happened goes to the next step, which says what Bessent’s Treasury did', rl);
     await p.context().close();
-    /* every page of every call fits, at three desktop sizes; an old stored place opens on the call itself */
-    for (const [w, h] of [[1440, 900], [1280, 760], [1024, 768]]) {
+    /* every step of every call fits, at three desktop sizes, with a force open and an option chosen; nothing under 10.5 px */
+    for (const [w, h] of [[1440, 900], [1280, 720], [1024, 768]]) {
       const q = await open(w, h, { 'isx-way': 'guide' }, {}); const over = [];
-      for (const k of D) { const [l, bb] = where(k); for (let dp = 0; dp <= I.calls[k].pg.length; dp++) {
+      for (const k of D) { const [l, bb] = where(k); for (let dp = 0; dp < 3; dp++) {
         await q.evaluate(([l, bb, dp]) => sessionStorage.setItem('isx-sim-pos', JSON.stringify({ l, b: bb, ph: 'ask', dp })), [l, bb, dp]);
         await q.reload(); await q.waitForFunction(() => !document.getElementById('isx-root').classList.contains('booting')); await q.waitForTimeout(700);
-        const r = await q.evaluate(() => { const i = document.getElementById('isx-sn-in'), b = document.getElementById('isx-sn-body').getBoundingClientRect(), bar = document.getElementById('isx-s2bar').getBoundingClientRect(); return { k: ISX.sim.dec, dp: ISX.sim.dp, s: i.scrollHeight - i.clientHeight, under: b.bottom <= bar.top + 1, small: [...document.querySelectorAll('#isx-sn-body .dc *')].filter(e => e.children.length === 0 && e.textContent.trim() && e.getClientRects().length && parseFloat(getComputedStyle(e).fontSize) < 10.5).map(e => e.textContent.trim().slice(0, 20)) }; });
-        if (r.k !== k || r.dp !== dp || r.s > 1 || !r.under || r.small.length) over.push(r);
+        if (dp === 1) { await q.click('#isx-sn-body .dc-var[data-dcv="0"]'); await q.waitForTimeout(150); }
+        if (dp === 2) { await q.click('#isx-sn-body .dc-opt'); await q.waitForTimeout(150); }
+        const r = await q.evaluate(() => { const i = document.getElementById('isx-sn-in'); return { k: ISX.sim.dec, dp: ISX.sim.dp, s: i.scrollHeight - i.clientHeight, wide: document.documentElement.scrollWidth <= innerWidth, small: [...document.querySelectorAll('#isx-sn-body .dc *')].filter(e => e.children.length === 0 && e.textContent.trim() && e.getClientRects().length && parseFloat(getComputedStyle(e).fontSize) < 10.5).map(e => e.textContent.trim().slice(0, 20)) }; });
+        if (r.k !== k || r.dp !== dp || r.s > 1 || !r.wide || r.small.length) over.push(r);
       } }
-      ok(!over.length, `${w} × ${h}: every page of every call fits above the bar, without scrolling, nothing under 10.5 px`, over.slice(0, 4));
+      ok(!over.length, `${w} × ${h}: every step of every call fits the window without scrolling, nothing under 10.5 px`, over.slice(0, 4));
       await q.context().close();
     }
     const o = await open(1440, 900, { 'isx-way': 'guide' }, at(0, where('0-7')[1], { ph: 'ask' }));
-    ok(await o.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '0-7' && ISX.sim.dp === ISX.sim.np - 1), 'a place stored before the patch (no page) opens on the call itself');
+    ok(await o.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '0-7' && ISX.sim.dp === ISX.sim.np - 1), 'a place stored before the patch (no step) opens on the call itself');
     await o.context().close();
-    /* phones */
+    /* phones: the window scrolls; Make this call is reachable */
     const m = await open(390, 844, { 'isx-way': 'guide' }, at(0, b1, { ph: 'ask', dp: 2 }));
-    const mm = await m.evaluate(() => { const c = document.getElementById('isx-snarr'), st = document.querySelector('#isx-cock .s2stage'); return { pos: getComputedStyle(c).position, stage: getComputedStyle(st).display, wide: document.documentElement.scrollWidth <= innerWidth, opts: document.querySelectorAll('#isx-sn-body .sn-opt').length, tiles: document.querySelectorAll('#isx-sn-body .dc-tl').length }; });
-    ok(mm.pos === 'static' && mm.stage === 'none' && mm.wide && mm.opts === 2 && mm.tiles === 3, 'phones: the call is a page in the card, the map out of the way, nothing wider than the screen', mm);
+    await m.click('#isx-sn-body .dc-opt[data-dco="real"]'); await m.waitForTimeout(300);
+    const mm = await m.evaluate(() => { const c = document.getElementById('isx-snarr'), st = document.querySelector('#isx-cock .s2stage'), g = document.querySelector('#isx-sn-body .dc-go').getBoundingClientRect(); return { pos: getComputedStyle(c).position, stage: getComputedStyle(st).display, wide: document.documentElement.scrollWidth <= innerWidth, opts: document.querySelectorAll('#isx-sn-body .dc-opt').length, go: g.bottom <= innerHeight && g.top >= 0, tall: g.height >= 44 }; });
+    ok(mm.pos === 'fixed' && mm.stage === 'none' && mm.wide && mm.opts === 2 && mm.go && mm.tall, 'phones: the call is the whole screen and scrolls, the map out of the way, “Make this call” brought into view', mm);
     await m.context().close();
     /* the inflows reveal */
     const f = await open(1440, 900, { 'isx-way': 'guide' }, {});

@@ -89,11 +89,11 @@ const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
      records the card (story/ask-N), takes what happened on the card and goes on. */
   let steps = 0, last = '';
   for (let i = 0; i < 120; i++) {
-    const st = await p.evaluate(() => { const e = document.querySelector('.sn-cnt'), o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'), nx = document.querySelector('#isx-s2bar .rt-nx'); return { cnt: e ? e.textContent.replace(/\s+/g, '') : '', opt: !!o, hold: !!nx && nx.classList.contains('hold') }; });
+    const st = await p.evaluate(() => { const e = document.querySelector('.sn-cnt'), o = document.querySelector('#isx-sn-body .dc-opt[data-dco="real"], #isx-sn-body [data-pick="real"]'), nx = document.querySelector('#isx-s2bar .rt-nx'); return { cnt: e ? e.textContent.replace(/\s+/g, '') : '', opt: !!o, hold: !!nx && nx.classList.contains('hold') }; });
     if (st.cnt && st.cnt !== last) { last = st.cnt; await snap(p, 'story/' + String(+st.cnt.split('/')[0] - 1).padStart(2, '0'), '#isx-snarr'); }
     else if (!st.cnt) await snap(p, 'story/ask-' + (last.split('/')[0] || '0'), '#isx-snarr');
     if (/^(\d+)\/\1$/.test(st.cnt)) { steps = +st.cnt.split('/')[0]; break; }
-    if (st.hold && st.opt) await p.evaluate(() => document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]').click());
+    if (st.hold && st.opt) { await p.evaluate(() => { document.querySelector('#isx-sn-body .dc-opt[data-dco="real"], #isx-sn-body [data-pick="real"]').click(); const g = document.querySelector('#isx-sn-body .dc-go'); if (g) g.click(); }); await p.waitForTimeout(500); }   /* call screen round: choose, then make the call */
     else await p.keyboard.press('ArrowRight');
     await p.waitForTimeout(260);
   }

@@ -49,13 +49,12 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
     const out = {}, go = async t => { document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(); await new Promise(r => setTimeout(r, 300)); return ((document.querySelector('#isx-sn-body .s2why') || {}).textContent || '') + ' ' + ((document.querySelector('#isx-sn-body .sn-why p') || {}).textContent || ''); };
     out.dc = await go('0:0'); out.who = await go('0:9'); out.yip = await go('0:20'); out.t25 = await go('0:25');
     document.querySelector(`#isx-s2bar [data-rt-t="0:26"]`).click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300));   /* clarity patch: past the call's setup page */
-    out.q06 = (document.querySelector('#isx-sn-body .dq') || {}).textContent || ''; out.ph = ISX.sim.ph; return out;
+    out.q06 = (document.querySelector('#isx-sn-body .dc-txt') || {}).textContent || ''; out.ph = ISX.sim.ph; return out;   /* call screen round: the line sits on the call's first step, the problem */
   });
   ok(/Start with the shopper\./.test(ledes.dc), 'chapter 1 opens with its lead line', ledes.dc);
   ok(/All of this runs on borrowed money, and the state borrows most of all\./.test(ledes.who), 'chapter 5 (who buys the debt) opens with its lead line', ledes.who);
   ok(/One rule sets how much those banks can carry\./.test(ledes.yip), 'the leverage rule, now in “Bonds get yippy”, follows from the dealer banks', ledes.yip);
-  ok(ledes.ph === 'ask' && /the Treasury still has to sell its debt/.test(ledes.q06), 'the call “Long yields climb” no longer assumes the leveraged funds of chapter 6', ledes);
+  ok(ledes.ph === 'ask' && /the Treasury still has to sell its debt/i.test(ledes.q06), 'the call “Long yields climb” no longer assumes the leveraged funds of chapter 6', ledes);
   ok(await js(p, async () => { const pl = ISX.sim.lines.findIndex(L => L.pre); document.querySelector(`#isx-s2bar [data-rt-t="${pl}:${ISX.sim.lines[pl].steps.length - 1}"]`).click(); await new Promise(r => setTimeout(r, 250)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return /starts with the loop the money runs in/.test(document.getElementById('isx-sn-body').textContent); }), 'first principles hand over to the loop (clarity build), not to the central banks');
   const raw = await js(p, async () => { const out = [], L = ISX.sim.lines, pre = L.findIndex(x => x.pre), gnd = L.findIndex(x => x.gnd); localStorage.setItem('isx-way', 'ground');
     document.getElementById('isx-sn-pickb').click(); await new Promise(r => setTimeout(r, 80)); document.querySelector(`#isx-sn-pick [data-sl="${gnd}"]`).click(); await new Promise(r => setTimeout(r, 80));
@@ -294,12 +293,12 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   p = await mk({}, { way: 'guide' });
   const C = await js(p, async () => {
     const w = ms => new Promise(r => setTimeout(r, ms)), L = ISX.sim.lines, pi = L.findIndex(x => x.pre), out = { pre: L[pi].steps.map(s => s.t), main: L[0].steps.map(s => s.t), cards: [] };
-    const grab = (l, i, kind) => { const B = document.getElementById('isx-sn-body'); return { l, i, kind, h3: (B.querySelector('.cl-a') || B.querySelector('h3') || {}).textContent || '',   /* clarity build: a guide step is known by its name; its heading is its question */ x: [...B.querySelectorAll('.s2p')].map(e => e.textContent).join(' '), nt: [...B.querySelectorAll('.sn-note')].map(e => e.textContent).join(' '), echo: [...B.querySelectorAll('.thesis-echo')].map(e => e.textContent), ch: (ISX.sim.line === 0 && ISX.sim.beat >= 0 && ISX.sim.beat < L[0].steps.length) ? null : null }; };
+    const grab = (l, i, kind) => { const B = document.getElementById('isx-sn-body'); return { l, i, kind, h3: (B.querySelector('.cl-a') || B.querySelector('.dc-h') || B.querySelector('h3') || {}).textContent || '',   /* clarity build: a guide step is known by its name; its heading is its question */ x: [...B.querySelectorAll('.s2p')].map(e => e.textContent).join(' '), nt: [...B.querySelectorAll('.sn-note')].map(e => e.textContent).join(' '), echo: [...B.querySelectorAll('.thesis-echo')].map(e => e.textContent), ch: (ISX.sim.line === 0 && ISX.sim.beat >= 0 && ISX.sim.beat < L[0].steps.length) ? null : null }; };
     for (const l of [pi, 0]) { const n = L[l].steps.length;
       for (let i = 0; i <= n; i++) { const t = document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`); if (!t) continue;
         const dk = document.querySelector(`#isx-s2bar [data-rt-t="d:${l}:${i - 1}"]`);
         if (dk) { dk.click(); await w(60); const lp = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (lp) { lp.click(); await w(60); }   /* clarity patch: the call itself is the last page */
-          out.cards.push(grab(l, i, 'ask')); document.querySelector('#isx-sn-body [data-fk="alt"]').click(); await w(60);
+          out.cards.push(grab(l, i, 'ask')); document.querySelector('#isx-sn-body .dc-opt[data-dco="alt"]').click(); document.querySelector('#isx-sn-body .dc-go').click(); await w(60);
           for (let c = 0; c < 9; c++) { out.cards.push(grab(l, i, ISX.sim.ph)); if (ISX.sim.ph === 'crisis') break; document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await w(60); } }
         document.querySelector(`#isx-s2bar [data-rt-t="${l}:${i}"]`).click(); await w(80); out.cards.push(grab(l, i, i === n ? 'end' : 'step')); } }
     out.chOf = L[0].steps.map((s, i) => { const b = document.querySelector(`#isx-s2bar [data-rt-t="0:${i}"]`); return b ? [...document.querySelectorAll('#isx-s2bar .rt-segs > .rt-s')].findIndex(sg => sg.contains(b)) : -1; });

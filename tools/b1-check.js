@@ -30,6 +30,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   };
   const js = (p, f, a) => p.evaluate(f, a);
   const click = (p, sel) => p.evaluate(s => { const e = document.querySelector(s); if (e) e.click(); return !!e; }, sel);
+  const choose = async (p, o) => { await click(p, `#isx-sn-body .dc-opt[data-dco="${o}"]`); await click(p, '#isx-sn-body .dc-go'); };   /* call screen round: a choice is made in two moves */
   const right = async (p, ms = 220) => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(ms); };
   const left = async (p, ms = 220) => { await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(ms); };
   /* where the guide is, and where Back, Next and the lit marker are */
@@ -56,7 +57,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
         /* clarity patch: a call opens on its setup pages; → turns them, and the last page is the call itself */
         for (let k = 0; k < 4 && t.dp < t.np - 1; k++) { await take('setup ' + (t.dp + 1) + ' before the decision after step ' + (s.beat + 1)); await right(p); t = await state(p); }
         await take('decision after step ' + (s.beat + 1));
-        await click(p, '#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(260);
+        await choose(p, 'alt'); await p.waitForTimeout(260);
         for (let k = 0; k < 8; k++) { t = await take('chain'); t.tag = t.ph === 'crisis' ? 'crisis after step ' + (s.beat + 1) : 'link ' + (t.c + 1) + ' after step ' + (s.beat + 1); if (t.ph === 'crisis') break; await right(p); }
         await right(p, 300);
       }
@@ -96,13 +97,13 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       const n = { reveals: rows.filter(r => /^reveal/.test(r.tag)).length, steps: rows.filter(r => /^step/.test(r.tag)).length, asks: rows.filter(r => /^decision/.test(r.tag)).length, links: rows.filter(r => /^link/.test(r.tag)).length, crises: rows.filter(r => /^crisis/.test(r.tag)).length };
       ok(`walk (${w} px): 10 reveals, 43 steps, 4 decision cards, 22 chain links and 4 crisis cards (clarity build: the other three decisions are in episodes)`, n.reveals === 10 && n.steps === 43 && n.asks === 4 && n.links === 22 && n.crises === 4, n);
       if (want(2)) {
-        const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);
-        ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.length} cards (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });
+        const far = (a, c) => a.some((v, i) => Math.abs(v - c[i]) > 1), moved = rows.filter(r => !/^(setup|decision)/.test(r.tag)).filter(r => far(r.bk, rows[0].bk) || far(r.nx, rows[0].nx)).map(r => [r.tag, r.bk.join(), r.nx.join()]);   /* call screen round: a call covers the window, bar included */
+        ok(`Back and Next (${w} px): the same box, within 1 px, on all ${rows.filter(r => !/^(setup|decision)/.test(r.tag)).length} cards outside the calls (Back ${rows[0].bk.join(', ')}; Next ${rows[0].nx.join(', ')})`, moved.length === 0, { first: [rows[0].bk, rows[0].nx], moved: moved.slice(0, 5) });
         ok(`Next (${w} px): held on every decision card; “Next in the chain” on a link; “Back to What happened” on a crisis card`, rows.every(r => /^setup/.test(r.tag) ? /^Next/i.test(r.nxt) : /^decision/.test(r.tag) ? /^Your call ?Choose/i.test(r.nxt) : /^link/.test(r.tag) ? /^(Next in the chain|Chain ?Next)/i.test(r.nxt) : /^crisis/.test(r.tag) ? /^Back to/i.test(r.nxt) : true), rows.filter(r => /decision|link|crisis/.test(r.tag)).map(r => r.nxt).slice(0, 6));
       }
       if (want(3)) {
-        const seen = rows.filter(r => r.here != null), off = seen.filter(r => Math.abs(r.here) > 2).map(r => [r.tag, r.here]);
-        ok(`lit marker (${w} px): under the current mark, within 2 px, on ${seen.length} of ${rows.length} cards (clarity build: between 761 and 1180 px the guide's bar keeps its words and drops the marks)`, (w > 760 && w <= 1180) || (seen.length === rows.length && off.length === 0 && rows.every(r => r.cur)), { seen: seen.length, off: off.slice(0, 6), noCur: rows.filter(r => !r.cur).map(r => r.tag).slice(0, 4) });
+        const cards = rows.filter(r => !/^(setup|decision)/.test(r.tag)), seen = cards.filter(r => r.here != null), off = seen.filter(r => Math.abs(r.here) > 2).map(r => [r.tag, r.here]);   /* call screen round: not under a call, which covers the bar */
+        ok(`lit marker (${w} px): under the current mark, within 2 px, on ${seen.length} of ${cards.length} cards outside the calls (clarity build: between 761 and 1180 px the guide's bar keeps its words and drops the marks)`, (w > 760 && w <= 1180) || (seen.length === cards.length && off.length === 0 && cards.every(r => r.cur)), { seen: seen.length, off: off.slice(0, 6), noCur: cards.filter(r => !r.cur).map(r => r.tag).slice(0, 4) });
         ok(`lit marker (${w} px): cuts under reduced motion`, rows.every(r => r.hereT.split(',').every(t => parseFloat(t) === 0)), rows[0].hereT);
       }
       if (want(8) && w === 1440) {
@@ -128,17 +129,17 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     const p = await page('#simulator', { pos: '{"l":0,"b":9}' });   /* clarity build: the first call follows step 10 */
     await right(p, 300);
     const a = await state(p); await right(p, 300); const a1 = await state(p); await right(p, 300); const a2 = await state(p); await right(p, 300); await right(p, 300);
-    const c = await state(p), foc = await js(p, () => { const e = document.activeElement; return !!e && e.classList.contains('sn-opt') && e === document.querySelector('#isx-sn-body .sn-opt'); });
+    const c = await state(p), foc = await js(p, () => { const e = document.activeElement; return !!e && e.classList.contains('dc-opt') && e === document.querySelector('#isx-sn-body .dc-opt'); });
     /* clarity patch: the call opens on its first setup page (two before the first call), → turns the pages, and on the call itself → moves focus to option A */
     ok('decision: → turns the call’s setup pages, then on the call itself does not leave it; it moves focus to option A', a.ph === 'ask' && a.dp === 0 && a1.dp === 1 && a2.dp === 2 && a2.np === 3 && c.ph === 'ask' && c.dp === 2 && c.beat === 9 && foc, { a: [a.ph, a.dp], a1: a1.dp, a2: [a2.dp, a2.np], c: [c.ph, c.dp], foc });
-    await click(p, '#isx-s2bar .rt-nx'); await p.waitForTimeout(250);
-    ok('decision: the held Next does the same (it is not a dead button)', (await state(p)).ph === 'ask' && await js(p, () => document.querySelector('#isx-s2bar .rt-nx').getAttribute('aria-disabled') === 'true'));
+    /* call screen round: the call covers the window, so the bar under it is out of reach while it is open */
+    ok('decision: the bar under the call is out of reach while it is open', await js(p, () => { const l = document.getElementById('isx-s2low'); return !!l && l.inert && getComputedStyle(l).visibility === 'hidden'; }));
     await left(p, 300); const b1 = await state(p); await left(p, 300); const b0 = await state(p); await left(p, 300);
     const back = await state(p);
     ok('decision: ← turns the pages back, and from the first page goes back to the step before the call', b1.ph === 'ask' && b1.dp === 1 && b0.dp === 0 && back.ph === null && back.beat === 9, { b1: [b1.ph, b1.dp], b0: b0.dp, back: [back.ph, back.beat] });
-    await right(p, 300); await right(p, 300); await right(p, 300); await click(p, '#isx-sn-body [data-fk="real"]'); await p.waitForTimeout(300);
+    await right(p, 300); await right(p, 300); await right(p, 300); await choose(p, 'real'); await p.waitForTimeout(300);
     const real = await state(p); await left(p, 300); const again = await state(p);
-    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 10 && real.ph === null && again.ph === 'ask' && again.beat === 9 && await js(p, () => { const o = document.querySelector('#isx-sn-body .sn-opt.was'); return !!o && o.dataset.fk === 'real' && /your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
+    ok('decision: ← from the step after a decision returns to the decision card, with the earlier call marked', real.beat === 10 && real.ph === null && again.ph === 'ask' && again.beat === 9 && await js(p, () => { const o = [...document.querySelectorAll('#isx-sn-body .dc-opt')].find(x => x.querySelector('.was')); return !!o && o.dataset.dco === 'real' && /Your earlier call/.test(o.textContent); }), { real: [real.beat, real.ph], again: [again.beat, again.ph] });
     ok('decision: no page errors', p._errs.length === 0, p._errs); await p.context().close();
     /* a phone: a swipe is Next or Back on a step, and never a choice on a decision card */
     const q = await page('#simulator', { w: 390, h: 844, touch: true, pos: '{"l":0,"b":4}' });   /* clarity build: a step with no call after it */
@@ -152,12 +153,13 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
     ok('swipe (390 px, touch): left on the card is Next, right is Back', s1.beat === 5 && s2.beat === 4, [s1.beat, s2.beat]);
     await swipe('#isx-b1play', -120); await q.waitForTimeout(300);
     ok('swipe: the in-play strip scrolls sideways and does not step', (await state(q)).beat === 4);
-    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 90 && (await state(q)).beat < 19; i++) { const z = await state(q); if (z.ph === 'ask' && z.dp === z.np - 1) { await click(q, '#isx-sn-body [data-fk="real"]'); await q.waitForTimeout(200); } else await right(q, 160); }
+    await js(q, () => { const m = document.querySelector('#isx-s2bar .rt-nx'); m.focus(); }); for (let i = 0; i < 90 && (await state(q)).beat < 19; i++) { const z = await state(q); if (z.ph === 'ask' && z.dp === z.np - 1) { await choose(q, 'real'); await q.waitForTimeout(200); } else await right(q, 160); }
     await right(q, 350); await js(q, () => document.getElementById('isx-snarr').scrollIntoView({ block: 'center' }));
     /* clarity patch: on a setup page a swipe turns the page; on the call itself it neither chooses nor leaves */
-    const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1b = await state(q);
-    ok('swipe: on a setup page a swipe turns the page; on the call itself it does not choose and does not leave', d0.ph === 'ask' && d0.dp === 0 && d1.ph === 'ask' && d1.dp === 1 && d1b.ph === 'ask' && d1b.dp === 1 && d1b.beat === 19, [d0.ph, d0.dp, d1.dp, d1b.ph, d1b.dp, d1b.beat]);
-    await swipe('#isx-snarr', 120); await q.waitForTimeout(300); await swipe('#isx-snarr', 120); await q.waitForTimeout(300); const d2 = await state(q);
+    /* call screen round: three steps; a swipe turns them, and on the call itself it neither chooses nor leaves */
+    const d0 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1 = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1a = await state(q); await swipe('#isx-snarr', -120); await q.waitForTimeout(300); const d1b = await state(q);
+    ok('swipe: on a setup page a swipe turns the page; on the call itself it does not choose and does not leave', d0.ph === 'ask' && d0.dp === 0 && d1.ph === 'ask' && d1.dp === 1 && d1a.dp === 2 && d1b.ph === 'ask' && d1b.dp === 2 && d1b.beat === 19, [d0.ph, d0.dp, d1.dp, d1a.dp, d1b.ph, d1b.dp, d1b.beat]);
+    for (let i = 0; i < 3; i++) { await swipe('#isx-snarr', 120); await q.waitForTimeout(300); } const d2 = await state(q);
     ok('swipe: right turns the pages back, and from the first page goes back to the step before', d2.ph === null && d2.beat === 19, [d2.ph, d2.beat]);
     ok('swipe: no page errors', q._errs.length === 0, q._errs); await q.context().close();
   }
@@ -177,22 +179,19 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       for (let k = 0; k < 4; k++) { const z = await state(p); if (z.ph !== 'ask' || z.dp >= z.np - 1) break; setupText.push(await js(p, () => document.getElementById('isx-sn-body').textContent)); await right(p, 350); }
       if (want(5)) {
         ok(`${tag}: the setup pages before the call name no outcome`, setupText.every(t => ![D.step, D.crisis, 'So did Washington', 'So did the'].concat(D.chain.map(C => C.t)).some(x => t.includes(x))), setupText.length);
-        const card = await js(p, D => { const b = document.getElementById('isx-sn-body'), t = b.textContent, opts = b.querySelector('.dopts'), lock = b.querySelector('.dlock');
+        /* call screen round: the call itself is the third step of a whole-window screen */
+        const card = await js(p, D => { const b = document.getElementById('isx-sn-body'), t = b.textContent, opts = b.querySelector('.dc-opts');
           const leak = [D.step, D.crisis, 'So did Washington', 'Washington '].concat(D.chain.map(C => C.t)).filter(x => t.includes(x));
-          if (lock) { lock.click(); lock.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); }
-          return { h3: b.querySelector('h3').textContent, n: b.querySelectorAll('.sn-opt').length, letters: [...b.querySelectorAll('.sn-opt .dl')].map(x => x.textContent).join(''), order: [...b.querySelectorAll('.sn-opt')].map(x => x.dataset.fk).join(), labels: /What happened|Other outcome|Other path/.test(opts.textContent), kick: /What happened|Other/.test(b.querySelector('.s2k').textContent), leak, group: opts.getAttribute('role') === 'group' && opts.getAttribute('aria-label') === 'Your call',
-            mech: !!b.querySelector('details.s2deep, .s2d'), lock: !lock && /after you choose/.test((b.querySelector('.dfine') || {}).textContent || ''), ctx: !!b.querySelector('.dctx') && b.querySelector('.dctx p').textContent.length > 20, more: (b.querySelector('.dmore') || { getAttribute: () => null }).getAttribute('aria-expanded'), nx: document.querySelector('#isx-s2bar .rt-nx').textContent, ch: document.querySelectorAll('#isx-rmap .fe.ch, #isx-rmap .fe.off, #isx-rmap .gn.flare, #isx-rmap .gt.flare, #isx-rmap .gn.bor').length }; }, D);
-        ok(`${tag}: “You’re at …”, two options A and B in the spec’s order (${D.ord.join(', ')}), in a group labelled “Your call”`, /You’re at [^.]+\./.test(card.h3) && card.n === 2 && card.letters === 'AB' && card.order === D.ord.join() && card.group, card);
-        ok(`${tag}: neither option is labelled, and neither outcome is on the card, in the bar’s Next or on the map`, !card.labels && !card.kick && card.leak.length === 0 && !card.nx.includes(D.step) && card.ch === 0, card);
-        ok(`${tag}: “The mechanism” is not on the call (the fine print says what happened opens after you choose); the situation is on the screen, with more behind one click`, !card.mech && card.lock && card.ctx && card.more === 'false', card);   /* clarity patch: the locked line under the card is gone from the full-screen call */
-        await click(p, '#isx-sn-body .dmore'); await p.waitForTimeout(150);
-        ok(`${tag}: “More context” opens in the card and still names no outcome`, await js(p, D => { const b = document.getElementById('isx-sn-body'), m = document.getElementById('isx-dctx'); return b.querySelector('.dmore').getAttribute('aria-expanded') === 'true' && !m.hidden && m.textContent.length > 20 && ![D.step, D.crisis].concat(D.chain.map(C => C.t)).some(x => b.textContent.includes(x)); }, D));
-        await click(p, '#isx-sn-body .dmore');
+          return { h: (b.querySelector('.dc-h') || {}).textContent || '', n: b.querySelectorAll('.dc-opt').length, letters: [...b.querySelectorAll('.dc-opt .key')].map(x => x.textContent).join(''), order: [...b.querySelectorAll('.dc-opt')].map(x => x.dataset.dco).join(), labels: /What happened|Other outcome|Other path/.test(opts.textContent), kick: /What happened|Other/.test(b.querySelector('.dc-k').textContent), leak, group: opts.getAttribute('role') === 'group' && opts.getAttribute('aria-label') === 'Your options',
+            mech: !!b.querySelector('details.s2deep, .s2d'), fine: /after you choose/.test((b.querySelector('.dc-fine') || {}).textContent || ''), lead: (b.querySelector('.dc-lead') || { textContent: '' }).textContent.length > 20, pr: [...b.querySelectorAll('.dc-opt')].every(o => o.querySelectorAll('.ol i').length >= 2), ch: document.querySelectorAll('#isx-rmap .fe.ch, #isx-rmap .fe.off, #isx-rmap .gn.flare, #isx-rmap .gt.flare').length }; }, D);
+        ok(`${tag}: the question as the title, two options A and B in the spec’s order (${D.ord.join(', ')}), in a group labelled “Your options”`, /\?$/.test(card.h.trim()) && card.n === 2 && card.letters === 'AB' && card.order === D.ord.join() && card.group, card);
+        ok(`${tag}: neither option is labelled, and neither outcome is on the screen or on the map`, !card.labels && !card.kick && card.leak.length === 0 && card.ch === 0, card);
+        ok(`${tag}: “The mechanism” is not on the call; the situation leads it, each option says where it moves the pressure, and the fine print says what happened opens after you choose`, !card.mech && card.fine && card.lead && card.pr, card);
       }
       if (want(6)) {
         const sus = await state(p);
         ok(`${tag}: no value changes on the decision card (its subject shows “?” at most)`, Object.keys(before.vals).every(id => sus.vals[id] === before.vals[id] || (D.sus.includes(id) && sus.vals[id] === '?')), sus.vals);
-        await click(p, '#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(350);
+        await choose(p, 'alt'); await p.waitForTimeout(350);
         const bad = []; let links = 0, crisis = null;
         for (let i = 0; i < 8; i++) {
           const s = await state(p), m = await js(p, () => ({ ch: [...document.querySelectorAll('#isx-rmap .fe.ch')].map(x => +x.dataset.e).sort((a, b) => a - b), off: [...document.querySelectorAll('#isx-rmap .fe.off')].map(x => +x.dataset.e).sort((a, b) => a - b), x: document.querySelectorAll('#isx-rmap .fx:not(.gh)').length,
@@ -255,7 +254,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   if (want(10)) {
     for (const [w, h] of [[1440, 900], [1280, 760]]) {
       const fit = (p, what) => js(p, () => { const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-snarr').getBoundingClientRect(), box = document.getElementById('isx-sn-in'), led = document.getElementById('isx-b1led');
-        const r = { stage: c.getBoundingClientRect().bottom <= innerHeight + 1 && c.scrollHeight <= c.clientHeight + 1, bar: bar.bottom <= innerHeight + 1, card: card.top >= 0 && card.bottom <= bar.top + 1, inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 };
+        const r = { stage: c.getBoundingClientRect().bottom <= innerHeight + 1 && c.scrollHeight <= c.clientHeight + 1, bar: bar.bottom <= innerHeight + 1, card: c.classList.contains('dcall') ? card.top <= 0 && card.bottom >= innerHeight - 1 : card.top >= 0 && card.bottom <= bar.top + 1,   /* call screen round: a call is the whole window */ inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 };
         if (led && !led.hidden) { const l = led.getBoundingClientRect(); r.led = l.top >= 0 && l.bottom <= bar.top + 1 && led.scrollHeight <= led.clientHeight + 1; }
         return r; });
       const all = r => Object.values(r).every(Boolean);
@@ -269,7 +268,9 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       for (const at of await js(p, () => ISX.sim.decisions.map(D => D.at).filter(a => a >= 0))) {
         await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), 'd:0:' + (at - 1)); await p.waitForTimeout(450);
         r = await fit(p); ok(`one screen (${w}×${h}): the decision before step ${at + 1}`, all(r), r);
-        await click(p, '#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(450);
+        await js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }); await p.waitForTimeout(300);
+        r = await fit(p); ok(`one screen (${w}×${h}): the call itself before step ${at + 1}`, all(r), r);
+        await choose(p, 'alt'); await p.waitForTimeout(450);
         for (let i = 0; i < 8; i++) { const s = await state(p); r = await fit(p); ok(`one screen (${w}×${h}): ${s.ph === 'crisis' ? 'the crisis card' : 'chain link ' + (s.c + 1)} before step ${at + 1}`, all(r) || (h < 800 && soft(r)), r); if (s.ph === 'crisis') break; await right(p, 420); }
       }
       ok(`one screen (${w}×${h}): no page errors`, p._errs.length === 0, p._errs); await p.context().close();

@@ -113,9 +113,11 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     ok('the map: picking the outlined actor ends it', r.on === 'map' && r.picked && !(await p.evaluate(() => ISX.hints.on)), r);
     await done(p);
     p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' }, pos: { l: 0, b: 9, ph: 'ask' } });   /* clarity build: the first call follows step 10 */
-    await p.waitForFunction(() => ISX.hints.on === 'call', null, { timeout: 8000 }).catch(() => {});
-    r = await hintOf(p); ok('a decision carries “No right answer, no score…” before anything else', r.on === 'call' && r.text === LINES.call, r);
-    await p.evaluate(() => document.querySelector('#isx-sn-body .sn-opt').click()); await p.waitForTimeout(300); ok('choosing ends it', (await p.evaluate(() => ISX.hints.on)) !== 'call');
+    await p.waitForTimeout(1500);
+    /* call screen round: a call covers the window and says it on its own screen, so no hint sits behind it */
+    r = await p.evaluate(() => { document.querySelectorAll('#isx-sn-body [data-dcp="2"]').forEach(b => b.click()); return { on: ISX.hints.on || null }; }); await p.waitForTimeout(400);
+    const fine = await p.evaluate(() => (document.querySelector('#isx-sn-body .dc-fine') || {}).textContent || '');
+    ok('a call shows no hint over its screen; the screen itself says there is no right answer and no score', !r.on && !(await p.evaluate(() => ISX.hints.on)) && /^No right answer, no score\./.test(fine), [r, fine]);
     await done(p);
     p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' }, pos: { l: 12, b: 0 } });
     await p.waitForFunction(() => ISX.hints.on, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(300);

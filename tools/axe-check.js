@@ -116,8 +116,8 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('B1-3, phone: the “more” menu', '#simulator', sim(22), 390, 844, click('#isx-s2bar .rt-more'));
   /* B1-4: decisions, chain reactions, crisis cards */
   const ask = async p => { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400); await p.evaluate(() => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }); await p.waitForTimeout(400); };   /* clarity patch: to the call itself, past its setup pages */
-  const chainTo = n => async p => { await ask(p); await p.evaluate(() => document.querySelector('#isx-sn-body [data-fk="alt"]').click()); await p.waitForTimeout(400); for (let i = 0; i < n; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); } };
-  await run('B1-4: a decision card (the yen), “More context” open', '#simulator', sim(0, 18), 1440, 900, async p => { await ask(p); await p.click('#isx-sn-body .dmore'); await p.waitForTimeout(200); });
+  const chainTo = n => async p => { await ask(p); await p.evaluate(() => { document.querySelector('#isx-sn-body .dc-opt[data-dco="alt"]').click(); document.querySelector('#isx-sn-body .dc-go').click(); }); await p.waitForTimeout(700); for (let i = 0; i < n; i++) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); } };
+  await run('B1-4: a decision (the yen call), an option chosen', '#simulator', sim(0, 18), 1440, 900, async p => { await ask(p); await p.click('#isx-sn-body .dc-opt'); await p.waitForTimeout(300); });
   await run('B1-4: a decision card at 1280×760', '#simulator', sim(9), 1280, 760, ask);
   await run('B1-4: a chain link, “The mechanism” open', '#simulator', sim(0, 18), 1440, 900, async p => { await chainTo(1)(p); await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(200); });
   await run('B1-4: a chain link with a relation that was not used', '#simulator', sim(26), 1440, 900, chainTo(0));
@@ -243,17 +243,18 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('clarity: the full view at rest, lines in grey', '#simulator', fullv, 1280, 760);
   await run('clarity, phone: a step with its numbers in the card', '#simulator', cl(12), 390, 844);
   await run('clarity: 1280 × 760, tiles above the card', '#simulator', cl(9), 1280, 760);
-  /* clarity patch (17 Nov 2026): the calls as screens: the first call's three pages, a call's “More context” open, the calendar's line,
-     an episode's call with its way back, the page at 1024 and on a phone, and the entry with “Show hints again” */
+  /* call screen round (18 Nov 2026): the calls as whole-window screens: each step of the first call, a force open, an option chosen,
+     the calendar's line, an episode's call, 1024 and a short window, and phones */
   const dc = (l, b2, dp) => ({ ...seen, 'isx-way': 'guide', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l, b: b2, ph: 'ask', dp }) });
-  await run('call: the first call, page 1 (the problem)', '#simulator', dc(0, 9, 0), 1440, 900);
-  await run('call: the first call, page 2 (your seat), its terms', '#simulator', dc(0, 9, 1), 1440, 900);
-  await run('call: the first call itself, tiles and Substack', '#simulator', dc(0, 9, 2), 1440, 900);
-  await run('call: More context open, the calendar’s line shown', '#simulator', dc(0, 14, 1), 1280, 760, async p => { await p.click('#isx-sn-body .dmore'); await p.focus('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(250); });
-  await run('call: an episode’s call (oil), with the way back', '#simulator', dc(14, 0, 1), 1280, 760);
-  await run('call: 1024 × 768, the yen call', '#simulator', dc(18, 0, 1), 1024, 768);
-  await run('call, phone: the first call itself', '#simulator', dc(0, 9, 2), 390, 844);
-  await run('call, phone: a setup page', '#simulator', dc(0, 19, 0), 390, 844);
+  await run('call: the first call, the problem', '#simulator', dc(0, 9, 0), 1440, 900);
+  await run('call: the first call, what you weigh (bills and bonds)', '#simulator', dc(0, 9, 1), 1440, 900);
+  await run('call: the first call, a force open', '#simulator', dc(0, 9, 1), 1440, 900, async p => { await p.click('#isx-sn-body .dc-var[data-dcv="3"]'); await p.waitForTimeout(300); });
+  await run('call: the first call itself', '#simulator', dc(0, 9, 2), 1440, 900);
+  await run('call: an option chosen, “Make this call”, the calendar’s line', '#simulator', dc(0, 14, 2), 1280, 720, async p => { await p.click('#isx-sn-body .dc-opt[data-dco="real"]'); await p.focus('#isx-sn-body .dc-sup [data-remind]'); await p.waitForTimeout(250); });
+  await run('call: an episode’s call (oil), what you weigh', '#simulator', dc(14, 0, 1), 1280, 720, async p => { await p.click('#isx-sn-body .dc-var[data-dcv="0"]'); await p.waitForTimeout(300); });
+  await run('call: 1024 × 768, the yen call', '#simulator', dc(18, 0, 2), 1024, 768);
+  await run('call, phone: the first call itself, an option chosen', '#simulator', dc(0, 9, 2), 390, 844, async p => { await p.click('#isx-sn-body .dc-opt'); await p.waitForTimeout(300); });
+  await run('call, phone: the problem', '#simulator', dc(0, 19, 0), 390, 844);
   await run('call: the entry with “Show hints again”', '#simulator', { ...seen, 'isx-sim-mode': 'story', 'isx-hints-off': '1', '__pos': JSON.stringify({ l: 0, b: -1 }) }, 1440, 900);
   /* profit tab build 1: the profit dollar's stations, views, a table, the text under the board, a hint, and the ring's four doors */
   const pf = (i, v, t) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };

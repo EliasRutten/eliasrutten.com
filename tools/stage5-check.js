@@ -116,7 +116,7 @@ const AUDITOR = () => {
   const click = (p, sel, n = 0) => p.evaluate(([s, i]) => { const e = document.querySelectorAll(s)[i]; if (e) e.click(); return !!e; }, [sel, n]);
   const where = p => p.evaluate(() => { const S = ISX.sim; return { mode: S.mode, line: S.line, beat: S.beat, steps: S.lines[S.line].steps.length }; });
   /* B1: → never chooses. One move forward: take what happened where the card asks for a choice, otherwise press → */
-  const fwd = async p => { const picked = await p.evaluate(() => { const o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'); if (o) { o.click(); return true; } return false; }); if (!picked) await p.keyboard.press('ArrowRight'); };
+  const fwd = async p => { const picked = await p.evaluate(() => { const o = document.querySelector('#isx-sn-body .dc-opt[data-dco="real"], #isx-sn-body [data-pick="real"]'); if (o) { o.click(); const g = document.querySelector('#isx-sn-body .dc-go'); if (g) g.click(); return true; } return false; }); if (!picked) await p.keyboard.press('ArrowRight'); };
 
   /* ================= 1. flicker ================= */
   if (want(1)) {
@@ -154,8 +154,8 @@ const AUDITOR = () => {
         ok(`flicker (${tag}): the episode “${D.ep}” opens from step ${D.from + 1} of the guide`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === 0, D.li)); inEp++;
       }
       await step(nm + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:${D.li}:${D.si - 1}"]`), 2100);
-      await step(nm + ': from its setup page to the call itself', () => js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }), 2100);   /* clarity patch: a call opens on its setup page */
-      await step(nm + ': the other path', () => click(p, '#isx-sn-body [data-fk="alt"]'), 2100); links++;
+      await step(nm + ': from the problem to the call itself', () => js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }), 2100);   /* a call opens on the problem */
+      await step(nm + ': the other path', () => js(p, () => { document.querySelector('#isx-sn-body .dc-opt[data-dco="alt"]').click(); document.querySelector('#isx-sn-body .dc-go').click(); }), 2100); links++;
       for (let i = 1; i < D.n; i++) { await step(nm + ': link ' + (i + 1), key('ArrowRight'), 2100); links++; }
       await step(nm + ': the crisis card', key('ArrowRight'), 2100);
       await step(nm + ': one link back', key('ArrowLeft'), 2100);
@@ -280,7 +280,7 @@ const AUDITOR = () => {
       await q.keyboard.press('Escape');
       const fork = await js(q, async () => {
         const S = ISX.sim, wait = ms => new Promise(r => setTimeout(r, ms)), i = S.lines[0].steps.findIndex((s, j) => j > 11 && false);
-        for (let k = 0; k < 30; k++) { const o = [...document.querySelectorAll('#isx-sn-body [data-fk]')].find(x => x.dataset.fk !== 'real'); if (o) { o.click(); await wait(250); break; } document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(120); }
+        for (let k = 0; k < 30; k++) { const o = document.querySelector('#isx-sn-body .dc-opt[data-dco="alt"]'); if (o) { o.click(); document.querySelector('#isx-sn-body .dc-go').click(); await wait(650); break; } document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(120); }
         const T = ISX.sim; if (!T.alt) return { alt: null };
         const cum = new Set(T.lines[0].steps[T.beat].n), tmp = [...document.querySelectorAll('#isx-rmap .fn.tmp')];
         const E = new Set(T.lines[0].steps[T.beat].e), late = T.indicators.filter(I => !I.rel.some(i => E.has(i)));

@@ -92,7 +92,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
     const r = await p.evaluate(() => { const t = (document.querySelector('#isx-sn-body .s2p') || {}).textContent || ''; const s = t.split(/[.!?]\s+(?=[A-Z“‘$])/).length; const c = document.querySelector('.sn-cnt'); return { s, deep: !!document.querySelector('#isx-sn-body .s2deep'), cnt: c ? c.textContent.replace(/\s+/g, '') : '', held: (document.querySelector('#isx-s2bar .rt-nx') || {}).className || '' }; });
     if (r.cnt && !cnts.has(r.cnt)) { cnts.add(r.cnt); worst = Math.max(worst, r.s); n++; if (!r.deep) deepOk = false; }
     if (/^(\d+)\/\1$/.test(r.cnt)) break;
-    if (/hold/.test(r.held)) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(80); await p.evaluate(() => { const o = document.querySelector('#isx-sn-body [data-fk="real"], #isx-sn-body [data-pick="real"]'); if (o) o.click(); }); }
+    if (/hold/.test(r.held)) { await p.keyboard.press('ArrowRight'); await p.waitForTimeout(80); await p.evaluate(() => { const o = document.querySelector('#isx-sn-body .dc-opt[data-dco="real"], #isx-sn-body [data-pick="real"]'); if (o) { o.click(); const g = document.querySelector('#isx-sn-body .dc-go'); if (g) g.click(); } }); }
     else await p.keyboard.press('ArrowRight');
     await p.waitForTimeout(120);
   }
@@ -122,9 +122,9 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.click('#isx-sn-body [data-sg="start"]'); await p.waitForTimeout(350);
   ok('guide: the step before a decision says so on Next', await p.evaluate(() => /Next · your call/i.test(document.querySelector('#isx-s2bar .rt-nx').textContent)));
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* clarity patch: past the call's setup page, to the call itself */
-  ok('guide: a decision at the first key moment: its own card, two options, Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.sn-opt').length === 2 && /You’re at the White House/.test(b.querySelector('h3').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dopts').textContent); }));
-  await p.click('#isx-sn-body [data-fk="alt"]'); await p.waitForTimeout(300);
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* call screen round: past the problem and what you weigh, to the call itself */
+  ok('guide: a decision at the first key moment: its own screen, two options, the bar’s Next held', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'), nx = document.querySelector('#isx-s2bar .rt-nx'); return b.querySelectorAll('.dc-opt').length === 2 && /What do you do\?/.test(b.querySelector('.dc-h').textContent) && nx.classList.contains('hold') && nx.getAttribute('aria-disabled') === 'true' && !/What happened ·|Other outcome|Other path/.test(b.querySelector('.dc-opts').textContent); }));
+  await p.click('#isx-sn-body .dc-opt[data-dco="alt"]'); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(300);
   const chain = [];
   for (let i = 0; i < 9; i++) { const c = await p.evaluate(() => ({ k: document.querySelector('#isx-sn-body .s2k').textContent, s: document.querySelector('#isx-sn-body .s2p').textContent.split(/[.!?]\s+(?=[A-Z“‘$])/).length, nx: document.querySelector('#isx-s2bar .rt-nx').textContent })); chain.push(c); if (/Where it leads/.test(c.k)) break; await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250); }
   ok('guide: the other path is a chain of reveals, two sentences at most each, and ends on a crisis card that leads back', chain.length === 6 && chain.slice(0, 5).every(c => /Other path/.test(c.k) && c.s <= 2 && /Next in the chain/i.test(c.nx)) && /Where it leads/.test(chain[5].k) && /Back to\s*What happened/i.test(chain[5].nx), chain);

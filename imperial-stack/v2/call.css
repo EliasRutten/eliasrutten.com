@@ -156,7 +156,7 @@ html.isx-dclock, html.isx-dclock body { overflow: hidden; }
 #isx-root .s2 .dc-nx.ready { animation: dc-glow 2.4s ease-in-out infinite; }
 @keyframes dc-glow { 50% { box-shadow: 0 0 22px rgba(255, 181, 71, .45); } }
 #isx-root .s2 .dc-gox { display: inline-flex; min-height: 50px; align-items: center; }
-#isx-root .s2 .dc-go { display: inline-grid; grid-template-columns: auto auto; align-items: center; column-gap: 16px; row-gap: 4px; min-height: 50px; padding: 7px 22px; border: 0; border-radius: 999px; background: linear-gradient(180deg, #ffd27a, #ffb547); color: #1a1205; text-align: left; cursor: pointer; box-shadow: 0 0 30px rgba(255, 181, 71, .38); transition: box-shadow .25s ease, transform .25s ease; }
+#isx-root .s2 .dc-go { scroll-margin: 16px; display: inline-grid; grid-template-columns: auto auto; align-items: center; column-gap: 16px; row-gap: 4px; min-height: 50px; padding: 7px 22px; border: 0; border-radius: 999px; background: linear-gradient(180deg, #ffd27a, #ffb547); color: #1a1205; text-align: left; cursor: pointer; box-shadow: 0 0 30px rgba(255, 181, 71, .38); transition: box-shadow .25s ease, transform .25s ease; }
 #isx-root .s2 .dc-go span { font: 600 14px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
 #isx-root .s2 .dc-go small { grid-row: 2; font: 400 10.5px/1.1 var(--mono); letter-spacing: .04em; opacity: .78; }
 #isx-root .s2 .dc-go .dc-ar { grid-column: 2; grid-row: 1 / span 2; stroke-width: 1.6; }
