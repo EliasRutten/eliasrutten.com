@@ -236,7 +236,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
      and as a run with its way back, the picker with acts and episodes, the key on demand, the map at rest in grey; phone and 1280 × 760 */
   const cl = b2 => ({ ...seen, 'isx-way': 'ground', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: b2 }) });
   await run('clarity: a step with its numbers above the card (a chart)', '#simulator', cl(21), 1440, 900, async p => { await p.waitForTimeout(500); });
-  await run('clarity: the chart as a table', '#simulator', cl(21), 1440, 900, async p => { await p.waitForTimeout(500); await p.click('#isx-cl-nums [data-cl-tbl]'); await p.waitForTimeout(250); });
+  await run('clarity: the chart as a table', '#simulator', cl(21), 1440, 900, async p => { await p.waitForTimeout(500); /* where the chart does not fit above the card it sits folded in the card: open the fold first */ await p.evaluate(() => { const f = document.querySelector('#isx-cl-nums.fold:not(.open) .cl-nh'); if (f) f.click(); }); await p.waitForTimeout(250); await p.click('#isx-cl-nums [data-cl-tbl]'); await p.waitForTimeout(250); });
   await run('clarity: tiles, sources open', '#simulator', cl(9), 1440, 900, async p => { await p.click('#isx-cl-nums [data-cl-src]'); await p.waitForTimeout(250); });
   await run('clarity: bars, “New here”, an episode folded open', '#simulator', cl(14), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body details.cl-epi summary').click()); await p.waitForTimeout(300); });
   await run('clarity: an episode step with the way back', '#simulator', cl(27), 1440, 900, async p => { await p.click('#isx-sn-body .cl-ep'); await p.waitForTimeout(500); });

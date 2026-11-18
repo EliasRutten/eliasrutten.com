@@ -3300,7 +3300,7 @@ function aCatLoad() {
   try { window.ISX.load('switches').then(d => { Object.keys(d.CAT || {}).forEach(k => (d.CAT[k].cases || []).forEach(c => { aCat[c] = d.CAT[k].s; })); if (view === 'arm' && armMode !== 'rev') { if (armFilter === 'control') { renderArmCard(); if (armLay === 'reach') renderReach(); if (ashKind) ashFill(); } } }).catch(() => {}); } catch (e) { /* the kinds stay off */ }
 }
 const PLAY = '<svg viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg>';
-const aDoor = c => { const S = aStory(c); return S ? `<button type="button" class="adoor" data-scen="${c}" aria-label="Open the scenario in The imperial arm: ${esc(S.t)}">${PLAY}<span>Scenario · ${esc(S.t)}</span></button>` : ''; };
+const aDoor = c => { const S = aStory(c); return S ? `<button type="button" class="adoor" data-scen="${c}" aria-label="Open in The imperial arm: scenario · ${esc(S.t)}">${PLAY}<span>Scenario · ${esc(S.t)}</span></button>` : ''; };
 const aDoors = e => e.cases.length ? `<span class="adoors">${e.cases.map(aDoor).join('')}</span>` : '';
 
 /* a node's reach: its own links, then, for a state body or an economy group, the links from the sectors it reaches to the far
