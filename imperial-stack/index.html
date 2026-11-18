@@ -8543,6 +8543,23 @@ function dcGoHTML(k) {
   return o ? `<button type="button" class="dc-go" data-dcgo data-dcf><span>Make this call</span><small>${dcKey(D, o)} · ${fe(D[o][0])}</small>${dcArr}</button>`
     : `<span class="dc-wait">Choose A or B</span>`;
 }
+/* plain-language round (18 Nov 2026): an episode opens as a whole-window screen in the call screens' style: what happened, when, the
+   steps it walks (each can be opened straight away), and where in the guide it fits */
+const sEpIn = () => { try { return !!sLine().ep && SIM.beat === -1 && !SIM.ph; } catch (e) { return false; } };
+function sEpScreenHTML(L) {
+  const X = L.ep, n = L.beats.length, h = sEpHome(X), H = SLINES[0].beats[h], ret = SIM.epRet, [lede] = sTips([X.lede || L.lede || '']);
+  const head = `<header class="dc-mast"><div class="dc-k"><i class="dia" aria-hidden="true" style="--ec:${X.c}"></i><span>Episode</span><span class="sep" aria-hidden="true">·</span><span>${fe(X.s)}</span><span class="sep" aria-hidden="true">·</span><em>${fe(X.w)}</em></div></header>`;
+  const steps = L.beats.map((B, i) => `<li><button type="button" class="dc-epst" data-sl="${SIM.line}" data-sb="${i}"><span class="n" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><span class="t">${fe(B.t)}</span>${B.fork ? '<span class="yc"><i class="dia" aria-hidden="true"></i>Your call</span>' : B.w ? `<span class="w">${fe(B.w)}</span>` : ''}</button></li>`).join('');
+  const calls = L.beats.filter(B => B.fork).length;
+  const body = `<div class="dc-grid dc-epg"><div class="dc-txt"><p>${ft(lede)}</p>`
+    + `<p class="dc-epn">An episode is a dated moment when the machine was used or strained. The guide does not need it: it fits at step ${h + 1}, “${fe(H.t)}”.</p>`
+    + (calls ? `<p class="dc-epn">${calls === 1 ? 'One of its steps is a call: you sit in the chair and choose before you see what happened.' : sWord(calls)[0].toUpperCase() + sWord(calls).slice(1) + ' of its steps are calls: you choose before you see what happened.'}</p>` : '')
+    + `</div><div class="dc-fig dc-epl"><span class="dc-lab">In ${sWord(n)} steps</span><ol class="dc-eps">${steps}</ol></div></div>`;
+  const nav = `<button type="button" class="dc-bk" data-epback>${dcArl}<span>Back to the guide</span></button><button type="button" class="dc-nx ready" data-sg="start" data-dcf><span>Begin</span>${dcArr}</button>`;
+  return `<div class="dc dc-ep${SIM.dcArr ? ' arrive' : ''}" style="--ec:${X.c}">${head}`
+    + `<div class="dc-stage"><h2 class="dc-h">${fe(L.t)}</h2><i class="dc-rule" aria-hidden="true"></i><div class="dc-col">${body}</div></div>`
+    + `<footer class="dc-foot"><div class="dc-fl"><p class="dc-fine">Press any step to open it, or begin at the first.</p></div><div class="dc-nav">${nav}</div>${sCallSup()}</footer></div>`;
+}
 function sAskHTML(k) {
   const D = SDEC[k], C = SCALL[k], n = sCallN(k), dp = Math.max(0, Math.min(n - 1, SIM.dp || 0));
   const head = `<header class="dc-mast"><div class="dc-k"><i class="dia" aria-hidden="true"></i><span>Your call</span><span class="sep" aria-hidden="true">·</span><span>${fe(D.nt)}</span><span class="sep" aria-hidden="true">·</span><em>${fe(D.when)}</em></div>`
@@ -8604,7 +8621,7 @@ function dcCommit() {
 function dcSync() {
   try {
     const cock = $('cock'); if (!cock) return;
-    const now = simOn() && SIM.ph === 'ask', was = cock.classList.contains('dcall');
+    const now = simOn() && (SIM.ph === 'ask' || sEpIn()), was = cock.classList.contains('dcall');
     if (now !== was) { cock.classList.toggle('dcall', now); dcHold(now); const st = $('stage'); if (st) st.inert = now || (simOn() && SIM.beat < 0 && !!sLine().main); }
   } catch (e) { /* the Simulator is not built yet */ }
 }
@@ -8612,6 +8629,11 @@ function dcSync() {
    a force; A and B choose. Returns true when it used the key. */
 function dcKeys(e) {
   const cock = $('cock');
+  if (cock && cock.classList.contains('dcall') && sEpIn() && !e.defaultPrevented && !e.metaKey && !e.ctrlKey && !e.altKey && !(ISX.remind && ISX.remind.on)) {
+    if (e.key === 'Escape') { e.preventDefault(); simEpBack(); return true; }   /* plain-language round: an episode's entry screen */
+    if (/^[1-9]$/.test(e.key) && sLine().beats[+e.key - 1]) { e.preventDefault(); simGo(SIM.line, +e.key - 1, 'focus'); return true; }
+    return false;
+  }
   if (!cock || !cock.classList.contains('dcall') || SIM.ph !== 'ask' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || (e.target.closest && e.target.closest('input, textarea, select'))) return false;
   if (ISX.remind && ISX.remind.on) return false;
   const k = sDecK();
@@ -8846,6 +8868,7 @@ function simBodyHTML0() {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
     if (L.main) return sEntryHTML();
+    if (L.ep) return sEpScreenHTML(L);
     if (L.ep) return `<div class="s2k" style="--rc:${L.c}"><i></i>Episode<em>${fe(L.ep.w)}</em><span class="sn-cnt">${n} steps</span></div><h3>${fe(L.t)}</h3>${L.ep.warn ? `<p class="cb-warn">${fe(L.ep.warn)}</p>` : ''}<p class="s2p">${ft(sTips([lede])[0])}</p>`
       + `<p class="cl-epn">An episode is a dated moment when the machine was used or strained. The guide does not need it; it opens from “${fe(SLINES[0].beats[sEpHome(L.ep)].t)}”, step ${sEpHome(L.ep) + 1}.</p>`
       + `<div class="s2acts"><button type="button" class="sn-go" data-sg="start">Start ${sArrR}</button><button type="button" class="s2lnk sn-q2" data-epback>Back to the guide</button></div>`;
@@ -8929,7 +8952,7 @@ function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); { const was = cock.classList.contains('dcall'), now = on && SIM.ph === 'ask'; cock.classList.toggle('dcall', now); SIM.dcArr = now && !was; if (now !== was) dcHold(now); } { const st = $('stage'); if (st) st.inert = on && ((SIM.beat < 0 && !!sLine().main) || SIM.ph === 'ask'); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); { const was = cock.classList.contains('dcall'), now = on && (SIM.ph === 'ask' || sEpIn()); cock.classList.toggle('dcall', now); SIM.dcArr = now && !was; if (now !== was) dcHold(now); } { const st = $('stage'); if (st) st.inert = on && ((SIM.beat < 0 && !!sLine().main) || SIM.ph === 'ask' || sEpIn()); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
@@ -8953,7 +8976,7 @@ function simEp(id, ret) {
   const li = sEpLine(id); if (li < 0) return;
   if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
   SIM.epRet = ret && SLINES[SIM.line].main && SIM.beat >= 0 && SIM.beat < SLINES[SIM.line].beats.length ? { l: SIM.line, b: SIM.beat } : null;
-  simGo(li, ret ? 0 : -1, 'focus');
+  simGo(li, -1, 'focus');   /* plain-language round: every episode opens on its entry screen */
 }
 function simEpBack() {
   const L = sLine(); if (!L.ep) return;
@@ -9118,7 +9141,7 @@ function simSetMode(m) {
 /* keep keyboard focus on the control that moves the story */
 function simFocus() {
   const ae = document.activeElement;
-  if (SIM.ph === 'ask') { setTimeout(() => { const b = ROOT.querySelector('#isx-sn-body'), t = b && (b.querySelector('[data-dcf]') || b.querySelector('.dc-opt[aria-pressed="true"]') || b.querySelector('.dc-opt') || b.querySelector('.dc-nx')); if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170); return; }   /* call screen round: a call covers the window, so focus goes onto it */
+  if (SIM.ph === 'ask' || sEpIn()) { setTimeout(() => { const b = ROOT.querySelector('#isx-sn-body'), t = b && (b.querySelector('[data-dcf]') || b.querySelector('.dc-opt[aria-pressed="true"]') || b.querySelector('.dc-opt') || b.querySelector('.dc-nx')); if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170); return; }   /* call screen round: a call covers the window, so focus goes onto it */
   if (!ae || !ae.closest || !ae.closest('#isx-snarr')) return;
   setTimeout(() => { const nx = RT && RT.next('sim'), t = (nx && nx.getAttribute('aria-disabled') !== 'true' && nx.getClientRects().length ? nx : null) || ROOT.querySelector('#isx-sn-body .sn-opt') || ROOT.querySelector('#isx-sn-body .sn-go') || nx; if (t) t.focus({ preventScroll: true }); }, reduce ? 0 : 170);
 }

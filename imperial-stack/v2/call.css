@@ -278,3 +278,19 @@ html.isx-dclock, html.isx-dclock body { overflow: hidden; }
 #isx-root .s2 .ge-fr { display: inline-flex; align-items: center; gap: 8px; }
 @media (max-width: 760px) { #isx-root .s2 .ge-fr { flex-wrap: wrap; } }
 @media (max-width: 760px) { #isx-root .s2 .dc-k > span:nth-of-type(4) { display: none; } #isx-root .s2 .dc-k em { flex-basis: 100%; } }
+
+/* plain-language round (18 Nov 2026): an episode's entry screen, in the same whole-window frame as a call */
+#isx-root .s2 .dc-ep .dc-k .dia { background: var(--ec, #ffb547); box-shadow: 0 0 10px var(--ec, #ffb547); }
+#isx-root .s2 .dc-epg { align-items: start; }
+#isx-root .s2 .dc-epn { color: #9fb0c0; font-size: clamp(14.5px, 1.05vw, 15.5px); }
+#isx-root .s2 .dc-eps { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .dc-eps li { border-bottom: 1px solid rgba(143, 163, 182, .16); }
+#isx-root .s2 .dc-epst { appearance: none; cursor: pointer; width: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: baseline; gap: 12px;
+  padding: 14px 10px 14px 8px; background: transparent; border: 0; color: #e6edf3; text-align: left; transition: background .2s ease; }
+#isx-root .s2 .dc-epst:hover { background: rgba(255, 181, 71, .06); }
+#isx-root .s2 .dc-epst:focus-visible { outline: 2px solid #ffb547; outline-offset: -2px; }
+#isx-root .s2 .dc-epst .n { font: 400 11px/1.4 var(--mono); color: var(--ec, #ffb547); }
+#isx-root .s2 .dc-epst .t { font: 400 clamp(15.5px, 1.2vw, 17px)/1.4 var(--sans); }
+#isx-root .s2 .dc-epst .w { font: 400 10px/1.4 var(--mono); letter-spacing: .06em; color: #8ea0b2; white-space: nowrap; }
+#isx-root .s2 .dc-epst .yc { display: inline-flex; align-items: center; gap: 7px; font: 400 10px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #ffd27a; white-space: nowrap; }
+#isx-root .s2 .dc-epst .yc .dia { width: 7px; height: 7px; transform: rotate(45deg); background: #ffb547; }
