@@ -52,17 +52,29 @@ html.isx-dclock, html.isx-dclock body { overflow: hidden; }
 #isx-root #isx-cock.s2 .s2card .dc h2.dc-h { margin: 0; max-width: 26ch; font: 400 clamp(25px, 2.55vw, 38px)/1.16 var(--title); letter-spacing: .035em; text-transform: uppercase; text-align: center; text-wrap: balance; color: #f1f5f8; }
 #isx-root .s2 .dc-rule { display: block; width: 52px; height: 1.5px; margin: clamp(14px, 2.4vh, 22px) auto clamp(20px, 3.4vh, 34px); background: #ffb547; box-shadow: 0 0 12px rgba(255, 181, 71, .55); transform-origin: center; }
 /* the column: centred under the masthead, read from its left margin; a very faint warm glow round it, no line */
-#isx-root .s2 .dc-col { width: min(1080px, 100%); padding: clamp(22px, 3.6vh, 36px) clamp(22px, 3vw, 42px); border-radius: 22px; background: rgba(8, 14, 21, .58); box-shadow: 0 0 80px 4px rgba(255, 168, 60, .05), 0 0 24px 0 rgba(255, 196, 110, .03), 0 30px 80px -34px rgba(0, 0, 0, .7); text-align: left; }
-#isx-root .s2 .dc-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); column-gap: clamp(30px, 5vw, 76px); align-items: center; }
+#isx-root .s2 .dc-col { width: min(1180px, 100%); padding: clamp(22px, 3.6vh, 36px) clamp(22px, 3vw, 42px); border-radius: 22px; background: rgba(8, 14, 21, .58); box-shadow: 0 0 80px 4px rgba(255, 168, 60, .05), 0 0 24px 0 rgba(255, 196, 110, .03), 0 30px 80px -34px rgba(0, 0, 0, .7); text-align: left; }
+#isx-root .s2 .dc-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); column-gap: clamp(30px, 4.4vw, 68px); align-items: start; }
 #isx-root .s2 .dc-lab { display: block; margin: 0 0 12px; font: 400 10.5px/1.35 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8ea0b2; }
 #isx-root .s2 .dc-big { display: block; margin: 0; font: 600 clamp(46px, 4.6vw, 68px)/1 var(--display); letter-spacing: .01em; color: #ffd27a; font-variant-numeric: tabular-nums; text-shadow: 0 0 30px rgba(255, 181, 71, .25); }
 #isx-root .s2 .dc-cap { margin: 8px 0 0; max-width: 38ch; font: 400 14px/1.5 var(--sans); color: #9fb1c2; }
 
 /* ---------- 1 · the problem ---------- */
-#isx-root .s2 .dc-txt p { margin: 0 0 .95em; max-width: 58ch; text-wrap: pretty; font: 400 clamp(15px, 1.15vw, 17px)/1.62 var(--sans); color: #d3dde6; }
+#isx-root .s2 .dc-txt p { margin: 0 0 .95em; max-width: 62ch; text-wrap: pretty; font: 400 clamp(15px, 1.15vw, 17px)/1.62 var(--sans); color: #d3dde6; }
 #isx-root .s2 .dc-txt p.lead { font-size: clamp(16.5px, 1.32vw, 19px); line-height: 1.52; color: #eef3f7; }
 #isx-root .s2 .dc-txt p:last-child { margin-bottom: 0; }
-#isx-root .s2 .dc-fig { align-self: stretch; display: flex; flex-direction: column; justify-content: center; padding-left: clamp(24px, 3vw, 44px); border-left: 1px solid rgba(143, 163, 182, .13); }
+#isx-root .s2 .dc-fig { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-start; padding-left: clamp(24px, 3vw, 44px); border-left: 1px solid rgba(143, 163, 182, .13); }
+#isx-root .s2 .dc-fig .dc-big { font-size: clamp(36px, 3.3vw, 50px); }
+#isx-root .s2 .dc-fig .dc-row b { font-size: clamp(32px, 3vw, 46px); }
+#isx-root .s2 .dc-fig .dc-rows { gap: 10px; }
+/* plain-language round: under the figure, the explainer it needs */
+#isx-root .s2 .dc-ex { margin-top: clamp(16px, 2.4vh, 22px); padding-top: clamp(14px, 2vh, 18px); border-top: 1px solid rgba(143, 163, 182, .13); }
+#isx-root #isx-cock.s2 .s2card .dc .dc-ex h4 { margin: 0 0 10px; font: 400 12.5px/1.3 var(--title); letter-spacing: .1em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .s2 .dc-ex p { margin: 0 0 .75em; font: 400 clamp(14.5px, 1.05vw, 15.5px)/1.6 var(--sans); color: #d3dde6; }
+#isx-root .s2 .dc-ex p:last-of-type { margin-bottom: 0; }
+#isx-root .s2 .dc-esl { display: inline-flex; align-items: center; gap: 8px; margin: 12px 14px 0 0; font: 400 13.5px/1.3 var(--sans); color: #ff9a62; text-decoration: none; border-bottom: 1px solid rgba(255, 103, 25, .4); }
+#isx-root .s2 .dc-esl svg { width: 14px; height: 14px; color: #ff6719; flex: none; }
+#isx-root .s2 .dc-esl:hover { color: #ffb48a; }
+#isx-root .s2 .dc-esl:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
 #isx-root .s2 .dc-rows { display: grid; gap: 14px; }
 #isx-root .s2 .dc-row { display: grid; grid-template-columns: 4.6ch minmax(0, 1fr); align-items: baseline; column-gap: 14px; }
 #isx-root .s2 .dc-row .y { font: 400 11px/1 var(--mono); letter-spacing: .1em; color: #8ea0b2; }
@@ -114,6 +126,7 @@ html.isx-dclock, html.isx-dclock body { overflow: hidden; }
 #isx-root .s2 .dc-opt { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; column-gap: 18px; row-gap: 14px; padding: clamp(18px, 2.6vh, 26px) clamp(16px, 1.8vw, 26px); border: 1px solid #2b3c4b; border-radius: 16px; background: rgba(10, 18, 27, .62); color: inherit; text-align: left; cursor: pointer; transition: border-color .25s ease, background .25s ease, transform .25s ease, opacity .35s ease, box-shadow .35s ease; }
 #isx-root .s2 .dc-opt .key { grid-row: 1 / span 4; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid rgba(255, 181, 71, .55); border-radius: 50%; font: 500 14px/1 var(--mono); color: #ffb547; transition: background .25s ease, color .25s ease; }
 #isx-root .s2 .dc-opt .ot b { display: block; margin: 0 0 8px; font: 400 clamp(16.5px, 1.45vw, 21px)/1.25 var(--title); letter-spacing: .03em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .s2 .dc-opt .osub { display: block; margin: -2px 0 10px; font: 400 10.5px/1.45 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8ea0b2; }
 #isx-root .s2 .dc-opt .od { display: block; font: 400 15px/1.5 var(--sans); color: #b9c6d2; }
 #isx-root .s2 .dc-opt .of { display: grid; gap: 7px; }
 #isx-root .s2 .dc-opt .of .dc-lab { margin: 0; }
