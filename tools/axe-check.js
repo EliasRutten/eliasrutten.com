@@ -266,19 +266,38 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('plain, phone: an episode’s entry screen (calm)', '#simulator', { ...seen, 'isx-way': 'guide', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 15, b: -1 }) }, 390, 844);
   /* profit tab build 1: the profit dollar's stations, views, a table, the text under the board, a hint, and the ring's four doors */
   const pf = (i, v, t) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };
-  for (const [i, v] of [[0, 'pic'], [0, 'nat'], [0, 'own'], [0, 'roc'], [1, 'hold'], [1, 'flow'], [1, 'list'], [1, 'home'], [1, 'pay'], [2, 'all'], [2, 'sum'], [2, 'pos'], [2, 'ord'], [3, 'wt'], [3, 'capex'], [3, 'ni'], [3, 'why']])
+  /* the arc (18 Nov): six stations; the views of build 1 in their new stations, with the three ways and the orbits */
+  for (const [i, v] of [[0, 'pic'], [1, 'nat'], [0, 'own'], [1, 'roc'], [0, 'hold'], [0, 'flow'], [0, 'list'], [3, 'home'], [3, 'pay'], [3, 'all'], [3, 'sum'], [2, 'pos'], [2, 'ord'], [4, 'wt'], [4, 'capex'], [4, 'ni'], [3, 'why'], [1, 'tri']])
     await run('profit: view ' + v, '#profit', seen, 1440, 900, pf(i, v));
   await run('profit: the ideal types as a table', '#profit', seen, 1440, 900, pf(2, 'ord', true));
-  await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(2, 'all', true));
-  await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(2, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });
-  await run('profit: 1024 wide', '#profit/claims', seen, 1024, 768, pf(1, 'list'));
-  await run('profit, phone: station 3', '#profit/regime', seen, 390, 844, pf(2, 'all'));
+  await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(3, 'all', true));
+  await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(3, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });
+  await run('profit: 1024 wide', '#profit/claims', seen, 1024, 768, pf(0, 'list'));
+  await run('profit, phone: station 3', '#profit/regime', seen, 390, 844, pf(3, 'all'));
   await run('profit, phone: two orders', '#profit/regime/ord', seen, 390, 844, pf(2, 'ord'));
-  await run('profit, phone: station 4, its doors', '#profit/ai', seen, 390, 844, async p => { await pf(3, 'wt')(p); await p.evaluate(() => document.querySelector('#isx-pf-text .pf-side').scrollIntoView()); await p.waitForTimeout(300); });
+  await run('profit, phone: station 5, its sources', '#profit/ai', seen, 390, 844, async p => { await pf(4, 'wt')(p); await p.evaluate(() => document.querySelector('#isx-pf-text .pf-side').scrollIntoView()); await p.waitForTimeout(300); });
   await run('profit: a hint (the tiles)', '#profit/regime', { ...first, 'isx-hints': 'pf-table' }, 1440, 900, async p => { await p.waitForFunction(() => ISX.hints && ISX.hints.on === 'pf-tile', null, { timeout: 15000 }); });
   await run('profit: the ring with four doors', '#circuit/ring', seen, 1440, 900);
   await run('profit, phone: the ring with four doors', '#circuit/ring', seen, 390, 844);
   await run('profit: a link from the primer', '#simulator', { ...seen, __pos: JSON.stringify({ l: 13, b: 9 }) }, 1440, 900, async p => { await p.evaluate(() => { const d = document.querySelector('#isx-cock details.s2deep'); if (d) d.open = true; }); await p.waitForTimeout(300); });
+  /* profit tab patch (18 Nov): the entry screens, the footnote, the finale, the orbits, the full-screen lines */
+  const ent = { ...seen, 'isx-tips-sim': null, 'isx-hints-off': '1', 'isx-simtour': 'off', 'isx-open-circuit': '1', 'isx-open-sim': '1' };
+  const entered = async p => { await p.waitForFunction(() => ISX.enter && ISX.enter.on, null, { timeout: 15000 }); await p.evaluate(() => document.getElementById('isx-enter').classList.add('en-all')); await p.waitForTimeout(200); };
+  await run('patch: the entry screen of the profit dollar, footnote and stations open', '#profit', ent, 1440, 900, async p => { await entered(p); await p.click('#isx-enter .en-star'); await p.click('#isx-enter [data-en="stops"]'); await p.waitForTimeout(600); });
+  await run('patch: the entry screen of the imperial machinery, levels open', '#simulator', ent, 1440, 900, async p => { await entered(p); await p.click('#isx-enter [data-en="levels"]'); await p.waitForTimeout(600); });
+  await run('patch: the entry screen of the elite network', '#elite-network', ent, 1280, 760, entered);
+  await run('patch, phone: the entry screen of the imperial arm', '#imperial-arm', ent, 390, 844, entered);
+  await run('patch: the entry screen with the reminder open', '#profit', ent, 1440, 900, async p => { await entered(p); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(400); });
+  await run('patch: the title’s footnote open in the tab', '#profit', seen, 1440, 900, async p => { await pf(0, 'pic')(p); await p.click('.pf-star'); await p.waitForTimeout(200); });
+  await run('patch: Bought each year as a table', '#profit', seen, 1440, 900, pf(0, 'flow', true));
+  await run('patch: the finale', '#profit/finale', seen, 1440, 900, async p => { await pf(5)(p); await p.waitForTimeout(400); });
+  await run('patch, phone: the finale', '#profit/finale', seen, 390, 844, async p => { await pf(5)(p); await p.waitForTimeout(400); });
+  const orb = (ord, more) => async p => { await pf(2, 'orb')(p); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); if (ord === 'ps') { await p.evaluate(() => document.querySelector('[data-po="ps"]').click()); await p.waitForTimeout(1300); } if (more) await more(p); await p.waitForTimeout(300); };
+  await run('patch: the orbits, the WTO order', '#profit/order', seen, 1440, 900, orb('wto'));
+  await run('patch: the orbits, Pax Silica, a body selected, a layer and the flows on', '#profit/order', seen, 1440, 900, orb('ps', async p => { await p.evaluate(() => { [...document.querySelectorAll('[data-ob]')].find(g => g.getAttribute('aria-label') === 'DR Congo').dispatchEvent(new MouseEvent('click', { bubbles: true })); document.querySelector('[data-pf="flows"]').click(); }); await p.evaluate(() => document.querySelector('[data-pl="waico"]').click()); }));
+  await run('patch: the orbits as a table', '#profit/order', seen, 1280, 760, orb('wto', async p => { await p.click('#isx-pf-table'); }));
+  await run('patch, phone: the orbits, Pax Silica', '#profit/order', seen, 390, 844, orb('ps'));
+  await run('patch, phone: One year, the lines full screen', '#profit/regime/sum', seen, 390, 844, async p => { await pf(3, 'sum')(p); await p.click('.pf-zoomb'); await p.waitForTimeout(400); });
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

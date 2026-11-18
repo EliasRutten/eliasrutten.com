@@ -169,6 +169,7 @@ html.isx-pzlock, html.isx-pzlock body { overflow: hidden; }
 #isx-root .pf-orbt { display: inline-flex; border: 1px solid #33475a; border-radius: 999px; background: rgba(8, 14, 21, .82); overflow: hidden; }
 #isx-root .pf-orbt button, #isx-root .pf-orbsys button { min-height: 32px; padding: 0 14px; border: 0; background: none; color: #9aabba; font: 400 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
 #isx-root .pf-orbt button[aria-pressed="true"] { background: #ffb547; color: #1a1205; }
+#isx-root .pf-orbi:focus-visible, #isx-root .pf-orbc:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
 #isx-root .pf-orbt button:focus-visible, #isx-root .pf-orbsys button:focus-visible, #isx-root .pf-orbz button:focus-visible { outline: 2px solid #ffb547; outline-offset: -3px; }
 #isx-root .pf-orbsys { position: absolute; z-index: 3; right: 0; top: 0; display: inline-flex; border: 1px solid #33475a; border-radius: 999px; background: rgba(8, 14, 21, .82); overflow: hidden; }
 #isx-root .pf-orbsys[hidden] { display: none; }
