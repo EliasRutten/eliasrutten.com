@@ -270,18 +270,18 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const pages = [];
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
     ok(pages[0].ph === 'ask' && pages[0].dp === 0 && pages[0].np === 3 && /The old buyers have stopped buying/.test(pages[0].h) && /January 2025/.test(pages[0].kick) && /The problem/.test(pages[0].cur) && !pages[0].opts && !pages[0].vars, 'Next from step 10 opens the call on the problem, dated January 2025, with no options yet', pages[0]);
-    ok(pages[0].dcall && pages[0].cover && pages[0].lock && pages[0].held && pages[0].stage && pages[0].fits && pages[0].focus !== 'outside', 'the call covers the window: the page under it is out of reach and out of sight, it does not scroll, focus is on the screen', pages[0]);
+    ok(pages[0].dcall && pages[0].cover && pages[0].lock && pages[0].held && pages[0].stage && pages[0].focus !== 'outside', 'the call covers the window: the page under it is out of reach and out of sight, the page does not scroll (the call may, a little: plain-language round), focus is on the screen', pages[0]);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
     ok(pages[1].dp === 1 && /Four forces pull on this call/i.test(pages[1].h) && pages[1].vars === 4 && /A bill/.test(pages[1].det) && /A note or bond/.test(pages[1].det) && /0 of 4/.test(pages[1].cnt), 'Next turns to what you weigh: four forces, bills against bonds explained, none weighed yet', pages[1]);
     await p.keyboard.press('1'); await p.waitForTimeout(250); pages.push(await look());
-    ok(/Pulls toward B · Sell more bills/.test(pages[2].det) && /4\.34%/.test(pages[2].det) && /Source:/.test(pages[2].det) && /1 of 4/.test(pages[2].cnt), 'a force says which option it pulls toward, with its dated figure and source', pages[2].det.slice(0, 300));
+    ok(/Pulls toward B · Borrow cheaply now, and add near-money/.test(pages[2].det) && /4\.34%/.test(pages[2].det) && /Source:/.test(pages[2].det) && /1 of 4/.test(pages[2].cnt), 'a force says which option it pulls toward, with its dated figure and source', pages[2].det.slice(0, 300));
     for (const n of ['2', '3', '4']) { await p.keyboard.press(n); await p.waitForTimeout(120); }
     pages.push(await look());
-    ok(/4 of 4/.test(pages[3].cnt) && (await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-var .pk')].map(x => x.textContent).join(''))) === 'BBAA', 'every force weighed is marked with the option it pulls toward', pages[3].cnt);
+    ok(/4 of 4/.test(pages[3].cnt) && (await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-var .pk')].map(x => x.textContent).join(''))) === 'BBAA B', 'every force weighed is marked with the option it pulls toward, or A B where it cuts both ways (the cash behind the bills, plain-language round)', pages[3].cnt);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(350); pages.push(await look());
-    const opt = await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-opt')].map(o => [o.querySelector('.key').textContent, o.querySelector('.ot b').textContent, [...o.querySelectorAll('.ol i')].map(i => i.textContent), [...o.querySelectorAll('.ol em')].map(e => e.textContent + (e.classList.contains('w') ? '+' : ''))]));
+    const opt = await p.evaluate(() => [...document.querySelectorAll('#isx-sn-body .dc-opt')].map(o => [o.querySelector('.key').textContent, o.querySelector('.ot b').textContent, [...o.querySelectorAll('.ol i')].map(i => i.textContent), [...o.querySelectorAll('.ol em')].map(e => e.textContent + (e.classList.contains('w') ? '+' : '')), (o.querySelector('.osub') || {}).textContent || '']));
     ok(pages[4].dp === 2 && /How do you fund the deficit\?/.test(pages[4].h) && pages[4].opts === 2 && pages[4].wait && !pages[4].go, 'then your call: the question, two options, nothing made yet', pages[4]);
-    ok(opt[0][0] === 'A' && opt[0][1] === 'Keep selling long bonds' && opt[0][2].includes('10-year yield') && opt[0][2].includes('Hedge funds') && opt[1][0] === 'B' && opt[1][1] === 'Sell more bills' && opt[1][2].includes('Money funds') && opt[1][3].includes('What each costs today+'), 'each option says what argues for it (the forces you weighed marked) and where it moves the pressure, in the map’s own names', opt);
+    ok(opt[0][0] === 'A' && opt[0][1] === 'Lock in the rate, and let investors carry the debt' && opt[0][4] === 'Keep selling long bonds' && opt[0][2].includes('higher long-term rates') && opt[1][0] === 'B' && opt[1][1] === 'Borrow cheaply now, and add near-money' && opt[1][4] === 'Sell more bills' && opt[1][2].includes('near-money for money funds') && opt[1][3].includes('What each costs today+'), 'each option leads with what it means, the move itself under it, what argues for it (the forces you weighed marked) and what it sets in motion (plain-language round)', opt);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dp === 2), 'Next on the call does not leave it');
     await p.keyboard.press('b'); await p.waitForTimeout(250); pages.push(await look());
@@ -339,9 +339,9 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
         if (dp === 1) { await q.click('#isx-sn-body .dc-var[data-dcv="0"]'); await q.waitForTimeout(150); }
         if (dp === 2) { await q.click('#isx-sn-body .dc-opt'); await q.waitForTimeout(150); }
         const r = await q.evaluate(() => { const i = document.getElementById('isx-sn-in'); return { k: ISX.sim.dec, dp: ISX.sim.dp, s: i.scrollHeight - i.clientHeight, wide: document.documentElement.scrollWidth <= innerWidth, small: [...document.querySelectorAll('#isx-sn-body .dc *')].filter(e => e.children.length === 0 && e.textContent.trim() && e.getClientRects().length && parseFloat(getComputedStyle(e).fontSize) < 10.5).map(e => e.textContent.trim().slice(0, 20)) }; });
-        if (r.k !== k || r.dp !== dp || r.s > 1 || !r.wide || r.small.length) over.push(r);
+        if (r.k !== k || r.dp !== dp || r.s > 160 || !r.wide || r.small.length) over.push(r);   /* plain-language round (18 Nov): Elias allows a slight scroll; never more than 160 px */
       } }
-      ok(!over.length, `${w} × ${h}: every step of every call fits the window without scrolling, nothing under 10.5 px`, over.slice(0, 4));
+      ok(!over.length, `${w} × ${h}: every step of every call fits the window or scrolls at most 160 px, nothing under 10.5 px`, over.slice(0, 4));
       await q.context().close();
     }
     const o = await open(1440, 900, { 'isx-way': 'guide' }, at(0, where('0-7')[1], { ph: 'ask' }));

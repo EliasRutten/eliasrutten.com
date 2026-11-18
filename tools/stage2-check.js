@@ -150,7 +150,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.evaluate(() => document.querySelectorAll('#isx-cock .pchip')[0].click()); await p.waitForTimeout(300);
   ok('full view: an episode runs in the dossier', await p.evaluate(() => /Episode ·/.test(document.querySelector('#isx-cock > .dossier').textContent) && !!document.getElementById('isx-pn')));
   await p.evaluate(() => document.querySelector('.sn-asstory').click()); await p.waitForTimeout(400);
-  ok('full view: “Follow this episode in the guide” opens the episode’s opening card', await p.evaluate(() => document.getElementById('isx-cock').classList.contains('st') && /Episode/.test(document.querySelector('#isx-sn-body .s2k').textContent) && ISX.sim.lines[ISX.sim.line].ep === 'oil' && ISX.sim.beat === -1));
+  ok('full view: “Follow this episode in the guide” opens the episode’s opening card', await p.evaluate(() => document.getElementById('isx-cock').classList.contains('st') && /Episode/.test(document.querySelector('#isx-sn-body .dc-ep .dc-k').textContent) && ISX.sim.lines[ISX.sim.line].ep === 'oil' && ISX.sim.beat === -1));   /* plain-language round: the entry screen */
   await p.evaluate(() => document.querySelector('.smode [data-sm="full"]').click()); await p.waitForTimeout(300);
   await p.evaluate(() => document.querySelector('.fsw [data-fm="stack"]').click()); await p.waitForTimeout(500);
   ok('the capital stack still opens, with the bottom tabs and the sales list', await p.evaluate(() => !!document.getElementById('isx-tower') && !!document.querySelector('#isx-fin #isx-issue') && document.getElementById('isx-finmore').innerHTML === '' && document.getElementById('isx-tabs').getClientRects().length > 0));
