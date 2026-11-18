@@ -54,6 +54,19 @@ assert not first, 'data files were not placed'
 rep('<a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span>', '<span class="er-ps">Pax Silica · </span>')
 rep('<a class="b b2" href="/">More work by Elias Rutten</a>', '<a class="b b2" href="https://eliasrutten.com/" target="_blank" rel="noopener">More work by Elias Rutten</a>')
 
+# 8. artifact only: a way to see the first visit again. An open artifact has already stored "toured", so the welcome
+#    would never show; this small button clears the first-visit keys and reloads. The site does not get it.
+ART_BTN = ('<style>#isx-art-replay{position:fixed;left:10px;bottom:10px;z-index:40;font:600 11px/1 system-ui,sans-serif;'
+           'color:#cfe3f2;background:rgba(11,19,28,.92);border:1px solid rgba(160,200,230,.35);border-radius:999px;padding:8px 12px;'
+           'cursor:pointer}#isx-art-replay:hover,#isx-art-replay:focus-visible{background:#16293a;outline:2px solid #7fc4f0}'
+           '.wl-stage:not(.wl-in) #isx-art-replay{display:none}</style>'
+           '<button id="isx-art-replay" type="button" aria-label="Show the first visit again: clear the saved tour and reload">\u21BB Show the first visit again</button>'
+           '<script>document.getElementById("isx-art-replay").addEventListener("click",function(){'
+           'try{["isx-intro","isx-tour"].forEach(function(k){localStorage.removeItem(k)})}catch(e){}'
+           'try{location.reload()}catch(e){location.href=location.href}});</script>\n')
+i = s.rfind('</html>'); assert i > 0, 'page end not found'
+s = s[:i] + ART_BTN + s[i:]
+
 # checks: no remaining code or attribute reference to a file outside the page (comments and absolute URLs aside)
 left = sorted(set(re.findall(r'(?:src|href)="(/[^"]+)"', s)))
 print('local references left:', left)
