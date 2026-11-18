@@ -95,7 +95,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
       ok(!bad.twice.length, way + ': a term is defined once on the route', bad.twice);
       ok(!bad.word.length, way + ': “New here” uses the glossary’s wording', bad.word);
       ok(acts === 3, way + ': the first card of each act says so', acts);
-      ok(way === 'ground' ? Object.keys(seenNew).length >= 15 : Object.keys(seenNew).length >= 8 && Object.keys(seenNew).length < 30, way + ': the number of terms spelled out', Object.keys(seenNew).length);
+      ok(way === 'ground' ? Object.keys(seenNew).length >= 12 :   /* plain-language round (18 Nov): fewer terms, because the cards now say “cloud giants”, “capital spending” and the like in words */ Object.keys(seenNew).length >= 8 && Object.keys(seenNew).length < 30, way + ': the number of terms spelled out', Object.keys(seenNew).length);
       await p.context().close();
     }
   }
@@ -128,6 +128,8 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     ok(ch.role === 'img' && /MOVE/.test(ch.aria) && /Mar 2020/.test(ch.aria) && /Apr 2025/.test(ch.aria) && /Oct 2026/.test(ch.aria), 'the MOVE chart says itself in words, with its three moments', ch.aria);
     ok(ch.lines === 1 && ch.labels.length === ch.lines && /MOVE/.test(ch.labels[0]), 'every line is labelled at its end', ch.labels);
     ok(ch.marks.join() === 'March 2020,April 2025', 'March 2020 and April 2025 are marked on the line (October 2026 is the line’s end)', ch.marks);
+    /* plain-language round (18 Nov): a longer card puts its numbers in a fold inside the card; open it first */
+    if (await p.evaluate(() => !!document.querySelector('#isx-cl-nums.fold:not(.open)'))) { await p.click('#isx-cl-nums .cl-nh'); await p.waitForTimeout(250); }
     await p.click('#isx-cl-nums [data-cl-tbl]'); await p.waitForTimeout(150);
     const tb = await p.evaluate(() => { const el = document.getElementById('isx-cl-nums'); return { rows: el.querySelectorAll('.cl-tb tbody tr').length, hid: el.querySelector('.cl-ch svg').hasAttribute('hidden') && !el.querySelector('.cl-ch svg').getClientRects().length, src: (el.querySelector('.cl-cs') || {}).textContent || '', pressed: el.querySelector('[data-cl-tbl]').getAttribute('aria-pressed') }; });
     ok(tb.rows >= 4 && tb.hid && tb.pressed === 'true' && /MOVE/.test(tb.src), 'the chart has a table view with its source', tb);
@@ -260,7 +262,7 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const second = D.filter(k => !/\b(You|you|your)\b/.test(I.calls[k].prob.p.join(' ')) || /\b(I|my)\b/.test(I.calls[k].prob.p.join(' ') + I.calls[k].vars.map(V => V.t).join(' ')));
     ok(!second.length, 'every problem speaks to the reader (“you”), none in the first person', second);
     const c1 = I.calls['0-1'];
-    ok(/“departed from norms regarding the issuance profile of Treasury debt”/.test(c1.prob.p.join(' ')) && c1.prob.sl.some(s => /manhattan\.institute/.test(s[1])) && c1.prob.sl.some(s => /hudsonbaycapital\.com/.test(s[1])), 'the first call keeps Bessent’s words, quoted and linked, and the paper', c1.prob.sl.map(s => s[1]));
+    ok(/“departed from norms regarding the issuance profile of Treasury debt in an effort to stimulate markets in advance of the election”/.test(c1.prob.p.join(' ')) && /“taken control of monetary policy”/.test(c1.prob.p.join(' ')) && c1.prob.sl.some(s => /manhattan\.institute/.test(s[1])) && c1.prob.sl.some(s => /hudsonbaycapital\.com/.test(s[1])), 'the first call keeps Bessent’s words, quoted and linked, and the paper', c1.prob.sl.map(s => s[1]));
     ok(c1.prim && c1.prim.a[0] === 'A bill' && c1.prim.b[0] === 'A note or bond' && c1.prim.a[1].length === 3 && c1.prim.b[1].length === 3, 'the first call explains bills against bonds before any force is pressed', c1.prim);
     /* walk the first call from step 10, with the keyboard */
     const [l1, b1] = where('0-1'); await go(p, l1, b1);
