@@ -161,3 +161,82 @@ html.isx-pzlock, html.isx-pzlock body { overflow: hidden; }
   #isx-root .pf-fd .pf-doors { grid-template-columns: minmax(0, 1fr); }
   #isx-root .pf.fin .pf-q { font-size: clamp(26px, 8vw, 36px); }
 }
+
+/* ---------- stage 2: the orbit view (station 3, The order) ---------- */
+#isx-root .pf-orb { position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%; }
+#isx-root .pf-orbsc { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#isx-root .pf-orb svg.pf-orbs { display: block; overflow: visible; }
+#isx-root .pf-orbt { display: inline-flex; border: 1px solid #33475a; border-radius: 999px; background: rgba(8, 14, 21, .82); overflow: hidden; }
+#isx-root .pf-orbt button, #isx-root .pf-orbsys button { min-height: 32px; padding: 0 14px; border: 0; background: none; color: #9aabba; font: 400 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+#isx-root .pf-orbt button[aria-pressed="true"] { background: #ffb547; color: #1a1205; }
+#isx-root .pf-orbt button:focus-visible, #isx-root .pf-orbsys button:focus-visible, #isx-root .pf-orbz button:focus-visible { outline: 2px solid #ffb547; outline-offset: -3px; }
+#isx-root .pf-orbsys { position: absolute; z-index: 3; right: 0; top: 0; display: inline-flex; border: 1px solid #33475a; border-radius: 999px; background: rgba(8, 14, 21, .82); overflow: hidden; }
+#isx-root .pf-orbsys[hidden] { display: none; }
+#isx-root .pf-orbsys button[aria-pressed="true"] { background: #e4ebf1; color: #0a131d; }
+/* the four cards: a glass strip across the top; the orbits show through */
+#isx-root .pf-orbc { position: absolute; z-index: 2; left: 0; right: 0; top: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; pointer-events: none; }
+#isx-root .pf-orbc div { padding: 7px 11px 8px; border: 1px solid rgba(143, 163, 182, .2); border-radius: 10px; background: rgba(12, 21, 31, .56); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); font: 400 12.5px/1.38 var(--sans); color: #c9d4de; }
+#isx-root .pf-orbc b { display: block; margin-bottom: 1px; font: 400 9.5px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #ffb547; }
+#isx-root .pf-orbi { flex: none; height: 66px; overflow: auto; display: grid; grid-template-columns: minmax(180px, .9fr) 2fr 1.5fr; gap: 2px 18px; align-content: start; padding: 7px 12px 8px; border: 1px solid #253442; border-radius: 10px; background: rgba(8, 14, 21, .9); font: 400 12.5px/1.42 var(--sans); color: #b9c6d2; scrollbar-width: thin; }
+#isx-root .pf-orbi p { margin: 0; } #isx-root .pf-orbi p.oh { grid-column: 1 / -1; color: #8496a5; }
+#isx-root .pf-orbi .k, #isx-root .pf-orbi b { grid-column: 1; } #isx-root .pf-orbi p { grid-column: 2; } #isx-root .pf-orbi p.ml { grid-column: 3; grid-row: 1 / span 3; } #isx-root .pf-orbi p.ml + p.ml { grid-row: auto; }
+#isx-root .pf-orbi .k { display: block; font: 400 9.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #ffb547; }
+#isx-root .pf-orbi b { display: block; margin-top: 2px; font: 600 16px/1.15 var(--display); letter-spacing: .05em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .pf-orbi p.fg { color: #e4ebf1; } #isx-root .pf-orbi p.ml { font-size: 11.5px; color: #8496a5; }
+/* the bodies */
+#isx-root .pf-orbs .ob { cursor: pointer; transition: transform 1.05s cubic-bezier(.45, .05, .2, 1), opacity .45s ease; outline: none; }
+#isx-root .pf-orbs.now .ob { transition: opacity .2s ease; }
+#isx-root .pf-orbs .ob.off { opacity: 0; pointer-events: none; }
+#isx-root .pf-orbs .ob.dim { opacity: .2; }
+#isx-root .pf-orbs .ob .c { fill: #0a131d; stroke: #8fa3b6; stroke-width: 1.5; transition: fill .6s ease, stroke .6s ease; }
+#isx-root .pf-orbs .ob .gd { fill: #8fa3b6; }
+#isx-root .pf-orbs.ps .ob.s-us .c { stroke: #ffb547; stroke-width: 1.2; }
+#isx-root .pf-orbs.ps .ob.pax .c { fill: #ffb547; stroke: #ffb547; }
+#isx-root .pf-orbs.ps .ob.tw .c { fill: #0a131d; stroke: #ffb547; stroke-width: 1.6; stroke-dasharray: 2.5 2; }
+#isx-root .pf-orbs.ps .ob.s-cn .c { fill: #e2574c; stroke: #e2574c; }
+#isx-root .pf-orbs.ps .ob.s-both .c { fill: #ffb547; stroke: #e2574c; stroke-width: 2.6; }
+#isx-root .pf-orbs.ps .ob.s-swing .c { fill: #0a131d; stroke: #9aabba; }
+#isx-root .pf-orbs.ps .ob.s-open .c { fill: #0a131d; stroke: #9aabba; stroke-dasharray: 2 2; }
+#isx-root .pf-orbs.ps .ob.grp .gd { fill: #0a131d; } #isx-root .pf-orbs.ps .ob.grp.s-swing .gd { fill: #9aabba; }
+#isx-root .pf-orbs .ob.hatch .c { stroke-dasharray: 1.5 1.5; }
+#isx-root .pf-orbs.wto .ob .c { fill: #8fa3b6; stroke: #8fa3b6; } #isx-root .pf-orbs.wto .ob.grp .gd { fill: #0a131d; }
+#isx-root .pf-orbs .ob.s-core .c { fill: #ffb547; stroke: #ffb547; filter: drop-shadow(0 0 10px rgba(255, 181, 71, .5)); }
+#isx-root .pf-orbs.ps .ob.s-core.wa .c { fill: #e2574c; stroke: #e2574c; filter: drop-shadow(0 0 10px rgba(226, 87, 76, .5)); }
+#isx-root .pf-orbs.wto .ob.s-core.wa .c { fill: #8fa3b6; stroke: #8fa3b6; filter: none; }
+#isx-root .pf-orbs .ob.sel .c, #isx-root .pf-orbs .ob:focus-visible .c { stroke: #fff; stroke-width: 2.4; }
+#isx-root .pf-fig svg.pf-orbs text.ol { font-family: var(--sans); font-size: 11px; fill: #c9d4de; paint-order: stroke; stroke: #0a131d; stroke-width: 3px; stroke-linejoin: round; }
+#isx-root .pf-fig svg.pf-orbs .ob.sel text.ol { fill: #fff; font-weight: 600; }
+#isx-root .pf-fig svg.pf-orbs text.ol.quiet { display: none; }
+#isx-root .pf-fig svg.pf-orbs text.cl { font-family: var(--display); font-size: 12px; font-weight: 600; letter-spacing: .04em; fill: #1a1205; }
+#isx-root .pf-fig svg.pf-orbs.wto .ob.s-core.wa text.cl { fill: #0a131d; }
+/* the two states cross-fade; the flows are grey at rest */
+#isx-root .pf-orbs .os { transition: opacity .8s ease; }
+#isx-root .pf-orbs.wto .os.ps, #isx-root .pf-orbs.ps .os.wto { opacity: 0; pointer-events: none; }
+#isx-root .pf-orbs .fl { stroke-width: 2; transition: opacity .4s ease; }
+#isx-root .pf-orbs:not(.flows) .fl { stroke: #5f7284 !important; stroke-width: 1.2; opacity: .55; marker-end: none !important; stroke-dasharray: 2 4; }
+#isx-root .pf-fig svg.pf-orbs text.fl-t { font-family: var(--sans); font-size: 11.5px; opacity: 0; transition: opacity .4s ease; paint-order: stroke; stroke: #0a131d; stroke-width: 4px; stroke-linejoin: round; }
+#isx-root .pf-fig svg.pf-orbs.flows text.fl-t { opacity: 1; }
+#isx-root .pf-orbs .curtain { stroke: #e2574c; stroke-width: 1.4; stroke-dasharray: 5 5; opacity: .75; }
+#isx-root .pf-fig svg.pf-orbs text.cur-t { font-size: 9.5px; letter-spacing: .16em; fill: #e2574c; paint-order: stroke; stroke: #0a131d; stroke-width: 4px; }
+/* the key */
+#isx-root .pf-lg .ofl { flex: 1 1 100%; color: #d5dee6; } #isx-root .pf-lg .ofl i { width: 18px; height: 2.5px; border-radius: 1.5px; }
+#isx-root .pf-lg .olg i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #8fa3b6; background: none; box-sizing: border-box; }
+#isx-root .pf-lg .olg i.pax { background: #ffb547; border-color: #ffb547; } #isx-root .pf-lg .olg i.tw { border: 1.5px dashed #ffb547; } #isx-root .pf-lg .olg i.usx { border-color: #ffb547; border-width: 1px; }
+#isx-root .pf-lg .olg i.wa { background: #e2574c; border-color: #e2574c; } #isx-root .pf-lg .olg i.both { background: #ffb547; border: 2.5px solid #e2574c; } #isx-root .pf-lg .olg i.sw { border-color: #9aabba; }
+#isx-root .pf-lg .olg i.z { border-radius: 1px; transform: rotate(45deg) scale(.82); } #isx-root .pf-lg .olg i.g { width: 13px; height: 13px; background: radial-gradient(circle, #8fa3b6 0 2px, transparent 2.5px); }
+@media (min-width: 761px) { #isx-root .pf-board .pf-fig[data-lens="orb"] { height: clamp(500px, calc(100vh - 414px - var(--pfx, 0px)), 700px); } }
+@media (max-width: 1180px) and (min-width: 761px) { #isx-root .pf-orbc div { font-size: 11.5px; padding: 5px 9px 6px; } }
+@media (max-width: 760px) {
+  #isx-root .pf-board .pf-fig[data-lens="orb"] { height: auto; }
+  #isx-root .pf-orb { display: flex; flex-direction: column; gap: 8px; height: auto; }
+  #isx-root .pf-orbsys, #isx-root .pf-orbc, #isx-root .pf-orbi, #isx-root .pf-orbsc { position: static; }
+  #isx-root .pf-orbi { display: block; height: auto; min-height: 66px; } #isx-root .pf-orbi p { margin: 4px 0 0; }
+  #isx-root .pf-orbt { flex: none; }
+  #isx-root .pf-orbt, #isx-root .pf-orbsys { align-self: flex-start; } #isx-root .pf-orbt button, #isx-root .pf-orbsys button { min-height: 40px; padding: 0 11px; letter-spacing: .06em; }
+  #isx-root .pf-orbc { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; margin: 0 -11px; padding: 0 11px 2px; pointer-events: auto; scrollbar-width: none; }
+  #isx-root .pf-orbc div { flex: 0 0 78%; scroll-snap-align: start; }
+  #isx-root .pf-orbsc { overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; }
+  #isx-root .pf-orbi { width: auto; max-height: none; }
+  #isx-root .pf-orbz { position: absolute; right: 6px; top: 150px; display: flex; gap: 6px; }
+  #isx-root .pf-orbz button { width: 44px; height: 44px; border: 1px solid #33475a; border-radius: 10px; background: rgba(8, 14, 21, .9); color: #e4ebf1; font: 400 20px/1 var(--sans); }
+}

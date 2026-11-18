@@ -8,7 +8,7 @@ const only = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).sp
 const want = n => !only.length || only.includes(n);
 let pass = 0, fail = 0;
 const ok = (name, cond, info) => { if (cond) { pass++; console.log('  ok   ' + name); } else { fail++; console.log('  FAIL ' + name + (info !== undefined ? ' :: ' + JSON.stringify(info).slice(0, 400) : '')); } };
-const QUIET = { 'isx-tips-globe': 'off', 'isx-tour': 'off', 'isx-simtour': 'off', 'isx-first': 'off', 'isx-insights': 'off' };
+const QUIET = { 'isx-enter': 'off', 'isx-tips-globe': 'off', 'isx-tour': 'off', 'isx-simtour': 'off', 'isx-first': 'off', 'isx-insights': 'off' };
 const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
 
 (async () => {

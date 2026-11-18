@@ -202,7 +202,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('guide build: the guide’s close, the reminder open', '#simulator', sim(43), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
   /* round 5b (16 Nov 2026): a hint shown, the lever row with two pulled, both first openings held at one moment.
      The hints and the openings stay away while isx-tips-sim is 'off' (every other state here), so these states take it off. */
-  const first = { ...seen, 'isx-tips-sim': null, 'isx-simtour': 'off', 'isx-open-circuit': '1', 'isx-open-sim': '1' };
+  const first = { ...seen, 'isx-enter': 'off', 'isx-tips-sim': null, 'isx-simtour': 'off', 'isx-open-circuit': '1', 'isx-open-sim': '1' };
   const hint = id => async p => { await p.waitForFunction(k => ISX.hints && ISX.hints.on === k, id, { timeout: 15000 }); await p.waitForTimeout(400); };
   await run('round 5b: a hint shown (Next), first principles', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 0 }) }, 1440, 900, hint('next'));
   await run('round 5b: a hint beside the card (a dotted word)', '#simulator', { ...first, 'isx-hints': 'next', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 2 }) }, 1440, 900, hint('term'));

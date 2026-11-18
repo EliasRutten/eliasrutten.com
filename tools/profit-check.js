@@ -31,6 +31,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
 
   /* 2 · every view */
   const all = await p.evaluate(() => ISX.profit.stations.flatMap((s, i) => s.views.map(v => [i, v])));
+  if (await p.evaluate(() => ISX.profit.stations[2].views.includes('orb'))) { await p.evaluate(() => ISX.profit.go(2, 'orb')); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); }   /* the orbit view loads its own data file */
   for (const [i, v] of all) {
     const r = await p.evaluate(([i, v]) => { ISX.profit.go(i, v); const f = document.getElementById('isx-pf-fig'), s = f.querySelectorAll('svg'), R = {}; const alt = f.querySelector('svg[role="img"], .pf-tri, .pf-orb'); R.svg = s.length + (f.querySelector('.pf-tri') ? 1 : 0); R.aria = alt ? (alt.getAttribute('aria-label') || '').length : 0; R.h3 = document.getElementById('isx-pf-title').textContent.length; R.nan = /NaN|undefined/.test(f.innerHTML + document.getElementById('isx-pf-tiles').textContent + document.getElementById('isx-pf-reading').textContent);
       document.getElementById('isx-pf-table').click(); const t = f.querySelectorAll('table'); R.rows = t.length ? t[0].querySelectorAll('tbody tr').length : 0; R.cap = t.length ? t[0].caption.textContent.length : 0; R.tnan = /NaN|undefined/.test(f.textContent); document.getElementById('isx-pf-table').click(); R.back = f.querySelectorAll('svg').length + (f.querySelector('.pf-tri') ? 1 : 0); return R; }, [i, v]);

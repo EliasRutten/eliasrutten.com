@@ -87,7 +87,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
 
   /* ================= 2. three doors at the end of the ring ================= */
   if (want(2)) {
-    const DOORS = [['#profit', 'The profit dollar', 'Whose profits the world’s savings buy', 'profit'], ['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#arm', 'The imperial arm', 'See the internal structure of dominant American capital', 'arm'], ['#scenarios', 'Scenarios', 'How Washington leverages the stack internationally', 'story']];
+    const DOORS = [['#profit', 'The profit dollar', 'Whose profits the world’s savings buy', 'profit'], ['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#elite-network', 'The elite network', 'See the internal structure of dominant American capital', 'arm'], ['#imperial-arm', 'The imperial arm', 'Scenarios: how Washington leverages the stack internationally', 'story']];
     for (const [w, h, touch] of [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]]) {
       const p = await page('#circuit/ring', { w, h, touch, wait: 2200 });
       const r = await js(p, () => { const d = [...document.querySelectorAll('#isx-tournarr a.rgdoor')], bar = document.getElementById('isx-tabs').getBoundingClientRect(), card = document.getElementById('isx-tournarr').getBoundingClientRect(), rb = document.getElementById('isx-resbar'), rbr = rb && rb.getClientRects().length && getComputedStyle(rb).visibility !== 'hidden' ? rb.getBoundingClientRect() : null;

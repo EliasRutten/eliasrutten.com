@@ -14,7 +14,7 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
   const b = await chromium.launch();
   const mk = async (opt, mode, tourOn) => {
     const c = await b.newContext(Object.assign({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' }, opt));
-    await c.addInitScript(([m, off, t]) => { try { off.filter(k => !(t && k === 'isx-simtour')).forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-intro-off', '1'); if (m) localStorage.setItem('isx-sim-mode', m); } catch (e) {} }, [mode, OFF, tourOn]);
+    await c.addInitScript(([m, off, t]) => { try { off.filter(k => !(t && k === 'isx-simtour')).forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-intro-off', '1'); localStorage.setItem('isx-enter', 'off'); if (m) localStorage.setItem('isx-sim-mode', m); } catch (e) {} }, [mode, OFF, tourOn]);
     const p = await c.newPage(); p._errs = [];
     p.on('pageerror', e => p._errs.push(String(e.message).slice(0, 200))); p.on('console', m => { if (m.type() === 'error') p._errs.push(m.text().slice(0, 200)); });
     await p.goto(base + '#simulator', { waitUntil: 'load' });
