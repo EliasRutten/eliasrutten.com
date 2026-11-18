@@ -2375,6 +2375,7 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/clarity.css">
 <link rel="stylesheet" href="/imperial-stack/v2/profit.css">
 <link rel="stylesheet" href="/imperial-stack/v2/call.css">
+<link rel="stylesheet" href="/imperial-stack/v2/printer.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
@@ -8347,7 +8348,8 @@ function simPickHTML() {
   const ep = L => `<button type="button" class="pk-l${SLINES[SIM.line] === L ? ' on' : ''}" data-ep="${L.ep.id}" style="--pc:${L.c}"><i aria-hidden="true"></i><b>${fe(L.t)}</b><small>${fe(L.ep.w)} · ${L.beats.length} steps${SIM.epSeen.has(L.ep.id) ? ' · seen' : ''}</small></button>`;
   return `<div class="pk-h">Start here</div><button type="button" class="pk-l pk-pre${SIM.line === SGI ? ' on' : ''}" data-sl="${SGI}" data-sb="0" style="--pc:${Q.c}"><i aria-hidden="true"></i><b>${fe(Q.t)}</b><small>${Q.beats.length} screens · assumes nothing</small></button><button type="button" class="pk-l pk-pre${SIM.line === SPI ? ' on' : ''}" data-sl="${SPI}" data-sb="-1" style="--pc:${Pp.c}"><i aria-hidden="true"></i><b>${fe(Pp.t)}</b><small>${Pp.beats.length} reveals · the source of it all</small></button>`
     + `<div class="pk-h">The guide · ${M.beats.length} steps in three acts</div><div class="pk-t pk-acts"><div class="pk-ms">${SACTS.map(act).join('')}</div></div>`
-    + `<div class="pk-h">Episodes · dated moments, opened from the step where they fit</div><div class="pk-t pk-eps"><div class="pk-ms">${SLINES.filter(L => L.ep).map(ep).join('')}</div></div>`;
+    + `<div class="pk-h">Episodes · dated moments, opened from the step where they fit</div><div class="pk-t pk-eps"><div class="pk-ms">${SLINES.filter(L => L.ep).map(ep).join('')}</div></div>`
+    + `<div class="pk-h">The larger machine · behind four of your calls</div><button type="button" class="pk-l pk-mp" data-mpo style="--pc:#ffd27a"><i aria-hidden="true"></i><b>The secret money printer</b><small>${mpGot().size} of ${SMP.length} steps unlocked${mpGot().size < SMP.length ? ' · make the calls to open it' : ' · open'}</small></button>`;
 }
 /* the bar along the bottom: which line, its chapters (or the steps of a mechanism), and the trays */
 const S4T = [['guide', 'Guide', 'step by step', '#ffd27a'], ['plays', 'Episodes', 'dated moments', '#ffb547'], ['levers', 'Levers', 'pull one', '#44d7ec']];
@@ -9008,10 +9010,100 @@ function simBack() {
   const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask', sCallN(B.fork) - 1); return; }   /* the step a decision leads to goes back to the decision */
   simGo(SIM.line, SIM.beat - 1, 'focus');
 }
+/* plain-language round (18 Nov 2026): the secret money printer. Four of the guide's calls are each one routine-looking step of a
+   single machine, after “The house always prints”: making a call unlocks its step (whichever option is chosen, since what followed is
+   shown either way), a toast says so, and the whole machine opens from the toast or from the picker. The explanation of why the four
+   together print money opens only once all four are unlocked. Kept per visitor in localStorage, isx-printer. */
+const SMP = [
+  { k: '0-1', t: 'The Treasury sells bills', o: 'Treasury',
+    f: 'Bills reached 22.2% of marketable debt in July 2026, above the 15–20% the Treasury’s advisers recommend.',
+    s: 'US Treasury financing estimates (Aug 2026), via TrendForce.',
+    w: 'The deficit is funded with short IOUs that money funds and banks hold as if they were cash. The government borrows in something that already works almost like money.' },
+  { k: '0-7', t: 'The Fed buys the bills', o: 'Fed',
+    f: 'Reserve management purchases from 12 December 2025. The Fed held $571bn of bills on 28 October 2026.',
+    s: 'New York Fed (10 Dec 2025); Fed H.4.1 (29 Oct 2026).',
+    w: 'The Fed pays for the bills with reserves it creates. In accounting terms that is the same as QE: new money, exchanged for government debt, under the name of plumbing.' },
+  { k: '0-4', t: 'The banks get room to buy', o: 'Regulators',
+    f: 'From 1 April 2026 the leverage rule cut the capital the largest banks’ deposit-taking arms must hold by 28%: $219bn, by Governor Barr’s count.',
+    s: 'Federal Reserve, FDIC and OCC final rule (25 Nov 2025); statement by Governor Barr (25 Nov 2025).',
+    w: 'A bank pays for a Treasury with a deposit it creates. Room on the banks’ books to hold the debt is room to create money for the government.' },
+  { k: '0-6', t: 'The Treasury buys back long bonds', o: 'Treasury',
+    f: 'Up to $6bn per operation from September 2026, of 10- to 30-year bonds.',
+    s: 'Reuters (20 Aug 2026); reports of the 9 Sep 2026 announcement.',
+    w: 'Long bonds leave private hands, paid for with more short debt. Markets carry less debt that ties money up for years, and hold more that works like cash.' }];
+const MPK = 'isx-printer';
+const mpGot = () => { try { const a = JSON.parse(stGet(MPK) || '[]'); return new Set(Array.isArray(a) ? a.filter(k => SMP.some(P => P.k === k)) : []); } catch (e) { return new Set(); } };
+const mpAsk = k => SDEC[k] ? (SCALL[k] && SCALL[k].ask) || SDEC[k].q : '';
+/* a call made: unlock its step, and say so once the call screen has gone */
+function mpUnlock(k) {
+  const i = SMP.findIndex(P => P.k === k); if (i < 0) return;
+  const got = mpGot(), had = got.has(k); got.add(k); stSet(MPK, JSON.stringify([...got]));
+  if (had) return;
+  track('Printer', { step: i + 1, of: got.size });
+  setTimeout(() => mpToast(i, got.size), reduce ? 0 : 520);
+}
+function mpToast(i, n) {
+  let el = document.getElementById('isx-mpt');
+  if (!el) { el = document.createElement('div'); el.id = 'isx-mpt'; el.className = 'mpt'; el.setAttribute('role', 'status'); $('root').appendChild(el); }
+  const all = n >= SMP.length;
+  el.innerHTML = `<span class="mpt-k"><i aria-hidden="true"></i>${all ? 'All four steps unlocked' : `Step ${i + 1} of ${SMP.length} unlocked`}</span>`
+    + `<b>${all ? 'You have unlocked the secret money printer' : `You have unlocked step ${i + 1} of the secret money printer`}</b>`
+    + `<p>${all ? 'See why the four steps together print money, though no one calls it that.' : `${fe(SMP[i].t)}. ${SMP.length - n} more ${SMP.length - n === 1 ? 'call unlocks' : 'calls unlock'} the rest.`}</p>`
+    + `<span class="mpt-a"><button type="button" data-mpo>${all ? 'See how it prints' : 'Open the printer'}</button><button type="button" class="mpt-x" data-mpx aria-label="Close">Later</button></span>`;
+  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  clearTimeout(mpToast.tm); mpToast.tm = setTimeout(() => el.classList.remove('on'), 14000);
+}
+let mpRet = null, mpIn = [];
+function mpHTML() {
+  const got = mpGot(), n = got.size, all = n >= SMP.length, H = ESSAYS.house;
+  const card = (P, i) => {
+    const on = got.has(P.k);
+    return `<li class="mp-c${on ? ' on' : ''}"><span class="mp-n">0${i + 1}</span><span class="mp-o">${fe(P.o)}</span><h3>${on ? fe(P.t) : 'Locked'}</h3>`
+      + (on ? `<p class="mp-f">${fe(P.f)}</p><p class="mp-w">${fe(P.w)}</p><p class="mp-s">Source: ${fe(P.s)}</p>`
+        : `<p class="mp-w">Make the call “${fe(mpAsk(P.k))}” to unlock this step.</p><button type="button" class="mp-go" data-mpgo="${P.k}">Go to this call<span aria-hidden="true">→</span></button>`)
+      + `</li>`;
+  };
+  return `<div class="mp-col"><p class="mp-kick"><i aria-hidden="true"></i>${all ? 'Unlocked' : `${n} of ${SMP.length} steps unlocked`}</p>`
+    + `<h2 id="isx-mp-h">The secret money printer</h2><span class="mp-rule" aria-hidden="true"></span>`
+    + `<p class="mp-lede">No office in Washington prints money for the deficit. Four of them each do one routine-looking thing, and each of those things is one of your calls. Put together, they do what printing would.</p>`
+    + `<ol class="mp-cs">${SMP.map(card).join('')}</ol>`
+    + (all ? `<section class="mp-end"><h3>Duration out, money in</h3>`
+        + `<p>On its own every step has an ordinary name: debt management, reserve management, bank regulation, a buyback. None is called printing money, and none would be enough alone.</p>`
+        + `<p>Together they swap debt that ties money up for years for debt that works like cash, and have the Fed and the banks pay for it with money they create. The deficit ends up financed by new money, and the work is split between the Treasury, the Fed and the regulators, so that no one has to say so.</p>`
+        + `<p>That is also why a rate hike does not switch the machine off: with more of the debt in bills, a higher rate raises the government’s interest bill, which is paid with more bills.</p>`
+        + `<a class="mp-es" href="${H[1]}" target="_blank" rel="noopener">${sSub}<span>${fe(H[0])}</span><small>${fe(H[2])} · Paid</small></a></section>`
+      : `<p class="mp-wait">The last part opens when all four are unlocked: why the four steps together print money, though no one calls it that.</p>`)
+    + `<p class="mp-ft"><button type="button" class="mp-back" data-mpx><span aria-hidden="true">←</span>Back</button></p></div>`;
+}
+function mpOpen() {
+  let el = document.getElementById('isx-mp');
+  if (!el) { el = document.createElement('div'); el.id = 'isx-mp'; el.className = 'mp'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'isx-mp-h'); $('root').appendChild(el); }
+  const t = document.getElementById('isx-mpt'); if (t) t.classList.remove('on');
+  mpRet = document.activeElement; el.innerHTML = mpHTML(); el.hidden = false; el.scrollTop = 0;
+  mpIn = [...$('root').children, ...document.body.children].filter(c => c !== el && c !== $('root') && !c.inert && c.id !== 'isx-mpt');
+  mpIn.forEach(c => { c.inert = true; }); document.documentElement.classList.add('isx-mplock');
+  track('Printer open', { of: mpGot().size });
+  requestAnimationFrame(() => { el.classList.add('on'); const f = el.querySelector('h2'); if (f) { f.tabIndex = -1; f.focus({ preventScroll: true }); } });
+}
+function mpClose(go) {
+  const el = document.getElementById('isx-mp'); if (!el || el.hidden) return;
+  el.classList.remove('on'); el.hidden = true; mpIn.forEach(c => { c.inert = false; }); mpIn = []; document.documentElement.classList.remove('isx-mplock');
+  if (go) { const i = SLINES[0].beats.findIndex(B => B.fork === go); if (i > 0) { if (SIM.mode !== 'story') simSetMode('story'); simPhase(0, i - 1, 'ask'); return; } }
+  if (mpRet && mpRet.isConnected) mpRet.focus({ preventScroll: true });
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('[data-mpo], [data-mpx], [data-mpgo]'); if (!t) return;
+  if (t.hasAttribute('data-mpo')) { mpOpen(); return; }
+  if (t.hasAttribute('data-mpgo')) { mpClose(t.getAttribute('data-mpgo')); return; }
+  const tt = t.closest('#isx-mpt'); if (tt) { tt.classList.remove('on'); return; }
+  mpClose();
+});
+document.addEventListener('keydown', e => { const el = document.getElementById('isx-mp'); if (e.key === 'Escape' && el && !el.hidden) { e.preventDefault(); e.stopPropagation(); mpClose(); } }, true);
 function simChoose(k) {
   const fk = SIM.ph === 'ask' ? sDecK() : null; if (!fk || (k !== 'real' && k !== 'alt')) return;
   SIM.pick[fk] = k;   /* the latest call is “your call”: the card it leads to says how it compares with what Washington did */
   track('Choice', { fork: fk, pick: k });
+  mpUnlock(fk);   /* plain-language round: a step of the secret money printer */
   if (k === 'real') { simGo(SIM.line, SIM.beat + 1, 'focus'); return; }
   simPhase(SIM.line, SIM.beat, 'chain', 0);
 }

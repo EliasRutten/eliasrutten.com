@@ -1,0 +1,58 @@
+/* plain-language round (18 Nov 2026): the secret money printer, a whole-window screen in the call screens' style, and the toast that
+   says a step was unlocked */
+#isx-root .mpt { position: fixed; z-index: 95; top: 84px; left: 50%; width: min(460px, calc(100% - 24px)); padding: 16px 18px 15px; border-radius: 14px;
+  background: linear-gradient(180deg, rgba(20, 24, 31, .97), rgba(10, 13, 18, .97)); border: 1px solid rgba(255, 210, 122, .42);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .4), 0 18px 50px rgba(0, 0, 0, .6), 0 0 44px rgba(255, 181, 71, .16);
+  transform: translate(-50%, -14px); opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s; }
+#isx-root .mpt.on { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity .3s ease, transform .3s ease; }
+#isx-root .mpt-k { display: flex; align-items: center; gap: 8px; font: 400 10px/1.3 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .mpt-k i, #isx-root .mp-kick i { width: 8px; height: 8px; transform: rotate(45deg); background: #ffb547; box-shadow: 0 0 10px #ffb547; flex: none; }
+#isx-root .mpt b { display: block; margin-top: 8px; font: 400 17px/1.3 var(--title); letter-spacing: .05em; text-transform: uppercase; color: #fff; }
+#isx-root .mpt p { margin: 6px 0 0; font: 400 14px/1.5 var(--sans); color: #c9d4de; }
+#isx-root .mpt-a { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+#isx-root .mpt-a button { appearance: none; cursor: pointer; padding: 8px 14px; border-radius: 999px; font: 400 10.5px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  background: #ffb547; color: #120d05; border: 1px solid #ffb547; }
+#isx-root .mpt-a .mpt-x { background: transparent; color: #c9d4de; border-color: rgba(143, 163, 182, .35); }
+#isx-root .mpt-a button:hover { filter: brightness(1.08); }
+#isx-root .mpt-a button:focus-visible, #isx-root .mp button:focus-visible, #isx-root .mp a:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
+
+html.isx-mplock, html.isx-mplock body { overflow: hidden; }
+#isx-root .mp { position: fixed; inset: 0; z-index: 100; overflow-y: auto; overscroll-behavior: contain; color: #e6edf3;
+  background: radial-gradient(ellipse 70% 55% at 50% 30%, rgba(255, 181, 71, .07), transparent 70%), #05070a; opacity: 0; transition: opacity .35s ease; }
+#isx-root .mp[hidden] { display: none; }
+#isx-root .mp.on { opacity: 1; }
+#isx-root .mp-col { width: min(1120px, 100%); margin: 0 auto; padding: clamp(34px, 6vh, 64px) clamp(18px, 4vw, 48px) 40px; }
+#isx-root .mp-kick { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0; font: 400 10.5px/1.3 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .mp h2 { margin: 18px 0 0; text-align: center; font: 400 clamp(28px, 3.6vw, 44px)/1.15 var(--title); letter-spacing: .06em; text-transform: uppercase; color: #fff; outline: none;
+  text-shadow: 0 0 34px rgba(255, 181, 71, .18); }
+#isx-root .mp-rule { display: block; width: 52px; height: 2px; margin: 22px auto 0; background: #ffb547; box-shadow: 0 0 12px rgba(255, 181, 71, .6); }
+#isx-root .mp-lede { max-width: 64ch; margin: 24px auto 0; text-align: left; font: 400 clamp(16px, 1.3vw, 18px)/1.6 var(--sans); color: #d3dde6; }
+#isx-root .mp-cs { list-style: none; margin: clamp(26px, 4vh, 40px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+#isx-root .mp-c { position: relative; padding: 20px 22px 20px; border-radius: 16px; border: 1px dashed rgba(143, 163, 182, .28); background: rgba(12, 16, 22, .6); }
+#isx-root .mp-c.on { border: 1px solid rgba(255, 210, 122, .38); background: linear-gradient(180deg, rgba(36, 28, 14, .55), rgba(12, 14, 18, .7)); box-shadow: 0 0 36px rgba(255, 181, 71, .08); }
+#isx-root .mp-n { font: 400 11px/1 var(--mono); letter-spacing: .14em; color: #ffb547; }
+#isx-root .mp-o { margin-left: 12px; font: 400 10px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .mp h3 { margin: 12px 0 0; font: 400 clamp(17px, 1.5vw, 20px)/1.3 var(--title); letter-spacing: .05em; text-transform: uppercase; color: #fff; }
+#isx-root .mp-c:not(.on) h3 { color: #7e8d9b; }
+#isx-root .mp-f { margin: 12px 0 0; font: 400 15px/1.5 var(--sans); color: #ffd27a; }
+#isx-root .mp-w { margin: 10px 0 0; font: 400 15px/1.6 var(--sans); color: #c9d4de; }
+#isx-root .mp-s { margin: 12px 0 0; font: 400 10px/1.5 var(--mono); color: #7e8d9b; }
+#isx-root .mp-go, #isx-root .mp-back { appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 9px 15px; border-radius: 999px;
+  background: transparent; color: #ffd27a; border: 1px solid rgba(255, 210, 122, .5); font: 400 10.5px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+#isx-root .mp-go:hover, #isx-root .mp-back:hover { background: rgba(255, 181, 71, .1); }
+#isx-root .mp-end { margin: 28px 0 0; padding: clamp(22px, 3vw, 32px); border-radius: 18px; border: 1px solid rgba(255, 181, 71, .5);
+  background: radial-gradient(ellipse 80% 90% at 50% 0%, rgba(255, 181, 71, .12), rgba(10, 12, 16, .7)); box-shadow: 0 0 60px rgba(255, 181, 71, .12); }
+#isx-root .mp-end h3 { margin: 0 0 14px; font-size: clamp(20px, 2vw, 26px); color: #ffd27a; }
+#isx-root .mp-end p { max-width: 70ch; margin: 0 0 .9em; font: 400 clamp(15.5px, 1.2vw, 17px)/1.65 var(--sans); color: #dbe3ea; }
+#isx-root .mp-es { display: inline-flex; align-items: center; gap: 9px; margin-top: 4px; font: 400 15px/1.3 var(--sans); color: #ff9a62; text-decoration: none; border-bottom: 1px solid rgba(255, 103, 25, .45); }
+#isx-root .mp-es svg { width: 15px; height: 15px; color: #ff6719; }
+#isx-root .mp-es small { font: 400 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .mp-wait { margin: 24px 0 0; font: 400 15px/1.6 var(--sans); color: #8ea0b2; text-align: center; }
+#isx-root .mp-ft { margin: 30px 0 0; text-align: center; }
+#isx-root .pk-mp b { color: #ffd27a; }
+@media (max-width: 760px) {
+  #isx-root .mp-cs { grid-template-columns: minmax(0, 1fr); }
+  #isx-root .mpt { top: 64px; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .mp, #isx-root .mpt { transition: none; } }
+#isx-root.rm .mp, #isx-root.rm .mpt { transition: none; }
