@@ -267,9 +267,9 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
       await p.keyboard.press('Escape'); await p.waitForTimeout(200);
       for (const at of await js(p, () => ISX.sim.decisions.map(D => D.at).filter(a => a >= 0))) {
         await js(p, t => document.querySelector(`#isx-s2bar [data-rt-t="${t}"]`).click(), 'd:0:' + (at - 1)); await p.waitForTimeout(450);
-        r = await fit(p); ok(`one screen (${w}×${h}): the decision before step ${at + 1}`, all(r), r);
+        r = await fit(p); ok(`one screen (${w}×${h}): the decision before step ${at + 1}`, soft(r), r);   /* plain-language round (18 Nov): a call may scroll a little inside itself, never the page */
         await js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }); await p.waitForTimeout(300);
-        r = await fit(p); ok(`one screen (${w}×${h}): the call itself before step ${at + 1}`, all(r), r);
+        r = await fit(p); ok(`one screen (${w}×${h}): the call itself before step ${at + 1}`, soft(r), r);
         await choose(p, 'alt'); await p.waitForTimeout(450);
         for (let i = 0; i < 8; i++) { const s = await state(p); r = await fit(p); ok(`one screen (${w}×${h}): ${s.ph === 'crisis' ? 'the crisis card' : 'chain link ' + (s.c + 1)} before step ${at + 1}`, all(r) || (h < 800 && soft(r)), r); if (s.ph === 'crisis') break; await right(p, 420); }
       }

@@ -7344,7 +7344,7 @@ const SMAIN = {
     { act: 1, t: 'Who buys the debt?', s: 'Who buys?', w: 'Dec 2022 to Oct 2026', b: [[0, 0, 'All of this runs on borrowing, and the US government borrows most of all. The foreign central banks that lent to it for decades are leaving.', 1], [0, 1], [0, 8], [0, 2], [0, 9], [0, 3, 'Once the parked cash was spent, every dollar the Treasury raised came out of the banks’ reserves.'], [0, 7]] },
     { act: 1, t: 'On borrowed money', s: 'Borrowed money', w: '2019 to Nov 2026', b: [[0, 5], [9, 7], [9, 0, 'The long bonds central banks no longer buy have found a new home: a handful of funds that buy with borrowed money, booked offshore, financed by the big banks, and dependent on calm markets.'], [9, 2], [0, 4, 'One rule sets how much those banks can carry.'], [9, 8], [9, 3], [9, 1], [9, 5]] },
     { act: 1, t: 'The long end', s: 'Long end', w: 'Mar to Oct 2026', b: [[8, 0, 'The AI firms borrow at rates set by long Treasury yields, the interest the government pays to borrow for ten years or more: those yields are the floor under every bond the firms sell.', 1], [7, 0, 'The same long-term rates reach households through the mortgage.'], [0, 6]] },
-    { act: 1, t: 'The dollar abroad', s: 'Abroad', w: 'Jan 2025 to Nov 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create. When dollars run short abroad, the quickest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 6], [5, 8]] },
+    { act: 1, t: 'The dollar abroad', s: 'Abroad', w: 'Jan 2025 to Nov 2026', tri: { p: 'Dollars run short abroad, and the fastest way to raise them is to sell Treasuries' }, b: [[5, 0, 'Since the 1970s the world has saved and borrowed in a currency only the US can create, so when dollars run short abroad, the quickest way to raise them is to sell Treasuries.', 1], [5, 1], [5, 6], [5, 8]] },
     { act: 2, t: 'Off the books', s: 'Off the books', w: 'Oct 2025 to Jun 2026', b: [[1, 0, 'The data centres from the loop need tenants, and the tenants are the AI labs.', 1], [1, 1], [1, 2]] },
     { act: 2, t: 'If it breaks', s: 'If it breaks', w: 'Feb to Oct 2026', b: [[3, 0, 'The vehicles live on lease payments, and those depend on AI revenue.'], [3, 1], [3, 2], [3, 3], [4, 1], [4, 0, 'Washington adds support of its own: the 2025 tax law.'], [7, 1], [3, 4]] },
   ],
@@ -8556,7 +8556,7 @@ function sEpScreenHTML(L) {
     + `<p class="dc-epn">An episode is a dated moment when the machine was used or strained. The guide does not need it: it fits at step ${h + 1}, “${fe(H.t)}”.</p>`
     + (calls ? `<p class="dc-epn">${calls === 1 ? 'One of its steps is a call: you sit in the chair and choose before you see what happened.' : sWord(calls)[0].toUpperCase() + sWord(calls).slice(1) + ' of its steps are calls: you choose before you see what happened.'}</p>` : '')
     + `</div><div class="dc-fig dc-epl"><span class="dc-lab">In ${sWord(n)} steps</span><ol class="dc-eps">${steps}</ol></div></div>`;
-  const nav = `<button type="button" class="dc-bk" data-epback>${dcArl}<span>Back to the guide</span></button><button type="button" class="dc-nx ready" data-sg="start" data-dcf><span>Begin</span>${dcArr}</button>`;
+  const nav = `<button type="button" class="dc-bk" data-epback>${dcArl}<span>Back to the guide · step ${(ret && ret.l === 0 ? ret.b : h) + 1}</span></button><button type="button" class="dc-nx ready" data-sg="start" data-dcf><span>Begin</span>${dcArr}</button>`;
   return `<div class="dc dc-ep${SIM.dcArr ? ' arrive' : ''}" style="--ec:${X.c}">${head}`
     + `<div class="dc-stage"><h2 class="dc-h">${fe(L.t)}</h2><i class="dc-rule" aria-hidden="true"></i><div class="dc-col">${body}</div></div>`
     + `<footer class="dc-foot"><div class="dc-fl"><p class="dc-fine">Press any step to open it, or begin at the first.</p></div><div class="dc-nav">${nav}</div>${sCallSup()}</footer></div>`;
@@ -8721,7 +8721,7 @@ function sMins(ids) {
    as well, once per card, never inside another tip. Plain words (deficit, debt, yield, bond) are tipped only where the primer and first
    principles define them, because elsewhere they would mislead (a trade deficit is not the budget deficit). */
 const TIPW = [['srf', /\bstanding repo\b/], ['rrp', /\breverse repo\b/], ['swapspread', /\bswap-spread trades?\b/], ['basis', /\bbasis trades?\b/], ['eslr', /\bleverage rule\b/],
-  ['pb', /\bprime brokerage\b/], ['repo', /\brepo\b/], ['haircut', /\bhaircuts?\b/], ['move', /\bMOVE\b/], ['vol', /\b[Vv]olatility\b/], ['leverage', /\b[Ll]everage\b/],
+  ['pb', /\bprime brokerage\b/], ['repo', /(?<!reverse )\brepo\b/], ['haircut', /\bhaircuts?\b/], ['move', /\bMOVE\b/], ['vol', /\b[Vv]olatility\b/], ['leverage', /\b[Ll]everage\b/],
   ['tga', /Treasury’s account|its account at the Fed/], ['reserves', /(?<!central-)\b[Bb]ank reserves\b|\bReserves\b/], ['debtlimit', /\bdebt limit\b/], ['buyback', /\bbuybacks?\b/],
   ['bills', /\b[Bb]ills\b/], ['mmf', /\b[Mm]oney funds?\b/], ['dealer', /\b[Dd]ealer banks?\b|\b[Dd]ealers\b/], ['hedgefund', /\b[Hh]edge funds?\b/],
   ['genius', /\bGENIUS Act\b/], ['stablecoin', /\b[Ss]tablecoins?\b/], ['swapline', /\bswap lines?\b|\bswap framework\b/], ['esf', /Exchange Stabilization Fund/],
@@ -9073,7 +9073,7 @@ function mpToast(i, n) {
   el.innerHTML = `<span class="mpt-k"><i aria-hidden="true"></i>${all ? 'All four steps unlocked' : `Step ${i + 1} of ${SMP.length} unlocked`}</span>`
     + `<b>${all ? 'You have unlocked the secret money printer' : `You have unlocked step ${i + 1} of the secret money printer`}</b>`
     + `<p>${all ? 'See why the four steps together print money, though no one calls it that.' : `${fe(SMP[i].t)}. ${SMP.length - n} more ${SMP.length - n === 1 ? 'call unlocks' : 'calls unlock'} the rest.`}</p>`
-    + `<span class="mpt-a"><button type="button" data-mpo>${all ? 'See how it prints' : 'Open the printer'}</button><button type="button" class="mpt-x" data-mpx aria-label="Close">Later</button></span>`;
+    + `<span class="mpt-a"><button type="button" data-mpo>${all ? 'See how it prints' : 'Open the printer'}</button><button type="button" class="mpt-x" data-mpx>Later</button></span>`;
   el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
   clearTimeout(mpToast.tm); mpToast.tm = setTimeout(() => el.classList.remove('on'), 14000);
 }

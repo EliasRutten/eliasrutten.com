@@ -151,7 +151,10 @@ const AUDITOR = () => {
         await step('guide: jump to step ' + (D.from + 1), () => click(p, `#isx-s2bar [data-rt-t="0:${D.from}"]`), 2400);
         await p.waitForFunction(id => !!document.querySelector(`#isx-sn-body .cl-ep[data-ep="${id}"]`), D.ep, { timeout: 8000 }).catch(() => {});
         await step('episode “' + D.ep + '”: open from step ' + (D.from + 1), () => click(p, `#isx-sn-body .cl-ep[data-ep="${D.ep}"]`), 2400);
-        ok(`flicker (${tag}): the episode “${D.ep}” opens from step ${D.from + 1} of the guide`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === 0, D.li)); inEp++;
+        /* plain-language round (18 Nov): an episode opens on its whole-window entry screen; “Begin” goes to its first step */
+        ok(`flicker (${tag}): the episode “${D.ep}” opens from step ${D.from + 1} of the guide, on its entry screen`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body .dc-ep') && document.getElementById('isx-cock').classList.contains('dcall'), D.li));
+        await step('episode “' + D.ep + '”: Begin', () => click(p, '#isx-sn-body .dc-ep [data-sg="start"]'), 2400);
+        ok(`flicker (${tag}): “Begin” opens its first step`, await js(p, li => ISX.sim.line === li && ISX.sim.beat === 0 && !document.getElementById('isx-cock').classList.contains('dcall'), D.li)); inEp++;
       }
       await step(nm + ': the card', () => click(p, `#isx-s2bar [data-rt-t="d:${D.li}:${D.si - 1}"]`), 2100);
       await step(nm + ': from the problem to the call itself', () => js(p, () => { const b = [...document.querySelectorAll('#isx-sn-body [data-dcp]')].pop(); if (b) b.click(); }), 2100);   /* a call opens on the problem */

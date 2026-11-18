@@ -183,8 +183,12 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     const from = M.indexOf('0-6'); await go(p, 0, from);
     ok(await p.evaluate(() => { const d = document.querySelector('#isx-sn-body .cl-ep[data-ep="oil"]'); return !!d && /The oil shock/.test(d.textContent) && /6 steps/.test(d.textContent); }), 'the oil shock is offered on “A calmer long end, mostly”');
     await p.click('#isx-sn-body .cl-ep[data-ep="oil"]'); await p.waitForTimeout(400);
+    /* plain-language round (18 Nov): an episode opens on its whole-window entry screen, then → opens its first step */
+    const e0 = await p.evaluate(() => ({ ep: ISX.sim.lines[ISX.sim.line].ep, beat: ISX.sim.beat, ret: (document.querySelector('#isx-sn-body .dc-ep [data-epback]') || {}).textContent || '', k: (document.querySelector('#isx-sn-body .dc-ep .dc-k') || {}).textContent || '', n: document.querySelectorAll('#isx-sn-body .dc-ep .dc-epst').length, dcall: document.getElementById('isx-cock').classList.contains('dcall') }));
+    ok(e0.ep === 'oil' && e0.beat === -1 && e0.dcall && e0.n === 6 && new RegExp('step ' + (from + 1)).test(e0.ret) && /Episode/i.test(e0.k), 'it opens on its entry screen: six steps, and the way back to the step it came from', e0);
+    await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
     const e1 = await p.evaluate(() => ({ ep: ISX.sim.lines[ISX.sim.line].ep, beat: ISX.sim.beat, ret: (document.querySelector('#isx-sn-body [data-epback]') || {}).textContent || '', k: document.querySelector('#isx-sn-body .s2k').innerText, where: document.querySelector('#isx-sn-pickb').innerText.replace(/\s+/g, ' ') }));
-    ok(e1.ep === 'oil' && e1.beat === 0 && new RegExp('step ' + (from + 1)).test(e1.ret) && /Episode/i.test(e1.k) && /EPISODE/i.test(e1.where), 'it opens at its first step, with the way back to the step it came from', e1);
+    ok(e1.ep === 'oil' && e1.beat === 0 && new RegExp('step ' + (from + 1)).test(e1.ret) && /Episode/i.test(e1.k) && /EPISODE/i.test(e1.where), 'then → opens its first step, with the way back to the step it came from', e1);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => ISX.sim.ph === 'ask' && ISX.sim.dec === '6-1'), 'the oil call sits inside the episode');
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);   /* call screen round: past the problem and what you weigh */
