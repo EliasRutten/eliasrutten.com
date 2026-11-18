@@ -189,7 +189,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     const ctl = E.filter(e => e.type === 'control').length, B = await p.evaluate(() => ISX.armBoard()), pl = await p.evaluate(() => ISX.armPlayed());
     r = await p.evaluate(() => ({ tiles: document.querySelectorAll('#isx-areach .aboard .asw').length, doors: document.querySelectorAll('#isx-areach .aboard .adoor').length, pulled: document.querySelectorAll('#isx-areach .aboard .asw.on').length, head: document.querySelector('#isx-areach .abh2').textContent, tg: document.getElementById('isx-aview').hidden }));
     ok(`6 · Control on a phone: the switchboard fills the stage, ${ctl} tiles, ${B.played} doors, the toggle hidden`, r.tiles === ctl && ctl === 19 && r.doors === 13 && B.played === 13 && r.tg, r);
-    ok('6 · 12 pulled, 7 ready, and the header says so', r.pulled === 12 && B.ready.length === 7 && r.head === 'Who can switch off what. 19 control links: 12 pulled against a named party, 7 ready. 13 are played in Scenarios.', r);
+    ok('6 · 12 pulled, 7 ready, and the header says so', r.pulled === 12 && B.ready.length === 7 && r.head === 'Who can switch off what. 19 control links: 12 pulled against a named party, 7 ready. 13 are played in The imperial arm.', r);
     const cases = new Set(pl.flatMap(x => x.cases));
     ok('6 · 31 links are played in Scenarios and every one of the 14 cases has at least one', pl.length === 31 && cases.size === 14, { n: pl.length, cases: [...cases] });
     await p.tap('#isx-areach [data-atile="COMM>FAB"]'); await sleep(300);
@@ -204,12 +204,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     ok('6 · desktop: the card\'s switchboard has 19 tiles in two columns; 13 switch marks on the machine', r.tiles === 19 && r.cols === 2 && r.marks === 13, r);
     await d.click('#isx-acard [data-scen="huawei"]'); await sleep(900);
     r = await d.evaluate(() => ({ v: ISX.view, where: ISX.whereNow().slug }));
-    ok('6 · a gold door opens the case in Scenarios', r.v === 'story' && r.where === 'scenarios/huawei', r);
+    ok('6 · a gold door opens the case in Scenarios', r.v === 'story' && r.where === 'imperial-arm/huawei', r);
     await d.goBack(); await sleep(900);
     ok('6 · Back returns to the Arm as it was', await d.evaluate(() => ISX.view === 'arm' && ISX.armRel === 'control'));
     await d.evaluate(() => ISX.setArmSel('COMM')); await sleep(300);
     r = await d.evaluate(() => [...document.querySelectorAll('#isx-acard .aelse .aels small')].map(e => e.textContent));
-    ok('6 · Commerce: “Elsewhere on the map” has a Circuit, a Simulator and a Scenarios row', r.join() === 'Circuit,Simulator,Scenarios', r);
+    ok('6 · Commerce: “Elsewhere on the map” has a Circuit, a Simulator and a Scenarios row', r.join() === 'Circuit,Simulator,The imperial arm', r);
     ok('6 · no page errors on desktop', !d._errs.length, d._errs);
     await done(d);
   }
@@ -289,7 +289,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- 10. the three elements ---------- */
   if (want(10)) {
-    const views = [['#circuit/03', null, 'circuit/03'], ['#arm', null, 'arm'], ['#revenue', null, 'revenue'], ['#simulator', 'guide', 'simulator/guide'], ['#simulator', 'map', 'simulator/full'], ['#capital-stack', 'guide', 'simulator'], ['#scenarios', null, 'scenarios/']];
+    const views = [['#circuit/03', null, 'circuit/03'], ['#arm', null, 'elite-network'], ['#revenue', null, 'revenue'], ['#simulator', 'guide', 'simulator/guide'], ['#simulator', 'map', 'simulator/full'], ['#capital-stack', 'guide', 'simulator'], ['#scenarios', null, 'imperial-arm/']];
     for (const [w, h] of [[1440, 900], [1024, 768], [390, 844]]) {
       const bad = [];
       for (const [hash, way, slug] of views) {
