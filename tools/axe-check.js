@@ -41,10 +41,18 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   const sim = (b, l) => ({ ...seen, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: l || 0, b }) });
   await run('circuit: Firms tray open', '#circuit/04', seen, 1440, 900, click('#isx-tp-firms'));
   await run('circuit: Layers tray open', '#circuit/04', seen, 1440, 900, click('#isx-tp-layers'));
-  await run('circuit: tour, first stop', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.tour.open(true)); await p.waitForTimeout(500); });
-  await run('circuit: tour, last stop', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => { ISX.tour.open(true); for (let i = 0; i < 3; i++) document.querySelector('#isx-tour .tgo').click(); }); await p.waitForTimeout(500); });
+  /* first-visit welcome (18 Nov 2026): the welcome card, each of the tour's seven stops at desktop and phone width, and the deep link's offer
+     (the old four-stop tour is gone). The key and the switches that keep it away are cleared for these states. */
+  const wlFresh = { ...seen, 'isx-tips-sim': null, 'isx-tour': null, 'isx-intro': null, 'isx-enter': 'off' };
+  const wlUp = async p => { await p.waitForFunction(() => !!document.querySelector('#isx-wl') && !ISX.opening.on, null, { timeout: 20000 }).catch(() => {}); await p.waitForTimeout(900); };
+  const wlStop = n => async p => { await p.evaluate(k => ISX.welcome.start(k), n); await p.waitForTimeout(900); };
+  await run('welcome: the card', '', wlFresh, 1440, 900, wlUp);
+  for (let n = 1; n <= 7; n++) await run('welcome: tour, stop ' + n, '#circuit', wlFresh, 1440, 900, wlStop(n));
+  await run('welcome: the deep link’s offer', '#circuit/04', wlFresh, 1440, 900, async p => { await p.waitForSelector('#isx-wlban', { timeout: 5000 }).catch(() => {}); });
   await run('phone: Firms tray open', '#circuit/04', seen, 390, 844, click('#isx-tp-firms'));
-  await run('phone: tour', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.tour.open(true)); await p.waitForTimeout(500); });
+  await run('phone: welcome, the card', '', wlFresh, 390, 844, wlUp);
+  for (let n = 1; n <= 7; n++) await run('phone: welcome, tour, stop ' + n, '#circuit', wlFresh, 390, 844, wlStop(n));
+  await run('phone: welcome, the deep link’s offer', '#profit', wlFresh, 390, 844, async p => { await p.waitForSelector('#isx-wlban', { timeout: 5000 }).catch(() => {}); });
   await run('simulator, guide: opening card', '#simulator', sim(-1), 1440, 900);
   await run('simulator, guide: a step, “The mechanism” open', '#simulator', sim(2), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
   await run('simulator, guide: the step before a decision', '#simulator', sim(9), 1440, 900);
@@ -213,11 +221,11 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('round 5b: the lever row at 1280 × 760, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1280, 760, two);
   await run('round 5b, phone: the lever row, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 390, 844, two);
   const held = (name, t) => async p => { if (name === 'sim') { await p.evaluate(() => { ISX.opening.end(); document.getElementById('isx-v-fin').click(); }); await p.waitForTimeout(300); } await p.evaluate(([n, t]) => { if (ISX.opening.on !== n) throw new Error('the opening is not playing: ' + n); ISX.opening.seek(t); }, [name, t]); await p.waitForTimeout(700); };
-  const fresh = { 'isx-tips-sim': null, 'isx-insights': 'off' };
-  await run('round 5b: the Circuit’s opening, the title (1.8 s)', '', fresh, 1440, 900, held('circuit', 1.8));
+  const fresh = { 'isx-tips-sim': null, 'isx-tour': null, 'isx-insights': 'off' };   /* welcome, 18 Nov: the Circuit's opening plays only before the welcome, so the old tour's key is cleared as well */
+  await run('round 5b: the Circuit’s opening, the dark (1.8 s)', '', fresh, 1440, 900, held('circuit', 1.8));
   await run('round 5b: the Circuit’s opening, the line and the ring (5.2 s)', '', fresh, 1440, 900, held('circuit', 5.2));
   await run('round 5b: the Simulator’s opening, the sweep (3.8 s)', '', fresh, 1440, 900, held('sim', 3.8));
-  await run('round 5b, phone: the Circuit’s opening, the title (1.8 s)', '', fresh, 390, 844, held('circuit', 1.8));
+  await run('round 5b, phone: the Circuit’s opening, the dark (1.8 s)', '', fresh, 390, 844, held('circuit', 1.8));
   /* round 6 (16 Nov 2026): the Arm rethought: Reach and Orbit on phones, the sheet, the switchboard, “Elsewhere on the map”, a hint */
   const tap = id => async p => { await p.evaluate(k => document.querySelector(`#isx-areach [data-anode="${k}"]`).dispatchEvent(new MouseEvent('click', { bubbles: true })), id); await p.waitForTimeout(700); };
   await run('round 6, phone: Reach, the whole machine', '#arm', seen, 390, 844);
