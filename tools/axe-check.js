@@ -6,8 +6,10 @@ const axeSrc = fs.readFileSync(process.env.AXE || require.resolve('axe-core/axe.
 const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
 (async () => {
   const b = await chromium.launch(); let total = 0;
+  let fromHit = false;
   const run = async (name, hash, ls, w, h, prep) => {
-    if (process.env.ONLY && !new RegExp(process.env.ONLY).test(name)) return;   /* ONLY=<regex> reruns a group of states */
+    if (process.env.ONLY && !new RegExp(process.env.ONLY).test(name)) return;
+    if (process.env.FROM && !fromHit) { if (new RegExp(process.env.FROM).test(name)) fromHit = true; else return; }   /* FROM=<regex> resumes a run at the first state it matches */   /* ONLY=<regex> reruns a group of states */
     const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
     await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-stack', 'open'); Object.keys(o).forEach(k => { if (k === '__pos') sessionStorage.setItem('isx-sim-pos', o[k]); else if (o[k] === null) localStorage.removeItem(k); else localStorage.setItem(k, o[k]); }); } catch (e) {} }, ls);
     const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' });
@@ -204,7 +206,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   const hint = id => async p => { await p.waitForFunction(k => ISX.hints && ISX.hints.on === k, id, { timeout: 15000 }); await p.waitForTimeout(400); };
   await run('round 5b: a hint shown (Next), first principles', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 0 }) }, 1440, 900, hint('next'));
   await run('round 5b: a hint beside the card (a dotted word)', '#simulator', { ...first, 'isx-hints': 'next', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 12, b: 2 }) }, 1440, 900, hint('term'));
-  await run('round 5b: a hint at a decision', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: 9, ph: 'ask' }) }, 1280, 760, hint('call'));
+  await run('round 5b: a decision with hints on (the call screen says it itself; no hint behind it)', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 0, b: 9, ph: 'ask' }) }, 1280, 760, async p => { await p.waitForTimeout(1200); });
   await run('round 5b, phone: a hint shown', '#simulator', { ...first, 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 13, b: 0 }) }, 390, 844, hint('next'));
   const two = async p => { await p.evaluate(() => { ISX.simLever(0); ISX.simLever(14); }); await p.waitForTimeout(500); };
   await run('round 5b: the lever row, two pulled', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 1440, 900, two);
