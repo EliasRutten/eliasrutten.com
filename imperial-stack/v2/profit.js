@@ -1,11 +1,15 @@
-/* The Imperial Stack v2 · profit.js (profit tab build 1, 17 Nov 2026; spec claude/specs/profit-tab-17-nov.md, §0c wins)
-   The profit dollar: its own tab, second after the Circuit. Four stations, each a question with one dated figure:
-   1 Profits · 2 Claims · 3 The regime · 4 The AI trade. Layout (Elias, 17 Nov): the statistics and the chart take the full
-   width at the top, the text sits under them, on every screen size; the page may scroll, and buttons lead to the explanation
-   and the methodology. One chart a board, one key a chart, a table view and a text alternative for every picture.
-   Data: data/profit.json, built and checked by tools/profit-data.py. Colours: the set checked with the dataviz validator on #0a131d.
+/* The Imperial Stack v2 · profit.js (profit tab build 1, 17 Nov 2026; the arc: profit tab patch, 18 Nov 2026)
+   The profit dollar: its own tab, second after the Circuit, under the title “Why dollar assets need to be the most profitable*”.
+   Told as an arc of six stations whose titles carry the argument (spec claude/specs/profit-tab-v4-17-nov.md and its addendum, which wins):
+   1 Profits · 2 Technology · 3 The order · 4 The regime · 5 The AI trade · 6 the finale. Layout (Elias, 17 Nov): the statistics and the
+   chart take the full width at the top, the text sits under them, on every screen size; the page may scroll, and buttons lead to the
+   explanation and the methodology. One chart a board, one key a chart, a table view and a text alternative for every picture.
+   The views of a station are switched with dots under the chart (arrows, swipe on phones); the view's name stands above the chart.
+   A view that is not a station's main screen carries one short closable note, “Why you are seeing this”.
+   Data: data/profit.json, built and checked by tools/profit-data.py (key E: the Treasury's TIC transactions by holder, E1).
+   Colours: the set checked with the dataviz validator on #0a131d.
    The page owns the tab switch and the bar's host; this file draws the scene and hands the bar its model (ISX.route).
-   Seam: ISX.profit { show, bar, where, detail, apply, go, state }. Bus event: profit { st, view, act }. */
+   Seam: ISX.profit { show, bar, where, detail, apply, go, state, footnote, title, notes }. Bus event: profit { st, view, act }. */
 (function () {
   'use strict';
   const X = window.ISX; if (!X) return;
@@ -22,8 +26,6 @@
   const LOCK = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   const phone = () => scene.clientWidth < 760;
 
-  /* ---------- the four stations: question, figure, views, copy ---------- */
-  const WHY = 'Profits are booked in the firm, and capital flows to where the firm is listed. That decides how liquid the market is and how much investment can be raised by selling shares and bonds.';
   const SRC = {
     bea: ['BEA, national accounts (NIPA flat files, 4 Nov 2026)', 'https://apps.bea.gov/national/Release/TXT/NipaDataA.txt'],
     forbes: ['Forbes Global 2000, lists of 2011 to 2026', 'https://www.forbes.com/lists/global2000/'],
@@ -48,54 +50,92 @@
     k2: ['Alphabet, 2025', 'https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm'],
     k3: ['Microsoft, fiscal 2026', 'https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm'],
     k4: ['Meta, 2025', 'https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm'],
-    k5: ['Oracle, fiscal 2026', 'https://s23.q4cdn.com/440135859/files/doc_downloads/2026/09/10K_Bookmarked.pdf']
+    k5: ['Oracle, fiscal 2026', 'https://s23.q4cdn.com/440135859/files/doc_downloads/2026/09/10K_Bookmarked.pdf'],
+    tic: ['US Treasury, TIC monthly reports on cross-border portfolio flows, history table (file of 13 Oct 2026, read 17 Nov 2026)', 'https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/npr_history.html'],
+    gowan: ['P. Gowan, The Global Gamble: Washington’s Faustian Bid for World Dominance (Verso, 1999), link not stored', null],
+    beaip: ['BEA, US receipts for the use of intellectual property, 2025 (as on the Circuit, step 01), link not stored', null],
+    asml: ['ASML, sales by region, 2024 and 2025 (as on the Circuit, step 03), link not stored', null]
   };
+  /* ---------- the arc (patch of 18 Nov 2026; spec profit-tab-v4 and its addendum §1): six stations whose titles carry the argument ----------
+     1 Profits · 2 Technology · 3 The order · 4 The regime · 5 The AI trade · 6 the finale. The first view of a station is its main screen:
+     the title explains it, so it carries no note. Every other view carries one short note above its chart (NOTE). */
+  const TITLE = 'Why dollar assets need to be the most profitable';
+  const WHY = 'Profits are booked in the firm, and capital flows to where the firm is listed. That decides how liquid the market is and how much investment can be raised by selling shares and bonds.';
   const ST = [
-    { id: 'profits', t: 'Profits', f: '42% of the largest firms’ profits · 2026', q: 'Whose profits are they?',
-      views: [['pic', 'In one picture'], ['nat', 'By nationality'], ['own', 'By owner'], ['roc', 'Return on capital']],
-      x: 'A profit belongs to the firm that books it, wherever it was earned, and the firm belongs to the market where it is listed. In the 2026 Forbes list, US firms took 42.2% of the profits of the world’s 2,000 largest listed firms, with 26.1% of world GDP.',
+    { id: 'profits', t: 'Profits', f: '42% of the largest firms’ profits · 2026', q: 'Savers want profitable equity. That is why they buy US stocks.',
+      views: [['pic', 'In one picture'], ['hold', 'Held abroad'], ['flow', 'Bought each year'], ['own', 'By owner'], ['list', 'The listing premium']],
+      x: 'A profit belongs to the firm that books it, wherever it was earned, and the firm belongs to the market where it is listed. In the 2026 Forbes list, US firms took 42.2% of the profits of the world’s 2,000 largest listed firms, with 26.1% of world GDP. Foreign investors held $22.2tn of US shares in mid-2026, against $9.3tn of Treasuries.',
       rd: 'The US is the imperial organiser of capital accumulation globally: the profits stay with the firm listed in the US wherever they are earned, and that claim is what foreign investors buy.',
-      nt: 'Two measures, never added: Forbes counts firms by headquarters, the national accounts by owner.',
-      more: ['The first measure is Herman Mark Schwartz’s {{capture|profit capture}}: who gets the profits, and in what proportion, across firms by nationality. He found 1.45 for US firms over 2005 to 2017. The update here starts in 2011, because the Forbes archive before that year is incomplete.',
+      nt: 'Holdings move with prices as well as purchases: in 2025 they rose by $3.2tn, while net purchases were $0.65tn (Federal Reserve, Z.1). “Bought each year” uses the Treasury’s own count of transactions, which differs from the Federal Reserve’s; the two are never drawn on one chart.',
+      more: ['Shares passed Treasuries again in 2017: what the world now buys is a claim on profits, not a loan to the US government. Even official holders, central banks and state funds, now buy the claim: they sold Treasury bonds and notes in most years since 2015 and bought $56.0bn of US shares in 2025.',
+        'The national accounts measure the same thing by owner: profits earned in the US economy, less what foreign owners take out of it, plus what US owners receive from abroad. In 2025 US owners received $1,064bn from abroad, 26.4% of the profits of US-owned firms; net of what foreign owners took out of the US, 12.7%. Two measures, never added: Forbes counts firms by headquarters, the national accounts by owner.',
+        'The listing premium, measured: US-listed firms were 48.8% of the world’s stock-market value at the end of 2025, with 26.1% of world GDP. On the World Federation of Exchanges’ own world total for 2025 the share is about 45%. Equity raised on exchanges by year is not collected yet, so the premium is shown for market value only.'],
+      src: ['forbes', 'imfg', 'bea', 'z1e', 'z1t', 'tic', 'wb', 'wfe'],
+      doors: [{ lock: 1, t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { lock: 1, t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
+    { id: 'technology', t: 'Technology', f: 'Profit capture 1.62 · 2026 list', q: 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.',
+      views: [['tri', 'Three ways'], ['nat', 'By nationality'], ['roc', 'Return on capital']],
+      x: 'Profits this large have to be secured. The surest way is to hold the most sophisticated technology, and to hold it three ways at once: through economics, the markets and the finance that fund it; through coercion, the export controls, sanctions and tariffs that keep rivals from it; and through code, the patents, chips, platforms and standards everyone else has to use.',
+      rd: 'Whoever holds the capital, and controls the technology through which it moves, writes the rules of the interaction.',
+      nt: 'The three ways are a scheme, not a measurement: each column names its instruments and carries one dated figure that is measured elsewhere on this map.',
+      more: ['Generally speaking, the financial sector is dominant while the productive sector is determinant. Access to US consumers, capital markets, the clearing system and the platforms is the price of admission, and it can be withdrawn.',
+        'The measure is Herman Mark Schwartz’s {{capture|profit capture}}: who gets the profits, and in what proportion, across firms by nationality. He found 1.45 for US firms over 2005 to 2017. The update here starts in 2011, because the Forbes archive before that year is incomplete.',
         'A list of year Y is set against world GDP of the year before, at market exchange rates. A weak yen lifts Japan’s ratio; a single year swings with one-off profits and losses, so the pooled windows are the steadier measure.',
-        'The second measure is the national accounts’: profits earned in the US economy, less what foreign owners take out of it, plus what US owners receive from abroad. In 2025 US owners received $1,064bn from abroad, 26.4% of the profits of US-owned firms; net of what foreign owners took out of the US, 12.7%.',
         'The return on capital is the territorial comparison: what capital earns inside each economy, housing included. The US return has held near 8% for three decades. It cannot show what US firms book abroad, which is why profit capture leads.'],
-      src: ['schwartz', 'forbes', 'imfg', 'bea', 'pwt'],
-      doors: [{ lock: 1, t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
-    { id: 'claims', t: 'Claims', f: '$22.2tn of US shares held abroad · mid-2026', q: 'Who buys the claim, and what does the listing buy the US?',
-      views: [['hold', 'Held abroad'], ['flow', 'Bought each year'], ['list', 'The listing premium'], ['home', 'Who holds them at home'], ['pay', 'The payout']],
-      x: 'Foreign investors held $22.2tn of US shares in mid-2026, against $9.3tn of Treasuries. Shares passed Treasuries again in 2017: what the world now buys is a claim on profits.',
-      rd: 'The inflow is a purchase of claims on the worldwide profits of US-listed firms, not a loan to the US government.',
-      nt: 'Holdings move with prices as well as purchases: in 2025 they rose by $3.2tn, while net purchases were $0.65tn.',
-      more: ['The listing premium, measured: US-listed firms were 48.8% of the world’s stock-market value at the end of 2025, with 26.1% of world GDP. On the World Federation of Exchanges’ own world total for 2025 the share is about 45%.',
-        'Equity raised on exchanges by year is not collected yet, so the premium is shown for market value only.',
+      src: ['schwartz', 'forbes', 'imfg', 'pwt', 'wb', 'beaip', 'asml'], doors: [] },
+    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
+      q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
+      views: [['ord', 'Two orders, one picture'], ['pos', 'Positions']],
+      x: 'Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories.',
+      rd: 'The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.',
+      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
+      more: ['The reading of the WTO order as a global empire follows Peter Gowan (The Global Gamble, 1999) and Herman Mark Schwartz (2019). Finance is the same in both orders: savings flow in as claims, demand flows out as imports.',
+        'The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
+        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.'],
+      src: ['gowan', 'schwartz', 'imfc', 'forbes', 'bbp', 'fritz'],
+      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }] },
+    { id: 'regime', t: 'The regime', f: 'Federal deficit 6.3% of GDP · 2025', q: 'Deficits realise the profits, and the inflow needs the deficits.',
+      views: [['all', 'Every year since 1960'], ['sum', 'One year'], ['why', 'Why the deficit cannot shrink'], ['home', 'Who holds them at home'], ['pay', 'The payout']],
+      x: 'In the accounts the line runs one way: since 2014 the federal deficit has supplied 6.3% of GDP a year to US profits. In the regime it {{bothways|runs both ways}}: the profits draw the world’s savings in, and the state borrows to hold up demand and jobs at home.',
+      rd: 'This is a political-economic regime, not a one-way cause: the deficits that look like weakness are what realise the profits.',
+      nt: 'Only the {{profiteq|profit equation}} is accounting: it holds by definition and says nothing about which term moves first.',
+      more: ['The loop, step by step. US profits make US shares worth holding, so the world’s savings come in. By accounting, money that comes in is the other side of the deficit with the world: the US buys more than it sells. That gap takes demand and jobs out of the US economy, and federal borrowing puts them back. Federal borrowing then turns up as profits again.',
+        'Why the deficit cannot shrink. Household saving and the deficit with the world take profit out every year, so something must put it back: investment or government borrowing. Net private investment has supplied about 4.5% of GDP a year since 2014, against 8% in 1960 to 1979, so federal borrowing carries the rest. That is the capital vacuum the inflow regime needs: deficits and thin household saving offset the leak abroad, and the profits they produce keep claims on US firms worth buying.',
         'At home the claim is concentrated: the richest tenth of US households held 88.1% of household-held shares in mid-2026, the top 1% alone 50.9%.',
         'The payout: the firms of the S&P 500 paid $629.6bn in dividends and bought back $942.5bn of their own shares in 2024. In the national accounts, dividends were 7.0% of GDP in 2025.'],
-      src: ['z1e', 'z1t', 'z1f', 'z1g', 'dfa', 'wb', 'wfe', 'sp', 'imfg'],
-      doors: [{ lock: 1, t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
-    { id: 'regime', t: 'The regime', f: 'Federal deficit 6.3% of GDP · 2025', q: 'Why do deficits and profits feed each other?',
-      views: [['all', 'Every year since 1960'], ['sum', 'One year'], ['pos', 'Positions'], ['ord', 'Two orders']],
-      x: 'In the accounts the line runs one way: since 2014 the federal deficit has supplied 6.3% of GDP a year to US profits. In the regime it {{bothways|runs both ways}}: the profits draw the world’s savings in, and the state borrows to hold up demand and jobs at home.',
-      rd: 'This is a political-economic regime, not a one-way cause: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.',
-      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
-      more: ['The loop, step by step. US profits make US shares worth holding, so the world’s savings come in. By accounting, money that comes in is the other side of the deficit with the world: the US buys more than it sells. That gap takes demand and jobs out of the US economy, and federal borrowing puts them back. Federal borrowing then turns up as profits again.',
-        'Only the {{profiteq|profit equation}} is accounting: it holds by definition and says nothing about which term moves first. The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
-        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy.',
-        'Two orders, one picture. Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories. Finance is the same in both: savings flow in as claims, demand flows out as imports. The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.'],
-      src: ['bea', 'imfc', 'forbes', 'bbp', 'fritz'],
-      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }] },
-    { id: 'ai', t: 'The AI trade', f: '49% of the S&P 500 · Oct 2026', q: 'What keeps the claim worth buying?',
-      views: [['wt', 'Weight in the market'], ['capex', 'Capital spending'], ['ni', 'Spending against profits'], ['why', 'Why the deficit cannot shrink']],
+      src: ['bea', 'dfa', 'sp'], doors: [] },
+    { id: 'ai', t: 'The AI trade', f: '49% of the S&P 500 · Oct 2026', q: 'The AI trade is what now keeps the claim worth buying.',
+      views: [['wt', 'Weight in the market'], ['capex', 'Capital spending'], ['ni', 'Spending against profits']],
       x: 'The claim is worth buying while the profits behind it are expected to grow, and the AI build-out is where the market now expects them. In October 2026, 41 AI-related stocks made up 49% of the S&P 500’s value.',
       rd: 'The {{aitrade|AI trade}} has become the main way the dollar system absorbs the world’s savings: the system is moving from a state-centric, public-reserve hegemony to an asset-driven, private-capital network.',
       nt: 'The weight by year is Amundi’s narrower basket of AI-linked stocks; the 49% is the 41-stock basket in October 2026. The two are not joined.',
       more: ['Five firms (Amazon, Alphabet, Microsoft, Meta and Oracle) spent $378.7bn on property and equipment in their 2025 fiscal years, up from $71.1bn in 2019. That is 1.2% of GDP*, against 4.35% for the net private investment of the whole economy: gross spending against a net term, fiscal years against a calendar year, so a scale and not a share.',
         'Their profits were $384.6bn in the same years: capital spending has caught up with net income. Microsoft and Oracle have closed fiscal 2026, with $115.9bn and $55.7bn of capital spending.',
-        'Why the deficit cannot shrink. Household saving and the deficit with the world take profit out every year, so something must put it back: investment or government borrowing. Net private investment has supplied about 4.5% of GDP a year since 2014, against 8% in 1960 to 1979, so federal borrowing carries the rest.',
-        'That is the capital vacuum the inflow regime needs: deficits and thin household saving offset the leak abroad, and the profits they produce keep claims on US firms worth buying. The build-out is the one large private term that is rising.'],
-      src: ['bea', 'k1', 'k2', 'k3', 'k4', 'k5', 'amundi', 'bianco', 'tooze'],
-      doors: [{ go: 'simulator', c: '#ffd27a', t: 'The imperial machinery', s: 'How Washington keeps the loop running' }, { go: 'arm', c: '#44d7ec', t: 'The imperial arm', s: 'The firms behind the trade' }, { go: 'scenarios', c: '#e4ebf1', t: 'Scenarios', s: 'The power in use' }] }
+        'In the sum from “The regime”, the build-out is the one large private term that is rising.'],
+      src: ['bea', 'k1', 'k2', 'k3', 'k4', 'k5', 'amundi', 'bianco', 'tooze'], doors: [] },
+    { id: 'finale', t: 'If it fails', f: 'Crisis simulator · coming soon', q: 'What if AI doesn’t deliver?', fin: 1, views: [],
+      lines: ['The claim is worth buying while the profits behind it are expected to grow.',
+        'In October 2026, 41 AI-related stocks made up 49% of the S&P 500’s value, and five firms spent as much on the build-out as they earned.',
+        'If the build-out stops paying, the one large private term that is rising falls away. By the profit equation, what investment no longer supplies has to come from federal borrowing, or profits fall.',
+        'And the claim the world holds, $22.2tn of US shares, is priced on those profits.'],
+      x: '', rd: '', nt: '', more: [], src: [],
+      doors: [{ go: 'simulator', c: '#ffd27a', t: 'The imperial machinery', s: 'How Washington keeps the loop running' }, { go: 'elite-network', c: '#44d7ec', t: 'The elite network', s: 'The firms behind the trade' }, { go: 'imperial-arm', c: '#e4ebf1', t: 'The imperial arm', s: 'The power in use' }] }
   ];
+  /* why you are seeing this: one short note above the chart of every view that is not a station's main screen (drafts for Elias) */
+  const NOTE = {
+    hold: 'The stock, not the flow: what foreigners already own. Shares overtook Treasuries in 2017, so the claim the world holds is now mostly a claim on profits.',
+    flow: 'Who buys matters as much as how much. A central bank buying Treasuries lends to the US state; an investor buying shares buys a claim on US firms’ profits. The mix shows which of the two the system now runs on.',
+    own: 'The national accounts count profits by owner, not by headquarters: a second measure of the same thing, kept apart from the Forbes lists.',
+    list: 'A listing in the US is worth more than the economy’s weight. This is the premium the market pays for it.',
+    nat: 'Profit capture sets each country’s share of the largest firms’ profits against its share of world GDP. Above 1, its firms book more than the economy’s weight.',
+    roc: 'The contrast. Inside the territory, capital in the US earns an ordinary return: the outsized profits are booked by firms across borders, not earned by the territory.',
+    pos: 'The same order, measured: each economy’s balance with the world against its firms’ share of profits. The hub sits alone.',
+    sum: 'This is the profit equation for one year: the bars that add to profits and the ones that take from them. The lines below show each term since 1960, so you can see which one does the work in which era.',
+    why: 'Two eras side by side. Something has to put back what household saving and the deficit with the world take out; the chart shows what did it then and what does it now.',
+    home: 'Who collects at home: the claim on profits is held by few households, so the payout lands at the top.',
+    pay: 'What the profits become: dividends and buybacks, paid to those who hold the shares.',
+    capex: 'The build-out in dollars: what five firms spend on data centres, chips and power each year.',
+    ni: 'Spending against what the firms earn. Once the two lines meet, the build-out needs outside money.'
+  };
   const ERAS = [[1960, 1979], [1980, 1999], [2000, 2013], [2014, 2025]];
   const TERMS = [['npi', 'Net private investment'], ['fed', 'Federal net borrowing'], ['div', 'Dividends'], ['rest', 'State and local, other'], ['hh', 'Household saving'], ['ca', 'Deficit with the world']];
   const NAME = { USA: 'United States', 'CHN+HKG': 'China with Hong Kong', CHN: 'China', JPN: 'Japan', DEU: 'Germany', GBR: 'United Kingdom', FRA: 'France', KOR: 'South Korea', IND: 'India', TWN: 'Taiwan', CHE: 'Switzerland', SAU: 'Saudi Arabia', NLD: 'Netherlands' };
@@ -104,7 +144,7 @@
   const FIRM = [['AMZN', 'Amazon', C.gold], ['GOOGL', 'Alphabet', C.blue], ['MSFT', 'Microsoft', C.teal], ['META', 'Meta', C.purple], ['ORCL', 'Oracle', C.red]];
 
   /* ---------- state ---------- */
-  const S = { st: 0, view: ST.map(s => s.views[0][0]), year: 2025, era: null, win: '2011-2026', table: false };
+  const S = { st: 0, view: ST.map(s => (s.views[0] || [null])[0]), year: 2025, era: null, win: '2011-2026', table: false, ord: 'wto', terms: { npi: true, fed: true, div: true, rest: false, hh: true, ca: true }, whyOff: U.stGet('isx-pf-why') === 'off' };
   let D = null, B = null, G = null, built = false, R = {}, lastW = 0;
   const cur = () => ST[S.st], vw = () => S.view[S.st];
   const emit = act => { X.emit('profit', { st: cur().id, view: vw(), act: act || null }); };
@@ -121,45 +161,86 @@
 
   /* ---------- the scene's frame, built once ---------- */
   function build() {
-    host.innerHTML = '<div class="pf-head"><div class="pf-hk"><div class="pf-k" id="isx-pf-k"></div><h2 class="pf-q" id="isx-pf-q"></h2></div>'
+    host.innerHTML = '<div class="pf-top"><p class="pf-tt"><span class="pf-ttk">The profit dollar</span><span class="pf-ttl">' + esc(TITLE) + '<button type="button" class="pf-star" data-pf="fn" aria-expanded="false" aria-controls="isx-pf-fn" aria-label="Footnote: why only a very large economy can play this role">*</button></span><span class="pf-k" id="isx-pf-k"></span></p><div class="pf-fn" id="isx-pf-fn" hidden></div></div>'
+      + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
       + '<div class="pf-jump"><button type="button" data-pf="read">The explanation <span aria-hidden="true">↓</span></button><button type="button" data-how data-pf="how">How we count <span aria-hidden="true">↓</span></button></div></div>'
       + '<section class="pf-board" id="isx-pf-board" aria-label="Chart"><div class="pf-chips" id="isx-pf-chips"></div>'
-      + '<div class="pf-bhead"><h3 id="isx-pf-title"></h3><span class="pf-unit" id="isx-pf-unit"></span></div>'
+      + '<div class="pf-bhead"><div class="pf-bh"><span class="pf-vn" id="isx-pf-vn"></span><h3 id="isx-pf-title"></h3></div><span class="pf-br"><span class="pf-unit" id="isx-pf-unit"></span><button type="button" class="pf-whyq" id="isx-pf-whyq" data-pf="whyq" aria-label="Why you are seeing this" hidden>?</button></span></div>'
+      + '<div class="pf-note" id="isx-pf-note" hidden><b>Why you are seeing this</b><span></span><button type="button" class="x" data-pf="whyx" aria-label="Close this note">×</button></div>'
       + '<div class="pf-tiles" id="isx-pf-tiles"></div><p class="pf-reading" id="isx-pf-reading" aria-live="polite"></p>'
-      + '<figure class="pf-fig" id="isx-pf-fig"></figure>'
-      + '<div class="pf-foot"><div class="pf-scrub" id="isx-pf-scrub"></div><div class="pf-lg" id="isx-pf-lg"></div><button type="button" class="pf-tbtn" data-pf="table" id="isx-pf-table" aria-pressed="false">View as table</button></div>'
+      + '<figure class="pf-fig" id="isx-pf-fig" data-noswipe></figure>'
+      + '<div class="pf-foot"><div class="pf-scrub" id="isx-pf-scrub"></div><div class="pf-lg" id="isx-pf-lg"></div><nav class="pf-dots" id="isx-pf-dots" aria-label="Views of this station"></nav><button type="button" class="pf-tbtn" data-pf="table" id="isx-pf-table" aria-pressed="false">View as table</button></div>'
       + '<div class="pf-tip" id="isx-pf-tip" hidden></div></section>'
+      + '<section class="pf-fin" id="isx-pf-fin" aria-labelledby="isx-pf-q" hidden></section>'
       + '<div class="pf-text" id="isx-pf-text" tabindex="-1"></div>';
-    ['k', 'q', 'board', 'chips', 'title', 'unit', 'tiles', 'reading', 'fig', 'scrub', 'lg', 'table', 'tip', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
+    ['k', 'q', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
+    R.top = host.querySelector('.pf-top');
     host.addEventListener('click', e => {
-      const b = e.target.closest('[data-pf], [data-pv], [data-pe], [data-pw], [data-pgo], [data-pweb]'); if (!b) return;
+      const b = e.target.closest('[data-pf], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pgo], [data-pweb]'); if (!b) return;
       const d = b.dataset;
-      if (d.pv) { S.view[S.st] = d.pv; S.table = false; board(); sync(); emit('view'); }
+      if (d.pv) { setV(d.pv); }
+      else if (d.pvn) { stepV(+d.pvn); }
       else if (d.pe != null) { const e2 = ERAS[+d.pe]; S.era = S.era && S.era[0] === e2[0] ? null : e2; board(); emit('year'); }
       else if (d.pw) { S.win = d.pw; S.table = false; board(); }
+      else if (d.pt) { S.terms[d.pt] = !S.terms[d.pt]; board(true); const again = R.fig.querySelector('[data-pt="' + d.pt + '"]'); if (again) again.focus({ preventScroll: true }); emit('term'); }
+      else if (d.po) { S.ord = d.po; S.table = false; text(); board(); sync(); emit('order'); const again = host.querySelector('[data-po="' + d.po + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pf === 'table') { S.table = !S.table; board(); emit('table'); }
+      else if (d.pf === 'fn') { foot(b); }
+      else if (d.pf === 'whyx') { S.whyOff = true; U.stSet('isx-pf-why', 'off'); board(true); R.whyq.focus({ preventScroll: true }); }
+      else if (d.pf === 'whyq') { S.whyOff = false; U.stSet('isx-pf-why', null); board(true); const x = R.note.querySelector('.x'); if (x) x.focus({ preventScroll: true }); }
+      else if (d.pf === 'zoom') { zoomOpen(b); }
       else if (d.pf === 'read') { R.text.scrollIntoView({ behavior: X.reduce ? 'auto' : 'smooth', block: 'start' }); R.text.focus({ preventScroll: true }); }
       else if (d.pf === 'how') { const m = $('method'), f = m && m.classList.contains('shut') ? m.querySelector(':scope > .fold6') : null; if (f) f.click(); }
-      else if (d.pgo) { X.setView(d.pgo === 'simulator' ? 'fin' : d.pgo === 'scenarios' ? 'story' : d.pgo); $('frame').scrollIntoView({ block: 'start' }); }
+      else if (d.pgo) { X.setView(d.pgo === 'simulator' ? 'fin' : d.pgo === 'imperial-arm' ? 'story' : d.pgo === 'elite-network' ? 'arm' : d.pgo); $('frame').scrollIntoView({ block: 'start' }); }
       else if (d.pweb != null) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.web) X.web.open(); }, 60); }
     });
+    /* the views are swiped on phones (the chart is marked data-noswipe, so the bar's own swipe between stations leaves it alone) */
+    let sx = 0, sy = 0, st = 0;
+    R.fig.addEventListener('touchstart', e => { st = e.touches.length === 1 && phone() && !e.target.closest('.pf-tw, .pf-terms, input') ? 1 : 0; if (st) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    R.fig.addEventListener('touchend', e => { if (!st) return; st = 0; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.6) stepV(dx < 0 ? 1 : -1); }, { passive: true });
     let rt = 0;
-    if (window.ResizeObserver) new ResizeObserver(() => { if (X.view !== 'profit' || !D) return; const w = R.fig.clientWidth; if (Math.abs(w - lastW) < 2) return; clearTimeout(rt); rt = setTimeout(() => board(true), 90); }).observe(R.fig);
+    if (window.ResizeObserver) new ResizeObserver(() => { if (X.view !== 'profit' || !D || cur().fin) return; const w = R.fig.clientWidth; if (Math.abs(w - lastW) < 2) return; clearTimeout(rt); rt = setTimeout(() => board(true), 90); }).observe(R.fig);
     built = true;
   }
+  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
+  function stepV(d) { const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), j = i + d; if (j < 0 || j >= vs.length) return; setV(vs[j][0]); }
+
+  /* ---------- the title's footnote (the same text opens from the entry screen). The five references were checked on 18 Nov 2026 against
+     library and publisher records: author, title, publisher and year. Links are the ones found in that check (the Susan Strange archive, Cornell
+     University Press, Routledge's reprint of Kindleberger, Oxford's catalogue entry on RePEc); none was found for Helleiner ---------- */
+  const FN = { lead: 'Only a very large economy can play this role. An international currency needs assets that exist in great quantity and can be bought and sold in size at any moment, so that everyone can use them at once as a medium of exchange and a store of value; the largest market is the most useful one, which entrenches it.',
+    refs: [['On the hierarchy of currencies', [['Susan Strange', 'Sterling and British Policy', 'Oxford University Press, 1971', 'https://susanstrange.org/archive/sterling_and_british_policy_a_political_study_of_an_international_currency_in_decline'], ['Benjamin J. Cohen', 'The Geography of Money', 'Cornell University Press, 1998', 'https://www.cornellpress.cornell.edu/book/9780801435133/the-geography-of-money/']]],
+      ['On deep markets and the privilege', [['Charles P. Kindleberger', 'International Money', 'George Allen & Unwin, 1981', 'https://www.routledge.com/International-Money-A-Collection-of-Essays/Kindlerberger/p/book/9780415852265'], ['Barry Eichengreen', 'Exorbitant Privilege', 'Oxford University Press, 2011', 'https://econpapers.repec.org/RePEc:oxp:obooks:9780199596713']]],
+      ['On the state behind it', [['Eric Helleiner', 'The Status Quo Crisis', 'Oxford University Press, 2014', null]]]] };
+  const footnote = () => '<p><b>*</b> ' + esc(FN.lead) + '</p><p>' + FN.refs.map(g => esc(g[0]) + ': ' + g[1].map(r => esc(r[0]) + ', ' + (r[3] ? '<a href="' + esc(r[3]) + '" target="_blank" rel="noopener"><i>' + esc(r[1]) + '</i></a>' : '<i>' + esc(r[1]) + '</i>') + ' (' + esc(r[2]) + (r[3] ? '' : '; link not stored') + ')').join('; ')).join('. ') + '. References checked 18 Nov 2026.</p>';
+  function foot(b) { if (!R.fn.innerHTML) R.fn.innerHTML = footnote(); R.fn.hidden = !R.fn.hidden; b.setAttribute('aria-expanded', String(!R.fn.hidden)); if (D && !cur().fin) board(true); }
 
   /* ---------- the text under the board ---------- */
   function text() {
-    const s = cur();
-    R.k.innerHTML = 'The profit dollar <i>·</i> station ' + (S.st + 1) + ' of 4 <i>·</i> <b>' + esc(s.f) + '</b>';
-    R.q.textContent = s.q;
+    const s = cur(), two = s.q2 && S.ord === 'ps';
+    R.k.innerHTML = 'Station ' + (S.st + 1) + ' of ' + ST.length + ' <i>·</i> <b>' + esc(s.f) + '</b>';
+    R.q.textContent = two ? s.q2 : s.q; R.q.classList.toggle('long', R.q.textContent.length > 84);
+    const sub = two ? s.sub2 : s.sub; R.sub.hidden = !sub; R.sub.textContent = sub || '';
+    if (s.q2 && !V.orb) { R.sub.textContent = s.sub + ' '; const b2 = h('b', '', s.q2); R.sub.append(b2, s.sub2); }   /* until the orbit view carries the second state, both titles stand here */
+    host.dataset.st = s.id; host.classList.toggle('fin', !!s.fin);
+    R.board.hidden = !!s.fin; R.text.hidden = !!s.fin; R.fin.hidden = !s.fin; host.querySelector('.pf-jump').hidden = !!s.fin;
+    if (s.fin) { finale(); return; }
     const src = s.src.map(k => SRC[k]).map(x => x[1] ? `<a href="${esc(x[1])}" target="_blank" rel="noopener">${esc(x[0])}</a>` : esc(x[0])).join('. ') + '.';
-    const door = d => d.lock ? `<div class="pf-door lock" role="group" aria-label="${esc(d.t)}: coming soon"><span class="dl">${LOCK}<b>${esc(d.t)}</b><em>coming soon</em></span><small>${esc(d.s)}</small></div>`
-      : d.web ? `<button type="button" class="pf-door" data-pweb><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`
-      : `<button type="button" class="pf-door go" data-pgo="${d.go}" style="--dc:${d.c}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`;
-    R.text.innerHTML = `<article class="pf-claim"><div class="pf-ck">${esc(s.t)} · the claim</div><p class="pf-x">${tips(s.x)}</p><p class="pf-rd">${tips(s.rd)}</p><p class="pf-why"><b>Why it matters</b>${esc(WHY)}</p><p class="pf-nt">${esc(s.nt)}</p></article>`
+    R.text.innerHTML = `<article class="pf-claim"><div class="pf-ck">${esc(s.t)} · the claim</div><p class="pf-x">${tips(s.x)}</p><p class="pf-rd">${tips(s.rd)}</p><p class="pf-why"><b>Why it matters</b>${esc(WHY)}</p><p class="pf-nt">${tips(s.nt)}</p></article>`
       + `<article class="pf-mech"><div class="pf-ck">The mechanism</div>${s.more.map(t => `<p>${tips(t)}</p>`).join('')}</article>`
-      + `<article class="pf-side"><div class="pf-ck">${S.st === 3 ? 'Where next' : 'Go deeper'}</div><div class="pf-doors">${s.doors.map(door).join('')}</div><div class="pf-ck">Sources</div><p class="pf-src">${src}</p></article>`;
+      + `<article class="pf-side">${s.doors.length ? `<div class="pf-ck">Go deeper</div><div class="pf-doors">${s.doors.map(door).join('')}</div>` : ''}<div class="pf-ck">Sources</div><p class="pf-src">${src}</p></article>`;
+  }
+  const door = d => d.lock ? `<div class="pf-door lock" role="group" aria-label="${esc(d.t)}: coming soon"><span class="dl">${LOCK}<b>${esc(d.t)}</b><em>coming soon</em></span><small>${esc(d.s)}</small></div>`
+    : d.web ? `<button type="button" class="pf-door" data-pweb><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`
+    : `<button type="button" class="pf-door go" data-pgo="${d.go}" style="--dc:${d.c}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`;
+  /* the finale: one screen, no chart. The title, four plain lines that arrive one at a time, the locked crisis simulator, the doors out */
+  function finale() {
+    const s = cur(), E = X.essays && X.essays.bubble, SSL = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>';
+    R.fin.className = 'pf-fin' + (X.reduce ? ' all' : ''); let i = 0; const r = () => ' style="--i:' + (i++) + '"';
+    R.fin.innerHTML = '<div class="pf-fl">' + s.lines.map(t => '<p class="fr"' + r() + '>' + esc(t) + '</p>').join('') + '</div>'
+      + '<div class="pf-fx fr"' + r() + '><div class="pf-crisis" role="group" aria-label="Crisis simulator: coming soon">' + LOCK + '<b>Crisis simulator</b><em>coming soon</em><small>What happens when the AI bubble pops</small></div>'
+      + (E ? '<a class="pf-ess" href="' + esc(E[1]) + '" target="_blank" rel="noopener">' + SSL + '<span>' + esc(E[0]) + '</span><small>' + esc(E[2]) + '</small></a>' : '') + '</div>'
+      + '<div class="pf-fd fr"' + r() + '><div class="pf-ck">Where next</div><div class="pf-doors">' + s.doors.map(door).join('') + '</div></div>';
   }
 
   /* ---------- board helpers ---------- */
@@ -264,8 +345,27 @@
     fig.append(svg);
   }
 
-  /* ---------- station 1 · Profits ---------- */
+  /* ---------- profits and profit capture (stations 1 and 2) ---------- */
   const V = {};
+  /* ---------- station 2 · Technology: the rule of three (a scheme, drawn in words; each way carries one figure measured elsewhere on the map) ---------- */
+  const TRI = [['Economics', 'Markets and finance', ['The deepest stock and bond markets', 'The listing: capital flows to where the firm is listed', 'Dollar funding and clearing'], C.gold,
+      () => [D.M.mv[D.M.mv.length - 1].toFixed(1) + '%', 'of the world’s stock-market value is listed in the US, with ' + D.M.gdp[D.M.gdp.length - 1].toFixed(1) + '% of world GDP', 'End of ' + D.M.y[D.M.y.length - 1] + ' · World Bank, IMF']],
+    ['Coercion', 'Export controls, sanctions and tariffs', ['Export controls and licences on chips and tools', 'Sanctions through the dollar’s clearing system', 'Tariffs that sort who supplies whom'], C.red,
+      () => ['36% → 33%', 'China’s share of ASML’s sales, as export controls sort the toolmakers into the American sphere', '2024 to 2025 · ASML (Circuit, step 03)']],
+    ['Code', 'Patents, chips, platforms and standards', ['Intellectual property, protected by treaty', 'The chips and the tools that make them', 'Platforms and the standards others must use'], C.purple,
+      () => ['$195bn', 'US receipts for the use of intellectual property; most foreign revenue is booked by subsidiaries abroad', '2025 · BEA (Circuit, step 01)']]];
+  V.tri = { title: 'Three ways to hold the technology', unit: 'A scheme · figures as measured elsewhere on this map', draw() {
+    const us = D.CS['2026'].find(r => r.c === 'USA');
+    reading('Read across: ', 'each way names its instruments and carries one dated figure. Together they secure the profits below.');
+    const w = h('div', 'pf-tri'); w.setAttribute('role', 'group'); w.setAttribute('aria-label', 'Three ways the profits are secured: economics, coercion and code');
+    TRI.forEach(([nm, what, list, c, fg], i) => { const s = h('section'), F = fg(); s.style.setProperty('--tc', c);
+      const ul = h('ul'); list.forEach(t => ul.append(h('li', '', t)));
+      const f = h('div', 'fg'); f.append(h('b', '', F[0]), h('span', '', F[1]), h('small', '', F[2]));
+      s.append(h('span', 'n', '0' + (i + 1)), h('h4', '', nm), h('p', 'w', what), ul, f); w.append(s); });
+    const out = h('p', 'out'); out.append(h('i', ''), h('b', '', us.r.toFixed(2)), h('span', '', `Profit capture: US firms book ${f1(us.ps)}% of the profits of the world’s 2,000 largest listed firms on ${f1(us.gs)}% of world GDP (Forbes list of 2026).`)); w.append(out);
+    R.fig.append(w);
+  }, table: () => ({ wrap: 1, cap: 'Three ways to hold the technology whose profits the firms book. A scheme: the instruments are named, not measured; each way carries one dated figure measured elsewhere on this map.', head: ['Way', 'What it covers', 'Instruments', 'One figure', 'Date and source'],
+    rows: TRI.map(([nm, what, list, c, fg]) => { const F = fg(); return [nm, what, list.join('; '), F[0] + ' ' + F[1], F[2]]; }) }) };
   V.pic = { title: 'The US economy and its firms’ profits', unit: 'Forbes Global 2000 · IMF', draw() {
     const a = D.CS['2026'].find(r => r.c === 'USA'), b = D.CS['2011-2026'].find(r => r.c === 'USA');
     reading('Read it this way: ', 'a profit Apple earns in Europe or TSMC earns in Arizona counts where the firm is listed, not where the sale was made.');
@@ -321,7 +421,7 @@
       tip: y => [String(y)].concat(ROC.map(([k]) => [NAME[k], A[k][y - 1980].toFixed(1) + '%'])) });
   }, table: () => ({ cap: 'Real internal rate of return on the capital stock, % (Penn World Table 11.0). Whole economies, housing and unincorporated business included; profits earned abroad are not in it.', head: ['Year'].concat(ROC.map(([k]) => NAME[k])), rows: D.A.y.map((y, i) => [y].concat(ROC.map(([k]) => f2(D.A[k][i])))).reverse() }) };
 
-  /* ---------- station 2 · Claims ---------- */
+  /* ---------- the claims (now views of stations 1 and 4) ---------- */
   V.hold = { title: 'US shares and US Treasuries held abroad', unit: '$tn, end of year · Federal Reserve, Z.1', draw() {
     const Hd = D.H, n = Hd.y.length - 1;
     tiles([{ v: tn(Hd.last[1]), k: 'US shares held abroad', d: 'mid-2026', c: C.gold, line: 1 }, { v: tn(Hd.last[2]), k: 'US Treasuries held abroad', d: 'mid-2026', c: C.blue, line: 1 }, { v: (Hd.last[1] / Hd.last[2]).toFixed(1) + '×', k: 'shares for every dollar of Treasuries', d: '2000: ' + (Hd.eq[0] / Hd.tr[0]).toFixed(1) + '×' }]);
@@ -331,14 +431,40 @@
       series: [{ name: 'US Treasuries', c: C.blue, pts: Hd.y.map((y, i) => [y, Hd.tr[i]]).concat([[2026.5, Hd.last[2]]]) }, { name: 'US shares', c: C.gold, w: 2.6, hi: 1, pts: Hd.y.map((y, i) => [y, Hd.eq[i]]).concat([[2026.5, Hd.last[1]]]) }],
       tip: x => { const i = Math.min(n, Math.max(0, Math.round(x) - 2000)), l = x > 2025.6; return [l ? 'Mid-2026' : 'End of ' + Hd.y[i], ['US shares', tn(l ? Hd.last[1] : Hd.eq[i])], ['US Treasuries', tn(l ? Hd.last[2] : Hd.tr[i])]]; } });
   }, table: () => ({ cap: 'US shares and US Treasury securities held by the rest of the world, $tn, end of year (Federal Reserve, Z.1, vintage of 17 Nov 2026). Shares: equities issued by US corporations, at market value; fund shares are not included.', head: ['Year', 'US shares', 'US Treasuries'], rows: [['Mid-2026', D.H.last[1].toFixed(3), D.H.last[2].toFixed(3)]].concat(D.H.y.map((y, i) => [y, D.H.eq[i].toFixed(3), D.H.tr[i].toFixed(3)]).reverse()) }) };
-  V.flow = { title: 'What foreigners bought each year', unit: 'Net purchases, $bn a year · Federal Reserve, Z.1', draw() {
-    const F = D.F;
-    reading('Purchases, not prices: ', `in 2025 foreigners bought ${bn(F.eq[25])} of US shares and ${bn(F.tr[25])} of Treasuries, net. First half of 2026, at an annual rate: ${bn(F.h1[1])} and ${bn(F.h1[2])}.`);
-    legend([[C.gold, 'US shares', 1], [C.blue, 'US Treasuries', 1]]);
-    cols({ cats: F.y, series: [{ c: C.gold, vals: F.eq }, { c: C.blue, vals: F.tr }], y0: -300, y1: 800, yt: [-200, 0, 200, 400, 600, 800], yf: v => String(v), every: 2, everyP: 5,
-      aria: 'Two columns a year, 2000 to 2025: net foreign purchases of US shares and of US Treasuries, in billions of dollars. Shares: highest 672 in 2020 and 647 in 2025; negative in 2013, 2015, 2016, 2019, 2021 and 2022. Treasuries: highest 740 in 2010 and 728 in 2023; negative in 2000 and 2016.',
-      tip: i => [String(F.y[i]), ['US shares', bn(F.eq[i]).replace('$-', '−$')], ['US Treasuries', bn(F.tr[i]).replace('$-', '−$')]] });
-  }, table: () => ({ cap: 'Net purchases by the rest of the world, $bn a year (Federal Reserve, Z.1 transactions; a year is the mean of four quarterly annual rates; price changes are not in them). The 2026 row is the first half at an annual rate, not a year.', head: ['Year', 'US shares', 'US Treasuries'], rows: [['2026, first half, annual rate', D.F.h1[1], D.F.h1[2]]].concat(D.F.y.map((y, i) => [y, D.F.eq[i], D.F.tr[i]]).reverse()) }) };
+  /* E1 (18 Nov): who bought and what, from the Treasury's TIC transactions. Two panels on one scale: official holders above, private
+     holders below, each a stack by instrument. Bills are left out of the chart (they are a change in holdings, not transactions) and sit
+     in the table under their own name; 2026 is eight months, so it is named in the reading line and the table and not drawn as a year. */
+  const EK = [['t', 'Treasury bonds & notes', C.blue], ['a', 'Agency bonds', C.teal], ['c', 'Corporate bonds', C.purple], ['e', 'Shares', C.gold]];
+  const bs = x => (x < 0 ? '−$' : '$') + Math.abs(Math.round(x)).toLocaleString('en-US') + 'bn';
+  V.flow = { title: 'What foreigners bought each year: who bought, and what', unit: 'Net purchases, $bn a year · US Treasury, TIC', draw() {
+    const E = D.E, y = E.y, n = y.length, v = E.v, ph = phone(), i = n - 1, tot = (hd, j) => EK.reduce((s, k) => s + v[hd + k[0]][j], 0);
+    const sold = y.filter((yy, j) => yy >= 2015 && v.ot[j] < 0).length, soldSum = y.reduce((s, yy, j) => s + (yy >= 2015 ? v.ot[j] : 0), 0);
+    tiles([{ v: bs(v.ot[i]), k: 'Treasury bonds & notes, official holders', d: '2025', c: C.blue }, { v: bs(v.oe[i]), k: 'shares, official holders', d: '2025', c: C.gold },
+      { v: bs(v.pe[i]), k: 'shares, private holders', d: '2025', c: C.gold }, { v: bs(tot('o', i) + tot('p', i)), k: 'all long-term US securities', d: '2025, both holders' }]);
+    reading('Official holders are leaving Treasuries for shares: ', `they sold Treasury bonds and notes, net, in ${sold} of the 11 years from 2015 to 2025 (${bs(soldSum)} in all) and bought ${bs(E.p26.oe)} of shares in ${E.part}, after ${bs(v.oe[i])} in 2025.`);
+    legend(EK.map(k => [k[2], k[1], 1]));
+    const fig = R.fig, W = fig.clientWidth, H = fig.clientHeight, m = { l: 46, r: ph ? 6 : 14, t: 22, b: 20 }, gap = 34, pw = W - m.l - m.r, slot = pw / n, bw = Math.max(3, Math.min(24, slot * .64));
+    const ext = hd => { let hi = 0, lo = 0; y.forEach((_, j) => { let u = 0, d = 0; EK.forEach(k => { const x = v[hd + k[0]][j]; if (x >= 0) u += x; else d += x; }); hi = Math.max(hi, u); lo = Math.min(lo, d); }); return [Math.floor(lo / 100) * 100, Math.ceil(hi / 100) * 100]; };
+    const eo = ext('o'), ep = ext('p'), kk = (H - m.t - m.b - gap) / ((eo[1] - eo[0]) + (ep[1] - ep[0]));
+    const svg = svgOf(W, H, `Two panels of stacked columns, one column a year from 2000 to 2025, in billions of dollars, on one scale. Above, foreign official holders: net sellers of Treasury bonds and notes in ${sold} of the 11 years from 2015 to 2025, with the largest sales in 2016 (${bs(v.ot[16])}) and 2019 (${bs(v.ot[19])}); net buyers of US shares in 2023 (${bs(v.oe[23])}), 2024 (${bs(v.oe[24])}) and 2025 (${bs(v.oe[25])}). Below, private foreign holders: in 2025 they bought ${bs(v.pe[i])} of shares, ${bs(v.pt[i])} of Treasury bonds and notes, ${bs(v.pc[i])} of corporate bonds and ${bs(v.pa[i])} of agency bonds.`);
+    [['o', 'Official holders', 'central banks and state funds', eo, m.t], ['p', 'Private holders', 'funds, banks and households', ep, m.t + (eo[1] - eo[0]) * kk + gap]].forEach(([hd, name, who, e, top]) => {
+      const Y = x => top + (e[1] - x) * kk, step = hd === 'o' ? 200 : 400;
+      for (let t = Math.ceil(e[0] / step) * step; t <= e[1]; t += step) svg.append(el('line', { x1: m.l, x2: m.l + pw, y1: Y(t), y2: Y(t), stroke: t === 0 ? '#5d6f7e' : '#17222d', 'stroke-width': 1 }), el('text', { x: m.l - 6, y: Y(t) + 3.5, 'text-anchor': 'end' }, (t < 0 ? '−' : '') + Math.abs(t)));
+      svg.append(el('text', { x: m.l, y: top - 8, class: 'lb', fill: C.ink }, name), el('text', { x: m.l + name.length * 7.1 + 10, y: top - 8, class: 'lb' }, ph ? '' : who));
+      y.forEach((yy, j) => {
+        const cx = m.l + slot * j + slot / 2, g = el('g', { class: 'col' }); let up = 0, dn = 0;
+        EK.forEach(k => { const x = v[hd + k[0]][j]; let y0, y1; if (x >= 0) { y0 = Y(up); y1 = Y(up + x); up += x; } else { y0 = Y(dn); y1 = Y(dn + x); dn += x; } const hh = Math.abs(y1 - y0); g.append(el('rect', { x: cx - bw / 2, y: Math.min(y0, y1) + (hh > 3 ? .5 : 0), width: bw, height: Math.max(.8, hh - (hh > 3 ? 1 : 0)), rx: Math.min(2, bw / 4), fill: k[2] })); });
+        svg.append(g);
+        const rows = [yy + ' · ' + name.toLowerCase()].concat(EK.map(k => [k[1], bs(v[hd + k[0]][j])]));
+        const hit = el('rect', { x: cx - slot / 2, y: top, width: slot, height: (e[1] - e[0]) * kk, fill: 'transparent', tabindex: 0, role: 'img', 'aria-label': rows.map((r, q) => q ? r.join(' ') : r).join('; ') }); hover(hit, rows); svg.append(hit);
+      });
+    });
+    y.forEach((yy, j) => { if (yy % (ph ? 10 : 5) === 0 || j === n - 1) svg.append(el('text', { x: m.l + slot * j + slot / 2, y: H - 4, 'text-anchor': 'middle' }, String(yy))); });
+    fig.append(svg);
+  }, table: () => { const E = D.E, v = E.v, K = ['ot', 'oa', 'oc', 'oe', 'pt', 'pa', 'pc', 'pe', 'ob', 'pb'], f = x => x.toFixed(1).replace('-', '−');
+    return { cap: `Net purchases of US securities by foreigners, $bn (US Treasury, TIC monthly reports, history table of ${E.stamp}; a year is the sum of twelve months, not seasonally adjusted; reported transactions, without price changes and before Treasury’s stock-swap adjustment). The 2026 row is ${E.part}, eight months, not a year. Treasury bills are a different kind of series, the change in reported holdings, and are never added to the others here. The Federal Reserve’s own count (Z.1), used for “Held abroad”, gives $646.7bn of shares for 2025 where this table gives ${bs(v.oe[25] + v.pe[25]).slice(1)}: two measures, not reconciled.`,
+      head: ['Year', 'Official: Treasury bonds & notes', 'Official: agency bonds', 'Official: corporate bonds', 'Official: shares', 'Private: Treasury bonds & notes', 'Private: agency bonds', 'Private: corporate bonds', 'Private: shares', 'Official: bills (change in holdings)', 'Private: bills (change in holdings)'],
+      rows: [[E.part + ' (eight months)'].concat(K.map(k => f(E.p26[k])))].concat(E.y.map((yy, j) => [yy].concat(K.map(k => f(v[k][j])))).reverse()) }; } };
   V.list = { title: 'The listing premium', unit: 'US share of the world total, % · World Bank, IMF', draw() {
     const M = D.M, n = M.y.length - 1;
     tiles([{ v: M.mv[n].toFixed(1) + '%', k: 'of the world’s stock-market value', d: 'end of 2025', c: C.gold, line: 1 }, { v: M.gdp[n].toFixed(1) + '%', k: 'of world GDP', d: '2025', c: C.grey, line: 1 }, { v: (M.mv[n] / M.gdp[n]).toFixed(2) + '×', k: 'market value against GDP weight', d: '2010: ' + (M.mv[10] / M.gdp[10]).toFixed(2) + '×' }, { v: '—', k: 'of equity raised on exchanges', d: 'not collected', empty: 1 }]);
@@ -365,7 +491,7 @@
       tip: i => [String(P.y[i]), ['Dividends', bn(P.div[i])], ['Buybacks', bn(P.buy[i])], ['Together', bn(P.div[i] + P.buy[i])]] });
   }, table: () => ({ cap: 'Dividends and share buybacks of the firms of the S&P 500, $bn (S&P Dow Jones Indices; 2008 to 2012 are sums of four quarters). Before 2008 and the full year 2025: not collected.', head: ['Year', 'Dividends', 'Buybacks', 'Together'], rows: [[D.S.ttm[0] + ', preliminary', D.S.ttm[1], D.S.ttm[2], (D.S.ttm[1] + D.S.ttm[2]).toFixed(1)]].concat(D.S.y.map((y, i) => [y, D.S.div[i], D.S.buy[i], (D.S.div[i] + D.S.buy[i]).toFixed(1)]).reverse()) }) };
 
-  /* ---------- station 3 · The regime ---------- */
+  /* ---------- the regime and the order (stations 4 and 3) ---------- */
   const MOMENT = { 2000: r => `The federal budget was in surplus (${f1(r.fed)}% of GDP); net private investment carried profits.`, 2009: r => `Net private investment fell to ${f1(r.npi)}% of GDP; federal borrowing, ${f1(r.fed)}%, held profits up.`, 2020: r => `Federal borrowing reached ${f1(r.fed)}% of GDP; households saved ${f1(-r.hh)}%.`, 2025: r => `The federal deficit supplied ${f1(r.fed)} points, more than net private investment (${f1(r.npi)}).` };
   function eqReading() { const r = yr(); let t = `profits after tax ${f1(r.pat)}% of GDP. `; if (r.era) t += `Net private investment ${f1(r.npi)}, federal net borrowing ${f1(r.fed)}.`; else if (r.prov) t += 'Third-quarter profits are published on 25 Nov 2026.'; else if (MOMENT[r.y]) t += MOMENT[r.y](r); else t += phone() ? 'Drag the year, or pick an era.' : 'Move over the chart, drag the year, or pick an era.'; reading(r.era ? r.label + ', average a year: ' : r.prov ? 'First half of 2026, provisional: ' : r.p + ': ', t); }
   function eqTiles() { const r = yr(); tiles([{ big: 1, op: '=', v: f1(r.pat) + '%', k: 'Profits after tax = the sum', d: r.era ? 'average, ' + r.label : r.prov ? 'first half of 2026, provisional' : r.p + ' · ' + bn(r.bn) }].concat(TERMS.map(([k]) => ({ op: r[k] < 0 ? '−' : '+', v: f1(r[k]), k: termLabel(k, r[k]), c: C[k] }))), true); }
@@ -399,38 +525,92 @@
     hit.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse' && !S.era) pick(ev); }); hit.addEventListener('pointerdown', pick);
     svg.append(hit); fig.append(svg);
   }, table: eqTable };
+  /* One year (patch of 18 Nov, as in the preview): the bridge on top, then every term of the sum as its own line since 1960, the main
+     chart: full width, each term switchable, profits on top. The year moves both. On phones a tap opens the lines full screen. */
+  const LT = [['npi', 'Net private investment'], ['fed', 'Federal net borrowing'], ['div', 'Dividends'], ['rest', 'State and local, other'], ['hh', 'Household saving', 1], ['ca', 'Balance with the world', 1]];
+  let BEXT = null;
+  const bext = () => { if (BEXT) return BEXT; let lo = 0, hi = 0; B.forEach(r => { let run = 0; TERMS.forEach(([k]) => { run += r[k]; lo = Math.min(lo, run); hi = Math.max(hi, run); }); }); return (BEXT = [Math.floor(lo) - 1, Math.ceil(hi) + 2]); };
+  /* the lines: shared by the board and the full-screen view */
+  function termLines(svg, W, H, o) {
+    const ph = phone(), m = { l: 34, r: o.zoom || ph ? 12 : 128, t: 18, b: 22 }, Bf = B.filter(r => !r.prov), n = Bf.length, pw = W - m.l - m.r, phh = H - m.t - m.b, lo = -14, hi = 16;
+    const Xs = i => m.l + pw * i / (n - 1), Y = v => m.t + (hi - v) / (hi - lo) * phh;
+    ERAS.forEach(([a, b], k) => { const xa = Xs(a - 1960) - (a > 1960 ? pw / (n - 1) / 2 : 0), xb = Xs(b - 1960) + (b < 2025 ? pw / (n - 1) / 2 : 0), on = S.era && S.era[0] === a; if (k % 2 === 0 || on) svg.append(el('rect', { x: xa, y: m.t, width: xb - xa, height: phh, fill: '#ffffff', opacity: on ? .06 : .018 })); svg.append(el('text', { x: (xa + xb) / 2, y: m.t + 11, 'text-anchor': 'middle' }, a + '–' + String(b).slice(2))); });
+    for (let t = -10; t <= 15; t += 5) svg.append(el('line', { x1: m.l, x2: m.l + pw, y1: Y(t), y2: Y(t), stroke: t === 0 ? C.ink2 : '#17222d', 'stroke-width': t === 0 ? 1.4 : 1 }), el('text', { x: m.l - 6, y: Y(t) + 3.5, 'text-anchor': 'end' }, String(Math.abs(t))));
+    svg.append(el('text', { x: m.l + 6, y: Y(lo) - 6, class: 'lb' }, 'below the line: takes from profits, % of GDP'));
+    const every = W > 1500 ? 5 : W > 760 ? 10 : 20; Bf.forEach((r, i) => { if (r.y % every === 0) svg.append(el('text', { x: Xs(i), y: H - 5, 'text-anchor': 'middle' }, String(r.y))); });
+    const path = k => Bf.map((r, i) => Xs(i).toFixed(1) + ',' + Y(r[k]).toFixed(1)).join(' ');
+    LT.forEach(([k]) => { if (S.terms[k]) svg.append(el('polyline', { points: path(k), fill: 'none', stroke: C[k], 'stroke-width': 2, 'stroke-linejoin': 'round', opacity: .92 })); });
+    svg.append(el('polyline', { points: path('pat'), fill: 'none', stroke: C.bg, 'stroke-width': 7, 'stroke-linejoin': 'round' }), el('polyline', { points: path('pat'), fill: 'none', stroke: C.pat, 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+    if (!o.zoom && !ph) { const lr = Bf[n - 1]; svg.append(el('text', { x: Xs(n - 1) + 10, y: Y(lr.pat) - 1, class: 'lb', fill: C.ink }, 'Profits after tax'), el('text', { x: Xs(n - 1) + 10, y: Y(lr.pat) + 13, class: 'lb' }, 'the sum')); }
+    if (!S.era) { const i = Math.min(n - 1, Math.max(0, S.year - 1960)), r = Bf[i]; svg.append(el('line', { x1: Xs(i), x2: Xs(i), y1: m.t, y2: m.t + phh, stroke: C.lab, 'stroke-width': 1, opacity: .8 }));
+      LT.forEach(([k]) => { if (S.terms[k]) svg.append(el('circle', { cx: Xs(i), cy: Y(r[k]), r: 3.5, fill: C[k], stroke: C.bg, 'stroke-width': 1.5 })); }); svg.append(el('circle', { cx: Xs(i), cy: Y(r.pat), r: 4.5, fill: C.pat, stroke: C.bg, 'stroke-width': 2 }));
+      svg.append(el('text', { x: Math.min(Math.max(Xs(i), m.l + 24), m.l + pw - 24), y: m.t + phh + 0, 'text-anchor': 'middle', class: 'lb', fill: C.lab, dy: -4 }, S.year === 2026 ? '2025' : String(r.y))); }
+    return { pick: ev => { const bb = svg.getBoundingClientRect(), i = Math.max(0, Math.min(n - 1, Math.round(((ev.clientX - bb.left) * (W / bb.width) - m.l) / pw * (n - 1)))); return Bf[i].y; } };
+  }
   V.sum = { title: 'Where US profits come from, one year at a time', unit: '% of GDP · United States', scrub: 1, chips: eraChips, draw() {
     eqReading();
-    const fig = R.fig, W = fig.clientWidth, H = fig.clientHeight, ph = phone(), r = yr();
-    const stripH = Math.max(78, Math.min(110, H * .26)), lw = ph ? 0 : 214, m = { l: lw + 8, r: ph ? 46 : 58, t: 6 }, pw = W - m.l - m.r;
-    const rows = TERMS.map(([k]) => [k, r[k]]), n = rows.length + 1, gap = ph ? 22 : 8, top = m.t + (ph ? 14 : 0), bandH = H - stripH - 26 - top, rh = Math.min(ph ? 34 : 34, (bandH - gap * (n - 1)) / n), Xs = v => m.l + (v / 26) * pw;
-    const svg = svgOf(W, H, `The profit equation for ${r.era ? r.label + ', average' : r.prov ? 'the first half of 2026' : r.p}, as a share of GDP: net private investment ${f1(r.npi)}, federal net borrowing ${r.fed < 0 ? 'minus ' : ''}${f1(r.fed)}, dividends ${f1(r.div)}, state and local borrowing, transfers and discrepancy ${r.rest < 0 ? 'minus ' : ''}${f1(r.rest)}, household saving minus ${f1(-r.hh)}, the balance with the world ${r.ca < 0 ? 'minus ' : ''}${f1(r.ca)}; profits after tax ${f1(r.pat)}. Below, profits and federal net borrowing as a share of GDP, 1960 to 2026.`);
-    const defs = el('defs'), pat = el('pattern', { id: 'isx-pf-hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }); pat.append(el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: C.bg, 'stroke-width': 2, opacity: .55 })); defs.append(pat); svg.append(defs);
-    for (let v = 0; v <= 25; v += 5) svg.append(el('line', { x1: Xs(v), x2: Xs(v), y1: top - 2, y2: top + n * (rh + gap) - gap + 2, stroke: v === 0 ? '#3a4d5e' : '#17222d', 'stroke-width': 1 }));
+    const fig = R.fig, W = fig.clientWidth, H = fig.clientHeight, ph = phone(), r = yr(), wrap = h('div', 'pf-oy'), hb = Math.round(Math.max(118, Math.min(190, H * .3)));
+    /* the bridge: what adds, what takes, and the sum */
+    const [lo, hi] = bext(), items = TERMS.map(([k]) => [k, r[k]]), n = items.length + 1, mb = { l: 8, r: 8, t: 22, b: ph ? 30 : 34 }, bw = (W - mb.l - mb.r) / n, Y = v => mb.t + (hb - mb.t - mb.b) * (hi - v) / (hi - lo);
+    const s1 = svgOf(W, hb, `The profit equation for ${r.era ? r.label + ', average' : r.prov ? 'the first half of 2026' : r.p}, as a share of GDP: net private investment ${f1(r.npi)}, federal net borrowing ${r.fed < 0 ? 'minus ' : ''}${f1(r.fed)}, dividends ${f1(r.div)}, state and local borrowing, transfers and discrepancy ${r.rest < 0 ? 'minus ' : ''}${f1(r.rest)}, household saving minus ${f1(-r.hh)}, the balance with the world ${r.ca < 0 ? 'minus ' : ''}${f1(r.ca)}; profits after tax ${f1(r.pat)}.`);
+    s1.setAttribute('class', 'oy-b'); s1.style.height = hb + 'px';
+    const defs = el('defs'), pat = el('pattern', { id: 'isx-pf-hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }); pat.append(el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: C.bg, 'stroke-width': 2, opacity: .55 })); defs.append(pat); s1.append(defs);
+    s1.append(el('line', { x1: mb.l, x2: W - mb.r, y1: Y(0), y2: Y(0), stroke: '#5d6f7e', 'stroke-width': 1 }));
     let run = 0;
-    rows.forEach(([k, v], i) => {
-      const y = top + i * (rh + gap), a = run, b = run + v, x0 = Xs(Math.min(a, b)), x1 = Xs(Math.max(a, b)), add = v >= 0, name = termLabel(k, v) + (add ? '' : ph ? '' : ' · takes from profits');
-      if (ph) svg.append(el('text', { x: m.l, y: y - 6, class: 'lb' }, name)); else svg.append(el('text', { x: m.l - 12, y: y + rh / 2 + 4, 'text-anchor': 'end', class: 'lb' }, name));
-      svg.append(el('rect', { x: x0, y, width: Math.max(1.5, x1 - x0), height: rh, rx: 3, fill: C[k], opacity: add ? 1 : .9 }));
-      if (!add) svg.append(el('rect', { x: x0 + 1, y: y + 1, width: Math.max(0, x1 - x0 - 2), height: rh - 2, rx: 2, fill: 'url(#isx-pf-hatch)' }));
-      svg.append(el('text', { x: x1 + 7, y: y + rh / 2 + 5, class: 'lv' }, (add ? '+' : '−') + f1(v)));
-      svg.append(el('line', { x1: Xs(b), x2: Xs(b), y1: y + rh, y2: y + rh + gap, stroke: '#5d6f7e', 'stroke-width': 1, 'stroke-dasharray': '2 2' }));
-      run = b;
+    items.concat([['pat', r.pat]]).forEach(([k, v], i) => {
+      const tot = k === 'pat', a = tot ? 0 : run, b = tot ? v : run + v, x0 = mb.l + i * bw + bw * .16, w = Math.min(bw * .68, 150), xc = mb.l + i * bw + bw / 2, x = xc - w / 2, top = Y(Math.max(a, b)), hh = Math.max(1.5, Math.abs(Y(a) - Y(b)));
+      s1.append(el('rect', { x, y: top, width: w, height: hh, rx: 3, fill: tot ? C.pat : C[k] }));
+      if (!tot && v < 0) s1.append(el('rect', { x: x + 1, y: top + 1, width: Math.max(0, w - 2), height: Math.max(0, hh - 2), rx: 2, fill: 'url(#isx-pf-hatch)' }));
+      s1.append(el('text', { x: xc, y: top - 6, 'text-anchor': 'middle', class: 'lv' }, tot ? '= ' + f1(v) + '%' : (v < 0 ? '−' : '+') + f1(v)));
+      const nm = tot ? (ph ? 'Profits' : 'Profits after tax') : ph ? { npi: 'Invest.', fed: 'Federal', div: 'Divid.', rest: 'Other', hh: 'Saving', ca: 'World' }[k] : termLabel(k, v);
+      s1.append(el('text', { x: xc, y: hb - mb.b + 16, 'text-anchor': 'middle', class: 'lb', fill: tot ? C.ink : C.ink2 }, nm));
+      if (!tot && v < 0 && !ph) s1.append(el('text', { x: xc, y: hb - mb.b + 30, 'text-anchor': 'middle' }, 'takes from profits'));
+      if (!tot) { run = b; if (i < items.length) s1.append(el('line', { x1: x + w, x2: x + bw, y1: Y(b), y2: Y(b), stroke: '#5d6f7e', 'stroke-width': 1, 'stroke-dasharray': '2 2' })); }
     });
-    const yP = top + rows.length * (rh + gap);
-    if (ph) svg.append(el('text', { x: m.l, y: yP - 6, class: 'lb', fill: C.ink }, 'Profits after tax')); else svg.append(el('text', { x: m.l - 12, y: yP + rh / 2 + 4, 'text-anchor': 'end', class: 'lb', fill: C.ink }, 'Profits after tax'));
-    svg.append(el('rect', { x: Xs(0), y: yP, width: Xs(r.pat) - Xs(0), height: rh, rx: 3, fill: C.pat }), el('text', { x: Xs(r.pat) + 7, y: yP + rh / 2 + 5, class: 'lv' }, '= ' + f1(r.pat) + '%'));
-    const sy = H - stripH, sh = stripH - 22, sl = ph ? 26 : m.l, sr = ph ? 62 : 172, sw = W - sl - sr, slot = sw / B.length, SX = i => sl + slot * i + slot / 2, SY = v => sy + sh - (v + 2) / 18 * sh;
-    svg.append(el('text', { x: sl, y: sy - 8 }, 'Every year since 1960, % of GDP'));
-    [0, 10].forEach(v => svg.append(el('line', { x1: sl, x2: sl + sw, y1: SY(v), y2: SY(v), stroke: v ? '#17222d' : '#3a4d5e', 'stroke-width': 1 }), el('text', { x: sl - 5, y: SY(v) + 3.5, 'text-anchor': 'end' }, String(v))));
-    if (S.era) { const a = B.findIndex(q => q.y === S.era[0]), b = B.findIndex(q => q.y === S.era[1]); svg.append(el('rect', { x: sl + slot * a, y: sy - 2, width: slot * (b - a + 1), height: sh + 4, fill: '#ffffff', opacity: .05 })); }
-    [['fed', C.fed, 'Federal net borrowing'], ['pat', C.pat, 'Profits']].forEach(([k, c, nm]) => { svg.append(el('polyline', { points: B.map((q, i) => SX(i) + ',' + SY(q[k])).join(' '), fill: 'none', stroke: c, 'stroke-width': 2, 'stroke-linejoin': 'round' })); const lq = B[B.length - 1]; svg.append(el('text', { x: SX(B.length - 1) + 7, y: SY(lq[k]) + (k === 'pat' ? -2 : 10), class: 'lb', fill: c === C.pat ? C.ink : C.ink2 }, ph ? (k === 'pat' ? 'Profits' : 'Federal') : nm)); });
-    [1960, 1980, 2000, 2020].forEach(y => { const i = B.findIndex(q => q.y === y); svg.append(el('text', { x: SX(i), y: H - 3, 'text-anchor': 'middle' }, String(y))); });
-    if (!S.era) { const i = B.findIndex(q => q.y === S.year); svg.append(el('line', { x1: SX(i), x2: SX(i), y1: sy - 2, y2: sy + sh + 2, stroke: C.lab, 'stroke-width': 1 }), el('circle', { cx: SX(i), cy: SY(B[i].pat), r: 3.5, fill: C.pat, stroke: C.bg, 'stroke-width': 2 })); }
-    const hit = el('rect', { x: sl, y: sy - 4, width: sw, height: sh + 22, fill: 'transparent', style: 'cursor:crosshair' }), pick = pickYear(svg, W, sl, slot);
-    hit.addEventListener('pointerdown', pick); hit.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse' && ev.buttons) pick(ev); });
-    svg.append(hit); fig.append(svg);
+    /* the terms: each a switch, and the key to the lines */
+    const tr = h('div', 'pf-terms'); tr.setAttribute('role', 'group'); tr.setAttribute('aria-label', 'Lines shown');
+    const pb = h('span', 'pt on'); const pi = h('i'); pi.style.background = C.pat; pb.append(pi, 'Profits after tax, the sum'); tr.append(pb);
+    LT.forEach(([k, nm, takes]) => { const b = h('button', 'pt'); b.type = 'button'; b.dataset.pt = k; b.setAttribute('aria-pressed', String(!!S.terms[k])); const i = h('i'); i.style.background = C[k]; b.append(i, nm + (takes ? ' (takes)' : '')); tr.append(b); });
+    wrap.append(s1, tr); fig.append(wrap);
+    const zb = ph ? h('button', 'pf-zoomb', 'Open full screen ⤢') : null; if (zb) { zb.type = 'button'; zb.dataset.pf = 'zoom'; wrap.append(zb); }
+    const hl = Math.max(170, H - hb - tr.offsetHeight - (zb ? zb.offsetHeight + 8 : 0) - 14);
+    const s2 = svgOf(W, hl, 'Every term of the profit equation as a line, one point a year from 1960 to 2025, as a share of GDP; the white line on top is profits after tax, the sum. Net private investment falls from about 8% of GDP in the 1960s and 1970s to about 4.5% since 2014; federal net borrowing rises from about 3% to 6.3%, with peaks of 10.2% in 2009 and 14.4% in 2020; household saving and the deficit with the world lie below the line. Profits rise from 6.5% to 10.2% of GDP.');
+    s2.setAttribute('class', 'oy-l'); s2.style.height = hl + 'px';
+    const L = termLines(s2, W, hl, {}), hit = el('rect', { x: 0, y: 0, width: W, height: hl, fill: 'transparent', style: 'cursor:crosshair' });
+    const pick = ev => { const yv = L.pick(ev); if (S.era || yv !== S.year) { S.era = null; S.year = yv; board(true); emit('year'); } };
+    hit.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse' && !S.era) pick(ev); });
+    hit.addEventListener('pointerdown', ev => { if (ph && ev.pointerType !== 'mouse') return; pick(ev); });
+    hit.addEventListener('click', ev => { if (ph) zoomOpen(zb); });
+    s2.append(hit);
+    if (zb) wrap.insertBefore(s2, zb); else wrap.append(s2);
   }, table: eqTable };
+  /* the lines, full screen (phones): scroll along the years, zoom, tap a year */
+  let Z = null;
+  function zoomDraw() {
+    if (!Z) return; const sc = Z.el.querySelector('.pz-sc'), svg = Z.el.querySelector('svg'), W = Math.round(window.innerWidth * Z.k), H = Math.max(240, sc.clientHeight - 6);
+    svg.textContent = ''; svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.width = W + 'px'; svg.style.height = H + 'px';
+    const L = termLines(svg, W, H, { zoom: 1 }), hit = el('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' });
+    hit.addEventListener('click', ev => { S.era = null; S.year = L.pick(ev); zoomDraw(); }); svg.append(hit);
+    const r = yr(); Z.el.querySelector('.pz-y').textContent = (r.prov ? 'First half of 2026' : r.p) + ' · profits ' + f1(r.pat) + '% of GDP';
+  }
+  function zoomOpen(from) {
+    if (Z) return;
+    const e = h('div', 'pf-zoom'); e.id = 'isx-pf-zoom'; e.setAttribute('role', 'dialog'); e.setAttribute('aria-modal', 'true'); e.setAttribute('aria-label', 'Every term since 1960, full screen');
+    e.innerHTML = '<div class="pz-bar"><div class="pz-t"><b>Every term since 1960 · % of GDP</b><span class="pz-y" aria-live="polite"></span></div><button type="button" data-pz="out" aria-label="Zoom out">−</button><button type="button" data-pz="in" aria-label="Zoom in">+</button><button type="button" data-pz="x">Close</button></div><div class="pz-sc" tabindex="0" role="region" aria-label="The chart: scroll sideways along the years"><svg role="img" aria-label="Every term of the profit equation as a line, 1960 to 2025, as a share of GDP. Tap a year to select it."></svg></div>';
+    root.appendChild(e); Z = { el: e, k: 2.4, from: from || null }; document.documentElement.classList.add('isx-pzlock');
+    e.addEventListener('click', ev => { const b = ev.target.closest('[data-pz]'); if (!b) return; if (b.dataset.pz === 'x') { zoomClose(); return; } const sc = e.querySelector('.pz-sc'), c = (sc.scrollLeft + sc.clientWidth / 2) / sc.scrollWidth; Z.k = Math.max(1, Math.min(6, Z.k * (b.dataset.pz === 'in' ? 1.4 : 1 / 1.4))); zoomDraw(); sc.scrollLeft = c * sc.scrollWidth - sc.clientWidth / 2; });
+    e.addEventListener('keydown', ev => { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); zoomClose(); } });
+    zoomDraw(); const sc = e.querySelector('.pz-sc'); sc.scrollLeft = sc.scrollWidth;
+    const wrap = root.querySelector(':scope > .wrap'); if (wrap) wrap.inert = true;
+    e.querySelector('[data-pz="x"]').focus({ preventScroll: true });
+  }
+  function zoomClose() {
+    if (!Z) return; const z = Z; Z = null; if (z.el.parentNode) z.el.parentNode.removeChild(z.el); document.documentElement.classList.remove('isx-pzlock');
+    const wrap = root.querySelector(':scope > .wrap'); if (wrap) wrap.inert = false;
+    if (X.view === 'profit' && D && !cur().fin) board(true);
+    const f = host.querySelector('.pf-zoomb') || z.from; if (f && f.isConnected) f.focus({ preventScroll: true });
+  }
+
   const GC = { hub: C.gold, export: C.teal, centre: C.blue, mixed: C.teal };
   const OFF = { USA: [0, -1, 'middle'], CHN: [0, 1, 'middle'], JPN: [-1, -1, 'end'], KOR: [1, 0, 'start'], DEU: [0, 1, 'middle'], GBR: [-1, 0, 'end'], FRA: [0, 1, 'middle'], TWN: [-1, 0, 'end'], CHE: [1, 0, 'start'], SAU: [-1, 0, 'end'], NLD: [0, -1, 'middle'] };
   const GN = { hub: 'Hub', export: 'Export-led spoke', centre: 'Financial or booking centre', mixed: 'Both: export-led and booking centre', other: 'Not placed' };
@@ -496,7 +676,7 @@
       ['Value chains', 'Assembly moves out to the cheapest place; China’s fabrication ring is wide open', 'Chains are re-routed to the 26 signatories (October 2026); China’s links to the inner rings are cut or licensed'],
       ['Finance', 'Savings flow in as claims; demand flows out as imports', 'The same']] }] };
 
-  /* ---------- station 4 · The AI trade ---------- */
+  /* ---------- the AI trade (station 5) and “Why the deficit cannot shrink” (station 4) ---------- */
   V.wt = { title: 'The AI trade’s weight in the S&P 500', unit: '% of the index’s value · Amundi; Bianco Research', draw() {
     const A = D.W.amundi, pk = D.W.peak, b = D.W.basket41, tx = d => +d.slice(0, 4) + (+d.slice(5, 7) - 1) / 12 + (+d.slice(8, 10) || 15) / 365;
     tiles([{ v: '49%', k: 'of the S&P 500: 41 AI-related stocks', d: 'October 2026', c: C.gold }, { v: A[A.length - 1][1].toFixed(1) + '%', k: 'Amundi’s basket of AI-linked stocks', d: '31 Mar 2026', c: C.teal, line: 1 }, { v: A[0][1].toFixed(1) + '%', k: 'the same basket', d: 'end of 2020', c: C.teal, line: 1 }]);
@@ -535,13 +715,34 @@
 
   /* ---------- the board ---------- */
   function chipRow(label, opts, key, on) { if (R.chips.childNodes.length) R.chips.append(h('span', 'gap')); R.chips.append(h('span', 'cl', label)); opts.forEach(([k, t]) => { const b = h('button', 'pf-chip', t); b.type = 'button'; b.dataset[key] = k; b.setAttribute('aria-pressed', String(on === k)); R.chips.append(b); }); }
+  /* the view switch (v4, decision 6): dots under the chart with arrows that name the view they lead to; the view's name above the chart */
+  function dots() {
+    const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), nav = R.dots; nav.textContent = ''; nav.hidden = vs.length < 2; if (vs.length < 2) return;
+    const arr = (d, j) => { const b = h('button', 'pf-arr ' + (d < 0 ? 'pv' : 'nx')); b.type = 'button'; b.dataset.pvn = d; b.disabled = j < 0 || j >= vs.length; b.setAttribute('aria-label', b.disabled ? (d < 0 ? 'No earlier view' : 'No further view') : (d < 0 ? 'Previous view: ' : 'Next view: ') + vs[j][1]); const t = h('span', 'at', b.disabled ? '' : vs[j][1]), a = h('i', '', d < 0 ? '‹' : '›'); a.setAttribute('aria-hidden', 'true'); if (d < 0) b.append(a, t); else b.append(t, a); return b; };
+    const row = h('div', 'pf-dr'); row.setAttribute('role', 'group'); row.setAttribute('aria-label', 'Choose a view');
+    vs.forEach(([k, t], j) => { const b = h('button', 'pf-dot'); b.type = 'button'; b.dataset.pv = k; b.title = t; b.setAttribute('aria-label', (j + 1) + ' of ' + vs.length + ': ' + t); b.setAttribute('aria-current', String(j === i)); row.append(b); });
+    nav.append(arr(-1, i - 1), row, arr(1, i + 1));
+  }
+  function note() {
+    const s = cur(), t = vw() === s.views[0][0] ? null : NOTE[vw()];
+    R.note.hidden = !t || S.whyOff; R.whyq.hidden = !t || !S.whyOff;
+    if (t) R.note.querySelector('span').textContent = t;
+  }
+  /* the board ends above the bar on a wide screen: what the head, the title line, a note, the chips and the dots add is taken from the chart */
+  function fit() {
+    const chips = R.chips.childNodes.length ? R.chips.offsetHeight + 8 : 0, nt = R.note.hidden ? 0 : R.note.offsetHeight + 8;
+    R.board.style.setProperty('--pfx', Math.round(R.top.offsetHeight + 12 + R.head.offsetHeight - 51 + chips + nt - 38) + 'px');   /* build 1 had a head of 51 px and a row of view chips of 38 px */
+  }
   function board(keep) {
     if (!D) return;
-    const s = cur(), v = V[vw()], fig = R.fig;
+    const s = cur(); if (s.fin) { if (!keep) emit(); return; }
+    const v = V[vw()], fig = R.fig, vi = s.views.findIndex(q => q[0] === vw());
     tipHide(); fig.textContent = ''; R.chips.textContent = ''; R.tiles.textContent = ''; R.tiles.className = 'pf-tiles'; reading('', ''); legend([]);
-    fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); R.board.dataset.st = s.id;
-    chipRow('View', s.views, 'pv', vw()); if (v.chips) v.chips();
+    fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); R.board.dataset.st = s.id; R.board.dataset.lens = vw();
+    if (v.chips) v.chips();
+    R.vn.textContent = s.views.length > 1 ? s.views[vi][1] + ' · ' + (vi + 1) + ' of ' + s.views.length : s.views[vi][1];
     R.title.textContent = v.title; R.unit.textContent = v.unit; R.table.setAttribute('aria-pressed', String(S.table));
+    dots(); note();
     if (!v.scrub) R.scrub.textContent = '';
     else {
       let inp = R.scrub.querySelector('input');
@@ -550,8 +751,12 @@
       inp.setAttribute('aria-valuetext', S.era ? 'average of ' + S.era[0] + ' to ' + S.era[1] : S.year === 2026 ? 'first half of 2026, provisional' : String(S.year));
     }
     R.board.classList.toggle('has-tiles', false);
+    /* the tiles and the reading line are set by the view before it measures the chart's box: draw twice when they change its height */
+    fit();
     if (S.table) { v.draw(); fig.textContent = ''; legend([]); table(v.table()); } else v.draw();
-    R.board.classList.toggle('has-tiles', R.tiles.childNodes.length > 0); R.board.classList.toggle('has-lg', R.lg.childNodes.length > 0 || !!v.scrub);
+    const had = R.board.classList.contains('has-tiles'), has = R.tiles.childNodes.length > 0;
+    R.board.classList.toggle('has-tiles', has); R.board.classList.toggle('has-lg', R.lg.childNodes.length > 0 || !!v.scrub);
+    if (has !== had && !S.table) { fig.textContent = ''; v.draw(); }
     lastW = fig.clientWidth;
     if (!keep) emit();
   }
@@ -560,7 +765,7 @@
   function bar() {
     const RT = X.route, hostB = $('tabs'); if (!RT || !hostB) return;
     const last = S.st === ST.length - 1;
-    RT.render(hostB, { id: 'profit', label: 'The profit dollar: four stations', stage: scene, count: (S.st + 1) + ' / 4',
+    RT.render(hostB, { id: 'profit', label: 'The profit dollar: six stations', stage: scene, count: (S.st + 1) + ' / ' + ST.length,
       back: { enabled: S.st > 0, label: S.st > 0 ? 'Back: ' + ST[S.st - 1].t : 'Back' },
       next: last ? { kicker: 'Go on', title: 'The imperial machinery', ptitle: 'Machinery' } : { kicker: 'Next', title: ST[S.st + 1].t, ptitle: ST[S.st + 1].t.replace(/^The /, '') },
       segs: [{ label: 'The profit dollar', short: 'Profits', colour: '#d78bff', current: true, lab: true, wide: true, grow: 9, marks: ST.map((s, i) => ({ kind: 'step', n: '0' + (i + 1), t: s.t, state: i === S.st ? 'cur' : i < S.st ? 'done' : '', target: String(i), title: s.t + ' · ' + s.q, sub: s.f })) }] });
@@ -586,18 +791,28 @@
     if (!D) { if (show.busy) return; show.busy = true; host.classList.add('loading'); X.load('profit').then(d => { prep(d); host.classList.remove('loading'); if (X.view === 'profit') { text(); board(); bar(); } }).catch(() => { R.reading.textContent = 'The figures could not be loaded. Reload the page to try again.'; }); text(); bar(); return; }
     text(); board(); bar();
   }
-  const detail = () => S.st === 0 && vw() === ST[0].views[0][0] ? '' : '/' + cur().id + (vw() !== cur().views[0][0] ? '/' + vw() : '');
-  function apply(hash) { const p = String(hash || '').replace(/^#\/?/, '').split('/'); const i = ST.findIndex(s => s.id === (p[1] || '').toLowerCase()); if (i < 0) return; go(i, (p[2] || '').toLowerCase() || ST[i].views[0][0], true); }
-  X.profit = { show, bar, go, detail, apply,
-    where: () => ({ where: 'Station ' + (S.st + 1) + ' · ' + cur().t + ' · ' + cur().views.find(v => v[0] === vw())[1] + (S.table ? ' · table' : '') }),
-    get state() { return { st: cur().id, view: vw(), year: S.year, era: S.era ? S.era.slice() : null, table: S.table, win: S.win, ready: !!D }; },
-    stations: ST.map(s => ({ id: s.id, t: s.t, q: s.q, f: s.f, views: s.views.map(v => v[0]) })), copy: () => ST.map(s => ({ id: s.id, q: s.q, x: s.x, rd: s.rd, nt: s.nt, more: s.more.slice() })), why: WHY };
+  const first = i => (ST[i].views[0] || [null])[0];
+  const detail = () => S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : '') + (cur().q2 && S.ord === 'ps' && S.st !== 0 ? '' : '');
+  /* the link: #profit/<station>/<view>. A link made before the arc still lands: “claims” is now part of “profits”, and a view that
+     moved to another station is found there */
+  function apply(hash) {
+    const p = String(hash || '').replace(/^#\/?/, '').split('/'), id = (p[1] || '').toLowerCase(); let view = (p[2] || '').toLowerCase(), i = ST.findIndex(s => s.id === id);
+    const home = v => ST.findIndex(s => s.views.some(q => q[0] === v));
+    if (i < 0 && id === 'claims') { if (!view) view = 'hold'; i = home(view); }
+    if (i >= 0 && view && !ST[i].views.some(q => q[0] === view)) { const j = home(view); if (j >= 0) i = j; else view = ''; }
+    if (i < 0) return; go(i, view || first(i), true);
+  }
+  X.profit = { show, bar, go, detail, apply, footnote, title: TITLE,
+    where: () => ({ where: 'Station ' + (S.st + 1) + ' · ' + cur().t + (cur().fin ? '' : ' · ' + cur().views.find(v => v[0] === vw())[1] + (S.table ? ' · table' : '')) }),
+    get state() { return { st: cur().id, view: vw(), year: S.year, era: S.era ? S.era.slice() : null, table: S.table, win: S.win, ord: S.ord, terms: Object.assign({}, S.terms), zoom: !!Z, ready: !!D }; },
+    stations: ST.map(s => ({ id: s.id, t: s.t, q: s.q, f: s.f, views: s.views.map(v => v[0]) })), notes: Object.assign({}, NOTE),
+    copy: () => ST.map(s => ({ id: s.id, q: s.q, q2: s.q2 || null, x: s.x, rd: s.rd, nt: s.nt, more: s.more.slice(), lines: (s.lines || []).slice() })), why: WHY };
   /* the link: #profit/<station>/<view> */
   const hd = X.hashDetail, ad = X.applyDetail;
   X.hashDetail = function () { return X.view === 'profit' ? detail() : hd ? hd() : ''; };
   X.applyDetail = function (hh) { if (X.view === 'profit') { apply(hh); return; } if (ad) ad(hh); };
   const vn = X.viewName; X.viewName = function () { return X.view === 'profit' ? 'the profit dollar, ' + cur().t.toLowerCase() : vn ? vn() : ''; };
-  X.on('view', v => { if (v !== 'profit') tipHide(); });
+  X.on('view', v => { if (v !== 'profit') { tipHide(); if (Z) zoomClose(); } });
   /* the page chose this tab before the file loaded (a link straight to it) */
   if (X.view === 'profit') { const h0 = window.__isxHash0 || location.hash; if (/^#\/?profit[^/]*\/./.test(h0)) apply(h0); show(); }
 })();

@@ -2376,22 +2376,24 @@ button.res:hover { transform: none; box-shadow: none; }
 <link rel="stylesheet" href="/imperial-stack/v2/profit.css">
 <link rel="stylesheet" href="/imperial-stack/v2/call.css">
 <link rel="stylesheet" href="/imperial-stack/v2/printer.css">
+<link rel="stylesheet" href="/imperial-stack/v2/enter.css">
+<link rel="stylesheet" href="/imperial-stack/v2/arc.css">
 
 <noscript><style>.isx.booting > .wrap { visibility: visible; } .isx.booting::before, .isx.booting::after { display: none; }</style><p style="margin:16px;color:#cfd9e2;font:15px/1.5 system-ui,sans-serif">The interactive map needs JavaScript. The text below the map explains what it shows.</p></noscript>
 <div class="isx booting" id="isx-root"><div class="wrap">
-  <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the profit dollar, the imperial arm, the imperial machinery and scenarios">
+  <section class="frame" id="isx-frame" data-v="1" aria-label="The imperial stack: the dollar loop, the profit dollar, the elite network, the imperial machinery and the imperial arm">
     <div class="hud-top">
       <div class="brand"><div class="kicker"><a class="er-home" href="/">← Elias Rutten</a><span class="er-ps"> · Pax Silica · </span><span class="kl"><b class="kv">v.2.0</b></span><button type="button" class="aboutk" id="isx-about" aria-label="About this map: replay the introduction"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span>About this map</span></button><button type="button" class="b4mis" id="isx-mis" data-mis aria-label="See a mistake? Copy a reference and message me on Substack" data-tip="<b>See a mistake?</b><p>Copy a reference to this view and message me on Substack.</p>" aria-haspopup="dialog" aria-expanded="false" aria-controls="isx-mpanel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Mistake?</span></button><a id="isx-sup-link" href="#isx-support" hidden></a></div><h1>The imperial <span>stack</span></h1></div>
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="isx-v-map" aria-pressed="true"><span class="lg">The circuit</span><span class="sm">Circuit</span></button>
         <button type="button" id="isx-v-profit" aria-pressed="false"><span class="lg">The profit dollar</span><span class="sm">Profits</span></button>
-        <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
+        <button type="button" id="isx-v-arm" aria-pressed="false"><span class="lg">The elite network</span><span class="sm">Network</span></button>
         <button type="button" id="isx-v-fin" aria-pressed="false"><span class="lg">The imperial machinery</span><span class="sm">Machinery</span></button>
-        <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">Scenarios</span><span class="sm">Scenarios</span></button>
+        <button type="button" id="isx-v-story" aria-pressed="false"><span class="lg">The imperial arm</span><span class="sm">Arm</span></button>
         <button type="button" id="isx-v-crisis" class="soon" disabled title="Coming soon: what happens when the AI bubble pops"><span class="lg">Crisis simulation</span><span class="sm">Crisis</span><em>coming soon</em></button>
       </div>
       <div class="tgl" id="isx-tgl"><button class="toggle" id="isx-waico" type="button" role="switch" aria-checked="true"><span class="knob"></span><span class="lbl">WAICO, China’s bloc</span></button><button class="toggle tmin soon" id="isx-min" type="button" aria-disabled="true"><span class="knob"></span><span class="lbl">The other stack: minerals <span class="wip">Coming soon</span></span></button></div>
-      <div class="mswitch" id="isx-mswitch" role="group" aria-label="Arm view" hidden><button type="button" id="isx-m-machine" aria-pressed="true">Machine</button><button type="button" id="isx-m-rev" aria-pressed="false">Revenue map</button></div>
+      <div class="mswitch" id="isx-mswitch" role="group" aria-label="Elite network view" hidden><button type="button" id="isx-m-machine" aria-pressed="true">Machine</button><button type="button" id="isx-m-rev" aria-pressed="false">Revenue map</button></div>
     </div>
     <div class="resbar" id="isx-resbar" aria-label="Key numbers"></div>
     <div class="vchip" id="isx-vchip" hidden></div>
@@ -2407,11 +2409,11 @@ button.res:hover { transform: none; box-shadow: none; }
       <div class="b4kick" id="isx-akick"></div>
       <p class="b4hint" id="isx-ahint" hidden></p>
       <div class="flat"><div class="flatin">
-        <svg id="isx-arm" viewBox="0 0 1040 640" role="group" aria-label="The imperial arm: the US state, the firms by sector and the real economy they draw on"></svg>
+        <svg id="isx-arm" viewBox="0 0 1040 640" role="group" aria-label="The elite network: the US state, the firms by sector and the real economy they draw on"></svg>
         <canvas id="isx-cv-arm"></canvas>
         <div class="atip" id="isx-atip" role="tooltip" hidden></div>
       </div></div>
-      <div class="aview" id="isx-aview" role="group" aria-label="Two ways to draw the Arm" hidden><button type="button" data-aview="reach" aria-pressed="true">Reach</button><button type="button" data-aview="orbit" aria-pressed="false">Orbit</button></div>
+      <div class="aview" id="isx-aview" role="group" aria-label="Two ways to draw the network" hidden><button type="button" data-aview="reach" aria-pressed="true">Reach</button><button type="button" data-aview="orbit" aria-pressed="false">Orbit</button></div>
       <div class="areach" id="isx-areach"></div>
       <article class="b4card acard" id="isx-acard" aria-live="polite"></article>
     </div>
@@ -2431,8 +2433,8 @@ button.res:hover { transform: none; box-shadow: none; }
         <div class="b3vig" aria-hidden="true"></div>
         <div class="b3redv" id="isx-b3-redv" aria-hidden="true"></div>
         <div class="b3sc" aria-hidden="true"><div class="b3world" id="isx-b3-world"></div></div>
-        <p class="sc3lede" id="isx-sc-lede"><b>Scenarios</b> shows the exercise of power: geoeconomic coercion, switches turned on and off. The <button type="button" class="sc3lnk" id="isx-sc-tofin">Scott Bessent Simulator</button> shows the financial flows and how the dollar system was built.</p>
-        <section class="b3gal" id="isx-b3-gal" aria-label="Scenarios: fourteen cases"></section>
+        <p class="sc3lede" id="isx-sc-lede"><b>The imperial arm</b> is the arm in use. These scenarios show the exercise of power: geoeconomic coercion, switches turned on and off. The <button type="button" class="sc3lnk" id="isx-sc-tofin">Scott Bessent Simulator</button> shows the financial flows and how the dollar system was built.</p>
+        <section class="b3gal" id="isx-b3-gal" aria-label="The imperial arm: fourteen scenarios"></section>
         <div class="b3hud" id="isx-b3-hud" role="region" aria-label="Scenario, step by step">
           <button type="button" class="b3back" data-b3="leave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg><span>All cases</span></button>
           <div class="b3deep" id="isx-b3-deep"></div>
@@ -2684,7 +2686,7 @@ const STEPS_D = [
     fig: '$22.2tn', cap: 'US shares held abroad, mid-2026, against $9.3tn of Treasuries', scale: 'The step bar under the map shows where you are in the loop: ten steps in five acts.' },
   { key: 'rent', n: '01', act: 0, t: 'Rents', c: C.rent, pov: { lat: 30, lng: -40, altitude: 2.05 }, spin: true, h: 'Rents flow to the platforms',
     x: () => `The loop starts with rent. Businesses, users and governments abroad pay US firms for search, ads, app stores, software licences, cloud, models and card payments. Counting only those services, and leaving out hardware and retail sales, US platform, cloud, AI and payment firms earned roughly ${fmtBn(RENT_TOT)} outside the US in their latest fiscal year, about ${Math.round(RENT[0][2] / RENT_TOT * 100)}% of it in Europe; the regional split is partly estimated. The balance of payments measures something narrower, $195bn of US receipts for the use of intellectual property in 2025 (BEA), because most foreign revenue is booked by subsidiaries abroad, Europe’s mostly in Ireland.`,
-    fig: () => '~' + fmtBn(RENT_TOT), cap: 'foreign revenue of US platform, cloud, AI and payment firms, latest fiscal year', scale: 'Arc width ∝ revenue by region; regional splits partly estimated from company filings. The revenue map in the imperial arm breaks it down by firm.' },
+    fig: () => '~' + fmtBn(RENT_TOT), cap: 'foreign revenue of US platform, cloud, AI and payment firms, latest fiscal year', scale: 'Arc width ∝ revenue by region; regional splits partly estimated from company filings. The revenue map in the elite network breaks it down by firm.' },
   { key: 'capex', n: '02', act: 1, t: 'Capex', c: C.dollar, pov: { lat: 34, lng: -165, altitude: 1.75 }, h: 'Rents are spent on the allies who produce',
     x: 'The platforms turn rents into data centres, and most of the money leaves the country. Amazon, Alphabet, Microsoft and Meta plan about $730bn of capital spending in 2026. US imports of computers, peripherals and parts ran at $601bn a year in the second quarter of 2026, four times the rate of 2023, and made up 39% of the goods deficit, against about 10% before 2023. This is the hinge of the loop: the rent becomes orders for factories in Taiwan, Mexico, Korea and Southeast Asia.',
     fig: '$730bn', cap: '2026 capex guidance, Amazon, Alphabet, Microsoft and Meta', scale: 'Arc width ∝ US imports of computers, parts, chips and chip tools from each economy, 2025.' },
@@ -3058,7 +3060,7 @@ const ATYPE = {
   rent: { c: C.rent, name: 'Rents', t: 'Fees and sales taken from the economy', x: 'Fees flow up from merchants, advertisers, businesses, governments, armies and savers: card fees, app-store commissions, ad sales, cloud and model fees, software and hardware for NATO, Israel, Ukraine and Australia, and the interest stablecoin holders give up to Tether and Circle.' },
   data: { c: C.data, name: 'Data', t: 'Data taken from users and citizens', x: 'Users and citizens supply the raw material: social and search data for ads, conversations with chatbots, professional profiles, card spending, TikTok’s US data stored by Oracle, and phone locations that brokers sell to ICE, the FBI and the NSA.' },
   displace: { c: C.deficit, name: 'Displacement', t: 'Incumbents competed away', x: 'Satellite networks compete with incumbent telecom operators, and dollar stablecoins move payments outside the correspondent banks.' },
-  supply: { c: C.goods, name: 'Supply', t: 'Production and power that feed the firms', x: 'The physical production beneath the arm sits mostly abroad: chips at TSMC in Taiwan, iPhones in China and India, chip tools sold mostly to China, Taiwan and Korea. Power and minerals are the new bottleneck: Microsoft is restarting Three Mile Island and Apple buys magnets from MP Materials.' },
+  supply: { c: C.goods, name: 'Supply', t: 'Production and power that feed the firms', x: 'The physical production beneath the network sits mostly abroad: chips at TSMC in Taiwan, iPhones in China and India, chip tools sold mostly to China, Taiwan and Korea. Power and minerals are the new bottleneck: Microsoft is restarting Three Mile Island and Apple buys magnets from MP Materials.' },
 };
 const ATAB = { contract: 'Customer', equity: 'Owner', alliance: 'Alliances', invest: 'Reinvested', personnel: 'Revolving door', control: 'Control', debt: 'Plumbing', rent: 'Rents', data: 'Data', displace: 'Displacement', supply: 'Supply' };
 const AF = ['all', 'contract', 'equity', 'alliance', 'invest', 'personnel', 'control', 'debt', 'rent', 'data', 'displace', 'supply'];
@@ -3102,7 +3104,7 @@ function armGeo(mode) {
   const full = mode === 'full', x0 = 12, x1 = 1028, H = AGH[mode], P = {};
   const sw = (x1 - x0) / ARM.state.length, ew = (x1 - x0) / ARM.econ.length, cw = (x1 - x0) / 7;
   const armB = full ? [110, 492] : [110, 322], ecTop = armB[1] + 20;
-  const bands = [['US state', 0, 92], ['The arm · ' + ARM.sectors.length + ' sectors · ' + NFIRMS + ' firms', armB[0], armB[1] - armB[0]], ['The real economy', ecTop, H - ecTop]];
+  const bands = [['US state', 0, 92], ['The firms · ' + ARM.sectors.length + ' sectors · ' + NFIRMS + ' firms', armB[0], armB[1] - armB[0]], ['The real economy', ecTop, H - ecTop]];
   ARM.state.forEach(([id], i) => { P[id] = { x: x0 + sw * (i + .5), y: 58, w: sw - 10, h: 42 }; });
   ARM.econ.forEach(([id], i) => { P[id] = { x: x0 + ew * (i + .5), y: ecTop + 64, w: ew - 9, h: 52 }; });
   const rowTop = full ? [armB[0] + 34, armB[0] + 210] : [armB[0] + 36, armB[0] + 122];
@@ -3298,7 +3300,7 @@ function aCatLoad() {
   try { window.ISX.load('switches').then(d => { Object.keys(d.CAT || {}).forEach(k => (d.CAT[k].cases || []).forEach(c => { aCat[c] = d.CAT[k].s; })); if (view === 'arm' && armMode !== 'rev') { if (armFilter === 'control') { renderArmCard(); if (armLay === 'reach') renderReach(); if (ashKind) ashFill(); } } }).catch(() => {}); } catch (e) { /* the kinds stay off */ }
 }
 const PLAY = '<svg viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg>';
-const aDoor = c => { const S = aStory(c); return S ? `<button type="button" class="adoor" data-scen="${c}" aria-label="Open in Scenarios: ${esc(S.t)}">${PLAY}<span>Scenarios · ${esc(S.t)}</span></button>` : ''; };
+const aDoor = c => { const S = aStory(c); return S ? `<button type="button" class="adoor" data-scen="${c}" aria-label="Open the scenario in The imperial arm: ${esc(S.t)}">${PLAY}<span>Scenario · ${esc(S.t)}</span></button>` : ''; };
 const aDoors = e => e.cases.length ? `<span class="adoors">${e.cases.map(aDoor).join('')}</span>` : '';
 
 /* a node's reach: its own links, then, for a state body or an economy group, the links from the sectors it reaches to the far
@@ -3333,7 +3335,7 @@ function armElse(id) {
   const n = NODE[id], X = AELSE[boxOf(n).id] || {}, cs = aCases(id), rows = [];
   if (X.c != null && STEPS_D[X.c]) rows.push(`<button type="button" class="aels" data-ago="c:${X.c}"><small>Circuit</small><span>${STEPS_D[X.c].n} · ${esc(STEPS_D[X.c].t)}</span>${CHR}</button>`);
   if (X.s && FN[X.s]) rows.push(`<button type="button" class="aels" data-ago="s:${X.s}"><small>Simulator</small><span>${esc(FN[X.s][3])}</span>${CHR}</button>`);
-  if (cs.length) rows.push(`<div class="aels sc"><small>Scenarios</small><span class="acs">${cs.slice(0, 3).map(aDoor).join('')}${cs.length > 3 ? `<i>+${cs.length - 3} more in the links below</i>` : ''}</span></div>`);
+  if (cs.length) rows.push(`<div class="aels sc"><small>The imperial arm</small><span class="acs">${cs.slice(0, 3).map(aDoor).join('')}${cs.length > 3 ? `<i>+${cs.length - 3} more in the links below</i>` : ''}</span></div>`);
   return rows.length ? `<div class="aelse" role="group" aria-label="Elsewhere on the map"><div class="b4lk">Elsewhere on the map</div>${rows.join('')}</div>` : '';
 }
 /* every link of a node, by relation group (the sheet on phones and tablets) */
@@ -3366,7 +3368,7 @@ function armSwitches() {
 function armBoardHTML(where) {
   aCatLoad();
   const W = armSwitches(), ready = W.ctl.length - W.pulled;
-  let h = `<div class="aboard ${where}" role="group" aria-label="Who can switch off what"><p class="abh2">Who can switch off what. <b>${W.ctl.length}</b> control links: <b>${W.pulled}</b> pulled against a named party, <b>${ready}</b> ready. <b>${W.played}</b> are played in Scenarios.</p>`
+  let h = `<div class="aboard ${where}" role="group" aria-label="Who can switch off what"><p class="abh2">Who can switch off what. <b>${W.ctl.length}</b> control links: <b>${W.pulled}</b> pulled against a named party, <b>${ready}</b> ready. <b>${W.played}</b> are played in The imperial arm.</p>`
     + `<p class="abkey"><span><b>Pulled</b> a power Washington or a firm has used against a named firm, person or country, with a date.</span><span><b>Ready</b> a power that exists as a rule, not yet used on a named target.</span></p>`;
   let firms = false;
   W.hold.forEach(hid => {
@@ -3466,13 +3468,13 @@ function orbitPath(G, e) {
 const aNodeIds = () => [...ARM.state.map(s => s[0]), ...ARM.sectors.map(s => s[0]), ...ARM.econ.map(s => s[0])];
 function buildReach(host, W) {
   const orbit = armView === 'orbit', G = orbit ? orbitGeo(W) : reachGeo(W);
-  const svg = el('svg', { viewBox: `0 0 ${W} ${G.H.toFixed(0)}`, width: W, height: G.H.toFixed(0), class: 'arsvg ' + armView, role: 'group', 'aria-label': orbit ? 'Orbit: the US state at the centre, the fourteen sectors of the arm around it, the ten groups of the economy on the rim' : 'Reach: the US state on the left, the fourteen sectors of the arm in the middle, the ten groups of the economy on the right' });
+  const svg = el('svg', { viewBox: `0 0 ${W} ${G.H.toFixed(0)}`, width: W, height: G.H.toFixed(0), class: 'arsvg ' + armView, role: 'group', 'aria-label': orbit ? 'Orbit: the US state at the centre, the fourteen sectors of firms around it, the ten groups of the economy on the rim' : 'Reach: the US state on the left, the fourteen sectors of firms in the middle, the ten groups of the economy on the right' });
   RG.W = W; RG.v = armView; RG.lines = []; RG.nodes = {}; RG.G = G;
   if (orbit) {
     [.34, .64, 1].forEach(k => el('ellipse', { cx: G.cx, cy: G.cy, rx: (G.rx * k).toFixed(1), ry: (G.ry * k).toFixed(1), class: 'oring' }, svg));
   } else {
     const hy = 18;
-    [['US state', (G.sx + G.XS) / 2, 'middle'], ['The arm', (G.PL + G.PR) / 2, 'middle'], ['The economy', (G.XE + W - G.sx) / 2, 'middle']].forEach(([t, x, a]) => { el('text', { x: x.toFixed(1), y: hy, 'text-anchor': a, class: 'rcap', 'aria-hidden': 'true' }, svg).textContent = t; });
+    [['US state', (G.sx + G.XS) / 2, 'middle'], ['The firms', (G.PL + G.PR) / 2, 'middle'], ['The economy', (G.XE + W - G.sx) / 2, 'middle']].forEach(([t, x, a]) => { el('text', { x: x.toFixed(1), y: hy, 'text-anchor': a, class: 'rcap', 'aria-hidden': 'true' }, svg).textContent = t; });
   }
   const gl = el('g', { class: 'rlines', 'aria-hidden': 'true' }, svg), gn = el('g', { class: 'rnodes' }, svg), gt = el('g', { class: 'rlabs', 'aria-hidden': 'true' }, svg);
   ARM.edges.forEach(e => { const P = orbit ? orbitPath(G, e) : reachPath(G, e); if (!P) return; const p = el('path', { d: P.d, stroke: ATYPE[e.type].c, 'stroke-dasharray': ADASH[e.type] || 'none', class: 'rl' }, gl); RG.lines.push({ e, p, inner: !!P.inner }); });
@@ -3506,7 +3508,7 @@ function buildReach(host, W) {
       const w = Math.max(...o.ls.map(ln => aTextW(ln, G.fN))); RG.boxes.push([o.r ? x : x - w, o.ty - o.h / 2, o.r ? x + w : x, o.ty + o.h / 2]);
     });
     ARM.state.concat(ARM.econ).forEach(([id]) => { const p = G.P[id]; RG.boxes.push([p.x - 5, p.y - 5, p.x + 5, p.y + 5]); });
-    [['US state', G.cy + 4], ['The arm', G.cy - G.ry * .64 - 10], ['The economy', G.cy - G.ry - 14]].forEach(([t, y]) => { el('text', { x: G.cx, y: y.toFixed(1), 'text-anchor': 'middle', class: 'rcap', 'aria-hidden': 'true' }, gt).textContent = t; });
+    [['US state', G.cy + 4], ['The firms', G.cy - G.ry * .64 - 10], ['The economy', G.cy - G.ry - 14]].forEach(([t, y]) => { el('text', { x: G.cx, y: y.toFixed(1), 'text-anchor': 'middle', class: 'rcap', 'aria-hidden': 'true' }, gt).textContent = t; });
     RG.labs = el('g', { class: 'olabs', 'aria-hidden': 'true' }, svg);
   } else RG.labs = null;
   host.innerHTML = ''; host.appendChild(svg);
@@ -3608,9 +3610,9 @@ function armCardHTML(strip) {
       const tap = armView === 'orbit' ? 'Nine state bodies at the centre, fourteen sectors around them, ten groups of the economy on the rim. Tap a dot to name it and see its ties.' : 'Tap a state body to see whom it reaches through the firms, or a group on the right to see who in Washington reaches it.';
       return `<div class="b4k"><span>Whole machine · ${ARM.edges.length} links</span>${cnt}</div><h3 class="b4t">Who reaches whom</h3><p class="aq">${esc(AQ)}</p>`
         + `<div class="arfig w3"><div><b>${Wh.u} of ${ARM.state.length}</b><span>state bodies reach users</span></div><div><b>${Wh.sa}</b><span>state ↔ arm</span></div><div><b>${Wh.ae}</b><span>arm ↔ economy</span></div></div>`
-        + `<p class="atap">${esc(tap)}</p>${mechHTML(esc(rv) + (mech ? ' ' + esc(mech) : ''))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}<p class="awide">Every firm in one picture: open the Arm on a wider screen.</p>`;
+        + `<p class="atap">${esc(tap)}</p>${mechHTML(esc(rv) + (mech ? ' ' + esc(mech) : ''))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}<p class="awide">Every firm in one picture: open the elite network on a wider screen.</p>`;
     }
-    return `<div class="b4k"><span>The imperial arm</span>${cnt}</div><h3 class="b4t">The whole machine</h3>`
+    return `<div class="b4k"><span>The elite network</span>${cnt}</div><h3 class="b4t">The whole machine</h3>`
       + (strip ? `<div class="b4sl"><p class="aq">${esc(AQ)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-ash="pick">Relations ${CHR}</button><button type="button" class="b4b2 q" data-acard="mech">The mechanism</button></div>`
         : `<p class="aq">${esc(AQ)}</p><p>${esc(rv)}</p>${fig}${mechHTML(esc(mech))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}`);
   }
@@ -3626,7 +3628,7 @@ function renderArmCard() {
   const strip = c.classList.contains('strip');
   c.style.setProperty('--sc', aCol(armFilter));
   c.innerHTML = armCardHTML(strip);
-  c.setAttribute('aria-label', 'The imperial arm: ' + (armSel ? NODE[armSel].label : armFilter === 'all' ? 'the whole machine' : ATYPE[armFilter].name));
+  c.setAttribute('aria-label', 'The elite network: ' + (armSel ? NODE[armSel].label : armFilter === 'all' ? 'the whole machine' : ATYPE[armFilter].name));
   mechWire(c);
   emit('card');
 }
@@ -3787,7 +3789,7 @@ function armBar() {
     pm = [mk('all')]; AGRP.forEach(g => { pm.push(gap); g.keys.forEach(k => pm.push(mk(k))); });
   }
   const nx = keys[(i + 1) % n];
-  RT.render(host, { id: rev ? 'revenue' : 'arm', label: rev ? 'Revenue map: sectors' : 'The imperial arm: relations', stage: rev ? $('scene-map') : $('scene-arm'),
+  RT.render(host, { id: rev ? 'revenue' : 'arm', label: rev ? 'Revenue map: sectors' : 'The elite network: relations', stage: rev ? $('scene-map') : $('scene-arm'),
     back: { enabled: i > 0, label: i > 0 ? 'Back: ' + nm(keys[i - 1]) : 'Back' },
     next: { kicker: 'Next', title: nm(nx), pkicker: 'Next', ptitle: nm(nx) },
     line: { kicker: rev ? 'Sector' : 'Relation', title: nm(cur), attrs: { 'data-ash': 'pick', 'aria-haspopup': 'dialog', 'aria-expanded': String(ashKind === 'pick'), 'aria-controls': 'isx-asheet' } },
@@ -3817,7 +3819,7 @@ function armLayout() {
   const top0 = hud ? Math.round(hb - fr.getBoundingClientRect().top) + 10 : 96, cTop = top0 + 22;
   const was = card.className;
   const place = (e, o) => { Object.assign(e.style, { left: '', right: '', top: '', bottom: '', width: '', height: '', maxHeight: '' }, o || {}); };
-  const kick = $(rev ? 'rkick' : 'akick'); if (kick) kick.textContent = rev ? `Revenue map · latest fiscal year · ${REVSEC.length} sectors · ${REV.firms.length} firms` : `The imperial arm · ${ARM.state.length} state bodies · ${ARM.sectors.length} sectors · ${NFIRMS} firms · ${ARM.edges.length} documented links`;
+  const kick = $(rev ? 'rkick' : 'akick'); if (kick) kick.textContent = rev ? `Revenue map · latest fiscal year · ${REVSEC.length} sectors · ${REV.firms.length} firms` : `The elite network · ${ARM.state.length} state bodies · ${ARM.sectors.length} sectors · ${NFIRMS} firms · ${ARM.edges.length} documented links`;
   if (rev) {
     const H = sc.clientHeight, barTop = H - 68;
     card.className = 'b4card acard ' + (ph ? 'flow' : col ? 'col' : 'strip');
@@ -3910,13 +3912,13 @@ function whereNow(from) {
   if (from) return { tab: 'Below the map', where: from === 'page/support' ? 'The support and feedback box' : from, slug: from };
   const base = hashFor();
   if (view === 'map') { const t = STEPS[step]; return { tab: 'Circuit · ' + (circMode === 'min' ? 'the other stack' : 'the dollar loop'), where: ringOn ? 'The ring, after step 10' : step ? 'Step ' + t.n + ' · ' + t.t + (selIso && CTY[selIso] ? ' · ' + CTY[selIso].name : '') : 'Overview' + (selIso && CTY[selIso] ? ' · ' + CTY[selIso].name : ''), slug: base }; }
-  if (view === 'arm' && armMode === 'rev') return { tab: 'Arm · revenue map', where: revSec === 'all' ? 'All sectors' : REV.sectors[revSec][0], slug: base };
-  if (view === 'arm') { const n = armSel ? NODE[armSel] : null; return { tab: 'Arm · the machine', where: (n ? n.label + ' (' + (n.layer === 'sector' ? 'sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'real economy' : 'firm, ' + NODE[n.sector].label) + ')' : '') + (n && armFilter !== 'all' ? ' · ' : '') + (armFilter !== 'all' ? 'relation ' + ATYPE[armFilter].name : n ? '' : 'The whole machine'), slug: base }; }
+  if (view === 'arm' && armMode === 'rev') return { tab: 'The elite network · revenue map', where: revSec === 'all' ? 'All sectors' : REV.sectors[revSec][0], slug: base };
+  if (view === 'arm') { const n = armSel ? NODE[armSel] : null; return { tab: 'The elite network · the machine', where: (n ? n.label + ' (' + (n.layer === 'sector' ? 'sector' : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'real economy' : 'firm, ' + NODE[n.sector].label) + ')' : '') + (n && armFilter !== 'all' ? ' · ' : '') + (armFilter !== 'all' ? 'relation ' + ATYPE[armFilter].name : n ? '' : 'The whole machine'), slug: base }; }
   if (view === 'story') {
     const S = STORIES[storyIdx], n = S.steps.length;
-    if (storyStep < 0) return { tab: 'Scenarios', where: S.h + ' · the gallery', slug: 'scenarios/' + S.id };
-    if (storyStep >= n) return { tab: 'Scenarios', where: S.h + ' · the close', slug: 'scenarios/' + S.id + '/close' };
-    const st = S.steps[storyStep]; return { tab: 'Scenarios', where: S.h + ' · step ' + (storyStep + 1) + ' of ' + n + (st && st.t ? ' · ' + st.t : ''), slug: 'scenarios/' + S.id + '/' + pad(storyStep + 1) };
+    if (storyStep < 0) return { tab: 'The imperial arm', where: S.h + ' · the gallery', slug: 'imperial-arm/' + S.id };
+    if (storyStep >= n) return { tab: 'The imperial arm', where: S.h + ' · the close', slug: 'imperial-arm/' + S.id + '/close' };
+    const st = S.steps[storyStep]; return { tab: 'The imperial arm', where: S.h + ' · step ' + (storyStep + 1) + ' of ' + n + (st && st.t ? ' · ' + st.t : ''), slug: 'imperial-arm/' + S.id + '/' + pad(storyStep + 1) };
   }
   if (view === 'fin' && finMode === 'stack') return { tab: 'The imperial machinery · the capital stack', where: 'The capital stack', slug: 'capital-stack' };
   if (view === 'fin') {
@@ -4498,7 +4500,7 @@ const STEP6 = {
     deep: () => [
       ['What counts', 'Service revenue earned outside the US by US platform, cloud, AI and payment firms, from their filings. Hardware and retail sales are left out. Where firms do not split revenue by region, the split is estimated. The card lists every firm with its source.'],
       ['Why official data miss it', 'The balance of payments records only $195bn of US receipts for the use of intellectual property in 2025 (BEA), a narrower measure: most foreign revenue is booked by subsidiaries abroad, Europe’s mostly in Ireland.'],
-      ['Why it matters', 'Rents are the loop’s fuel: monopoly income that does not depend on exporting goods. The imperial arm tab shows the firms that collect it.'],
+      ['Why it matters', 'Rents are the loop’s fuel: monopoly income that does not depend on exporting goods. The elite network tab shows the firms that collect it.'],
     ], defs: ['rents'] },
   capex: { ic: 'capex', tease: 'Who makes the machines?',
     sum: 'Amazon, Alphabet, Microsoft and Meta plan about $730bn of capital spending in 2026. Much of it leaves the US as orders for factories in Taiwan, Mexico, Korea and Southeast Asia.',
@@ -4615,7 +4617,7 @@ const METHOD6 = [
   ['The profit dollar: studies', 'On which way the regime runs. Spending and profits: E. A. da Silva, Brazilian Journal of Political Economy 7(4), 1987; M. Cassetti, PKES Working Paper 2510, 2025. Investment and profits: I. Stubelj (Granger tests, EU countries). Capital flows and the current account: H. Yan (2005); A. Oeking and L. Zwick, Ruhr Economic Papers 565 (2015): for rich economies the current account mostly leads. Imports and federal outlays: D. Autor, D. Dorn and G. Hanson, American Economic Review 103(6), 2013, and “On the Persistence of the China Shock”, 2021; T. C. Tang (2014). The other direction: narrative studies of fiscal consolidation find that a consolidation of 1% of GDP raises the current-account balance by about 0.6 points. Whose saving funds the deficits: A. Mian, L. Straub and A. Sufi, NBER Working Paper 26941 (2020). No study confirms the whole two-way regime; timing tests measure timing, not cause. Links not stored.'],
   ['Trade', 'UN Comtrade 2025. Chip-making tools (step 03) are each economy’s total exports and imports against all other countries together, because country pairs mislead in global value chains. Where arcs show pairs (steps 02, 04, 05): flows into the US use US import data; other flows use the reporting country’s data, as each step states. AI hardware means computers and servers (HS 8471), their parts (8473), chips (8542) and chip-making machines (8486); wafers are HS 3818. Taiwan does not report to Comtrade: its figures come from its Ministry of Finance and use a broader ICT category (marked *). All trade is gross, not value added.'],
   ['Capital flows and holdings', 'Flows are TIC net purchases summed over 12 months. Holdings are TIC’s monthly table of major foreign holders and the annual survey of foreign portfolio holdings at June 2025 (final report of April 2026 where its main tables list the country; otherwise the preliminary report of February 2026). TIC assigns securities to the country where they are held, so financial centres look bigger than their owners are; we add the Fed’s research on likely owners and mark uncertain attributions with *.'],
-  ['Company figures', 'Rents, capex and deals come from filings, results and bond documents. For the rents, each firm’s source is linked in the table on step 01 and in the revenue view of the imperial arm tab, with a status: checked against the filing, total checked with the split estimated, secondary source, or not re-checked. Where a firm does not split revenue by region, the split is estimated from its disclosures and marked.'],
+  ['Company figures', 'Rents, capex and deals come from filings, results and bond documents. For the rents, each firm’s source is linked in the table on step 01 and in the revenue view of the elite network tab, with a status: checked against the filing, total checked with the split estimated, secondary source, or not re-checked. Where a firm does not split revenue by region, the split is estimated from its disclosures and marked.'],
   ['The map', 'Arc width is proportional to value within each step, not across steps. Thin, regular arcs are schematic: they show a relation, not an amount. Bars are proportional to the value in their label; node rings to a country’s flows in the step.'],
   ['Estimates and updates', '* marks figures that are implied, derived or uncertain; sources are dated. The key numbers are checked monthly against their primary sources; the date is on the map.'],
   ['Not counted', 'Direct investment, derivatives and services trade other than the platforms’ rents.'],
@@ -4964,7 +4966,7 @@ function rentFirms(host, tog) {
     + `<div class="rn tot"><b>Total abroad</b></div><div class="r tot">${fmtBn(sum)}</div><div class="r"></div><div class="rs"></div></div>`
     + '<div class="gmh" style="margin-top:14px">The official statistic is narrower</div>'
     + `<div class="fnote" style="margin-top:2px">US receipts for the use of intellectual property (BEA, balance of payments): ${Object.keys(ip).slice(-3).map(y => '$' + (ip[y] / 1e3).toFixed(1) + 'bn in ' + y).join(', ')}. That is a different measure from the table above, which counts service revenue earned by foreign subsidiaries and booked abroad, Europe’s mostly in Ireland. <a href="${esc(REV.bop.url)}" target="_blank" rel="noopener noreferrer">BEA via FRED, series IEAXSIPA</a>, updated 24 Jun 2026, checked ${esc(REV.bop.checked)}.</div>`;
-  $('c-note').innerHTML = richText('Sources: the companies’ annual reports (10-K) for the latest fiscal year, linked in each row. Where a firm does not report revenue by region, the split is our estimate from its disclosures and is marked “est.”. Chip firms and defence firms are not counted here: the imperial arm tab lists all five sectors. The same figures, with dates and status, are kept in the data inventory behind this page (sheet “Rents”).');
+  $('c-note').innerHTML = richText('Sources: the companies’ annual reports (10-K) for the latest fiscal year, linked in each row. Where a firm does not report revenue by region, the split is our estimate from its disclosures and is marked “est.”. Chip firms and defence firms are not counted here: the elite network tab lists all five sectors. The same figures, with dates and status, are kept in the data inventory behind this page (sheet “Rents”).');
 }
 /* v.1.9: the rents, by region: where the customer sits; each region shows its biggest payers and how much rests on estimated splits */
 function rentRegions(host, tog) {
@@ -6428,7 +6430,7 @@ const INTRO_HTML = `
         <h3>How to read the map</h3>
         <div class="in-ways">
           <p><b>Follow the loop.</b> Press <em>Play</em> or use the step bar along the bottom: ten steps, from rents to the loop closing. Arcs are flows, as wide as their value. Click any country for its card.</p>
-          <p><b>Find everything.</b> Tabs at the top: the Circuit, the Profit dollar, the imperial Arm, the imperial Machinery (with the Scott Bessent Simulator) and 14 Scenarios; a crisis simulation is coming. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page. Unless a named author is credited, the readings on this map are the author’s.</p>
+          <p><b>Find everything.</b> Tabs at the top: the Circuit, the Profit dollar, the Elite network, the imperial Machinery (with the Scott Bessent Simulator) and the imperial Arm with its 14 scenarios; a crisis simulation is coming. Countries raised with a gold edge signed the June 2026 AI statement. Sources, dates and definitions sit under “How we count”, at the foot of the page. Unless a named author is credited, the readings on this map are the author’s.</p>
         </div>
       </div>
     </div>
@@ -6531,7 +6533,7 @@ function buildTabs() {
   const host = $('tabs');
   if (RT && view === 'map') { circBar(); return; }
   if (RT && view === 'arm') { armBar(); return; }   /* B4: the Arm and the Revenue map join the shared bar */
-  if (RT && view === 'profit') { if (window.ISX && ISX.profit) ISX.profit.bar(); return; }   /* the profit dollar's four stations */
+  if (RT && view === 'profit') { if (window.ISX && ISX.profit) ISX.profit.bar(); return; }   /* the profit dollar's six stations */
   if (RT) { RT.drop(host); if (!(view === 'story' || (view === 'fin' && finMode === 'plumb'))) RT.release(); }
   host.innerHTML = '';
   const tab = (n, t, col, cur, fn, extra) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tb' + (extra ? ' ' + extra : ''); b.style.setProperty('--sc', col); b.innerHTML = `<span class="n">${n}</span><span class="t">${esc(t)}</span>`; if (cur) b.setAttribute('aria-current', 'true'); b.addEventListener('click', fn); host.appendChild(b); return b; };
@@ -6677,12 +6679,12 @@ function ringDraw(keep) {
 }
 function ringClick(e) { const g = e.target.closest('[data-rs]'); if (!g) return; stopPlay(); setStep(+g.dataset.rs); const nx = RT && RT.next('circuit'); if (nx && e.detail === 0) nx.focus({ preventScroll: true }); }
 /* the card on the ring: step 10's own two sentences, three doors of equal weight into the other tabs, and a way round again.
-   A door is a real link (#simulator, #arm, #scenarios), in its tab's own hue from the top strip. */
+   A door is a real link (#simulator, #elite-network, #imperial-arm), in its tab's own hue from the top strip. */
 const RDOORS = [
   { h: 'profit', c: '#d78bff', t: 'The profit dollar', s: 'Whose profits the world’s savings buy' },
   { h: 'simulator', c: '#ffd27a', t: 'The imperial machinery', s: 'Follow the money in the Scott Bessent Simulator' },
-  { h: 'arm', c: '#44d7ec', t: 'The imperial arm', s: 'See the internal structure of dominant American capital' },
-  { h: 'scenarios', c: '#e4ebf1', t: 'Scenarios', s: 'How Washington leverages the stack internationally' },
+  { h: 'elite-network', c: '#44d7ec', t: 'The elite network', s: 'See the internal structure of dominant American capital' },
+  { h: 'imperial-arm', c: '#e4ebf1', t: 'The imperial arm', s: 'Scenarios: how Washington leverages the stack internationally' },
 ];
 function ringCard() {
   const T = ringTxt(10), a = (/High valuations and cheap capital close the loop\./.exec(T) || /High valuations and cheap \w+ close the loop/.exec(T) || ['High valuations and cheap capital close the loop.'])[0].replace(/\.?$/, '.'), b = (/As long as the loop turns[^.]*\./.exec(T) || [''])[0];
@@ -6741,7 +6743,7 @@ function narrate() {
     h = S.h; x = S.sum; sc = '#ff3b5c'; fig = String(nch); cap = nch === 1 ? 'chokepoint, where a US switch limits sovereignty' : 'chokepoints, where a US switch limits sovereignty';
     scale = 'Step through the chain above; red broken links mark a switch, sanction or refusal.';
   } else if (view === 'arm') {
-    const t = armFilter === 'all' ? { name: 'The imperial arm', x: 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from.' } : ATYPE[armFilter];
+    const t = armFilter === 'all' ? { name: 'The elite network', x: 'The machine has three layers. On top, the US state acts at once as investor (In-Q-Tel and direct stakes), customer (defence, intelligence and border contracts) and regulator (licences, sanctions, export controls and the CLOUD Act). In the middle, firms grouped by sector, bound to each other by stakes, partnerships, people and recycled profits. Below, the real economy they draw rents and data from.' } : ATYPE[armFilter];
     h = t.name; x = t.x; sc = armFilter === 'all' ? '#e4ebf1' : ATYPE[armFilter].c;
     fig = String(ARM.edges.filter(e => armFilter === 'all' || e.type === armFilter).length); cap = armFilter === 'all' ? 'documented links between state, firms and economy' : 'links of this kind';
     scale = 'Particles show the direction of each relation, not its size.';
@@ -6920,7 +6922,7 @@ function renderLegend() {
 const SRC = {
   fin: 'Sources, episodes: Bloomberg (Treasury selloff, 11 Apr 2025); Trump’s remarks (9 Apr 2025); Al Jazeera (US–Japan yen intervention, 3 Aug 2026, citing Bank of Japan data); Wikipedia, 2026 Iran war fuel crisis (IEA, AAA, EIA data); Federal Reserve implementation note (16 Sep 2026). Reuters (quarterly refunding and buybacks, 4 Nov 2026); CME Group (net bill issuance, 6 Aug 2026); TipRanks citing The Information (Hyperion, Oct 2025); Office of Financial Research (repo, Dec 2025); US Treasury (financing estimates, Aug 2026; TIC); TrendForce (bills share, Aug 2026); Reuters (buybacks, 20 Aug 2026; hyperscaler bonds, 29 Jul 2026); Cboe (MOVE and yields, 19 Oct 2026); Federal Reserve (FOMC statements, 16 Sep and 28 Oct 2026; H.4.1, 29 Oct 2026; eSLR final rule and Governor Barr’s statement, 25 Nov 2025); New York Fed (10 Dec 2025); Bloomberg via The Star (16 Sep 2026); Tether attestations (Q4 2025; Q3 2026, via Bitcoin.com News, 30 Oct 2026); BIS Working Paper 1270; Goldman Sachs and Apollo via Reuters (Jul 2026); Morgan Stanley (Aug 2025); IFR (Hyperion, Oct 2025; Amazon, Mar 2026); Financial Times (Google and Anthropic TPU financing, Aug 2026; OpenAI revenue, Oct 2026); Bloomberg via Swissinfo and MarketScreener (Alphabet, Feb 2026); The Next Web (May 2026); CNBC (Meta, 27 Oct 2026); Moody’s via Reinsurance News (23 Oct 2026); FT via Startup Fortune (NAIC, Jun 2026); DNB (Mar 2026); US Treasury portfolio-holdings survey (Apr 2026).',
   map: 'Sources, the dollar loop: BEA (current account, annual update, 24 Jun 2026); US Treasury FX report (Jul 2026); IMF External Sector Report (Jul 2026); DGBAS via Focus Taiwan (30 Jan 2026); US Treasury, quarterly refunding (4 Nov 2026, via Reuters) and TBAC presentation (Aug 2026); Joint Economic Committee monthly debt update (Oct 2026); CME Group (Norland, 6 Aug 2026); Office of Financial Research (repo market, 4 Dec 2025); S&P Global Ratings via ANI (29 Oct 2026); Howell, Capital Wars (25 Apr 2026); Miran and Roubini, Hudson Bay Capital (2024); Colin, The Arden Letter (18 Oct 2026); Tooze, Chartbook 475 and 481 (Sep and Oct 2026); Varoufakis, Technofeudalism (2023); ING Research (Dutch economy, 10 Sep 2026; ASML, 26 Oct 2026, via Techzine and IO+); Cboe 10-year yield index (TNX), October 2026 closes via Portfolio Terminal; Klein and Pettis, Trade Wars Are Class Wars (2020); US Treasury TIC (16 Oct 2026; major foreign holders, Aug 2026; portfolio-holdings survey at 30 Jun 2025, Apr 2026); Federal Reserve FEDS Notes (Barth and others, 15 Oct 2025; Judson and Kim, 13 Feb 2026); Federal Reserve Z.1; Epoch AI Frontier Data Centers hub (Nov 2026); Reuters (hyperscaler bonds, 29 Jul 2026); Growth models after Baccaro, Blyth and Pontusson (2022) and Klein and Pettis (2020). The other stack: USGS Mineral Commodity Summaries 2026; IEA Global Critical Minerals Outlook 2026 via BOFIT (Aug 2026); EIA via the American Nuclear Society (Aug 2026); Supply Chain Dive (23 Sep 2026); Axios (Project Vault, Feb 2026). US State Department (Pax Silica signatories, to 23 Oct 2026); WAICO members to 31 Jul 2026 from public tracking of the founding agreement; World Bank and US Treasury FX report, July 2026 (current accounts, 2025); UN Comtrade, 2025 (US imports, HS 8471, 8473, 8542, 8486; exports of chip-making machines, wafers and chips by the Netherlands, Japan, Korea and the US; Taiwan’s flows from partners’ imports of “Other Asia, nes”; Korea’s and Japan’s flows to China include Hong Kong); US Treasury TIC survey of foreign holdings of US securities, 30 June 2025, and TIC monthly data to Aug 2026; BEA (receipts for the use of intellectual property, 2025); company results and filings, Oct 2026. Rents: company filings for the latest fiscal year, with regional splits partly estimated. Asset prices: Federal Reserve Financial Accounts (Q2 2026) and Distributional Financial Accounts; Minneapolis Fed on Moody’s spending data (2026); JPMorgan via Coin Bureau (AI share of the S&P 500, Oct 2026); ICE (dollar index). Financialised industrial policy: Federal Reserve and New York Fed (reserve management purchases; reserves, 9 Sep 2026); Federal Reserve, FDIC and OCC (eSLR rule, Nov 2025); Tether attestations (Q4 2025; Q3 2026, via Bitcoin.com News, 30 Oct 2026). AI-hardware trade: UN Comtrade 2025; Taiwan Ministry of Finance. Minerals, liquidity and asset-price arcs are schematic. Country shapes: Natural Earth; night lights: NASA.',
-  arm: 'Sources: company filings, annual reports and announcements; revenue map: latest fiscal-year filings, regional splits partly estimated; Nvidia 10-K FY2026; Palantir Q4 2025 release; Tether Q4 2025 attestation; CNBC and The Next Web (Nvidia investments, 2026); Anthropic (Fable 5 and Mythos 5, Jun 2026); French Senate inquiry (Microsoft France, Jun 2025); AP (ICC email, May 2025); Le Monde (ICC judge, Nov 2025); DefenseScoop (Detachment 201, Jun 2025); SpaceX listing documents (May 2026); Senator Wyden (NSA data purchases, Jan 2024); US Army (Palantir enterprise agreement, Aug 2025); Reuters (Maven programme of record, Mar 2026); Chief Digital and AI Office (frontier-AI awards, 2025); US Space Force (data-network backbone, May 2026); Department of Defense (MP Materials, Jul 2025); White House and Commerce (Intel stake, Aug 2025; H200 licences, Dec 2025); ICE (ImmigrationOS, Apr 2025); Nextgov (NSA cloud, 2021); Defense News (Meta–Anduril, May 2025; OpenAI–Anduril, Dec 2024); Tether Q1 2026 attestation and Cointelegraph (Garantex, Mar 2025); GENIUS Act (Jul 2025); Axios (Catch and Revoke, Mar 2025); NATO (Maven Smart System, Apr 2025); Bloomberg (Palantir–Israel, Jan 2024); Times of Israel (Project Nimbus, Apr 2021); Microsoft and Globes (Azure, Sep 2025); Australian Department of Defence (Ghost Shark, Sep 2025); Reuters (Starshield, 2024); Isaacson and Musk (Starlink and Crimea, Sep 2023); Oracle (TikTok US joint venture, Jan 2026). The arm shows documented links only; it is not a complete map of contracts.',
+  arm: 'Sources: company filings, annual reports and announcements; revenue map: latest fiscal-year filings, regional splits partly estimated; Nvidia 10-K FY2026; Palantir Q4 2025 release; Tether Q4 2025 attestation; CNBC and The Next Web (Nvidia investments, 2026); Anthropic (Fable 5 and Mythos 5, Jun 2026); French Senate inquiry (Microsoft France, Jun 2025); AP (ICC email, May 2025); Le Monde (ICC judge, Nov 2025); DefenseScoop (Detachment 201, Jun 2025); SpaceX listing documents (May 2026); Senator Wyden (NSA data purchases, Jan 2024); US Army (Palantir enterprise agreement, Aug 2025); Reuters (Maven programme of record, Mar 2026); Chief Digital and AI Office (frontier-AI awards, 2025); US Space Force (data-network backbone, May 2026); Department of Defense (MP Materials, Jul 2025); White House and Commerce (Intel stake, Aug 2025; H200 licences, Dec 2025); ICE (ImmigrationOS, Apr 2025); Nextgov (NSA cloud, 2021); Defense News (Meta–Anduril, May 2025; OpenAI–Anduril, Dec 2024); Tether Q1 2026 attestation and Cointelegraph (Garantex, Mar 2025); GENIUS Act (Jul 2025); Axios (Catch and Revoke, Mar 2025); NATO (Maven Smart System, Apr 2025); Bloomberg (Palantir–Israel, Jan 2024); Times of Israel (Project Nimbus, Apr 2021); Microsoft and Globes (Azure, Sep 2025); Australian Department of Defence (Ghost Shark, Sep 2025); Reuters (Starshield, 2024); Isaacson and Musk (Starlink and Crimea, Sep 2023); Oracle (TikTok US joint venture, Jan 2026). The network shows documented links only; it is not a complete map of contracts.',
   story: 'Sources: Time (Feb 2024); Reuters (Feb 2023, Mar 2025); Pentagon (Starlink contract, Jun 2023); Isaacson, Elon Musk (2023); Maxar and NGA (Mar 2025); Ukrainian Defence Ministry (5 Feb 2026); Dutch Safety Board (2015); Joint Investigation Team (2016, 2018, 2019); Bellingcat; District Court of The Hague (9 Jun 2020, 17 Nov 2022); ICAO Council (May 2025); Volkskrant (Palantir at the Dutch police, 2025); The Tufts Daily (26 Mar 2024); Axios (6 Mar 2025); Washington Post (Apr 2025); Ozturk v. Hyde (D. Vt.); ICE (ImmigrationOS, Apr 2025); CBP (ESTA notice, Dec 2025); Follow the Money (Marechaussee and Palantir); IamExpat and European Commission (EBSP, May 2026); DHS (biometric entry-exit rule, 27 Oct 2025; HART privacy impact assessment); AFP (Mar 2025); Executive Order 14203 and OFAC (2025); AP (May 2025); Le Monde (Nov 2025); French Senate (10 Jun 2025); Handelsblatt and Euractiv (Oct 2025). Maps: Natural Earth; Crimea shown as part of Ukraine.',
   profit: 'Sources, the profit dollar: BEA, national accounts (NIPA flat files, 4 Nov 2026); Forbes Global 2000, lists of 2011 to 2026; IMF World Economic Outlook (Oct 2026: GDP in dollars, current accounts); Penn World Table 11.0 (7 Oct 2025); Federal Reserve Board, Financial Accounts of the United States (Z.1) and Distributional Financial Accounts, via FRED (read 17 Nov 2026); World Bank, market capitalisation of listed domestic companies (11 Nov 2026), from the World Federation of Exchanges; S&P Dow Jones Indices, S&P 500 buybacks workbook; annual reports (10-K) of Amazon, Alphabet, Microsoft, Meta and Oracle; Amundi Investment Institute, Working Paper 190 (Apr 2026); Bianco Research (11 Oct 2026); H. M. Schwartz, Review of International Political Economy 26(3), 2019; A. Tooze, Chartbook 457 (8 Jul 2026); Levy Forecasting Center, Where Profits Come From (2008); Baccaro, Blyth and Pontusson (eds), Diminishing Returns (2022); Autor, Dorn and Hanson (2013); Mian, Straub and Sufi (2020). The profit equation is accounting.',
   chain: 'Sources: Reuters (Palantir in Ukraine, Feb 2023); Time (Ukraine as an AI war lab, Feb 2024); Pentagon and Defense News (Starlink for Ukraine, Jun 2023); Isaacson and Musk (Crimea, Sep 2023); Bloomberg (Maven and the February 2024 strikes); DefenseScoop (Maven contract, May 2025); Reuters (Maven programme of record, Mar 2026); NRK and Vice (Venntel location data, Dec 2020); Wall Street Journal (ICE and CBP location data, Feb 2020); ICE (ImmigrationOS, Apr 2025); Guardian, +972 Magazine and Local Call (Unit 8200 and Azure, Aug 2025); Microsoft (review, Sep 2025); Times of Israel (Project Nimbus, Apr 2021); +972 Magazine (Lavender, Apr 2024); OFAC (Garantex, Apr 2022); Cointelegraph (Tether freeze, Mar 2025); Decrypt (domain seizure, Mar 2025); Axios (Catch and Revoke, Mar 2025). Scenarios S1–S5 are illustrations, not reports.',
@@ -6989,7 +6991,7 @@ function hasWebGL() {
 function globeReady() { const gb = ROOT.querySelector('.globebox'); if (gb) gb.classList.add('gl-ready'); }
 function globeFallback(why) {
   const host = $('globe'); globe = null; ROOT.classList.add('no-gl'); fsPlace();
-  host.innerHTML = `<div class="nogl6"><img src="/assets/img/globe-1000.webp" alt="" width="1000" height="1000" decoding="async"><p><b>${why}</b> Everything else works: the step cards and tables under the map, the Arm, the Machinery and the Scenarios.</p></div>`;
+  host.innerHTML = `<div class="nogl6"><img src="/assets/img/globe-1000.webp" alt="" width="1000" height="1000" decoding="async"><p><b>${why}</b> Everything else works: the step cards and tables under the map, the Elite network, the Machinery and the Imperial arm.</p></div>`;
   globeReady();
 }
 function bootGlobe() {
@@ -7019,7 +7021,7 @@ function gTips() {
   return [
     { k: 'drag', h: 'Turn the globe', p: COARSE ? 'Swipe sideways across the globe to turn it. Swipe up or down to scroll the page as usual.' : 'Drag the globe to turn it. It stops spinning as soon as you take hold.' },
     { k: 'select', h: COARSE ? 'Tap a country' : 'Click a country', p: 'The globe turns to it and its card opens under the map, with its figures for this step. ' + (COARSE ? 'Tap it again' : 'Click it again') + ' to go back.' },
-    { k: 'step', h: 'Step through the loop', p: PHONE() ? 'Back and Next in the bar at the bottom take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In Scenarios, ← → move through each case.', t: '#isx-tabs' },
+    { k: 'step', h: 'Step through the loop', p: PHONE() ? 'Back and Next in the bar at the bottom take you through the ten steps, from rents to the loop closing.' : COARSE ? 'The step bar takes you through the ten steps, from rents to the loop closing. Play runs them for you.' : 'Use ← → on your keyboard, or the step bar along the bottom: ten steps, from rents to the loop closing. In The imperial arm, ← → move through each scenario.', t: '#isx-tabs' },
     { k: 'zoom', h: 'Zoom', p: (COARSE ? '+ and −' : '+ and − (or the + and − keys)') + ' zoom in and out; ⟲ brings back the view for this step.', t: '#isx-zoom' },
   ];
 }
@@ -7116,7 +7118,7 @@ function simTipsShow() { if (window.ISX && ISX.simtour) ISX.simtour.open(true);
 
 
 /* ================= v.1.11: linkable tabs, phone step control, share =================
-   Tabs: #circuit, #profit, #arm, #simulator, #scenarios (plus #revenue for the Arm’s revenue map and #capital-stack for the
+   Tabs: #circuit, #profit, #elite-network, #simulator, #imperial-arm (the old #arm and #scenarios still open the same tabs; plus #revenue for the elite network’s revenue map and #capital-stack for the
    simulator’s second view). Old hashes (#chains, #story, #financing, #plumbing) still open the right tab.
    A tab switch pushes a history entry (Back goes to the previous tab); a switch inside a tab replaces it.
    Nothing is written to the address bar until the reader switches tab, so a plain visit still opens on the entry screen.
@@ -7127,17 +7129,17 @@ const PHONE = () => { try { return matchMedia('(max-width: 760px)').matches; } c
 
 /* ---------- routes ---------- */
 const ROUTES = new Map([
-  ['circuit', ['map']], ['arm', ['arm', 'machine']], ['revenue', ['arm', 'rev']],
+  ['circuit', ['map']], ['elite-network', ['arm', 'machine']], ['network', ['arm', 'machine']], ['arm', ['arm', 'machine']], ['revenue', ['arm', 'rev']],
   ['simulator', ['fin', 'plumb']], ['plumbing', ['fin', 'plumb']], ['financing', ['fin', 'plumb']], ['capital-stack', ['fin', 'stack']],
-  ['scenarios', ['story']], ['chains', ['story']], ['story', ['story']],
+  ['imperial-arm', ['story']], ['scenarios', ['story']], ['chains', ['story']], ['story', ['story']],
   ['profit', ['profit']], ['profits', ['profit']], ['profit-dollar', ['profit']],
 ]);
 let routeMute = true, lastView = 'map';
 function routeOf(h) { return ROUTES.get(String(h || '').replace(/^#\/?/, '').split('/')[0].toLowerCase()) || null; }
 function slugOf(v, m) {
-  if (v === 'arm') return m === 'rev' ? 'revenue' : 'arm';
+  if (v === 'arm') return m === 'rev' ? 'revenue' : 'elite-network';
   if (v === 'fin') return m === 'stack' ? 'capital-stack' : 'simulator';
-  if (v === 'story' || v === 'chain') return 'scenarios';
+  if (v === 'story' || v === 'chain') return 'imperial-arm';
   if (v === 'profit') return 'profit';
   return 'circuit';
 }
@@ -7161,6 +7163,9 @@ function onRoute() {
   routeMute = true;
   try { if (slugOf(r[0], r[1]) !== slugNow()) { applyModes(r); setView(r[0]); } if (window.ISX && ISX.applyDetail) ISX.applyDetail(location.hash); } finally { routeMute = false; }
   lastView = view;
+  /* patch of 18 Nov: an old address (#arm, #scenarios) is rewritten to the tab's new one (#elite-network, #imperial-arm) */
+  const seg = location.hash.replace(/^#\/?/, '').split('/')[0];
+  if (seg !== slugNow()) { try { history.replaceState(null, '', '#' + slugNow() + location.hash.replace(/^#\/?[^/]*/, '')); } catch (e) { /* ignore */ } }
 }
 addEventListener('popstate', onRoute); addEventListener('hashchange', onRoute);
 
@@ -7188,13 +7193,13 @@ $('ms-prev').innerHTML = MS_ARR.l;
 const SHARE_BASE = (() => { const c = document.querySelector('link[rel="canonical"]'); return (c && c.href) || (location.origin + location.pathname); })();
 const SH_TXT = {
   circuit: 'The Imperial Stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe. An interactive by Elias Rutten.',
-  arm: 'The Imperial Stack, the arm: how the US state and its tech firms are tied together, and how much of their revenue comes from abroad. An interactive by Elias Rutten.',
+  'elite-network': 'The Imperial Stack, the elite network: how the US state and its tech firms are tied together, and how much of their revenue comes from abroad. An interactive by Elias Rutten.',
   simulator: 'The Imperial Stack, the imperial machinery: in the Scott Bessent Simulator, how Washington keeps money cheap for the AI build-out, one lever at a time. An interactive by Elias Rutten.',
-  scenarios: 'The Imperial Stack, scenarios: fourteen cases of how US tech and the dollar give Washington leverage. An interactive by Elias Rutten.',
+  'imperial-arm': 'The Imperial Stack, the imperial arm: fourteen scenarios of how US tech and the dollar give Washington leverage. An interactive by Elias Rutten.',
 };
-const SH_NAME = { circuit: 'The circuit', arm: 'The imperial arm', revenue: 'The imperial arm · revenue map', simulator: 'The imperial machinery · Scott Bessent Simulator', 'capital-stack': 'The imperial machinery · capital stack', scenarios: 'Scenarios' };
+const SH_NAME = { circuit: 'The circuit', 'elite-network': 'The elite network', revenue: 'The elite network · revenue map', simulator: 'The imperial machinery · Scott Bessent Simulator', 'capital-stack': 'The imperial machinery · capital stack', 'imperial-arm': 'The imperial arm' };
 function shareData() {
-  const slug = slugNow(), k = slug === 'revenue' ? 'arm' : slug === 'capital-stack' ? 'simulator' : slug;
+  const slug = slugNow(), k = slug === 'revenue' ? 'elite-network' : slug === 'capital-stack' ? 'simulator' : slug;
   let more = ''; try { more = window.ISX && ISX.viewName ? ISX.viewName() || '' : ''; } catch (e) { /* ignore */ }
   return { slug, url: SHARE_BASE + '#' + hashFor(), text: SH_TXT[k], name: SH_NAME[slug] + (more ? ' · ' + more : ''), title: 'The Imperial Stack · ' + SH_NAME[slug] };
 }
@@ -8896,7 +8901,7 @@ function simBodyHTML0() {
         + sEcho('A price manipulated, buyers captured, rules shaped, dollars rationed: those are the valves, and you have seen who holds them.')
         + `<p class="s2p s2pay">That is why the dollar needs the AI trade: it is where the world’s savings now land, and every valve you have seen keeps them landing there.</p>`
         + `<p class="s2p s2close">${ft(`The system also holds because others are bought in. In 2025 Taiwan’s exports of ICT goods and components were about half its GDP, and Malaysia’s and Singapore’s {{gross|gross}} AI-hardware exports about ${sAiPct('MYS')}% and ${sAiPct('SGP')}%. Economies that grow like this cannot step out of the trade without giving up growth. At home they are crowded out: the hyperscalers also borrow in the allies’ own currencies, and took ${SFIG.gbp.v} of sterling corporate bond issuance in ${SFIG.gbp.d}, so local firms compete with them for their own savers.`)}</p>`
-        + `<p class="s2p">Open the full view to run the episodes, pull any lever and click anything. Scenarios shows the same power being exercised.</p>`
+        + `<p class="s2p">Open the full view to run the episodes, pull any lever and click anything. The imperial arm shows the same power being exercised.</p>`
         : `<p class="s2p">${sLine().cum[n - 1].n.size} actors and ${sLine().cum[n - 1].e.size} relations of the ${Object.keys(FN).length} and ${FE.length} in the machine. Open the full view to run the episodes, pull any lever and click anything.</p>`)
       + `<div class="s2acts"><button type="button" class="sn-go" data-sm="full">Open the full view ${sArrR}</button></div>`
       + `<div class="s2more">${L.main ? `<button type="button" data-sp="1">Acts and episodes</button>${STACK_OPEN ? '<button type="button" data-fm2="stack">The capital stack</button>' : `<button type="button" class="cb-soon" aria-disabled="true">${LOCK3}The capital stack · coming soon</button>`}` : `<button type="button" data-sl="${SLINES.indexOf(nxt)}" data-sb="-1">Next: ${fe(nxt.t)}</button><button type="button" data-sl="0" data-sb="-1">The guide</button>`}<button type="button" data-sg="restart">Start again</button>${L.main ? '<button type="button" data-remind>Plan the next session</button>' : ''}</div>`
@@ -9271,7 +9276,7 @@ if (location.hash === '#tour') ROOT.classList.add('tour');
 if (location.hash === '#minerals') setTimeout(() => setCirc('min'), 1500);
 /* round 5b: “#replay” plays the two first openings again (v2/opening.js), for review and for anyone who wants to see them twice */
 const REPLAY = location.hash === '#replay';
-if (REPLAY) { stSet('isx-open-circuit', null); stSet('isx-open-sim', null); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address stays; the page still opens on the Circuit */ } }
+if (REPLAY) { stSet('isx-open-circuit', null); stSet('isx-open-sim', null); ['profit', 'arm', 'fin', 'story'].forEach(k => stSet('isx-enter-' + k, null)); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address stays; the page still opens on the Circuit */ } }
 const R0 = REPLAY ? null : routeOf(location.hash); if (R0) applyModes(R0);
 const start = R0 ? R0[0] : 'map';
 setView(start); lastView = view;
@@ -9380,6 +9385,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/hints.js"></script>
 <script defer src="/imperial-stack/v2/clarity.js"></script>
 <script defer src="/imperial-stack/v2/profit.js"></script>
+<script defer src="/imperial-stack/v2/enter.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">

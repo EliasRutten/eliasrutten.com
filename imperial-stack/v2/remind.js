@@ -10,13 +10,13 @@
   var X = window.ISX, root = document.getElementById('isx-root'); if (!X || !root) return;
   var U = X.util, SITE = 'https://eliasrutten.com/imperial-stack/#simulator';
   var LV = { ground: ['Foundations', 'the basics, then the guide', 'ground'], guide: ['Fluent', 'first principles, then the guide', 'guide'], map: ['Expert', 'the full map', null] };
-  var box = null, opener = null, when = null;
+  var box = null, opener = null, when = null, CX = null;   /* CX: what an entry screen asks the reminder to say (patch of 18 Nov; ISX.remindCtx) */
   var pad = function (n) { return String(n).padStart(2, '0'); };
   var local = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
   var stamp = function (d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00'; };
   var utc = function (d) { return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z'; };
   function level() { var k = U.stGet('isx-way'); return LV[k] || LV.guide; }
-  function minutes() { var l = level(), m = l[2] && X.mins ? X.mins[l[2]] : 45; return Math.max(15, Math.ceil(m / 15) * 15); }
+  function minutes() { if (CX && CX.mins) return CX.mins; var l = level(), m = l[2] && X.mins ? X.mins[l[2]] : 45; return Math.max(15, Math.ceil(m / 15) * 15); }
   /* where the visitor stands, in words: the event cannot hold the place, so it names it */
   function place() {
     var S = X.sim, L = S && S.lines && S.lines[S.line]; if (!L || S.mode !== 'story' || S.beat < 0) return '';
@@ -30,22 +30,23 @@
     return [[late ? 'Tomorrow evening' : 'This evening', at(late ? 1 : 0, 20)], [late ? 'The evening after' : 'Tomorrow evening', at(late ? 2 : 1, 20)], ['Saturday morning', at(sat, 10)]];
   }
   function details() {
+    if (CX && CX.details) return CX.details;
     var l = level(), p = place();
     return 'The Imperial Stack, the Scott Bessent Simulator. Level: ' + l[0] + ' (' + l[1] + ').' + (p ? ' ' + p : '') + ' ' + SITE + ' Your level is remembered in the same browser, and the bar at the foot of the map jumps to any chapter.';
   }
   function links() {
-    var end = new Date(when.getTime() + minutes() * 60000), title = 'The Imperial Stack: ' + level()[0], tz = '';
+    var end = new Date(when.getTime() + minutes() * 60000), title = CX && CX.title ? CX.title : 'The Imperial Stack: ' + level()[0], tz = '', SITE1 = CX && CX.url ? CX.url : SITE;
     try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { /* no zone: the calendar uses its own */ }
     var g = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(title) + '&dates=' + stamp(when) + '/' + stamp(end) + (tz ? '&ctz=' + encodeURIComponent(tz) : '') + '&details=' + encodeURIComponent(details());
     var esc = function (t) { return String(t).replace(/([\\;,])/g, '\\$1').replace(/\n/g, '\\n'); };
     var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Elias Rutten//The Imperial Stack//EN', 'BEGIN:VEVENT', 'UID:isx-' + utc(when) + '@eliasrutten.com', 'DTSTAMP:' + utc(new Date()), 'DTSTART:' + utc(when), 'DTEND:' + utc(end),
-      'SUMMARY:' + esc(title), 'DESCRIPTION:' + esc(details()), 'URL:' + SITE, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(title), 'TRIGGER:-PT30M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      'SUMMARY:' + esc(title), 'DESCRIPTION:' + esc(details()), 'URL:' + SITE1, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(title), 'TRIGGER:-PT30M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     return { g: g, ics: ics };
   }
   function paint() {
     var l = level(), d = when, fmt = '';
     try { fmt = d.toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); } catch (e) { fmt = local(d).replace('T', ' '); }
-    box.querySelector('.rm-sum').textContent = l[0] + ' · ' + fmt + ' · ' + minutes() + ' minutes';
+    box.querySelector('.rm-sum').textContent = (CX && CX.name ? CX.name : l[0]) + ' · ' + fmt + ' · ' + minutes() + ' minutes';
     box.querySelector('input').value = local(d);
     var L = links(); box.querySelector('.rm-g').href = L.g;
     var f = box.querySelector('.rm-f'); if (f) { try { if (f._u) URL.revokeObjectURL(f._u); f._u = URL.createObjectURL(new Blob([L.ics], { type: 'text/calendar' })); f.href = f._u; } catch (e) { f.hidden = true; } }
@@ -67,7 +68,9 @@
     box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } });
   }
   function open(from) {
-    var host = X.$('cock') || root; if (!box) build();
+    CX = X.remindCtx && from && from.dataset && from.dataset.remind ? X.remindCtx(from.dataset.remind) : null;
+    var host = (CX && CX.host) || X.$('cock') || root; if (!box) build();
+    box.querySelector('.rm-note').textContent = CX && CX.note ? CX.note : 'The guide keeps your place while this tab stays open; the event says where you stopped.';
     if (box.parentNode !== host) host.appendChild(box);
     opener = from || null;
     var C = chips(); when = C[0][1];

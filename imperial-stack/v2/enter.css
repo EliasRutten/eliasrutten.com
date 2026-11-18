@@ -1,0 +1,99 @@
+/* profit tab patch (18 Nov 2026): the entry screens (v2/enter.js). Scoped under #isx-root, linked after printer.css.
+   The whole window: a veil over the tab (the veil blurs its own backdrop; nothing filters the tab, so the globe's canvas is safe),
+   a small centred masthead, the title in the title face, the gold rule of the other entry screens, three blocks side by side with a
+   clean line above each, three buttons. Wide and quiet: no card, no frame, no panel behind the text. Arrival is slow, one line at a
+   time (--i); .en-all shows the rest at once; .en-out is the screen falling away. Only opacity and transform move. */
+html.isx-enlock, html.isx-enlock body { overflow: hidden; }
+#isx-root .en { position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column; color: #c9d4de; outline: 0; }
+#isx-root .en-veil { position: absolute; inset: 0; background: radial-gradient(ellipse 90% 80% at 50% 44%, rgba(6, 11, 17, .86), rgba(4, 8, 13, .955) 68%, rgba(3, 6, 10, .99)); -webkit-backdrop-filter: blur(7px) saturate(.7); backdrop-filter: blur(7px) saturate(.7); animation: en-veil 1.1s ease-out both; }
+#isx-root .en-veil::after { content: ""; position: absolute; left: 50%; top: 0; width: min(900px, 80vw); height: 46vh; transform: translateX(-50%); background: radial-gradient(ellipse 50% 60% at 50% 0, color-mix(in srgb, var(--eh, #ffb547) 9%, transparent), transparent 70%); pointer-events: none; }
+#isx-root .en-in { position: relative; flex: 1 1 auto; display: flex; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: clamp(26px, 6vh, 72px) clamp(20px, 5vw, 80px) clamp(20px, 4vh, 44px); }
+#isx-root .en-col { width: min(1180px, 100%); margin: auto; display: flex; flex-direction: column; align-items: center; text-align: center; transition: opacity .55s ease, transform .7s cubic-bezier(.3, .1, .3, 1); }
+
+/* arrival: one line at a time */
+#isx-root .en-r { opacity: 0; transform: translateY(12px); animation: en-in 1.05s cubic-bezier(.22, .61, .36, 1) both; animation-delay: calc(.55s + var(--i, 0) * .52s); }
+#isx-root .en-rule.en-r { transform: scaleX(0); animation-name: en-rule; }
+#isx-root .en.en-all .en-r { animation: none; opacity: 1; transform: none; }
+#isx-root .en.en-all .en-veil { animation: none; }
+@keyframes en-veil { from { opacity: 0; } }
+@keyframes en-in { to { opacity: 1; transform: none; } }
+@keyframes en-rule { to { opacity: 1; transform: none; } }
+/* the screen falls away */
+#isx-root .en.en-out { pointer-events: none; }
+#isx-root .en.en-out .en-col { opacity: 0; transform: scale(1.045); }
+#isx-root .en.en-out .en-veil { opacity: 0; transition: opacity .72s ease .04s; animation: none; }
+#isx-root.rm .en-r, #isx-root.rm .en-veil { animation: none; opacity: 1; transform: none; }
+#isx-root.rm .en.en-out .en-col { transform: none; transition: opacity .18s linear; }
+#isx-root.rm .en.en-out .en-veil { transition: opacity .18s linear; }
+@media (prefers-reduced-motion: reduce) {
+  #isx-root .en-r, #isx-root .en-veil { animation: none; opacity: 1; transform: none; }
+  #isx-root .en.en-out .en-col { transform: none; transition: opacity .18s linear; }
+  #isx-root .en.en-out .en-veil { transition: opacity .18s linear; }
+}
+
+/* the masthead, the title, the rule */
+#isx-root .en-k { display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 4px 10px; margin: 0; font: 400 10.5px/1.3 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: #9fb1c2; }
+#isx-root .en-k .dia { width: 7px; height: 7px; background: var(--eh, #ffb547); transform: rotate(45deg); box-shadow: 0 0 10px color-mix(in srgb, var(--eh, #ffb547) 60%, transparent); }
+#isx-root .en-k em { font-style: normal; color: #6f8294; }
+#isx-root .en-k .sep { color: #5f7284; }
+#isx-root .en h2.en-h { margin: clamp(16px, 3vh, 30px) 0 0; max-width: 24ch; font: 400 clamp(26px, 3.1vw, 46px)/1.14 var(--title); letter-spacing: .035em; text-transform: uppercase; text-wrap: balance; color: #f1f5f8; }
+#isx-root .en-star { display: inline-block; margin: 0 0 0 .12em; padding: 0 .18em; border: 0; border-radius: 6px; background: none; color: #ffb547; font: inherit; line-height: 1; cursor: pointer; vertical-align: baseline; }
+#isx-root .en-star:hover { color: #ffd27a; background: rgba(255, 181, 71, .1); }
+#isx-root .en-rule { display: block; width: 56px; height: 1.5px; margin: clamp(16px, 2.8vh, 26px) auto 0; background: #ffb547; box-shadow: 0 0 12px rgba(255, 181, 71, .55); transform-origin: center; }
+#isx-root .en-note { width: min(820px, 100%); margin: clamp(14px, 2.2vh, 20px) auto 0; padding: 14px 18px; border-left: 2px solid #ffb547; background: rgba(10, 18, 27, .6); text-align: left; font: 400 13.5px/1.6 var(--sans); color: #b9c6d2; }
+#isx-root .en-note[hidden] { display: none; }
+#isx-root .en-note p { margin: 0 0 8px; } #isx-root .en-note p:last-child { margin: 0; }
+#isx-root .en-note i { font-style: italic; color: #dfe7ee; }
+#isx-root .en-note a { color: #ffd27a; }
+
+/* the three blocks: side by side, a clean line above each */
+#isx-root .en-b { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 clamp(26px, 3.6vw, 56px); width: 100%; margin: clamp(26px, 5vh, 54px) 0 0; text-align: left; }
+#isx-root .en-b section { padding: 18px 0 0; border-top: 1px solid rgba(143, 163, 182, .26); }
+#isx-root .en-b h3 { margin: 0 0 12px; font: 400 10.5px/1.35 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .en-b p { margin: 0; font: 400 clamp(15px, 1.12vw, 16.5px)/1.62 var(--sans); color: #d5dee6; text-wrap: pretty; }
+#isx-root .en-sub { display: inline; color: #ffb38a; text-decoration: underline; text-decoration-color: rgba(255, 103, 25, .6); text-underline-offset: 3px; }
+#isx-root .en-sub .ssl { margin: 0 5px -1px 0; color: #ff6719; }
+#isx-root .en-sub:hover { color: #ffd0b5; }
+
+/* the three buttons, and what one of them opens */
+#isx-root .en-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 14px; margin: clamp(26px, 5vh, 50px) 0 0; }
+#isx-root .en-btn { min-height: 46px; padding: 0 22px; border: 1px solid #33475a; border-radius: 999px; background: rgba(10, 18, 27, .5); color: #dfe7ee; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: border-color .25s ease, background .25s ease, color .25s ease, box-shadow .3s ease; }
+#isx-root .en-btn:hover { border-color: #6f8294; color: #fff; }
+#isx-root .en-btn.pri { border-color: #ffb547; background: rgba(255, 181, 71, .1); color: #ffd27a; box-shadow: 0 0 26px -6px rgba(255, 181, 71, .45); }
+#isx-root .en-btn.pri:hover { background: #ffb547; color: #1a1205; }
+#isx-root .en-btn[aria-expanded="true"] { border-color: #ffb547; color: #ffd27a; }
+#isx-root .en-btn:focus-visible, #isx-root .en-ch:focus-visible, #isx-root .en-star:focus-visible, #isx-root .en-sub:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
+#isx-root .en-more { width: 100%; margin: 18px 0 0; }
+#isx-root .en-more[hidden] { display: none; }
+#isx-root .en-chs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; animation: en-in .45s ease both; opacity: 0; transform: translateY(8px); }
+#isx-root .en-ch { display: grid; gap: 6px; align-content: start; padding: 14px 16px; border: 1px solid #2b3c4b; border-radius: 14px; background: rgba(10, 18, 27, .62); color: inherit; text-align: left; cursor: pointer; transition: border-color .25s ease, background .25s ease; }
+#isx-root .en-ch:hover { border-color: #ffb547; background: rgba(255, 181, 71, .06); }
+#isx-root .en-ch b { font: 400 14px/1.25 var(--title); letter-spacing: .04em; text-transform: uppercase; color: #f1f5f8; }
+#isx-root .en-ch span { font: 400 13.5px/1.45 var(--sans); color: #b9c6d2; }
+#isx-root .en-ch small { font: 400 10px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .en-fine { display: block; margin: clamp(18px, 3.4vh, 30px) 0 0; font: 400 12.5px/1.5 var(--sans); color: #7f93a6; }
+#isx-root .en-fine svg { margin: 0 2px -2px; }
+#isx-root .en-skip { margin: 0 10px 0 0; padding: 4px 2px; border: 0; border-bottom: 1px solid #5f7284; background: none; color: #c9d4de; font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+#isx-root .en-skip:hover { color: #fff; border-color: #ffb547; }
+#isx-root .en-skip:focus-visible { outline: 2px solid #ffb547; outline-offset: 3px; }
+/* the reminder, when it is opened from an entry screen: centred on the window */
+#isx-root .en > .rm { position: fixed; z-index: 3; left: 50%; top: 50%; bottom: auto; transform: translate(-50%, -50%); }
+
+/* the machinery's tour, offered after “Explore on my own” */
+#isx-root .en-offer { position: fixed; z-index: 40; right: 18px; bottom: 96px; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 16px; border: 1px solid #2b3c4b; border-left: 2px solid #ffb547; border-radius: 12px; background: rgba(9, 16, 24, .96); box-shadow: 0 22px 60px -18px rgba(0, 0, 0, .9); font: 400 13px/1.3 var(--sans); color: #c9d4de; animation: en-in .5s ease both; opacity: 0; transform: translateY(8px); }
+#isx-root .en-offer button { min-height: 32px; padding: 0 12px; border: 1px solid #ffb547; border-radius: 999px; background: none; color: #ffd27a; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+#isx-root .en-offer button.x { width: 32px; padding: 0; border-color: #33475a; color: #9fb1c2; font: 400 16px/1 var(--sans); }
+#isx-root .en-offer button:focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  #isx-root .en-b { grid-template-columns: 1fr; gap: 20px 0; }
+  #isx-root .en-col { text-align: left; align-items: stretch; }
+  #isx-root .en-k { justify-content: flex-start; }
+  #isx-root .en h2.en-h { max-width: none; font-size: clamp(23px, 6.4vw, 32px); text-wrap: pretty; }
+  #isx-root .en-rule { margin-left: 0; margin-right: 0; transform-origin: left center; }
+  #isx-root .en-acts { flex-direction: column; align-items: stretch; }
+  #isx-root .en-btn { min-height: 48px; }
+  #isx-root .en-fine { text-align: left; }
+  #isx-root .en-in { padding: 26px 20px 28px; }
+  #isx-root .en-offer { left: 12px; right: 12px; bottom: 84px; }
+}

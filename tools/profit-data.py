@@ -9,6 +9,36 @@ Only the columns named below are read, so the full project files and slimmer wor
 The script stops if a check fails: the checks of claude/data/profit-tab/check.py, and those the D1 and D2 notes name."""
 import csv, json, statistics as st, sys
 
+# ---------- E1 (patch of 18 Nov 2026): net foreign purchases by holder and instrument, US Treasury TIC ----------
+# Usage for this part alone: python3 -I tools/profit-data.py --e1 <E1-tic-net-foreign-purchases-official-private.csv> <profit.json>
+# It reads the columns series_id, year, value (USD million) and writes the key E into an existing profit.json. The full build
+# below does the same when the E1 file sits in the folder. Checks: 27 periods for each of the 10 series; the column sums the E1
+# notes give (transcription); private + official shares and Treasury bonds & notes for 2025 as the notes state them.
+E1F = 'E1-tic-net-foreign-purchases-official-private.csv'
+E1SUM = {'pvt_treas': 6005634, 'pvt_agency': 3453025, 'pvt_corp': 4005771, 'pvt_equity': 2674309, 'off_treas': -321021, 'off_agency': 1175809,
+         'off_corp': 369999, 'off_equity': 241763, 'pvt_bills': 1075650, 'off_bills': 155993}
+E1KEY = {'pvt_treas': 'pt', 'pvt_agency': 'pa', 'pvt_corp': 'pc', 'pvt_equity': 'pe', 'off_treas': 'ot', 'off_agency': 'oa', 'off_corp': 'oc', 'off_equity': 'oe', 'pvt_bills': 'pb', 'off_bills': 'ob'}
+def build_e1(path):
+    bad, by = [], {k: {} for k in E1SUM}
+    for r in csv.DictReader(open(path, encoding='utf8')): by[r['series_id']][r['year']] = int(r['value'])
+    years = [str(y) for y in range(2000, 2026)]
+    for k, exp in E1SUM.items():
+        if sorted(by[k]) != sorted(years + ['2026Jan-Aug']): bad.append('E1 periods of ' + k)
+        elif sum(by[k].values()) != exp: bad.append('E1 column sum of %s = %d, expected %d' % (k, sum(by[k].values()), exp))
+    if not bad:
+        if by['pvt_equity']['2025'] + by['off_equity']['2025'] != 741607: bad.append('E1 shares 2025')
+        if by['pvt_treas']['2025'] + by['off_treas']['2025'] != 428443: bad.append('E1 Treasury bonds and notes 2025')
+    bnr = lambda v: round(v / 1000, 1)
+    E = {'y': [int(y) for y in years], 'v': {E1KEY[k]: [bnr(by[k][y]) for y in years] for k in E1SUM}, 'p26': {E1KEY[k]: bnr(by[k]['2026Jan-Aug']) for k in E1SUM},
+         'part': 'January to August 2026', 'stamp': '13 Oct 2026', 'read': '17 Nov 2026'} if not bad else None
+    return E, bad
+if len(sys.argv) > 1 and sys.argv[1] == '--e1':
+    E, bad = build_e1(sys.argv[2])
+    if bad: print('STOPPED: ' + '; '.join(bad)); sys.exit(1)
+    D = json.load(open(sys.argv[3], encoding='utf8')); D['E'] = E
+    json.dump(D, open(sys.argv[3], 'w', encoding='utf8'), ensure_ascii=False, separators=(',', ':'))
+    print('E1 written: %d years, 10 series, checks passed' % len(E['y'])); sys.exit(0)
+
 d, out = sys.argv[1], sys.argv[2]
 rows = lambda f: list(csv.DictReader(open(d + '/' + f, encoding='utf8')))
 num = lambda x: None if x in ('', None) else float(x)
@@ -124,6 +154,12 @@ D = {'meta': {'built': '17 Nov 2026',
      'H': {'y': ey, 'eq': ev, 'tr': tv, 'last': ['Q2 2026', el[1], tl[1]]},
      'F': {'y': fy, 'eq': fe, 'tr': ft, 'h1': ['First half of 2026, annual rate', fel[1], ftl[1]]},
      'T': T, 'S': S, 'M': M, 'X': X, 'W': W}
+import os
+if os.path.exists(d + '/' + E1F):   # E1 (18 Nov): the TIC split by holder and instrument, when its file is in the folder
+    E, bad = build_e1(d + '/' + E1F)
+    if bad: print('\n'.join('CHECK FAILED: ' + f for f in bad)); sys.exit(1)
+    D['E'] = E
+else: print('note: ' + E1F + ' is not in the folder; the key E is left out (add it with --e1)')
 json.dump(D, open(out, 'w', encoding='utf8'), ensure_ascii=False, separators=(',', ':'))
 print('profit.json written;', 'equation rows', len(B), '· gap rows', len(G), '· lists', len(US), '· positions', len(P), '· all checks passed')
 print('2025: capital spending of five firms', X['sumCapex'][-1], '$bn =', X['gdpPct'][-1], '% of GDP*; US share of world market value', M['mv'][-1], 'against GDP share', M['gdp'][-1])
