@@ -49,17 +49,17 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('stage: nothing covers the right half of the globe but the legend and zoom', await p.evaluate(() => { const fr = document.getElementById('isx-frame').getBoundingClientRect(); const els = document.elementsFromPoint(fr.left + fr.width * .78, fr.top + fr.height * .42); return !els.some(e => e.closest && e.closest('.mapmodes, .tray2, .resbar')); }));
   ok('no page errors (circuit)', p._errs.length === 0, p._errs); await p.context().close();
 
-  /* ---------- 2. the tour (first-visit welcome, 18 Nov: seven stops from the welcome card; tools/welcome-check.js has the rest) ---------- */
+  /* ---------- 2. the tour (first-visit welcome, 18 Nov: six stops from the welcome card (19 Nov: the stop for the first card is gone); tools/welcome-check.js has the rest) ---------- */
   p = await page('', { 'isx-tour': null, 'isx-tips-sim': null, 'isx-enter': 'off' }, { wait: 1200 });
   ok('tour: a first visit opens on the welcome card over the bare map', await p.evaluate(() => !!document.querySelector('#isx-wl') && document.getElementById('isx-root').classList.contains('wl-stage') && !ISX.tour.on));
   await p.click('#isx-wl .wl-go'); await p.waitForTimeout(400);
-  ok('tour: “Show me around” starts it at 1 of 7, focus on the tip, which is not modal', await p.evaluate(() => ISX.tour.on && /1 of 7/.test(document.querySelector('#isx-wltip .wl-n').textContent) && document.getElementById('isx-wltip').contains(document.activeElement) && document.getElementById('isx-wltip').getAttribute('aria-modal') === 'false'));
+  ok('tour: “Show me around” starts it at 1 of 6, focus on the tip, which is not modal', await p.evaluate(() => ISX.tour.on && /1 of 6/.test(document.querySelector('#isx-wltip .wl-n').textContent) && document.getElementById('isx-wltip').contains(document.activeElement) && document.getElementById('isx-wltip').getAttribute('aria-modal') === 'false'));
   ok('tour: stop 1 marks the card', await p.evaluate(() => document.getElementById('isx-cmd').classList.contains('wl-on')));
   const seen = [];
-  for (let i = 0; i < 6; i++) { seen.push(await p.evaluate(() => document.querySelector('#isx-wltip h3').textContent)); await p.click('#isx-wltip [data-wt="next"]'); await p.waitForTimeout(250); }
+  for (let i = 0; i < 5; i++) { seen.push(await p.evaluate(() => document.querySelector('#isx-wltip h3').textContent)); await p.click('#isx-wltip [data-wt="next"]'); await p.waitForTimeout(250); }
   seen.push(await p.evaluate(() => document.querySelector('#isx-wltip h3').textContent));
-  ok('tour: seven stops, seven tips', seen.length === 7 && new Set(seen).size === 7, seen);
-  ok('tour: stop 6 marked the Firms and Layers group, stop 7 the dock', await p.evaluate(() => document.getElementById('isx-dock').classList.contains('wl-on') && !document.getElementById('isx-tgl').classList.contains('wl-on')));
+  ok('tour: six stops, six tips', seen.length === 6 && new Set(seen).size === 6, seen);
+  ok('tour: stop 5 marked the Firms and Layers group, stop 6 the dock', await p.evaluate(() => document.getElementById('isx-dock').classList.contains('wl-on') && !document.getElementById('isx-tgl').classList.contains('wl-on')));
   await p.click('#isx-wltip [data-wt="next"]'); await p.waitForTimeout(500);
   ok('tour: the last button starts the loop, and the tour counts as taken', await p.evaluate(() => ISX.step === 1 && !ISX.tour.on && localStorage.getItem('isx-intro') === 'toured' && !document.querySelector('.wl-on') && !document.getElementById('isx-root').classList.contains('wl-stage')));
   await p.reload({ waitUntil: 'load' }); await p.waitForFunction(() => window.ISX && ISX.booted); await p.waitForTimeout(2500);
@@ -72,7 +72,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   p = await page('#circuit/07', { 'isx-tour': null, 'isx-tips-sim': null }, { wait: 2000 });
   ok('tour: not shown on a link to a step; the one-line offer is', await p.evaluate(() => !ISX.tour.on && !document.querySelector('#isx-wl') && !!document.querySelector('#isx-wlban'))); await p.context().close();
   p = await page('', { 'isx-tour': null, 'isx-first': null }, { wait: 1800, reduce: false });
-  ok('tour: waits while the first moment shows its line', await p.evaluate(() => !ISX.tour.on && !!document.querySelector('#isx-insight.in.first')));
+  ok('tour: no first card shows (gone 19 Nov), and the tour does not start by itself', await p.evaluate(() => !ISX.tour.on && !document.querySelector('#isx-insight.in')));
   await p.waitForFunction(() => ISX.tour.on, null, { timeout: 15000 }).catch(() => {});
   await p.waitForTimeout(6000);
   ok('tour: with the welcome kept away, it never starts by itself (the old tour that followed the first moment is gone)', await p.evaluate(() => !ISX.tour.on && !document.querySelector('#isx-wltip:not([hidden])')));

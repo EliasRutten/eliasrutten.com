@@ -218,7 +218,7 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     ok('the welcome card follows it; the instruments and the first line wait for the tour', r.wl && /\bwl-stage\b/.test(r.cls) && r.inst.every(v => v === 0) && !r.first && !r.quiet, r);
     await p.evaluate(() => document.querySelector('#isx-wl [data-wl="skip"]').click()); await p.waitForFunction(() => !document.querySelector('#isx-frame .wl-fade'), null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(300);
     r = await p.evaluate(() => ({ inst: ['.resbar', '.cmd6', '.tabs-bottom', '.legbox2'].map(s => +getComputedStyle(document.querySelector('#isx-frame ' + s)).opacity), first: !!document.querySelector('#isx-insight.in.first'), quiet: document.getElementById('isx-root').classList.contains('isx-quiet') }));
-    ok('“Skip to the map”: the instruments are in, the first line with them, nothing hidden again', r.inst.every(v => v === 1) && r.first && !r.quiet, r);
+    ok('“Skip to the map”: the instruments are in, no first card (gone 19 Nov), nothing hidden again', r.inst.every(v => v === 1) && !r.first && !r.quiet, r);
     /* the Simulator's, on the first entry into its tab */
     await p.evaluate(() => document.getElementById('isx-v-fin').click()); const t1 = Date.now();
     r = await p.evaluate(() => ({ on: ISX.opening.on, card: +getComputedStyle(document.querySelector('#isx-gentry .ge-card')).opacity, veil: getComputedStyle(document.getElementById('isx-stage'), '::after').opacity, hint: ISX.hints.on }));

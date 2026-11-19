@@ -2,7 +2,7 @@
    The first visit to the Circuit. The page opens on the bare map (class wl-stage, set at boot): the globe, its arcs, the dark frame,
    the title and the link home; everything else is laid out but hidden and inert. The fly-in (v2/opening.js, without its title) plays,
    then the welcome card: the thesis, one line, “Show me around” and “Skip to the map”, and “Don’t show this again”.
-   “Show me around” is the tour: seven stops, each bringing in its part of the interface (a fade and a 6 px rise) with a tip card beside
+   “Show me around” is the tour: six stops, each bringing in its part of the interface (a fade and a 6 px rise) with a tip card beside
    it; what has come in stays. “Skip to the map” and “Skip the tour” bring in all the rest at once and leave the visitor on step 00;
    the last stop’s “Start the loop” goes to step 01.
    When it shows: on a visit to the Circuit without a link into the map, until the visitor ticks “Don’t show this again” (isx-intro
@@ -28,7 +28,6 @@
   var PARTS = [
     ['#isx-cmd', '#isx-tabs', '#isx-mstep'],
     ['#isx-legbox', '#isx-zoom', '#isx-mapmodes', '#isx-hint', '#isx-mapnote', '#isx-rkick'],
-    ['#isx-insight'],
     ['#isx-resbar', '#isx-vchip'],
     ['#isx-strip', '.hud-top .seg'],
     ['#isx-tgl', '#isx-strip .st-div'],
@@ -50,7 +49,6 @@
     return [
       { at: ['#isx-cmd'], side: 'right', h: 'Follow the money, one step at a time.', p: 'This card tells the story; the bar below is the route. Press <em>Next</em>' + (co ? '' : ', or →,') + ' to move the money one step. Ten steps, five acts.' },
       { at: ['#isx-legbox', '#isx-zoom', '#isx-globe'], side: 'left', h: 'The globe is live.', p: (gl ? (co ? 'Swipe to turn it, tap a country for its figures.' : 'Drag to turn it, click a country for its figures.') : (co ? 'Tap a country for its figures.' : 'Click a country for its figures.')) + ' Each colour is a flow; the thicker the arc, the more money it carries.' },
-      { at: ['#isx-insight', '#isx-globe'], side: 'top', h: 'The fact behind the map.', p: 'This card carries the key number and its source. <em>How we count</em>, on the story card, opens the method. Close it with × if you want the globe clear.' },
       { at: ['#isx-resbar', '#isx-vchip'], side: 'right', h: 'The machine’s vital signs.', p: 'Six dated figures that move with the markets: Big Tech spending, the US deficit, who buys US shares and bonds. Select one for the source.' + (ph ? ' Swipe for more.' : '') },
       { at: ['.hud-top .seg'], side: 'bottom', h: 'Six views of the same machine.', p: 'The Circuit shows the money moving; Profits shows what it buys; Network, Machinery and Arm show who runs it and how it is enforced. Crisis is coming.' },
       { at: ['#isx-tgl'], side: 'bottom', h: 'Look beneath the flows.', p: '<em>Firms</em> shows who owns what; <em>Layers</em> adds the blocs, the surpluses and the holdings of US shares to the map.' },
@@ -73,22 +71,13 @@
   stage.on = function () { return root.classList.contains('wl-stage'); };
   function bring(i, how) {   /* the parts of stop i (0-based) */
     els(PARTS[i]).forEach(function (e) { show(e, how); });
-    if (i === 2) {   /* the step's one fact: the first line of the Circuit, now */
-      if (X.insight && !X.insight.card) X.insight.first();
-      var n = 0, t = setInterval(function () {
-        var b = $('insight'); if (b) show(b, how);
-        if ((b && X.insight && X.insight.card) || ++n > 30) { clearInterval(t); if (state === 'tour' && at === 2) setTimeout(function () { if (state === 'tour' && at === 2) render(false); }, 120); }
-      }, 100);
-    }
   }
   function unstage(how) {   /* everything at once, then the class goes */
     if (!stage.on()) return;
-    PARTS.forEach(function (p, i) { if (i !== 2) els(p).forEach(function (e) { show(e, how); }); });
-    if (X.view === 'map' && X.step === 0 && !X.sel.iso && X.insight && !X.insight.card && !X.insight.firstOn) X.insight.first();
-    var b = $('insight'); if (b) show(b, how);
+    PARTS.forEach(function (p) { els(p).forEach(function (e) { show(e, how); }); });
     root.classList.remove('wl-stage');
     els(ALL).forEach(function (e) { if (e.dataset.wli) { e.inert = false; delete e.dataset.wli; } });
-    setTimeout(function () { if (!stage.on()) els(ALL).concat([$('insight')]).forEach(function (e) { if (e) e.classList.remove('wl-in'); }); }, 800);
+    setTimeout(function () { if (!stage.on()) els(ALL).forEach(function (e) { if (e) e.classList.remove('wl-in'); }); }, 800);
   }
 
   /* ---------- storage ---------- */
@@ -170,8 +159,7 @@
     var T = stops(); if (i < 0 || i >= T.length || state !== 'tour') return;
     var fwd = i > at; at = i;
     /* phones: the step's one fact is a sheet of its own; past its stop it gives way, so it does not cover what comes next */
-    if (sheet() && i !== 2 && X.insight && X.insight.card) { var ix = X.insight.card.querySelector('.ix'); if (ix) ix.click(); }
-    for (var j = 0; j <= i; j++) if (!(j === 2 && sheet() && i !== 2)) bring(j, j === i && fwd ? 'wl-pop' : null);
+    for (var j = 0; j <= i; j++) bring(j, j === i && fwd ? 'wl-pop' : null);
     render(true);
     X.emit('welcome', { act: 'stop', at: i + 1 });
   }
@@ -230,7 +218,6 @@
     else if (side === 'top') { x = r.left + r.width / 2 - w / 2; y = r.top - g - h; }
     else { x = r.left + r.width / 2 - w / 2; y = r.bottom + g; }
     if (S.at[0] === '#isx-tgl' && side === 'bottom') x = r.right - w;           /* the toolbar's right end: the tip hangs under it */
-    if (S.at[0] === '#isx-insight' && side === 'top') x = r.left;
     x = Math.max(fr.left + 12, Math.min(x, fr.right - w - 12)); y = Math.max(fr.top + 12, Math.min(y, fr.bottom - h - 12));
     tip.style.left = Math.round(x - fr.left) + 'px'; tip.style.top = Math.round(y - fr.top) + 'px'; tip.dataset.side = side;
     var pt = tip.querySelector('.wl-pt');

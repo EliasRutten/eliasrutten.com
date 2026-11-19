@@ -335,7 +335,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   await p.context().close();
   /* the Circuit's first line (copy Part G) */
   const ins = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'insights.json'), 'utf8'));
-  ok(ins.first.t === 'The world’s dollars used to go into US government debt. In the year to August 2026 foreign investors put $1.01tn into US shares, while foreign central banks sold $164bn of Treasuries.' && ins.first.src === '12 months to August 2026 · US Treasury' && ins.first.go.label === 'Follow the dollar', 'the Circuit’s first line says why the pair of figures matters; same figures, source and button', ins.first);
+  ok(!('first' in ins), 'the Circuit has no first card (removed 19 Nov at Elias’s request)');
 
   await b.close();
   console.log(`tiers-check: ${pass} pass, ${fail} fail`);

@@ -1,4 +1,4 @@
-/* First-visit welcome (18 Nov 2026): checks for the bare map, the fly-in, the welcome card, the seven stops of the tour, the key, the
+/* First-visit welcome (18 Nov 2026): checks for the bare map, the fly-in, the welcome card, the six stops of the tour, the key, the
    header's Tour, the deep link's offer, phones, reduced motion, no WebGL and blocked storage.
    Spec: claude/specs/first-visit-welcome-18-nov.md §8. Elias, 18 Nov: the tour stops once it has been taken (isx-intro 'toured').
    Usage: node tools/welcome-check.js [baseUrl] [--only=1,2,…]   (1 bare map and fly-in, 2 welcome, 3 the stops, 4 leaving and the key,
@@ -12,8 +12,8 @@ let pass = 0, fail = 0;
 const ok = (name, cond, info) => { if (cond) { pass++; console.log('  ok   ' + name); } else { fail++; console.log('  FAIL ' + name + (info !== undefined ? ' :: ' + JSON.stringify(info).slice(0, 500) : '')); } };
 /* keep everything else on the page quiet; the welcome's own key stays unset */
 const QUIET = { 'isx-simtour': 'off', 'isx-insights': 'off', 'isx-tips-globe': 'off' };
-const PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-legbox', '#isx-zoom'], ['#isx-insight'], ['#isx-resbar'], ['#isx-strip', '.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-about', '#isx-tourb', '#isx-mis']];
-const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-insight'], ['#isx-resbar'], ['.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-b4row', '#isx-about', '#isx-tourb']];
+const PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-legbox', '#isx-zoom'], ['#isx-resbar'], ['#isx-strip', '.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-about', '#isx-tourb', '#isx-mis']];
+const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], ['.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-b4row', '#isx-about', '#isx-tourb']];
 
 (async () => {
   const b = await chromium.launch(), errors = [];
@@ -82,28 +82,27 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-insight'],
     await done(p);
   }
 
-  /* ---------- 3. the seven stops ---------- */
+  /* ---------- 3. the six stops ---------- */
   if (want(3)) {
-    console.log('3 · the seven stops');
+    console.log('3 · the six stops');
     const p = await page('', { wait: 0 }); await welcomeUp(p);
     await p.click('#isx-wl .wl-go'); await settle(p);
     const heads = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
       if (i) { await next(p); await settle(p); }
-      if (i === 2) await p.waitForFunction(() => { const e = document.querySelector('#isx-insight.in.wl-in'); return e && +getComputedStyle(e).opacity > .9 && document.querySelector('#isx-insight.wl-on'); }, null, { timeout: 6000 }).catch(() => {});
-      const on = await vis(p, PARTS.slice(0, i + 1).flat()), off = i < 6 ? await vis(p, PARTS.slice(i + 1).flat().filter(s => s !== '#isx-insight')) : [];
+      const on = await vis(p, PARTS.slice(0, i + 1).flat()), off = i < 5 ? await vis(p, PARTS.slice(i + 1).flat()) : [];
       const t = await p.evaluate(() => { const t = document.getElementById('isx-wltip'); return { n: t.querySelector('.wl-n').textContent, h: t.querySelector('h3').textContent, focus: t.contains(document.activeElement) || document.activeElement === t, live: t.querySelector('[aria-live="polite"]').textContent, nx: t.querySelector('[data-wt="next"]').textContent.trim(), bk: !t.querySelector('[data-wt="back"]').hidden, side: t.dataset.side, mark: [...document.querySelectorAll('.wl-on')].map(e => e.id || e.className.split(' ')[0]) }; });
       heads.push(t.h);
-      ok(`stop ${i + 1}: “${t.h}” – its parts in, the rest still held back, “${i + 1} of 7”`, allOn(on) && allOff(off) && t.n === `${i + 1} of 7`, { on: on.filter(x => x[1] !== true), off: off.filter(x => x[1] !== false), t });
-      ok(`stop ${i + 1}: focus on the tip, its text announced, Back ${i ? 'shown' : 'hidden'}, marks ${t.mark.join(', ')}`, t.focus && t.live.startsWith(t.h) && t.bk === !!i && t.mark.length > 0 && (i < 6 ? /^Next/.test(t.nx) : /^Start the loop/.test(t.nx)), t);
+      ok(`stop ${i + 1}: “${t.h}” – its parts in, the rest still held back, “${i + 1} of 6”`, allOn(on) && allOff(off) && t.n === `${i + 1} of 6`, { on: on.filter(x => x[1] !== true), off: off.filter(x => x[1] !== false), t });
+      ok(`stop ${i + 1}: focus on the tip, its text announced, Back ${i ? 'shown' : 'hidden'}, marks ${t.mark.join(', ')}`, t.focus && t.live.startsWith(t.h) && t.bk === !!i && t.mark.length > 0 && (i < 5 ? /^Next/.test(t.nx) : /^Start the loop/.test(t.nx)), t);
       if (i === 2) { await p.click('#isx-wltip [data-wt="back"]'); await settle(p);
-        const bk = await p.evaluate(() => [document.querySelector('#isx-wltip .wl-n').textContent, getComputedStyle(document.getElementById('isx-insight')).visibility]);
-        ok('Back returns to stop 2 and keeps what has come in', bk[0] === '2 of 7' && bk[1] === 'visible', bk);
+        const bk = await p.evaluate(() => [document.querySelector('#isx-wltip .wl-n').textContent, getComputedStyle(document.getElementById('isx-resbar')).visibility]);
+        ok('Back returns to stop 2 and keeps what has come in', bk[0] === '2 of 6' && bk[1] === 'visible', bk);
         await p.keyboard.press('ArrowRight'); await settle(p);
-        ok('→ is Next', await p.evaluate(() => document.querySelector('#isx-wltip .wl-n').textContent === '3 of 7' && ISX.step === 0));
+        ok('→ is Next', await p.evaluate(() => document.querySelector('#isx-wltip .wl-n').textContent === '3 of 6' && ISX.step === 0));
       }
     }
-    ok('seven different tips, in the spec’s order', heads.join('|') === 'Follow the money, one step at a time.|The globe is live.|The fact behind the map.|The machine’s vital signs.|Six views of the same machine.|Look beneath the flows.|Take it with you.', heads);
+    ok('six different tips, in the spec’s order', heads.join('|') === 'Follow the money, one step at a time.|The globe is live.|The machine’s vital signs.|Six views of the same machine.|Look beneath the flows.|Take it with you.', heads);
     const r = await p.evaluate(() => { const t = document.getElementById('isx-wltip'), tr = t.getBoundingClientRect(), fr = document.getElementById('isx-frame').getBoundingClientRect(); return { box: !!t.querySelector('input[data-wl-off]'), skip: t.querySelector('[data-wt="skip"]').hidden, inside: tr.left >= fr.left && tr.right <= fr.right && tr.top >= fr.top && tr.bottom <= fr.bottom }; });
     ok('the last stop carries “Don’t show this again”; the tip stays inside the frame', r.box && r.skip && r.inside, r);
     await next(p); await settle(p);
@@ -141,7 +140,7 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-insight'],
     ok('one tick turns off the tabs’ entry screens too', await p.evaluate(() => !document.getElementById('isx-enter')));
     await done(p);
     p = await page('', { wait: 0 }); await welcomeUp(p);
-    await p.click('#isx-wl .wl-go'); for (let i = 0; i < 6; i++) { await settle(p); await next(p); } await settle(p);
+    await p.click('#isx-wl .wl-go'); for (let i = 0; i < 5; i++) { await settle(p); await next(p); } await settle(p);
     await p.click('#isx-wltip input[data-wl-off]');
     ok('the last stop’s box writes the same key', await p.evaluate(() => localStorage.getItem('isx-intro') === 'off'));
     await next(p); await settle(p);
@@ -206,16 +205,15 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-insight'],
     r = await p.evaluate(() => { const t = document.getElementById('isx-wltip').getBoundingClientRect(), c = document.getElementById('isx-cmd').getBoundingClientRect(); return { sheet: document.getElementById('isx-wltip').dataset.side, bottom: Math.round(innerHeight - t.bottom), h: t.height / innerHeight, cardTop: Math.round(c.top), cardAbove: c.top >= 0 && c.top < t.top }; });
     ok('stop 1: the tip is a sheet, the story card scrolled into view above it', r.sheet === 'sheet' && Math.abs(r.bottom) <= 1 && r.h <= .56 && r.cardAbove, r);
     const heads = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
       if (i) { await next(p); await settle(p); await p.waitForTimeout(500); }
       const on = await vis(p, PHONE_PARTS[i]);
       const t = await p.evaluate(() => { const t = document.getElementById('isx-wltip'), tr = t.getBoundingClientRect(); return { h: t.querySelector('h3').textContent, p: t.querySelector('p').textContent, inView: tr.top >= 0 && tr.bottom <= innerHeight + 1 }; });
       heads.push(t.h);
       ok(`phone stop ${i + 1}: its parts in, the tip on screen`, allOn(on) && t.inView, { on, t });
-      if (i === 2) { const lift = await p.evaluate(() => { const a = document.getElementById('isx-insight').getBoundingClientRect(), t = document.getElementById('isx-wltip').getBoundingClientRect(); return a.bottom <= t.top + 1; }); ok('phone stop 3: the step’s fact stands above the sheet, not under it', lift); }
-      if (i === 3) ok('phone stop 4: the tiles’ strip, “Swipe for more”', /Swipe for more\.$/.test(t.p), t.p);
+      if (i === 2) ok('phone stop 3: the tiles’ strip, “Swipe for more”', /Swipe for more\.$/.test(t.p), t.p);
     }
-    ok('phone: the same seven stops', heads.length === 7 && new Set(heads).size === 7, heads);
+    ok('phone: the same six stops', heads.length === 6 && new Set(heads).size === 6, heads);
     await next(p); await settle(p);
     ok('phone: “Start the loop” goes to step 01', await p.evaluate(() => ISX.step === 1 && !ISX.tour.on));
     await done(p);

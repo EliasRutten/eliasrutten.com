@@ -5,8 +5,9 @@
    3. reading notes: where a country's figures need care (re-exports, custody, missing data), its label carries a diamond,
       its flows are drawn with a broken track, and its card lists the notes with their sources.
    Data: /imperial-stack/data/insights.json. Storage: isx-first.
-   19 Nov 2026 (Elias: the pop-ups at steps, firms and countries “feel too random”): only the first card is left. The
-   notes to read with care stay in the country card, the legend and on the globe; they no longer pop up. */
+   19 Nov 2026 (Elias: the pop-ups at steps, firms and countries “feel too random”): the pop-ups are gone. Later that day the
+   first card went too (D.first stays null, so startFirst() never runs). The notes to read with care stay in the country card,
+   the legend and on the globe; they no longer pop up. */
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
@@ -144,7 +145,7 @@
     host.parentNode.insertBefore(d, host.nextSibling);
   });
   X.load('insights').then(function (d) {
-    D.first = d.first || null; D.notes = d.notes || {};
+    D.first = null; D.notes = d.notes || {};
     if (X.view === 'map') { X.renderGlobe(false); X.recard(); X.emit('narr'); }
     loaded = true; if (wantNow) { wantNow = false; startFirst(true); } else startFirst();
   }).catch(function () { /* without the data the map simply shows no insights */ });

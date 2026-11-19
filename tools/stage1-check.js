@@ -20,21 +20,14 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   /* 1. first moment */
   let p = await page('', {}, { wait: 500 });
   ok('first moment: the entry screen does not open', !(await p.evaluate(() => !!document.querySelector('.intro6'))));
-  ok('first moment: controls are quiet at first', await cls(p, 'isx-quiet'));
-  await p.waitForTimeout(1500);
-  ok('first moment: one line is shown', await p.evaluate(() => !!document.querySelector('#isx-insight.in.first')), await p.evaluate(() => (document.querySelector('#isx-insight .it') || {}).textContent));
-  await p.waitForTimeout(3600);
-  ok('first moment: controls settle in on their own', !(await cls(p, 'isx-quiet')));
-  await p.click('#isx-insight .ig'); await p.waitForTimeout(900);
-  ok('first moment: “Follow the dollar” opens step 01', await p.evaluate(() => ISX.step === 1 && location.hash === '#circuit/01'), await p.evaluate(() => location.hash));
-  ok('first moment: remembered as seen', await p.evaluate(() => localStorage.getItem('isx-first') === 'off'));
+  await p.waitForTimeout(3000);
+  /* 19 Nov 2026 (Elias): the first card is gone, so no card shows and no controls are held back for it */
+  ok('first card: none shows, and the controls are not held back', await p.evaluate(() => !document.querySelector('#isx-insight.in') && !document.getElementById('isx-root').classList.contains('isx-quiet')));
   await p.click('#isx-about'); await p.waitForTimeout(600);
   ok('“About this map” still opens the entry text', await p.evaluate(() => !!document.querySelector('.intro6')));
   ok('no page errors (first moment)', p._errs.length === 0, p._errs); await p.context().close();
 
   /* 2. a first touch settles the controls at once; a deep link shows no first moment */
-  p = await page('', {}, { wait: 300 }); await p.mouse.click(700, 500); await p.waitForTimeout(200);
-  ok('first moment: a touch settles the controls', !(await cls(p, 'isx-quiet'))); await p.context().close();
   p = await page('#circuit/07', {}, { wait: 2500 });
   ok('deep link: no first moment, step restored', await p.evaluate(() => ISX.step === 7 && !document.querySelector('#isx-insight.in.first')), await p.evaluate(() => location.hash)); await p.context().close();
 
