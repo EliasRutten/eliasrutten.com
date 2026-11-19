@@ -252,7 +252,7 @@
     R.fin.className = 'pf-fin' + (X.reduce ? ' all' : ''); let i = 0; const r = () => ' style="--i:' + (i++) + '"';
     R.fin.innerHTML = '<div class="pf-fl">' + s.lines.map(t => '<p class="fr"' + r() + '>' + esc(t) + '</p>').join('') + '</div>'
       + '<div class="pf-fx fr"' + r() + '><div class="pf-crisis" role="group" aria-label="Crisis simulator: coming soon">' + LOCK + '<b>Crisis simulator</b><em>coming soon</em><small>What happens when the AI bubble pops</small></div>'
-      + (E ? '<a class="pf-ess" href="' + esc(E[1]) + '" target="_blank" rel="noopener">' + SSL + '<span>' + esc(E[0]) + '</span><small>' + esc(E[2]) + '</small></a>' : '') + '</div>'
+      + (E ? '<a class="pf-ess" href="' + esc(E[1]) + '" target="_blank" rel="noopener">' + SSL + '<span>' + esc(E[0]) + '</span><small>Related piece · ' + esc(E[2]) + '</small></a>' : '') + '</div>'
       + '<div class="pf-fd fr"' + r() + '><div class="pf-ck">Where next</div><div class="pf-doors">' + s.doors.map(door).join('') + '</div></div>';
   }
 

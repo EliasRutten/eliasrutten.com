@@ -52,7 +52,7 @@
       { at: ['#isx-resbar', '#isx-vchip'], side: 'right', h: 'The machine’s vital signs.', p: 'Six dated figures that move with the markets: Big Tech spending, the US deficit, who buys US shares and bonds. Select one for the source.' + (ph ? ' Swipe for more.' : '') },
       { at: ['.hud-top .seg'], side: 'bottom', h: 'Six views of the same machine.', p: 'The Circuit shows the money moving; Profits shows what it buys; Network, Machinery and Arm show who runs it and how it is enforced. Crisis is coming.' },
       { at: ['#isx-tgl'], side: 'bottom', h: 'Look beneath the flows.', p: '<em>Firms</em> shows who owns what; <em>Layers</em> adds the blocs, the surpluses and the holdings of US shares to the map.' },
-      { at: ['#isx-b4row', '#isx-dock'], side: 'top', h: 'Take it with you.', p: '<em>Share</em> copies a link to exactly this view. The essay behind the map is on Substack.' + (mis ? ' Spot an error? <em>Mistake?</em> goes straight to me.' : '') + ' <em>Tour</em>, top left, runs this again.', last: true }
+      { at: ['#isx-b4row', '#isx-dock'], side: 'top', h: 'Take it with you.', p: '<em>Share</em> copies a link to exactly this view. The thesis behind the map is coming soon on Substack; related pieces are there now.' + (mis ? ' Spot an error? <em>Mistake?</em> goes straight to me.' : '') + ' <em>Tour</em>, top left, runs this again.', last: true }
     ];
   }
 

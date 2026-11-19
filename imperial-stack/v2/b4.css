@@ -282,3 +282,29 @@
 /* Scenarios: the dock keeps its corner (B3); there the essay shows as “Essay” with the logo, its title in its name and tooltip, and the rail ends before the wider dock */
 @media (min-width: 761px) { #isx-root :not(.rt) > .dock6 .dk-es { max-width: none; } #isx-root :not(.rt) > .dock6 .dk-es small, #isx-root :not(.rt) > .dock6 .dk-es .tt { display: none; } #isx-root :not(.rt) > .dock6 .dk-es .ts { display: block; font-size: 13px; } }
 @media (min-width: 901px) { #isx-root .b3 .b3rail { right: 340px; } }
+
+/* ---------- machinery entry round (19 Nov 2026): the Substack button, the thesis first and related pieces as related ---------- */
+#isx-root .dock6 .dk-es, #isx-root .b4es { border: 1px solid #ff6719; font: inherit; cursor: pointer; }
+#isx-root .dock6 .dk-es .rel { font-family: var(--sans); font-size: 11.5px; letter-spacing: 0; text-transform: none; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .dock6 .dk-es[aria-expanded="true"], #isx-root .b4es[aria-expanded="true"] { box-shadow: 0 0 0 2px #ffd27a inset; }
+#isx-root .b4es { text-align: left; }
+#isx-root .b4es .rel { font-family: var(--sans); font-size: 11.5px; letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .dock6 { position: relative; }
+#isx-root .espop { position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 30; width: 320px; padding: 12px 10px 10px; border-radius: 14px; background: #09101a; border: 1px solid #2a3a4a; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .85); font-family: var(--sans); text-align: left; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s; }
+#isx-root .espop.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+#isx-root .espop::before { content: ""; position: absolute; left: 18px; right: 18px; top: -1px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, #ff6719, transparent); opacity: .85; }
+#isx-root .espop .shk { padding: 0 4px 6px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: #ff8a4c; }
+#isx-root .espop .shi { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 40px; margin: 0; padding: 6px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--ink); font: 500 14px/1.25 var(--sans); text-align: left; text-decoration: none; box-sizing: border-box; }
+#isx-root .espop .shi:hover, #isx-root .espop .shi:focus-visible { border-color: #2b3a49; background: rgba(255, 255, 255, .04); }
+#isx-root .espop .shi:focus-visible, #isx-root .espop .es-all:focus-visible { outline: 2px solid #ffb547; outline-offset: 1px; }
+#isx-root .espop .shi small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.3; font-weight: 400; color: var(--ink2); }
+#isx-root .espop .shi .sx { flex: none; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
+#isx-root .espop .es-th { border-color: rgba(255, 103, 25, .5); background: rgba(255, 103, 25, .08); }
+#isx-root .espop .es-th .sl { font-family: var(--display); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 13.5px; color: #ffb48a; }
+#isx-root .espop .es-k { margin: 10px 4px 4px; padding-top: 8px; border-top: 1px dashed #23323f; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .espop .es-all { display: inline-block; margin: 8px 6px 2px; font: 500 12px/1.3 var(--sans); color: #c9d4de; text-decoration: underline; text-decoration-color: rgba(154, 171, 186, .5); text-underline-offset: 3px; }
+@media (pointer: coarse) { #isx-root .espop .shi { min-height: 46px; } }
+#isx-root .b4row { position: relative; }
+#isx-root .espop.row { position: fixed; z-index: 70; left: 12px; right: 12px; width: auto; top: auto; bottom: calc(12px + env(safe-area-inset-bottom)); max-height: 70vh; overflow-y: auto; }
+#isx-root .espop, #isx-root .espop small { text-transform: none; letter-spacing: 0; }
+@media (prefers-reduced-motion: reduce) { #isx-root .espop { transition: none; } }
