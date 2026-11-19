@@ -3939,9 +3939,8 @@ function relatedKeys() {
 }
 function dockEssay() {
   const k = essayKey(), X = ESSAYS[k] || ESSAYS.grandma, rel = 'Related piece: ' + X[0] + ' · ' + X[2];
-  const say = 'On Substack: the thesis, coming soon, and related pieces. The one for this place: ' + X[0] + ' (' + X[2] + ')';
-  const d = $('dk-es'), was = d && d.dataset.k; if (d) { d.dataset.tip = `<b>The thesis · coming soon</b><p>Related piece: ${esc(X[0])} · ${esc(X[2])}</p>`; d.querySelector('.rel').textContent = rel; d.setAttribute('aria-label', say); d.dataset.k = k; }
-  const r = $('b4es'); if (r) { r.querySelector('.rel').textContent = rel; r.setAttribute('aria-label', say); r.dataset.k = k; }
+  const d = $('dk-es'), was = d && d.dataset.k; if (d) { d.dataset.tip = `<b>The thesis · coming soon</b><p>Related piece: ${esc(X[0])} · ${esc(X[2])}</p>`; d.querySelector('.rel').textContent = rel; d.dataset.k = k; }
+  const r = $('b4es'); if (r) { r.querySelector('.rel').textContent = rel; r.dataset.k = k; }
   if (esOpen) esFill();
   if (was && was !== k && RT) requestAnimationFrame(() => RT.place(true));   /* the bubble stays under the step in hand */
 }

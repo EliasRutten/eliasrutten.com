@@ -65,7 +65,7 @@ const ok = (c, t, x) => { if (c) pass++; else { fail++; console.log('FAIL  ' + t
       const p = await page(hash, { w, h, m, ls: { 'isx-enter': 'off' } });
       const r = await p.evaluate(() => { const b = document.getElementById('isx-tabx'), a = document.getElementById('isx-about'); const v = e => !!e && !e.hidden && e.getClientRects().length > 0 && e.getBoundingClientRect().right <= innerWidth + 1; return { tabx: v(b), about: v(a), name: b && b.getAttribute('aria-label') }; });
       if (!tab) { ok(!r.tabx && r.about, `${w}: the Circuit keeps “About this map” and has no tab explainer`, r); await done(p); continue; }
-      ok(r.tabx && !r.about && /How this tab works/.test(r.name), `${w} ${hash}: “How this tab works” is in the header, inside the window`, r);
+      ok(r.tabx && !r.about && /^How (this tab|it) works$/.test(r.name), `${w} ${hash}: “How this tab works” is in the header, inside the window`, r);
       const before = await p.evaluate(() => JSON.stringify([ISX.view, ISX.sim && ISX.sim.beat, ISX.sim && ISX.sim.mode, ISX.armRel, location.hash]));
       await p.evaluate(() => document.getElementById('isx-tabx').click()); await p.waitForTimeout(500);
       ok(await p.evaluate(t => ISX.enter.on === t, tab), `${w} ${hash}: it opens the tab’s entry screen`);

@@ -48,7 +48,7 @@
     { id: 'arm-fs', tab: 'arm', side: 'top', line: function () { return 'On a smaller screen this tab reads best in full screen: the button at the bottom right.'; },
       when: function () { return !phone() && !document.fullscreenElement && (window.innerHeight < 860 || window.innerWidth < 1366) ? firstIn('#isx-fs') : null; } },
     { id: 'arm-view', tab: 'arm', side: 'below', line: function () { return phone() || q('#isx-aview [data-aview="machine"][hidden]') ? 'Two ways to read this: Reach follows the paths, Orbit shows the whole shape. Switch any time.' : 'Three ways to read this: Layers shows every firm, Reach follows the paths, Orbit shows the whole shape. Switch any time.'; },
-      when: function () { return X.armRel !== 'control' && (reach() || seen['arm-pick']) ? firstIn('#isx-aview:not([hidden])') : null; } },   /* on the machine, after the pick: picking an actor matters first */
+      when: function () { return X.armRel !== 'control' && (reach() || (seen['arm-pick'] && !X.armSel)) ? firstIn('#isx-aview:not([hidden])') : null; } },   /* on the machine: after the pick, and not over a selection's own hints */
     { id: 'arm-pick', tab: 'arm', side: 'node', line: function () { var t = phone() || U.COARSE ? 'Tap' : 'Click'; return t + ' a state body to see whom it reaches, or a group ' + (!reach() ? 'at the bottom' : X.armView === 'orbit' ? 'on the rim' : 'on the right') + ' to see who reaches it.'; },
       when: function () { if (X.armSel || X.armRel === 'control') return null; return reach() ? firstIn('#isx-areach .rn.state:not(.dim)') : firstIn('#isx-arm .mnode.state:not(.dim)'); } },
     { id: 'arm-sheet', tab: 'arm', side: 'top', line: function () { return '“Every link” opens the panel to all its ties, with their sources.'; },

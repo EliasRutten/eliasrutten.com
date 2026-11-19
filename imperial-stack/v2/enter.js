@@ -215,10 +215,10 @@
   }
   function syncTabx() {
     var c = T[X.view];
-    if (tx) { tx.hidden = !c; if (c) tx.setAttribute('aria-label', 'How this tab works: open the introduction to ' + c.k.replace(/^The /, 'the ')); tx.setAttribute('aria-expanded', String(!!live)); }
+    if (tx) { tx.hidden = !c; tx.setAttribute('aria-label', U.PHONE() ? 'How it works' : 'How this tab works'); tx.setAttribute('aria-expanded', String(!!live)); if (c) tx.title = 'The introduction to ' + c.k.replace(/^The /, 'the '); }   /* the spoken name is the drawn one */
     if (ab) ab.hidden = !!c;
   }
-  X.on('view', syncTabx); syncTabx();
+  X.on('view', syncTabx); syncTabx(); window.addEventListener('resize', syncTabx);
 
   /* what the reminder says when it is set from an entry screen (v2/remind.js asks) */
   X.remindCtx = function (k) {
