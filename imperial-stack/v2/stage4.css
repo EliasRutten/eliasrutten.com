@@ -8,16 +8,12 @@
 #isx-root #isx-cock.s2 .fn.s4dim .fnk3 { opacity: 0; }
 #isx-root #isx-cock.s2 .fzg.s4dim { opacity: .42; transition: opacity .45s ease; }
 #isx-root #isx-cock.s2 .fzg.s4dim .fzk { pointer-events: none; }
-#isx-root #isx-cock.s2.s4open .fn.s4dim { opacity: .3; }
 
 /* the Guide / Full view switch now lives in the bar; the counters gave way to the bar's own progress */
 #isx-root .s2 .s2top .smode { display: none; }
 #isx-root #isx-cock.s2 .scount { display: none !important; }
 
 /* ---------- the opening card: centred, one primary action ---------- */
-#isx-root #isx-cock.s2.s4open .s2card { left: 50%; top: 47%; bottom: auto; width: 500px; max-width: calc(100% - 36px); transform: translate(-50%, -50%); }
-#isx-root #isx-cock.s2.s4open .s2fold { display: none; }
-#isx-root #isx-cock.s2.s4open .s2card h3 { font-size: 30px; }
 #isx-root .s2 .s4start { display: flex; flex-direction: column; gap: 12px; margin: 16px 0 6px; }
 #isx-root #isx-cock.s2 .s2card .s4go { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 62px; margin: 0; padding: 10px 18px 10px 20px; border-radius: 13px; border: 1px solid #ffe2a6; background: linear-gradient(180deg, #ffd88a, #f1b84d); color: #1b1305; text-align: left; cursor: pointer; box-shadow: 0 0 0 5px rgba(255, 210, 122, .1), 0 14px 34px -14px rgba(255, 190, 90, .6); transition: filter .18s, box-shadow .18s; }
 #isx-root #isx-cock.s2 .s2card .s4go:hover { filter: brightness(1.06); box-shadow: 0 0 0 6px rgba(255, 210, 122, .16), 0 14px 34px -12px rgba(255, 190, 90, .7); }
@@ -92,15 +88,12 @@
 }
 #isx-root #isx-cock.s2 .s4lvt { display: none !important; }
 @media (max-width: 760px) {
-  #isx-root #isx-cock.s2.s4open .s2card { order: 2; }
-  #isx-root #isx-cock.s2.s4open .s2stage { order: 3; }
   #isx-root .s2 .s2bar { flex-wrap: wrap; height: auto; row-gap: 4px; }
   #isx-root .s2 .s2bar > * { min-height: 48px; }
   #isx-root .s2 .s4tabs { width: 100%; flex: 1 1 100%; min-height: 42px !important; }
   #isx-root .s2 .s2bar .s4tab { flex: 1; align-items: center; min-width: 0; padding: 0 6px; }
   #isx-root .s2 .s2bar .s4tab small { display: none !important; }
   #isx-root .s2 .s4hint, #isx-root .s2 .s2bar .s4back { display: none; }
-  #isx-root #isx-cock.s2.s4open .s2card { transform: none; width: auto; max-width: none; }
   #isx-root .s2 .s4pull, #isx-root .s2 .pbl.s4pl { max-width: none; border-right: 0; padding: 0 0 6px; }
 }
 @media (prefers-reduced-motion: reduce) {

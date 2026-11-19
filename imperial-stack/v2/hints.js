@@ -70,7 +70,7 @@
     if (off() || !t || X.intro || (X.enter && X.enter.on) || document.hidden || (X.remind && X.remind.on) || (X.opening && X.opening.on) || (X.views && X.views.on)) return true;
     if (t === 'arm') return !$('scene-arm');
     if (t === 'profit') return !$('scene-profit') || !X.profit || !X.profit.state.ready;
-    return !$('cock') || (X.simtour && X.simtour.on) || !!q('#isx-cock.s4open') || !!q('#isx-cock.dcall');   /* the entry says how the guide works; hints start on the first card. Call screen round: a call covers the window and says on its own screen that there is no right answer, so no hint sits behind it */
+    return !$('cock') || (X.simtour && X.simtour.on) || !!q('#isx-cock.dcall');   /* the entry says how the guide works; hints start on the first card. Call screen round: a call covers the window and says on its own screen that there is no right answer, so no hint sits behind it */
   }
   function build() {
     box = document.createElement('div');

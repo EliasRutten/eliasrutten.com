@@ -6,8 +6,11 @@
    appears only after the button that needs it (the machinery's three levels after “Learn step by step”, the profit dollar's stations
    after “Jump to a station”); the machinery's tour is offered only after “Explore on my own”.
    It is shown once per browser, the first time a tab is entered at its door (the header, a door, Next, a plain link), never on a link
-   to a place inside the tab. Esc or a click outside skips it; the ⓘ in the header (“About this map”) opens it again; “#replay” in the
-   address shows all of them again.
+   to a place inside the tab. Esc or a click outside skips it; “How this tab works” in the header opens it again, on every tab that
+   has one, without touching the visitor's place in the tab; “#replay” in the address shows all of them again.
+   Machinery entry round (19 Nov 2026): this is the machinery's only entry. Its levels come from the page's data (ISX.simWays), never
+   from the page's markup, and start through ISX.simWay; each shows a Time and a Difficulty bar and no minutes, shown or spoken.
+   “Explore on my own” is not a level: the full map, nothing pinned, no thesis (ISX.simFree). Expert is the full map with the thesis.
    Motion: slow, one line at a time (veil, masthead, title, rule, the three blocks, the buttons); the first key or click shows the rest
    at once. Leaving, the text drifts toward the visitor and the veil lifts. Only opacity and transform move. Under reduced motion: a
    plain fade. Nothing here filters the tab behind (the globe's canvas must never sit under a CSS filter); the veil blurs its backdrop.
@@ -39,7 +42,7 @@
       b: [['Where you are', 'You came in through the Circuit, which showed the loop: the world’s savings flowing into US assets while the US buys more than it sells. Economics has come far in recognising these imbalances and the hot money around them as distorting and destabilising. What it misses is that the instability is manufactured, and used as a weapon for geoeconomic ends.'],
         ['What you are about to see', 'A schematic of the imperial machinery that manages this system and makes its cogs turn: the desks in Washington, the levers they pull and the prices those levers move. The real state apparatus is more complex than this schematic, so we made a guide that takes you through it step by step.'],
         ['How to use it', 'We want this to be a learning tool for anyone interested, so the guide has three levels of difficulty. You can also play with the machinery on your own instead of learning by steps. Understanding the mechanics takes time: if you want to come back to it, set a reminder. For more depth, {{sub|paid pieces on the Substack}} take one part of the machinery at a time.']],
-      acts: [['levels', 'Learn step by step'], ['free', 'Explore on my own'], ['remind', 'Remind me later']] },
+      acts: [['levels', 'Learn step by step', 'The guide, at one of three levels'], ['free', 'Explore on my own', 'The full map: no guide, no thesis'], ['remind', 'Remind me later']] },
     story: { n: '05', hue: '#e4ebf1', k: 'The imperial arm', h: 'Scenarios: how the arm is used', site: '#imperial-arm', mins: 20,
       b: [['Where you are', 'The machinery showed how prices are steered; the elite network who steers them. This is the arm in use: the moments Washington reached into another country’s economy, and what it took.'],
         ['What you are about to see', 'Cases, each told as a chain from decision to consequence, with the levers they used.'],
@@ -53,10 +56,14 @@
 
   /* ---------- the second row: what a button opens ---------- */
   function levels() {
-    var ws = [].slice.call(root.querySelectorAll('#isx-gentry .ge-way'));
-    return ws.map(function (w) {
-      var b = w.querySelector('.ge-wt b'), a = w.querySelector('.ge-wa'), m = /About (\d+) minutes/.exec(w.textContent || '');
-      return '<button type="button" class="en-ch" data-en-way="' + esc(w.dataset.way) + '"><b>' + esc(b ? b.textContent : w.dataset.way) + '</b><span>' + esc(a ? a.textContent : '') + '</span><small>' + (m ? 'About ' + m[1] + ' minutes' : 'At your own pace') + '</small></button>';
+    var W = X.simWays ? X.simWays() : [];
+    var lvl = ['', 'easiest', 'middle', 'hardest'];
+    return W.map(function (w) {
+      var tag = w.last ? '<small class="en-tag last">Last time</small>' : w.sug ? '<small class="en-tag">Suggested</small>' : '';
+      var t = Math.max(12, Math.round(w.len * 100));
+      return '<button type="button" class="en-ch en-lv' + (w.sug ? ' sug' : '') + '" data-en-way="' + esc(w.k) + '"><b>' + esc(w.t) + tag + '</b><span>' + esc(w.a) + '</span>'
+        + '<span class="en-say">' + esc(w.say) + '</span>'
+        + '<span class="en-bars" aria-hidden="true"><span class="en-bl">Time</span><span class="en-tb"><i style="width:' + t + '%"></i></span><span class="en-bl">Difficulty</span><span class="en-db">' + [1, 2, 3].map(function (j) { return '<i' + (j <= w.lv ? ' class="on"' : '') + '></i>'; }).join('') + '</span></span></button>';
     }).join('');
   }
   function stops() {
@@ -74,9 +81,9 @@
       + '<i' + r().replace('en-r', 'en-r en-rule') + ' aria-hidden="true"></i>'
       + (c.star ? '<div class="en-note" id="isx-en-note" hidden></div>' : '')
       + '<div class="en-b">' + c.b.map(function (b) { return '<section' + r() + '><h3>' + esc(b[0]) + '</h3><p>' + txt(b[1]) + '</p></section>'; }).join('') + '</div>'
-      + '<div' + r().replace('en-r', 'en-r en-acts') + '>' + c.acts.map(function (a, j) { return '<button type="button" class="en-btn' + (j ? '' : ' pri') + '" data-en="' + a[0] + '"' + (a[0] === 'remind' ? ' data-remind="enter"' : '') + (a[0] === 'levels' || a[0] === 'stops' ? ' aria-expanded="false" aria-controls="isx-en-more"' : '') + '>' + esc(a[1]) + (j ? '' : ' <span aria-hidden="true">→</span>') + '</button>'; }).join('') + '</div>'
+      + '<div' + r().replace('en-r', 'en-r en-acts') + '>' + c.acts.map(function (a, j) { return '<button type="button" class="en-btn' + (j ? '' : ' pri') + '" data-en="' + a[0] + '"' + (a[0] === 'remind' ? ' data-remind="enter"' : '') + (a[0] === 'levels' || a[0] === 'stops' ? ' aria-expanded="false" aria-controls="isx-en-more"' : '') + '>' + (a[2] ? '<span class="en-bt">' : '') + esc(a[1]) + (j ? '' : ' <span aria-hidden="true">→</span>') + (a[2] ? '</span><small>' + esc(a[2]) + '</small>' : '') + '</button>'; }).join('') + '</div>'
       + '<div class="en-more" id="isx-en-more" hidden></div>'
-      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. The <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg> at the top left opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
+      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. “How this tab works”, at the top left, opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
       + '</div></div>';
     return h;
   }
@@ -85,7 +92,7 @@
     document.documentElement.classList.toggle('isx-enlock', !!on);
     root.classList.toggle('en-on', !!on);
   }
-  function open(v, force) {
+  function open(v, force, expand) {
     if (!T[v] || live === v) return false;
     if (!force && (off() || U.stGet(KEY + v) === '1')) return false;
     if (live) drop();
@@ -101,18 +108,20 @@
     /* the first press shows the rest at once; a press outside the column leaves */
     el.addEventListener('pointerdown', function () { if (el) el.classList.add('en-all'); }, true);
     el.focus({ preventScroll: true });
+    if (expand) { var eb = el.querySelector('.en-btn[data-en="' + expand + '"]'); el.classList.add('en-all'); if (eb) more(expand, eb); }
+    syncTabx();
     X.emit('enter', { tab: v, act: 'open' });
     return true;
   }
-  function drop() { if (!el) return; var e = el; el = null; live = null; if (e.parentNode) e.parentNode.removeChild(e); hold(false); }
+  function drop() { if (!el) return; var e = el; el = null; live = null; if (e.parentNode) e.parentNode.removeChild(e); hold(false); syncTabx(); }
   /* the screen falls away: the text drifts toward the visitor, the veil lifts, the tab is there */
   function close(act, then) {
     if (!el) return; var e = el, v = live; el = null; live = null;
     if (X.remind && X.remind.on) X.remind.close();
-    e.classList.add('en-out'); e.inert = true; hold(false);
+    e.classList.add('en-out'); e.inert = true; hold(false); syncTabx();
     outT = setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, X.reduce ? 200 : 760);
     if (then) { try { then(); } catch (err) { /* the tab is still there */ } }
-    var f = back && back.isConnected && back.getClientRects().length ? back : $('v-' + v); back = null;
+    var f = back && back.isConnected && back.getClientRects().length && !back.hidden ? back : $('v-' + v); back = null;
     if (!then && f) { try { f.focus({ preventScroll: true }); } catch (err) { /* ignore */ } }
     X.emit('enter', { tab: v, act: act || 'skip' });
   }
@@ -132,20 +141,20 @@
     if (!n.innerHTML) n.innerHTML = X.profit && X.profit.footnote ? X.profit.footnote() : '';
     n.hidden = !n.hidden; btn.setAttribute('aria-expanded', String(!n.hidden));
   }
-  function way(k) { var b = root.querySelector('#isx-gentry .ge-way[data-way="' + k + '"]'); if (b) b.click(); }
   function onClick(e) {
     if (!el) return;
     var t = e.target, b = t.closest('[data-en], [data-en-way], [data-en-stop]');
     if (!b) { if (!t.closest('.en-col') && !t.closest('#isx-remind')) close('skip'); return; }
     var v = live, d = b.dataset;
-    if (d.enWay) { close('level', function () { way(d.enWay); }); return; }
+    var kb = e.detail === 0;
+    if (d.enWay) { close('level', function () { if (X.simWay) X.simWay(d.enWay, kb); }); return; }
     if (d.enStop != null) { close('stop', function () { if (X.profit) X.profit.go(+d.enStop); }); return; }
     if (d.en === 'skip') { close('skip'); return; }
     if (d.en === 'note') { note(b); return; }
     if (d.en === 'remind') return;                       /* v2/remind.js opens its panel on [data-remind] and asks remindCtx what to say */
     if (d.en === 'levels') { if (more('levels', b) === false) close('go'); return; }   /* the guide is already under way: nothing to choose */
     if (d.en === 'stops') { if (more('stops', b) === false) close('go'); return; }
-    if (d.en === 'free') { close('free', function () { way('map'); tourOffer(); }); return; }
+    if (d.en === 'free') { close('free', function () { if (X.simFree) X.simFree(kb); tourOffer(); }); return; }
     if (d.en === 'tour') { close('tour', function () { if (X.hints && X.hints.replay) X.hints.replay(v); }); return; }
     if (d.en === 'lever') { close('lever', function () { var l = root.querySelector('#isx-scene-story [data-b3="ledger"]'); if (l) l.click(); }); return; }
     close('go', v === 'profit' ? function () { if (X.profit) X.profit.go(0); } : null);
@@ -172,7 +181,7 @@
 
   /* ---------- when: the first time a tab is entered at its door ---------- */
   function atDoor(v) {
-    if (v === 'fin') return X.finMode === 'plumb' && !!root.querySelector('#isx-gentry');   /* the machinery still stands on its own entry: nothing was started */
+    if (v === 'fin') return X.finMode === 'plumb' && !!X.simFresh;   /* nothing was started in the machinery: no level chosen, the guide at its first step */
     if (v === 'arm' && X.armMode === 'rev') return false;
     var d = ''; try { d = X.hashDetail ? X.hashDetail() || '' : ''; } catch (e) { /* ignore */ }
     return !d;
@@ -193,9 +202,22 @@
   X.on('opening', consider);
   if (window.__isxReplay) Object.keys(T).forEach(function (k) { U.stSet(KEY + k, null); });
 
-  /* the ⓘ in the header: on a tab with an entry screen it opens that screen; on the Circuit it stays the map's introduction */
-  var ab = $('about');
-  if (ab) ab.addEventListener('click', function (e) { if (!T[X.view]) return; e.stopImmediatePropagation(); e.preventDefault(); open(X.view, true); }, true);
+  /* machinery entry round (19 Nov 2026): a labelled button in the header, “How this tab works”, in the same place on every tab that has an
+     entry screen (Profits, Network, Machinery, Arm), at every width. It reopens the screen over the tab and changes nothing behind it.
+     On the Circuit the place keeps “About this map” (the map's introduction) and Tour. */
+  var ab = $('about'), tx = null;
+  if (ab && ab.parentNode) {
+    tx = document.createElement('button'); tx.type = 'button'; tx.className = 'aboutk en-tabx'; tx.id = 'isx-tabx'; tx.hidden = true; tx.setAttribute('aria-haspopup', 'dialog');
+    tx.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span class="lg">How this tab works</span><span class="sm" aria-hidden="true">How it works</span>';
+    ab.parentNode.insertBefore(tx, ab.nextSibling);
+    tx.addEventListener('click', function () { if (T[X.view]) open(X.view, true); });
+  }
+  function syncTabx() {
+    var c = T[X.view];
+    if (tx) { tx.hidden = !c; if (c) tx.setAttribute('aria-label', 'How this tab works: open the introduction to ' + c.k.replace(/^The /, 'the ')); tx.setAttribute('aria-expanded', String(!!live)); }
+    if (ab) ab.hidden = !!c;
+  }
+  X.on('view', syncTabx); syncTabx();
 
   /* what the reminder says when it is set from an entry screen (v2/remind.js asks) */
   X.remindCtx = function (k) {

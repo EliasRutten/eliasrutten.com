@@ -6074,11 +6074,11 @@ function renderFin() { dcSync();
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Back to the three ways in: Foundations, Fluent, Expert"><span aria-hidden="true">↩</span>Three ways in</button><button type="button" class="cb-tourb cl-keyb" id="isx-cl-keyb" data-cl-key aria-expanded="false" aria-controls="isx-cl-key" aria-label="Key to the map: boxes, lines, colours and gauges"><span aria-hidden="true">◐</span>Key</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Three ways in: open the levels of the guide (Foundations, Fluent, Expert) or explore on your own"><span aria-hidden="true">↩</span>Three ways in</button><button type="button" class="cb-tourb cl-keyb" id="isx-cl-keyb" data-cl-key aria-expanded="false" aria-controls="isx-cl-key" aria-label="Key to the map: boxes, lines, colours and gauges"><span aria-hidden="true">◐</span>Key</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
       + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><aside class="cl-key" id="isx-cl-key" role="dialog" aria-labelledby="isx-cl-key-h" hidden>${keyHTML()}</aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><button type="button" data-b1more="hints" hidden>Show hints again</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
-      + simNarrHTML()
+      + simNarrHTML() + thxHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
       + `<div class="s2low" id="isx-s2low"><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
@@ -6106,7 +6106,7 @@ function renderFin() { dcSync();
 }
 
 /* ---------- selection state ---------- */
-function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); }
+function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); fch = null; }
 function pickNode(n) { if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); emit('simpick', { n: fsel }); }
 /* interface fixes: a line opens too. The tips and the opening card say “click any actor or line for what it does and its
    sources”; until now a line only showed a hover note. Its card names the two actors, what passes between them and, where a
@@ -6187,6 +6187,7 @@ function activeEdges(all) {
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
   if (fedge != null) return new Set([fedge]);
+  if (fchH != null || fch != null) return thxE(fchH != null ? fchH : fch);   /* 19 Nov: a chapter of the thesis panel */
   if (!all) { const se = simActive(); if (se) return se; } /* v.1.12: in story mode the step in hand is lit */
   return null;
 }
@@ -6205,6 +6206,7 @@ function styleRmap() {
     const rel = $('lvrel'); if (rel) { const was = rel.disabled; rel.disabled = !flev.size; rel.querySelector('b').textContent = flev.size ? String(flev.size) : ''; rel.querySelector('.vh').textContent = flev.size ? ` pulled lever${flev.size > 1 ? 's' : ''}: release ${flev.size > 1 ? 'them all' : 'it'}` : ': no lever is pulled';   /* the count is in the name, after the visible word */ if (was !== rel.disabled) levRove(); }
     const lb = $('levbar'); if (lb && lb._fade) lb._fade(); }
   ROOT.querySelectorAll('.pchip').forEach(b => { const on = fplay === +b.dataset.p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  ROOT.querySelectorAll('#isx-thx .thx-ch').forEach(b => { const i = +b.dataset.thxc; b.setAttribute('aria-pressed', String(fch === i)); b.classList.toggle('hv', fchH === i); });
   const cnt = $('pcnt'), cl = $('pclr'), any = fplay != null || flev.size || fsel || fedge != null;
   if (cnt) cnt.innerHTML = flev.size ? `<b>${flev.size}</b> of ${LEVERS.length} levers pulled · ` + (act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : '') : act ? `<b>${act.size}</b> relation${act.size === 1 ? '' : 's'} lit` : `${FE.length} relations · ${Object.keys(FN).length} actors`;
   if (cl) cl.hidden = !any;
@@ -8138,11 +8140,11 @@ const SREST = SLINES[0].beats.length ? [...SALL.e].filter(i => !SLINES[0].cum[SL
 /* ---------- state ---------- */
 /* B1-4: ph is where a decision stands (null: a step; 'ask': the decision card; 'chain': link c of the other path; 'crisis': its end).
    While ph is set, beat stays on the step before the decision. pick: the visitor's latest call per decision; seenAlt: other paths walked. */
-const SIM = { mode: 'story', line: 0, beat: -1, ph: null, c: 0, dp: 0, epRet: null, epSeen: new Set(), pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
+const SIM = { mode: 'story', line: 0, beat: 0, ph: null, c: 0, dp: 0, epRet: null, epSeen: new Set(), pick: {}, seenAlt: new Set(), R: null, shown: null, cam: null, camRAF: 0, ltab: 'set', vis: new Set(), tray: null, deep: false, wired: false, ftab: 'plays' };
 const SKEY = { mode: 'isx-sim-mode', pos: 'isx-sim-pos' };
 (() => {
   SIM.mode = stGet(SKEY.mode) === 'full' ? 'full' : 'story';
-  try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0));
+  try { const p = JSON.parse(stGet(SKEY.pos, true) || 'null'); if (p && SLINES[p.l]) { SIM.line = p.l; SIM.beat = Math.max(-1, Math.min(SLINES[p.l].beats.length, +p.b || 0)); if (SLINES[p.l].main && SIM.beat < 0) SIM.beat = 0;   /* 19 Nov: a place stored before the guide lost its step −1 */
     const nb = SLINES[p.l].beats[SIM.beat + 1], dk = SIM.beat >= 0 && nb ? nb.fork : null;   /* a stored decision or chain position (old values carry no ph and load as before) */
     if (SLINES[p.l].ep && Array.isArray(p.r) && SLINES[p.r[0]] && SLINES[p.r[0]].main) SIM.epRet = { l: p.r[0], b: Math.max(0, Math.min(SLINES[p.r[0]].beats.length - 1, +p.r[1] || 0)) };
     if (dk && ['ask', 'chain', 'crisis'].includes(p.ph)) { SIM.ph = p.ph; SIM.c = Math.max(0, Math.min(SDEC[dk].chain.length - 1, +p.c || 0)); if (p.ph !== 'ask') SIM.seenAlt.add(dk);
@@ -8301,8 +8303,8 @@ function simCamTarget() {
   cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB0) + 'px');
   /* stage 5: in the full view the map also clears the legend, which wraps to two rows on narrower screens (the rail keeps its own bottom, --ib) */
   const kt = on ? null : rel('s2low', 't'), iB = kt != null ? Math.max(iB0, H - kt + 10) : iB0;
-  const open = cock.classList.contains('s4open');
-  const iL = on && !folded && !open && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : 26, iR = 26;
+  const thx = !on && !phone && cock.classList.contains('thx-on') ? rel('thx', 'r') : null;   /* 19 Nov: Expert's thesis panel stands on the left of the full map */
+  const iL = on && !folded && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : thx != null ? thx + 24 : 26, iR = 26;
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
     const B = L.beats[b], P = b > 0 ? L.beats[b - 1] : null;
@@ -8432,7 +8434,7 @@ function simBar() {
   else nx = { kicker: 'Next', title: L.beats[b + 1].t, ptitle: 'Next' };
   const cs = segs.find(s => s.current);
   RT.render(host, { id: 'sim', label: guide ? 'Guide: the route' : L.ep ? 'Episode: steps' : 'Mechanism: steps', stage,
-    back: { enabled: b >= 0, label: L.ep && b === 0 && SIM.epRet && !SIM.ph ? 'Back to the guide' : SIM.ph === 'ask' ? (SIM.dp > 0 ? 'Back: ' + CP[SIM.dp - 1] : 'Back: ' + L.beats[b].t) : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? 'Back to the start' : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
+    back: { enabled: b >= 0, label: L.ep && b === 0 && SIM.epRet && !SIM.ph ? 'Back to the guide' : SIM.ph === 'ask' ? (SIM.dp > 0 ? 'Back: ' + CP[SIM.dp - 1] : 'Back: ' + L.beats[b].t) : SIM.ph === 'chain' ? (SIM.c ? 'Back: ' + DD.chain[SIM.c - 1].t : 'Back to your call') : SIM.ph === 'crisis' ? 'Back: ' + DD.chain[DD.chain.length - 1].t : b >= n ? 'Back to the last step' : b === 0 ? (L.main ? 'Back: ' + (sWayIn() === SGI ? 'the basics' : 'first principles') : 'Back to the start') : b > 0 ? (L.beats[b].fork ? 'Back to your call' : 'Back: ' + L.beats[b - 1].t) : 'Back' },
     next: nx,
     line: { kicker: sWhere()[0], title: sWhere()[1], attrs: { id: 'isx-sn-pickb', 'data-tray': 'pick', 'aria-expanded': String(SIM.tray === 'pick'), 'aria-controls': 'isx-s2tray-pick' } },
     segs, controls: simTabsHTML(),
@@ -8629,7 +8631,7 @@ function dcSync() {
   try {
     const cock = $('cock'); if (!cock) return;
     const now = simOn() && (SIM.ph === 'ask' || sEpIn()), was = cock.classList.contains('dcall');
-    if (now !== was) { cock.classList.toggle('dcall', now); dcHold(now); const st = $('stage'); if (st) st.inert = now || (simOn() && SIM.beat < 0 && !!sLine().main); }
+    if (now !== was) { cock.classList.toggle('dcall', now); dcHold(now); const st = $('stage'); if (st) st.inert = now; }
   } catch (e) { /* the Simulator is not built yet */ }
 }
 /* call screen round: the call's keys, wherever focus is while it is open. Esc leaves the call for the guide step before it; 1 to 4 weigh
@@ -8709,7 +8711,7 @@ function gsOpen(on, from) {
   ROOT.querySelectorAll('[data-gsteps][aria-expanded]').forEach(b => b.setAttribute('aria-expanded', String(!!on)));
 }
 /* tiers build A (15 Nov 2026): three ways in, named by what each route assumes (spec §1). The way used last time is marked in words. One
-   key: isx-way. guide build (16 Nov 2026): the three doors are drawn by the entry (sEntryHTML) as the levels Foundations, Fluent, Expert. */
+   key: isx-way. guide build (16 Nov 2026): the three doors became the levels Foundations, Fluent, Expert (now on the tab's entry screen, v2/enter.js). */
 const SWAY = 'isx-way';
 const sWords = t => (Array.isArray(t) ? t.join(' ') : String(t || '')).replace(/\{\{\w+\|([^}]+)\}\}/g, '$1').split(/\s+/).filter(Boolean).length;
 /* minutes from the text itself: words at 200 a minute plus 8 seconds a card; each decision, one walk of its other path and its crisis card counted once.
@@ -8824,42 +8826,56 @@ function sGndHTML(L, b) {
       + (B.soon ? `<p class="gs-soon">${LOCK3}${fe(B.soon)}</p>` : '')
       + `<div class="lsrc cb-src">${B.src ? 'Source: ' + fe(B.src) : 'Source: no figure on this screen.'}</div>` + sSrcLinks(B.sl) + (B.lk ? sLinksHTML(B.lk) : '') + (B.go ? sGoHTML(B.go) : '') + sTermsHTML(B.x, ...flat), 'Say more');
 }
-/* guide build (16 Nov 2026): the guide's entry (spec guide-entry-16-nov §1, words from guide spine §2). It replaces the opening card “How
-   the plumbing was built”: the title, the promise, then one glass card with the thesis in plain words (the full wording one click away),
-   what this part shows, three levels and how the guide works. Time and difficulty are bars; the minutes live in each level's accessible
-   name. The levels keep the keys of the three doors (ground, guide, map) and the one storage key, isx-way. */
-const SENTRY = { k: 'Scott Bessent Simulator', q: 'Why does the dollar need the AI trade?', p: 'By the end you will know, and you will know who keeps it going.',
-  th: ['Most economists treat the world’s trade imbalances, and the {{hotmoney|hot money}} that follows them, as a fault to be fixed. Elias Rutten’s thesis is that the instability is ', 'made on purpose and used as a weapon', ', by the United States and by China.'],
-  rem: 'Understanding the mechanics takes time. If you can’t finish today, set a reminder.' };
+/* machinery entry round (19 Nov 2026): the guide's three levels, as data. The old in-page entry card (sEntryHTML, “Choose your way
+   in”) is gone: the tab's whole-window entry screen (v2/enter.js) draws the levels from ISX.simWays and starts one with ISX.simWay.
+   No minutes are shown or spoken: the computed lengths only set the relative width of each level's Time bar. One storage key, isx-way. */
 const SWAYS = [
-  { k: 'ground', t: 'Foundations', a: 'I know the US has a debt problem, but not why.', ids: ['gnd', 'main'], lv: 1, al: 'the basics, then the guide', as: 'Assumes nothing' },
-  { k: 'guide', t: 'Fluent', a: 'I know how the dollar system works.', ids: ['pre', 'main'], lv: 2, al: 'first principles, then the guide', as: 'Assumes you know what a Treasury yield is', sug: true },
-  { k: 'map', t: 'Expert', a: 'I know the cogs. Show me the thesis on the map.', ids: null, lv: 3, al: 'the full map, every figure lit, any step of the guide one click away', as: 'Assumes you know the plumbing' }];
+  { k: 'ground', t: 'Foundations', a: 'I know the US has a debt problem, but not why.', ids: ['gnd', 'main'], lv: 1, say: 'The longest way in, and the easiest: assumes nothing. The basics, then the guide.' },
+  { k: 'guide', t: 'Fluent', a: 'I know how the dollar system works.', ids: ['pre', 'main'], lv: 2, say: 'A middle way in: assumes you know what a Treasury yield is. First principles, then the guide.', sug: true },
+  { k: 'map', t: 'Expert', a: 'I know the cogs. Show me the thesis on the map.', ids: null, lv: 3, say: 'The shortest way in, and the hardest: assumes you know the plumbing. The full map with the thesis on it, any step of the guide one click away.' }];
 const sWayMins = W => W.ids ? sMins(W.ids) : null;
-function sEntryHTML() {
-  const last = stGet(SWAY), G = SLINES[0], mins = SWAYS.map(sWayMins), top = Math.max(...mins.filter(Boolean)), scale = top > 60 ? top * 1.1 : 60;
-  const nInd = IND.filter(I => !I.slot).length, nDec = Object.keys(SDEC).length, word = n => sWord(n);
-  const way = (W, i) => { const m = mins[i], tag = last === W.k ? '<small class="ge-tag last">Last time</small>' : !last && W.sug ? '<small class="ge-tag">Suggested</small>' : '';
-    /* the minutes and what the route is live in the level's accessible name only: a hidden line after the visible words (the bars are for the eye) */
-    const more = `${W.al.replace(/^./, c => c.toUpperCase())}. ${m ? 'About ' + m + ' minutes' : 'At your own pace'}. ${W.as}.`;
-    return `<button type="button" class="ge-way${W.sug ? ' sug' : ''}" data-way="${W.k}"><span class="ge-wt"><b>${fe(W.t)}</b> ${tag} <i aria-hidden="true">→</i></span> <span class="ge-wa">${fe(W.a)}</span> <span class="vh">${fe(more)}</span>`
-      + `<span class="ge-bars" aria-hidden="true"><span class="ge-bl">Time</span><span class="ge-tb${m ? '' : ' pace'}">${m ? `<i style="width:${Math.min(100, Math.round(m / scale * 100))}%"></i>` : '<em>your pace</em>'}</span><span class="ge-bl">Difficulty</span><span class="ge-db">${[1, 2, 3].map(j => `<i${j <= W.lv ? ' class="on"' : ''}></i>`).join('')}</span></span></button>`; };
-  return `<div class="ge" id="isx-gentry"><div class="ge-head"><div class="ge-k">${fe(SENTRY.k)}</div><h3 class="ge-t">The imperial <span>machinery</span></h3><i class="ge-hr" aria-hidden="true"></i><p class="ge-pr"><b>${fe(SENTRY.q)}</b> ${fe(SENTRY.p)}</p></div>`
-    + `<div class="ge-card"><span class="ge-br" aria-hidden="true"></span>`
-    + `<section class="ge-sec ge-th s2thesis"><span class="ge-lab"><i aria-hidden="true">◆</i>The thesis</span><div class="ge-thx"><p>${ft(SENTRY.th[0])}<em>${fe(SENTRY.th[1])}</em>${fe(SENTRY.th[2])}</p><button type="button" class="ge-pill" data-gefull aria-expanded="false" aria-controls="isx-ge-full">Full thesis <span aria-hidden="true">›</span></button></div>`
-    + `<div class="ge-full" id="isx-ge-full" hidden><p>${richText(fe(SMAIN.thesis))}</p></div></section>`
-    + `<section class="ge-sec ge-shows" aria-labelledby="isx-ge-sh"><span class="ge-lab" id="isx-ge-sh">What this part shows</span><ol>`
-    + `<li class="c1"><span>01 · Every cog</span><p><b>${Object.keys(FN).length}</b> actors and gauges, <b>${FE.length}</b> relations and <b>${nInd}</b> dated indicators.</p></li>`
-    + `<li class="c2"><span>02 · How Washington works it</span><p><b>${LEVERS.length}</b> levers, and <b>${word(nDec)}</b> points where you take the decision yourself.</p></li>`
-    + `<li class="c3"><span>03 · Where it could break</span><p><b>${word(nDec).replace(/^./, c => c.toUpperCase())}</b> chain reactions toward a crisis, each anchored in a real precedent.</p></li></ol></section>`
-    + `<section class="ge-sec ge-ways"><span class="ge-lab" id="isx-tw-k">Choose your way in</span><div class="ge-wg" role="group" aria-labelledby="isx-tw-k">${SWAYS.map(way).join('')}</div></section>`
-    + `<section class="ge-sec ge-how" aria-labelledby="isx-ge-hw"><span class="ge-lab" id="isx-ge-hw">How the guide works</span><ul>`
-    + `<li><span class="g g-dw" aria-hidden="true">word</span>Dotted words carry a definition: hover or tap.</li>`
-    + `<li><span class="g g-dm" aria-hidden="true">◆</span>${word(nDec).replace(/^./, c => c.toUpperCase())} calls are yours: choose, then see what happened.</li>`
-    + `<li><span class="g g-mi" aria-hidden="true">More inside ›</span>A gold tab opens a deeper view.</li>`
-    + `<li><span class="g g-ar" aria-hidden="true">← →</span>${COARSE ? 'Swipe the card, or tap Next.' : 'Next and Back, or the arrow keys.'}</li></ul></section></div>`
-    + `<div class="ge-foot"><p class="ge-rem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>${fe(SENTRY.rem)}</span><button type="button" class="ge-pill sm" data-remind>Set a reminder</button></p>`
-    + `<span class="ge-fr">${stGet('isx-hints-off') === '1' ? '<button type="button" class="ge-pill sm" data-b1more="hints">Show hints again</button>' : ''}<button type="button" class="ge-pill" data-simtour aria-label="Take the tour of the Scott Bessent Simulator">Tour</button></span></div></div>`;   /* clarity patch: hints hidden can be brought back here (and from More on phones) */
+const sWayIn = () => stGet(SWAY) === 'ground' && SGI >= 0 ? SGI : SPI;
+function sWays() {
+  const m = SWAYS.map(sWayMins), top = Math.max(...m.filter(Boolean)), last = stGet(SWAY);
+  return SWAYS.map((W, i) => ({ k: W.k, t: W.t, a: W.a, lv: W.lv, say: W.say, len: m[i] ? m[i] / top : .2, last: last === W.k, sug: !last && !!W.sug }));
+}
+/* a level starts here: Foundations at the basics, Fluent at first principles, Expert on the full map with the thesis panel */
+function sWayGo(k, kb) {
+  if (!SWAYS.some(W => W.k === k)) return; stSet(SWAY, k); track('Way', { way: k });
+  if (k === 'map') { stSet(STHX, '1'); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) focusIn($('cock'), '#isx-thx .thx-ch'); return; }
+  stSet(STHX, null); SIM.ret = null; if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
+  simGo(k === 'ground' && SGI >= 0 ? SGI : SPI, 0, 'focus');
+}
+/* “Explore on my own”: the full map, nothing pinned, no thesis, no guide */
+function sFree(kb) { stSet(STHX, '0'); clearSel(); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) focusIn($('cock'), '[data-s4tab][aria-pressed="true"]'); }
+/* the thesis on the map (Expert): SMAIN.thesis in Elias Rutten's wording, then the guide's chapters, each lighting its actors and
+   lines on the map and opening its first step on demand. One panel, foldable; shown in the full view after Expert was chosen.
+   Storage: isx-sim-thesis ('1' after Expert, '0' after “Explore on my own”); isx-thx-fold (session) for the fold. */
+const STHX = 'isx-sim-thesis', thxE = ci => new Set(SLINES[0].beats.filter(B => B.ch === ci).flatMap(B => B.e));
+let fch = null, fchH = null;
+function thxHTML() {
+  const G = SLINES[0];
+  return `<aside class="thx" id="isx-thx" aria-labelledby="isx-thx-h" hidden><div class="thx-h"><h3 id="isx-thx-h"><i aria-hidden="true">◆</i>The thesis on the map</h3><button type="button" class="thx-f" data-thxf aria-expanded="true" aria-controls="isx-thx-b">Fold</button></div>`
+    + `<div class="thx-b" id="isx-thx-b"><p class="thx-t">${richText(fe(SMAIN.thesis))}</p>`
+    + `<p class="thx-l">The guide carries it in ${sWord(G.chs.length)} chapters. Point at one to light its actors and lines on the map; open it to read.</p><ol class="thx-c">`
+    + G.chs.map((C, ci) => `<li style="--rc:${SCHC[ci]}"><button type="button" class="thx-ch" data-thxc="${ci}" aria-pressed="false"><small>Act ${SACTS[C.act][0]}</small><span>${fe(C.t)}</span></button><button type="button" class="thx-go" data-gs="0:${G.first[ci]}" aria-label="Open the guide at ${fe(C.t)}, step ${G.first[ci] + 1}">Step ${G.first[ci] + 1} <span aria-hidden="true">›</span></button></li>`).join('')
+    + `</ol></div></aside>`;
+}
+function simThx() {
+  const t = $('thx'), cock = $('cock'); if (!t || !cock) return;
+  const on = SIM.mode === 'full' && stGet(STHX) === '1';
+  if (on && t.hidden) { const f = stGet('isx-thx-fold', true), fold = f ? f === '1' : PHONE(); thxFold(t, fold); }
+  t.hidden = !on; if (!on && (fch != null || fchH != null)) { fch = null; fchH = null; }
+  if (!t._w) { t._w = true;
+    const hv = e => { const b = e.target.closest('.thx-ch'), i = b ? +b.dataset.thxc : null; if (i === fchH) return; fchH = i; styleRmap(); };
+    t.addEventListener('pointerover', hv); t.addEventListener('focusin', hv);
+    t.addEventListener('pointerleave', () => { if (fchH == null) return; fchH = null; styleRmap(); });
+    t.addEventListener('focusout', e => { if (t.contains(e.relatedTarget)) return; if (fchH == null) return; fchH = null; styleRmap(); }); }
+  cock.classList.toggle('thx-on', on && !t.classList.contains('folded'));
+}
+function thxFold(t, fold) {
+  t.classList.toggle('folded', fold); const b = t.querySelector('[data-thxf]'); if (b) { b.textContent = fold ? 'Open' : 'Fold'; b.setAttribute('aria-expanded', String(!fold)); }
+  t.querySelector('.thx-b').hidden = fold;
 }
 /* the figure the closing card needs and the page did not carry: stored here with its source (copy Part F, point 2) */
 const SFIG = { gbp: { v: '47%', k: 'Hyperscalers’ share of sterling corporate bond issuance', d: '2026 to early September', src: 'Bank of England Financial Policy Committee record, 25 Sep 2026 (data round F6, section 3)' } };
@@ -8874,7 +8890,6 @@ function simBodyHTML0() {
   if (b < 0) {
     const lede = L.main ? SMAIN.lede : L.lede || `One mechanism, built from scratch: ${n} steps, from “${L.beats[0].t}” to “${L.beats[n - 1].t}”.`;
     const forks = L.beats.filter(B => B.fork).length, [l1, l2] = sSplit(lede);
-    if (L.main) return sEntryHTML();
     if (L.ep) return sEpScreenHTML(L);
     if (L.ep) return `<div class="s2k" style="--rc:${L.c}"><i></i>Episode<em>${fe(L.ep.w)}</em><span class="sn-cnt">${n} steps</span></div><h3>${fe(L.t)}</h3>${L.ep.warn ? `<p class="cb-warn">${fe(L.ep.warn)}</p>` : ''}<p class="s2p">${ft(sTips([lede])[0])}</p>`
       + `<p class="cl-epn">An episode is a dated moment when the machine was used or strained. The guide does not need it; it opens from “${fe(SLINES[0].beats[sEpHome(L.ep)].t)}”, step ${sEpHome(L.ep) + 1}.</p>`
@@ -8959,7 +8974,7 @@ function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
-  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); cock.classList.toggle('s4open', on && SIM.beat < 0 && !!sLine().main); { const was = cock.classList.contains('dcall'), now = on && (SIM.ph === 'ask' || sEpIn()); cock.classList.toggle('dcall', now); SIM.dcArr = now && !was; if (now !== was) dcHold(now); } { const st = $('stage'); if (st) st.inert = on && ((SIM.beat < 0 && !!sLine().main) || SIM.ph === 'ask' || sEpIn()); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
+  cock.classList.toggle('st', on); cock.classList.toggle('full', !on); { const was = cock.classList.contains('dcall'), now = on && (SIM.ph === 'ask' || sEpIn()); cock.classList.toggle('dcall', now); SIM.dcArr = now && !was; if (now !== was) dcHold(now); } { const st = $('stage'); if (st) st.inert = on && (SIM.ph === 'ask' || sEpIn()); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
   cock.querySelectorAll('.smode [data-sm]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sm === SIM.mode)));
   const R = simReveal(); SIM.R = R;
   if (SIM.beat >= 0) SIM.vis.add(SIM.line + ':' + SIM.beat);
@@ -8969,7 +8984,7 @@ function simApply(anim, fwd) {
   if (anim && prev && !reduce) simEnter(prev, R, fwd);
   SIM.shown = R;
   if (on) simNarr(anim);
-  simBar(); simTrays();
+  simBar(); simTrays(); simThx();
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
   try { stSet(SKEY.pos, JSON.stringify(Object.assign(SIM.ph ? Object.assign({ l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c }, SIM.ph === 'ask' ? { dp: SIM.dp } : {}) : { l: SIM.line, b: SIM.beat }, SIM.epRet ? { r: [SIM.epRet.l, SIM.epRet.b] } : {})), true); } catch (e) { /* ignore */ }
@@ -8991,6 +9006,7 @@ function simEpBack() {
   simGo(r.l, r.b, 'focus');
 }
 function simGo(line, beat, how) {
+  if (SLINES[line].main && beat < 0) beat = 0;   /* machinery entry round (19 Nov 2026): the guide has no step before its first; the tab's entry screen (v2/enter.js) is its start */
   if (!SLINES[line].ep) SIM.epRet = null;
   const fwd = line === SIM.line && beat === SIM.beat + 1 && SIM.ph !== 'chain';
   SIM.line = line; SIM.beat = beat; SIM.ph = null; SIM.c = 0; if (SIM.tray === 'pick') SIM.tray = null; clearSel();
@@ -9038,6 +9054,7 @@ function simBack() {
   if (SIM.beat < 0) return;
   if (sLine().ep && SIM.beat === 0 && SIM.epRet) { simEpBack(); return; }
   const B = sCur(); if (B && B.fork && SIM.beat > 0) { simPhase(SIM.line, SIM.beat - 1, 'ask', sCallN(B.fork) - 1); return; }   /* the step a decision leads to goes back to the decision */
+  if (sLine().main && SIM.beat === 0) { const w = sWayIn(); simGo(w, SLINES[w].beats.length, 'focus'); return; }   /* 19 Nov: the guide's first step goes back to the close of the way in */
   simGo(SIM.line, SIM.beat - 1, 'focus');
 }
 /* plain-language round (18 Nov 2026): the secret money printer. Four of the guide's calls are each one routine-looking step of a
@@ -9187,9 +9204,8 @@ function simMount() {
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
     if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); else if (SIM.tray === 'read' && e.detail === 0) focusIn($('b1led'), '.lcl'); return; }
     if (d.s4more != null) { const m = $('b1more'); if (m) { const hb = m.querySelector('[data-b1more="hints"]'); if (hb) hb.hidden = stGet('isx-hints-off') !== '1'; m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); if (!m.hidden && e.detail === 0) m.querySelector('button').focus({ preventScroll: true }); } return; }
-    if (d.b1more === 'ways') { $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) mb.setAttribute('aria-expanded', 'false'); SIM.ret = null; if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); } SIM.tray = null; simGo(0, -1); return; }
+    if (d.b1more === 'ways') { $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) mb.setAttribute('aria-expanded', 'false'); if (ISX.enter) ISX.enter.open('fin', true, 'levels'); return; }   /* 19 Nov: the levels are on the tab's entry screen; the place in the guide is kept */
     if (d.b1more === 'hints') { if (window.ISX.hints) ISX.hints.reset(); else stSet('isx-hints-off', null); track('Hints', { on: 'again' });
-      if (t.closest('.ge')) { t.hidden = true; const tb = ROOT.querySelector('.ge [data-simtour]'); if (tb) tb.focus({ preventScroll: true }); return; }
       $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) { mb.setAttribute('aria-expanded', 'false'); mb.focus({ preventScroll: true }); } return; }   /* clarity patch (round 5b's note 5): “Hide hints” is no longer final */
     if (d.b1more === 'share') { $('b1more').hidden = true; const sh = $('share'); if (sh) { sh.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); sh.click(); } return; }
     if (d.ltab) { SIM.ltab = d.ltab; const lc = $('b1led').querySelector('.lcols'); if (lc) lc.dataset.tab = d.ltab; $('b1led').querySelectorAll('[data-ltab]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.ltab === d.ltab))); return; }
@@ -9205,11 +9221,9 @@ function simMount() {
     if (d.twret != null) { SIM.ret = null; simSetMode('full'); focusIn(cock, '#isx-gsb'); return; }
     if (d.twkey != null) { const o = t.getAttribute('aria-expanded') !== 'true'; t.setAttribute('aria-expanded', String(o)); t.parentNode.classList.toggle('open', o); return; }
     if (d.gdt != null) { const g = t.closest('.gd'), on = t.getAttribute('aria-pressed') !== 'true'; t.setAttribute('aria-pressed', String(on)); t.textContent = on ? 'View as diagram' : 'View as table'; g.querySelector('.gd-pic').hidden = on; g.querySelector('.gd-tbl').hidden = !on; g.querySelector('.gd-foot .gd-edge').hidden = on; return; }
-    if (d.gefull != null) { const f = $('ge-full'), on = f.hidden; f.hidden = !on; t.setAttribute('aria-expanded', String(on)); $('gentry').classList.toggle('full', on); return; }
-    if (d.way) { if (t.getAttribute('aria-disabled') === 'true') return; stSet(SWAY, d.way); track('Way', { way: d.way });
-      if (d.way === 'map') { simSetMode('full'); emit('key', true); if (e.detail === 0) focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
-      else { const g = SLINES.findIndex(L => L.gnd); simGo(d.way === 'ground' && g >= 0 ? g : SPI, 0, 'focus'); }
-      return; }
+    if (d.way) { sWayGo(d.way, e.detail === 0); return; }
+    if (d.thxf != null) { const x = $('thx'), f = !x.classList.contains('folded'); thxFold(x, f); stSet('isx-thx-fold', f ? '1' : '0', true); simThx(); simCam(true); return; }
+    if (d.thxc != null) { const i = +d.thxc; fch = fch === i ? null : i; fsel = null; fedge = null; styleRmap(); renderSide(); return; }
     if (d.ep) { simEp(d.ep, !!t.closest('#isx-sn-body')); return; }
     if (d.epback != null) { simEpBack(); return; }
     if (d.act != null) { simGo(0, SLINES[0].first[SLINES[0].chs.findIndex(C => C.act === +d.act)], 'focus'); return; }
@@ -9323,6 +9337,9 @@ window.ISX = {
   stepNums: () => sNums(), get acts() { return SACTS.map(A => A.slice()); }, get episodes() { return SEPI.map(X => ({ id: X.id, t: X.t, w: X.w, from: X.from, n: X.b.length })); }, get numKeys() { return Object.keys(SNUM); },   /* clarity build, for v2/clarity.js and the checks */
   get figs() { return JSON.parse(JSON.stringify(SFIGN)); },
   get calls() { return JSON.parse(JSON.stringify(SCALL)); },   /* clarity patch: the call screens' pages, tiles and pieces, for checks */   /* guide build: the figures this round stored, for checks */
+  simWays: () => sWays(), simWay: (k, kb) => sWayGo(k, kb), simFree: kb => sFree(kb), get simThesis() { const t = $('thx'); return !!t && !t.hidden; },
+  /* 19 Nov: nothing started in the machinery: no level chosen, the guide at its first step, nothing chosen on the map */
+  get simFresh() { return finMode === 'plumb' && !stGet(SWAY) && SIM.mode === 'story' && SIM.line === 0 && SIM.beat === 0 && !SIM.ph; },
   get mins() { return { ground: sMins(['gnd', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },
   get sim() { return { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, ret: SIM.ret || null, c: SIM.c, dp: SIM.dp, np: SIM.ph === 'ask' && sDecK() ? sCallN(sDecK()) : 0, dec: sDecK(), alt: sInChain() ? sDecK() : null, pick: Object.assign({}, SIM.pick), seenAlt: [...SIM.seenAlt],
     decisions: Object.keys(SDEC).map(k => ({ k, at: SLINES[0].beats.findIndex(B => B.fork === k), ord: SDEC[k].ord.slice(), sus: Object.keys(SDEC[k].sus), real: SDEC[k].real[0], alt: SDEC[k].alt[0], chain: SDEC[k].chain.map(C => ({ t: C.t, e: C.e.slice(), off: C.off.slice(), fl: Object.assign({}, C.fl) })), crisis: SDEC[k].crisis.t })), lines: SLINES.map(L => ({ id: L.id, main: !!L.main, ep: L.ep ? L.ep.id : null, pre: !!L.pre, gnd: !!L.gnd, steps: L.beats.map((B, i) => ({ k: B.k || null, q: B.q || null, ch: B.ch, fk: B.fork || null, t: B.t, n: [...L.cum[i].n], e: [...L.cum[i].e], l: [...L.cum[i].l] })) })), relations: FE.map(e => [e[0], e[1]]), indicators: IND.map(I => ({ id: I.id, k: I.k, node: I.n, role: I.role, tag: I.tag, slot: !!I.slot, rel: I.rel.slice(), first: I.first, at: I.at || null })), gauges: Object.keys(GNODE) }; },

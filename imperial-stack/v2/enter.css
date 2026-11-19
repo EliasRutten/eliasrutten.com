@@ -97,3 +97,33 @@ html.isx-enlock, html.isx-enlock body { overflow: hidden; }
   #isx-root .en-in { padding: 26px 20px 28px; }
   #isx-root .en-offer { left: 12px; right: 12px; bottom: 84px; }
 }
+
+/* ---------- machinery entry round (19 Nov 2026) ---------- */
+/* a button with a one-line description under its label (the machinery's “Learn step by step” and “Explore on my own”) */
+#isx-root .en-btn:has(small) { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; min-height: 58px; padding: 8px 24px; }
+#isx-root .en-btn .en-bt { display: inline-flex; align-items: center; gap: 8px; }
+#isx-root .en-btn small { font: 400 12px/1.2 var(--sans); letter-spacing: 0; text-transform: none; color: #9fb1c2; }
+#isx-root .en-btn.pri small { color: #e9c98f; }
+#isx-root .en-btn.pri:hover small { color: #2a1d08; }
+/* the levels: no minutes; a Time and a Difficulty bar carry the trade-off */
+#isx-root .en-lv { gap: 7px; }
+#isx-root .en-chs:has(.en-lv) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 760px) { #isx-root .en-chs:has(.en-lv) { grid-template-columns: 1fr; } }
+#isx-root .en-lv.sug { border-color: rgba(255, 181, 71, .65); background: rgba(255, 181, 71, .05); }
+#isx-root .en-lv b { display: flex; align-items: center; gap: 10px; }
+#isx-root .en-tag { font: 400 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #ffb547; }
+#isx-root .en-tag::before { content: "● "; font-size: 7px; vertical-align: 1px; }
+#isx-root .en-tag.last { color: #6fe0d2; }
+#isx-root .en-bars { display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: 6px 10px; margin-top: 4px; }
+#isx-root .en-bars .en-bl { font: 400 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .en-tb { position: relative; display: block; height: 3px; border-radius: 2px; background: rgba(143, 163, 182, .22); }
+#isx-root .en-tb i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: #9fb1c2; }
+#isx-root .en-db { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+#isx-root .en-db i { display: block; height: 3px; border-radius: 2px; background: rgba(143, 163, 182, .22); }
+#isx-root .en-db i.on { background: #9fb1c2; }
+#isx-root .en-lv.sug .en-tb i, #isx-root .en-lv.sug .en-db i.on { background: #ffb547; }
+/* the header's explainer button: hidden where it does not apply */
+#isx-root .brand .kicker .aboutk[hidden] { display: none; }
+#isx-root .brand .kicker .en-tabx .sm { display: none; }
+@media (max-width: 760px) { #isx-root .brand .kicker .en-tabx .lg { display: none; } #isx-root .brand .kicker .en-tabx .sm { display: inline; } }
+#isx-root .en-lv .en-say { font-size: 12.5px; color: #93a5b6; }

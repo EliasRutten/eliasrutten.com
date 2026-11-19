@@ -338,7 +338,6 @@
 #isx-root .s2 .b1ind b { font-family: var(--mono); font-weight: 400; letter-spacing: .06em; color: var(--ink2); }
 #isx-root .s2 .b1ind .pips { display: flex; gap: 3px; } #isx-root .s2 .b1ind .pips i { width: 6px; height: 14px; border-radius: 2px; background: var(--rc); opacity: .9; }
 #isx-root .s2 .b1ind .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-#isx-root .s2.s4open .b1ind { display: none; }
 #isx-root .tip6:has(.b1tip) { width: 390px; max-width: min(390px, calc(100vw - 16px)); padding: 12px 14px 11px; }
 #isx-root .b1tip + .b1tip { margin-top: 10px; padding-top: 10px; border-top: 1px solid #22313d; }
 #isx-root .b1tip .th { display: flex; justify-content: space-between; gap: 10px; font: 10px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
@@ -485,7 +484,7 @@
 /* the card may grow up to the heading above it (--it: the map's top inset, set by the camera), never over it */
 @media (min-width: 761px) {
   /* bottom: on narrow tablets stage 5 kept the card clear of a two-row bar; the bar is one row at every width now */
-  #isx-root #isx-cock.s2:not(.s4open) .s2card { bottom: 86px; max-height: calc(100% - var(--it, 164px) - 90px); }
+  #isx-root #isx-cock.s2 .s2card { bottom: 86px; max-height: calc(100% - var(--it, 164px) - 90px); }
 }
 @media (min-width: 761px) {
   /* where a decision card is taller than its room (tablets, or “More context” open), the options stay at its foot */

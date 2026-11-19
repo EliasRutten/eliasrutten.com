@@ -268,7 +268,7 @@
 @media (min-width: 761px) { #isx-root .brand .er-ps { display: none; } }   /* the header has no room to spare; Pax Silica stays in About */
 @media (min-width: 761px) and (max-width: 1439px) { #isx-root .b4mis { width: 24px; padding: 0; justify-content: center; margin-left: 6px; } #isx-root .b4mis span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
 /* rule 1 · card titles 24 px on step cards (22 on phones); the Simulator's opening card and Scenarios' scene title keep their display size */
-@media (min-width: 761px) { #isx-root .cmd6 .tournarr h3, #isx-root .s2 .s2body h3 { font-size: 24px; } #isx-root #isx-cock.s2.s4open .s2card h3 { font-size: 30px; } }
+@media (min-width: 761px) { #isx-root .cmd6 .tournarr h3, #isx-root .s2 .s2body h3 { font-size: 24px; } }
 #isx-root .s2 .s2chl button { min-height: 36px; height: 36px; }
 #isx-root #isx-hint .tipsre { min-height: 24px; }
 #isx-root .acard .fy, #isx-root .acard .stt, #isx-root .b4sh-b .fy, #isx-root .b4sh-b .stt { font-size: 10.5px; }

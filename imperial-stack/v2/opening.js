@@ -1,6 +1,6 @@
 /* The Imperial Stack v2 · opening.js (round 5b, 16 Nov 2026; entry spec §4)
-   Two first openings, each once per browser: the Circuit's, on a first visit that arrives without a link into the map, and the
-   Simulator's, on the first entry into its tab. Restrained on purpose: the title first, one gold line as the only moving mark, the
+   The Circuit's first opening, once per browser, on a first visit that arrives without a link into the map. (The Simulator's, which
+   animated the machinery's old in-page entry card, went with that card on 19 Nov 2026: the tab's entry screen is v2/enter.js.) Restrained on purpose: the title first, one gold line as the only moving mark, the
    machine after; slow ease-outs, nothing bursts, bounces, glows or shakes, no sound, nothing tied to the pointer.
    Any key, click or tap skips (the rest resolves in a quarter of a second); under reduced motion neither plays.
    Cost: only opacity and transform are animated (and stroke-dashoffset on small SVG lines). Nothing filters, masks or clips the globe's
@@ -8,13 +8,13 @@
    small steps on the same clock (a count, a marker on a line), so a frame can be shown at any time (ISX.opening.seek, for the
    frame strips and the checks). The registry (v2/perf.js) owns it as a one-shot loop, “opening”: it starts only while the stage
    is in view and ends at once if the browser tab is hidden.
-   Storage: isx-open-circuit, isx-open-sim ('1' once played). “#replay” in the address plays both again. The check scripts' switch
-   isx-tips-sim = 'off' keeps both away. */
+   Storage: isx-open-circuit ('1' once played). “#replay” in the address plays it again. The check scripts' switch
+   isx-tips-sim = 'off' keeps it away. */
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
   var U = X.util, root = X.root, $ = X.$, P = X.perf, NS = 'http://www.w3.org/2000/svg';
-  var KEY = { circuit: 'isx-open-circuit', sim: 'isx-open-sim' }, EASE = 'cubic-bezier(.22,.61,.36,1)';
+  var KEY = { circuit: 'isx-open-circuit' }, EASE = 'cubic-bezier(.22,.61,.36,1)';
   var live = null, pending = null, ran = null, queue = [], replay = !!window.__isxReplay;
   var mk = function (tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; e.setAttribute('aria-hidden', 'true'); return e; };
   var sv = function (tag, at) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); return e; };
@@ -210,87 +210,12 @@
     start(tl); return true;
   }
 
-  /* ================= the Simulator: “The imperial machinery”, 6.5 s ================= */
-  function sim() {
-    var cock = $('cock'), stage = $('stage'), entry = $('gentry'), svg = $('rmap'); if (!cock || !stage || !entry || !svg || !cock.classList.contains('s4open')) return false;
-    var head = entry.querySelector('.ge-head'), kick = entry.querySelector('.ge-k'), title = entry.querySelector('.ge-t'), hr = entry.querySelector('.ge-hr'), prom = entry.querySelector('.ge-pr'), card = entry.querySelector('.ge-card'), foot = entry.querySelector('.ge-foot');
-    if (!head || !title || !card) return false;
-    var rise0 = function (y) { return [{ opacity: 0, translate: '0 ' + (y || 8) + 'px' }, { opacity: 1, translate: '0 0' }]; };
-    if (window.innerWidth <= 760) {   /* phones: the map is a small strip under the entry, so the opening is the title, then the entry: 2.6 s */
-      var ts = new TL('sim', 2.6); ts.stage = cock;
-      ts.a(kick, rise0(), .3, .7); ts.a(title, rise0(10), .45, .9); ts.a(hr, [{ opacity: 0, scale: '0 1' }, { opacity: .8, scale: '1 1' }], .9, .7);
-      ts.a(prom, rise0(6), 1.7, .5); ts.a(card, rise0(8), 1.85, .5); if (foot) ts.a(foot, [{ opacity: 0 }, { opacity: 1 }], 2.0, .4);
-      start(ts); return true;
-    }
-    var tl = new TL('sim', 6.5); tl.stage = cock;
-    cock.classList.add('op-s'); tl.undo.push(function () { cock.classList.remove('op-s'); });
-    var clip = mk('div', 'op-clip', '<i class="op-cov"></i>'), cov = clip.firstChild, cnt = mk('p', 'op-cnt'), skip = mk('button', 'op-skip', 'Skip <span>›</span>'); skip.type = 'button'; skip.tabIndex = -1;
-    stage.appendChild(clip); cock.appendChild(cnt); cock.appendChild(skip);
-    /* the header stays: where the site's header lies over the stage, the cover starts under it */
-    var hud = root.querySelector('#isx-frame .hud-top'), hb = hud && hud.getClientRects().length ? hud.getBoundingClientRect() : null, st0 = stage.getBoundingClientRect();
-    if (hb && hb.bottom > st0.top && hb.top < st0.top + 200) clip.style.top = Math.round(hb.bottom - st0.top + 8) + 'px';
-    tl.undo.push(function () { [clip, cnt, skip].forEach(function (e) { e.remove(); }); });
-    var rise = function (y) { return [{ opacity: 0, translate: '0 ' + (y || 8) + 'px' }, { opacity: 1, translate: '0 0' }]; };
-    /* the title alone on the dark stage, then up to its place in the entry */
-    var sr = stage.getBoundingClientRect(), hrc = head.getBoundingClientRect(), dy = Math.round(sr.top + sr.height * .44 - (hrc.top + hrc.height * .38));
-    tl.a(kick, rise(), .4, .8); tl.a(title, rise(10), .6, 1.0); tl.a(hr, [{ opacity: 0, scale: '0 1' }, { opacity: .8, scale: '1 1' }], 1.1, .8);
-    tl.a(head, [{ translate: '0 ' + dy + 'px', scale: '1.14' }, { translate: '0 0', scale: '1' }], 2.4, 1.1, { easing: 'cubic-bezier(.4,0,.2,1)' });
-    tl.a(prom, [{ opacity: 0 }, { opacity: 0 }], 0, 5.9); tl.a(prom, rise(6), 5.9, .5, { composite: 'replace', fill: 'forwards' });
-    /* one gold edge crosses the stage and the machine stands behind it: a cover moved aside, never a mask */
-    tl.a(cov, [{ translate: '0 0' }, { translate: 'calc(100% + 200px) 0' }], 2.7, 2.6, { easing: 'cubic-bezier(.45,.05,.3,1)' });
-    tl.a(stage, [{ opacity: 0 }, { opacity: 0 }], 0, 5.9, { pseudoElement: '::after' }); tl.a(stage, [{ opacity: 0 }, { opacity: 1 }], 5.9, .55, { pseudoElement: '::after', composite: 'replace', fill: 'forwards' });
-    /* a quiet count under it */
-    var N = [svg.querySelectorAll('.fn').length, svg.querySelectorAll('.fe').length, cock.querySelectorAll('.lv').length], lab = [' actors and gauges', ' relations', ' levers'];
-    cnt.innerHTML = N.map(function (n, i) { return '<span><b>0</b>' + lab[i] + '</span>'; }).join('<i>·</i>');
-    var nums = cnt.querySelectorAll('b'), shown = [-1, -1, -1];
-    tl.a(cnt, [{ opacity: 0 }, { opacity: 1 }], 2.9, .6); tl.a(cnt, [{ opacity: 1 }, { opacity: 0 }], 5.6, .4, { composite: 'replace', fill: 'forwards' });
-    tl.tick(function (t) { var k = Math.max(0, Math.min(1, (t - 2.9) / 2.2)), e = 1 - Math.pow(1 - k, 3); N.forEach(function (n, i) { var v = Math.round(n * e); if (v !== shown[i]) { shown[i] = v; nums[i].textContent = v; } }); });
-    /* one gold line through the money path, on the map's own relations: the Treasury to the dealer banks, the Treasury to the 10-year */
-    var rel = X.sim.relations, idx = function (a, b) { for (var i = 0; i < rel.length; i++) if (rel[i][0] === a && rel[i][1] === b) return i; return -1; };
-    var g = sv('g', { id: 'isx-op-g', 'class': 'op-money', 'aria-hidden': 'true' }), legs = [];
-    [['TSY', 'BNK', 4.5, .75], ['TSY', 'Y10', 5.15, .85]].forEach(function (L) {
-      var src = svg.querySelector('.fe[data-e="' + idx(L[0], L[1]) + '"]'); if (!src) return;
-      var p = sv('path', { d: src.getAttribute('d'), pathLength: 100 }); p.style.strokeDasharray = '100'; g.appendChild(p);
-      var len = src.getTotalLength(), pts = []; for (var i = 0; i <= 40; i++) { var q = src.getPointAtLength(len * i / 40); pts.push([q.x, q.y]); }
-      tl.a(p, [{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], L[2], L[3], { easing: 'cubic-bezier(.4,.1,.3,1)' });
-      legs.push({ t0: L[2], d: L[3], pts: pts });
-    });
-    if (legs.length) {
-      var dotc = sv('circle', { r: 3.4, 'class': 'op-dot' }), fp = svg.querySelector('#isx-fpart'); g.appendChild(dotc);
-      if (fp) fp.parentNode.insertBefore(g, fp.nextSibling); else svg.appendChild(g);   /* under the actors' boxes, where the map's own lines run */
-      tl.undo.push(function () { g.remove(); });
-      var ez = function (k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }, lastK = '';
-      tl.tick(function (t) {
-        var L = null; for (var i = 0; i < legs.length; i++) if (t >= legs[i].t0) L = legs[i];
-        var on = !!L && t <= legs[legs.length - 1].t0 + legs[legs.length - 1].d + .05, k = L ? Math.max(0, Math.min(1, (t - L.t0) / L.d)) : 0, f = ez(k) * 40, i0 = Math.min(39, Math.floor(f)), u = f - i0;
-        var key = on ? (L.pts[i0][0] + (L.pts[i0 + 1][0] - L.pts[i0][0]) * u).toFixed(1) + ',' + (L.pts[i0][1] + (L.pts[i0 + 1][1] - L.pts[i0][1]) * u).toFixed(1) : 'off';
-        if (key === lastK) return; lastK = key;
-        if (!on) { dotc.setAttribute('opacity', '0'); return; }
-        var xy = key.split(','); dotc.setAttribute('opacity', '1'); dotc.setAttribute('cx', xy[0]); dotc.setAttribute('cy', xy[1]);
-      });
-      tl.a(g, [{ opacity: 1 }, { opacity: 0 }], 6.0, .45, { easing: 'ease-in' });
-    }
-    /* the entry settles over the map: the promise first (above), then the card and its foot */
-    tl.a(card, [{ opacity: 0 }, { opacity: 0 }], 0, 6.0); tl.a(card, rise(8), 6.0, .5, { composite: 'replace', fill: 'forwards' });
-    if (foot) { tl.a(foot, [{ opacity: 0 }, { opacity: 0 }], 0, 6.1); tl.a(foot, [{ opacity: 0 }, { opacity: 1 }], 6.1, .4, { composite: 'replace', fill: 'forwards' }); }
-    tl.a(skip, [{ opacity: 0 }, { opacity: 1 }], .5, .4); tl.a(skip, [{ opacity: 1 }, { opacity: 0 }], 5.6, .3, { composite: 'replace', fill: 'forwards' });
-    start(tl); return true;
-  }
-
   /* ---------- when ---------- */
   var seenIt = function (k) { return U.stGet(KEY[k]) === '1'; };
   if (root.classList.contains('op-c')) {   /* the page decided at boot that this is a first visit to the Circuit */
     if (X.reduce || X.view !== 'map' || !circuit()) root.classList.remove('op-c');
   }
-  X.on('view', function (v) {
-    if (live && live.name === 'circuit' && v !== 'map') live.end();
-    if (live && live.name === 'sim' && v !== 'fin') live.end();
-    if (v !== 'fin' || live || !X.booted || X.reduce || testOff() || X.finMode !== 'plumb') return;
-    if (!replay && (seenIt('sim') || U.stGet('isx-way'))) return;   /* a visitor who has chosen a level before has been here before */
-    if (replay && seenIt('sim')) return;
-    sim();
-  });
-  X.on('fin', function () { if (live && live.name === 'sim' && !$('gentry')) live.end(); });
+  X.on('view', function (v) { if (live && live.name === 'circuit' && v !== 'map') live.end(); });
 
   /* “#replay” typed into the address of a page that is already open changes only the hash: load the page again so it plays */
   window.addEventListener('hashchange', function () { if (location.hash === '#replay') location.reload(); });
@@ -301,7 +226,7 @@
     wait: function (name, fn) { if (live && live.name === name && !live.done) { queue.push([name, fn]); return true; } return false; },
     skip: function () { if (live) live.skip(); }, end: function () { if (live) live.end(); },
     seek: function (t) { if (live) live.seek(t); return live ? live.t : null; },
-    /* for review and checks: play one again from here (the Simulator's needs its entry open) */
-    play: function (name) { if (live) live.end(); return name === 'sim' ? sim() : (X.view === 'map' ? (root.classList.add('op-c'), circuit()) : false); }
+    /* for review and checks: play the Circuit's again from here */
+    play: function (name) { if (live) live.end(); return name === 'circuit' && X.view === 'map' ? (root.classList.add('op-c'), circuit()) : false; }
   };
 })();

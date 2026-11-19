@@ -39,7 +39,7 @@
 #isx-root .cl-nums { --nk: #8fa3b6; font-family: var(--body, inherit); color: #dbe4ec; }
 #isx-root .cl-nums.up { position: absolute; left: 0; right: 0; bottom: calc(100% + 12px); padding: 11px 16px 12px; border-radius: 14px; border: 1px solid var(--line); background: rgba(9, 15, 22, .78); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 #isx-root .cl-nums.in { margin: 12px 0 0; padding: 10px 0 0; border-top: 1px solid #1b2733; }
-#isx-root #isx-cock.s2:not(.s4open) .s2card.cl-has { max-height: calc(100% - var(--it, 164px) - 90px - var(--cl-nh, 0px)); }
+#isx-root #isx-cock.s2 .s2card.cl-has { max-height: calc(100% - var(--it, 164px) - 90px - var(--cl-nh, 0px)); }
 #isx-root .cl-nh { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 16px; }
 #isx-root .cl-nh > span, #isx-root .cl-bk > span { font: 10.5px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--nk); }
 #isx-root .cl-bk { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 9px 0 6px; }
@@ -139,7 +139,7 @@
 #isx-root .cl-key .cl-kl i { flex: none; width: 3px; height: 13px; border-radius: 1.5px; }
 #isx-root .cl-key .cl-kl em { font-style: normal; font-size: 10.5px; color: #8fa3b6; }
 #isx-root .cl-key .cl-kg + .cl-kg .cl-kl { flex-wrap: wrap; row-gap: 0; }
-#isx-root .s2.s4open .cl-keyb, #isx-root .vw-on .cl-key { display: none; }
+#isx-root .vw-on .cl-key { display: none; }
 @media (max-width: 760px) { #isx-root .cl-key { position: fixed; left: 12px; right: 12px; top: auto; bottom: 12px; width: auto; max-height: 70vh; z-index: 60; } }
 /* the bar says where the visitor is on its line button (act and chapter, in full); the route keeps its marks and drops the cut-off labels */
 @media (min-width: 761px) {
@@ -162,3 +162,32 @@
 @media (min-width: 761px) { #isx-root #isx-cock.s2 #isx-s2bar .rt-route { overflow: hidden; } }
 /* under 1180 px there is no room for both: the words stay (act and chapter, in full), the marks go; the card carries the count */
 @media (min-width: 761px) and (max-width: 1180px) { #isx-root #isx-cock.s2.st #isx-s2bar .rt-route { display: none; } #isx-root #isx-cock.s2.st #isx-s2bar .rt-line { flex: 1 1 auto; min-width: 0; max-width: none; } }
+
+/* ---------- machinery entry round (19 Nov 2026): Expert's thesis on the full map ---------- */
+#isx-root .s2 .thx { position: absolute; z-index: 9; left: 18px; top: calc(var(--it, 164px) + 4px); width: 330px; max-height: calc(100% - var(--it, 164px) - var(--ib, 120px) - 12px); display: flex; flex-direction: column; border: 1px solid #253442; border-radius: 14px; background: rgba(10, 18, 27, .9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); box-shadow: 0 10px 34px rgba(0, 0, 0, .35); color: #c9d4de; }
+#isx-root .s2 .thx[hidden] { display: none; }
+#isx-root .s2 .thx::before { content: ""; position: absolute; left: -1px; top: -1px; width: 22px; height: 22px; border-left: 1.5px solid #ffb547; border-top: 1.5px solid #ffb547; border-top-left-radius: 14px; pointer-events: none; }
+#isx-root .s2 .thx-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px 9px 16px; }
+#isx-root .s2 .thx-h h3 { margin: 0; font: 400 11px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .s2 .thx-h h3 i { margin-right: 7px; font-style: normal; color: #ffb547; }
+#isx-root .s2 .thx-f { flex: none; min-height: 28px; padding: 0 11px; border: 1px solid #33475a; border-radius: 999px; background: none; color: #dfe7ee; font: 500 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+#isx-root .s2 .thx-f:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .thx-b { overflow-y: auto; padding: 0 16px 14px; scrollbar-width: thin; }
+#isx-root .s2 .thx-b[hidden] { display: none; }
+#isx-root .s2 .thx-t { margin: 0; font: 400 13.5px/1.5 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .thx-l { margin: 10px 0 8px; font: 400 12.5px/1.45 var(--sans); color: #9fb1c2; }
+#isx-root .s2 .thx-c { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; }
+#isx-root .s2 .thx-c li { display: flex; align-items: stretch; gap: 6px; }
+#isx-root .s2 .thx-ch { flex: 1; display: grid; gap: 2px; min-height: 40px; padding: 6px 10px 6px 12px; border: 1px solid #22313f; border-left: 3px solid var(--rc); border-radius: 9px; background: rgba(13, 22, 32, .6); color: inherit; text-align: left; cursor: pointer; }
+#isx-root .s2 .thx-ch small { font: 400 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .thx-ch span { font: 500 13px/1.25 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .thx-ch:hover, #isx-root .s2 .thx-ch.hv, #isx-root .s2 .thx-ch[aria-pressed="true"] { border-color: var(--rc); background: rgba(255, 181, 71, .06); }
+#isx-root .s2 .thx-ch[aria-pressed="true"] span { color: #fff; }
+#isx-root .s2 .thx-go { flex: none; min-width: 74px; padding: 0 10px; border: 1px solid #22313f; border-radius: 9px; background: none; color: #c9d4de; font: 500 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+#isx-root .s2 .thx-go:hover { border-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .thx :is(.thx-ch, .thx-go, .thx-f):focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+#isx-root .s2 .thx.folded { width: auto; }
+@media (max-width: 760px) {
+  #isx-root .s2 .thx { position: relative; order: 1; left: auto; top: auto; width: auto; max-height: none; margin: 0; }
+  #isx-root .s2 .thx-ch, #isx-root .s2 .thx-go, #isx-root .s2 .thx-f { min-height: 44px; }
+}

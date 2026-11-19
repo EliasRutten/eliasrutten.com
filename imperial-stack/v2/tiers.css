@@ -117,8 +117,6 @@
 
 /* the opening card: 680 px since the fix round, but never wider than the stage; on phones it flows like every other card
    (the fix round's width ran off the screen at 390 px) */
-#isx-root #isx-cock.s2.s4open .s2card { max-width: calc(100% - 36px); }
-@media (max-width: 760px) { #isx-root #isx-cock.s2.s4open .s2card { width: auto; max-width: none; } }
 
 /* ---------- tiers build B (15 Nov 2026) ---------- */
 /* the thesis echo: one quiet line under a card's two sentences (spec §1.1); a note that is an echo reads the same way */

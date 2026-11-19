@@ -275,8 +275,6 @@ html.isx-dclock, html.isx-dclock body { overflow: hidden; }
 }
 #isx-root.rm #isx-cock.s2.dcall #isx-snarr::before, #isx-root.rm #isx-cock.s2.dcall #isx-snarr::after, #isx-root.rm #isx-cock.s2.dcall .s2stage, #isx-root.rm .s2 .dc * { animation: none !important; transition: none !important; }
 /* the entry's foot: “Show hints again” beside the tour, when hints were hidden (round 5b's note 5) */
-#isx-root .s2 .ge-fr { display: inline-flex; align-items: center; gap: 8px; }
-@media (max-width: 760px) { #isx-root .s2 .ge-fr { flex-wrap: wrap; } }
 @media (max-width: 760px) { #isx-root .s2 .dc-k > span:nth-of-type(4) { display: none; } #isx-root .s2 .dc-k em { flex-basis: 100%; } }
 
 /* plain-language round (18 Nov 2026): an episode's entry screen, in the same whole-window frame as a call */
