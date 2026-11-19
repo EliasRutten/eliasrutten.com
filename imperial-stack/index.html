@@ -2414,7 +2414,7 @@ button.res:hover { transform: none; box-shadow: none; }
         <canvas id="isx-cv-arm"></canvas>
         <div class="atip" id="isx-atip" role="tooltip" hidden></div>
       </div></div>
-      <div class="aview" id="isx-aview" role="group" aria-label="Two ways to draw the network" hidden><button type="button" data-aview="reach" aria-pressed="true">Reach</button><button type="button" data-aview="orbit" aria-pressed="false">Orbit</button></div>
+      <div class="aview" id="isx-aview" role="group" aria-label="Ways to draw the network" hidden><button type="button" data-aview="machine" aria-pressed="false">Layers</button><button type="button" data-aview="reach" aria-pressed="true">Reach</button><button type="button" data-aview="orbit" aria-pressed="false">Orbit</button></div>
       <div class="areach" id="isx-areach"></div>
       <article class="b4card acard" id="isx-acard" aria-live="polite"></article>
     </div>
@@ -3252,8 +3252,8 @@ function armSelect(id) {
   armSel = id && armSel !== id ? id : null; armList = false;
   $('atip').hidden = true;
   renderArm(); renderArmCard();
-  if (armSel && armLay === 'reach') {
-    /* round 6: the sheet peeks with the figures; the node stays in view above it */
+  if (armSel && armLay === 'reach' && PHONE()) {
+    /* round 6: the sheet peeks with the figures; the node stays in view above it (19 Nov: on phones; at desktop width the card beside the drawing holds it) */
     const c = RG.nodes[aBox(armSel)];
     if (c) { const r = c.getBoundingClientRect(), lim = innerHeight - 136 - 24; if (r.bottom > lim || r.top < 70) window.scrollBy({ top: r.top - Math.min(innerHeight * .3, lim - 60), behavior: reduce ? 'auto' : 'smooth' }); }
     if (ashKind === 'sel') { ashFill(); armBar(); } else { ashTall = false; ashOpen('sel', c || ABT[armSel]); }
@@ -3292,7 +3292,9 @@ const AELSE = { RAILS: { c: 1 }, STABLE: { c: 8, s: 'STB' }, ASSET: { c: 7, s: '
 const ASHORT = { FED: 'The Fed', JUST: 'Justice · FBI', IC: 'Intelligence', DHS: 'Homeland Sec.', STATE: 'State Dept',
   INV: 'Stakes abroad', SAVE: 'Savers abroad', BANK: 'Banks abroad', MERCH: 'Merchants', ADV: 'Advertisers', USER: 'Users', BIZ: 'Firms, govts', MIL: 'Militaries', TEL: 'Telecoms', FAB: 'Fabs, mines',
   ASSET: 'Asset managers', CLOUD: 'Hyperscale cloud', LABS: 'AI labs', POWER: 'Minerals, power' };
-let armView = stGet('isx-arm-view') === 'orbit' ? 'orbit' : 'reach', armTile = null, ashTall = false, aCat = null;
+/* machinery entry round (19 Nov 2026): three views on every screen but a phone's: Layers (the full machine), Reach, Orbit. Phones keep
+   Reach and Orbit only; a stored “machine” reads as Reach there. One key, isx-arm-view. */
+let armView = (v => ['machine', 'reach', 'orbit'].includes(v) ? v : 'machine')(stGet('isx-arm-view')), armTile = null, ashTall = false, aCat = null;
 const aStory = c => STORIES.find(s => s.id === c);
 /* the cases a node's links are played in, in the gallery's order */
 const aCases = id => { const s = new Set(); ARM.edges.forEach(e => { if (aTouch(e, id)) e.cases.forEach(c => s.add(c)); }); return STORIES.map(S => S.id).filter(c => s.has(c)); };
@@ -3409,18 +3411,18 @@ function armRail(ids, yOf, lo, hi, gap) {
   const out = {}; want.forEach((w, i) => { out[w.id] = ys[i]; }); return out;
 }
 function reachGeo(W) {
-  const short = W < 600, fN = short ? 11.2 : 12.5, fP = short ? 11.5 : 12.5, m = short ? 2 : 12;
+  const short = W < 600, big = W >= 700 && !PHONE(), fN = short ? 11.2 : big ? 14 : 12.5, fP = short ? 11.5 : big ? 14 : 12.5, m = short ? 2 : 12;
   const wL = Math.max(...ARM.state.map(([id]) => aTextW(aNm(id, short), fN))), wR = Math.max(...ARM.econ.map(([id]) => aTextW(aNm(id, short), fN)));
   const wT = Math.max(...ARM.sectors.map(([id]) => aTextW(aNm(id, short), fP, 500))), room = W - 2 * m - wL - wR - 28;
   const wP = wT + Math.max(8, Math.min(20, room - wT - 48));   /* the pills keep their text; the gutters give way first, down to 24 px */
   const g = Math.max(24, Math.min(short ? 60 : 150, (room - wP) / 2));
   const tot = wL + 14 + g + wP + g + 14 + wR, sx = Math.max(m, (W - tot) / 2);
   const XS = sx + wL + 9, PL = XS + 5 + g, PR = PL + wP, XE = PR + g + 5;
-  const rowH = short ? 39 : 44, top = 44, Y = {};
+  const rowH = short ? 39 : big ? 52 : 44, top = big ? 48 : 44, Y = {};
   ARM.sectors.forEach(([id], i) => { Y[id] = top + i * rowH; });
   const lo = top, hi = top + (ARM.sectors.length - 1) * rowH, yOf = r => top + r * rowH;
   Object.assign(Y, armRail(ARM.state.map(s => s[0]), yOf, lo, hi, short ? 30 : 34), armRail(ARM.econ.map(s => s[0]), yOf, lo, hi, short ? 30 : 34));
-  return { W, H: hi + 30, short, fN, fP, XS, PL, PR, XE, Y, m, sx, ph: short ? 26 : 30 };
+  return { W, H: hi + 30, short, fN, fP, XS, PL, PR, XE, Y, m, sx, ph: short ? 26 : big ? 34 : 30 };
 }
 /* the ellipse, sampled; n points at equal arc length from the top, clockwise, starting at fraction f0 */
 function ellAt(rx, ry, cx, cy) {
@@ -3430,10 +3432,10 @@ function ellAt(rx, ry, cx, cy) {
   return f => { f = ((f % 1) + 1) % 1; const d = f * L; let i = 1; while (i < K && cum[i] < d) i++; const u = (d - cum[i - 1]) / ((cum[i] - cum[i - 1]) || 1); return [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u, L]; };
 }
 function orbitGeo(W) {
-  const short = W < 600, fN = short ? 11.2 : 12.5, cx = W / 2;
+  const short = W < 600, big = W >= 700 && !PHONE(), fN = short ? 11.2 : big ? 14 : 12.5, cx = W / 2;
   const lines = id => short ? aSplit2(aNm(id, true)) : [aNm(id, false)];
   const wE = Math.max(...ARM.econ.map(([id]) => Math.max(...lines(id).map(t => aTextW(t, fN)))));
-  const rx = Math.max(80, Math.min(cx - 6 - wE - 10, 280)), ry = Math.min(short ? 176 : 270, rx * 1.7), cy = 44 + ry, H = cy + ry + 34;
+  const rx = Math.max(80, Math.min(cx - 6 - wE - 10, big ? 400 : 280)), ry = Math.min(short ? 176 : big ? 330 : 270, rx * 1.7), cy = 44 + ry, H = cy + ry + 34;
   const P = {}, secF = {};
   const ring = (ids, k, f0) => { const at = ellAt(rx * k, ry * k, cx, cy); ids.forEach((id, i) => { const f = f0 + i / ids.length, p = at(f); P[id] = { x: p[0], y: p[1], f, k, gap: p[2] / ids.length }; }); };
   ring(ARM.sectors.map(s => s[0]), .64, .5 / ARM.sectors.length);
@@ -3470,7 +3472,7 @@ function orbitPath(G, e) {
 const aNodeIds = () => [...ARM.state.map(s => s[0]), ...ARM.sectors.map(s => s[0]), ...ARM.econ.map(s => s[0])];
 function buildReach(host, W) {
   const orbit = armView === 'orbit', G = orbit ? orbitGeo(W) : reachGeo(W);
-  const svg = el('svg', { viewBox: `0 0 ${W} ${G.H.toFixed(0)}`, width: W, height: G.H.toFixed(0), class: 'arsvg ' + armView, role: 'group', 'aria-label': orbit ? 'Orbit: the US state at the centre, the fourteen sectors of firms around it, the ten groups of the economy on the rim' : 'Reach: the US state on the left, the fourteen sectors of firms in the middle, the ten groups of the economy on the right' });
+  const svg = el('svg', { viewBox: `0 0 ${W} ${G.H.toFixed(0)}`, width: W, height: G.H.toFixed(0), class: 'arsvg ' + (orbit ? 'orbit' : 'reach'), role: 'group', 'aria-label': orbit ? 'Orbit: the US state at the centre, the fourteen sectors of firms around it, the ten groups of the economy on the rim' : 'Reach: the US state on the left, the fourteen sectors of firms in the middle, the ten groups of the economy on the right' });
   RG.W = W; RG.v = armView; RG.lines = []; RG.nodes = {}; RG.G = G;
   if (orbit) {
     [.34, .64, 1].forEach(k => el('ellipse', { cx: G.cx, cy: G.cy, rx: (G.rx * k).toFixed(1), ry: (G.ry * k).toFixed(1), class: 'oring' }, svg));
@@ -3562,7 +3564,7 @@ function orbitLabels(R, sb) {
 function renderReach() {
   const host = $('areach'), tg = $('aview'); if (!host) return;
   const board = armFilter === 'control';
-  if (tg) { tg.hidden = board; tg.querySelectorAll('[data-aview]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.aview === armView))); }
+  armViewSw();
   host.classList.toggle('board', board); host.classList.toggle('orbit', !board && armView === 'orbit');
   if (board) { host.innerHTML = armBoardHTML('stage'); RG.W = 0; RG.v = null; return; }
   const cs = getComputedStyle(host), W = Math.round((host.clientWidth || 390) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
@@ -3572,10 +3574,20 @@ function renderReach() {
 /* the names are measured: once the web fonts arrive, the drawing is measured again */
 try { if (document.fonts) { const again = () => { RG.W = 0; if (view === 'arm' && armLay === 'reach') renderReach(); }; document.fonts.ready.then(again); document.fonts.addEventListener('loadingdone', again); } } catch (e) { /* the first measure stands */ }
 function armSetView(v, act) {
-  v = v === 'orbit' ? 'orbit' : 'reach'; if (v === armView) return;
-  armView = v; stSet('isx-arm-view', v);
-  if (armLay === 'reach') { renderReach(); renderArmCard(); }
+  v = v === 'orbit' ? 'orbit' : v === 'machine' && !PHONE() ? 'machine' : 'reach';
+  const now = armLay === 'reach' ? (armView === 'orbit' ? 'orbit' : 'reach') : 'machine'; if (v === now && v === armView) return;
+  const sel = armSel; armView = v; stSet('isx-arm-view', v);
+  armLayout(); renderArm(); renderArmCard(); armViewSw();
+  if (sel && !NODE[sel]) armSelect(null);   /* the selection carries across the views: every view draws the same actors */
   routeSync(); armEmit(act ? 'view' : null);
+}
+/* the switch: Layers · Reach · Orbit on a desktop, Reach · Orbit on a phone (or where the window is too narrow for the machine); the
+   Control relation's switchboard is its own drawing, so the switch steps aside there and the choice comes back after it */
+function armViewSw() {
+  const tg = $('aview'); if (!tg) return;
+  const board = armFilter === 'control', forced = armLay === 'reach' && armView === 'machine', cur = armLay === 'reach' ? (armView === 'orbit' ? 'orbit' : 'reach') : 'machine';
+  tg.hidden = board || armMode === 'rev'; tg.setAttribute('aria-label', PHONE() || forced ? 'Two ways to draw the network' : 'Three ways to draw the network');
+  tg.querySelectorAll('[data-aview]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.aview === cur)); if (b.dataset.aview === 'machine') b.hidden = PHONE() || forced; });
 }
 /* the Arm tells the hints what it shows (round 5b's bus) */
 function armEmit(act) { emit('arm', { lay: armLay, v: armView, rel: armFilter, sel: armSel, sheet: ashKind, tall: ashTall, act: act || null }); }
@@ -3595,8 +3607,8 @@ function relListHTML(cur) {
   return `<ul class="arl" aria-label="Relations">${AORD.slice(1).map(k => { const T = ATYPE[k]; return `<li><button type="button" data-arel="${k}"${k === cur ? ' aria-current="true"' : ''}><span class="sw" style="background:${T.c}"></span><span class="rx"><span class="rn">${esc(T.name)}</span><span class="rt">${esc(T.t)}</span></span><span class="rc">${ARM.edges.filter(e => e.type === k).length}</span></button></li>`; }).join('')}</ul>`;
 }
 function armCardHTML(strip) {
-  const i = AORD.indexOf(armFilter), cnt = `<span class="cnt">${i + 1} / ${AORD.length}</span>`, reach = armLay === 'reach';
-  if (armSel && !reach) {   /* round 6: on phones and tablets in portrait the selection lives in the sheet */
+  const i = AORD.indexOf(armFilter), cnt = `<span class="cnt">${i + 1} / ${AORD.length}</span>`, reach = armLay === 'reach', wide = reach && !PHONE();
+  if (armSel && (!reach || wide)) {   /* round 6: on phones and tablets in portrait the selection lives in the sheet */
     const n = NODE[armSel], ls = aLinks(armSel), rel = armFilter !== 'all', F = armFigs(armSel);
     const kick = n.layer === 'sector' ? 'Sector · ' + aPl(n.firms.length, 'firm') : n.layer === 'state' ? 'US state' : n.layer === 'econ' ? 'The real economy' : 'Firm · ' + NODE[n.sector].label;
     const sub = n.layer === 'sector' ? n.firms.map(f => f.label).join(' · ') : n.sub;
@@ -3609,10 +3621,10 @@ function armCardHTML(strip) {
     const [rv, mech] = sSplit(ARMX), Wh = armWhole();
     const fig = `<div class="b4fig"><b>${ARM.edges.length}</b><span>documented links between ${ARM.state.length} state bodies, ${NFIRMS} firms in ${ARM.sectors.length} sectors and the real economy</span></div>`;
     if (reach) {
-      const tap = armView === 'orbit' ? 'Nine state bodies at the centre, fourteen sectors around them, ten groups of the economy on the rim. Tap a dot to name it and see its ties.' : 'Tap a state body to see whom it reaches through the firms, or a group on the right to see who in Washington reaches it.';
+      const tap = (armView === 'orbit' ? 'Nine state bodies at the centre, fourteen sectors around them, ten groups of the economy on the rim. Tap a dot to name it and see its ties.' : 'Tap a state body to see whom it reaches through the firms, or a group on the right to see who in Washington reaches it.').replace(/^Tap|\. Tap/g, m => wide ? m.replace('Tap', 'Click') : m);
       return `<div class="b4k"><span>Whole machine · ${ARM.edges.length} links</span>${cnt}</div><h3 class="b4t">Who reaches whom</h3><p class="aq">${esc(AQ)}</p>`
         + `<div class="arfig w3"><div><b>${Wh.u} of ${ARM.state.length}</b><span>state bodies reach users</span></div><div><b>${Wh.sa}</b><span>state ↔ arm</span></div><div><b>${Wh.ae}</b><span>arm ↔ economy</span></div></div>`
-        + `<p class="atap">${esc(tap)}</p>${mechHTML(esc(rv) + (mech ? ' ' + esc(mech) : ''))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}<p class="awide">Every firm in one picture: open the elite network on a wider screen.</p>`;
+        + `<p class="atap">${esc(tap)}</p>${mechHTML(esc(rv) + (mech ? ' ' + esc(mech) : ''))}<div class="b4lk">The twelve relations</div>${relListHTML(null)}${wide ? '' : '<p class="awide">Every firm in one picture: open the elite network on a wider screen.</p>'}`;
     }
     return `<div class="b4k"><span>The elite network</span>${cnt}</div><h3 class="b4t">The whole machine</h3>`
       + (strip ? `<div class="b4sl"><p class="aq">${esc(AQ)}</p>${fig}</div><div class="b4acts"><button type="button" class="b4b2" data-ash="pick">Relations ${CHR}</button><button type="button" class="b4b2 q" data-acard="mech">The mechanism</button></div>`
@@ -3816,7 +3828,7 @@ function armLayout() {
   if (!card || !sc || !fr) return;
   if (card.parentNode !== sc) sc.appendChild(card);
   const ph = PHONE(), W = fr.clientWidth, padL = 22, padR = 16; let col = !ph && W >= 1180;
-  const fs = document.fullscreenElement === fr, Hm = fs ? innerHeight : Math.max(600, Math.min(1040, innerHeight - 34));
+  const fs = document.fullscreenElement === fr, winH = fs ? innerHeight : Math.max(600, Math.min(1040, innerHeight - 34)); let Hm = winH;
   const hud = ROOT.querySelector('.hud-top'), hb = hud ? Math.max(hud.getBoundingClientRect().bottom, ...[...hud.querySelectorAll(':scope > *')].filter(e => e.getClientRects().length).map(e => e.getBoundingClientRect().bottom)) : 0;
   const top0 = hud ? Math.round(hb - fr.getBoundingClientRect().top) + 10 : 96, cTop = top0 + 22;
   const was = card.className;
@@ -3832,7 +3844,16 @@ function armLayout() {
     return;
   }
   let mode = 'reach', L = null;
-  if (!ph) {
+  /* 19 Nov: the machine no longer has to fit the window. Outside full screen the stage grows to what the machine needs at the width's
+     scale, and the page scrolls under the bar (which stays in view); full screen keeps the window's height */
+  if (!ph && !fs && armView === 'machine') {   /* the card beside the machine where the width allows it at full size; else the card under it */
+    const kc = Math.min((W - padL - 340 - 16 - padR) / AGW, 1.05), ks = Math.min((W - padL - padR) / AGW, 1.05);
+    if (col && kc < .896 && ks >= .896) col = false;
+    const k = col ? kc : ks;
+    if (k >= .896) Hm = Math.min(1500, Math.max(winH, Math.ceil(AGH.full * k + (col ? 82 : 84 + ASTRIP) + cTop)));
+  }
+  ROOT.classList.toggle('arm-tall', Hm > winH + 1);
+  if (!ph && armView === 'machine') {
     const barTop = Hm - 68;
     /* the hint line sits inside the map, in the economy band's empty foot, so it takes no room of its own.
        The card takes the left column where that still leaves a readable machine, else a strip under the map. */
@@ -3844,14 +3865,17 @@ function armLayout() {
   }
   const was0 = armLay; armLay = mode;
   ['full', 'compact', 'reach'].forEach(m => ROOT.classList.toggle('arm-' + m, m === mode));
+  ROOT.classList.toggle('arm-rwide', !ph && mode === 'reach');   /* Reach and Orbit at desktop width: the card beside the drawing */
+  if (mode === 'reach') ROOT.classList.remove('arm-tall');
   if (mode === 'reach') {
     sc.style.height = ''; card.className = 'b4card acard flow';
-    [card, flat, kick, $('ahint')].forEach(e => e && place(e));
+    sc.style.paddingTop = ph ? '' : Math.max(96, top0) + 'px';   /* 19 Nov: at desktop width the drawing starts under the header, as the machine does */
+    [card, flat, kick, $('ahint'), $('aview')].forEach(e => e && place(e));
     renderReach();
     if (was0 !== 'reach') { renderArm(); renderArmCard(); if (ashKind) ashFill(); }
   } else {
     if (was0 === 'reach') { if (ashKind === 'sel') ashClose(true); renderArm(); }
-    sc.style.height = Hm + 'px';
+    sc.style.height = Hm + 'px'; sc.style.paddingTop = '';
     if (armGeoMode !== mode) { armGeoMode = mode; buildArm(); renderArm(); }
     const ww = AGW * L.k, hh = AGEO[mode].H * L.k, fx = L.mx + (L.mw - ww) / 2, fy = L.mt + Math.max(0, (L.mh - hh) / 2);
     place(flat, { left: fx.toFixed(1) + 'px', top: fy.toFixed(1) + 'px', width: ww.toFixed(1) + 'px', height: hh.toFixed(1) + 'px' });
@@ -3859,10 +3883,12 @@ function armLayout() {
     if (col) place(card, { left: padL + 'px', top: cTop + 'px', width: '340px', maxHeight: (L.barTop - 14 - cTop) + 'px' });
     else place(card, { left: padL + 'px', right: padR + 'px', top: L.ct + 'px', height: ASTRIP + 'px' });
     place(kick, { left: padL + 'px', top: top0 + 'px' });
+    place($('aview'), { left: (padL + (kick ? kick.offsetWidth : 0) + 18) + 'px', top: Math.max(0, top0 - 9) + 'px' });   /* on the kicker's line, after it */
     place($('ahint'), { left: (fx + 16 * L.k).toFixed(1) + 'px', top: (fy + hh - 24 * L.k - 6).toFixed(1) + 'px' });
     pArm.size();
   }
   if (card.className !== was) renderArmCard();
+  armViewSw();
 }
 let armRZ = 0;
 window.addEventListener('resize', () => { clearTimeout(armRZ); armRZ = setTimeout(() => { if (view === 'arm') { armLayout(); if (armMode !== 'rev') renderArm(); } }, 120); });

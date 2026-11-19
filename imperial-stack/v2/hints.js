@@ -44,8 +44,11 @@
     { id: 'fold', side: 'card', line: function () { return 'More on this step is folded under “The mechanism”.'; },
       when: function () { if (!inStep() || S.ph) return null; var s = q('#isx-sn-body details.s2deep:not([open]) > summary'); return s && vis(s) && /The mechanism/.test(s.textContent) ? s : null; } },
     /* the Arm (round 6) */
-    { id: 'arm-view', tab: 'arm', side: 'below', line: function () { return 'Two ways to read this: Reach follows the paths, Orbit shows the whole shape. Switch any time.'; },
-      when: function () { return reach() && X.armRel !== 'control' ? firstIn('#isx-aview:not([hidden])') : null; } },
+    /* machinery entry round (19 Nov 2026): the tab no longer has to fit the window; on a smaller screen, full screen gives it room */
+    { id: 'arm-fs', tab: 'arm', side: 'top', line: function () { return 'On a smaller screen this tab reads best in full screen: the button at the bottom right.'; },
+      when: function () { return !phone() && !document.fullscreenElement && (window.innerHeight < 860 || window.innerWidth < 1366) ? firstIn('#isx-fs') : null; } },
+    { id: 'arm-view', tab: 'arm', side: 'below', line: function () { return phone() || q('#isx-aview [data-aview="machine"][hidden]') ? 'Two ways to read this: Reach follows the paths, Orbit shows the whole shape. Switch any time.' : 'Three ways to read this: Layers shows every firm, Reach follows the paths, Orbit shows the whole shape. Switch any time.'; },
+      when: function () { return X.armRel !== 'control' ? firstIn('#isx-aview:not([hidden])') : null; } },
     { id: 'arm-pick', tab: 'arm', side: 'node', line: function () { var t = phone() || U.COARSE ? 'Tap' : 'Click'; return t + ' a state body to see whom it reaches, or a group ' + (!reach() ? 'at the bottom' : X.armView === 'orbit' ? 'on the rim' : 'on the right') + ' to see who reaches it.'; },
       when: function () { if (X.armSel || X.armRel === 'control') return null; return reach() ? firstIn('#isx-areach .rn.state:not(.dim)') : firstIn('#isx-arm .mnode.state:not(.dim)'); } },
     { id: 'arm-sheet', tab: 'arm', side: 'top', line: function () { return '“Every link” opens the panel to all its ties, with their sources.'; },

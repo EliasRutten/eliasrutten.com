@@ -133,3 +133,22 @@
 /* the strip card (761 to 1179 px): the two figures take a wider column and one line each */
 #isx-root .b4card.strip > .b4sl.af { grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); }
 #isx-root .b4card.strip .arfig span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- machinery entry round (19 Nov 2026): three views at desktop width, and a machine that no longer has to fit the window ---------- */
+/* the switch on the machine: small, at the top right of the stage */
+@media (min-width: 761px) {
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .aview:not([hidden]) { display: inline-flex; position: absolute; z-index: 6; margin: 0; }
+  #isx-root.v-arm:not(.arm-reach) #isx-scene-arm .aview button { height: 28px; min-width: 76px; padding: 0 12px; font-size: 11.5px; }
+  /* the stage is taller than the window: the page scrolls and the bar stays in view at the bottom */
+  #isx-root.v-arm.arm-tall .tabs-bottom.rt-host { position: sticky; z-index: 12; bottom: 12px; margin: -68px 16px 12px; left: auto; right: auto; }
+}
+#isx-root .aview button[hidden] { display: none; }
+/* Reach and Orbit at desktop width: the card beside the drawing, the drawing at its own size */
+@media (min-width: 761px) {
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-scene-arm { display: grid; grid-template-columns: 360px minmax(0, 1fr); grid-template-areas: "kick kick" "hint hint" "card sw" "card draw"; column-gap: 30px; align-items: start; padding-left: 22px; padding-right: 22px; }
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-scene-arm .b4kick { grid-area: kick; margin: 0 0 8px; }
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-scene-arm .b4hint { grid-area: hint; margin: 0 0 8px; }
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-scene-arm .aview { grid-area: sw; justify-self: start; margin: 0 0 14px; }
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-scene-arm .areach { grid-area: draw; padding: 0; min-width: 0; }
+  #isx-root.v-arm.arm-reach.arm-rwide #isx-acard { grid-area: card; position: sticky; top: 16px; max-height: calc(100vh - 110px); overflow-y: auto; margin: 0; }
+}

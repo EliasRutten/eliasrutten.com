@@ -13,7 +13,7 @@
     /* B4: the Arm holds its relation and selection, the Revenue map its sector */
     if (X.view === 'arm') {
       if (X.armMode === 'rev') return X.revSec && X.revSec !== 'all' ? '/sec=' + X.revSec : '';
-      return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '') + (X.armLay === 'reach' && X.armView === 'orbit' ? '/v=orbit' : '');   /* round 6: the phone drawing, only when it is Orbit */
+      return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '') + (X.armLay === 'reach' && X.armView === 'orbit' ? '/v=orbit' : X.armLay === 'reach' && X.armView === 'reach' && !X.util.PHONE() ? '/v=reach' : '');   /* round 6: the drawing, when it is not the default (19 Nov: Orbit anywhere; Reach at desktop width, where Layers is the default) */
     }
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
