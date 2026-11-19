@@ -193,11 +193,23 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('B4, phone: the mistake panel open', '#arm', seen, 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-b4row [data-mis]').click()); await p.waitForTimeout(300); });
   /* guide build (16 Nov 2026): the entry (the full thesis, the reminder, a returning visitor), the primer's diagrams and their table views,
      the rewritten and the new reveals, the close with the reminder */
-  await run('guide build: the entry, the full thesis open', '#simulator', sim(-1), 1280, 760, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-gefull]').click()); await p.waitForTimeout(250); });
-  await run('guide build: the entry, the reminder open', '#simulator', sim(-1), 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
-  await run('guide build, phone: the entry, the reminder open', '#simulator', sim(-1), 390, 844, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body [data-remind]').click()); await p.waitForTimeout(300); });
-  await run('guide build: the entry for a returning visitor (“Last time”)', '#simulator', { ...sim(-1), 'isx-way': 'ground' }, 1440, 900);
-  await run('guide build, tablet: the entry', '#simulator', sim(-1), 1024, 768);
+  /* machinery entry round (19 Nov 2026): the old in-page entry is gone; in its place the states that replace it: Expert's thesis panel
+     (open, a chapter lit, folded, phone), the levels on the entry screen for a returning visitor, “How this tab works” on every tab with
+     an entry screen, the Substack panel (desktop and phone), the network's three views at desktop and phone */
+  const QE = { ...seen, 'isx-enter': 'off' };
+  const XP = { ...QE, 'isx-sim-mode': 'full', 'isx-way': 'map', 'isx-sim-thesis': '1' };
+  await run('entry round: Expert, the thesis on the map', '#simulator', XP, 1280, 760);
+  await run('entry round: Expert, a chapter lit', '#simulator', XP, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-thx .thx-ch[data-thxc="2"]').click()); await p.waitForTimeout(300); });
+  await run('entry round: Expert, the thesis folded', '#simulator', XP, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-thx [data-thxf]').click()); await p.waitForTimeout(300); });
+  await run('entry round, phone: Expert, the thesis open', '#simulator', XP, 390, 844, async p => { await p.evaluate(() => { const t = document.querySelector('#isx-thx'); if (t.classList.contains('folded')) t.querySelector('[data-thxf]').click(); }); await p.waitForTimeout(300); });
+  await run('entry round: the levels for a returning visitor (“Last time”)', '#simulator', { ...sim(0), 'isx-way': 'ground' }, 1440, 900, async p => { await p.evaluate(() => ISX.enter.open('fin', true, 'levels')); await p.waitForTimeout(800); });
+  for (const [hash, w, h] of [['#profit', 1280, 800], ['#elite-network', 1280, 800], ['#simulator', 1280, 800], ['#imperial-arm', 1280, 800], ['#profit', 390, 844], ['#elite-network', 390, 844], ['#simulator', 390, 844], ['#imperial-arm', 390, 844]])
+    await run(`entry round${w < 700 ? ', phone' : ''}: “How this tab works” reopens the entry screen (${hash})`, hash, { ...seen }, w, h, async p => { await p.evaluate(() => document.getElementById('isx-tabx').click()); await p.waitForTimeout(900); });
+  await run('entry round: the Substack panel', '#simulator', QE, 1440, 900, async p => { await p.evaluate(() => document.getElementById('isx-dk-es').click()); await p.waitForTimeout(400); });
+  await run('entry round, phone: the Substack panel', '#circuit', QE, 390, 844, async p => { await p.evaluate(() => document.getElementById('isx-b4es').click()); await p.waitForTimeout(400); });
+  for (const v of ['machine', 'reach', 'orbit']) await run(`entry round: the network, ${v === 'machine' ? 'Layers' : v}`, '#elite-network', { ...QE, 'isx-arm-view': v }, 1280, 800);
+  await run('entry round: the network, Reach with a selection in the card', '#elite-network/node=ic/v=reach', { ...QE, 'isx-arm-view': 'reach' }, 1440, 900);
+  for (const v of ['reach', 'orbit']) await run(`entry round, phone: the network, ${v}`, '#elite-network', { ...QE, 'isx-arm-view': v }, 390, 844);
   await run('guide build: the pyramid (P10)', '#simulator', sim(5, 13), 1440, 900);
   await run('guide build: the pyramid as a table', '#simulator', sim(5, 13), 1280, 760, async p => { await p.evaluate(() => document.querySelector('#isx-sn-body .gd-tg').click()); await p.waitForTimeout(250); });
   await run('guide build: the eras (P11), “Say more” open', '#simulator', sim(6, 13), 1440, 900, async p => { await p.evaluate(() => { document.querySelector('#isx-sn-body details.s2deep').open = true; }); await p.waitForTimeout(300); });
@@ -265,7 +277,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('call: 1024 × 768, the yen call', '#simulator', dc(18, 0, 2), 1024, 768);
   await run('call, phone: the first call itself, an option chosen', '#simulator', dc(0, 9, 2), 390, 844, async p => { await p.click('#isx-sn-body .dc-opt'); await p.waitForTimeout(300); });
   await run('call, phone: the problem', '#simulator', dc(0, 19, 0), 390, 844);
-  await run('call: the entry with “Show hints again”', '#simulator', { ...seen, 'isx-sim-mode': 'story', 'isx-hints-off': '1', '__pos': JSON.stringify({ l: 0, b: -1 }) }, 1440, 900);
+  await run('call: the guide’s first step with hints hidden (was the old entry with “Show hints again”)', '#simulator', { ...seen, 'isx-sim-mode': 'story', 'isx-hints-off': '1', '__pos': JSON.stringify({ l: 0, b: -1 }) }, 1440, 900);
   /* plain-language round (18 Nov 2026): the toast after a call, the secret money printer (locked and unlocked), an episode's entry screen */
   await run('plain: the printer toast after the first call', '#simulator', dc(0, 9, 2), 1440, 900, async p => { await p.click('#isx-sn-body .dc-opt[data-dco="real"]'); await p.click('#isx-sn-body .dc-go'); await p.waitForTimeout(1500); });
   await run('plain: the printer, one step unlocked', '#simulator', { ...dc(0, 9, 2), 'isx-printer': '["0-1"]' }, 1440, 900, async p => { await p.evaluate(() => { const b = document.createElement('button'); b.setAttribute('data-mpo', ''); document.body.appendChild(b); b.click(); b.remove(); }); await p.waitForTimeout(600); });

@@ -6165,7 +6165,7 @@ function renderFin() { dcSync();
 }
 
 /* ---------- selection state ---------- */
-function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); fch = null; }
+function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); fch = null; fchH = null; }
 function pickNode(n) { if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); emit('simpick', { n: fsel }); }
 /* interface fixes: a line opens too. The tips and the opening card say “click any actor or line for what it does and its
    sources”; until now a line only showed a hover note. Its card names the two actors, what passes between them and, where a
@@ -8899,14 +8899,15 @@ function sWays() {
   return SWAYS.map((W, i) => ({ k: W.k, t: W.t, a: W.a, lv: W.lv, say: W.say, len: m[i] ? m[i] / top : .2, last: last === W.k, sug: !last && !!W.sug }));
 }
 /* a level starts here: Foundations at the basics, Fluent at first principles, Expert on the full map with the thesis panel */
+const sFocus = q => { const c = $('cock'), f = c && c.querySelector(q); if (f && f.getClientRects().length) f.focus({ preventScroll: true }); };
 function sWayGo(k, kb) {
   if (!SWAYS.some(W => W.k === k)) return; stSet(SWAY, k); track('Way', { way: k });
-  if (k === 'map') { stSet(STHX, '1'); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) focusIn($('cock'), '#isx-thx .thx-ch'); return; }
+  if (k === 'map') { stSet(STHX, '1'); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) sFocus('#isx-thx .thx-ch'); return; }
   stSet(STHX, null); SIM.ret = null; if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
   simGo(k === 'ground' && SGI >= 0 ? SGI : SPI, 0, 'focus');
 }
 /* “Explore on my own”: the full map, nothing pinned, no thesis, no guide */
-function sFree(kb) { stSet(STHX, '0'); clearSel(); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) focusIn($('cock'), '[data-s4tab][aria-pressed="true"]'); }
+function sFree(kb) { stSet(STHX, '0'); clearSel(); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) sFocus('[data-s4tab][aria-pressed="true"]'); }
 /* the thesis on the map (Expert): SMAIN.thesis in Elias Rutten's wording, then the guide's chapters, each lighting its actors and
    lines on the map and opening its first step on demand. One panel, foldable; shown in the full view after Expert was chosen.
    Storage: isx-sim-thesis ('1' after Expert, '0' after “Explore on my own”); isx-thx-fold (session) for the fold. */

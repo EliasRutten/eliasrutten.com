@@ -96,7 +96,8 @@
     if (!T[v] || live === v) return false;
     if (!force && (off() || U.stGet(KEY + v) === '1')) return false;
     if (live) drop();
-    clearTimeout(outT); if (offer) dropOffer();
+    clearTimeout(outT); [].forEach.call(root.querySelectorAll('#isx-enter.en-out'), function (o) { o.remove(); });   /* a screen still leaving goes at once: one #isx-enter at a time */
+    if (offer) dropOffer();
     back = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
     el = document.createElement('div'); el.className = 'en' + (X.reduce ? ' en-all' : ''); el.id = 'isx-enter'; el.dataset.tab = v;
     el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'isx-en-h'); el.tabIndex = -1;

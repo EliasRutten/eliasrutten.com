@@ -185,9 +185,10 @@ const OFF = ['isx-tips-globe', 'isx-tour', 'isx-first', 'isx-insights', 'isx-sim
   p = await mk({}, 'story', true);
   /* guide build (16 Nov 2026, entry spec §2): the tour no longer starts by itself; the entry's “Tour” pill opens the first card of the level and runs it there */
   await p.waitForTimeout(3500);
-  ok(await p.evaluate(() => !ISX.simtour.on && ISX.sim.beat === -1 && !!document.querySelector('#isx-gentry .ge-foot [data-simtour]')), 'the tour does not start by itself on a first visit; the entry carries its “Tour” pill');
-  await p.click('#isx-gentry .ge-foot [data-simtour]'); await p.waitForFunction(() => ISX.simtour.on, null, { timeout: 5000 }).catch(() => {});
-  ok(await p.evaluate(() => ISX.simtour.on && ISX.sim.beat === 0 && ISX.sim.lines[ISX.sim.line].pre), 'the entry’s “Tour” opens the first card of the suggested level and starts the tour there');
+  /* machinery entry round (19 Nov 2026): the old entry card and its “Tour” pill are gone; the tour is the header's “Tour” button (and the quiet offer after “Explore on my own”) */
+  ok(await p.evaluate(() => !ISX.simtour.on && ISX.sim.beat === 0 && !document.querySelector('#isx-gentry') && !!document.querySelector('#isx-simtour-b')), 'the tour does not start by itself on a first visit; the Simulator’s header carries its “Tour” button');
+  await p.click('#isx-simtour-b'); await p.waitForFunction(() => ISX.simtour.on, null, { timeout: 5000 }).catch(() => {});
+  ok(await p.evaluate(() => ISX.simtour.on), 'the header’s “Tour” starts the tour');
   const txt = []; for (let i = 0; i < 8; i++) { const t = await p.evaluate(() => { const x = document.getElementById('isx-simtour'); return x && !x.hidden && ISX.simtour.on ? x.querySelector('h3').textContent + ' | ' + x.querySelector('p').textContent : null; }); if (!t) break; txt.push(t); await p.click('#isx-simtour .tgo'); await p.waitForTimeout(200); }
   ok(txt.length >= 4 && txt.some(t => t.includes('Click any actor or line for what it does and its sources.')), 'the tour runs to its end and keeps the line about clicking', txt.length + ' notes');
   ok(await p.evaluate(() => !ISX.simtour.on && localStorage.getItem('isx-simtour') === 'off' && ISX.sim.beat === 0), 'its last button ends it on that first card, and the tour is marked as seen');

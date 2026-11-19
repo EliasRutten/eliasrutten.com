@@ -246,14 +246,13 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
 
   /* ================= 6. the tutorial line, and what it promises ================= */
   if (want(6)) {
+    /* machinery entry round (19 Nov 2026): the old in-page entry and its row “How the guide works” are gone. The tab's entry screen says
+       how to use it, and the guide's own hints carry the dotted-words line on the first card that has one */
     let p = await page('#simulator', { pos: '{"l":0,"b":-1}' });
-    /* guide build (16 Nov 2026): the entry replaces the opening card. Its row “How the guide works” says how the guide is used (dotted words first); the line about clicking the map stays in the tour and on the primer's last screen */
-    let r = await js(p, () => { const e = document.querySelector('#isx-sn-body .ge-how'), c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-gentry').getBoundingClientRect(); return { line: e ? e.textContent.trim() : null, vis: !!e && e.getClientRects().length > 0, fits: card.bottom <= bar.top + 1 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
-    ok('tutorial: the guide’s entry says how the guide works, dotted words first', r.vis && /Dotted words carry a definition: hover or tap\./.test(r.line) && r.fits, r);
-    await p.context().close();
-    p = await page('#simulator', { w: 1280, h: 760, pos: '{"l":0,"b":-1}' });
-    r = await js(p, () => { const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-gentry').getBoundingClientRect(), box = document.getElementById('isx-sn-in'), e = document.querySelector('#isx-sn-body .ge-how'); return { vis: !!e && e.getClientRects().length > 0, card: card.top >= 0 && card.bottom <= bar.top + 1, inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 && c.getBoundingClientRect().bottom <= innerHeight + 1 }; });
-    ok('tutorial: at 1280×760 the entry still fits one screen with the row on it', Object.values(r).every(Boolean), r);
+    let r = await js(p, async () => { ISX.enter.open('fin', true); await new Promise(q => setTimeout(q, 150)); const e = document.getElementById('isx-enter'), h = [...e.querySelectorAll('.en-b section')].find(x => /How to use it/.test(x.textContent)); const out = { vis: !!h && h.getClientRects().length > 0, line: h ? h.textContent : '', beat: ISX.sim.beat }; ISX.enter.close(); return out; });
+    ok('tutorial: the machinery’s entry screen says how to use it; the guide stands at its first step (no step −1)', r.vis && /three levels of\s+difficulty/.test(r.line) && r.beat === 0, r);
+    r = await js(p, () => ISX.hints && ISX.hints.lines ? ISX.hints.lines() : {});
+    ok('tutorial: the guide’s hints keep the dotted-words line', JSON.stringify(r).includes('Dotted words have a definition'), r);
     await p.context().close();
     p = await page('#simulator', { ls: { 'isx-sim-mode': 'full' } });
     /* “How to use the simulator” has had no button on the page since the Simulator moved onto the stage; the card is opened here the way its button did */

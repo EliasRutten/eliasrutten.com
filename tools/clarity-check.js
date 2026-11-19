@@ -173,8 +173,8 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     ok(gs.on >= 1 && gs.col && gs.rest, 'in the guide the step in hand is in colour, what was reached before is grey', gs);
     await g.context().close();
     const ex = await open(1440, 900, {}, { 'isx-sim-pos': JSON.stringify({ l: 0, b: -1 }) });
-    await ex.click('.ge-way[data-way="map"]'); await ex.waitForTimeout(500);
-    ok(await ex.evaluate(() => ISX.sim.mode === 'full' && !document.getElementById('isx-cl-key').hidden), 'the Expert way in opens the key once');
+    await ex.evaluate(() => ISX.simWay('map')); await ex.waitForTimeout(500);   /* machinery entry round (19 Nov 2026): Expert now opens the thesis panel in place of the key */
+    ok(await ex.evaluate(() => ISX.sim.mode === 'full' && ISX.simThesis && document.getElementById('isx-cl-key').hidden), 'the Expert way in opens the full map with the thesis panel, the key left closed');
     await ex.context().close();
   }
 
@@ -366,9 +366,10 @@ const RETIRED = ['2-0', '7-2'];   /* they repeat 1-3 and 4-2; kept in the page's
     await f.context().close();
     /* “Show hints again” */
     const hn = await open(1440, 900, { 'isx-hints-off': '1', 'isx-sim-mode': 'story' }, at(0, -1));
-    const hv = await hn.evaluate(() => { const b = document.querySelector('#isx-sn-body .ge [data-b1more="hints"]'); return !!b && !b.hidden && b.getClientRects().length > 0; });
-    await hn.click('#isx-sn-body .ge [data-b1more="hints"]'); await hn.waitForTimeout(200);
-    ok(hv && await hn.evaluate(() => localStorage.getItem('isx-hints-off') !== '1' && document.activeElement && document.activeElement.hasAttribute('data-simtour')), 'the entry offers “Show hints again” once hints are hidden, and it brings them back', hv);
+    /* machinery entry round (19 Nov 2026): the old entry card and its “Show hints again” pill are gone; More keeps it */
+    const hv = await hn.evaluate(() => { const b = document.querySelector('#isx-b1more [data-b1more="hints"]'); return !!b && !document.querySelector('#isx-gentry'); });
+    await hn.evaluate(() => document.querySelector('#isx-b1more [data-b1more="hints"]').click()); await hn.waitForTimeout(200);
+    ok(hv && await hn.evaluate(() => localStorage.getItem('isx-hints-off') !== '1'), 'More offers “Show hints again” once hints are hidden, and it brings them back (no entry card)', hv);
     await hn.context().close();
     const hp = await open(390, 844, { 'isx-hints-off': '1', 'isx-sim-mode': 'story' }, at(0, 4));
     await hp.click('[data-s4more]'); await hp.waitForTimeout(200);

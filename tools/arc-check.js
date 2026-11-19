@@ -76,15 +76,16 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     await done(p);
     /* the machinery: levels only after “Learn step by step”; the tour only after “Explore on my own” */
     p = await open('#simulator', { first: 1 }); await p.waitForTimeout(600);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, ge: !!document.querySelector('#isx-gentry'), more: document.querySelector('#isx-en-more') && document.querySelector('#isx-en-more').hidden, txt: document.querySelector('#isx-enter .en-b').textContent, sub: (document.querySelector('#isx-enter .en-sub') || {}).href }));
+    r = await p.evaluate(() => ({ on: ISX.enter.on, ge: !document.querySelector('#isx-gentry'), more: document.querySelector('#isx-en-more') && document.querySelector('#isx-en-more').hidden, txt: document.querySelector('#isx-enter .en-b').textContent, sub: (document.querySelector('#isx-enter .en-sub') || {}).href }));
     ok(r.on === 'fin' && r.ge && r.more && /manufactured, and used as a weapon/.test(r.txt) && /paid pieces on the Substack/.test(r.txt) && /substack\.com/.test(r.sub || ''), 'the machinery’s screen carries the approved text and the line on the paid pieces, with the Substack link', r);
-    await p.click('#isx-enter [data-en="levels"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch')].map(x => x.dataset.enWay + ':' + x.querySelector('small').textContent));
-    ok(r.length === 3 && r[0].indexOf('ground:About') === 0 && r[1].indexOf('guide:About') === 0 && r[2] === 'map:At your own pace', 'the three levels appear only after “Learn step by step”, with their minutes', r);
+    /* machinery entry round (19 Nov 2026): the levels come from data, with a Time and a Difficulty bar and no minutes (changed on purpose) */
+    await p.click('#isx-enter [data-en="levels"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch')].map(x => x.dataset.enWay + ':' + (x.querySelector('.en-tb i') ? 'bar' : '') + ':' + (/\d+\s*min|minutes/i.test(x.textContent) ? 'mins' : '')));
+    ok(r.join() === 'ground:bar:,guide:bar:,map:bar:', 'the three levels appear only after “Learn step by step”, with Time and Difficulty bars and no minutes', r);
     await p.click('#isx-en-more [data-en-way="guide"]'); await p.waitForTimeout(1200);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, way: localStorage.getItem('isx-way'), mode: ISX.sim.mode, ge: !!document.querySelector('#isx-gentry') })); ok(!r.on && r.way === 'guide' && r.mode === 'story' && !r.ge, 'a level closes the screen and starts the guide at that level', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, way: localStorage.getItem('isx-way'), mode: ISX.sim.mode, ge: !!document.querySelector('#isx-gentry'), pre: ISX.sim.lines[ISX.sim.line].pre && ISX.sim.beat === 0 })); ok(!r.on && r.way === 'guide' && r.mode === 'story' && !r.ge && r.pre, 'a level closes the screen and starts the guide at that level', r);
     await done(p);
     p = await open('#simulator', { first: 1 }); await p.waitForTimeout(600); await p.click('#isx-enter [data-en="free"]'); await p.waitForTimeout(1200);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, mode: ISX.sim.mode, offer: !!document.querySelector('.en-offer') })); ok(!r.on && r.mode === 'full' && r.offer, '“Explore on my own” opens the full view and offers the tour in the corner', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, mode: ISX.sim.mode, offer: !!document.querySelector('.en-offer'), th: ISX.simThesis })); ok(!r.on && r.mode === 'full' && r.offer && !r.th, '“Explore on my own” opens the full view without the thesis and offers the tour in the corner', r);
     await p.click('.en-offer [data-eo="tour"]'); await p.waitForTimeout(500); ok(await p.evaluate(() => ISX.simtour.on && !document.querySelector('.en-offer')), 'the offer starts the tour of the screen');
     await done(p);
     /* a link to a place inside a tab never shows the screen; reduced motion and a click outside */

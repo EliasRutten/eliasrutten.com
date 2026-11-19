@@ -47,8 +47,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
 
   /* ---------- 2. the Simulator: first principles, ladder, sectors, backstop ---------- */
   p = await page('#simulator', { 'isx-sim-mode': 'story' });
-  ok('guide: the entry offers first principles and the guide (guide build, 16 Nov: the level “Fluent”, beside the full map as “Expert”)', await p.evaluate(() => { const b = document.getElementById('isx-sn-body'); return /First principles, then the guide/.test(b.querySelector('[data-way="guide"]').textContent) && !!b.querySelector('[data-way="map"]') && ISX.sim.lines[0].steps.length === 43; }));
-  await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
+  ok('guide: the entry offers first principles and the guide (guide build, 16 Nov: the level “Fluent”, beside the full map as “Expert”)', await p.evaluate(() => { const W = ISX.simWays(); return /First principles, then the guide/.test(W.find(w => w.k === 'guide').say) && W.some(w => w.k === 'map') && ISX.sim.lines[0].steps.length === 43; })   /* machinery entry round (19 Nov 2026): the levels are data now */);
+  await p.evaluate(() => ISX.simWay('guide')); await p.waitForTimeout(350);
   let n = 0, worst = 0, deepOk = true, kinds = [];
   for (let i = 0; i < 20; i++) {
     const r = await p.evaluate(() => ({ s: (document.querySelector('#isx-sn-body .s2p') || {}).textContent || '', deep: document.querySelectorAll('#isx-sn-body .s2deep .s2d > p').length, cnt: document.querySelector('.sn-cnt').textContent.replace(/\s+/g, ''), k: document.querySelector('#isx-sn-body .s2k').textContent, lit: document.querySelectorAll('#isx-rmap .fn:not(.gh)').length }));

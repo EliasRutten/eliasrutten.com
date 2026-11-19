@@ -45,7 +45,7 @@ const SIZES = [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390,
   /* the whole guide: 7 reveals, 37 steps, and at each decision the card, the other path link by link, the crisis card */
   const walk = async (p, each) => {
     const out = []; const take = async tag => { const s = await state(p); s.tag = tag; out.push(s); if (each) await each(s); return s; };
-    await click(p, '#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(350);
+    await p.evaluate(() => ISX.simWay('guide')); await p.waitForTimeout(350);
     for (let i = 0; i < 10; i++) { await take('reveal ' + (i + 1)); await right(p); }
     await click(p, '#isx-sn-body .sn-go'); await p.waitForTimeout(350);
     for (let guard = 0; guard < 120; guard++) {

@@ -84,10 +84,10 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
       gauge: 'A new indicator: its figure, date and source. All of them sit under Indicators.', door: 'A deeper view of this part. Close it to come back here.', fold: 'More on this step is folded under “The mechanism”.' };
     const hintOf = p => p.evaluate(() => { const b = document.getElementById('isx-hint7'); return { on: ISX.hints.on, shown: !!b && !b.hidden && b.classList.contains('in'), text: b ? b.querySelector('.hn-t').textContent : '', role: b ? b.getAttribute('role') : '', focusIn: !!b && b.contains(document.activeElement), marks: document.querySelectorAll('.hn-on').length }; });
     let p = await page('#simulator', { ls: { ...QUIET, ...SEEN, 'isx-sim-mode': 'story' } });
-    let r = await p.evaluate(() => ({ ids: ISX.hints.ids.filter(k => ISX.hints.tabs[k] === 'fin').sort(), lines: ISX.hints.lines(), on: ISX.hints.on, entry: document.getElementById('isx-cock').classList.contains('s4open') }));
+    let r = await p.evaluate(() => ({ ids: ISX.hints.ids.filter(k => ISX.hints.tabs[k] === 'fin').sort(), lines: ISX.hints.lines(), on: ISX.hints.on, entry: !document.querySelector('#isx-gentry, #isx-cock.s4open') && ISX.sim.beat === 0 }));
     ok('seven hints, with the spec’s lines word for word', r.ids.join() === Object.keys(LINES).sort().join() && Object.keys(LINES).every(k => r.lines[k] === LINES[k]), r.lines);
-    ok('none on the entry (it says how the guide works itself)', r.entry && !r.on, r);
-    await p.evaluate(() => document.querySelector('#isx-gentry [data-way="guide"]').click());
+    ok('no old entry card: the guide stands at its first step (machinery entry round, 19 Nov 2026)', r.entry, r);
+    await p.evaluate(() => ISX.simWay('guide'));
     await p.waitForFunction(() => ISX.hints.on, null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(400);
     r = await hintOf(p);
     ok('the first card carries “Next”: a status note that takes no focus, with its control outlined', r.on === 'next' && r.shown && r.role === 'status' && !r.focusIn && r.marks === 1 && r.text === LINES.next, r);
@@ -219,17 +219,11 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     await p.evaluate(() => document.querySelector('#isx-wl [data-wl="skip"]').click()); await p.waitForFunction(() => !document.querySelector('#isx-frame .wl-fade'), null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(300);
     r = await p.evaluate(() => ({ inst: ['.resbar', '.cmd6', '.tabs-bottom', '.legbox2'].map(s => +getComputedStyle(document.querySelector('#isx-frame ' + s)).opacity), first: !!document.querySelector('#isx-insight.in.first'), quiet: document.getElementById('isx-root').classList.contains('isx-quiet') }));
     ok('“Skip to the map”: the instruments are in, no first card (gone 19 Nov), nothing hidden again', r.inst.every(v => v === 1) && !r.first && !r.quiet, r);
-    /* the Simulator's, on the first entry into its tab */
-    await p.evaluate(() => document.getElementById('isx-v-fin').click()); const t1 = Date.now();
-    r = await p.evaluate(() => ({ on: ISX.opening.on, card: +getComputedStyle(document.querySelector('#isx-gentry .ge-card')).opacity, veil: getComputedStyle(document.getElementById('isx-stage'), '::after').opacity, hint: ISX.hints.on }));
-    ok('the first entry into the Simulator opens on its opening: the title alone, the entry’s card and veil held back', r.on === 'sim' && r.card === 0 && +r.veil === 0 && !r.hint, r);
-    await p.waitForFunction(() => !ISX.opening.on || ISX.opening.t > 4.0, null, { timeout: 30000 });
-    r = await p.evaluate(() => ({ cnt: document.querySelector('.op-cnt').textContent.replace(/\s+/g, ' '), money: document.querySelectorAll('#isx-op-g path').length, clipFx: getComputedStyle(document.querySelector('#isx-stage')).clipPath + getComputedStyle(document.querySelector('#isx-rmap')).maskImage }));
-    ok('the count names 37 actors and gauges, 75 relations, 17 levers; the gold line follows two of the map’s own relations', /actors and gauges·\d+ relations·\d+ levers/.test(r.cnt.replace(/ ?· ?/g, '·')) && r.money === 2 && r.clipFx === 'nonenone', r);
-    r = await props(p); ok('only opacity, transform and stroke-dashoffset are animated', !r.length, r);
-    await p.waitForFunction(() => !ISX.opening.on, null, { timeout: 30000 }); const took2 = (Date.now() - t1) / 1000; await p.waitForTimeout(400);
-    r = await p.evaluate(() => ({ left: document.querySelectorAll('.op-clip, .op-cnt, .op-skip, #isx-op-g').length, ops: document.getElementById('isx-cock').classList.contains('op-s'), card: +getComputedStyle(document.querySelector('#isx-gentry .ge-card')).opacity, veil: +getComputedStyle(document.getElementById('isx-stage'), '::after').opacity, head: getComputedStyle(document.querySelector('#isx-gentry .ge-head')).translate, seen: localStorage.getItem('isx-open-sim'), cnt: document.querySelectorAll('#isx-rmap .fn').length + '/' + document.querySelectorAll('#isx-rmap .fe').length }));
-    ok('it runs about 6.5 s and ends on the entry as it always is', took2 > 5.8 && took2 < 8.5 && r.left === 0 && !r.ops && r.card === 1 && r.veil === 1 && (r.head === 'none' || r.head === '0px') && r.seen === '1', [took2, r]);
+    /* machinery entry round (19 Nov 2026): the Simulator's opening animated the old in-page entry card and went with it; the tab's
+       entry screen (v2/enter.js) is its start. Checked on purpose: the first entry into the tab plays no opening */
+    await p.evaluate(() => document.getElementById('isx-v-fin').click()); await p.waitForTimeout(400);
+    r = await p.evaluate(() => ({ on: ISX.opening.on, card: !!document.querySelector('#isx-gentry') }));
+    ok('the first entry into the Simulator plays no opening of its own and shows no old entry card', !r.on && !r.card, r);
     await done(p);
     /* when they do not play */
     p = await page('', { ls: { 'isx-enter': 'off', 'isx-insights': 'off', 'isx-simtour': 'off' }, wait: 600 }); await p.keyboard.press('Escape'); const ts = Date.now(); await p.waitForFunction(() => !ISX.opening.on, null, { timeout: 5000 }).catch(() => {});
@@ -243,25 +237,20 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     r = await p.evaluate(() => ({ on: ISX.opening.on, hash: location.hash, deep: ISX.deep })); ok('“#replay” plays it again and leaves no link state behind', r.on === 'circuit' && !r.deep, r);
     await done(p);
     p = await page('#circuit/07', { ls: { 'isx-insights': 'off' }, wait: 300 }); r = await p.evaluate(() => ({ on: ISX.opening.on, opc: document.getElementById('isx-root').classList.contains('op-c') })); ok('a link into the map (#circuit/07): no opening', !r.on && !r.opc, r);
-    await p.evaluate(() => document.getElementById('isx-v-fin').click()); r = await p.evaluate(() => ISX.opening.on); ok('…but the first click on the Simulator’s tab still plays its opening', r === 'sim', r);
     await done(p);
     p = await page('#simulator', { ls: { 'isx-simtour': 'off' }, wait: 300 }); ok('a link straight to the Simulator: no opening', !(await p.evaluate(() => ISX.opening.on)));
     await done(p);
-    p = await page('', { ls: { ...QUIET, 'isx-way': 'guide' }, wait: 300 }); await p.evaluate(() => document.getElementById('isx-v-fin').click()); ok('a visitor who has chosen a level before: the Simulator’s does not play', !(await p.evaluate(() => ISX.opening.on)));
-    await done(p);
     p = await page('', { rm: true, ls: { 'isx-insights': 'off' }, wait: 300 });
     r = await p.evaluate(() => ({ on: ISX.opening.on, opc: document.getElementById('isx-root').classList.contains('op-c') })); await p.evaluate(() => document.getElementById('isx-v-fin').click());
-    ok('reduced motion: neither plays; the page is simply there', !r.on && !r.opc && !(await p.evaluate(() => ISX.opening.on)), r);
+    ok('reduced motion: the Circuit’s does not play; the page is simply there', !r.on && !r.opc && !(await p.evaluate(() => ISX.opening.on)), r);
     await done(p);
     p = await page('', { ls: { 'isx-tips-sim': 'off', 'isx-tour': 'off', 'isx-insights': 'off' }, wait: 300 });
     r = await p.evaluate(() => ({ on: ISX.opening.on, opc: document.getElementById('isx-root').classList.contains('op-c') })); await p.evaluate(() => document.getElementById('isx-v-fin').click());
-    ok('the check scripts’ switch (isx-tips-sim off) keeps both away', !r.on && !r.opc && !(await p.evaluate(() => ISX.opening.on)), r);
+    ok('the check scripts’ switch (isx-tips-sim off) keeps it away', !r.on && !r.opc && !(await p.evaluate(() => ISX.opening.on)), r);
     await done(p);
     p = await page('', { w: 390, h: 844, touch: true, ls: { 'isx-simtour': 'off', 'isx-insights': 'off' }, wait: 1200 });
     r = await p.evaluate(() => ({ on: ISX.opening.on, ttl: document.querySelectorAll('.op-ttl, .op-skip').length, page: document.documentElement.scrollWidth - innerWidth }));
     ok('phone: the Circuit’s opening plays, no title, no sideways scroll', r.on === 'circuit' && !r.ttl && r.page <= 0, r);
-    await p.evaluate(() => { ISX.opening.end(); document.getElementById('isx-v-fin').click(); }); const tp = Date.now(); await p.waitForFunction(() => !ISX.opening.on, null, { timeout: 15000 });
-    ok('phone: the Simulator’s is the title and the entry only, under 3 s', Date.now() - tp < 3400, Date.now() - tp);
     await done(p);
   }
   if (errors.length) { fail++; console.log('  FAIL page errors :: ' + JSON.stringify(errors).slice(0, 600)); }

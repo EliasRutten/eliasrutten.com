@@ -12,7 +12,8 @@
    6 build B: the primer (the hand-over, the way up, hidden text alternatives, the route in the bar, reading level, one screen);
      first principles; the three new steps and the trims; the thesis echoes and their rules (listed); the
      guide's close with the stored sterling figure; the Circuit's first line; the play runner keeps a play's order */
-/* guide build (16 Nov 2026): sections 2 and 3 check the entry (three levels, bars, the thesis in plain words and in full, the reminder
+/* machinery entry round (19 Nov 2026): sections 2 and 3 now check the tab's entry screen (levels from data, no minutes) and Expert's
+   thesis panel, in place of the old in-page card. guide build (16 Nov 2026): sections 2 and 3 checked the entry (three levels, bars, the thesis in plain words and in full, the reminder
    hint); section 6 the primer's twelve screens in the new order with their diagrams and stored figures, route A's hand-over, and first
    principles' ten reveals (R5 rewritten, R7 and R8 new). */
 const { chromium } = require('playwright');
@@ -65,74 +66,74 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(!p._errs.length, 'no page errors (order)', p._errs.join(' | '));
   await p.context().close();
 
-  /* ---------- 2, 3. the entry (guide build, 16 Nov 2026: spec guide-entry-16-nov §1, words from guide spine §2) and the thesis ---------- */
+  /* ---------- 2, 3. the entry and the thesis. Machinery entry round (19 Nov 2026): the old in-page card (#isx-gentry) is gone; the
+     levels live on the tab's whole-window entry screen (v2/enter.js), drawn from ISX.simWays, with no minutes shown or spoken; the
+     thesis sits on the full map after Expert. These checks follow the new design on purpose. ---------- */
   p = await mk();
-  const dc = await js(p, async () => {
-    const B = document.getElementById('isx-sn-body'), E = B.querySelector('#isx-gentry'), d = [...E.querySelectorAll('.ge-way')], g = E.querySelector('.ge-wg');
-    const out = { ways: d.map(x => x.dataset.way), names: d.map(x => x.querySelector('b').textContent), lines: d.map(x => x.querySelector('.ge-wa').textContent), aria: d.map(x => x.textContent.replace(/\s+/g, ' ').trim()), noLabel: d.every(x => !x.hasAttribute('aria-label')),
-      sug: d.map(x => x.classList.contains('sug')), tags: d.map(x => (x.querySelector('.ge-tag') || {}).textContent || ''), bars: d.map(x => { const t = x.querySelector('.ge-tb i'); return [t ? parseFloat(t.style.width) : null, x.querySelectorAll('.ge-db i.on').length, x.querySelector('.ge-bars').getAttribute('aria-hidden')]; }),
-      group: g && g.getAttribute('role') === 'group' && document.getElementById(g.getAttribute('aria-labelledby')).textContent, native: d.every(x => x.tagName === 'BUTTON'), old: !!B.querySelector('.s4go, .s5full, .s4skip, .tw-door, .s2chl'),
-      title: E.querySelector('h3').textContent, kicker: E.querySelector('.ge-k').textContent, promise: E.querySelector('.ge-pr').textContent, plain: E.querySelector('.ge-thx p').textContent, plainTips: [...E.querySelectorAll('.ge-thx dfn.df')].map(x => x.dataset.d),
-      shows: [...E.querySelectorAll('.ge-shows li')].map(x => x.textContent), how: [...E.querySelectorAll('.ge-how li')].map(x => x.textContent), minsText: (() => { const c = E.cloneNode(true); c.querySelectorAll('.vh').forEach(x => x.remove()); return /\d+\s*min/i.test(c.textContent); })(), mins: ISX.mins, full0: E.querySelector('#isx-ge-full').hidden,
-      rem: E.querySelector('.ge-rem span').textContent, remB: !!E.querySelector('.ge-rem [data-remind]'), tour: !!E.querySelector('.ge-foot [data-simtour]'), inert: document.getElementById('isx-stage').inert,
-      ttl: getComputedStyle(document.querySelector('#isx-cock .s2ttl')).visibility, segs: getComputedStyle(document.querySelector('#isx-s2bar .rt-segs')).visibility, S: { n: ISX.sim.lines[0].steps.length, nodes: document.querySelectorAll('#isx-rmap .fn').length, rel: ISX.sim.relations.length, ind: ISX.sim.indicators.filter(I => !I.slot).length, dec: ISX.sim.decisions.length } };
-    const fb = E.querySelector('[data-gefull]'); fb.click(); await new Promise(r => setTimeout(r, 80));
-    out.full1 = !E.querySelector('#isx-ge-full').hidden && fb.getAttribute('aria-expanded') === 'true'; out.th = E.querySelector('#isx-ge-full').textContent; out.tips = [...E.querySelectorAll('#isx-ge-full dfn.df')].map(x => x.dataset.d);
-    fb.click(); await new Promise(r => setTimeout(r, 80)); out.full2 = E.querySelector('#isx-ge-full').hidden && fb.getAttribute('aria-expanded') === 'false';
-    return out;
-  });
-  ok(dc.ways.join() === 'ground,guide,map' && dc.names.join('|') === 'Foundations|Fluent|Expert', 'three levels: Foundations, Fluent, Expert (the keys of the three doors stay: ground, guide, map)', dc.names);
+  const lvOpen = q => js(q, async () => { ISX.enter.open('fin', true, 'levels'); await new Promise(r => setTimeout(r, 120)); const E = document.getElementById('isx-enter'), d = [...E.querySelectorAll('.en-lv')];
+    return { gone: !document.querySelector('#isx-gentry, .ge-way, #isx-cock.s4open'), ways: d.map(x => x.dataset.enWay), names: d.map(x => x.querySelector('b').firstChild.textContent), lines: d.map(x => x.querySelector('b + span').textContent),
+      aria: d.map(x => x.textContent.replace(/\s+/g, ' ').trim()), sug: d.map(x => x.classList.contains('sug')), tags: d.map(x => (x.querySelector('.en-tag') || {}).textContent || ''),
+      bars: d.map(x => [parseFloat(x.querySelector('.en-tb i').style.width), x.querySelectorAll('.en-db i.on').length, x.querySelector('.en-bars').getAttribute('aria-hidden')]),
+      native: d.every(x => x.tagName === 'BUTTON'), group: (E.querySelector('.en-chs') || {}).getAttribute && E.querySelector('.en-chs').getAttribute('aria-label'),
+      mins: /\d+\s*min|minutes/i.test(E.textContent), free: (E.querySelector('[data-en="free"]') || {}).textContent, learn: (E.querySelector('[data-en="levels"]') || {}).textContent }; });
+  const dc = await lvOpen(p);
+  ok(dc.gone, 'the old in-page entry card is gone: no #isx-gentry, no .ge-way, no s4open', dc);
+  ok(dc.ways.join() === 'ground,guide,map' && dc.names.join('|') === 'Foundations|Fluent|Expert', 'three levels on the entry screen: Foundations, Fluent, Expert (keys ground, guide, map)', dc.names);
   ok(dc.lines.join('|') === 'I know the US has a debt problem, but not why.|I know how the dollar system works.|I know the cogs. Show me the thesis on the map.', 'each level has one first-person line for whom it is', dc.lines);
-  ok(dc.title === 'The imperial machinery' && dc.kicker === 'Scott Bessent Simulator' && dc.promise === 'Why does the dollar need the AI trade? By the end you will know, and you will know who keeps it going.', 'the entry’s title is “The imperial machinery”, with the promise under it (Elias’s choice, 16 Nov)', [dc.title, dc.promise]);
-  ok(/^Most economists treat the world’s trade imbalances, and the hot money that follows them, as a fault to be fixed\. Elias Rutten’s thesis is that the instability is made on purpose and used as a weapon, by the United States and by China\.$/.test(dc.plain) && dc.plainTips.join() === 'hotmoney', 'the thesis in plain words first, with “hot money” as a term tip', dc.plain);
-  ok(dc.shows.length === 3 && dc.shows[0].includes(dc.S.nodes + ' actors and gauges, ' + dc.S.rel + ' relations and ' + dc.S.ind + ' dated indicators') && /17 levers, and seven points where you take the decision yourself/.test(dc.shows[1]) && /Seven chain reactions toward a crisis, each anchored in a real precedent/.test(dc.shows[2]) && dc.S.dec === 7, 'what this part shows: the cogs, how Washington works it, where it could break; the figures are computed', dc.shows);
-  ok(dc.sug.join() === 'false,true,false' && dc.tags.join('|') === '|Suggested|', 'Fluent is the suggested level (gold outline, “Suggested”) on a first visit', [dc.sug, dc.tags]);
-  ok(dc.bars[0][0] === Math.min(100, Math.round(dc.mins.ground / 60 * 100)) && dc.bars[1][0] === Math.round(dc.mins.guide / 60 * 100) && dc.bars[2][0] === null && dc.bars.map(x => x[1]).join() === '1,2,3' && dc.bars.every(x => x[2] === 'true') && dc.mins.ground > dc.mins.guide, 'time and difficulty are bars: time is the route’s computed minutes over 60, Expert is “your pace”; difficulty 1, 2, 3', [dc.bars, dc.mins]);
-  ok(!dc.minsText && dc.noLabel && dc.aria[0].includes('About ' + dc.mins.ground + ' minutes') && dc.aria[1].includes('About ' + dc.mins.guide + ' minutes') && /^Foundations/.test(dc.aria[0]) && /^Fluent Suggested → I know how the dollar system works\. First principles, then the guide\./.test(dc.aria[1]) && /Assumes you know what a Treasury yield is\./.test(dc.aria[1]) && /^Expert/.test(dc.aria[2]) && /At your own pace/.test(dc.aria[2]), 'minutes live only in each level’s accessible name: the visible words first, then a hidden line with the route, the minutes and what it assumes (no aria-label over visible text)', dc.aria);
-  ok(dc.mins.ground >= 35 && dc.mins.gnd >= 12 && dc.mins.ground - dc.mins.guide >= 8, 'guide spine §6.1: the ground route counts the primer’s folds, so the two routes differ honestly in length', dc.mins);
-  ok(dc.native && dc.group === 'Choose your way in' && !dc.old, 'native buttons in a group labelled “Choose your way in”; the old door card, its buttons and its chapter list are gone', dc);
-  ok(dc.how.length === 4 && /Dotted words carry a definition: hover or tap\./.test(dc.how[0]) && /Seven calls are yours/.test(dc.how[1]) && /A gold tab opens a deeper view\./.test(dc.how[2]) && /arrow keys|Swipe the card/.test(dc.how[3]), '“How the guide works” is one row of four: dotted words, the calls, the gold tab, Next and Back', dc.how);
-  ok(dc.rem === 'Understanding the mechanics takes time. If you can’t finish today, set a reminder.' && dc.remB && dc.tour, 'the foot: the reminder hint with its pill, and the tour', dc.rem);
-  ok(dc.inert === true && dc.ttl === 'hidden' && dc.segs === 'hidden', 'while the entry is open the map behind it is out of reach, and the Simulator’s title row and the bar’s route are hidden', [dc.inert, dc.ttl, dc.segs]);
-  ok(dc.full0 && dc.full1 && dc.full2, '“Full thesis” opens and closes the full wording (aria-expanded follows)', [dc.full0, dc.full1, dc.full2]);
-  ok(/Economic theory has come far in recognizing global trade imbalances/.test(dc.th) && /the instability is manufactured/.test(dc.th) && /That is the thesis of the author, Elias Rutten\./.test(dc.th) && /Follow the plumbing and you can see who holds the valves\./.test(dc.th) && !/Klein|Pettis|Gowan|Hudson/.test(dc.th), 'the full thesis is Elias Rutten’s wording and names no economist', dc.th);
-  ok(dc.tips.sort().join() === 'geoecon,hotmoney,imbalance', 'the full thesis carries three term tips: global trade imbalances, hot money, geoeconomic', dc.tips);
-  ok(!/this map’s reading|map’s reading|not an allegation/i.test(dc.th + dc.plain), 'no hedges on the entry', dc.th);
-  /* the guide's door; the storage key; “Last time” */
-  await p.click('#isx-sn-body [data-way="guide"]'); await p.waitForTimeout(400);
+  ok(dc.sug.join() === 'false,true,false' && dc.tags.join('|') === '|Suggested|', 'Fluent is the suggested level on a first visit', [dc.sug, dc.tags]);
+  ok(dc.bars[0][0] > dc.bars[1][0] && dc.bars[1][0] > dc.bars[2][0] && dc.bars.map(x => x[1]).join() === '1,2,3' && dc.bars.every(x => x[2] === 'true'), 'time and difficulty are bars: Foundations longest and easiest, Expert shortest and hardest; the bars are for the eye', dc.bars);
+  ok(!dc.mins && dc.aria.every(t => !/\d+\s*min|minutes/i.test(t)) && /longest way in, and the easiest/.test(dc.aria[0]) && /middle way in/.test(dc.aria[1]) && /shortest way in, and the hardest/.test(dc.aria[2]), 'no minutes shown or spoken: each level says its trade-off in words', dc.aria);
+  ok(dc.native && dc.group === 'Choose your level', 'native buttons in a group labelled “Choose your level”', dc);
+  ok(/Explore on my own/.test(dc.free) && /no guide, no thesis/.test(dc.free) && /three levels/.test(dc.learn), 'the choices read as three levels of the guide plus “Explore on my own”, the difference in their one-line descriptions', [dc.learn, dc.free]);
+  await js(p, () => ISX.enter.close());
+  /* Expert: the thesis on the map */
+  await js(p, () => ISX.simWay('map')); await p.waitForTimeout(500);
+  const th = await js(p, () => { const t = document.getElementById('isx-thx'); return { mode: ISX.sim.mode, on: ISX.simThesis, txt: t ? t.querySelector('.thx-t').textContent : '', tips: t ? [...t.querySelectorAll('.thx-t dfn.df')].map(x => x.dataset.d).sort() : [], ch: t ? t.querySelectorAll('.thx-ch').length : 0 }; });
+  ok(th.mode === 'full' && th.on && th.ch === 7, 'Expert: the full map with the thesis panel and the seven chapters', th);
+  ok(/Economic theory has come far in recognizing global trade imbalances/.test(th.txt) && /the instability is manufactured/.test(th.txt) && /That is the thesis of the author, Elias Rutten\./.test(th.txt) && /Follow the plumbing and you can see who holds the valves\./.test(th.txt) && !/Klein|Pettis|Gowan|Hudson/.test(th.txt), 'the panel carries Elias Rutten’s thesis in his wording', th.txt);
+  ok(th.tips.join() === 'geoecon,hotmoney,imbalance', 'the thesis carries three term tips: global trade imbalances, hot money, geoeconomic', th.tips);
+  ok(!/this map’s reading|map’s reading|not an allegation/i.test(th.txt), 'no hedges on the thesis', th.txt);
+  const lit = await js(p, async () => { const b = document.querySelector('#isx-thx .thx-ch[data-thxc="1"]'); b.dispatchEvent(new PointerEvent('pointerover', { bubbles: true })); await new Promise(r => setTimeout(r, 60)); const n = document.querySelectorAll('#isx-rmap .fn.lit').length; b.click(); await new Promise(r => setTimeout(r, 60)); return { n, pressed: b.getAttribute('aria-pressed') }; });
+  ok(lit.n > 0 && lit.pressed === 'true', 'a chapter lights its actors on the map, and stays lit when chosen', lit);
+  await js(p, () => ISX.simFree()); await p.waitForTimeout(300);
+  ok(await js(p, () => ISX.sim.mode === 'full' && !ISX.simThesis && !document.querySelector('#isx-rmap .fn.lit')), 'Explore on my own: the full map, nothing pinned, no thesis panel');
+  /* the levels start the guide; the storage key; “Last time”; the guide has no step before its first */
+  await js(p, () => ISX.simWay('guide')); await p.waitForTimeout(400);
   let st = await js(p, () => ({ way: localStorage.getItem('isx-way'), pre: ISX.sim.lines[ISX.sim.line].pre, beat: ISX.sim.beat, mode: ISX.sim.mode }));
   ok(st.way === 'guide' && st.pre && st.beat === 0 && st.mode === 'story', 'Fluent: first principles, reveal 1; isx-way = guide', st);
-  await p.click('#isx-sn-body [data-way="ground"]').catch(() => {});
   await js(p, () => { sessionStorage.setItem('isx-sim-pos', '{"l":0,"b":-1}'); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
-  st = await js(p, () => ({ beat: ISX.sim.beat, mode: ISX.sim.mode, last: [...document.querySelectorAll('#isx-sn-body .ge-way')].filter(d => d.querySelector('.ge-tag.last')).map(d => d.dataset.way), txt: (document.querySelector('#isx-sn-body .ge-tag.last') || {}).textContent, sugTag: [...document.querySelectorAll('#isx-sn-body .ge-tag:not(.last)')].length, aria: document.querySelector('#isx-sn-body .ge-way[data-way="guide"]').textContent }));
-  ok(st.mode === 'story' && st.beat === -1 && st.last.join() === 'guide' && st.txt === 'Last time' && st.sugTag === 0 && /^Fluent\s+Last time/.test(st.aria), 'a returning visitor of the guide sees the entry again, Fluent marked “Last time” in words (and in its accessible name) in place of “Suggested”', st);
-  await js(p, () => document.querySelector('#isx-sn-body [data-way="ground"]').click()); await p.waitForTimeout(400);
+  st = await js(p, () => ({ beat: ISX.sim.beat, line: ISX.sim.line, mode: ISX.sim.mode }));
+  ok(st.mode === 'story' && st.line === 0 && st.beat === 0, 'a place stored before this round at the old step −1 opens on the guide’s first step', st);
+  const lt = await lvOpen(p);
+  ok(lt.tags.join('|') === '|Last time|' && /^Fluent\s*Last time/.test(lt.aria[1]), 'a returning visitor sees Fluent marked “Last time” in words, in place of “Suggested”', lt.tags);
+  await js(p, () => ISX.enter.close());
+  await js(p, () => ISX.simWay('ground')); await p.waitForTimeout(400);
   st = await js(p, () => ({ way: localStorage.getItem('isx-way'), gnd: ISX.sim.lines[ISX.sim.line].gnd, beat: ISX.sim.beat, h3: document.querySelector('#isx-sn-body h3').textContent }));
   ok(st.way === 'ground' && st.gnd && st.beat === 0 && st.h3 === 'How to read the map', 'Foundations opens the primer at screen 1; isx-way = ground', st);
-  await js(p, () => { sessionStorage.setItem('isx-sim-pos', '{"l":0,"b":-1}'); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
-  ok(await js(p, () => ISX.sim.beat === -1 && [...document.querySelectorAll('#isx-sn-body .ge-way')].filter(d => d.querySelector('.ge-tag.last')).map(d => d.dataset.way).join() === 'ground'), 'a returning visitor of the primer sees the entry again, Foundations marked');
-  ok(await js(p, async () => { ISX.route.next('sim').click(); await new Promise(r => setTimeout(r, 300)); const r = ISX.sim.lines[ISX.sim.line].gnd && ISX.sim.beat === 0; document.querySelector('#isx-ways-b').click(); await new Promise(r => setTimeout(r, 300)); return r && ISX.sim.beat === -1; }), 'for a visitor of the primer the bar’s gold button starts Foundations, and “Three ways in” leads back to the entry');
-  await p.focus('#isx-sn-body [data-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(600);
-  st = await js(p, () => ({ way: localStorage.getItem('isx-way'), mode: ISX.sim.mode, f: document.activeElement && document.activeElement.className }));
-  ok(st.way === 'map' && st.mode === 'full' && /rt-swb/.test(st.f), 'the full map’s door, by keyboard: the full view, focus in the bar; isx-way = map', st);
+  ok(await js(p, async () => { ISX.route.next('sim'); const L = ISX.sim.lines; document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click(); await new Promise(r => setTimeout(r, 300)); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })); await new Promise(r => setTimeout(r, 300)); return ISX.sim.lines[ISX.sim.line].gnd && ISX.sim.beat === L.find(x => x.gnd).steps.length; }), 'Back from the guide’s first step goes to the close of the way in (here the basics), never to an old step −1');
+  ok(await js(p, async () => { document.querySelector('#isx-ways-b').click(); await new Promise(r => setTimeout(r, 300)); const on = ISX.enter.on === 'fin' && !document.getElementById('isx-en-more').hidden; ISX.enter.close(); return on && ISX.sim.mode === 'story'; }), '“Three ways in” opens the entry screen at its levels and leaves the place in the guide alone');
+  await js(p, () => ISX.enter.open('fin', true, 'levels')); await p.focus('#isx-enter [data-en-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(900);
+  st = await js(p, () => ({ way: localStorage.getItem('isx-way'), mode: ISX.sim.mode, th: ISX.simThesis, f: document.activeElement && document.activeElement.className }));
+  ok(st.way === 'map' && st.mode === 'full' && st.th && /thx-ch/.test(st.f), 'Expert, by keyboard: the full view with the thesis, focus in the thesis panel; isx-way = map', st);
   await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted && ISX.sim); await p.waitForTimeout(600);
-  ok(await js(p, () => ISX.sim.mode === 'full'), 'a returning visitor of the full map opens in the full map');
+  ok(await js(p, () => ISX.sim.mode === 'full' && ISX.simThesis), 'a returning Expert opens in the full map with the thesis');
   await js(p, () => document.querySelector('#isx-s2bar .rt-nx.ret').click()); await p.waitForTimeout(500);
-  ok(await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body .ge-way[data-way="map"] .ge-tag.last')), '“Back to the guide · the opening card” leads to the entry, Expert marked');
-  ok(!p._errs.length, 'no page errors (doors)', p._errs.join(' | '));
+  ok(await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat >= 0 && !document.querySelector('#isx-gentry')), '“Back to the guide” leads to a step of the guide, never to an old entry card');
+  ok(!p._errs.length, 'no page errors (levels)', p._errs.join(' | '));
   await p.context().close();
-  /* one screen at 1280×760; the phone */
+  /* the entry screen's levels at 1280×760 and 1440×900; the phone */
   for (const [w, h] of [[1280, 760], [1440, 900]]) {
     p = await mk({ viewport: { width: w, height: h } });
-    const r = await js(p, () => { const c = document.getElementById('isx-cock'), bar = document.getElementById('isx-s2bar').getBoundingClientRect(), card = document.getElementById('isx-snarr').getBoundingClientRect(), box = document.getElementById('isx-sn-in'), d = [...document.querySelectorAll('#isx-sn-body .ge-way')].map(x => x.getBoundingClientRect()), ge = document.getElementById('isx-gentry').getBoundingClientRect();
-      return { card: ge.top >= card.top - 1 && ge.bottom <= bar.top + 1 && ge.top >= document.getElementById('isx-strip').getBoundingClientRect().bottom - 1, inner: box.scrollHeight <= box.clientHeight + 1, page: scrollY === 0 && c.getBoundingClientRect().bottom <= innerHeight + 1, row: d.every(q => Math.abs(q.top - d[0].top) < 1 && Math.abs(q.height - d[0].height) < 1) }; });
-    ok(Object.values(r).every(Boolean), `${w}×${h}: the entry is one screen without inner scroll, clear of the header strip and the bar, the levels one row of equal height`, r);
+    await js(p, () => ISX.enter.open('fin', true, 'levels')); await p.waitForTimeout(300);
+    const r = await js(p, () => { const d = [...document.querySelectorAll('#isx-enter .en-lv')].map(x => x.getBoundingClientRect()); return { row: d.length === 3 && d.every(q => Math.abs(q.top - d[0].top) < 1 && Math.abs(q.height - d[0].height) < 1), inside: d.every(q => q.left >= 0 && q.right <= innerWidth), side: document.documentElement.scrollWidth <= innerWidth + 1 }; });
+    ok(Object.values(r).every(Boolean), `${w}×${h}: the levels are one row of equal height inside the window`, r);
     await p.context().close();
   }
   p = await mk({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  let ph = await js(p, () => { const d = [...document.querySelectorAll('#isx-sn-body .ge-way')].map(x => x.getBoundingClientRect()), card = document.getElementById('isx-snarr').getBoundingClientRect(), th = document.querySelector('#isx-gentry .ge-th').getBoundingClientRect();
-    return { stacked: d.every((q, i) => !i || q.top >= d[i - 1].bottom - 1), first: d[0].top < innerHeight && d[0].bottom <= innerHeight, order: th.top >= d[2].bottom - 1, side: document.documentElement.scrollWidth <= innerWidth + 1, card: card.left >= 0 && card.right <= innerWidth + 1, tall: d.every(q => q.height >= 44) }; });
-  ok(Object.values(ph).every(Boolean), '390 px: the levels stack, each at least 44 px, the first above the fold and all three before the thesis; the entry stays inside the screen', ph);
+  await js(p, () => ISX.enter.open('fin', true, 'levels')); await p.waitForTimeout(300);
+  let ph = await js(p, () => { const d = [...document.querySelectorAll('#isx-enter .en-lv')].map(x => x.getBoundingClientRect());
+    return { n: d.length === 3, stacked: d.every((q, i) => !i || q.top >= d[i - 1].bottom - 1), side: document.documentElement.scrollWidth <= innerWidth + 1, inside: d.every(q => q.left >= 0 && q.right <= innerWidth + 1), tall: d.every(q => q.height >= 44) }; });
+  ok(Object.values(ph).every(Boolean), '390 px: the levels stack, each at least 44 px, inside the screen', ph);
   ok(!p._errs.length, 'no page errors (phone)', p._errs.join(' | '));
   await p.context().close();
 
@@ -187,7 +188,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   await p.context().close();
 
   /* ---------- 5. term tips ---------- */
-  p = await mk();
+  p = await mk(); await js(p, () => ISX.simWay('map')); await p.waitForTimeout(400);   /* machinery entry round (19 Nov 2026): the thesis's terms are on Expert's panel now */
   const D = await js(p, () => ISX.defs);
   const miss = NEWTIPS.filter(k => !D[k]), figs = NEWTIPS.filter(k => D[k] && /\$\d|\d{4}|\d+(\.\d+)?%/.test(D[k][1]) && !['rate', 'haircut', 'bp', 'bw', 'genius', 'cover'].includes(k));
   ok(!miss.length && NEWTIPS.length === 59, 'the glossary has the 53 tips of the spec and the copy round’s six', miss);
@@ -200,13 +201,12 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
     const r = t.getBoundingClientRect(), q = tip.getBoundingClientRect();
     return { shown: !tip.hidden, desc: t.getAttribute('aria-describedby'), role: tip.getAttribute('role'), head: (tip.querySelector('b') || {}).textContent, clear: q.bottom <= r.top + .5 || q.top >= r.bottom - .5 };
   }, [sel, act]);
-  let t1 = await tp('#isx-sn-body .s2thesis dfn[data-d="hotmoney"]', 'focus');
+  let t1 = await tp('#isx-thx .thx-t dfn[data-d="hotmoney"]', 'focus');
   ok(t1.shown && t1.desc === 'isx-tip6' && t1.role === 'tooltip' && t1.head === 'Hot money' && t1.clear, 'a term by keyboard: its tip shows, tied to it (aria-describedby), above or below it, never over it', t1);
   await p.keyboard.press('Escape'); await p.waitForTimeout(80);
-  t1 = await js(p, () => ({ hidden: document.getElementById('isx-tip6').hidden, desc: document.querySelector('#isx-sn-body .s2thesis dfn[data-d="hotmoney"]').getAttribute('aria-describedby'), mode: ISX.sim.mode, focus: document.activeElement && document.activeElement.dataset.d }));
-  ok(t1.hidden && !t1.desc && t1.mode === 'story' && t1.focus === 'hotmoney', 'Esc hides the tip and does nothing else (the guide stays, focus stays on the term)', t1);
-  await p.click('#isx-sn-body [data-gefull]'); await p.waitForTimeout(120);
-  const box = await p.locator('#isx-sn-body .s2thesis dfn[data-d="geoecon"]').boundingBox();
+  t1 = await js(p, () => ({ hidden: document.getElementById('isx-tip6').hidden, desc: document.querySelector('#isx-thx .thx-t dfn[data-d="hotmoney"]').getAttribute('aria-describedby'), mode: ISX.sim.mode, focus: document.activeElement && document.activeElement.dataset.d }));
+  ok(t1.hidden && !t1.desc && t1.mode === 'full' && t1.focus === 'hotmoney', 'Esc hides the tip and does nothing else (the full view stays, focus stays on the term)', t1);
+  const box = await p.locator('#isx-thx .thx-t dfn[data-d="geoecon"]').boundingBox();
   await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await p.waitForTimeout(120);
   const tb = await js(p, () => document.getElementById('isx-tip6').getBoundingClientRect().toJSON());
   await p.mouse.move(box.x + box.width / 2, tb.y + tb.height / 2 > box.y ? box.y + box.height + 4 : box.y - 4, { steps: 3 }); await p.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 4 }); await p.waitForTimeout(400);
@@ -216,8 +216,8 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(!p._errs.length, 'no page errors (tips)', p._errs.join(' | '));
   await p.context().close();
   p = await mk({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  await js(p, () => document.querySelector('#isx-sn-body [data-gefull]').click()); await p.waitForTimeout(120);
-  const tap = async () => { const l = p.locator('#isx-sn-body .s2thesis dfn[data-d="imbalance"]'); await l.scrollIntoViewIfNeeded(); const q = await l.boundingBox(); await p.touchscreen.tap(q.x + q.width / 2, q.y + q.height / 2); await p.waitForTimeout(200); return js(p, () => !document.getElementById('isx-tip6').hidden && /Global imbalance/.test(document.getElementById('isx-tip6').textContent)); };
+  await js(p, () => { ISX.simWay('map'); const t = document.getElementById('isx-thx'); if (t.classList.contains('folded')) t.querySelector('[data-thxf]').click(); }); await p.waitForTimeout(300);
+  const tap = async () => { const l = p.locator('#isx-thx .thx-t dfn[data-d="imbalance"]'); await l.scrollIntoViewIfNeeded(); const q = await l.boundingBox(); await p.touchscreen.tap(q.x + q.width / 2, q.y + q.height / 2); await p.waitForTimeout(200); return js(p, () => !document.getElementById('isx-tip6').hidden && /Global imbalance/.test(document.getElementById('isx-tip6').textContent)); };
   ok(await tap(), '390 px: a tap on a term shows its tip');
   ok(!(await tap()), '390 px: a second tap hides it');
   await tap(); await p.touchscreen.tap(20, 300); await p.waitForTimeout(200);
@@ -238,7 +238,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   p = await mk({}, { way: 'ground' });
   const G = await js(p, async () => {
     const w = ms => new Promise(r => setTimeout(r, ms)), L = ISX.sim.lines, gi = L.findIndex(x => x.gnd), pi = L.findIndex(x => x.pre), out = { gi, pi, n: L[gi].steps.length, s: [] };
-    document.querySelector('#isx-sn-body [data-way="ground"]').click(); await w(300);
+    ISX.simWay('ground'); await w(300);
     out.seg = document.querySelectorAll('#isx-s2bar .rt-segs > .rt-s').length;
     out.route = document.getElementById('isx-s2bar').textContent;
     for (let i = 0; i < out.n; i++) {

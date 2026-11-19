@@ -131,7 +131,7 @@ const AUDITOR = () => {
       if (r.cls.length || r.ops.length) bad.push({ step: name, classes: r.cls.slice(0, 6), opacity: r.ops.slice(0, 6), more: Math.max(0, r.cls.length + r.ops.length - 12) });
     };
     const key = k => () => p.keyboard.press(k);
-    await step('opening card → first principles', () => click(p, '#isx-sn-body [data-way="guide"]'), 2100);
+    await step('opening card → first principles', () => p.evaluate(() => ISX.simWay('guide')), 2100);
     for (let i = 2; i <= 10; i++) await step('first principles ' + i, key('ArrowRight'), 2100);   /* ten reveals since the guide build (16 Nov 2026) */
     await step('first principles: closing card', key('ArrowRight'), 2100);
     await step('→ guide, step 1', () => click(p, '#isx-sn-body .sn-go'), 2100);
@@ -223,7 +223,7 @@ const AUDITOR = () => {
     await take();
     /* tiers build B: the route from the ground up, so the primer's screens are audited too. guide build (16 Nov 2026): twelve screens; the
        hand-over leads to the guide (route A), so first principles are opened from its quiet second button and their ten reveals audited */
-    await click(p, '#isx-sn-body [data-way="ground"]'); await p.waitForTimeout(350);
+    await p.evaluate(() => ISX.simWay('ground')); await p.waitForTimeout(350);
     for (let i = 0; i < 12; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
     await click(p, '#isx-sn-body .sn-q2'); await p.waitForTimeout(900);   /* the primer's relations fade out over a quarter of a second, as the guide's do */
     for (let i = 0; i < 10; i++) { await take(); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300); }
@@ -295,21 +295,18 @@ const AUDITOR = () => {
   }
 
   }
-  /* ================= 3. the opening card and the way back ================= */
+  /* ================= 3. the way back (machinery entry round, 19 Nov 2026: the opening card is gone) ================= */
   if (want(3)) {
   {
     const p = await page();
-    /* tiers build A (15 Nov 2026): the two buttons and the skip link became three equal doors; the guide is the gold one */
-    const card = await js(p, () => { const d = [...document.querySelectorAll('#isx-sn-body .ge-way')], r = d.map(x => x.getBoundingClientRect()), cs = d.map(x => getComputedStyle(x));
-      return { n: d.length, ways: d.map(x => x.dataset.way).join(), sameRow: r.every(q => Math.abs(q.top - r[0].top) < 1 && Math.abs(q.height - r[0].height) < 1), order: r.every((q, i) => !i || q.left > r[i - 1].right), w: Math.round(r[2].width), h: Math.round(r[2].height),
-        text: d[2].querySelector('b').textContent, gold: cs[1].borderTopColor === 'rgb(255, 181, 71)' && d[1].classList.contains('sug'), plain: !d[2].classList.contains('sug') && cs[2].borderTopWidth === '1px', skip: !document.querySelector('#isx-sn-body .s4skip'), group: d[0].parentNode.getAttribute('role') === 'group' }; });
-    ok('the entry: three levels side by side, the same height: Foundations, Fluent, Expert', card.n === 3 && card.ways === 'ground,guide,map' && card.sameRow && card.order && card.w >= 180 && card.h >= 56 && card.text === 'Expert', card);
-    ok('the entry: Fluent has the gold outline, Expert is outlined in steel; the levels are one labelled group; no skip link', card.gold && card.plain && card.skip && card.group, card);
-    await p.focus('#isx-sn-body [data-way="map"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(700);
-    const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), focus: document.activeElement && document.activeElement.className }; });
-    ok('opening card: “The full map” opens the full view (37 actors lit), focus lands in the bar, “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && /rt-swb/.test(full.focus), full);
+    /* machinery entry round (19 Nov 2026): the opening card is gone; the levels are on the tab's entry screen (tools/tiers-check.js §2).
+       Here: Expert from the seam opens the full view, and “Back to the guide” comes back to a step of the guide, never to an entry card */
+    ok('no opening card: the guide stands at its first step, no #isx-gentry anywhere', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === 0 && !document.querySelector('#isx-gentry, .ge-way')));
+    await js(p, () => ISX.simWay('map', true)); await p.waitForTimeout(700);
+    const full = await js(p, () => { const c = document.getElementById('isx-cock'), back = c.querySelector('#isx-s2bar .rt-nx.ret'); return { mode: ISX.sim.mode, actors: c.querySelectorAll('#isx-rmap .fn:not(.s4dim)').length, back: !!back && back.getClientRects().length > 0 && /Back to the guide/.test(back.textContent), th: ISX.simThesis }; });
+    ok('Expert opens the full view (37 actors lit) with the thesis panel, and “Back to the guide” is there', full.mode === 'full' && full.actors === 37 && full.back && full.th, full);
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
-    ok('back to the guide: one click, and the opening card is back', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === -1 && !!document.querySelector('#isx-sn-body [data-way="guide"]')));
+    ok('back to the guide: one click, and the guide is at the step it was left on (its first), with no entry card', await js(p, () => ISX.sim.mode === 'story' && ISX.sim.beat === 0 && !document.querySelector('#isx-gentry')));
     await js(p, () => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300);   /* the guide's first step, from the bar (the skip link is gone) */
     for (let i = 0; i < 30 && (await where(p)).beat < 11; i++) { await fwd(p); await p.waitForTimeout(160); }
     await click(p, '[data-s4tab="plays"]'); await p.waitForTimeout(500); await click(p, '#isx-cock .pchip', 2); await p.waitForTimeout(300); await click(p, '#isx-pn'); await p.waitForTimeout(300);
@@ -318,7 +315,7 @@ const AUDITOR = () => {
     await click(p, '#isx-s2bar .rt-nx.ret'); await p.waitForTimeout(600);
     const res = await js(p, () => ({ mode: ISX.sim.mode, beat: ISX.sim.beat, cnt: (document.querySelector('.sn-cnt') || {}).textContent, lit: document.querySelectorAll('#isx-rmap .fe.on').length, sel: document.querySelectorAll('.lv.on, .pchip.on').length }));
     ok('back to the guide: after an episode in the tray and a lever, the guide picks up at the step it was left on (12 of 43), and the bar said so', res.mode === 'story' && res.beat === 11 && /^12\s*\/\s*43$/.test((res.cnt || '').trim()) && /step 12 of 43/.test(lab) && res.sel === 0, { res, lab });
-    ok('no page errors (opening card)', p._errs.length === 0, p._errs); await p.context().close();
+    ok('no page errors (the way back)', p._errs.length === 0, p._errs); await p.context().close();
   }
 
   }
