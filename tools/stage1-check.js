@@ -73,16 +73,13 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('a firm that is not mapped says so', await p.evaluate(() => /not yet mapped/.test((document.querySelector('#isx-c-firm .ownno') || {}).textContent || '')));
   ok('no page errors (footprint)', p._errs.length === 0, p._errs); await p.context().close();
 
-  /* 5. insights: shown once, leave with their step, can be switched off */
+  /* 5. insights (19 Nov): only the first card is left; nothing pops up at a step, a firm or a country */
   p = await page('#circuit', { 'isx-first': 'off' });
   await p.evaluate(() => ISX.setStep(6)); await p.waitForTimeout(1900);
-  ok('insight: shown at a key step', await p.evaluate(() => !!document.querySelector('#isx-insight.in.care')), await p.evaluate(() => (document.querySelector('#isx-insight .it') || {}).textContent));
-  ok('insight: does not take focus and is a status message', await p.evaluate(() => !document.getElementById('isx-insight').contains(document.activeElement) && document.getElementById('isx-insight').getAttribute('role') === 'status'));
-  await p.evaluate(() => ISX.setStep(5)); await p.waitForTimeout(700);
-  ok('insight: leaves when the reader steps on', await p.evaluate(() => !document.querySelector('#isx-insight.in')));
-  await p.evaluate(() => document.querySelector('[data-ins="toggle"]').click()); await p.waitForTimeout(200);
-  await p.evaluate(() => ISX.setStep(7)); await p.waitForTimeout(1900);
-  ok('insight: switched off stays off', await p.evaluate(() => !document.querySelector('#isx-insight.in') && localStorage.getItem('isx-insights') === 'off'));
+  ok('insight: nothing pops up at a key step', await p.evaluate(() => !document.querySelector('#isx-insight.in')));
+  await p.evaluate(() => ISX.select('CHN')); await p.waitForTimeout(1500);
+  ok('insight: nothing pops up on a country with a note; the note is in its card', await p.evaluate(() => !document.querySelector('#isx-insight.in') && !!document.querySelector('.care2')));
+  ok('insight: the switch is gone', await p.evaluate(() => !document.querySelector('[data-ins="toggle"]')));
   ok('no page errors (insights)', p._errs.length === 0, p._errs); await p.context().close();
 
   /* 6. loops and reduced motion */

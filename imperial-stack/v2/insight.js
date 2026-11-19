@@ -4,35 +4,29 @@
    2. insights: one short, dismissible observation when the reader reaches a key step, country or firm (each shown once);
    3. reading notes: where a country's figures need care (re-exports, custody, missing data), its label carries a diamond,
       its flows are drawn with a broken track, and its card lists the notes with their sources.
-   Data: /imperial-stack/data/insights.json. Storage: isx-first, isx-insights (off), isx-ins-seen. */
+   Data: /imperial-stack/data/insights.json. Storage: isx-first.
+   19 Nov 2026 (Elias: the pop-ups at steps, firms and countries “feel too random”): only the first card is left. The
+   notes to read with care stay in the country card, the legend and on the globe; they no longer pop up. */
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
   var U = X.util, root = X.root, frame = X.$('frame');
-  var D = { first: null, insights: [], notes: {} }, box = null, cur = null, hideT = 0, lastAt = 0, quietT = 0;
-  var KEY = { first: 'isx-first', off: 'isx-insights', seen: 'isx-ins-seen' };
-  var seen = {}; try { (U.stGet(KEY.seen) || '').split(',').forEach(function (k) { if (k) seen[k] = 1; }); } catch (e) { /* ignore */ }
-  var isOff = function () { return U.stGet(KEY.off) === 'off'; };
-  var markSeen = function (id) { seen[id] = 1; U.stSet(KEY.seen, Object.keys(seen).join(',')); };
+  var D = { first: null, notes: {} }, box = null, cur = null, quietT = 0;
+  var KEY = { first: 'isx-first' };
 
   /* ---------- the chip ---------- */
   function build() {
     if (box) return box;
     box = document.createElement('div');
     box.className = 'ins2'; box.id = 'isx-insight'; box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite'); box.hidden = true;
-    box.innerHTML = '<span class="ik"></span><p class="it"></p><span class="is"></span><div class="ia"><button type="button" class="ig" hidden></button><button type="button" class="io">Turn insights off</button></div><button type="button" class="ix" aria-label="Dismiss">×</button>';
+    box.innerHTML = '<span class="ik"></span><p class="it"></p><span class="is"></span><div class="ia"><button type="button" class="ig" hidden></button></div><button type="button" class="ix" aria-label="Dismiss">×</button>';
     frame.appendChild(box);
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
       if (b.classList.contains('ig')) { var go = cur && cur.go; close(true); if (go) act(go); }
-      else if (b.classList.contains('io')) { U.stSet(KEY.off, 'off'); close(true); syncToggle(); }
       else close(true);
     });
     box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); close(true); } });
-    /* reading time is suspended while the pointer or the focus is on it */
-    box.addEventListener('pointerenter', function () { clearTimeout(hideT); });
-    box.addEventListener('pointerleave', function () { if (cur && !cur.first) arm(4000); });
-    box.addEventListener('focusin', function () { clearTimeout(hideT); });
     return box;
   }
   /* desktop: beside the floating card, clear of the step bar; phones: a sheet at the foot of the screen (CSS) */
@@ -45,31 +39,27 @@
     box.style.setProperty('--ix', Math.round(left) + 'px'); box.style.setProperty('--iy', Math.round(bottom) + 'px');
   }
   window.addEventListener('resize', function () { if (cur) place(); });
-  function arm(ms) { clearTimeout(hideT); hideT = setTimeout(function () { close(false); }, ms); }
   function act(go) {
     if (go.step != null) { X.stopPlay(); if (X.sel.iso) X.select(null); X.setStep(go.step); }
     else if (go.firm) { var f = X.firmBySlug ? X.firmBySlug(X.slug(go.firm)) : null; if (f) X.select(f.iso, f); }
     else if (go.how === 'method') { var m = X.$('method'); if (m) U.crisp(m, 20); }
   }
   function show(it) {
-    if (!it || (isOff() && !it.first) || X.intro || X.view !== 'map') return false;
+    if (!it || X.intro || X.view !== 'map') return false;
     build();
-    cur = it; lastAt = Date.now();
-    box.classList.toggle('first', !!it.first); box.classList.toggle('care', !!it.care);
-    box.querySelector('.ik').textContent = it.k || (it.care ? 'Read with care' : 'Insight');
+    cur = it;
+    box.classList.add('first');
+    box.querySelector('.ik').textContent = it.k || '';
     box.querySelector('.it').textContent = it.t;
     box.querySelector('.is').textContent = it.src ? it.src : '';
     var g = box.querySelector('.ig'); g.hidden = !it.go; if (it.go) g.textContent = it.go.label;
-    box.querySelector('.io').hidden = !!it.first;
     box.hidden = false; place(); void box.offsetWidth; box.classList.add('in');
-    if (!it.first) arm(7000 + it.t.length * 45);
     return true;
   }
   function close(byUser) {
     if (!box || !cur) return;
-    var it = cur; cur = null; clearTimeout(hideT);
+    var it = cur; cur = null;
     if (it.first) { endFirst(byUser); }
-    if (it.id) markSeen(it.id);
     var had = box.contains(document.activeElement);
     box.classList.remove('in');
     setTimeout(function () { if (!cur) box.hidden = true; }, X.reduce ? 0 : 320);
@@ -114,21 +104,6 @@
     X.highlight(null);
   }
 
-  /* ---------- insights on events ---------- */
-  function fire(key) {
-    if (isOff() || firstOn || cur || X.intro) return;
-    if (Date.now() - lastAt < 14000) return;
-    for (var i = 0; i < D.insights.length; i++) {
-      var it = D.insights[i];
-      if (it.on === key && !seen[it.id]) { (function (it, at) { setTimeout(function () { if (!cur && !firstOn && here() === at) { it._at = at; show(it); } }, 1100); })(it, here()); return; }
-    }
-  }
-  /* an insight belongs to the place it was shown: stepping or selecting something else puts it away (unread, it comes back another time) */
-  function here() { var sel = X.sel; return X.step + '|' + (sel.firm ? sel.firm.name : sel.iso || ''); }
-  function leave() { if (cur && !cur.first && cur._at && cur._at !== here()) { var it = cur, quick = Date.now() - lastAt < 2500; close(false); if (quick && it.id) { delete seen[it.id]; U.stSet(KEY.seen, Object.keys(seen).join(',')); } } }
-  X.on('step', leave); X.on('select', leave);
-  X.on('step', function (s) { var st = X.steps[s]; if (st) fire('step:' + st.key); });
-  X.on('select', function (sel) { if (sel.firm) { if (X.own && X.own.has(sel.firm)) fire('firm'); } else if (sel.iso) fire('select:' + sel.iso); });
   X.on('view', function () { if (cur && X.view !== 'map') close(false); });
 
   /* ---------- reading notes ---------- */
@@ -168,28 +143,8 @@
       + (rest.length ? '<details' + (now.length ? '' : ' class="solo"') + '><summary>' + (now.length ? rest.length + ' more on ' + U.esc(nm) + '’s figures' : rest.length + (rest.length > 1 ? ' notes' : ' note') + ' on ' + U.esc(nm) + '’s figures') + '</summary><ul>' + rest.map(li).join('') + '</ul></details>' : '');
     host.parentNode.insertBefore(d, host.nextSibling);
   });
-  /* a country with a note for this step: the note is also the insight, once */
-  X.on('select', function (sel) {
-    if (!sel.iso || sel.firm || isOff() || cur || firstOn) return;
-    var st = X.steps[X.step], N = notesFor(sel.iso, st ? st.key : null); if (!N.length) return;
-    var n = N[0], id = 'note:' + sel.iso + ':' + (n.id || n.h); if (seen[id]) return;
-    var at = here(); setTimeout(function () { if (!cur && here() === at) show({ id: id, _at: at, care: true, k: 'Read with care · ' + X.data.CTY[sel.iso].name, t: n.s || n.t, src: n.src }); }, 900);
-  });
-
-  /* ---------- the switch: in the header of the map-mode panel on desktop, beside “How to use the globe” under the globe on phones ---------- */
-  function syncToggle() {
-    var off = isOff();
-    root.querySelectorAll('[data-ins="toggle"]').forEach(function (t) { t.hidden = false; t.setAttribute('aria-pressed', String(!off)); t.textContent = t.classList.contains('mini') ? (off ? 'Insights off' : 'Insights on') : (off ? 'Insights are off' : 'Insights are on'); t.title = off ? 'Show short observations at key steps, countries and firms' : 'Stop showing short observations'; });
-  }
-  root.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-ins="toggle"]'); if (!t) return;
-    var off = isOff(); U.stSet(KEY.off, off ? null : 'off'); if (!off && cur) close(true); syncToggle();
-  });
-  var mm = X.$('mapmodes'); if (mm) new MutationObserver(syncToggle).observe(mm, { childList: true });
-  syncToggle();
-
   X.load('insights').then(function (d) {
-    D.first = d.first || null; D.insights = d.insights || []; D.notes = d.notes || {};
+    D.first = d.first || null; D.notes = d.notes || {};
     if (X.view === 'map') { X.renderGlobe(false); X.recard(); X.emit('narr'); }
     loaded = true; if (wantNow) { wantNow = false; startFirst(true); } else startFirst();
   }).catch(function () { /* without the data the map simply shows no insights */ });

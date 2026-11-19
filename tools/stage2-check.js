@@ -31,7 +31,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(400);
   ok('firms tray: stepping on brings the step back', await p.evaluate(() => !ISX.sel.firm && ISX.step === 5));
   await p.click('#isx-tp-layers'); await p.waitForTimeout(250);
-  ok('layers tray: map modes, the two toggles, the insights switch and the tour', await p.evaluate(() => { const t = document.getElementById('isx-tray-layers'); return !t.hidden && t.querySelectorAll('.mm').length === 4 && !!t.querySelector('#isx-min') && !!t.querySelector('[data-ins="toggle"]') && !!t.querySelector('[data-tips="globe"]'); }));
+  ok('layers tray: map modes, the two toggles and the tour', await p.evaluate(() => { const t = document.getElementById('isx-tray-layers'); return !t.hidden && t.querySelectorAll('.mm').length === 4 && !!t.querySelector('#isx-min') && !!t.querySelector('[data-tips="globe"]'); }));
   await p.evaluate(() => document.querySelectorAll('#isx-tray-layers .mm')[1].click()); await p.waitForTimeout(250);
   ok('layers tray: a map mode still switches', await p.evaluate(() => document.querySelectorAll('#isx-tray-layers .mm')[1].getAttribute('aria-pressed') === 'true'));
   await p.evaluate(() => document.querySelectorAll('#isx-tray-layers .mm')[0].click());

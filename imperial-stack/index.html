@@ -2403,7 +2403,7 @@ button.res:hover { transform: none; box-shadow: none; }
       <div class="globebox"><div class="gskel" aria-hidden="true"><i></i><span>Loading the globe</span></div><div id="isx-globe" role="img" aria-label="3D globe of Pax Silica with flows between allies and to and from the United States"></div></div>
       <div class="zoom6" id="isx-zoom" role="group" aria-label="Zoom the globe"><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="reset" aria-label="Reset view">⟲</button></div>
       <div class="b4kick rkick" id="isx-rkick"></div>
-      <div class="hint" id="isx-hint"><span class="hl" id="isx-hint-t">Drag to turn the globe · click a country · ← → to step</span> <button type="button" class="tipsre" data-tips="globe">Take the tour</button> <button type="button" class="tipsre instog" data-ins="toggle" hidden></button></div>
+      <div class="hint" id="isx-hint"><span class="hl" id="isx-hint-t">Drag to turn the globe · click a country · ← → to step</span> <button type="button" class="tipsre" data-tips="globe">Take the tour</button></div>
       <div class="mapmodes panel" id="isx-mapmodes" role="group" aria-label="Map mode"></div>
     </div>
     <div class="scene" id="isx-scene-arm" hidden>
@@ -4171,7 +4171,7 @@ function mmColour(iso) {
   return mixHex('#1b2a36', '#ffd27a', Math.min(1, Math.sqrt(v / 2100)));
 }
 function buildMapModes() {
-  const host = $('mapmodes'); host.innerHTML = '<div class="mh"><span>Map mode</span><button type="button" class="instog mini" data-ins="toggle" hidden></button></div>';   /* the insights switch sits in the header: no extra line in a panel that is short of height */
+  const host = $('mapmodes'); host.innerHTML = '<div class="mh"><span>Map mode</span></div>';
   Object.entries(MM).forEach(([k, m]) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'mm'; b.style.setProperty('--mc', m.c); b.setAttribute('aria-pressed', String(k === mapMode));
     b.innerHTML = `<i></i><span>${esc(m.name)}</span>`; b.addEventListener('click', () => { mapMode = k; buildMapModes(); repaint(); legend6(); }); host.appendChild(b);

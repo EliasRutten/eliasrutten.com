@@ -103,7 +103,7 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-insight'],
         ok('→ is Next', await p.evaluate(() => document.querySelector('#isx-wltip .wl-n').textContent === '3 of 7' && ISX.step === 0));
       }
     }
-    ok('seven different tips, in the spec’s order', heads.join('|') === 'Follow the money, one step at a time.|The globe is live.|One fact per step.|The machine’s vital signs.|Six views of the same machine.|Look beneath the flows.|Take it with you.', heads);
+    ok('seven different tips, in the spec’s order', heads.join('|') === 'Follow the money, one step at a time.|The globe is live.|The fact behind the map.|The machine’s vital signs.|Six views of the same machine.|Look beneath the flows.|Take it with you.', heads);
     const r = await p.evaluate(() => { const t = document.getElementById('isx-wltip'), tr = t.getBoundingClientRect(), fr = document.getElementById('isx-frame').getBoundingClientRect(); return { box: !!t.querySelector('input[data-wl-off]'), skip: t.querySelector('[data-wt="skip"]').hidden, inside: tr.left >= fr.left && tr.right <= fr.right && tr.top >= fr.top && tr.bottom <= fr.bottom }; });
     ok('the last stop carries “Don’t show this again”; the tip stays inside the frame', r.box && r.skip && r.inside, r);
     await next(p); await settle(p);

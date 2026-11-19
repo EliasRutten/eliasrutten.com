@@ -26,7 +26,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('footprint: Besi', '#circuit/03/firm=besi', seen, 1440, 900);
   await run('footprint: Nexperia (disputed)', '#circuit/04/firm=nexperia', seen, 1440, 900);
   await run('footprint: Alphabet (founders)', '#circuit/02/firm=alphabet', seen, 1440, 900);
-  await run('insight shown', '#circuit', { 'isx-first': 'off' }, 1440, 900, async p => { await p.evaluate(() => ISX.setStep(6)); await p.waitForTimeout(2200); });
+  await run('step 06, no pop-up', '#circuit', { 'isx-first': 'off' }, 1440, 900, async p => { await p.evaluate(() => ISX.setStep(6)); await p.waitForTimeout(2200); });
   await run('first moment', '', {}, 1440, 900);
   await run('phone: footprint', '#circuit/03/firm=besi', seen, 390, 844);
   await run('phone: first moment', '', {}, 390, 844);
