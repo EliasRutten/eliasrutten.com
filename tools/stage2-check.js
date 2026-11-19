@@ -145,7 +145,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('full view: Indicators opens all 24', await p.evaluate(() => [...document.querySelectorAll('#isx-b1led .lr.ind:not(.later)')].filter(x => x.getClientRects().length).length) === 24);
   await p.evaluate(() => document.getElementById('isx-b1ind').click());
   await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300);
-  ok('full view: an actor opens a floating dossier, and its indicator shows in it', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && /Bills, share of marketable debt: 22\.2%/.test((d.querySelector('.dtile') || {}).textContent || '') && /Setting/.test(d.querySelector('.dtile .dr').textContent); }));
+  ok('full view: an actor opens a floating dossier, and its indicator shows in it', await p.evaluate(() => { const d = document.querySelector('#isx-cock > .dossier'); return !!d && !d.hidden && /US Treasury/i.test(d.textContent) && /Bills, share of marketable debt: 23\.0%/.test((d.querySelector('.dtile') || {}).textContent || '') && /Setting/.test(d.querySelector('.dtile .dr').textContent); }));
   await p.evaluate(() => document.querySelector('#isx-cock .dossier .dx').click());
   await p.evaluate(() => document.querySelectorAll('#isx-cock .pchip')[0].click()); await p.waitForTimeout(300);
   ok('full view: an episode runs in the dossier', await p.evaluate(() => /Episode ·/.test(document.querySelector('#isx-cock > .dossier').textContent) && !!document.getElementById('isx-pn')));

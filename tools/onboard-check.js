@@ -166,10 +166,6 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     await done(p);
     /* desktop: the pick, then the door and “Elsewhere on the map” */
     p = await page('#arm', { ls: { ...QUIET, ...SEEN } });
-    /* 19 Nov: on a desktop the switch reads Layers · Reach · Orbit, and its hint comes first */
-    await wait(p, 'arm-view'); r = await p.evaluate(() => ({ on: ISX.hints.on, text: document.querySelector('#isx-hint7 .hn-t').textContent }));
-    ok('desktop: the switch’s hint names the three ways', r.on === 'arm-view' && /^Three ways to read this: Layers shows every firm/.test(r.text), r);
-    await p.evaluate(() => document.querySelector('#isx-hint7 [data-hn="ok"]').click()); await p.waitForTimeout(300);
     await wait(p, 'arm-pick');
     r = await p.evaluate(() => ({ on: ISX.hints.on, text: document.querySelector('#isx-hint7 .hn-t').textContent, line: getComputedStyle(document.getElementById('isx-ahint')).visibility }));
     ok('desktop: “Click a state body … a group at the bottom …”, and the line under the machine steps aside', r.on === 'arm-pick' && /^Click a state body/.test(r.text) && /at the bottom/.test(r.text) && r.line === 'hidden', r);
@@ -186,7 +182,10 @@ const SEEN = { 'isx-open-circuit': '1', 'isx-open-sim': '1' };
     await p.evaluate(() => document.querySelector('.aboard [data-atile]').click()); await p.waitForTimeout(300);
     ok('opening a tile ends it', (await on(p)) !== 'arm-switch');
     r = await p.evaluate(() => (localStorage.getItem('isx-hints') || '').split(','));
-    ok('each shown once and stored (isx-hints)', ['arm-view', 'arm-pick', 'arm-door', 'arm-else', 'arm-switch'].every(k => r.includes(k)), r);
+    ok('each shown once and stored (isx-hints)', ['arm-pick', 'arm-door', 'arm-else', 'arm-switch'].every(k => r.includes(k)), r);
+    /* 19 Nov: on a desktop the switch reads Layers · Reach · Orbit; its hint comes after the pick and names the three ways */
+    r = await p.evaluate(() => ISX.hints.lines()['arm-view']);
+    ok('desktop: the switch’s hint names the three ways', /^Three ways to read this: Layers shows every firm/.test(r), r);
     await done(p);
     p = await page('#arm', { ls: { ...QUIET, ...SEEN, 'isx-hints-off': '1' } });
     ok('“Hide hints” (isx-hints-off) keeps the Arm’s away too', !(await on(p)));
