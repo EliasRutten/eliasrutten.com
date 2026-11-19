@@ -165,11 +165,11 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('fix round: level 2 as a table', '#simulator', fullv, 1280, 760, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
   await run('fix round, phone: level 2 as a table', '#simulator', fullv, 390, 844, async p => { await vw('bond', { level: 2 })(p); await p.click('#isx-vw .bx-tg'); await p.waitForTimeout(200); });
   await run('fix round: a chain borrows the 10-year; its dossier with figure and door row', '#simulator', sim(9), 1440, 900, async p => { await chainTo(3)(p); await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="Y10"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(400); });
-  await run('fix round: the opening card with the thesis at 1280×760', '#simulator', sim(-1), 1280, 760);
+  await run('fix round: the guide’s first step at 1280×760 (no opening card since 19 Nov 2026)', '#simulator', sim(-1), 1280, 760);
   /* tiers build A: the door card, a term's tip, the index of guide steps, a dossier with “In the guide”, a step opened from the index */
-  await run('tiers: the door card with a term tip open', '#simulator', sim(-1), 1440, 900, async p => { await p.focus('#isx-sn-body .s2thesis dfn.df'); await p.waitForTimeout(150); });
-  await run('tiers: the door card at 1280×760', '#simulator', sim(-1), 1280, 760);
-  await run('tiers, phone: the door card', '#simulator', sim(-1), 390, 844);
+  await run('tiers: a term tip open on Expert’s thesis panel (was the door card, gone 19 Nov 2026)', '#simulator', { ...seen, 'isx-enter': 'off', 'isx-sim-mode': 'full', 'isx-way': 'map', 'isx-sim-thesis': '1' }, 1440, 900, async p => { await p.focus('#isx-thx .thx-t dfn.df'); await p.waitForTimeout(150); });
+  await run('tiers: the guide’s first step at 1280×760 (was the door card)', '#simulator', { ...sim(-1), 'isx-enter': 'off' }, 1280, 760);
+  await run('tiers, phone: the guide’s first step (was the door card)', '#simulator', { ...sim(-1), 'isx-enter': 'off' }, 390, 844);
   await run('tiers: the full map with Guide steps open', '#simulator', fullv, 1440, 900, async p => { await p.evaluate(() => document.getElementById('isx-gsb').click()); await p.waitForTimeout(250); });
   await run('tiers, phone: Guide steps as a sheet', '#simulator', fullv, 390, 844, async p => { await p.evaluate(() => { document.querySelector('[data-s4more]').click(); document.querySelector('#isx-b1more .tw-gsm').click(); }); await p.waitForTimeout(250); });
   await run('tiers: a dossier with “In the guide”', '#simulator', fullv, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-rmap .fn[data-n="TSY"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300); });
@@ -236,7 +236,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   const fresh = { 'isx-tips-sim': null, 'isx-tour': null, 'isx-insights': 'off' };   /* welcome, 18 Nov: the Circuit's opening plays only before the welcome, so the old tour's key is cleared as well */
   await run('round 5b: the Circuit’s opening, the dark (1.8 s)', '', fresh, 1440, 900, held('circuit', 1.8));
   await run('round 5b: the Circuit’s opening, the line and the ring (5.2 s)', '', fresh, 1440, 900, held('circuit', 5.2));
-  await run('round 5b: the Simulator’s opening, the sweep (3.8 s)', '', fresh, 1440, 900, held('sim', 3.8));
+  /* machinery entry round (19 Nov 2026): the Simulator's opening went with the old entry card; its states are gone */
   await run('round 5b, phone: the Circuit’s opening, the dark (1.8 s)', '', fresh, 390, 844, held('circuit', 1.8));
   /* round 6 (16 Nov 2026): the Arm rethought: Reach and Orbit on phones, the sheet, the switchboard, “Elsewhere on the map”, a hint */
   const tap = id => async p => { await p.evaluate(k => document.querySelector(`#isx-areach [data-anode="${k}"]`).dispatchEvent(new MouseEvent('click', { bubbles: true })), id); await p.waitForTimeout(700); };
