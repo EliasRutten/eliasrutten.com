@@ -84,7 +84,8 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('simulator: one full-bleed stage, no longer than the window', Math.abs(geo.svg[0] - geo.cock[0]) < 3 && Math.abs(geo.svg[1] - geo.cock[1]) < 3 && geo.frame[1] <= geo.vh, geo);
   ok('simulator: card, bar with first principles and seven chapters (clarity build); trays closed', await p.evaluate(() => !!document.querySelector('#isx-cock .s2card #isx-sn-body') && document.querySelectorAll('#isx-s2bar .rt-s:not(.end)').length === 8 && document.getElementById('isx-s2tray-lev').hidden && document.getElementById('isx-s2tray-play').hidden));
   ok('simulator: the long lists moved under the stage', await p.evaluate(() => document.querySelectorAll('#isx-finmore details.fd').length === 3 && !document.querySelector('#isx-fin details.fd')));
-  { await p.evaluate(() => ISX.simWay('guide')); await p.waitForTimeout(350); await p.evaluate(() => document.querySelector('#isx-s2bar [data-rt-t="0:0"]').click()); await p.waitForTimeout(300); } else { await p.click('#isx-sn-body [data-sg="start"]'); } await p.waitForTimeout(300);
+  /* machinery entry round (19 Nov 2026): the guide stands at its first step already; nothing to start */
+  await p.waitForTimeout(300);
   /* B1: → never chooses. At a choice the walk takes what happened on the card, then goes on with → */
   let worst = 0, n = 0, deepOk = true; const cnts = new Set();
   for (let i = 0; i < 90; i++) {

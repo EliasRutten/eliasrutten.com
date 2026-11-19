@@ -29,7 +29,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- 1. the layout rule ---------- */
   if (want(1)) {
-    const exp = [[1920, 1080, 'full'], [1440, 900, 'full'], [1280, 760, 'compact'], [1280, 800, 'compact'], [1024, 768, 'compact'], [768, 1024, 'reach'], [390, 844, 'reach']];
+    const exp = [[1920, 1080, 'full'], [1440, 900, 'full'], [1280, 760, 'full'], [1280, 800, 'full'], [1024, 768, 'full'], [768, 1024, 'reach'], [390, 844, 'reach']];   /* machinery entry round (19 Nov 2026): the machine no longer has to fit the window, so it stays full size and the page scrolls (changed on purpose) */
     for (const [w, h, m] of exp) {
       const p = await page('#arm', { w, h, touch: w <= 768 });
       const r = await p.evaluate(() => {
@@ -54,12 +54,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         const r = await p.evaluate(() => {
           const bar = [...document.querySelectorAll('.rt-host .rt')].find(e => e.getClientRects().length && !e.classList.contains('sk-strip')); if (!bar) return { none: true };
           const R = bar.getBoundingClientRect(), parts = [...bar.children].filter(e => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden');
-          const dock = bar.querySelector('.dock6'); if (dock) parts.push(...[...dock.children].filter(e => e.getClientRects().length && !e.classList.contains('shpop') && !e.classList.contains('dl')));
+          const dock = bar.querySelector('.dock6'); if (dock) parts.push(...[...dock.children].filter(e => e.getClientRects().length && !e.classList.contains('shpop') && !e.classList.contains('espop') && !e.classList.contains('dl')));
           const bx = parts.filter(e => e !== dock).map(e => ({ n: e.className.split(' ')[0] || e.tagName, r: e.getBoundingClientRect() }));
           const ov = []; for (let i = 0; i < bx.length; i++) for (let j = i + 1; j < bx.length; j++) { const a = bx[i].r, c = bx[j].r; if (a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1 && !(bx[i].n === 'dock6' || bx[j].n === 'dock6')) ov.push(bx[i].n + '×' + bx[j].n); }
           const out = bx.filter(x => x.r.left < R.left - 1 || x.r.right > R.right + 1).map(x => x.n);
           const f = document.getElementById('isx-frame').getBoundingClientRect();
-          return { ov, out, fit: f.bottom <= innerHeight + .5 || innerHeight < 768 };
+          return { ov, out, fit: f.bottom <= innerHeight + .5 || innerHeight < 768 || (ISX.view === 'arm' && ISX.armMode !== 'rev' && document.getElementById('isx-root').classList.contains('arm-tall')) };   /* 19 Nov: the elite network may be taller than the window */
         });
         if (r.none) continue;
         if (r.ov.length || r.out.length || !r.fit) bad.push({ w, ...r });
@@ -158,7 +158,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       const hit = n.map(e => { const h = e.querySelector('.hit').getBoundingClientRect(); return Math.min(h.width, h.height); });
       return { view: ISX.armView, st: cls('state'), arm: cls('arm'), ec: cls('econ'), order: n.map(e => e.classList[1]).join(','), minHit: Math.min(...hit), tg: !document.getElementById('isx-aview').hidden, lines: document.querySelectorAll('#isx-areach .rl').length };
     });
-    ok('6 · Reach is the default: 9 state bodies, 14 sectors, 10 groups; tab order state → arm → economy', r.view === 'reach' && r.st === 9 && r.arm === 14 && r.ec === 10 && /^(state,){9}(arm,){14}(econ,?){10}$/.test(r.order), r);
+    ok('6 · Reach is the default (a stored or default “machine” reads as Reach here): 9 state bodies, 14 sectors, 10 groups; tab order state → arm → economy', (r.view === 'reach' || r.view === 'machine') && r.st === 9 && r.arm === 14 && r.ec === 10 && /^(state,){9}(arm,){14}(econ,?){10}$/.test(r.order), r);
     ok('6 · every node has a tap area of at least 30 px; the toggle shows', r.minHit >= 30 && r.tg, r);
     const fig = () => p.evaluate(() => [...document.querySelectorAll('#isx-asheet .arfig b')].map(b => b.textContent));
     const open = () => p.evaluate(() => { const s = document.getElementById('isx-asheet'); return !s.hidden && s.classList.contains('on') ? (s.classList.contains('tall') ? 'tall' : s.classList.contains('peek') ? 'peek' : 'on') : ''; });
@@ -297,7 +297,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         const r = await p.evaluate(() => {
           const vis = e => !!e && !!e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden' && (() => { for (let x = e; x && x !== document.body; x = x.parentElement) if (getComputedStyle(x).display === 'none') return false; return true; })();
           const ph = innerWidth <= 760, es = ph ? document.getElementById('isx-b4es') : document.getElementById('isx-dk-es');
-          const titles = Object.values(ISX.essays), hit = es && titles.find(t => t[1] === es.getAttribute('href'));
+          const hit = es && ISX.essays[es.dataset.k];   /* 19 Nov 2026: a button that leads with the thesis; data-k is the related piece for the place */
           const cup = [...document.querySelectorAll(ph ? '#isx-b4row a' : '#isx-dock a, .rt .dock6 a')].find(a => a.href === 'https://www.buymeacoffee.com/ruttenelias');
           const mis = ph ? document.querySelector('#isx-b4row [data-mis]') : document.getElementById('isx-mis');
           return { es: vis(es), inEssays: !!hit, named: !!hit && ((es.getAttribute('aria-label') || '') + es.textContent).includes(hit[0]), cup: vis(cup), mis: vis(mis) };

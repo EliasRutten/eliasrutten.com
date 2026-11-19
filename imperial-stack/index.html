@@ -3883,7 +3883,7 @@ function armLayout() {
     if (col) place(card, { left: padL + 'px', top: cTop + 'px', width: '340px', maxHeight: (L.barTop - 14 - cTop) + 'px' });
     else place(card, { left: padL + 'px', right: padR + 'px', top: L.ct + 'px', height: ASTRIP + 'px' });
     place(kick, { left: padL + 'px', top: top0 + 'px' });
-    place($('aview'), { left: (padL + (kick ? kick.offsetWidth : 0) + 18) + 'px', top: Math.max(0, top0 - 9) + 'px' });   /* on the kicker's line, after it */
+    place($('aview'), { left: (padL + (kick ? kick.offsetWidth : 0) + 18) + 'px', top: Math.max(0, top0 - 7) + 'px' });   /* on the kicker's line, after it */
     place($('ahint'), { left: (fx + 16 * L.k).toFixed(1) + 'px', top: (fy + hh - 24 * L.k - 6).toFixed(1) + 'px' });
     pArm.size();
   }

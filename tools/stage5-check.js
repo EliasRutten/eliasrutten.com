@@ -234,9 +234,10 @@ const AUDITOR = () => {
     const end = await take();
     ok(`no early reveal (${w} px): opening card, 12 primer screens, 10 reveals of first principles and all ${N} steps audited`, rows.length === 24 + N && seenSteps === N && N === 43, { rows: rows.length, seenSteps });   /* round 5b: the count follows the guide build's 12 and 10 (it still said 8 and 8) */
     ok(`no early reveal (${w} px): no actor lit, relation, gauge value, tag, breakdown or strip chip before its step`, leaks.length === 0, leaks.slice(0, 10));
-    ok(`no early reveal (${w} px): the opening card shows 37 dimmed names (8 of them sockets), no relation, no tag, no value`, rows[0].onMap.join() === '0,0' && rows[0].valueLines === 0 && rows[0].indicators.join() === '0,24', rows[0]);
+    /* machinery entry round (19 Nov 2026): there is no opening card; the guide starts on its first step, which reaches one relation and one indicator */
+    ok(`no early reveal (${w} px): the start is the guide’s first step and shows only what it reached (two actors, one relation, one indicator)`, rows[0].line === 0 && rows[0].beat === 0 && rows[0].onMap.join() === '2,1' && rows[0].indicators.join() === '1,23', rows[0]);
     ok(`no early reveal (${w} px): on the guide’s closing card everything is shown, the episodes’ relations and indicators with it (37 nodes, 75 relations, 24 indicators with their values)`, end.onMap.join() === '37,75' && end.indicators.join() === '24,0' && end.valueLines >= 23, end);
-    if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips === 0, rows.map(a => a.chips).join(''));
+    if (w <= 760) ok(`no early reveal (${w} px): the in-play strip carried chips on the way (${Math.max(...rows.map(a => a.chips))} at most), only for indicators the guide had reached`, rows.some(a => a.chips > 0) && rows[0].chips <= 1, rows.map(a => a.chips).join(''));
     if (AUDIT && w === 1440) { console.log('\n  step | title | reached: actors, relations, levers | on the map: nodes, relations | values on the map | indicators: reached, later'); rows.forEach(a => console.log('  ' + [(a.line ? 'FP ' : '') + (a.beat + 1), a.title, JSON.stringify(a.reached), a.onMap.join(', '), a.valueLines, a.indicators.join(', ')].join(' | '))); console.log(''); }
     if (w === 1440) {
       /* acting on the map must not get ahead of the guide either: at step 12, select every actor reached so far */
@@ -327,7 +328,7 @@ const AUDITOR = () => {
   for (const [w, h] of [[1440, 900], [1280, 760], [1024, 768], [768, 1024]]) {
     let p = await page({}, { w, h });
     const o = await js(p, onMap);
-    ok(`${w} px, opening card: 8 sockets, no tag, no value; the Indicators button counts “0 / 24” and waits behind the opening card; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 0 && o.btn === '0 / 24' && !o.btnShown && !o.strip && o.old === 0, o);
+    ok(`${w} px, the guide’s first step (no opening card since 19 Nov): 8 sockets, one tag, no gauge value; the Indicators button counts “1 / 24”, clear of the card and the bar; no rail, no strip`, o.live === 0 && o.sockets === 8 && o.tags === 1 && o.btn === '1 / 24' && o.btnShown && o.btnClear && !o.strip && o.old === 0, o);
     await p.context().close(); p = await page({}, { w, h, pos: '{"l":0,"b":9}' });
     const g = await js(p, onMap);
     ok(`${w} px, step 10: 1 gauge node carries its value, 6 tags hang under their actors, the button reads “7 / 24” (clarity build: the loop comes first) and is clear of the card and the bar`, g.live === 1 && g.sockets === 7 && g.tags === 6 && g.btn === '7 / 24' && g.btnShown && g.btnClear && !g.strip, g);
@@ -345,7 +346,7 @@ const AUDITOR = () => {
       return { shown: v(s), chips: chips.map(c => [c.dataset.ipc, c.querySelector('b').textContent, c.querySelector('em').textContent]), all: all.textContent.trim(), h: Math.round(sr.height), below: sr.top >= map.bottom - 1, wide: s.scrollWidth > s.clientWidth, pageWide: document.scrollingElement.scrollWidth > innerWidth + 1, btn: v(document.getElementById('isx-b1ind')), mapVals: [...document.querySelectorAll('#isx-rmap [data-gv]')].filter(x => x.textContent.trim()).length, barFixed: getComputedStyle(document.getElementById('isx-s2bar')).position, barBottom: Math.round(innerHeight - bar.bottom) }; };
     let p = await page({}, { w: 390, h: 844, touch: true });
     const o = await js(p, strip);
-    ok('390 px, opening card: the strip holds only the way to the indicators (“0 of 24”); no chip, no value on the map', o.shown && o.chips.length === 0 && /0 of 24/.test(o.all) && o.mapVals === 0 && !o.btn, o);
+    ok('390 px, the guide’s first step: the strip holds the one indicator it moves and the way to the rest (“1 of 24”)', o.shown && o.chips.length === 1 && o.chips[0][0] === 'con' && /1 of 24/.test(o.all) && o.mapVals <= 1 && !o.btn, o);
     await p.context().close(); p = await page({}, { w: 390, h: 844, touch: true, pos: '{"l":0,"b":9}' });
     const g = await js(p, strip), play10 = await js(p, () => { const S = ISX.sim, L = S.lines[0], now = new Set(L.steps[9].e), prev = new Set(L.steps[8].e), fresh = [...now].filter(i => !prev.has(i)); return S.indicators.filter(I => I.rel.some(i => fresh.includes(i))).map(I => I.id); });
     ok('390 px, step 10: one chip per indicator the step moves (name, value, role), then “All 7 of 24”; one row under the map; the page does not scroll sideways', g.chips.length > 0 && g.chips.every(c => (/\d/.test(c[1]) || c[0] === 'haircut') && /setting|conduit|stress gauge|outcome|first moved here/.test(c[2])) && /All 7 of 24/.test(g.all) && g.h <= 66 && g.below && !g.pageWide, g);

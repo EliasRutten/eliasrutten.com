@@ -82,12 +82,15 @@ const DOORS = { SAV: 'loop', Y10: 'bond', MOV: 'bond', BND: 'bond', TSY: 'desks'
   ok(!early.length, 'no early reveal: in the chain, indicators neither reached nor touched stay empty, and no door tab sits on a dimmed element', early);
   await p.context().close();
   p = await mk({}, { mode: 'guide', pos: JSON.stringify({ l: 0, b: -1 }) });
-  const op = await p.evaluate(() => ({ vals: [...document.querySelectorAll('#isx-rmap [data-gv]')].filter(v => v.textContent.trim()).map(v => v.dataset.gv), tabs: [...document.querySelectorAll('#isx-rmap .vdoor:not(.off)')].map(t => t.dataset.n),
-    th: (document.querySelector('#isx-sn-body .s2thesis, .s2thesis') || {}).textContent || '' }));
-  ok(!op.vals.length && !op.tabs.length, 'no early reveal: the opening card leaves the map without figures and door tabs', op);
+  /* machinery entry round (19 Nov 2026): no opening card; a place stored at step −1 opens on the guide's first step, which shows its
+     own one figure (consumer spending) and nothing else. The thesis is on Expert's panel on the full map. */
+  let op = await p.evaluate(() => ({ beat: ISX.sim.beat, vals: [...document.querySelectorAll('#isx-rmap [data-gv]')].filter(v => v.textContent.trim()).map(v => v.dataset.gv), tabs: [...document.querySelectorAll('#isx-rmap .vdoor:not(.off)')].map(t => t.dataset.n) }));
+  ok(op.beat === 0 && op.vals.join() === 'con' && !op.tabs.length, 'no early reveal: the guide’s first step shows only its own figure and no door tab', op);
+  await p.evaluate(() => ISX.simWay('map')); await p.waitForTimeout(400);
+  op.th = await p.evaluate(() => (document.querySelector('#isx-thx .thx-t') || {}).textContent || '');
   /* ---------- 6: the thesis ---------- */
   /* tiers build A (15 Nov 2026): the thesis in Elias Rutten's wording, no economist named */
-  ok(/the instability is manufactured/.test(op.th) && /Elias Rutten/.test(op.th) && /weaponized system/.test(op.th) && /who holds the valves/.test(op.th) && !/Klein|Pettis|Gowan|Hudson/.test(op.th), 'the opening card carries the thesis in Elias Rutten’s wording, naming no economist', op.th);
+  ok(/the instability is manufactured/.test(op.th) && /Elias Rutten/.test(op.th) && /weaponized system/.test(op.th) && /who holds the valves/.test(op.th) && !/Klein|Pettis|Gowan|Hudson/.test(op.th), 'Expert’s thesis panel carries the thesis in Elias Rutten’s wording, naming no economist', op.th);
   ok(!/does not assert|not a claim|no claim is made|map’s reading/i.test(op.th) && !/["']/.test(op.th), 'the thesis has no hedge line and no straight quotes', op.th);
   await p.context().close();
 

@@ -289,7 +289,6 @@
 #isx-root .dock6 .dk-es[aria-expanded="true"], #isx-root .b4es[aria-expanded="true"] { box-shadow: 0 0 0 2px #ffd27a inset; }
 #isx-root .b4es { text-align: left; }
 #isx-root .b4es .rel { font-family: var(--sans); font-size: 11.5px; letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#isx-root .dock6 { position: relative; }
 #isx-root .espop { position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 30; width: 320px; padding: 12px 10px 10px; border-radius: 14px; background: #09101a; border: 1px solid #2a3a4a; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .85); font-family: var(--sans); text-align: left; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s; }
 #isx-root .espop.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 #isx-root .espop::before { content: ""; position: absolute; left: 18px; right: 18px; top: -1px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, #ff6719, transparent); opacity: .85; }

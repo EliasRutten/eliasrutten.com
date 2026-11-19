@@ -167,7 +167,7 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], 
     console.log('5 · Tour, and deep links');
     let p = await page('#profit', { ls: { 'isx-intro': 'toured', 'isx-enter': 'off' }, wait: 1200 });
     let r = await p.evaluate(() => { const t = document.getElementById('isx-tourb'); return { vis: t.getClientRects().length > 0, lab: t.getAttribute('aria-label'), next: t.previousElementSibling && t.previousElementSibling.id, ban: !!document.getElementById('isx-wlban') }; });
-    ok('“Tour” in the header, beside “About this map”, on every tab; no offer once the tour is taken', r.vis && /^Tour/.test(r.lab) && r.next === 'isx-about' && !r.ban, r);
+    ok('“Tour” in the header, beside “How this tab works” (19 Nov 2026: in place of “About this map” on the four tabs), on every tab; no offer once the tour is taken', r.vis && /^Tour/.test(r.lab) && r.next === 'isx-tabx' && !r.ban, r);
     await p.click('#isx-tourb'); await p.waitForFunction(() => ISX.tour.on, null, { timeout: 8000 }).catch(() => {}); await settle(p);
     r = await p.evaluate(() => ({ v: ISX.view, at: ISX.welcome.at, stage: document.getElementById('isx-root').classList.contains('wl-stage'), wl: !!document.querySelector('#isx-wl') }));
     ok('from another tab it switches to the Circuit and runs the tour from stop 1 (no welcome), on the bare map again', r.v === 'map' && r.at === 1 && r.stage && !r.wl, r);

@@ -58,8 +58,8 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     }
     await p.click('#isx-v-map'); await p.click('#isx-v-profit'); await p.waitForTimeout(600);
     ok(!(await p.evaluate(() => ISX.enter.on)), 'a second entry into the tab does not show the screen again');
-    await p.click('#isx-about'); await p.waitForTimeout(400);
-    ok(await p.evaluate(() => ISX.enter.on === 'profit' && !ISX.intro), 'the ⓘ in the header opens the tab’s entry screen again');
+    await p.click('#isx-tabx'); await p.waitForTimeout(400);   /* machinery entry round (19 Nov 2026): a labelled button in place of the ⓘ on the four tabs */
+    ok(await p.evaluate(() => ISX.enter.on === 'profit' && !ISX.intro), '“How this tab works” in the header opens the tab’s entry screen again');
     /* the profit dollar: the footnote, the stations, the reminder */
     await p.click('#isx-enter .en-star'); let r = await p.evaluate(() => { const nn = document.getElementById('isx-en-note'); return { open: !nn.hidden, t: nn.textContent }; });
     ok(r.open && /Only a very large economy can play this role/.test(r.t) && ['Strange', 'Cohen', 'Kindleberger', 'Eichengreen', 'Helleiner'].every(x => r.t.indexOf(x) >= 0), 'the asterisk opens the footnote with its five references', r);
@@ -67,7 +67,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     ok(r.length === 6 && /Profits/.test(r[0]) && /Technology/.test(r[1]) && /The order/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
     await p.click('#isx-enter [data-en-stop="3"]'); await p.waitForTimeout(900);
     r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st, view: ISX.profit.state.view })); ok(!r.on && r.st === 'regime' && r.view === 'all', 'choosing a station closes the screen and opens it: the regime, on the stacked chart', r);
-    await p.click('#isx-about'); await p.waitForTimeout(300); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(300);
+    await p.click('#isx-tabx'); await p.waitForTimeout(300); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(300);
     r = await p.evaluate(() => { const m = document.getElementById('isx-remind'); return { on: ISX.remind.on, inside: !!m && document.getElementById('isx-enter').contains(m), link: decodeURIComponent(ISX.remind.link || ''), sum: m && m.querySelector('.rm-sum').textContent }; });
     ok(r.on && r.inside && /the profit dollar/.test(r.link) && /#profit/.test(r.link) && /The profit dollar/.test(r.sum), '“Remind me later” opens the reminder on the screen, for this tab', r);
     await p.keyboard.press('Escape'); await p.waitForTimeout(200); ok(await p.evaluate(() => !ISX.remind.on && ISX.enter.on === 'profit'), 'Esc closes the reminder first, the screen stays');
