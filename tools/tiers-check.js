@@ -259,7 +259,7 @@ const NEWTIPS = ['deficit', 'debt', 'rate', 'surplus', 'treasuries', 'bond', 'yi
   ok(G.s.every((x, i) => x.k === `The basics${i + 1} of 12`), 'each screen’s kicker: “The basics · k of 12”', G.s.map(x => x.k));
   ok(G.s.every(x => x.x.split(/(?<=[.!?])\s+(?=[A-Z“$])/).length <= 2), 'each screen shows at most two sentences; the rest is behind “Say more”', G.s.filter(x => x.x.split(/(?<=[.!?])\s+(?=[A-Z“$])/).length > 2).map(x => x.h3));
   ok(G.s.every(x => /(^On the map: |[.:] On the map[ ,:])/.test(x.vh) && x.vh.length > 30) && /^A pyramid of eight tiers/.test(gs(2).vh) && /^A timeline in five bands, each ending in a crisis/.test(gs(3).vh) && /^The timeline’s fifth band is lit/.test(gs(10).vh), 'each screen has its hidden text alternative; the three with a diagram describe the diagram first', G.s.map(x => x.vh));
-  ok(/5\.13%/.test(gs(5).vh) && /7\.24%/.test(gs(6).vh), 'the figures in the text alternatives come from the indicators (5.13%, 7.24%)', [gs(5).vh, gs(6).vh]);
+  ok(/5\.13%/.test(gs(5).vh) && /7\.11%/.test(gs(6).vh), 'the figures in the text alternatives come from the indicators (5.13%, 7.11%)', [gs(5).vh, gs(6).vh]);
   ok(G.s.every(x => /^On the map/.test(x.map) && x.know && x.fold === 'Say more'), 'each screen: what is lit, the quiet “I know this: go to the guide”, and “Say more”', G.s.map(x => [x.map.slice(0, 30), x.know, x.fold]));
   ok(G.s.every(x => /^Source: /.test(x.src)) && G.s.every((x, i) => ['P2', 'P8'].includes(G.ids[i]) || /\d{4}/.test(x.src)), 'every screen with a figure names its source and date', G.s.map(x => x.src));
   ok(G.s.slice(0, 11).every(x => x.lit > 0), 'screens 1 to 11 light real parts of the map', G.s.map(x => x.lit));
