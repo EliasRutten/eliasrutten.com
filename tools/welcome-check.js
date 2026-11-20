@@ -68,7 +68,7 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], 
       return { k: c.querySelector('.wl-k').textContent.replace(/\s+/g, ' '), h: c.querySelector('h2').textContent, l: c.querySelector('.wl-l').textContent, go: c.querySelector('.wl-go').textContent.trim(), skip: c.querySelector('.wl-skip').textContent, box: !!c.querySelector('input[data-wl-off]'), role: c.getAttribute('role'), lab: c.getAttribute('aria-labelledby'), focus: document.activeElement === c,
         dx: Math.abs(cr.left + cr.width / 2 - (g.left + g.width / 2)), stage: document.getElementById('isx-root').classList.contains('wl-stage'), blur: getComputedStyle(c).backdropFilter }; });
     ok('kicker “The Imperial Stack · 01 of 05”', /The Imperial Stack\s*·\s*01 of 05/i.test(r.k), r.k);
-    ok('the thesis and the one line, as in the spec', /^This is how America finances its imperial stack – and how the imperial stack keeps the dollar afloat\.$/.test(r.h) && /^Follow the money on one globe/.test(r.l), [r.h, r.l]);
+    ok('the thesis and the one line, as in the spec', /^This is how America finances its imperial stack – and how the imperial stack keeps the dollar afloat\.\*?$/.test(r.h) && /^Follow the money on one globe/.test(r.l), [r.h, r.l]);
     ok('“Show me around →”, “Skip to the map”, “Don’t show this again”', /^Show me around/.test(r.go) && r.skip === 'Skip to the map' && r.box, r);
     ok('a dialog labelled by its thesis, with focus; centred on the globe, glass behind it; the map still bare', r.role === 'dialog' && r.lab === 'isx-wl-h' && r.focus && r.dx < 4 && /blur/.test(r.blur) && r.stage, r);
     await p.keyboard.press('ArrowRight'); await p.waitForTimeout(200);

@@ -1,0 +1,29 @@
+/* “Work in progress” (20 Nov 2026): an amber pill beside the version, a short note under it. Scoped under #isx-root. */
+#isx-root .wipk { display: inline-flex; align-items: center; gap: 7px; height: 22px; margin-left: 10px; padding: 0 10px 0 9px; border-radius: 999px; vertical-align: middle;
+  border: 1px solid rgba(255, 181, 71, .55); background: rgba(255, 181, 71, .09); color: #ffd27a; cursor: pointer;
+  font: 400 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; transition: background .15s, border-color .15s; }
+#isx-root .wipk i { width: 6px; height: 6px; border-radius: 50%; background: #ffb547; box-shadow: 0 0 8px rgba(255, 181, 71, .7); }
+#isx-root .wipk:hover, #isx-root .wipk[aria-expanded="true"] { background: rgba(255, 181, 71, .18); border-color: #ffb547; color: #fff; }
+#isx-root .wipk:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .wipk .wips { display: none; }
+@media (max-width: 1439px) { #isx-root .wipk .wipw { display: none; } #isx-root .wipk .wips { display: inline; } }
+
+#isx-root .wipn { position: absolute; z-index: 30; width: 300px; box-sizing: border-box; padding: 14px 16px 12px; border-radius: 14px;
+  background: rgba(7, 12, 19, .92); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 181, 71, .35); box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .9); color: #c9d4de; font: 400 13.5px/1.5 var(--sans); }
+#isx-root .wipn[hidden] { display: none; }
+#isx-root .wipn p { margin: 0; }
+#isx-root .wipn .wipn-h { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font: 400 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+#isx-root .wipn .wipn-h i { width: 6px; height: 6px; border-radius: 50%; background: #ffb547; }
+#isx-root .wipn-go { margin-top: 10px; padding: 0; border: 0; background: none; color: #ffd27a; cursor: pointer; font: 400 11px/1.6 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  text-decoration: underline; text-decoration-color: rgba(255, 210, 122, .4); text-underline-offset: 4px; }
+#isx-root .wipn-go:hover { color: #fff; }
+#isx-root .wipn-go:focus-visible { outline: 2px solid #ffd27a; outline-offset: 3px; }
+@media (max-width: 600px) { #isx-root .wipn { left: 12px; right: 12px; top: 64px; width: auto; } }
+
+/* the welcome card's asterisk and footnote */
+#isx-root .wl-card .wl-ast { position: relative; top: -.45em; margin-left: .1em; font: 400 .7em/0 var(--sans); color: #ffb547; vertical-align: baseline; }
+#isx-root .wl-card .wl-fn { margin: 14px auto 0; max-width: 52ch; font: 400 12.5px/1.45 var(--sans); color: #9fb0c0; }
+#isx-root .wl-card .wl-fn b { color: #ffb547; font-weight: 400; margin-right: .25em; }
+#isx-root .kicker .kl { display: inline-flex; align-items: center; white-space: nowrap; }
+@media (max-width: 600px) { #isx-root .wipk { margin-left: 8px; height: 20px; padding: 0 8px 0 7px; } }

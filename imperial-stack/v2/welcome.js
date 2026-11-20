@@ -42,7 +42,8 @@
     k: 'The Imperial Stack', n: '01',
     h: 'This is how America finances its imperial stack – and how the imperial stack keeps the dollar afloat.',
     l: 'Follow the money on one globe: from the rents US platforms collect abroad, through the chips and the factories, back into US shares and bonds.',
-    go: 'Show me around', skip: 'Skip to the map', off: 'Don’t show this again'
+    go: 'Show me around', skip: 'Skip to the map', off: 'Don’t show this again',
+    fn: 'Work in progress: small mistakes and bugs may still be there, but the general thesis holds.'
   };
   function stops() {
     var co = U.COARSE, gl = !root.classList.contains('no-gl'), ph = sheet(), mis = [].some.call(root.querySelectorAll('[data-mis]'), shown);
@@ -100,8 +101,9 @@
     card = document.createElement('div'); card.className = 'wl-card'; card.id = 'isx-wl'; card.tabIndex = -1;
     card.setAttribute('role', 'dialog'); card.setAttribute('aria-modal', 'false'); card.setAttribute('aria-labelledby', 'isx-wl-h'); card.setAttribute('aria-describedby', 'isx-wl-l');
     card.innerHTML = '<p class="wl-k"><i class="dia" aria-hidden="true"></i><span>' + esc(WL.k) + '</span><span aria-hidden="true">·</span><span>' + WL.n + ' <em>of 05</em></span></p>'
-      + '<h2 id="isx-wl-h">' + esc(WL.h) + '</h2><i class="wl-rule" aria-hidden="true"></i><p class="wl-l" id="isx-wl-l">' + esc(WL.l) + '</p>'
+      + '<h2 id="isx-wl-h">' + esc(WL.h) + '<span class="wl-ast" aria-hidden="true">*</span></h2><i class="wl-rule" aria-hidden="true"></i><p class="wl-l" id="isx-wl-l">' + esc(WL.l) + '</p>'
       + '<div class="wl-acts"><button type="button" class="wl-go" data-wl="go">' + esc(WL.go) + ' <span aria-hidden="true">→</span></button><button type="button" class="wl-skip" data-wl="skip">' + esc(WL.skip) + '</button></div>'
+      + '<p class="wl-fn"><b aria-hidden="true">*</b>' + esc(WL.fn) + '</p>'
       + offBox();
     frame.appendChild(card); placeCard();
     card.addEventListener('click', function (e) { var b = e.target.closest('[data-wl]'); if (!b) return; if (b.dataset.wl === 'go') { closeCard(); start(1, true); } else leaveAll(); });
