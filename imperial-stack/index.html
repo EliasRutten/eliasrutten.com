@@ -2218,7 +2218,7 @@ button.res:hover { transform: none; box-shadow: none; }
 .ctarow6 { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 4px 0 22px; }
 .ctarow6 .cta6b { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 290px; max-width: 100%; height: 48px; border-radius: 12px; text-decoration: none; font-family: var(--display); font-weight: 700; font-size: 16px; letter-spacing: .1em; text-transform: uppercase; transition: background .15s, border-color .15s, box-shadow .2s, translate .15s; }
 .ctarow6 .cta6b:hover { translate: 0 -1px; }
-.ctarow6 .cta6-th { border: 1px solid #ff6719; background: #ff6719; color: #fff; }
+.ctarow6 .cta6-th { border: 1px solid #ff6719; background: #ff6719; color: #fff; width: auto; min-width: 290px; padding: 0 22px; }
 .ctarow6 .cta6-th:hover { background: #ff7a38; border-color: #ff7a38; box-shadow: 0 0 18px rgba(255, 103, 25, .3); }
 .ctarow6 .cta6-th .ssl { color: #fff; }
 .ctarow6 .cta6-th em { font-style: normal; font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .1em; background: rgba(0, 0, 0, .25); border-radius: 999px; padding: 2px 8px; }
@@ -2477,7 +2477,7 @@ button.res:hover { transform: none; box-shadow: none; }
 
   <div class="sep">The full picture · data, definitions, sources</div>
   <div class="ctarow6" role="group" aria-label="The thesis and support">
-    <a class="cta6b cta6-th" href="https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it" title="The thesis is coming soon. Until then, the closest piece: It’s War, but No One Sees It (19 Nov 2026)." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg><span>Read the thesis</span><em>coming soon</em></a>
+    <a class="cta6b cta6-th" href="https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it" title="A preliminary version of the thesis. The full thesis is coming soon." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg><span>Read the preliminary thesis</span></a>
     <a class="cta6b cta-cup" href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener"><span class="cup" aria-hidden="true">☕</span><span>Support this free map</span></a>
   </div>
 
@@ -6497,7 +6497,7 @@ const INTRO_HTML = `
     </div>
     <div class="in-acts">
       <button type="button" class="in-go" id="isx-in-go"><span>Back to the map</span><i aria-hidden="true">→</i></button>
-      <a class="in-thesis" href="https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it" target="_blank" rel="noopener" title="The thesis is coming soon. Until then, the closest piece: It’s War, but No One Sees It (19 Nov 2026).">${SSL}<span>Read the thesis</span><em>coming soon</em></a>
+      <a class="in-thesis" href="https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it" target="_blank" rel="noopener" title="A preliminary version of the thesis. The full thesis is coming soon.">${SSL}<span>Read the preliminary thesis</span></a>
     </div>
     <p class="in-foot">Work in progress · v.2.0 · data as of 5 Nov 2026 · By Elias Rutten<br>“About this map”, top left, brings you back here</p>
   </div>`;
