@@ -7924,7 +7924,7 @@ const SECHO = {
 };
 function sBeat(p, s, ch, why, ld) {
   const st = PLAYS[p].steps[s], m = SMETA[p][s], k = p + '-' + s, o = st[3] || {};   /* content build: depth, sources, links, whose reading, a view */
-  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n, ech: SECHO[k] || null, k, q: SQ[k] || null, epi: o.ep || null, eps: SEPI.filter(X => X.from === k).map(X => X.id) };
+  return { p, s, ch, t: st[0], x: st[1], e: st[2], r: m[0], w: m[1], why: why != null ? why : m[2], lev: m[3], fork: SDEC[k] ? k : null, ld: !!ld, d: o.d, src: o.src, lk: o.lk, go: o.go, nt: o.nt, vw: o.vw, vr: o.vr, n: o.n, ech: SECHO[k] || null, k, q: SQ[k] || null, epi: o.ep || null, eps: SEPI.filter(X => X.from === k).map(X => X.id) };
 }
 /* v2 round 3: first principles. Seven reveals that come before the plumbing: the accounting, the surplus side, why the
    claims are taken in dollars, how the US accommodates them, how long this has been built, what it does to US markets,

@@ -12,7 +12,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
     if (process.env.FROM && !fromHit) { if (new RegExp(process.env.FROM).test(name)) fromHit = true; else return; }   /* FROM=<regex> resumes a run at the first state it matches */   /* ONLY=<regex> reruns a group of states */
     const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
     await c.addInitScript(o => { try { localStorage.setItem('isx-tips-globe', 'off'); localStorage.setItem('isx-tour', 'off'); localStorage.setItem('isx-tips-sim', 'off'); localStorage.setItem('isx-stack', 'open'); Object.keys(o).forEach(k => { if (k === '__pos') sessionStorage.setItem('isx-sim-pos', o[k]); else if (o[k] === null) localStorage.removeItem(k); else localStorage.setItem(k, o[k]); }); } catch (e) {} }, ls);
-    const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load' });
+    const p = await c.newPage(); await p.goto(base + hash, { waitUntil: 'load', timeout: 90000 });
     await p.waitForFunction(() => window.ISX && ISX.booted && ISX.globe && ISX.own && ISX.own.data, null, { timeout: 60000 });
     await p.waitForTimeout(2500); if (prep) await prep(p);
     await p.evaluate(axeSrc);

@@ -77,7 +77,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   ok(r.sw === 'true' && r.a[0] === 0 && r.a[1] === 0 && r.a[2] === 49 && r.b[0] === 4 && r.b[1] === 3, 'calm: the firms alone; with a firm picked, only its own lines and holders', r);
   await p.click('#isx-fw [data-fw="calm"]'); await p.evaluate(() => ISX.firms.pick(null));
   await p.click('#isx-fw [data-fw="table"]'); await p.waitForTimeout(200);
-  r = await p.evaluate(() => { const t = document.querySelectorAll('#isx-fw .fwtab table'); return { n: t.length, rows: t[0] ? t[0].querySelectorAll('tbody tr').length : 0, rows2: t[1] ? t[1].querySelectorAll('tbody tr').length : 0, cap: t[0] ? t[0].caption.textContent : '', svg: getComputedStyle(document.querySelector('#isx-fw svg')).display, btn: document.querySelector('#isx-fw [data-fw="table"]').textContent, nan: /NaN|undefined/.test(document.querySelector('#isx-fw .fwtab').textContent) }; });
+  r = await p.evaluate(() => { const t = document.querySelectorAll('#isx-fw .fwtab table'); return { n: t.length, rows: t[0] ? t[0].querySelectorAll('tbody tr').length : 0, rows2: t[1] ? t[1].querySelectorAll('tbody tr').length : 0, cap: t[0] ? t[0].caption.textContent : '', svg: getComputedStyle(document.querySelector('#isx-fw .fwpan')).display, btn: document.querySelector('#isx-fw [data-fw="table"]').textContent, nan: /NaN|undefined/.test(document.querySelector('#isx-fw .fwtab').textContent) }; });
   ok(r.n === 2 && r.rows === 49 && r.rows2 === 130 && r.cap.length > 30 && r.svg === 'none' && r.btn === 'View as web' && !r.nan, 'the table view: 49 firms and 130 holders as text, and the way back', r);
   await p.click('#isx-fw [data-fw="table"]'); await p.waitForTimeout(150);
   await p.keyboard.press('Escape'); await p.waitForTimeout(250);
@@ -109,6 +109,16 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   r = await p.evaluate(() => { const src = [...document.scripts].map(s => s.textContent).join(''); return { old: /Firms profitability view, coming soon/.test(src), go: /go: \['circuit\/firms', 'Who owns the profits: the firm web'\]/.test(src), how: /The firm web: profits and owners/.test(src), name: ISX.viewName() }; });
   ok(!r.old && r.go && r.how && r.name === 'the firm web', 'the guide’s line no longer says “coming soon”: it links to the firm web; “How we count” has its row', r);
   await p.close();
+
+  { /* the guide's step “Dollars for the underclass” (old play line 6, step 9): its quiet link opens the firm web */
+    const cg = await b.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+    await cg.addInitScript(() => { try { ['isx-first', 'isx-insights', 'isx-tour', 'isx-simtour', 'isx-tips-sim', 'isx-enter'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-intro', '1'); localStorage.setItem('isx-hints-off', '1'); localStorage.setItem('isx-way', 'guide'); if (!sessionStorage.getItem('isx-sim-pos')) sessionStorage.setItem('isx-sim-pos', '{"l":6,"b":8}'); } catch (e) { /* ignore */ } });
+    p = await open(cg, '#simulator'); await p.waitForTimeout(900);
+    r = await p.evaluate(() => { const a = document.querySelector('#isx-snarr a[href="#circuit/firms"]'), c = document.getElementById('isx-snarr'); const R = { a: a ? a.textContent.trim() : null, t: (c.querySelector('h3') || {}).textContent, soon: /coming soon/.test(c.textContent) }; if (a) a.click(); return R; });
+    if (r.a) await up(p);
+    ok(r.t === 'Dollars for the underclass' && /^Who owns the profits: the firm web/.test(r.a || '') && !r.soon && await p.evaluate(() => ISX.view === 'map' && ISX.firms.isOpen), 'the guide’s quiet link on “Dollars for the underclass” opens the firm web', r);
+    await p.close(); await cg.close();
+  }
 
   /* 8 · a firm's card on the globe */
   p = await open(c, '#circuit/05/firm=asml'); await p.waitForFunction(() => ISX.sel.firm && document.querySelector('[data-own="fweb"]'), null, { timeout: 30000 }).catch(() => {});

@@ -127,9 +127,10 @@
       el('text', { transform: 'translate(' + fx(q[0]) + ',' + fx(q[1]) + ') rotate(' + fx(flip ? n.a + 180 : n.a) + ')', 'text-anchor': flip ? 'end' : 'start', dy: '.34em', 'class': cls }, g, text);
     };
     M.secs.forEach(function (s) {
-      var g = node(s, 'sector', s.d.n + ': sector row, no firm profiled yet', true);
+      var shown = s.d.n.replace(/^Power, grid and data-centre construction$/, 'Power, grid, data centres').replace(/^Design software \(EDA\)$/, 'Design software');
+      var g = node(s, 'sector', shown + ': ' + (shown === s.d.n ? '' : s.d.n + ', ') + 'sector row, no firm profiled yet', true);
       el('rect', { x: fx(s.p[0] - 5), y: fx(s.p[1] - 5), width: 10, height: 10, rx: 2.5, 'class': 'fm', transform: 'rotate(' + fx(s.a) + ' ' + fx(s.p[0]) + ' ' + fx(s.p[1]) + ')' }, g);
-      radial(g, s, s.d.n.replace(/^Power, grid and data-centre construction$/, 'Power, grid, data centres').replace(/^Design software \(EDA\)$/, 'Design software'), 'ft');
+      radial(g, s, shown, 'ft');
     });
     M.firms.forEach(function (f) {
       var d = f.d, g = node(f, 'firm' + (d.usd == null ? ' none' : d.usd < 0 ? ' loss' : '') + (d.x ? ' star' : ''), firmLabel(f), true);
@@ -246,9 +247,9 @@
     var opt = function (v, t, cur) { return '<option value="' + esc(v) + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + esc(t) + '</option>'; };
     var sel = function (k, lab, all, opts) { return '<label class="fsel' + (S.f[k] !== '' ? ' set' : '') + '"><select data-fwf="' + k + '" aria-label="' + lab + '">' + opt('', all, S.f[k]) + opts.map(function (o) { return opt(o[0], o[1], S.f[k]); }).join('') + '</select></label>'; };
     host.querySelector('.fwbar').innerHTML = sel('L', 'Layer', 'All layers', M.groups.map(function (g) { return [g.i, g.L.n]; }))
-      + sel('fc', 'Firm’s country', 'Firms: all countries', uniq(D.firms.map(function (f) { return f.home; })).map(function (c) { return [c, 'Firms: ' + c]; }))
+      + sel('fc', 'Firm’s country', 'Firms from: all', uniq(D.firms.map(function (f) { return f.home; })).map(function (c) { return [c, 'Firms from: ' + c]; }))
       + sel('ht', 'Holder type', 'All holder types', TYPES.map(function (t) { return [t[0], t[1]]; }))
-      + sel('hc', 'Holder’s country', 'Holders: all countries', uniq(D.holders.map(function (h) { return h.c; })).map(function (c) { return [c, 'Holders: ' + c]; }))
+      + sel('hc', 'Holder’s country', 'Holders from: all', uniq(D.holders.map(function (h) { return h.c; })).map(function (c) { return [c, 'Holders from: ' + c]; }))
       + (anyF() ? '<button type="button" class="fbtn" data-fw="reset">Clear</button>' : '')
       + '<span class="fgap"></span><button type="button" class="fbtn fcalm" data-fw="calm" role="switch" aria-checked="' + S.calm + '"><i aria-hidden="true"></i>Calm</button>'
       + '<button type="button" class="fbtn" data-fw="table" aria-pressed="' + S.table + '">' + (S.table ? 'View as web' : 'View as table') + '</button>';
@@ -261,7 +262,7 @@
     if (host) return;
     host = document.createElement('section'); host.className = 'web3 fw'; host.id = 'isx-fw'; host.hidden = true; host.setAttribute('aria-label', 'The firm web: profits and owners');
     host.innerHTML = '<aside class="wcard" aria-live="polite"></aside><div class="wstage"><div class="fwbar" role="group" aria-label="Filter the web"></div>'
-      + '<svg viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="The firms of the AI supply chain on a ring, by layer; inside it, the holders their filings name. A mark’s size is the firm’s latest full-year profit; a line’s width, the profit attributed to that holder. “View as table” gives the same figures as text."></svg>'
+      + '<div class="fwpan"><svg viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="The firms of the AI supply chain on a ring, by layer; inside it, the holders their filings name. A mark’s size is the firm’s latest full-year profit; a line’s width, the profit attributed to that holder. “View as table” gives the same figures as text."></svg></div>'
       + '<div class="fwtab" tabindex="0" role="region" aria-label="The firm web as tables"></div>'
       + '<div class="wkey" aria-hidden="true">' + TYPES.slice(0, 5).map(function (t) { return '<span><i class="t-' + t[0] + '"></i>' + t[1] + '</span>'; }).join('') + '<span><i class="k-loss"></i>Loss</span><span><i class="k-na"></i>Not attributed</span><span><i class="k-sec"></i>Sector row</span></div></div>'
       + '<button type="button" class="wclose" data-fw="close"><span aria-hidden="true">←</span> <span class="wct">Back to the globe</span></button>';
@@ -302,7 +303,7 @@
       if (o.firm && M.byId[o.firm]) S.sel = 'f:' + o.firm;
       host.querySelector('.wct').textContent = from === 'profit' ? 'Back to the profit dollar' : 'Back to the globe';
       host.hidden = false; root.classList.add('web-on', 'fw-on'); refresh();
-      var stg = host.querySelector('.wstage'); if (stg.scrollWidth > stg.clientWidth + 4) stg.scrollLeft = (stg.scrollWidth - stg.clientWidth) / 2;   /* phones: the picture pans; start at its middle */
+      var stg = host.querySelector('.fwpan'); if (stg.scrollWidth > stg.clientWidth + 4) stg.scrollLeft = (stg.scrollWidth - stg.clientWidth) / 2;   /* phones: the picture pans; start at its middle */
       try { if (X.globe) X.globe.pauseAnimation(); } catch (e) { /* ignore */ }
       var b = host.querySelector('.wclose'); if (b) b.focus({ preventScroll: true });
       X.emit('firms', { sel: S.sel, by: S.by, table: false, open: true }); if (X.routeSync) X.routeSync();

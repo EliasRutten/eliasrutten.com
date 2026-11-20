@@ -3,8 +3,8 @@
    ring, marks, bars and table. Holder colours are the profit dollar's checked set: gold, teal, red, blue, purple. */
 #isx-root .web3.fw { --fw-manager: #c4861c; --fw-founder: #19a88f; --fw-state: #e2574c; --fw-firm: #4a8be6; --fw-employees: #a672e0; --fw-other: #9aabba; --fw-pass: #6b7d8c; }
 #isx-root .web3.fw .wstage { display: grid; grid-template-rows: auto minmax(0, 1fr); place-items: stretch; gap: 6px; top: 82px; }
-#isx-root .web3.fw svg { min-height: 0; min-width: 0; }
-#isx-root .web3.fw .wstage.tab svg, #isx-root .web3.fw .wstage.tab .wkey, #isx-root .web3.fw .wstage:not(.tab) .fwtab { display: none; }
+#isx-root .web3.fw .fwpan { min-height: 0; min-width: 0; display: grid; } #isx-root .web3.fw svg { min-height: 0; min-width: 0; }
+#isx-root .web3.fw .wstage.tab .fwpan, #isx-root .web3.fw .wstage.tab .wkey, #isx-root .web3.fw .wstage:not(.tab) .fwtab { display: none; }
 #isx-root .web3.fw .wcard { border-color: #2a3947; }
 #isx-root .web3.fw .wk3 { color: #ffb547; } #isx-root .web3.fw .wk3.sub { color: var(--ink2); }
 #isx-root .web3.fw .wk3.t-state { color: #f08a80; } #isx-root .web3.fw .wk3.t-founder { color: #4fd0b8; } #isx-root .web3.fw .wk3.t-firm { color: #8fb8f5; } #isx-root .web3.fw .wk3.t-employees { color: #c9a6f0; } #isx-root .web3.fw .wk3.t-other, #isx-root .web3.fw .wk3.t-pass { color: var(--ink2); }
@@ -109,15 +109,14 @@
 #isx-root .fw .fwtab .wlk { font-weight: 600; text-align: left; }
 
 @media (min-width: 761px) and (max-width: 1400px) { #isx-root .fw .fsel select { max-width: 120px; } #isx-root .fw .fbtn { padding: 0 11px; } }
-@media (min-width: 761px) and (max-width: 1240px) { #isx-root .web3.fw .wstage { top: 126px; } #isx-root .fw .fsel select { max-width: 104px; font-size: 12px; } #isx-root .fw .fwbar { gap: 6px 5px; } }
+@media (min-width: 761px) and (max-width: 1240px) { #isx-root .web3.fw .wstage { top: 126px; } #isx-root .fw .fsel select { max-width: 132px; font-size: 12px; } #isx-root .fw .fwbar { gap: 6px 5px; } }
 @media (max-width: 760px) {
-  #isx-root .web3.fw .wstage { display: grid; grid-template-rows: auto auto; order: 2; } #isx-root .web3.fw .wcard { order: 3; } #isx-root .web3.fw .wclose { order: 1; }
+  #isx-root .web3.fw .wstage { display: block; order: 2; min-width: 0; } #isx-root .web3.fw .wcard { order: 3; overflow: visible; } #isx-root .web3.fw .wclose { order: 1; }
   #isx-root .fw .fwbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } #isx-root .fw .fsel { height: 44px; min-width: 0; } #isx-root .fw .fsel select { max-width: none; width: 100%; min-width: 0; height: 44px; } #isx-root .fw .fbtn { height: 44px; justify-content: center; } #isx-root .fw .fgap { display: none; }
   /* the picture keeps a readable size and pans sideways inside its own box; the page itself never scrolls sideways */
-  #isx-root .web3.fw .wstage { overflow-x: auto; overscroll-behavior-x: contain; } #isx-root .web3.fw svg { width: 740px; max-width: none; height: 740px; }
-  #isx-root .fw .fwbar, #isx-root .web3.fw .wkey, #isx-root .fw .fwtab { position: sticky; left: 0; width: calc(100vw - 20px); box-sizing: border-box; }
+  #isx-root .web3.fw .fwpan { display: block; overflow-x: auto; overscroll-behavior-x: contain; margin-top: 6px; } #isx-root .web3.fw svg { display: block; width: 740px; max-width: none; height: 740px; }
   #isx-root .fw .fnode .ft { font-size: 12.5px; } #isx-root .fw .fnode.holder .ft { font-size: 11px; }
-  #isx-root .web3.fw .wkey { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; }
+  #isx-root .web3.fw .wkey { position: static; display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; }
   #isx-root .fw .fwtab { max-height: 70vh; padding-right: 2px; } #isx-root .fw .fseg button, #isx-root .fw .fhowb { height: 44px; } #isx-root .fw button.fbar { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { #isx-root .fw .fk, #isx-root .fw .fnode, #isx-root .fw .fcalm i, #isx-root .fw .fcalm i::after { transition: none; } }
