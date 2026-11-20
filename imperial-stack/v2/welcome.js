@@ -31,7 +31,7 @@
     ['#isx-resbar', '#isx-vchip'],
     ['#isx-strip', '.hud-top .seg'],
     ['#isx-tgl', '#isx-strip .st-div'],
-    ['#isx-dock', '#isx-b4row', '.hud-top .er-ps', '.hud-top .kl', '#isx-about', '#isx-tourb', '#isx-mis']
+    ['#isx-dock', '#isx-b4row', '.hud-top .er-ps', '.hud-top .kl', '#isx-help', '#isx-about', '#isx-tourb', '#isx-mis']
   ];
   var ALL = PARTS.reduce(function (a, b) { return a.concat(b); }, []);
   var els = function (sels) { var out = []; sels.forEach(function (q) { root.querySelectorAll(q).forEach(function (e) { out.push(e); }); }); return out; };
@@ -53,7 +53,7 @@
       { at: ['#isx-resbar', '#isx-vchip'], side: 'right', h: 'The machine’s vital signs.', p: 'Six dated figures that move with the markets: Big Tech spending, the US deficit, who buys US shares and bonds. Select one for the source.' + (ph ? ' Swipe for more.' : '') },
       { at: ['.hud-top .seg'], side: 'bottom', h: 'Six views of the same machine.', p: 'The Circuit shows the money moving; Profits shows what it buys; Network, Machinery and Arm show who runs it and how it is enforced. Crisis is coming.' },
       { at: ['#isx-tgl'], side: 'bottom', h: 'Look beneath the flows.', p: '<em>Firms</em> shows who owns what; <em>Layers</em> adds the blocs, the surpluses and the holdings of US shares to the map.' },
-      { at: ['#isx-b4row', '#isx-dock'], side: 'top', h: 'Take it with you.', p: '<em>Share</em> copies a link to exactly this view. The thesis behind the map is coming soon on Substack; related pieces are there now.' + (mis ? ' Spot an error? <em>Mistake?</em> goes straight to me.' : '') + ' <em>Tour</em>, top left, runs this again.', last: true }
+      { at: ['#isx-b4row', '#isx-dock'], side: 'top', h: 'Take it with you.', p: '<em>Share</em> copies a link to exactly this view. The thesis behind the map is coming soon on Substack; related pieces are there now.' + (mis ? ' Spot an error? <em>Mistake?</em> goes straight to me.' : '') + ' The <em>?</em>, top left, runs this again.', last: true }
     ];
   }
 
@@ -183,7 +183,7 @@
     var tgt = target(S); live = tgt;
     if (tgt && tgt.id !== 'isx-globe') tgt.classList.add('wl-on');
     if (at === 0) { var bar = $('tabs'); if (shown(bar)) bar.classList.add('wl-on'); }
-    if (at === 6) els(['#isx-about', '#isx-tourb', '#isx-mis']).forEach(function (e) { if (shown(e)) e.classList.add('wl-on'); });
+    if (at === 6) els(['#isx-help', '#isx-mis']).forEach(function (e) { if (shown(e)) e.classList.add('wl-on'); });
     tip.hidden = false;
     /* the parts take their place first (the card may have grown): then the tip is placed beside them */
     var place1 = function () { if (!tip || stops()[at] !== undefined && at < 0) return; var t2 = target(S); place(S, t2); };

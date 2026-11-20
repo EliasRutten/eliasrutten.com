@@ -6,7 +6,7 @@
 
 /* ---------- the bare map ---------- */
 #isx-root.wl-stage :is(#isx-cmd, #isx-tabs, #isx-mstep, #isx-legbox, #isx-zoom, #isx-mapmodes, #isx-hint, #isx-mapnote, #isx-rkick, #isx-insight,
-  #isx-resbar, #isx-vchip, #isx-strip, .hud-top .seg, #isx-tgl, #isx-strip .st-div, #isx-dock, #isx-b4row, #isx-about, #isx-tourb, #isx-mis, .hud-top .er-ps, .hud-top .kl):not(.wl-in) {
+  #isx-resbar, #isx-vchip, #isx-strip, .hud-top .seg, #isx-tgl, #isx-strip .st-div, #isx-dock, #isx-b4row, #isx-help, #isx-about, #isx-tourb, #isx-mis, .hud-top .er-ps, .hud-top .kl):not(.wl-in) {
   visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 #isx-root .wl-pop { animation: wl-pop .3s cubic-bezier(.22, .61, .36, 1) both; }
 #isx-root .wl-fade { animation: wl-fade .4s ease both; }

@@ -127,3 +127,31 @@ html.isx-enlock, html.isx-enlock body { overflow: hidden; }
 #isx-root .brand .kicker .en-tabx .sm { display: none; }
 @media (max-width: 760px) { #isx-root .brand .kicker .en-tabx .lg { display: none; } #isx-root .brand .kicker .en-tabx .sm { display: inline; } }
 #isx-root .en-lv .en-say { font-size: 12.5px; color: #93a5b6; }
+
+/* help menu (20 Nov 2026): one “?” in the header holds “About this map” / “How this tab works” and the Tour, so the header stays short
+   and the tab bar keeps its room. The buttons keep their ids; inside the menu they are plain rows. */
+#isx-root .brand .kicker .hlp { position: relative; display: inline-block; vertical-align: middle; margin-left: 8px; pointer-events: auto; }
+#isx-root .brand .kicker .hlpb { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border-radius: 50%;
+  border: 1px solid color-mix(in srgb, #ffb547 50%, #243444); background: color-mix(in srgb, #ffb547 8%, #0b131b); color: #ffd27a; cursor: pointer; }
+#isx-root .brand .kicker .hlpb:hover, #isx-root .brand .kicker .hlp.on .hlpb { color: #fff; border-color: #ffb547; background: color-mix(in srgb, #ffb547 18%, #0b131b); box-shadow: 0 0 14px rgba(255, 181, 71, .28); }
+#isx-root .brand .kicker .hlpb:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .brand .kicker .hlpm { position: absolute; z-index: 60; top: calc(100% + 8px); left: -4px; min-width: 228px; padding: 6px; border-radius: 12px;
+  border: 1px solid #2c3c4c; background: rgba(9, 15, 22, .97); box-shadow: 0 14px 40px rgba(0, 0, 0, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+#isx-root .brand .kicker .hlpm[hidden] { display: none; }
+#isx-root .brand .kicker .hlpm > button:not([hidden]) { display: flex; align-items: center; gap: 9px; width: 100%; height: auto; margin: 0; padding: 9px 10px; border: 0; border-radius: 8px;
+  background: none; box-shadow: none; color: #c9d4de; font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; text-align: left; white-space: nowrap; cursor: pointer; }
+#isx-root .brand .kicker .hlpm > button svg { flex: none; color: #ffd27a; }
+#isx-root .brand .kicker .hlpm > button:hover, #isx-root .brand .kicker .hlpm > button:focus-visible { background: rgba(255, 181, 71, .12); color: #fff; outline: none; }
+#isx-root .brand .kicker .hlpm > button span { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+#isx-root .brand .kicker .hlpm .en-tabx .lg { display: inline; }
+#isx-root .brand .kicker .hlpm .en-tabx .sm { display: none; }
+#isx-root .brand .kicker .hlpm > button.wl-tb { margin-left: 0; }
+#isx-root.hlp-open .hud-top { z-index: 40; }   /* above the stat cards and the panels while the menu is open */
+@media (max-width: 600px) { #isx-root .brand .kicker .hlpm { min-width: 210px; left: auto; right: -4px; } }
+
+/* the tab bar fits its frame (20 Nov 2026; set by v2/enter.js when the bar would overflow): short labels first, then tighter padding */
+#isx-root.st-short .seg button .lg, #isx-root.st-short .st-fin .lg { display: none !important; }
+#isx-root.st-short .seg button .sm, #isx-root.st-short .st-fin .sm { display: inline !important; }
+#isx-root.st-tight.strip-on .strip3 .seg button { padding: 0 11px; letter-spacing: .07em; }
+#isx-root.st-tight.strip-on .st-ctx .tp, #isx-root.st-tight.strip-on .st-ctx .mswitch button, #isx-root.st-tight.strip-on .st-fin button { padding: 0 10px; }
+#isx-root.st-tight.strip-on .st-div { margin: 7px 6px; }

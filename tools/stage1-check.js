@@ -23,7 +23,7 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   await p.waitForTimeout(3000);
   /* 19 Nov 2026 (Elias): the first card is gone, so no card shows and no controls are held back for it */
   ok('first card: none shows, and the controls are not held back', await p.evaluate(() => !document.querySelector('#isx-insight.in') && !document.getElementById('isx-root').classList.contains('isx-quiet')));
-  await p.click('#isx-about'); await p.waitForTimeout(600);
+  await p.click('#isx-helpb'); await p.click('#isx-about'); await p.waitForTimeout(600);
   ok('“About this map” still opens the entry text', await p.evaluate(() => !!document.querySelector('.intro6')));
   ok('no page errors (first moment)', p._errs.length === 0, p._errs); await p.context().close();
 

@@ -12,8 +12,8 @@ let pass = 0, fail = 0;
 const ok = (name, cond, info) => { if (cond) { pass++; console.log('  ok   ' + name); } else { fail++; console.log('  FAIL ' + name + (info !== undefined ? ' :: ' + JSON.stringify(info).slice(0, 500) : '')); } };
 /* keep everything else on the page quiet; the welcome's own key stays unset */
 const QUIET = { 'isx-simtour': 'off', 'isx-insights': 'off', 'isx-tips-globe': 'off' };
-const PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-legbox', '#isx-zoom'], ['#isx-resbar'], ['#isx-strip', '.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-about', '#isx-tourb', '#isx-mis']];
-const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], ['.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-b4row', '#isx-about', '#isx-tourb']];
+const PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-legbox', '#isx-zoom'], ['#isx-resbar'], ['#isx-strip', '.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-help', '#isx-mis']];
+const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], ['.hud-top .seg'], ['#isx-tgl'], ['#isx-dock', '#isx-b4row', '#isx-help']];
 
 (async () => {
   const b = await chromium.launch(), errors = [];
@@ -166,8 +166,9 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], 
   if (want(5)) {
     console.log('5 · Tour, and deep links');
     let p = await page('#profit', { ls: { 'isx-intro': 'toured', 'isx-enter': 'off' }, wait: 1200 });
+    await p.click('#isx-helpb'); await p.waitForTimeout(200);   /* 20 Nov 2026: the Tour sits in the “?” menu */
     let r = await p.evaluate(() => { const t = document.getElementById('isx-tourb'); return { vis: t.getClientRects().length > 0, lab: t.getAttribute('aria-label'), next: t.previousElementSibling && t.previousElementSibling.id, ban: !!document.getElementById('isx-wlban') }; });
-    ok('“Tour” in the header, beside “How this tab works” (19 Nov 2026: in place of “About this map” on the four tabs), on every tab; no offer once the tour is taken', r.vis && /^Tour/.test(r.lab) && r.next === 'isx-tabx' && !r.ban, r);
+    ok('“Tour” in the header’s “?” menu, under “How this tab works” (20 Nov 2026), on every tab; no offer once the tour is taken', r.vis && /^Take the 1-minute tour/.test(r.lab) && r.next === 'isx-tabx' && !r.ban, r);
     await p.click('#isx-tourb'); await p.waitForFunction(() => ISX.tour.on, null, { timeout: 8000 }).catch(() => {}); await settle(p);
     r = await p.evaluate(() => ({ v: ISX.view, at: ISX.welcome.at, stage: document.getElementById('isx-root').classList.contains('wl-stage'), wl: !!document.querySelector('#isx-wl') }));
     ok('from another tab it switches to the Circuit and runs the tour from stop 1 (no welcome), on the bare map again', r.v === 'map' && r.at === 1 && r.stage && !r.wl, r);

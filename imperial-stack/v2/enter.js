@@ -83,7 +83,7 @@
       + '<div class="en-b">' + c.b.map(function (b) { return '<section' + r() + '><h3>' + esc(b[0]) + '</h3><p>' + txt(b[1]) + '</p></section>'; }).join('') + '</div>'
       + '<div' + r().replace('en-r', 'en-r en-acts') + '>' + c.acts.map(function (a, j) { return '<button type="button" class="en-btn' + (j ? '' : ' pri') + '" data-en="' + a[0] + '"' + (a[0] === 'remind' ? ' data-remind="enter"' : '') + (a[0] === 'levels' || a[0] === 'stops' ? ' aria-expanded="false" aria-controls="isx-en-more"' : '') + '>' + (a[2] ? '<span class="en-bt">' : '') + esc(a[1]) + (j ? '' : ' <span aria-hidden="true">→</span>') + (a[2] ? '</span><small>' + esc(a[2]) + '</small>' : '') + '</button>'; }).join('') + '</div>'
       + '<div class="en-more" id="isx-en-more" hidden></div>'
-      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. “How this tab works”, at the top left, opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
+      + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. The ? at the top left opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
       + '</div></div>';
     return h;
   }
@@ -215,10 +215,62 @@
   }
   function syncTabx() {
     var c = T[X.view];
-    if (tx) { tx.hidden = !c; tx.setAttribute('aria-label', U.PHONE() ? 'How it works' : 'How this tab works'); tx.setAttribute('aria-expanded', String(!!live)); if (c) tx.title = 'The introduction to ' + c.k.replace(/^The /, 'the '); }   /* the spoken name is the drawn one */
+    if (tx) { tx.hidden = !c; tx.setAttribute('aria-label', 'How this tab works'); tx.setAttribute('aria-expanded', String(!!live)); if (c) tx.title = 'The introduction to ' + c.k.replace(/^The /, 'the '); }   /* the spoken name is the drawn one */
     if (ab) ab.hidden = !!c;
   }
   X.on('view', syncTabx); syncTabx(); window.addEventListener('resize', syncTabx);
+
+  /* help menu (20 Nov 2026): “About this map” / “How this tab works” and the Tour no longer sit as separate pills in the header – they pushed
+     the tab bar (Crisis · coming soon, the Simulator) off the right edge. One “?” opens a small menu with them; the buttons keep their ids
+     and handlers, they only move into the menu. The menu closes before an item's own handler runs, so focus comes back to the “?”. */
+  var tb = $('tourb'), hw = null, hb = null, hm = null;
+  if (ab && ab.parentNode) {
+    hw = document.createElement('span'); hw.className = 'hlp'; hw.id = 'isx-help';
+    hw.innerHTML = '<button type="button" class="hlpb" id="isx-helpb" aria-haspopup="menu" aria-expanded="false" aria-controls="isx-helpm" aria-label="Help: how this works and the tour" title="Help">'
+      + '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17.2v.01"/></svg></button>'
+      + '<div class="hlpm" id="isx-helpm" role="menu" aria-label="Help" hidden></div>';
+    ab.parentNode.insertBefore(hw, ab);
+    hb = hw.firstChild; hm = hw.lastChild;
+    [ab, tx, tb].forEach(function (b) { if (b) { b.setAttribute('role', 'menuitem'); b.tabIndex = -1; hm.appendChild(b); } });
+    if (tb) { var tl = tb.querySelector('span'); if (tl) tl.textContent = 'Take the 1-minute tour'; tb.setAttribute('aria-label', 'Take the 1-minute tour of the map'); }
+    var items = function () { return [].slice.call(hm.querySelectorAll('[role="menuitem"]')).filter(function (b) { return !b.hidden; }); };
+    var hset = function (on, focusFirst) {
+      hm.hidden = !on; hb.setAttribute('aria-expanded', String(on)); hw.classList.toggle('on', on); root.classList.toggle('hlp-open', on);
+      if (on && focusFirst) { var f = items()[0]; if (f) f.focus(); }
+    };
+    hb.addEventListener('click', function () { hset(hm.hidden, false); });
+    hb.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown' || ((e.key === 'Enter' || e.key === ' ') && hm.hidden)) { e.preventDefault(); hset(true, true); } });
+    hm.addEventListener('click', function (e) { if (e.target.closest('[role="menuitem"]')) { hset(false); hb.focus({ preventScroll: true }); } }, true);
+    hm.addEventListener('keydown', function (e) {
+      var L = items(), i = L.indexOf(document.activeElement);
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); hset(false); hb.focus(); }
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); e.stopPropagation(); var n = L[(i + (e.key === 'ArrowDown' ? 1 : -1) + L.length) % L.length]; if (n) n.focus(); }
+      else if (e.key === 'Tab') hset(false);
+    });
+    document.addEventListener('pointerdown', function (e) { if (!hm.hidden && !hw.contains(e.target)) hset(false); }, true);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !hm.hidden) { hset(false); } });
+    X.on('view', function () { if (!hm.hidden) hset(false); });
+  }
+
+  /* the tab bar fits its frame (20 Nov 2026): the long labels (“The imperial machinery”, “Crisis simulation”) switch on by window width,
+     but the frame stops growing at about 1600 px, so on wide screens the bar ran past its edge and cut off the coming-soon tabs. When the
+     bar would overflow, the short labels take over (st-short), then tighter padding (st-tight). Measured against the header, which does not
+     change size with the labels, so the check cannot loop. */
+  var strip = $('strip'), hud = strip && strip.closest('.hud-top'), fitT = 0;
+  function fitStrip() {
+    if (!strip) return;
+    root.classList.remove('st-short', 'st-tight');
+    if (!strip.getClientRects().length || U.PHONE()) return;
+    var over = function () { return strip.scrollWidth > strip.clientWidth + 1; };
+    if (over()) { root.classList.add('st-short'); if (over()) root.classList.add('st-tight'); }
+  }
+  var fitSoon = function () { clearTimeout(fitT); fitT = setTimeout(fitStrip, 60); };
+  if (strip) {
+    if (window.ResizeObserver && hud) new ResizeObserver(fitSoon).observe(hud); else window.addEventListener('resize', fitSoon);
+    X.on('view', function () { fitSoon(); setTimeout(fitStrip, 400); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
+    window.addEventListener('load', fitSoon); fitStrip();
+  }
 
   /* what the reminder says when it is set from an entry screen (v2/remind.js asks) */
   X.remindCtx = function (k) {
