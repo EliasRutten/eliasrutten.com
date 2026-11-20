@@ -6577,7 +6577,13 @@ function initIntro() {
   ROOT.classList.remove('booting'); /* the page may now show; the overlay is already in place */
   const ab = $('about'); if (ab) ab.addEventListener('click', () => introOpen());
   const h1 = ROOT.querySelector('.hud-top .brand h1');
-  if (h1) { h1.classList.add('introlink'); h1.title = 'About this map: replay the introduction'; h1.addEventListener('click', () => introOpen()); }
+  /* The title is the way home: it returns to the Circuit, from any tab (on the Circuit: back to step 00, nothing selected).
+     It no longer opens the old introduction; “About this map” still does. During the welcome nothing happens: the visitor is already at the front door. */
+  if (h1) { h1.classList.add('introlink'); h1.title = 'Back to the circuit'; h1.addEventListener('click', () => {
+    if (introEl || ROOT.classList.contains('wl-stage')) return;
+    if (view !== 'map') { setView('map'); return; }
+    select(null); setStep(0);
+  }); }
   /* v2: the page opens straight on the instrument. The first moment (v2/insight.js) replaces the automatic entry screen and tips;
      “About this map” still opens this screen and “How to use the globe”, under the map, still opens the tips. */
 }
