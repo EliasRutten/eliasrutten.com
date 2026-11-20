@@ -298,8 +298,8 @@
 #isx-root .espop .shi:focus-visible, #isx-root .espop .es-all:focus-visible { outline: 2px solid #ffb547; outline-offset: 1px; }
 #isx-root .espop .shi small { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.3; font-weight: 400; color: var(--ink2); }
 #isx-root .espop .shi .sx { flex: none; font-family: var(--mono); font-size: 12px; color: var(--ink3); }
-#isx-root .espop .es-th { border-color: rgba(255, 103, 25, .5); background: rgba(255, 103, 25, .08); }
-#isx-root .espop .es-th .sl { font-family: var(--display); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 13.5px; color: #ffb48a; }
+#isx-root .espop .es-th, #isx-root .espop .es-pre { border-color: rgba(255, 103, 25, .5); background: rgba(255, 103, 25, .08); }
+#isx-root .espop .es-th .sl, #isx-root .espop .es-pre .sl { font-family: var(--display); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 13.5px; color: #ffb48a; }
 #isx-root .espop .es-k { margin: 10px 4px 4px; padding-top: 8px; border-top: 1px dashed #23323f; font: 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
 #isx-root .espop .es-all { display: inline-block; margin: 8px 6px 2px; font: 500 12px/1.3 var(--sans); color: #c9d4de; text-decoration: underline; text-decoration-color: rgba(154, 171, 186, .5); text-underline-offset: 3px; }
 @media (pointer: coarse) { #isx-root .espop .shi { min-height: 46px; } }

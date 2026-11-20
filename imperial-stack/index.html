@@ -3933,6 +3933,7 @@ function essayKey() {
    is never presented as the whole: the button never says “Essay” on its own. A click opens a small panel: the thesis line (subscribe),
    then up to three related pieces for this place, the contextual one first, each with its date. Elias's choice to reverse if he wants. */
 const THESIS_SUB = 'https://eliasrutten.substack.com/subscribe';
+const PRELIM = 'https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it';
 function relatedKeys() {
   const E = SECTION_ESSAY, k = essayKey(), more = view === 'arm' ? Object.values(E.arm).concat(E.revenue) : view === 'fin' ? [E.simulator].concat(Object.values(E.simChapter), Object.values(E.simEp), E.simYen, E.simStable) : view === 'story' ? [E.scenarios].concat(Object.values(E.scenario)) : view === 'profit' ? [E.profit, 'bubble'] : [E.circuit, E.circuitClose, E.minerals];
   return [...new Set([k, ...more, 'house', 'grandma', 'bubble'])].filter(x => ESSAYS[x]).slice(0, 3);
@@ -3947,7 +3948,8 @@ function dockEssay() {
 let esOpen = null;
 function esFill() {
   const L = $('es-list'); if (!L) return;
-  L.innerHTML = `<a class="shi es-th" href="${THESIS_SUB}" target="_blank" rel="noopener"><span class="sl">The thesis · coming soon<small>One essay explaining the whole map. Subscribe to get it.</small></span><span class="sx" aria-hidden="true">↗</span></a>`
+  L.innerHTML = `<a class="shi es-pre" href="${PRELIM}" target="_blank" rel="noopener"><span class="sl">Preliminary thesis<small>Nov 2026 · A first version of the argument, on Substack.</small></span><span class="sx" aria-hidden="true">↗</span></a>`
+    + `<a class="shi es-th" href="${THESIS_SUB}" target="_blank" rel="noopener"><span class="sl">The full thesis · coming soon<small>One essay explaining the whole map. Subscribe to get it.</small></span><span class="sx" aria-hidden="true">↗</span></a>`
     + `<div class="es-k">Related pieces</div>` + relatedKeys().map(x => { const E = ESSAYS[x]; return `<a class="shi es-rel" href="${E[1]}" target="_blank" rel="noopener" data-es="${x}"><span class="sl">${esc(E[0])}<small>${esc(E[2])}</small></span><span class="sx" aria-hidden="true">↗</span></a>`; }).join('')
     + `<a class="es-all" href="https://eliasrutten.substack.com" target="_blank" rel="noopener">All pieces on Substack ↗</a>`;
 }
