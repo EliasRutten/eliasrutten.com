@@ -4,7 +4,7 @@
    3 the layout at five sizes (no sideways scroll; from 1200 px wide the board ends above the bar; on phones the statistics come first) ·
    4 links in and out, the locked doors, the ring's fourth door · 5 the name lines are gone and the credit line is there · 6 hints */
 const { chromium } = require('playwright');
-const base = process.argv.slice(2).find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
+const base = process.argv.slice(2).find(a => /^(https?|file):/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';   /* file: the single-file build (tools/artifact-build.py), when no server is at hand */
 let fail = 0, n = 0;
 const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else if (process.env.V) console.log('ok    ' + t); };
 (async () => {
@@ -63,7 +63,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   ok(await p.evaluate(() => [...document.querySelectorAll('.rgdoor')].map(a => a.dataset.door).join()) === 'profit,simulator,elite-network,imperial-arm', 'the ring has four doors, the profit dollar first');
   await p.click('.rgdoor[data-door="profit"]'); await ready(p);
   ok(await p.evaluate(() => ISX.view === 'profit'), 'the ring’s door opens the tab');
-  ok(await p.evaluate(() => { ISX.profit.go(0); const a = document.querySelectorAll('#isx-pf-text .pf-door.lock'); ISX.profit.go(2); const d = document.querySelectorAll('#isx-pf-text .pf-door.lock'); return a.length === 2 && d.length === 1 && /coming soon/.test(d[0].textContent) && !d[0].matches('button, a'); }), 'three locked Atlas doors, none of them a control');
+  ok(await p.evaluate(() => { ISX.profit.go(0); const a = document.querySelectorAll('#isx-pf-text .pf-door.lock'); ISX.profit.go(2); const d = document.querySelectorAll('#isx-pf-text .pf-door.lock'); const open = document.querySelectorAll('#isx-pf-text').length; ISX.profit.go(0); const fw = document.querySelectorAll('#isx-pf-text button.pf-door[data-pfw]'); return open && a.length === 0 && fw.length === 2 && d.length === 1 && /coming soon/.test(d[0].textContent) && !d[0].matches('button, a'); }), 'station 1: the two doors to the firm web are open (firm web build, 20 Nov); one locked Atlas door is left, not a control');
   ok(await p.evaluate(() => { ISX.profit.go(5); return [...document.querySelectorAll('#isx-pf-fin [data-pgo]')].map(b => b.dataset.pgo).join(); }) === 'simulator,elite-network,imperial-arm', 'the finale has three doors out');
   await p.click('#isx-pf-fin [data-pgo="elite-network"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => ISX.view === 'arm'), 'a door out opens its tab');

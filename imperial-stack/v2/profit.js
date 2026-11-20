@@ -75,7 +75,7 @@
         'The national accounts measure the same thing by owner: profits earned in the US economy, less what foreign owners take out of it, plus what US owners receive from abroad. In 2025 US owners received $1,064bn from abroad, 26.4% of the profits of US-owned firms; net of what foreign owners took out of the US, 12.7%. Two measures, never added: Forbes counts firms by headquarters, the national accounts by owner.',
         'The listing premium, measured: US-listed firms were 48.8% of the world’s stock-market value at the end of 2025, with 26.1% of world GDP. On the World Federation of Exchanges’ own world total for 2025 the share is about 45%. Equity raised on exchanges by year is not collected yet, so the premium is shown for market value only.'],
       src: ['forbes', 'imfg', 'bea', 'z1e', 'z1t', 'tic', 'wb', 'wfe'],
-      doors: [{ lock: 1, t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { lock: 1, t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
+      doors: [{ fw: 'type', t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { fw: 'country', t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
     { id: 'technology', t: 'Technology', f: 'Profit capture 1.62 · 2026 list', q: 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.',
       views: [['tri', 'Three ways'], ['nat', 'By nationality'], ['roc', 'Return on capital']],
       x: 'Profits this large have to be secured. The surest way is to hold the most sophisticated technology, and to hold it three ways at once: through economics, the markets and the finance that fund it; through coercion, the export controls, sanctions and tariffs that keep rivals from it; and through code, the patents, chips, platforms and standards everyone else has to use.',
@@ -183,7 +183,7 @@
     ['k', 'q', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
     R.top = host.querySelector('.pf-top');
     host.addEventListener('click', e => {
-      const b = e.target.closest('[data-pf], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pl], [data-ps], [data-pzk], [data-pgo], [data-pweb]'); if (!b) return;
+      const b = e.target.closest('[data-pf], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pl], [data-ps], [data-pzk], [data-pgo], [data-pweb], [data-pfw]'); if (!b) return;
       const d = b.dataset;
       if (d.pv) { setV(d.pv); }
       else if (d.pvn) { stepV(+d.pvn); }
@@ -206,6 +206,7 @@
       else if (d.pf === 'read') { R.text.scrollIntoView({ behavior: X.reduce ? 'auto' : 'smooth', block: 'start' }); R.text.focus({ preventScroll: true }); }
       else if (d.pf === 'how') { const m = $('method'), f = m && m.classList.contains('shut') ? m.querySelector(':scope > .fold6') : null; if (f) f.click(); }
       else if (d.pgo) { X.setView(d.pgo === 'simulator' ? 'fin' : d.pgo === 'imperial-arm' ? 'story' : d.pgo === 'elite-network' ? 'arm' : d.pgo); $('frame').scrollIntoView({ block: 'start' }); }
+      else if (d.pfw) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.firms) X.firms.open({ by: d.pfw, from: 'profit' }); }, 60); }
       else if (d.pweb != null) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.web) X.web.open(); }, 60); }
     });
     /* the views are swiped on phones (the chart is marked data-noswipe, so the bar's own swipe between stations leaves it alone) */
@@ -244,6 +245,7 @@
       + `<article class="pf-side">${s.doors.length ? `<div class="pf-ck">Go deeper</div><div class="pf-doors">${s.doors.map(door).join('')}</div>` : ''}<div class="pf-ck">Sources</div><p class="pf-src">${src}</p></article>`;
   }
   const door = d => d.lock ? `<div class="pf-door lock" role="group" aria-label="${esc(d.t)}: coming soon"><span class="dl">${LOCK}<b>${esc(d.t)}</b><em>coming soon</em></span><small>${esc(d.s)}</small></div>`
+    : d.fw ? `<button type="button" class="pf-door" data-pfw="${d.fw}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`   /* firm web build (20 Nov 2026): the two Atlas doors of station 1 are open */
     : d.web ? `<button type="button" class="pf-door" data-pweb><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`
     : `<button type="button" class="pf-door go" data-pgo="${d.go}" style="--dc:${d.c}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`;
   /* the finale: one screen, no chart. The title, four plain lines that arrive one at a time, the locked crisis simulator, the doors out */

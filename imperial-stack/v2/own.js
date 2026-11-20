@@ -155,6 +155,7 @@
       var f = X.sel.firm, g = X.globe, pv = has(f) && centre(OWN.firms[f.name], b.dataset.iso);
       if (pv && g) { try { g.controls().autoRotate = false; g.pointOfView(pv, X.reduce ? 0 : 1100); } catch (err) { /* ignore */ } }
     }
+    else if (b.dataset.own === 'fweb') { if (X.firms) X.firms.open({ firm: X.firms.idOf(b.dataset.name) }); }
     else if (b.dataset.own === 'firm') { var t = X.data.FIRMS.filter(function (x) { return x.name === b.dataset.name; })[0]; if (t) X.select(t.iso, t); }
   });
   function roleRows(o) { var seen = [], h = ''; (o.sites || []).forEach(function (s) { if (seen.indexOf(s.role) < 0) { seen.push(s.role); h += '<div class="lr"><i class="ownk site r-' + s.role + '"></i><span>' + U.esc((OWN.roles[s.role] || OWN.roles.site)[0]) + '</span></div>'; } }); return h; }
@@ -192,6 +193,7 @@
     d.innerHTML = '<dl class="ownd">'
       + '<dt>Home</dt><dd>' + U.esc(o.legal) + ' · ' + U.esc(o.seat.city) + ', ' + U.esc(cname(o.seat.iso)) + '<br><span class="dim">' + U.esc(o.listing) + '</span></dd>'
       + '<dt>Owners</dt><dd><span class="octl c-' + o.control + '">' + U.esc(CONTROL[o.control] || '') + '</span>' + (hold ? '<ul class="ownl">' + hold + '</ul>' : '<p class="ownno">Not yet mapped.</p>') + '</dd>'
+      + '<dt>Profits</dt><dd><button type="button" class="ownf" data-own="fweb" data-name="' + U.esc(f.name) + '">Its profit and whose it is, in the firm web →</button></dd>'   /* firm web build (20 Nov 2026): every firm with a record here is on the firm web's ring */
       + '<dt>Operates</dt><dd>' + (sites ? '<ul class="ownl sites">' + sites + '</ul>' : '<p class="ownno">Sites not yet mapped.</p>') + '</dd>'
       + (links ? '<dt>On this map</dt><dd><ul class="ownl links">' + links + '</ul></dd>' : '')
       + (o.open && o.open.length ? '<dt>Still open</dt><dd><ul class="ownl open">' + o.open.map(function (t) { return '<li>' + U.esc(t) + '</li>'; }).join('') + '</ul></dd>' : '')

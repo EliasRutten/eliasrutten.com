@@ -1,0 +1,123 @@
+/* The Imperial Stack v2 · firms.css · the firm web with profits and owners (v2/firms.js).
+   It sits on the ownership web's stage (.web3 in stage3.css: the background, the card, the close button) and adds its own
+   ring, marks, bars and table. Holder colours are the profit dollar's checked set: gold, teal, red, blue, purple. */
+#isx-root .web3.fw { --fw-manager: #c4861c; --fw-founder: #19a88f; --fw-state: #e2574c; --fw-firm: #4a8be6; --fw-employees: #a672e0; --fw-other: #9aabba; --fw-pass: #6b7d8c; }
+#isx-root .web3.fw .wstage { display: grid; grid-template-rows: auto minmax(0, 1fr); place-items: stretch; gap: 6px; top: 82px; }
+#isx-root .web3.fw svg { min-height: 0; min-width: 0; }
+#isx-root .web3.fw .wstage.tab svg, #isx-root .web3.fw .wstage.tab .wkey, #isx-root .web3.fw .wstage:not(.tab) .fwtab { display: none; }
+#isx-root .web3.fw .wcard { border-color: #2a3947; }
+#isx-root .web3.fw .wk3 { color: #ffb547; } #isx-root .web3.fw .wk3.sub { color: var(--ink2); }
+#isx-root .web3.fw .wk3.t-state { color: #f08a80; } #isx-root .web3.fw .wk3.t-founder { color: #4fd0b8; } #isx-root .web3.fw .wk3.t-firm { color: #8fb8f5; } #isx-root .web3.fw .wk3.t-employees { color: #c9a6f0; } #isx-root .web3.fw .wk3.t-other, #isx-root .web3.fw .wk3.t-pass { color: var(--ink2); }
+
+/* the tile in the Firms tray */
+#isx-root .tray2 .t2web.t2fw { border-color: rgba(255, 181, 71, .5); background: linear-gradient(180deg, rgba(255, 181, 71, .13), rgba(255, 181, 71, .03)); }
+#isx-root .tray2 .t2web.t2fw:hover { border-color: #ffb547; background: rgba(255, 181, 71, .2); }
+#isx-root .tray2 .t2web.t2fw i { border-color: #ffb547; background: radial-gradient(circle, #ffb547 0 2px, transparent 3px), radial-gradient(circle at 78% 30%, #e4ebf1 0 2.5px, transparent 3px), radial-gradient(circle at 22% 68%, #e4ebf1 0 1.5px, transparent 2px); }
+
+/* the filter row */
+#isx-root .fw .fwbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-height: 38px; }
+#isx-root .fw .fsel { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 2px 0 9px; border-radius: 999px; border: 1px solid #2a3947; background: var(--glass); }
+#isx-root .fw .fsel span { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
+#isx-root .fw .fsel select { appearance: none; -webkit-appearance: none; max-width: 168px; height: 30px; padding: 0 22px 0 4px; border: 0; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239aabba' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 8px center; color: var(--ink); font: 500 12.5px var(--sans); text-overflow: ellipsis; cursor: pointer; }
+#isx-root .fw .fsel select option { background: #0e1626; color: #e4ebf1; }
+#isx-root .fw .fsel.set { border-color: #ffb547; } #isx-root .fw .fsel.set select { color: #ffd28a; }
+#isx-root .fw .fsel:focus-within { outline: 2px solid #ffb547; outline-offset: 2px; } #isx-root .fw .fsel select:focus { outline: none; }
+#isx-root .fw .fgap { flex: 1; }
+#isx-root .fw .fbtn { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px; border-radius: 999px; border: 1px solid #2a3947; background: var(--glass); color: var(--ink); font: 500 12.5px var(--sans); cursor: pointer; white-space: nowrap; }
+#isx-root .fw .fbtn:hover { border-color: #8fa3b6; color: #fff; }
+#isx-root .fw .fcalm i { width: 24px; height: 14px; border-radius: 999px; background: #22313f; position: relative; transition: background .2s; }
+#isx-root .fw .fcalm i::after { content: ""; position: absolute; left: 2px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #9aabba; transition: transform .2s, background .2s; }
+#isx-root .fw .fcalm[aria-checked="true"] { border-color: #ffb547; } #isx-root .fw .fcalm[aria-checked="true"] i { background: rgba(255, 181, 71, .35); } #isx-root .fw .fcalm[aria-checked="true"] i::after { transform: translateX(10px); background: #ffb547; }
+
+/* the ring */
+#isx-root .fw .farc { fill: none; stroke: #263646; stroke-width: 1; }
+#isx-root .fw .frim { fill: none; stroke: #33475a; stroke-width: 1.2; stroke-linecap: round; }
+#isx-root .fw .farct { font-family: var(--mono); font-size: 9px; letter-spacing: .14em; fill: var(--ink2); }
+#isx-root .fw .fk { fill: none; stroke-linecap: round; opacity: .42; transition: opacity .2s; }
+#isx-root .fw .fk.t-manager { stroke: var(--fw-manager); } #isx-root .fw .fk.t-founder { stroke: var(--fw-founder); } #isx-root .fw .fk.t-state { stroke: var(--fw-state); } #isx-root .fw .fk.t-firm { stroke: var(--fw-firm); }
+#isx-root .fw .fk.t-employees { stroke: var(--fw-employees); } #isx-root .fw .fk.t-other { stroke: var(--fw-other); } #isx-root .fw .fk.t-pass { stroke: var(--fw-pass); }
+#isx-root .fw .fk.na { stroke-dasharray: 1.5 3.5; opacity: .5; } #isx-root .fw .fk.neg { stroke-dasharray: 5 3; }
+#isx-root .fw .fnode { cursor: pointer; transition: opacity .2s; } #isx-root .fw .fnode:focus { outline: none; }
+#isx-root .fw .fnode .ft { font-family: var(--display); font-weight: 600; font-size: 11.5px; letter-spacing: .04em; fill: #dbe4ec; paint-order: stroke; stroke: #070b13; stroke-width: 3px; stroke-linejoin: round; }
+#isx-root .fw .fnode.firm .fm { fill: rgba(228, 235, 241, .16); stroke: #e4ebf1; stroke-width: 1.3; }
+#isx-root .fw .fnode.firm.loss .fm { fill: none; stroke: #ff8a5c; stroke-dasharray: 3 2.5; }
+#isx-root .fw .fnode.firm.none .fm { fill: none; stroke: #7d8fa0; stroke-dasharray: 1.5 2.5; } #isx-root .fw .fnode.firm.none .ft { fill: var(--ink2); }
+#isx-root .fw .fnode.sector .fm { fill: none; stroke: #7d8fa0; stroke-width: 1.1; stroke-dasharray: 2 2; } #isx-root .fw .fnode.sector .ft { fill: var(--ink3); font-weight: 500; font-style: italic; }
+#isx-root .fw .fnode.holder .fm { stroke: #070b13; stroke-width: .8; }
+#isx-root .fw .fnode.t-manager .fm { fill: var(--fw-manager); } #isx-root .fw .fnode.t-founder .fm { fill: var(--fw-founder); } #isx-root .fw .fnode.t-state .fm { fill: var(--fw-state); } #isx-root .fw .fnode.t-firm .fm { fill: var(--fw-firm); } #isx-root .fw .fnode.t-employees .fm { fill: var(--fw-employees); }
+#isx-root .fw .fnode.t-other .fm { fill: #0b131c; stroke: var(--fw-other); stroke-width: 1.1; } #isx-root .fw .fnode.t-pass .fm { fill: #0b131c; stroke: var(--fw-pass); stroke-width: 1.1; stroke-dasharray: 1.6 1.6; }
+#isx-root .fw .fnode.holder.neg .fm { fill: #0b131c; stroke: #ff8a5c; stroke-width: 1.1; stroke-dasharray: 3 2; }
+#isx-root .fw .fnode.holder .ft { font-size: 9.5px; font-weight: 500; fill: #f1f5f8; opacity: 0; pointer-events: none; transition: opacity .2s; }
+#isx-root .fw .fnode.holder.multi .ft, #isx-root .fw svg.hl .fnode.holder.on:not(.one) .ft, #isx-root .fw svg.hl .fnode.holder.sel .ft, #isx-root .fw .fnode.holder:hover .ft, #isx-root .fw .fnode.holder:focus-visible .ft { opacity: 1; }
+#isx-root .fw .fnode.holder.multi .ft { font-size: 11px; font-weight: 600; }
+#isx-root .fw .fnode:hover .fm { stroke: #fff; }
+#isx-root .fw .fnode.sel .fm, #isx-root .fw .fnode:focus-visible .fm { stroke: #ffb547; stroke-width: 2.2; stroke-dasharray: none; }
+#isx-root .fw .fnode.sel .ft { fill: #ffb547; }
+#isx-root .fw svg.hl .fk { opacity: .05; } #isx-root .fw svg.hl .fk.on { opacity: .95; }
+#isx-root .fw svg.hl .fnode:not(.on) { opacity: .2; }
+#isx-root .fw svg.flt .fk.off { opacity: .03; } #isx-root .fw svg.flt .fnode.off { opacity: .14; }
+#isx-root .fw svg.flt:not(.hl) .fk:not(.off) { opacity: .8; } #isx-root .fw svg.flt .fnode.holder:not(.off):not(.one) .ft { opacity: 1; }
+/* calm: only the picked mark and what it touches; with nothing picked, the firms alone */
+#isx-root .fw svg.calm .fk:not(.on), #isx-root .fw svg.calm .fnode.holder:not(.on) { display: none; }
+#isx-root .fw svg.calm.hl .fnode:not(.on) { opacity: .1; }
+#isx-root .fw svg.calm.flt:not(.hl) .fk:not(.off), #isx-root .fw svg.calm.flt:not(.hl) .fnode.holder:not(.off) { display: inline; }
+/* the key */
+#isx-root .web3.fw .wkey { display: grid; gap: 4px; left: 0; bottom: 0; font-size: 11px; pointer-events: none; }
+#isx-root .web3.fw .wkey i { width: 16px; height: 0; border-top: 3px solid var(--fw-other); }
+#isx-root .web3.fw .wkey i.t-manager { border-color: var(--fw-manager); } #isx-root .web3.fw .wkey i.t-founder { border-color: var(--fw-founder); } #isx-root .web3.fw .wkey i.t-state { border-color: var(--fw-state); } #isx-root .web3.fw .wkey i.t-firm { border-color: var(--fw-firm); } #isx-root .web3.fw .wkey i.t-employees { border-color: var(--fw-employees); }
+#isx-root .web3.fw .wkey i.k-loss { width: 11px; height: 11px; border: 1.3px dashed #ff8a5c; border-radius: 50%; margin: 0 2.5px; } #isx-root .web3.fw .wkey i.k-na { border-top: 2px dotted #9aabba; }
+#isx-root .web3.fw .wkey i.k-sec { width: 9px; height: 9px; border: 1.1px dashed #7d8fa0; border-radius: 2px; margin: 0 3.5px; }
+
+/* the card */
+#isx-root .fw .fst { text-decoration: none; color: #ffb547; cursor: help; font-weight: 600; }
+#isx-root .fw .fscope { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #ffb547; }
+#isx-root .fw .fseg { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 12px; border: 1px solid #2a3947; border-radius: 999px; padding: 2px; }
+#isx-root .fw .fseg button { height: 32px; border: 0; border-radius: 999px; background: none; color: var(--ink2); font: 500 12.5px var(--sans); cursor: pointer; }
+#isx-root .fw .fseg button[aria-pressed="true"] { background: rgba(255, 181, 71, .16); color: #ffd28a; }
+#isx-root .fw .fbars { display: grid; gap: 3px; margin-top: 10px; }
+#isx-root .fw .fbar { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: baseline; width: 100%; padding: 4px 9px 5px; border-radius: 9px; border: 1px solid transparent; background: none; color: var(--ink); text-align: left; font: 400 12.5px var(--sans); }
+#isx-root .fw button.fbar { cursor: pointer; } #isx-root .fw button.fbar:hover { border-color: #33475a; background: rgba(255, 255, 255, .03); }
+#isx-root .fw .fbar.on { border-color: #ffb547; background: rgba(255, 181, 71, .08); }
+#isx-root .fw .fbar b { font-weight: 500; } #isx-root .fw .fbar span { font-family: var(--mono); font-size: 10.5px; color: var(--ink2); white-space: nowrap; }
+#isx-root .fw .fbar i { grid-column: 1 / -1; height: 7px; border-radius: 4px; background: #131e2b; overflow: hidden; } #isx-root .fw .fbar u { display: block; height: 100%; border-radius: 4px; background: #e4ebf1; }
+#isx-root .fw .fbar.t-manager u { background: var(--fw-manager); } #isx-root .fw .fbar.t-founder u { background: var(--fw-founder); } #isx-root .fw .fbar.t-state u { background: var(--fw-state); } #isx-root .fw .fbar.t-firm u { background: var(--fw-firm); } #isx-root .fw .fbar.t-employees u { background: var(--fw-employees); } #isx-root .fw .fbar.t-other u { background: var(--fw-other); }
+#isx-root .fw .fbar.cty u { background: #c9d4de; }
+#isx-root .fw .fbar.rest { margin-top: 5px; padding-top: 9px; border-top: 1px dashed #2a3947; border-radius: 0 0 9px 9px; } #isx-root .fw .fbar.rest b { color: var(--ink2); }
+#isx-root .fw .fbar.rest u { background: repeating-linear-gradient(135deg, #5c6d7c 0 3px, #26333f 3px 6px); }
+#isx-root .fw .fhowb { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 12px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #2a3947; background: none; color: var(--ink); font: 500 12.5px var(--sans); cursor: pointer; }
+#isx-root .fw .fhowb:hover { border-color: #8fa3b6; }
+#isx-root .fw .fhow { margin: 8px 0 0; padding: 0 0 0 16px; display: grid; gap: 6px; font-size: 12.5px; line-height: 1.45; color: #c5d1db; }
+#isx-root .fw .ftiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 11px; } #isx-root .fw .ftiles.one { grid-template-columns: 1fr; }
+#isx-root .fw .ftiles > div { display: grid; gap: 3px; padding: 9px 11px; border-radius: 11px; border: 1px solid #22313f; background: rgba(255, 255, 255, .025); }
+#isx-root .fw .ftiles small { font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em; line-height: 1.35; color: var(--ink2); }
+#isx-root .fw .ftiles b { font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1; letter-spacing: .02em; color: #fff; }
+#isx-root .web3.fw .wcard p.fline { margin-top: 5px; font-size: 13px; } #isx-root .fw .fline b { display: inline-block; min-width: 54px; font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+#isx-root .fw .fown li { display: grid; grid-template-columns: 1fr auto; gap: 1px 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid #1a2633; }
+#isx-root .fw .fown li > span { grid-column: 1 / -1; font-size: 11.5px; line-height: 1.4; color: var(--ink2); } #isx-root .fw .fown li > span.fv { grid-column: 2; font-family: var(--mono); font-size: 11px; color: #fff; white-space: nowrap; }
+#isx-root .fw .fown li > small { grid-column: 1 / -1; font-size: 11px; line-height: 1.4; color: var(--ink3); } #isx-root .fw .fown li.na > span.fv { color: var(--ink2); } #isx-root .fw .fown em { font-style: normal; color: #f0b27a; }
+#isx-root .fw .fown .wlk { text-align: left; }
+#isx-root .web3.fw .wsrc a { color: inherit; text-decoration: underline; text-underline-offset: 2px; } #isx-root .web3.fw .wsrc a:hover { color: #fff; }
+
+/* the table view */
+#isx-root .fw .fwtab { overflow: auto; padding: 4px 14px 14px 2px; }
+#isx-root .fw .fwtab:focus-visible { outline: 2px solid #ffb547; outline-offset: -2px; }
+#isx-root .fw .fwtab table { width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 12.5px; }
+#isx-root .fw .fwtab caption { text-align: left; padding: 0 0 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #ffb547; }
+#isx-root .fw .fwtab th, #isx-root .fw .fwtab td { padding: 5px 10px 5px 0; border-top: 1px solid #1a2633; text-align: left; vertical-align: baseline; color: #c5d1db; font-weight: 400; }
+#isx-root .fw .fwtab thead th { position: sticky; top: 0; background: #0a111c; border-top: 0; font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+#isx-root .fw .fwtab .num { text-align: right; font-family: var(--mono); font-size: 11.5px; white-space: nowrap; color: #fff; }
+#isx-root .fw .fwtab .wlk { font-weight: 600; text-align: left; }
+
+@media (min-width: 761px) and (max-width: 1400px) { #isx-root .fw .fsel select { max-width: 120px; } #isx-root .fw .fbtn { padding: 0 11px; } }
+@media (min-width: 761px) and (max-width: 1240px) { #isx-root .web3.fw .wstage { top: 126px; } #isx-root .fw .fsel select { max-width: 104px; font-size: 12px; } #isx-root .fw .fwbar { gap: 6px 5px; } }
+@media (max-width: 760px) {
+  #isx-root .web3.fw .wstage { display: grid; grid-template-rows: auto auto; order: 2; } #isx-root .web3.fw .wcard { order: 3; } #isx-root .web3.fw .wclose { order: 1; }
+  #isx-root .fw .fwbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } #isx-root .fw .fsel { height: 44px; min-width: 0; } #isx-root .fw .fsel select { max-width: none; width: 100%; min-width: 0; height: 44px; } #isx-root .fw .fbtn { height: 44px; justify-content: center; } #isx-root .fw .fgap { display: none; }
+  /* the picture keeps a readable size and pans sideways inside its own box; the page itself never scrolls sideways */
+  #isx-root .web3.fw .wstage { overflow-x: auto; overscroll-behavior-x: contain; } #isx-root .web3.fw svg { width: 740px; max-width: none; height: 740px; }
+  #isx-root .fw .fwbar, #isx-root .web3.fw .wkey, #isx-root .fw .fwtab { position: sticky; left: 0; width: calc(100vw - 20px); box-sizing: border-box; }
+  #isx-root .fw .fnode .ft { font-size: 12.5px; } #isx-root .fw .fnode.holder .ft { font-size: 11px; }
+  #isx-root .web3.fw .wkey { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; }
+  #isx-root .fw .fwtab { max-height: 70vh; padding-right: 2px; } #isx-root .fw .fseg button, #isx-root .fw .fhowb { height: 44px; } #isx-root .fw button.fbar { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .fw .fk, #isx-root .fw .fnode, #isx-root .fw .fcalm i, #isx-root .fw .fcalm i::after { transition: none; } }

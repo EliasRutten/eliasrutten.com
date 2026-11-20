@@ -3,7 +3,7 @@
    1 the renames and the addresses · 2 the entry screens · 3 the arc: stations, views, dots, notes · 4 Bought each year and One year
    · 5 the finale · 6 phones · 7 the orbit view (stage 2). */
 const { chromium } = require('playwright');
-const args = process.argv.slice(2), base = args.find(a => /^https?:/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
+const args = process.argv.slice(2), base = args.find(a => /^(https?|file):/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 const ONLY = (args.find(a => /^--only=/.test(a)) || '').slice(7).split(',').filter(Boolean).map(Number), want = n => !ONLY.length || ONLY.includes(n);
 let n = 0, fail = 0;
 const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !== undefined ? '  → ' + JSON.stringify(x).slice(0, 400) : '')); } else if (process.env.V) console.log('ok    ' + t); };

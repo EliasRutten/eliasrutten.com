@@ -42,7 +42,7 @@
     TF.innerHTML = '<div class="t2h"><b>Firms</b><span>' + names.length + ' footprints</span><button type="button" class="t2x" data-tray="close" aria-label="Close">×</button></div>'
       + '<p class="t2p">Pick a firm to see who owns it and where it builds, on the globe.</p>'
       + '<button type="button" class="t2web" data-tray="web"><i aria-hidden="true"></i><span><b>The ownership web</b><small>all ' + names.length + ' firms, their owners and sites at once</small></span><em aria-hidden="true">→</em></button>'
-      + '<div class="t2soon" role="note"><b>Profits and the dollar</b><small>the Firms profitability view</small><em>coming soon</em></div>'   /* content build: parked, shown as coming soon (Elias, 14 Nov 2026) */
+      + '<button type="button" class="t2web t2fw" data-tray="fweb"><i aria-hidden="true"></i><span><b>Profits and owners</b><small>the Firms profitability view: 49 firms, their profits and whose they are</small></span><em aria-hidden="true">→</em></button>'   /* firm web build (20 Nov 2026): unlocked; it was parked as “coming soon” on 14 Nov */
       + GROUPS.map(function (g) { var l = names.filter(function (n) { return groupOf(OWN.firms[n]) === g[0]; }); return l.length ? '<div class="t2g"><div class="t2k">' + g[1] + '</div><div class="t2fs">' + l.map(chip).join('') + '</div></div>' : ''; }).join('')
       + '<div class="t2key"><span><i class="ownk seat"></i>Seat</span><span><i class="ownk site r-fab"></i>Sites</span><span><i class="ownk holder"></i>Owners</span></div>'
       + '<button type="button" class="t2all" data-tray="allfirms">All ' + F.length + ' firms in the stack <span aria-hidden="true">↓</span></button>';
@@ -75,6 +75,7 @@
       }
       else if (b.dataset.tray === 'allfirms') { setOpen(null); var box = $('firmsbox'), fold = box && box.querySelector(':scope > .fold6'); if (fold && fold.getAttribute('aria-expanded') === 'false') fold.click(); if (box) U.crisp(box, 16); }
       else if (b.dataset.tray === 'web') { setOpen(null); if (X.web) X.web.open(); }
+      else if (b.dataset.tray === 'fweb') { setOpen(null); if (X.firms) X.firms.open(); }
       else if (b.hasAttribute('data-tips')) setOpen(null);   /* the tour opens: the tray steps aside */
     });
     T.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); var was = open; setOpen(null); if (was) $('tp-' + was).focus({ preventScroll: true }); } });
