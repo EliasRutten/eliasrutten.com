@@ -1,0 +1,89 @@
+# Runs the site's check scripts (tools/*-check.js) and the accessibility run on every push to v2.
+# It only reads the repository: it changes no page file and deploys nothing. Results appear on the run's summary page.
+name: checks
+
+on:
+  push:
+    branches: [v2]
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Behaviour checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start the local server
+        run: |
+          python3 -m http.server 8731 --bind 127.0.0.1 > /dev/null 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8731/imperial-stack/ > /dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:8731/imperial-stack/ > /dev/null
+      - name: Run the checks one after another
+        run: bash .github/scripts/run-checks.sh
+      - name: Build the one-file page (for looking at, not published)
+        if: always()
+        continue-on-error: true
+        run: python3 -I tools/artifact-build.py . ci-logs/imperial-stack-one-file.html
+      - name: Keep the logs and the one-file page
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-logs-and-one-file-page
+          path: ci-logs/
+          retention-days: 14
+
+  accessibility:
+    name: Accessibility (axe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright and axe
+        run: |
+          npm install --no-save playwright axe-core
+          npx playwright install --with-deps chromium
+      - name: Start the local server
+        run: |
+          python3 -m http.server 8731 --bind 127.0.0.1 > /dev/null 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8731/imperial-stack/ > /dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:8731/imperial-stack/ > /dev/null
+      - name: Run axe on every state
+        run: |
+          mkdir -p ci-logs
+          set +e
+          node tools/axe-check.js 2>&1 | tee ci-logs/axe-check.log
+          rc=${PIPESTATUS[0]}
+          {
+            echo "### Accessibility (axe)"
+            echo
+            echo "States with a violation: $(grep -ci 'violation' ci-logs/axe-check.log || true) line(s) mention one; exit code $rc."
+            echo
+            echo '```'
+            tail -n 15 ci-logs/axe-check.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: axe-log
+          path: ci-logs/
+          retention-days: 14
