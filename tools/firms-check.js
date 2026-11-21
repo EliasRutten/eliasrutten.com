@@ -223,6 +223,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   await view('earned');
   ok(await p.evaluate(() => !!document.querySelector('#isx-fw .fbook') && /WHERE IT IS BOOKED · WIP/.test(document.querySelector('#isx-fw .fbookt').textContent) && document.querySelectorAll('#isx-fw .fnode.country:not(.out)').length === 14), '9: on the picture “booked” is an empty, labelled ring between the firms and the 14 countries');
   await view('debt');
+  ok(await p.evaluate(() => { const S = document.querySelector('#isx-fw svg'); return !S.classList.contains('flt') && S.querySelectorAll('.fnode.sector:not(.out)').length === 4 && S.querySelectorAll('.fk.off').length === 0; }), '10: the picture stays as it is at rest (the four sector rows, nothing lit or dimmed)');
   r = V.debt; ok(r.s.inFirms === 49 && /WIP/.test(r.k) && /WIP Preliminary: the debt figures are still being gathered\./.test(r.txt) && r.read.length > 60 && await p.evaluate(() => !document.querySelector('#isx-fw .wcard .fbars')), '10: a placeholder: its name, one line of what it will show, the WIP marker and “Preliminary: the debt figures are still being gathered”; no figures', r.txt.slice(0, 220));
   /* a view is a start: change a filter and it is your own; a lens stays while it is on */
   await view('state'); await p.evaluate(() => ISX.firms.set('fc', ['China'])); await p.waitForTimeout(150);

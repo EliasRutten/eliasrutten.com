@@ -107,6 +107,7 @@
   var lensFirm = function (f) { var l = S.lens; return l === 'losses' ? f.d.usd < 0 : l === 'votes' ? !!f.votes : l === 'ring' ? !!f.ring : l === 'undisclosed' ? f.d.usd > 0 : l === 'earned' ? f.d.sites > 0 : true; };
   var lensLink = function (L) { return S.lens === 'ring' ? L.kind === 'ff' : S.lens === 'votes' ? !!L.votes : true; };
   var anyF = function () { return !!(S.lens || S.cmp || KEYS.some(function (k) { return S.f[k].length; })); };
+  var filt = function () { return !!((S.lens && S.lens !== 'debt') || S.cmp || KEYS.some(function (k) { return S.f[k].length; })); };   /* view 10 is a placeholder: it leaves the picture as it is at rest */
   /* a firm's place: 0 on the whole ring, −1 the left half (group A), 1 the right half (group B), null out of the view */
   function sides() {
     var a = hasFF(S.f), b = hasFF(S.g), split = S.cmp && (a || b);
@@ -139,7 +140,7 @@
   function layout() {
     var split = sides(), ins = M.firms.filter(inView), whole = ins.length === M.firms.length && !split && S.lens !== 'undisclosed';
     var out = { split: split, arcs: [], k: 1, tags: [] };
-    var secOK = function (s) { return !split && !S.lens && !S.f.fc.length && !S.cmp && (!S.f.L.length || S.f.L.indexOf(String(s.d.L)) >= 0); };
+    var secOK = function (s) { return !split && (!S.lens || S.lens === 'debt') && !S.f.fc.length && !S.cmp && (!S.f.L.length || S.f.L.indexOf(String(s.d.L)) >= 0); };
     M.secs.forEach(function (s) { s.side = secOK(s) ? 0 : null; });
     var groupsOf = function (side) {
       var fs = ins.filter(function (f) { return f.side === side; });
@@ -294,7 +295,7 @@
     LAY = layout();
     for (var id in M.nodes) { var n = M.nodes[id]; if (!n.q) n.q = n.z; else if (n.p) n.q = { x: n.p[0], y: n.p[1], r: n.pr, a: n.pa, ox: n.po }; while (n.z.a - n.q.a > 180) n.z.a -= 360; while (n.z.a - n.q.a < -180) n.z.a += 360; }
     var svg = host.querySelector('svg'), votes = S.lens === 'votes';
-    M.links.forEach(function (L) { L.vis = L.b.side != null; L.lit = linkOn(L); L.shown = L.vis && (L.lit || !anyF()); var w = (votes && L.p != null ? .6 + 1.1 * Math.sqrt(L.p) : L.w0 * LAY.k); L.el.style.strokeWidth = w.toFixed(2); if (L.halo) L.halo.style.strokeWidth = (.6 + 1.1 * Math.sqrt(L.v)).toFixed(2); });
+    M.links.forEach(function (L) { L.vis = L.b.side != null; L.lit = linkOn(L); L.shown = L.vis && (L.lit || !filt()); var w = (votes && L.p != null ? .6 + 1.1 * Math.sqrt(L.p) : L.w0 * LAY.k); L.el.style.strokeWidth = w.toFixed(2); if (L.halo) L.halo.style.strokeWidth = (.6 + 1.1 * Math.sqrt(L.v)).toFixed(2); });
     M.sites.forEach(function (L) { L.vis = L.a.side != null && L.b.side != null; });
     svg.classList.toggle('split', !!LAY.split); svg.classList.toggle('few', !!LAY.few);
     ['votes', 'undisclosed', 'earned', 'losses', 'ring', 'debt'].forEach(function (l) { svg.classList.toggle('l-' + l, S.lens === l); });
@@ -303,7 +304,7 @@
     if (!anim) { end(); return; }
     put(0);
     run(440, function (u) { put(EASE(u)); }, end);
-    var fresh = M.links.filter(function (L, i) { return L.shown && L.lit && anyF() && (sweep || !was[i]); });
+    var fresh = M.links.filter(function (L, i) { return L.shown && L.lit && filt() && (sweep || !was[i]); });
     if (sweep) {   /* preset 1: the lines draw in one after another, largest first, and the total runs up with them */
       fresh.sort(function (a, b) { return (b.att || 0) - (a.att || 0); });
       var step = Math.min(110, 1500 / (fresh.length || 1)), tot = 0, acc = fresh.map(function (L) { tot += Math.max(0, L.att || 0); return tot; }), all = 300 + fresh.length * step + 380, tk = null;
@@ -312,7 +313,7 @@
     } else fresh.forEach(function (L) { drawIn(L, 120, 420); });
   }
   function mark() {
-    var svg = host.querySelector('svg'), n = S.sel && M.nodes[S.sel], near = {}, flt = anyF(), live = {}, hf = flt && (S.lens === 'ring' || S.lens === 'votes' || hasHF(S.f) || (S.cmp && hasHF(S.g)));
+    var svg = host.querySelector('svg'), n = S.sel && M.nodes[S.sel], near = {}, flt = filt(), live = {}, hf = flt && (S.lens === 'ring' || S.lens === 'votes' || hasHF(S.f) || (S.cmp && hasHF(S.g)));
     if (n) { near[n.id] = 1; n.links.forEach(function (id) { near[id] = 1; }); if (n.kind === 'firm' && M.nodes['p:' + n.d.id]) near['p:' + n.d.id] = 1; if (n.proxy) near[n.proxy.id] = 1; }
     M.links.forEach(function (L) {
       var s = src(L), on = !!n && (L.a.id === S.sel || L.b.id === S.sel || (L.px && L.px.id === S.sel));
