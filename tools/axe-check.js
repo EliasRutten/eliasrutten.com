@@ -91,13 +91,14 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('scenarios: the ledger filtered to US firms', '#scenarios', seen, 1440, 900, async p => { await scThen(null, '#isx-b3-gal [data-b3="ledger"]')(p); await p.evaluate(() => document.querySelector('#isx-b3-ledger [data-b3f="usfirm"]').click()); await p.waitForTimeout(500); });
   await run('scenarios: the ledger filtered by kind (Scenarios polish)', '#scenarios', seen, 1440, 900, async p => { await scThen(null, '#isx-b3-gal [data-b3="ledger"]')(p); await p.evaluate(() => document.querySelector('#isx-b3-ledger [data-b6c="finance"]').click()); await p.waitForTimeout(500); });
   await run('scenarios: the close', '#scenarios', seen, 1440, 900, scIn(8));
-  await run('ownership web', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
-  await run('ownership web: a firm', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForSelector('#isx-web3 .wnode[data-id="f:TSMC"]', { state: 'attached', timeout: 20000 }); await p.waitForTimeout(300); await p.evaluate(() => document.querySelector('#isx-web3 .wnode[data-id="f:TSMC"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(300); });   /* waits for the web itself: on a slow machine 900 ms was not always enough */
+  /* round 2 (21 Nov 2026): the ownership web is folded into the firm web; its seam opens “where it is earned” there */
+  await run('ownership web (now the firm web’s “where it is earned”)', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForFunction(() => ISX.firms.isOpen && ISX.firms.state.firms > 0, null, { timeout: 30000 }); await p.waitForTimeout(700); });
+  await run('ownership web: a firm (in the firm web)', '#circuit', seen, 1440, 900, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForFunction(() => ISX.firms.isOpen && ISX.firms.state.firms > 0, null, { timeout: 30000 }); await p.evaluate(() => ISX.firms.pick('f:tsmc')); await p.waitForTimeout(500); });
   await run('phone: scenarios, the gallery', '#scenarios', seen, 390, 844);
   await run('phone: scenarios, a switch step', '#scenarios', seen, 390, 844, scIn(6));
   await run('phone: scenarios, the drawer', '#scenarios', seen, 390, 844, scThen(6, '#isx-b3-card .b3more'));
   await run('phone: scenarios, the ledger', '#scenarios', seen, 390, 844, scThen(null, '#isx-b3-gal [data-b3="ledger"]'));
-  await run('phone: ownership web', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForTimeout(900); });
+  await run('phone: ownership web (in the firm web)', '#circuit', seen, 390, 844, async p => { await p.evaluate(() => ISX.web.open()); await p.waitForFunction(() => ISX.firms.isOpen && ISX.firms.state.firms > 0, null, { timeout: 30000 }); await p.waitForTimeout(700); });
   await run('phone: the ledger', '#simulator', { ...seen, 'isx-sim-mode': 'full' }, 390, 844, click('#isx-b1ind'));
   /* stage 5: readings as names until the guide reaches them, the strip of key readings below 1180 px, the full ladder as a list */
   const full = { ...seen, 'isx-sim-mode': 'full' };
@@ -332,6 +333,16 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('firm web: the tile in the Firms tray', '#circuit', seen, 1440, 900, async p => { await p.click('#isx-tp-firms'); await p.waitForTimeout(400); });
   await run('firm web: the doors on the profit dollar’s station 1', '#profit/profits', { ...seen, 'isx-enter': 'off' }, 1440, 900, async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(() => document.getElementById('isx-pf-text').scrollIntoView()); await p.waitForTimeout(300); });
   await run('firm web: a footprint card with its door', '#circuit/05/firm=asml', seen, 1440, 900, async p => { await p.evaluate(() => { const c = document.getElementById('isx-card'); if (c) c.scrollIntoView(); }); await p.waitForTimeout(300); });
+  /* round 2 (21 Nov 2026): the ten views, the chips and their panels, compare, a country, the WIP marker, the phone's views panel and caption */
+  for (const v of ['claim', 'systems', 'state', 'chokepoints', 'ring', 'votes', 'losses', 'undisclosed', 'earned', 'debt']) await run('firm web, view: ' + v, '#circuit/firms=v=' + v, seen, 1440, 900, fwUp());
+  await run('firm web: a filter’s panel open, two values picked', '#circuit/firms', seen, 1440, 900, fwUp(() => { ISX.firms.set('fc', ['Netherlands', 'Japan']); document.querySelector('#isx-fw [data-fwp="fc"]').click(); }));
+  await run('firm web: compare two groups, its panel open', '#circuit/firms=fc=netherlands;vs;fc2=japan,taiwan', seen, 1280, 760, fwUp(() => { document.querySelector('#isx-fw [data-fwp="ht"]').click(); }));
+  await run('firm web: a country of operation picked', '#circuit/firms', seen, 1440, 900, fwUp(() => ISX.firms.pick('c:TWN')));
+  await run('firm web: “The web in numbers” open', '#circuit/firms', seen, 1440, 900, fwUp(() => { document.querySelector('#isx-fw [data-fw="more"]').click(); }));
+  await run('firm web: a firm from the ownership web, its older owners unfolded', '#circuit/firms', seen, 1440, 900, fwUp(() => { ISX.firms.pick('f:nexperia'); const d = document.querySelector('#isx-fw .fold2'); if (d) d.open = true; }));
+  await run('firm web, phone: the views panel', '#circuit/firms', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw .fvw').click(); }));
+  await run('firm web, phone: a view with its caption', '#circuit/firms=v=systems', seen, 390, 844, fwUp());
+  await run('firm web, phone: a filter’s panel', '#circuit/firms=v=earned', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw [data-fwp="hc"]').click(); }));
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

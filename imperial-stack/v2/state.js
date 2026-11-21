@@ -17,7 +17,7 @@
     }
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
-    if (X.firms && X.firms.isOpen) return '/firms' + (X.firms.state.by === 'country' ? '=country' : '');   /* firm web build: #circuit/firms */
+    if (X.firms && X.firms.isOpen) { var fa = X.firms.addr; return '/firms' + (fa ? '=' + fa : ''); }   /* the firm web: #circuit/firms=country;v=state;fc=china (round 2: every combination has an address) */
     if (X.ring) return '/ring';                            /* B1: the Circuit's closing ring */
     if (X.step > 0 || sel.iso) d += '/' + String(X.step).padStart(2, '0');
     if (sel.firm) d += '/firm=' + slug(sel.firm.name);
@@ -42,7 +42,7 @@
     if (X.view !== 'map') return;
     var parts = String(hash || '').replace(/^#\/?/, '').split('/').slice(1), st = null, firm = null, iso = null;
     if (parts[0] === 'ring') { if (!X.ring) X.setRing(true); return; }
-    if (/^firms(=|$)/.test(parts[0] || '')) { if (X.firms && !X.firms.isOpen) X.firms.open({ by: parts[0].slice(6) || 'type' }); return; }
+    if (/^firms(=|$)/.test(parts[0] || '')) { if (X.firms) { var fs = parts[0].slice(6); try { fs = decodeURIComponent(fs); } catch (e) { /* as written */ } X.firms.go(fs); } return; }
     if (X.firms && X.firms.isOpen) X.firms.close(false);
     if (X.ring && parts.length) X.setRing(false);
     parts.forEach(function (p) {

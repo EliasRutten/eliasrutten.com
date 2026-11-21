@@ -75,7 +75,7 @@
         'The national accounts measure the same thing by owner: profits earned in the US economy, less what foreign owners take out of it, plus what US owners receive from abroad. In 2025 US owners received $1,064bn from abroad, 26.4% of the profits of US-owned firms; net of what foreign owners took out of the US, 12.7%. Two measures, never added: Forbes counts firms by headquarters, the national accounts by owner.',
         'The listing premium, measured: US-listed firms were 48.8% of the world’s stock-market value at the end of 2025, with 26.1% of world GDP. On the World Federation of Exchanges’ own world total for 2025 the share is about 45%. Equity raised on exchanges by year is not collected yet, so the premium is shown for market value only.'],
       src: ['forbes', 'imfg', 'bea', 'z1e', 'z1t', 'tic', 'wb', 'wfe'],
-      doors: [{ fw: 'type', t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { fw: 'country', t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'The ownership web today', s: '17 firms and their owners, on the Circuit' }] },
+      doors: [{ fw: 'type', t: 'Who owns the profits', s: 'The firm web on the map, with each firm’s profits and owners' }, { fw: 'country', t: 'Who owns which firm', s: 'The firm web on the map, by the holders’ countries' }, { web: 1, t: 'Where it is earned', s: 'The firm web on the map: 14 firms and the countries they build in' }] },
     { id: 'technology', t: 'Technology', f: 'Profit capture 1.62 · 2026 list', q: 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.',
       views: [['tri', 'Three ways'], ['nat', 'By nationality'], ['roc', 'Return on capital']],
       x: 'Profits this large have to be secured. The surest way is to hold the most sophisticated technology, and to hold it three ways at once: through economics, the markets and the finance that fund it; through coercion, the export controls, sanctions and tariffs that keep rivals from it; and through code, the patents, chips, platforms and standards everyone else has to use.',
@@ -207,7 +207,7 @@
       else if (d.pf === 'how') { const m = $('method'), f = m && m.classList.contains('shut') ? m.querySelector(':scope > .fold6') : null; if (f) f.click(); }
       else if (d.pgo) { X.setView(d.pgo === 'simulator' ? 'fin' : d.pgo === 'imperial-arm' ? 'story' : d.pgo === 'elite-network' ? 'arm' : d.pgo); $('frame').scrollIntoView({ block: 'start' }); }
       else if (d.pfw) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.firms) X.firms.open({ by: d.pfw, from: 'profit' }); }, 60); }
-      else if (d.pweb != null) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.web) X.web.open(); }, 60); }
+      else if (d.pweb != null) { X.setView('map'); $('frame').scrollIntoView({ block: 'start' }); setTimeout(() => { if (X.web) X.web.open({ from: 'profit' }); }, 60); }   /* round 2: the ownership web's door opens the firm web on “where it is earned” */
     });
     /* the views are swiped on phones (the chart is marked data-noswipe, so the bar's own swipe between stations leaves it alone) */
     let sx = 0, sy = 0, st = 0;

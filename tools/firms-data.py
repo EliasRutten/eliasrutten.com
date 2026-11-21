@@ -156,8 +156,12 @@ assert sum(1 for h in holders if h['s'] == 'A') == 159
 pos = sum(f['usd'] for f in firms if f['usd'] and f['usd'] > 0); att = sum(h['a'] for h in holders if h.get('a') and h['a'] > 0 and fx[h['f']]['usd'] > 0)
 
 firms, holders, sectors = curl(firms), curl(holders), curl(sectors)
+# ---- what is unfinished (design principles, thread 11): the page draws its WIP marker while a part says status: preliminary.
+#      A part comes off this list only when Elias says the data is done: debt with data round D8, booked with D6.
+PARTS = {'debt': {'status': 'preliminary', 'missing': 'the debt figures are still being gathered'},
+         'booked': {'status': 'preliminary', 'missing': 'where the profits are booked is still being gathered'}}
 out = {'asof': '20 Nov 2026', 'layers': [{'n': a, 's': b} for a, b in LAYERS], 'firms': firms, 'holders': holders, 'sectors': sectors,
-       'flagged': len(M['conflicts']), 'sum': {'profit': round(pos), 'attributed': round(att)}}
+       'flagged': len(M['conflicts']), 'sum': {'profit': round(pos), 'attributed': round(att)}, 'parts': PARTS}
 json.dump(out, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 print('firms', len(firms), 'holders', len(holders), 'nodes', len({h['k'] for h in holders if not h.get('m')}), 'sector rows', len(sectors),
       '| profits of the firms in profit, USD m:', round(pos), '| attributed*:', round(att), '(%.1f%%)' % (att / pos * 100))

@@ -126,19 +126,20 @@ const ok = (name, cond, extra) => { if (!cond) fails++; console.log((cond ? 'PAS
   ok('scenarios: the sentence links to the Simulator', await p.evaluate(() => ISX.view === 'fin'));
   ok('no page errors (scenarios)', p._errs.length === 0, p._errs); await p.context().close();
 
-  /* ---------- 4. the ownership web ---------- */
+  /* ---------- 4. the ownership web, folded into the firm web (round 2 of 21 Nov 2026): what it showed is all still there ---------- */
   p = await page('#circuit');
   await p.waitForFunction(() => ISX.own && ISX.own.data, null, { timeout: 30000 });
   await p.click('#isx-tp-firms'); await p.waitForTimeout(250);
-  await p.click('#isx-tray-firms .t2web'); await p.waitForTimeout(700);
-  const web = await p.evaluate(() => { const w = document.getElementById('isx-web3'); return { open: !!w && !w.hidden, firms: w.querySelectorAll('.wnode.firm').length, un: w.querySelectorAll('.wnode.firm.un').length, holders: w.querySelectorAll('.wnode.holder').length, links: w.querySelectorAll('.wk.own').length, sites: w.querySelectorAll('.wk.site').length, sheets: w.querySelectorAll('.wsr').length, rows: /0 rows/.test(w.querySelector('.wsh').textContent) }; });
-  const want = await p.evaluate(() => { const d = ISX.own.data; let l = 0; Object.values(d.firms).forEach(f => { l += (f.holders || []).length; }); return l; });
-  ok('web: 17 mapped firms and 3 not yet mapped on the ring, every stake drawn', web.open && web.firms === 20 && web.un === 3 && web.links === want && web.sites > 20, { web, want });
-  ok('web: three empty data sheets are listed', web.sheets === 3 && web.rows, web);
-  await p.evaluate(() => document.querySelector('#isx-web3 .wnode[data-id="f:ASML"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(250);
-  ok('web: a firm opens the focused card with owners and sites', await p.evaluate(() => { const c = document.querySelector('#isx-web3 .wcard'); return /ASML/.test(c.querySelector('h3').textContent) && /BlackRock/.test(c.textContent) && /Operates in/i.test(c.textContent) && !!c.querySelector('.wgo'); }));
-  await p.click('#isx-web3 .wgo'); await p.waitForTimeout(700);
-  ok('web: “Open its footprint” closes the web and selects the firm on the globe', await p.evaluate(() => document.getElementById('isx-web3').hidden && ISX.sel.firm && ISX.sel.firm.name === 'ASML'));
+  await p.click('#isx-tray-firms .t2web'); await p.waitForFunction(() => ISX.firms.isOpen && ISX.firms.state.firms > 0, null, { timeout: 30000 }); await p.waitForTimeout(400);
+  const web = await p.evaluate(() => { const w = document.getElementById('isx-fw'), d = ISX.own.data, ids = Object.keys(d.firms).map(n => ISX.firms.idOf(n)); document.querySelector('#isx-fw [data-fw="more"]').click(); const sh = w.querySelector('.wsh');
+    return { open: !w.hidden, old: !!document.getElementById('isx-web3'), mapped: ids.filter(i => i && w.querySelector('.fnode.firm[data-id="f:' + i + '"]')).length, un: ['huawei', 'smic', 'wingtech'].filter(i => w.querySelector('.fnode.firm[data-id="f:' + i + '"]')).length, sites: w.querySelectorAll('.fk.site').length, countries: w.querySelectorAll('.fnode.country').length, sheets: w.querySelectorAll('.wsr').length, rows: !!sh && /0 rows/.test(sh.textContent) }; });
+  const want = await p.evaluate(() => { const d = ISX.own.data, pairs = {}; Object.keys(d.firms).forEach(n => (d.firms[n].sites || []).forEach(s => { pairs[n + '>' + s.iso] = 1; })); return { sites: Object.keys(pairs).length, asml: d.firms.ASML.holders.length }; });
+  ok('web: the tray’s one entry opens the firm web; the 17 mapped firms and the 3 once “not yet mapped” are on its ring, every firm-to-country site line drawn', web.open && !web.old && web.mapped === 17 && web.un === 3 && web.sites === want.sites && web.sites > 20 && web.countries === 14, { web, want });
+  ok('web: three empty data sheets are listed (under “The web in numbers”)', web.sheets === 3 && web.rows, web);
+  await p.evaluate(() => document.querySelector('#isx-fw .fnode[data-id="f:asml"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(250);
+  ok('web: a firm opens the focused card with owners and sites', await p.evaluate(n => { const c = document.querySelector('#isx-fw .wcard'); return /ASML/.test(c.querySelector('h3').textContent) && /BlackRock/.test(c.textContent) && /Where it is earned/i.test(c.textContent) && /No controlling owner/.test(c.textContent) && c.querySelectorAll('.fold2 li').length === n && c.querySelectorAll('.wseat button').length === 6 && !!c.querySelector('.wgo'); }, want.asml));
+  await p.click('#isx-fw .wgo'); await p.waitForTimeout(700);
+  ok('web: “Open its footprint” closes the web and selects the firm on the globe', await p.evaluate(() => document.getElementById('isx-fw').hidden && ISX.sel.firm && ISX.sel.firm.name === 'ASML'));
   ok('no page errors (web)', p._errs.length === 0, p._errs); await p.context().close();
 
   /* ---------- 5. sizes: nothing runs off the frame; the main stage fits the window ---------- */

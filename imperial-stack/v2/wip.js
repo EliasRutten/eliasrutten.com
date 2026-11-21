@@ -4,6 +4,13 @@
    pill again closes it. */
 (function () {
   'use strict';
+  /* the reusable marker (21 Nov 2026, design principles thread 11): a small amber pill “WIP” and one plain line on what is missing.
+     pill() goes on the control that opens an unfinished view (inside the control, so its spoken name contains “WIP”); note(missing)
+     goes inside the view. The caller shows it only while the data says status: preliminary. */
+  if (window.ISX) window.ISX.wip = {
+    pill: function () { return '<span class="wipm"><i aria-hidden="true"></i>WIP</span>'; },
+    note: function (missing) { return '<p class="wipl"><span class="wipm"><i aria-hidden="true"></i>WIP</span> Preliminary: ' + window.ISX.util.esc(missing) + '.</p>'; }
+  };
   var root = document.getElementById('isx-root'), btn = document.getElementById('isx-wip'), frame = document.getElementById('isx-frame');
   if (!root || !btn || !frame) return;
   var note = document.createElement('div');
