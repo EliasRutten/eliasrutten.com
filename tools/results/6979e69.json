@@ -1,0 +1,190 @@
+{
+ "commit": "6979e69",
+ "started": "2026-11-21T17:12:46.299Z",
+ "finished": "2026-11-21T19:21:12.880Z",
+ "base": "http://127.0.0.1:8731/imperial-stack/",
+ "note": "Assembled from three runs of tools/run-suite.js on 21 Nov 2026 (2 cores, one check at a time). Run 1: all 20 checks at b919e3c (before the round): b4 (the WIP pill, 6 failed lines), interface (2 stale name expectations) and onboard (one timing line, 991 ms against about 250 ms, while another process was running) failed; the other 17 passed. Runs 2 and 3: every check except stage5 and axe, again on the fixed working tree (= commit 6979e69 for the code under test): all pass; onboard passes alone, so its failure was a busy machine. stage5 and axe were not re-run after the 2 px pill change: their results are those of b919e3c (commit field per check). The next go-live run replaces all of it.",
+ "checks": [
+  {
+   "check": "b4",
+   "exit": 0,
+   "pass": 88,
+   "fail": 0,
+   "failed": [],
+   "seconds": 197,
+   "commit": "6979e69"
+  },
+  {
+   "check": "b6",
+   "exit": 0,
+   "pass": 24,
+   "fail": 0,
+   "failed": [],
+   "seconds": 79,
+   "commit": "6979e69"
+  },
+  {
+   "check": "content",
+   "exit": 0,
+   "pass": 71,
+   "fail": 0,
+   "failed": [],
+   "seconds": 45,
+   "commit": "6979e69"
+  },
+  {
+   "check": "entry",
+   "exit": 0,
+   "pass": 138,
+   "fail": 0,
+   "failed": [],
+   "seconds": 107,
+   "commit": "6979e69"
+  },
+  {
+   "check": "fix",
+   "exit": 0,
+   "pass": 67,
+   "fail": 0,
+   "failed": [],
+   "seconds": 22,
+   "commit": "6979e69"
+  },
+  {
+   "check": "onboard",
+   "exit": 0,
+   "pass": 70,
+   "fail": 0,
+   "failed": [],
+   "seconds": 139,
+   "commit": "6979e69"
+  },
+  {
+   "check": "welcome",
+   "exit": 0,
+   "pass": 74,
+   "fail": 0,
+   "failed": [],
+   "seconds": 298,
+   "commit": "6979e69"
+  },
+  {
+   "check": "stage1",
+   "exit": 0,
+   "pass": 40,
+   "fail": 0,
+   "failed": [],
+   "seconds": 82,
+   "commit": "6979e69"
+  },
+  {
+   "check": "stage2",
+   "exit": 0,
+   "pass": 61,
+   "fail": 0,
+   "failed": [],
+   "seconds": 149,
+   "commit": "6979e69"
+  },
+  {
+   "check": "stage3",
+   "exit": 0,
+   "pass": 54,
+   "fail": 0,
+   "failed": [],
+   "seconds": 76,
+   "commit": "6979e69"
+  },
+  {
+   "check": "profit",
+   "exit": 0,
+   "pass": 141,
+   "fail": 0,
+   "failed": [],
+   "seconds": 31,
+   "commit": "6979e69"
+  },
+  {
+   "check": "arc",
+   "exit": 0,
+   "pass": 221,
+   "fail": 0,
+   "failed": [],
+   "seconds": 92,
+   "commit": "6979e69"
+  },
+  {
+   "check": "b1",
+   "exit": 0,
+   "pass": 175,
+   "fail": 0,
+   "failed": [],
+   "seconds": 228,
+   "commit": "6979e69"
+  },
+  {
+   "check": "b3",
+   "exit": 0,
+   "pass": 53,
+   "fail": 0,
+   "failed": [],
+   "seconds": 131,
+   "commit": "6979e69"
+  },
+  {
+   "check": "interface",
+   "exit": 0,
+   "pass": 142,
+   "fail": 0,
+   "failed": [],
+   "seconds": 287,
+   "commit": "6979e69"
+  },
+  {
+   "check": "firms",
+   "exit": 0,
+   "pass": 110,
+   "fail": 0,
+   "failed": [],
+   "seconds": 88,
+   "commit": "6979e69"
+  },
+  {
+   "check": "clarity",
+   "exit": 0,
+   "pass": 108,
+   "fail": 0,
+   "failed": [],
+   "seconds": 220,
+   "commit": "6979e69"
+  },
+  {
+   "check": "tiers",
+   "exit": 0,
+   "pass": 106,
+   "fail": 0,
+   "failed": [],
+   "seconds": 66,
+   "commit": "6979e69"
+  },
+  {
+   "check": "stage5",
+   "exit": 0,
+   "pass": 114,
+   "fail": 0,
+   "failed": [],
+   "seconds": 1008,
+   "commit": "b919e3c"
+  },
+  {
+   "check": "axe",
+   "exit": 0,
+   "pass": 299,
+   "fail": 0,
+   "failed": [],
+   "seconds": 1627,
+   "commit": "b919e3c"
+  }
+ ],
+ "clean": true
+}
