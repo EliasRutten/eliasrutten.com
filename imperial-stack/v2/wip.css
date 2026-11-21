@@ -1,5 +1,5 @@
 /* “Work in progress” (20 Nov 2026): an amber pill beside the version, a short note under it. Scoped under #isx-root. */
-#isx-root .wipk { display: inline-flex; align-items: center; gap: 7px; height: 22px; margin-left: 10px; padding: 0 10px 0 9px; border-radius: 999px; vertical-align: middle;
+#isx-root .wipk { display: inline-flex; align-items: center; gap: 7px; height: 24px; margin-left: 10px; padding: 0 10px 0 9px; border-radius: 999px; vertical-align: middle;
   border: 1px solid rgba(255, 181, 71, .55); background: rgba(255, 181, 71, .09); color: #ffd27a; cursor: pointer;
   font: 400 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; transition: background .15s, border-color .15s; }
 #isx-root .wipk i { width: 6px; height: 6px; border-radius: 50%; background: #ffb547; box-shadow: 0 0 8px rgba(255, 181, 71, .7); }
@@ -26,7 +26,7 @@
 #isx-root .wl-card .wl-fn { margin: 14px auto 0; max-width: 52ch; font: 400 12.5px/1.45 var(--sans); color: #9fb0c0; }
 #isx-root .wl-card .wl-fn b { color: #ffb547; font-weight: 400; margin-right: .25em; }
 #isx-root .kicker .kl { display: inline-flex; align-items: center; white-space: nowrap; }
-@media (max-width: 600px) { #isx-root .wipk { margin-left: 8px; height: 20px; padding: 0 8px 0 7px; } }
+@media (max-width: 600px) { #isx-root .wipk { margin-left: 8px; height: 24px; padding: 0 8px 0 7px; } }
 
 /* the reusable marker (21 Nov 2026): on a control that opens an unfinished view, and inside the view with one line on what is missing */
 #isx-root .wipm { display: inline-flex; align-items: center; gap: 5px; height: 17px; padding: 0 7px 0 6px; border-radius: 999px; vertical-align: middle; white-space: nowrap; flex: none;
