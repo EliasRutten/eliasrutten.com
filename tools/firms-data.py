@@ -1,6 +1,7 @@
 """Build imperial-stack/data/firms.json, the firm web's data (profits and owners), from the merged file of the firm rounds.
-Usage: python3 -I tools/firms-data.py <firms-merged-20-nov-2026.json> imperial-stack/data/ownership.json imperial-stack/data/firms.json
+Usage: python3 -I tools/firms-data.py <firms-merged-21-nov-2026.json> imperial-stack/data/ownership.json imperial-stack/data/firms.json
 The merged file lives in the project (claude/data/firms/); a working copy is not kept in the repo.
+The 21 Nov close-out was first loaded with tools/firms-topup-d4c.py (same rules, the changed rows only); this script has not been run on the 21 Nov file yet.
 
 Nothing is researched or estimated here. The script only
   1. converts each firm's attributable profit to US dollars at the rate the merged file states;
@@ -44,7 +45,7 @@ HOME_STAR = {'arm'}   # the merged file has "not read (D5 gap)"; the United King
 # ---- one node for a holder that appears under several printed names; every row keeps its name as printed
 ALIAS = [(r'^BlackRock', 'BlackRock'), (r'Vanguard', 'Vanguard'), (r'^Capital (World|Research)', 'Capital Research'),
          (r'^FMR LLC', 'FMR (Fidelity)'), (r'^(JPMorgan Chase|JP Morgan Asset)', 'JPMorgan'),
-         (r'^(Norges Bank|Government of Norway)', 'Norges Bank'), (r'^Mubadala', 'Mubadala'),
+         (r'^(Norges Bank|Government of Norway|GOVERNMENT OF NORWAY)', 'Norges Bank'), (r'^Mubadala', 'Mubadala'),
          (r'HKSCC', 'HKSCC Nominees'), (r'^(财政部|Ministry of Finance)', 'Ministry of Finance (China)'),
          (r'^(国开金融|China Development Bank Capital)', 'CDB Capital (国开金融)'),
          (r'^(上海国盛|Shanghai Guosheng)', 'Shanghai Guosheng (上海国盛)'), (r'^Elon Musk', 'Elon Musk'), (r'^Antonio J\. Gracias', 'Antonio J. Gracias'),
@@ -52,7 +53,8 @@ ALIAS = [(r'^BlackRock', 'BlackRock'), (r'Vanguard', 'Vanguard'), (r'^Capital (W
 # ---- a holder that is itself a firm on the ring: marked, drawn as a line between the two firms, never looked through
 RING = [(r'^SoftBank Group', 'softbank_group'), (r'^Google LLC', 'alphabet'), (r'^NVIDIA Corporation', 'nvidia'), (r'^Big Fund II \(', 'bigfund_ii'),
         (r'^Big Fund I \(', 'bigfund_i'), (r'^China IC Fund Phase II', 'bigfund_ii'), (r'^Applied Materials Inc', 'applied_materials'),
-        (r'^ASML Holding', 'asml'), (r'^Wingtech Technology Co', 'wingtech'), (r'^Microsoft$', 'microsoft')]
+        (r'^ASML Holding', 'asml'), (r'^Wingtech Technology Co', 'wingtech'), (r'^Microsoft$', 'microsoft'),
+        (r'^Tokyo Electron Ltd', 'tokyo_electron')]   # 21 Nov: Tokyo Electron's 4.7% of ASM International
 # SMIC's "China Integrated Circuit Industry Investment Fund Co., Ltd. (Big Fund)" stays a holder of its own: the source does not state the phase.
 
 def holder_type(t):
@@ -73,7 +75,8 @@ def country(c):
     """One name per country for the sums; the row keeps the wording of the source."""
     s = c.strip()
     if re.match(r'^(US|United States)\b', s): return 'United States'
-    if re.match(r'^UK / US', s) or s in ('various', 'not printed', 'not stated in source'): return 'Not stated'
+    if re.match(r'^UK / US', s) or s in ('various', 'not printed', 'not stated in source', 'not stated'): return 'Not stated'
+    if re.match(r'^UK\b', s): return 'United Kingdom'
     if 'owner China' in s or s.startswith('China'): return 'China'
     return re.sub(r'\s*\(.*$', '', s)
 
@@ -147,12 +150,12 @@ sectors = [{'id': s['row_id'], 'L': LIX[s['layer']], 'n': s['row'], 'role': s['r
             'unit': s['unit'], 'date': s['date'], 'src': s['source'], 'fl': s['flags']} for s in M['sector_rows']]
 
 # ---- checks against what the merge round reported
-assert len(firms) == 49 and len(holders) == 204 and len(sectors) == 4, (len(firms), len(holders), len(sectors))
+assert len(firms) == 49 and len(holders) == 240 and len(sectors) == 4   # 21 Nov close-out (D4c): 240 holder rows, (len(firms), len(holders), len(sectors))
 want = {'tsmc': 55120, 'samsung': 31139, 'softbank_group': 33171, 'zeiss_group': 640, 'coreweave': -1167, 'spacex': -4937}
 for k, v in want.items(): assert abs(fx[k]['usd'] - v) < 1, (k, fx[k]['usd'], v)
 assert fx['arm']['cov'][0] == 86 and next(h for h in holders if h['f'] == 'arm')['m'] == 'softbank_group'
 assert all(h['f'] in fx and (not h.get('m') or h['m'] in fx) for h in holders)
-assert sum(1 for h in holders if h['s'] == 'A') == 159
+assert sum(1 for h in holders if h['s'] == 'A') == 167
 pos = sum(f['usd'] for f in firms if f['usd'] and f['usd'] > 0); att = sum(h['a'] for h in holders if h.get('a') and h['a'] > 0 and fx[h['f']]['usd'] > 0)
 
 firms, holders, sectors = curl(firms), curl(holders), curl(sectors)
@@ -160,7 +163,7 @@ firms, holders, sectors = curl(firms), curl(holders), curl(sectors)
 #      A part comes off this list only when Elias says the data is done: debt with data round D8, booked with D6.
 PARTS = {'debt': {'status': 'preliminary', 'missing': 'the debt figures are still being gathered'},
          'booked': {'status': 'preliminary', 'missing': 'where the profits are booked is still being gathered'}}
-out = {'asof': '20 Nov 2026', 'layers': [{'n': a, 's': b} for a, b in LAYERS], 'firms': firms, 'holders': holders, 'sectors': sectors,
+out = {'asof': '21 Nov 2026', 'layers': [{'n': a, 's': b} for a, b in LAYERS], 'firms': firms, 'holders': holders, 'sectors': sectors,
        'flagged': len(M['conflicts']), 'sum': {'profit': round(pos), 'attributed': round(att)}, 'parts': PARTS}
 json.dump(out, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 print('firms', len(firms), 'holders', len(holders), 'nodes', len({h['k'] for h in holders if not h.get('m')}), 'sector rows', len(sectors),
