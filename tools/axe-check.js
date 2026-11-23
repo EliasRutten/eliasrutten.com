@@ -303,7 +303,8 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('plain: an episode’s entry screen (oil)', '#simulator', { ...seen, 'isx-way': 'guide', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 14, b: -1 }) }, 1440, 900);
   await run('plain, phone: an episode’s entry screen (calm)', '#simulator', { ...seen, 'isx-way': 'guide', 'isx-sim-mode': 'story', '__pos': JSON.stringify({ l: 15, b: -1 }) }, 390, 844);
   /* profit tab build 1: the profit dollar's stations, views, a table, the text under the board, a hint, and the ring's four doors */
-  const pf = (i, v, t) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };
+  const pf = (i, v, t) => async p => { if (typeof i === 'number') i = [1, 2, 0, 3, 4, 5][i];   /* the indices below are the stations before OB1 (23 Nov 2026), when the order became station 1 */
+    await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(([i, v, t]) => { ISX.profit.go(i, v); if (t) document.getElementById('isx-pf-table').click(); }, [i, v, t]); await p.waitForTimeout(350); };
   /* the arc (18 Nov): six stations; the views of build 1 in their new stations, with the three ways and the orbits */
   for (const [i, v] of [[0, 'pic'], [1, 'nat'], [0, 'own'], [1, 'roc'], [0, 'hold'], [0, 'flow'], [0, 'list'], [3, 'home'], [3, 'pay'], [3, 'all'], [3, 'sum'], [2, 'pos'], [2, 'ord'], [4, 'wt'], [4, 'capex'], [4, 'ni'], [3, 'why'], [1, 'tri']])
     await run('profit: view ' + v, '#profit', seen, 1440, 900, pf(i, v));
@@ -331,7 +332,7 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('patch: the finale', '#profit/finale', seen, 1440, 900, async p => { await pf(5)(p); await p.waitForTimeout(400); });
   await run('patch, phone: the finale', '#profit/finale', seen, 390, 844, async p => { await pf(5)(p); await p.waitForTimeout(400); });
   const orb = (ord, more) => async p => { await pf(2, 'orb')(p); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); if (ord === 'ps') { await p.evaluate(() => document.querySelector('[data-po="ps"]').click()); await p.waitForTimeout(1300); } if (more) await more(p); await p.waitForTimeout(300); };
-  await run('patch: the orbits, the WTO order', '#profit/order', seen, 1440, 900, orb('wto'));
+  await run('patch: the orbits, the WTO order', '#profit/order/wto', seen, 1440, 900, orb('wto'));
   await run('patch: the orbits, Pax Silica, a body selected, a layer and the flows on', '#profit/order', seen, 1440, 900, orb('ps', async p => { await p.evaluate(() => { [...document.querySelectorAll('[data-ob]')].find(g => g.getAttribute('aria-label') === 'DR Congo').dispatchEvent(new MouseEvent('click', { bubbles: true })); document.querySelector('[data-pf="flows"]').click(); }); await p.evaluate(() => document.querySelector('[data-pl="waico"]').click()); }));
   await run('patch: the orbits as a table', '#profit/order', seen, 1280, 760, orb('wto', async p => { await p.click('#isx-pf-table'); }));
   await run('patch, phone: the orbits, Pax Silica', '#profit/order', seen, 390, 844, orb('ps'));
@@ -360,6 +361,13 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('firm web, phone: the views panel', '#circuit/firms', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw .fvw').click(); }));
   await run('firm web, phone: a view with its caption', '#circuit/firms=v=systems', seen, 390, 844, fwUp());
   await run('firm web, phone: a filter’s panel', '#circuit/firms=v=earned', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw [data-fwp="hc"]').click(); }));
+  /* OB1 (23 Nov 2026): the orrery, its slider and card, the deep button, the figures by year, the way back */
+  const orr = (y, more) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.orrery > 0, null, { timeout: 30000 }); if (y) await p.evaluate(y => { const i = document.querySelector('.orr-sl input'); i.value = y; i.dispatchEvent(new Event('input', { bubbles: true })); }, y); await p.waitForTimeout(700); if (more) await more(p); };
+  await run('orrery: the story at 1995', '#profit', seen, 1440, 900, orr(0));
+  await run('orrery: the story at 2025, a body selected, the deep button drawn as the next step', '#profit/order/2025', seen, 1440, 900, orr(0, async p => { await p.hover('[data-q="O1-018"] .hit'); await p.waitForTimeout(200); }));
+  await run('orrery: the story as a table', '#profit/order/2019', seen, 1280, 760, orr(0, async p => { await p.click('#isx-pf-table'); }));
+  await run('orrery: the deep layer, the figures by year', '#profit/order/fig', seen, 1440, 900, orr(0, async p => { await p.waitForSelector('.orr-method'); }));
+  await run('orrery, phone: two systems stacked', '#profit/order/2025', seen, 390, 844, orr(0));
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

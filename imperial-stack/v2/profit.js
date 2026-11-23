@@ -61,12 +61,27 @@
     asml: ['ASML, sales by region, 2024 and 2025 (as on the Circuit, step 03), link not stored', null]
   };
   /* ---------- the arc (patch of 18 Nov 2026; spec profit-tab-v4 and its addendum §1): six stations whose titles carry the argument ----------
-     1 Profits · 2 Technology · 3 The order · 4 The regime · 5 The AI trade · 6 the finale. The first view of a station is its main screen:
+     OB1 (23 Nov 2026, spec orrery-opener §2): 1 The order · 2 Profits · 3 Technology · 4 The regime · 5 The AI trade · 6 the finale. The order
+     opens on the orrery (the story layer); its other views are the deep layer, behind “For economists: the full statistics”. The first view of a station is its main screen:
      the title explains it, so it carries no note. Every other view carries one short note above its chart (NOTE). */
   const TITLE = 'Why dollar assets need to be the most profitable';
   const WHY = 'Profits are booked in the firm, and capital flows to where the firm is listed. That decides how liquid the market is and how much investment can be raised by selling shares and bonds.';
   const ST = [
-    { id: 'profits', t: 'Profits', f: '42% of the largest firms’ profits · 2026', q: 'Savers want profitable equity. That is why they buy US stocks.',
+    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.', sub: '1995–2026 · drag through the years',
+      qd: 'To secure the profits, first a global empire: one ladder for the whole world.', subd: 'The WTO order, 1995–.',
+      q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
+      views: [['orr', 'The orrery'], ['orb', 'The orbits'], ['ord', 'Two orders, one picture'], ['pos', 'Positions'], ['fig', 'The figures by year']], deep: ['orb', 'ord', 'pos', 'fig'],
+      x: 'Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories.',
+      rd: 'The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.',
+      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
+      more: ['The reading of the WTO order as a global empire follows Peter Gowan (The Global Gamble, 1999) and Herman Mark Schwartz (2019). Finance is the same in both orders: savings flow in as claims, demand flows out as imports.',
+        'The orbits combine the tiers of world-systems analysis (Immanuel Wallerstein) with polarity: a hierarchy inside each system, and two systems side by side. Membership of Pax Silica is a privilege, not a requirement for exploitation: access to the full stack in return for alignment, with the rank inside following the division of labour. “Silicon curtain” is Jake Wright’s term.',
+        'Beneath the institutions lies the material base. The outer orbit holds the extraction zones: mineral sources that function as extractive neocolonies whether or not they sit at the table. A zone sits in the overlap when capital linked to both centres is present, as in the DR Congo, Indonesia and Zambia; it sits in China’s system when the owners are Chinese only.',
+        'The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
+        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.'],
+      src: ['gowan', 'schwartz', 'o1p', 'o1w', 'usgs', 'wright', 'imfc', 'forbes', 'bbp', 'fritz'],
+      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }] },
+    { id: 'profits', t: 'Profits', f: '42% of the largest firms’ profits · 2026', pre: 'This is what the order pays its centre.', q: 'Savers want profitable equity. That is why they buy US stocks.',
       views: [['pic', 'In one picture'], ['hold', 'Held abroad'], ['flow', 'Bought each year'], ['own', 'By owner'], ['list', 'The listing premium']],
       x: 'A profit belongs to the firm that books it, wherever it was earned, and the firm belongs to the market where it is listed. In the 2026 Forbes list, US firms took 42.2% of the profits of the world’s 2,000 largest listed firms, with 26.1% of world GDP. Foreign investors held $22.2tn of US shares in mid-2026, against $9.3tn of Treasuries.',
       rd: 'The US is the imperial organiser of capital accumulation globally: the profits stay with the firm listed in the US wherever they are earned, and that claim is what foreign investors buy.',
@@ -86,19 +101,6 @@
         'A list of year Y is set against world GDP of the year before, at market exchange rates. A weak yen lifts Japan’s ratio; a single year swings with one-off profits and losses, so the pooled windows are the steadier measure.',
         'The return on capital is the territorial comparison: what capital earns inside each economy, housing included. The US return has held near 8% for three decades. It cannot show what US firms book abroad, which is why profit capture leads.'],
       src: ['schwartz', 'forbes', 'imfg', 'pwt', 'wb', 'beaip', 'asml'], doors: [] },
-    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
-      q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
-      views: [['orb', 'The orbits'], ['ord', 'Two orders, one picture'], ['pos', 'Positions']],
-      x: 'Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories.',
-      rd: 'The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.',
-      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
-      more: ['The reading of the WTO order as a global empire follows Peter Gowan (The Global Gamble, 1999) and Herman Mark Schwartz (2019). Finance is the same in both orders: savings flow in as claims, demand flows out as imports.',
-        'The orbits combine the tiers of world-systems analysis (Immanuel Wallerstein) with polarity: a hierarchy inside each system, and two systems side by side. Membership of Pax Silica is a privilege, not a requirement for exploitation: access to the full stack in return for alignment, with the rank inside following the division of labour. “Silicon curtain” is Jake Wright’s term.',
-        'Beneath the institutions lies the material base. The outer orbit holds the extraction zones: mineral sources that function as extractive neocolonies whether or not they sit at the table. A zone sits in the overlap when capital linked to both centres is present, as in the DR Congo, Indonesia and Zambia; it sits in China’s system when the owners are Chinese only.',
-        'The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
-        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.'],
-      src: ['gowan', 'schwartz', 'o1p', 'o1w', 'usgs', 'wright', 'imfc', 'forbes', 'bbp', 'fritz'],
-      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }] },
     { id: 'regime', t: 'The regime', f: 'Federal deficit 6.3% of GDP · 2025', q: 'Deficits realise the profits, and the inflow needs the deficits.',
       views: [['all', 'Every year since 1960'], ['sum', 'One year'], ['why', 'Why the deficit cannot shrink'], ['home', 'Who holds them at home'], ['pay', 'The payout']],
       x: 'In the accounts the line runs one way: since 2014 the federal deficit has supplied 6.3% of GDP a year to US profits. In the regime it {{bothways|runs both ways}}: the profits draw the world’s savings in, and the state borrows to hold up demand and jobs at home.',
@@ -141,7 +143,8 @@
     home: 'Who collects at home: the claim on profits is held by few households, so the payout lands at the top.',
     pay: 'What the profits become: dividends and buybacks, paid to those who hold the shares.',
     capex: 'The build-out in dollars: what five firms spend on data centres, chips and power each year.',
-    ni: 'Spending against what the firms earn. Once the two lines meet, the build-out needs outside money.'
+    ni: 'Spending against what the firms earn. Once the two lines meet, the build-out needs outside money.',
+    fig: 'The figures behind the orrery, for the year on the slider: each economy’s share of world GDP, its current account summed since 1995, and what US firms’ affiliates earned there.'
   };
   const ERAS = [[1960, 1979], [1980, 1999], [2000, 2013], [2014, 2025]];
   const TERMS = [['npi', 'Net private investment'], ['fed', 'Federal net borrowing'], ['div', 'Dividends'], ['rest', 'State and local, other'], ['hh', 'Household saving'], ['ca', 'Deficit with the world']];
@@ -151,7 +154,7 @@
   const FIRM = [['AMZN', 'Amazon', C.gold], ['GOOGL', 'Alphabet', C.blue], ['MSFT', 'Microsoft', C.teal], ['META', 'Meta', C.purple], ['ORCL', 'Oracle', C.red]];
 
   /* ---------- state ---------- */
-  const S = { st: 0, view: ST.map(s => (s.views[0] || [null])[0]), year: 2025, era: null, win: '2011-2026', table: false, ord: 'wto', terms: { npi: true, fed: true, div: true, rest: false, hh: true, ca: true }, whyOff: U.stGet('isx-pf-why') === 'off', lay: null, flows: false, sys: 'us', oz: 1 };
+  const S = { st: 0, view: ST.map(s => (s.views[0] || [null])[0]), year: 2025, era: null, win: '2011-2026', table: false, ord: 'wto', terms: { npi: true, fed: true, div: true, rest: false, hh: true, ca: true }, whyOff: U.stGet('isx-pf-why') === 'off', lay: null, flows: false, sys: 'us', oz: 1, oy: 1995 };
   let D = null, B = null, G = null, built = false, R = {}, lastW = 0;
   const cur = () => ST[S.st], vw = () => S.view[S.st];
   const emit = act => { X.emit('profit', { st: cur().id, view: vw(), act: act || null }); };
@@ -169,21 +172,21 @@
   /* ---------- the scene's frame, built once ---------- */
   function build() {
     host.innerHTML = '<div class="pf-top"><p class="pf-tt"><span class="pf-ttk">The profit dollar</span><span class="pf-ttl">' + esc(TITLE) + '<button type="button" class="pf-star" data-pf="fn" aria-expanded="false" aria-controls="isx-pf-fn" aria-label="Footnote: why only a very large economy can play this role">*</button></span><span class="pf-k" id="isx-pf-k"></span></p><div class="pf-fn" id="isx-pf-fn" hidden></div></div>'
-      + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
+      + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><p class="pf-pre" id="isx-pf-pre" hidden></p><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
       + '<div class="pf-jump"><button type="button" data-pf="read">The explanation <span aria-hidden="true">↓</span></button><button type="button" data-how data-pf="how">How we count <span aria-hidden="true">↓</span></button></div></div>'
       + '<section class="pf-board" id="isx-pf-board" aria-label="Chart"><div class="pf-chips" id="isx-pf-chips"></div>'
       + '<div class="pf-bhead"><div class="pf-bh"><span class="pf-vn" id="isx-pf-vn"></span><h3 id="isx-pf-title"></h3></div><span class="pf-br"><span class="pf-unit" id="isx-pf-unit"></span><button type="button" class="pf-whyq" id="isx-pf-whyq" data-pf="whyq" aria-label="Why you are seeing this" hidden>?</button></span></div>'
       + '<div class="pf-note" id="isx-pf-note" hidden><b>Why you are seeing this</b><span></span><button type="button" class="x" data-pf="whyx" aria-label="Close this note">×</button></div>'
       + '<div class="pf-tiles" id="isx-pf-tiles"></div><p class="pf-reading" id="isx-pf-reading" aria-live="polite"></p>'
       + '<figure class="pf-fig" id="isx-pf-fig" data-noswipe></figure>'
-      + '<div class="pf-foot"><div class="pf-scrub" id="isx-pf-scrub"></div><div class="pf-lg" id="isx-pf-lg"></div><nav class="pf-dots" id="isx-pf-dots" aria-label="Views of this station"></nav><button type="button" class="pf-tbtn" data-pf="table" id="isx-pf-table" aria-pressed="false">View as table</button></div>'
+      + '<div class="pf-foot"><div class="pf-scrub" id="isx-pf-scrub"></div><div class="pf-lg" id="isx-pf-lg"></div><div class="pf-deep" id="isx-pf-deep" hidden></div><nav class="pf-dots" id="isx-pf-dots" aria-label="Views of this station"></nav><button type="button" class="pf-tbtn" data-pf="table" id="isx-pf-table" aria-pressed="false">View as table</button></div>'
       + '<div class="pf-tip" id="isx-pf-tip" hidden></div></section>'
       + '<section class="pf-fin" id="isx-pf-fin" aria-labelledby="isx-pf-q" hidden></section>'
       + '<div class="pf-text" id="isx-pf-text" tabindex="-1"></div>';
-    ['k', 'q', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
+    ['k', 'pre', 'deep', 'q', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
     R.top = host.querySelector('.pf-top');
     host.addEventListener('click', e => {
-      const b = e.target.closest('[data-pf], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pl], [data-ps], [data-pzk], [data-pgo], [data-pweb], [data-pfw]'); if (!b) return;
+      const b = e.target.closest('[data-pf], [data-qy], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pl], [data-ps], [data-pzk], [data-pgo], [data-pweb], [data-pfw]'); if (!b) return;
       const d = b.dataset;
       if (d.pv) { setV(d.pv); }
       else if (d.pvn) { stepV(+d.pvn); }
@@ -194,11 +197,14 @@
         if (S.ord === d.po) return; S.ord = d.po; text(); R.title.textContent = V.orb.title();
         if (vw() === 'orb' && !S.table && V.orb.L && !phone()) orbPlace(V.orb.L); else { board(true); const again = host.querySelector('[data-po="' + d.po + '"]'); if (again) again.focus({ preventScroll: true }); }
         sync(); emit('order'); }
+      else if (d.qy && !b.closest('.orr-ev')) { S.oy = +d.qy; board(true); sync(); const again = R.chips.querySelector('[data-qy="' + d.qy + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pl) { S.lay = S.lay === d.pl ? null : d.pl; board(true); const again = R.chips.querySelector('[data-pl="' + d.pl + '"]'); if (again) again.focus({ preventScroll: true }); emit('layer'); }
       else if (d.ps) { S.sys = d.ps; board(true); const again = host.querySelector('[data-ps="' + d.ps + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pzk) { S.oz = Math.max(1, Math.min(3, S.oz * (d.pzk === '+' ? 1.5 : 1 / 1.5))); board(true); const again = host.querySelector('[data-pzk="' + d.pzk + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pf === 'flows') { S.flows = !S.flows; board(true); const again = R.chips.querySelector('[data-pf="flows"]'); if (again) again.focus({ preventScroll: true }); emit('flows'); }
       else if (d.pf === 'table') { S.table = !S.table; board(); emit('table'); }
+      else if (d.pf === 'deep') { setV(d.pd || 'orb'); }   /* OB1: the door to the deep layer, and back to the story on the same year */
+      else if (d.pf === 'story') { setV('orr'); const b2 = R.deep.querySelector('[data-pf="deep"]'); if (b2) b2.focus({ preventScroll: true }); }
       else if (d.pf === 'fn') { foot(b); }
       else if (d.pf === 'whyx') { S.whyOff = true; U.stSet('isx-pf-why', 'off'); board(true); R.whyq.focus({ preventScroll: true }); }
       else if (d.pf === 'whyq') { S.whyOff = false; U.stSet('isx-pf-why', null); board(true); const x = R.note.querySelector('.x'); if (x) x.focus({ preventScroll: true }); }
@@ -217,8 +223,9 @@
     if (window.ResizeObserver) new ResizeObserver(() => { if (X.view !== 'profit' || !D || cur().fin) return; const w = R.fig.clientWidth; if (Math.abs(w - lastW) < 2) return; clearTimeout(rt); rt = setTimeout(() => board(true), 90); }).observe(R.fig);
     built = true;
   }
-  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
-  function stepV(d) { const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), j = i + d; if (j < 0 || j >= vs.length) return; setV(vs[j][0]); }
+  const walk = () => { const s = cur(); return !s.deep ? s.views : vw() === 'orr' ? [] : s.views.filter(v => s.deep.includes(v[0])); };
+  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; const was = vw(); S.view[S.st] = id; S.table = false; if (cur().deep && (was === 'orr' || id === 'orr')) text(); board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
+  function stepV(d) { const vs = walk(), i = vs.findIndex(v => v[0] === vw()), j = i + d; if (j < 0 || j >= vs.length) return; setV(vs[j][0]); }
 
   /* ---------- the title's footnote (the same text opens from the entry screen). The five references were checked on 18 Nov 2026 against
      library and publisher records: author, title, publisher and year. Links are the ones found in that check (the Susan Strange archive, Cornell
@@ -232,10 +239,11 @@
 
   /* ---------- the text under the board ---------- */
   function text() {
-    const s = cur(), two = s.q2 && S.ord === 'ps';
+    const s = cur(), dp = !!s.deep && vw() !== 'orr', two = s.q2 && S.ord === 'ps' && dp;
     R.k.innerHTML = 'Station ' + (S.st + 1) + ' of ' + ST.length + ' <i>·</i> <b>' + esc(s.f) + '</b>';
-    R.q.textContent = two ? s.q2 : s.q; R.q.classList.toggle('long', R.q.textContent.length > 84);
-    const sub = two ? s.sub2 : s.sub; R.sub.hidden = !sub; R.sub.textContent = sub || '';
+    R.pre.hidden = !s.pre; R.pre.textContent = s.pre || '';
+    R.q.textContent = two ? s.q2 : dp ? s.qd : s.q; R.q.classList.toggle('long', R.q.textContent.length > 84);
+    const sub = two ? s.sub2 : dp ? s.subd : s.sub; R.sub.hidden = !sub; R.sub.textContent = sub || '';
     host.dataset.st = s.id; host.classList.toggle('fin', !!s.fin);
     R.board.hidden = !!s.fin; R.text.hidden = !!s.fin; R.fin.hidden = !s.fin; host.querySelector('.pf-jump').hidden = !!s.fin;
     if (s.fin) { finale(); return; }
@@ -757,6 +765,200 @@
     table: () => O ? { cap: 'The bodies of the orbit view, from the project’s country file (claude/data/orbit/O1-countries.csv, 17 Nov 2026; 103 rows, grouped where no role in the chain is collected). Sector and orbit are draft placements. Mine output: share of the world total, USGS Mineral Commodity Summaries 2026.', wrap: 1, head: ['Body', 'Under Pax Silica', 'Role in the chain', 'Orbit', 'Lists', 'Mine output', 'What it does'],
       rows: O.B.map(b => [b.full && b.k === 'c' ? b.full : b.n + (b.m ? ' (' + b.m + ')' : ''), { core: 'Centre', us: b.mem.p ? 'US system, signatory' : b.mem.t ? 'US system, participant' : 'US system, outside Pax Silica', cn: 'China’s system', both: 'Overlap', swing: 'On neither list', open: 'Between the systems, ownership not researched' }[b.sys], b.sys === 'core' ? 'IP and finance' : O.sectors[b.sec], b.sys === 'core' ? 'Centre' : ['', 'Inner', 'Middle', 'Outer', 'Edge'][b.ring], [b.mem.p && 'Pax Silica', b.mem.t && 'Pax Silica participant', b.mem.a && 'AI statement', b.mem.w && 'WAICO', b.mem.b && 'BRICS ' + b.mem.b.replace(/\s*\(.*$/, ''), b.mem.e && 'EU', b.mem.s && 'US treaty'].filter(Boolean).join(', ') || 'none', b.share || 'not collected', b.role || 'not collected']) } : { cap: 'The orbits are loading.', head: ['Body'], rows: [['…'], ['…'], ['…']] } };
 
+  /* ---------- station 1 · The order, the story layer: the orrery (OB1, 23 Nov 2026; spec claude/specs/orrery-opener-spec-21-nov.md §2–§8) ----------
+     A still orrery over 1995–2026. Size is the share of world GDP at market exchange rates (radius ∝ √share), the ring is the tier, the
+     angle the role in the chain. The placements are the orbit view's (data/orbit.json: wring and wsec for one system, ring, sec and sys
+     for two); the figures are data/orrery.json (tools/orrery-data.py, from OR2). OB1 switches between the one-system layout (to 2024)
+     and the two-system layout (2025–26). The tear itself, the ripple, the opening, the play button, the streams and “German Hypocrisy”
+     are OB2. At rest nothing moves; a body moves only when the slider changes its place (one curve, off under reduced motion). */
+  let Q = null, QSEL = null, QL = null;
+  const QR = ['THE CORE', 'TOOLS, CHIPS AND FINANCE', 'THE ASSEMBLY LINE', 'ENERGY AND MINERALS', 'ROLE NOT COLLECTED'], QF = [.2, .39, .58, .77, .96];
+  const qi = y => y - 1995, qTwo = () => S.oy >= 2025;
+  const qISO = {}, qB = id => Q && Q.bodies[qISO[id]];
+  const qv = (b, k, y) => b && b[k] ? b[k][qi(y)] : null;
+  const qRing = (b, two, y) => b.book ? 1 : b.id === 'O1-049' && !two ? (y >= 2001 ? 2 : 4) : !two && b.wring === 0 ? 0 : ({ 0: 1, 4: 1, 1: 2, 2: 3, 3: 3, 5: 4 })[two ? b.sec : b.wsec];
+  const qSun = (b, two) => b.id === 'O1-001' || (two && b.id === 'O1-049');
+  const qTn = v => v == null ? 'not collected' : (v < 0 ? '−' : '+') + '$' + (Math.abs(v) / 1000).toFixed(1) + 'tn';
+  const qPct = v => v == null ? 'not collected' : (Math.round(v * 10) / 10).toFixed(1) + '%';
+  function qList() {   /* the orbit view's bodies, plus the booking points (no mass: their GDP is not what they book) */
+    if (!qList.L) { Object.keys(Q.bodies).forEach(k => { if (Q.bodies[k].id) qISO[Q.bodies[k].id] = k; });
+      qList.L = O.B.concat(Object.keys(Q.bodies).filter(k => !Q.bodies[k].id).map(k => { qISO['BK-' + k] = k; return { id: 'BK-' + k, n: Q.bodies[k].name, full: Q.bodies[k].name, k: 'c', sys: 'us', sec: 4, wsec: 4, ring: 1, wring: 1, book: 1, mem: {} }; })); }
+    return qList.L;
+  }
+  function qLay(W, H, ph, two, y) {
+    const P = {}, rings = [], L = qList(), us = L.find(b => b.id === 'O1-001'), cn = L.find(b => b.id === 'O1-049'), order = b => OSO.indexOf(two ? b.sec : b.wsec);
+    const put = (list, cx, cy, rx, ry, a0, a1) => {   /* the bodies of one system on its rings, between two angles (degrees, clockwise from the top) */
+      const by = {}; list.forEach(b => { const k = qRing(b, two, y); (by[k] = by[k] || []).push(b); });
+      Object.keys(by).forEach(k => { const g = by[k].sort((p, q) => (order(p) - order(q)) || (p.book ? 1 : 0) - (q.book ? 1 : 0) || (p.id < q.id ? -1 : 1)), n = g.length, f = QF[k];
+        g.forEach((b, i) => { const a = (a0 + (a1 - a0) * (i + .5) / n) * Math.PI / 180, o = n > 11 ? [-.03, .03][i % 2] : 0; P[b.id] = { x: cx + rx * (f + o) * Math.sin(a), y: cy - ry * (f + o) * Math.cos(a) }; }); });
+      [1, 2, 3, 4].concat(two ? [] : [0]).forEach(k => rings.push({ cx, cy, rx: rx * QF[k], ry: ry * QF[k], k, lab: !rings.some(q => q.k === k) }));
+    };
+    if (!two) {
+      const top = ph ? 110 : 0, ratio = ph ? Math.max(.78, Math.min(1.3, ((H - top) / 2 - 14) / (W / 2 - 18))) : .4, rx = Math.min(W / 2 - 18, ((H - top) / 2 - 14) / ratio), cx = W / 2, cy = top + (H - top) / 2 + (ph ? 0 : 6);   /* phones: the rings fill the height under the counters */
+      put(L.filter(b => b !== us), cx, cy, rx, rx * ratio, 0, 360); P[us.id] = { x: cx, y: cy };
+      return { P, rings, two };
+    }
+    const both = L.filter(b => b.sys === 'both'), rest = L.filter(b => b.sys === 'swing' || b.sys === 'open'), lane = {};
+    if (ph) {   /* phones: the US system above, China's below, the overlap and the bodies on neither list in the lane between */
+      const top = 100, rx = W / 2 - 16, ry = Math.min(rx * .78, (H - top - 80) / 2 / .98), cyU = top + ry * .98, cyC = H - ry * .86 - 10;
+      put(L.filter(b => b.sys === 'us'), W / 2, cyU, rx, ry, 0, 360); put(L.filter(b => b.sys === 'cn'), W / 2, cyC, rx * .86, ry * .86, 0, 360);
+      P[us.id] = { x: W / 2, y: cyU }; P[cn.id] = { x: W / 2, y: cyC };
+      const my = (cyU + ry + cyC - ry * .86) / 2; Object.assign(lane, { horiz: 1, y: my, x0: 0, x1: W });
+      both.forEach((b, i) => { P[b.id] = { x: 14 + (W - 28) * (i + .5) / both.length, y: my - 11 }; });
+      rest.forEach((b, i) => { P[b.id] = { x: 14 + (W - 28) * (i + .5) / rest.length, y: my + 11 }; });
+      return { P, rings, two, lane };
+    }
+    const ratio = .4, rxU = Math.min(W * .26, (H / 2 - 14) / ratio), rxC = Math.min(W * .19, (H / 2 - 14) / ratio * .8), cy = H / 2 + 6, cxU = rxU + 26, cxC = W - rxC - 26, mid = (cxU + rxU + cxC - rxC) / 2;
+    put(L.filter(b => b.sys === 'us'), cxU, cy, rxU, rxU * ratio, 128, 412); put(L.filter(b => b.sys === 'cn'), cxC, cy, rxC, rxC * ratio, -52, 232);
+    P[us.id] = { x: cxU, y: cy }; P[cn.id] = { x: cxC, y: cy };
+    const col = (list, y0, y1) => list.forEach((b, i) => { const r = Math.floor(i / 2), n = Math.ceil(list.length / 2); P[b.id] = { x: mid + (i % 2 ? 16 : -16), y: y0 + (y1 - y0) * (r + .5) / n }; });
+    col(both, 26, cy - 22); col(rest, cy + 22, H - 26); Object.assign(lane, { x: mid, y0: 6, y1: H - 6, y: cy });
+    return { P, rings, two, lane };
+  }
+  function qShape(g, b, rad, two) {   /* one body, drawn for its year: a sun, a filled or hollow disc, a diamond, a split disc, a group */
+    g.querySelectorAll('.q-s').forEach(n => n.remove()); const at = g.querySelector('text'), add = n => { n.classList.add('q-s'); g.insertBefore(n, at); return n; };
+    const d = qB(b.id), share = qv(d, 'share', S.oy), sun = qSun(b, two), none = b.k === 'c' && !b.book && share == null;
+    let r = b.book ? 3.6 : b.k === 'g' ? 3.4 : none ? 3.2 : Math.max(3.2, rad * Math.sqrt(share)), cls = b.book ? 'bk' : b.sys === 'both' ? 'bo' : b.sys === 'cn' || b.id === 'O1-049' ? 'cn' : b.sys === 'us' || b.sys === 'core' ? 'us' : 'nl';
+    cls += b.k === 'g' || none ? ' ho' : b.mem.p || b.sys === 'cn' || b.sys === 'both' || sun || b.id === 'O1-049' ? ' fi' : b.mem.t ? ' da' : ' ho';
+    if (none) cls += ' da';
+    g.setAttribute('class', 'q ' + cls + (sun ? ' sun' : '') + (QSEL === b.id ? ' sel' : ''));
+    if (sun) add(el('circle', { r: r * 2.3, class: 'glow', fill: 'url(#isx-q-' + (b.id === 'O1-001' ? 'us' : 'cn') + ')' }));
+    if (b.book || (b.zone && !sun && b.id !== 'O1-049')) add(el('rect', { x: -r * .78, y: -r * .78, width: r * 1.56, height: r * 1.56, transform: 'rotate(45)', class: 'c' }));
+    else add(el('circle', { r, class: 'c' }));
+    if (b.k === 'g') add(el('circle', { r: 1.4, class: 'gd' }));
+    add(el('circle', { r: Math.max(r, 11), fill: 'transparent', class: 'hit' }));
+    return r;
+  }
+  function qWhere(b, two) {
+    if (b.book) return 'Booking point: profit is booked here; its GDP is not what it books';
+    if (b.id === 'O1-001') return 'Centre of the system';
+    if (b.id === 'O1-049') return two ? 'Centre of the second system' : S.oy >= 2001 ? 'Inside the one system, on the assembly line (from 2001)' : 'Outside the WTO until December 2001';
+    if (!two) return 'Inside the one system · ' + QR[qRing(b, false, S.oy)].toLowerCase();
+    return { us: b.mem.p ? 'US system · Pax Silica signatory' : b.mem.t ? 'US system · takes part in Pax Silica without signing' : 'US system · outside Pax Silica', cn: 'China’s system', both: 'On both lists', swing: 'On neither list', open: 'Between the systems · ownership not researched' }[b.sys] || '';
+  }
+  function qTip(b, ev) {
+    const d = qB(b.id), y = S.oy, inc = qv(d, 'income', y), est = d && d.estFrom && y >= d.estFrom;
+    const rows = [(b.id === 'O1-001' ? 'United States' : b.k === 'g' && b.m ? b.n + ' (' + b.m + ')' : b.full) + ' · ' + y + (est ? ' · IMF estimate' : ''), ['Place', qWhere(b, qTwo())]];
+    if (d && d.share) rows.push(['Share of world GDP', qPct(qv(d, 'share', y))], ['Current account summed since 1995', qTn(qv(d, 'bcaSum', y) == null ? null : qv(d, 'bcaSum', y)) + (qv(d, 'bcaSumPctGdp', y) == null ? '' : ' · ' + qPct(qv(d, 'bcaSumPctGdp', y)) + ' of GDP')]);
+    else if (b.k === 'c') rows.push(['Share of world GDP', d && d.note ? d.note.replace(/^No IMF row: /, '') : 'not collected']);
+    if (d && d.income) rows.push(['Income of US firms’ affiliates there', inc == null ? 'not collected' : typeof inc === 'string' ? (inc === '(D)' ? 'suppressed by BEA' : 'less than $0.5m') : '$' + (inc / 1000).toFixed(1) + 'bn (BEA' + (y < 2006 ? ', net of withholding taxes' : '') + ')']);
+    if (b.k === 'g') rows.push(['', 'A group: ' + (b.members ? b.members.join(', ') : 'members not named in the sources read') + '. Not sized.']);
+    if (ev === undefined) return rows;
+    const g = R.fig.querySelector('[data-q="' + b.id + '"] .c'), r = g ? g.getBoundingClientRect() : null;
+    tipShow(rows, ev && ev.clientX ? ev.clientX : r ? r.right : 0, ev && ev.clientY ? ev.clientY : r ? r.top : 0);
+  }
+  function qLabels(L) {   /* names beside the larger bodies; a name that would run into one already placed waits for its body to be selected */
+    const svg = R.fig.querySelector('svg.orr-s'); if (!svg) return; const put = [], hit = q => put.some(p => q[0] < p[2] && q[2] > p[0] && q[1] < p[3] && q[3] > p[1]);
+    const L2 = qList().map(b => ({ b, g: svg.querySelector('[data-q="' + b.id + '"]') })).filter(o => o.g && L.P[o.b.id]);
+    L2.forEach(o => { const p = L.P[o.b.id], r = +o.g.dataset.r; put.push([p.x - r, p.y - r, p.x + r, p.y + r]); });
+    L2.sort((a, b) => (QSEL === b.b.id) - (QSEL === a.b.id) || +b.g.dataset.r - +a.g.dataset.r).forEach(o => {
+      const t = o.g.querySelector('text'), p = L.P[o.b.id], r = +o.g.dataset.r, sun = qSun(o.b, L.two), w = t.textContent.length * 6.4 + 4;
+      if (sun) { t.setAttribute('x', 0); t.setAttribute('y', r + 14); t.setAttribute('text-anchor', 'middle'); t.classList.remove('quiet'); put.push([p.x - w / 2, p.y + r + 3, p.x + w / 2, p.y + r + 17]); return; }
+      const box = [p.x + r + 4, p.y - 6, p.x + r + 4 + w, p.y + 6], big = r >= (phone() ? 6 : 6.5) || QSEL === o.b.id;
+      const ok = big && (QSEL === o.b.id || !hit(box)); t.setAttribute('x', r + 4); t.setAttribute('y', 3.5); t.setAttribute('text-anchor', 'start'); t.classList.toggle('quiet', !ok); if (ok) put.push(box);
+    });
+  }
+  function qSet(y, quiet) {   /* the slider: the year sets the masses, the counters, the card; 2025 switches to two systems */
+    y = Math.max(1995, Math.min(2026, Math.round(y))); const was = S.oy; S.oy = y;
+    const wrap = R.fig.querySelector('.pf-orr'); if (!wrap || !Q) return;
+    const svg = wrap.querySelector('svg.orr-s'), two = qTwo(), W = +svg.dataset.w, H = +svg.dataset.h, ph = phone();
+    if (!QL || QL.two !== two || (was < 2001) !== (y < 2001) || quiet === 'all') QL = qLay(W, H, ph, two, y);
+    svg.classList.toggle('two', two); svg.classList.toggle('one', !two);
+    const rad = 28 / Math.sqrt(26) * Math.max(.55, Math.min(1.05, W / 1380));
+    qList().forEach(b => { const g = svg.querySelector('[data-q="' + b.id + '"]'), p = QL.P[b.id]; if (!g) return; if (!p) { g.classList.add('off'); return; }
+      g.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)'; const r = qShape(g, b, rad, two); g.dataset.r = r.toFixed(1);
+      const lab = b.id === 'O1-001' ? 'US' : b.n, al = qTip(b).map((q, i) => i ? (q[0] ? q[0] + ': ' : '') + q[1] : q).join('. '); g.setAttribute('aria-label', (al.toLowerCase().indexOf(lab.toLowerCase()) === 0 ? '' : lab + ', ') + al); });   /* the spoken name starts with the name drawn beside the body (US, UK) */
+    qLabels(QL);
+    const us = Q.bodies.USA, cn = Q.bodies.CHN, est = y >= us.estFrom, ct = wrap.querySelector('.orr-ct');
+    ct.innerHTML = '<b class="yr">' + y + '</b>' + (est && X.wip ? X.wip.pill() + '<span class="es">IMF estimate</span>' : '')
+      + '<p><span>Share of world GDP</span><i>US</i> ' + qPct(qv(us, 'share', y)) + ' <i>China</i> ' + qPct(qv(cn, 'share', y)) + '</p>'
+      + '<p><span>Current account summed since 1995</span><i>US</i> ' + qTn(qv(us, 'bcaSum', y)) + ' <i>China</i> ' + (qv(cn, 'bcaSum', y) == null ? 'not collected' : qTn(qv(cn, 'bcaSum', y)) + (y < 2005 ? ' (from 1997)' : '')) + '</p>';
+    const ev = Q.events.filter(e => e.year <= y).pop(), card = wrap.querySelector('.orr-card'), now = Q.events.find(e => e.year === y);
+    card.innerHTML = '<span class="k">' + ev.year + ' · ' + esc(ev.mark) + '</span><p>' + esc(ev.line) + '</p><small>' + (ev.url ? '<a href="' + esc(ev.url) + '" target="_blank" rel="noopener">' + esc(ev.src) + '</a>' : esc(ev.src)) + '</small><button type="button" class="orr-4" data-pf="deep" data-pd="orb">All four cards <span aria-hidden="true">›</span></button>';
+    const inp = wrap.querySelector('.orr-sl input'); if (+inp.value !== y) inp.value = y;
+    inp.setAttribute('aria-valuetext', 'Year ' + y + '. China, ' + qPct(qv(cn, 'share', y)) + ' of world GDP.' + (now ? ' Event: ' + now.line : ''));
+    wrap.querySelectorAll('.orr-ev button').forEach(b => b.classList.toggle('past', +b.dataset.qy <= y));
+    R.title.textContent = V.orr.title(); deepDoor();
+  }
+  V.orr = { title: () => qTwo() ? 'Two systems, and a curtain between them' : 'One system around the United States', unit: 'Size: share of world GDP · Position: tier and role · Schematic',
+    load() { if (V.orr.busy) return; V.orr.busy = 1; Promise.all([X.load('orrery'), O || X.load('orbit')]).then(([q, o]) => { Q = q; O = o; V.orr.busy = 0; if (X.view === 'profit' && cur().deep) board(true); }).catch(() => { V.orr.busy = 0; reading('', 'The orrery could not be loaded. Reload the page to try again.'); }); },
+    draw() {
+      if (!Q || !O) { reading('', 'Loading the orrery.'); V.orr.load(); return; }
+      const fig = R.fig, ph = phone(), wrap = h('div', 'pf-orr');
+      wrap.setAttribute('role', 'group'); wrap.setAttribute('aria-label', 'The order as an orrery, 1995 to 2026. Each economy is a body whose size is its share of world GDP; the ring is its tier and the angle its role in the chain. Until 2024 there is one system around the United States: the old core, Japan, the United Kingdom and the European members, on the inner ring, China on the assembly line from 2001. From 2025 there are two systems, the United States on the left and China on the right, with the economies on both lists and on neither list in the lane between. The counters give the year, the US and Chinese shares of world GDP and their current accounts summed since 1995; the card under the slider tells the last event passed. The table view lists every figure for the year.');
+      const sky = h('div', 'orr-sky'), ct = h('div', 'orr-ct'), sl = h('div', 'orr-sl'), card = h('div', 'orr-card'); ct.setAttribute('aria-live', 'polite'); card.setAttribute('aria-live', 'polite');
+      sky.append(ct); wrap.append(sky, sl, card); fig.append(wrap);
+      const W = Math.max(280, sky.clientWidth), H = Math.max(240, sky.clientHeight), svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'orr-s' + (X.reduce ? ' now' : ''), 'aria-hidden': 'false' }); svg.dataset.w = W; svg.dataset.h = H;
+      const defs = el('defs'); [['us', '#FFF4DA', '#F3D28C'], ['cn', '#E9FFFD', '#8FD3CF']].forEach(([k, a, b]) => { const g = el('radialGradient', { id: 'isx-q-' + k }); g.append(el('stop', { offset: '0', 'stop-color': a, 'stop-opacity': '.55' }), el('stop', { offset: '.45', 'stop-color': b, 'stop-opacity': '.18' }), el('stop', { offset: '1', 'stop-color': b, 'stop-opacity': '0' })); defs.append(g); });
+      const lg = el('linearGradient', { id: 'isx-q-lane', x1: 0, x2: 1, y1: 0, y2: 0 }); const hf = el('linearGradient', { id: 'isx-q-half', x1: 0, x2: 1, y1: 0, y2: 0 }); hf.append(el('stop', { offset: '.5', 'stop-color': '#E9C77F' }), el('stop', { offset: '.5', 'stop-color': '#8FD3CF' })); defs.append(hf);
+      lg.append(el('stop', { offset: '0', 'stop-color': '#06080C', 'stop-opacity': '0' }), el('stop', { offset: '.5', 'stop-color': '#000', 'stop-opacity': '.85' }), el('stop', { offset: '1', 'stop-color': '#06080C', 'stop-opacity': '0' })); defs.append(lg); svg.append(defs);
+      /* a sparse, still starfield (about 140 points, 8–35% opacity), the same on every visit */
+      const stars = el('g', { class: 'stars' }); let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < 140; i++) stars.append(el('circle', { cx: (rnd() * W).toFixed(1), cy: (rnd() * H).toFixed(1), r: (.45 + rnd() * .7).toFixed(2), fill: '#cfd8e3', opacity: (.08 + rnd() * .27).toFixed(2) })); svg.append(stars);
+      /* rings and the lane for both layouts; the class on the svg shows one */
+      [false, true].forEach(two => { const L = qLay(W, H, ph, two, two ? 2025 : 2001), g = el('g', { class: 'rg ' + (two ? 'two' : 'one') });
+        if (two && L.lane) { if (L.lane.horiz) g.append(el('rect', { x: 0, y: L.lane.y - 24, width: W, height: 48, fill: 'url(#isx-q-lane)', transform: '' }), el('line', { x1: 0, x2: W, y1: L.lane.y, y2: L.lane.y, class: 'cur' }), el('text', { x: 6, y: L.lane.y - 27, class: 'rk' }, 'ON BOTH LISTS'), el('text', { x: 6, y: L.lane.y + 35, class: 'rk' }, 'ON NEITHER LIST'));
+          else g.append(el('rect', { x: L.lane.x - 46, y: 0, width: 92, height: H, fill: 'url(#isx-q-lane)' }), el('line', { x1: L.lane.x, x2: L.lane.x, y1: 4, y2: H - 4, class: 'cur' }), el('text', { x: L.lane.x, y: 14, 'text-anchor': 'middle', class: 'rk' }, 'ON BOTH LISTS'), el('text', { x: L.lane.x, y: H - 6, 'text-anchor': 'middle', class: 'rk' }, 'ON NEITHER LIST')); }
+        L.rings.forEach(r => { g.append(el('ellipse', { cx: r.cx, cy: r.cy, rx: r.rx, ry: r.ry, class: 'qr' + (r.k === 4 ? ' dash' : '') }));
+          if (r.lab && !ph && !(two && r.cx > W / 2)) g.append(el('text', { x: r.cx - r.rx * .72 - 4, y: r.cy + r.ry * .72 + 12, 'text-anchor': 'end', class: 'rl' }, QR[r.k])); });
+        svg.append(g); });
+      const bodies = el('g', { class: 'bodies' });
+      qList().slice().sort((a, b) => (qSun(a, true) ? 1 : 0) - (qSun(b, true) ? 1 : 0)).forEach(b => { const g = el('g', { class: 'q', 'data-q': b.id, role: 'button', tabindex: 0 }); g.append(el('text', { class: 'ql' }, b.id === 'O1-001' ? 'US' : b.n)); bodies.append(g); });
+      svg.append(bodies); sky.append(svg);
+      const of = ev => { const g = ev.target.closest && ev.target.closest('[data-q]'); return g ? qList().find(b => b.id === g.dataset.q) : null; };
+      const pick = (b, ev) => { QSEL = b ? b.id : null; svg.querySelectorAll('.q.sel').forEach(g => g.classList.remove('sel')); if (b) { svg.querySelector('[data-q="' + b.id + '"]').classList.add('sel'); qLabels(QL); qTip(b, ev); } else tipHide(); };
+      svg.addEventListener('pointerover', ev => { const b = of(ev); if (b && ev.pointerType === 'mouse') pick(b, ev); });
+      svg.addEventListener('pointerleave', () => { if (QSEL) { QSEL = null; svg.querySelectorAll('.q.sel').forEach(g => g.classList.remove('sel')); qLabels(QL); } tipHide(); });
+      svg.addEventListener('click', ev => { const b = of(ev); pick(b, ev); });
+      svg.addEventListener('focusin', ev => { const b = of(ev); if (b) pick(b); });
+      svg.addEventListener('focusout', () => tipHide());
+      /* the slider: 1995 to 2026, the events as dots with their year above; ← → by year, Page Up and Page Down by event, Home and End */
+      const evs = h('div', 'orr-ev'); Q.events.forEach(e => { const b = h('button'); b.type = 'button'; b.dataset.qy = e.year; b.style.left = (qi(e.year) / 31 * 100) + '%'; b.setAttribute('aria-label', e.year + ': ' + e.mark); b.title = e.mark; if (!ph) b.append(h('span', '', String(e.year))); evs.append(b); });
+      const inp = h('input'); inp.type = 'range'; inp.min = 1995; inp.max = 2026; inp.step = 1; inp.value = S.oy; inp.setAttribute('aria-label', 'Year');
+      inp.addEventListener('input', () => qSet(+inp.value));
+      inp.addEventListener('change', () => { sync(); emit('year'); });
+      inp.addEventListener('keydown', ev => { if (ev.key !== 'PageUp' && ev.key !== 'PageDown') return; ev.preventDefault(); const ys = Q.events.map(e => e.year), y = ev.key === 'PageUp' ? ys.find(v => v > S.oy) || 2026 : ys.filter(v => v < S.oy).pop() || 1995; qSet(y); sync(); emit('year'); });
+      const ends = h('div', 'orr-ends'); ends.append(h('span', '', '1995'), h('span', '', '2026'));
+      sl.append(evs, inp, ends);
+      evs.addEventListener('click', ev => { const b = ev.target.closest('[data-qy]'); if (!b) return; qSet(+b.dataset.qy); inp.focus({ preventScroll: true }); sync(); emit('year'); });
+      QL = null; qSet(S.oy, 'all');
+      /* the key: inside the picture on a wide screen (the board then ends above the bar), under it on a phone */
+      legend([]); const key = ph ? R.lg : h('div', 'orr-key'); if (!ph) { key.setAttribute('aria-label', 'Key'); sky.append(key); }
+      [['us fi', 'Pax Silica signatory'], ['us da', 'Takes part without signing'], ['us ho', 'US system, outside Pax Silica'], ['cn fi', 'China’s system'], ['bo', 'On both lists'], ['nl ho', 'On neither list'], ['z', 'Extraction zone'], ['bk', 'Booking point']].forEach(([c, t]) => { const s = h('span', 'qlg'), i = h('i', c); s.append(i, t); key.append(s); });
+    },
+    table: () => qTable(S.oy) };
+  function qTable(y) {
+    const rows = qList().filter(b => qB(b.id)).map(b => { const d = qB(b.id), inc = qv(d, 'income', y);
+      return [b.id === 'O1-001' ? 'United States' : b.full, d.share ? qPct(qv(d, 'share', y)) : null, d.bcaSum && qv(d, 'bcaSum', y) != null ? Math.round(qv(d, 'bcaSum', y)).toLocaleString('en-US') : null, d.bcaSumPctGdp && qv(d, 'bcaSumPctGdp', y) != null ? qPct(qv(d, 'bcaSumPctGdp', y)) : null,
+        inc == null ? null : typeof inc === 'string' ? (inc === '(D)' ? 'suppressed' : 'under 0.5') : inc.toLocaleString('en-US'), [d.estFrom && y >= d.estFrom ? 'IMF estimate' : '', d.book ? 'booking point' : '', d.income && y < 2006 ? 'BEA before 2006: net of withholding taxes' : '', d.note && !d.share ? d.note : ''].filter(Boolean).join('; ') || '—', qv(d, 'share', y) || 0]; })
+      .sort((a, b) => b[6] - a[6]).map(r => r.slice(0, 6));
+    return { cap: 'The orrery’s figures for ' + y + ' (data/orrery.json, preliminary). GDP and current accounts: ' + Q.vintage.gdp + '. Income: ' + Q.vintage.income + '. Shares are of the IMF’s world total; sums start in 1995 (China in 1997) and include estimated years.', wrap: 1,
+      head: ['Economy', 'Share of world GDP', 'Current account summed since 1995, $bn', 'As % of that year’s GDP', 'Income of US firms’ affiliates there, $m', 'Flags'], rows };
+  }
+  /* the deep layer's last view: the figures behind every year, and the method */
+  V.fig = { only: 1, title: () => 'The figures behind the orrery, ' + S.oy, unit: 'IMF WEO Oct 2026 · BEA · preliminary',
+    chips() { chipRow('Year', (Q ? Q.events.map(e => e.year) : []).concat([2026]).filter((v, i, a) => a.indexOf(v) === i).map(y => [String(y), String(y)]), 'qy', String(S.oy)); },
+    draw() {
+      if (!Q || !O) { reading('', 'Loading the figures.'); V.orr.load(); return; }
+      if (X.wip && Q.status === 'preliminary') { const w = h('div', 'orr-wip'); w.innerHTML = X.wip.note('the series are OR2’s first pull; the streams, the creditor and debtor rings and the booked-profit view are still being built'); R.fig.append(w); }
+      table(qTable(S.oy));
+      const m = h('div', 'orr-method'); m.innerHTML = '<h4>Method</h4>' + [
+        'Size is the share of world GDP at market exchange rates, from the IMF’s World Economic Outlook of October 2026; the World Bank’s figures differ by less than 2.5% for the six largest economies (OR2). Taiwan’s 1995 value is in the IMF file.',
+        'The current account summed since 1995 is the sum of each year’s balance in current dollars; divided by one year’s GDP it is a stock over a flow, so prices and exchange rates are not corrected (IMF WP/99/115). The IMF has no value for China in 1995 and 1996, so China’s sum starts in 1997. The world’s current accounts do not add to zero: the IMF’s world figure was +$490bn in 2024.',
+        'Income is what US firms’ foreign affiliates earned, by host country, including reinvested earnings (BEA, outward). Before 2006 it is net of withholding taxes, from 2006 gross: one break, not adjusted. Income attributed to a host country is not where it was earned: Ireland, the Netherlands, Luxembourg, Bermuda and the UK Caribbean islands book profits made elsewhere.',
+        'China’s side has no streams: no official source publishes Chinese outward direct-investment income by host country (MOFCOM gives flows and stocks, SAFE aggregates, CDIS positions only). Whether China’s surplus is understated is disputed: the Fed’s FEDS Notes (22 Sep 2026) put the 2025 understatement at about 0.6 point of GDP; Brad Setser (CFR) puts the surplus near $1tn; VoxChina argues the gap is explained by adjustments. No figure here is changed for it.',
+        'Groups and the EU are not sized: the EU’s members are drawn on their own, and the groups stand for economies whose role in the chain is not collected. New Caledonia has no IMF row.'].map(t => '<p>' + esc(t) + '</p>').join('');
+      R.fig.append(m);
+    },
+    table: () => qTable(S.oy) };
+  function deepDoor() {   /* “For economists: the full statistics”: always in the board's foot of the story; drawn as the next step at the end of the timeline */
+    const s = cur(), d = R.deep; if (!s.deep) { d.hidden = true; d.textContent = ''; return; }
+    const story = vw() === 'orr', end = story && S.oy >= 2025, pill = Q && Q.status === 'preliminary' && X.wip ? ' ' + X.wip.pill() : '';
+    d.hidden = false; d.className = 'pf-deep' + (end ? ' hi' : '') + (end && !deepDoor.once && !X.reduce ? ' pulse' : ''); if (end) deepDoor.once = 1;
+    d.innerHTML = story ? '<button type="button" class="pf-dbtn" data-pf="deep" data-pd="orb">For economists: the full statistics' + pill + ' <span aria-hidden="true">›</span></button>' + (end ? '<small>The figures behind every year, the two orders side by side, and the method.</small>' : '')
+      : '<button type="button" class="pf-dbtn back" data-pf="story"><span aria-hidden="true">‹</span> Back to the story, ' + S.oy + '</button>' + pill;
+  }
+
   const GC = { hub: C.gold, export: C.teal, centre: C.blue, mixed: C.teal };
   const OFF = { USA: [0, -1, 'middle'], CHN: [0, 1, 'middle'], JPN: [-1, -1, 'end'], KOR: [1, 0, 'start'], DEU: [0, 1, 'middle'], GBR: [-1, 0, 'end'], FRA: [0, 1, 'middle'], TWN: [-1, 0, 'end'], CHE: [1, 0, 'start'], SAU: [-1, 0, 'end'], NLD: [0, -1, 'middle'] };
   const GN = { hub: 'Hub', export: 'Export-led spoke', centre: 'Financial or booking centre', mixed: 'Both: export-led and booking centre', other: 'Not placed' };
@@ -863,7 +1065,7 @@
   function chipRow(label, opts, key, on) { if (R.chips.childNodes.length) R.chips.append(h('span', 'gap')); R.chips.append(h('span', 'cl', label)); opts.forEach(([k, t]) => { const b = h('button', 'pf-chip', t); b.type = 'button'; b.dataset[key] = k; b.setAttribute('aria-pressed', String(on === k)); R.chips.append(b); }); }
   /* the view switch (v4, decision 6): dots under the chart with arrows that name the view they lead to; the view's name above the chart */
   function dots() {
-    const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), nav = R.dots; nav.textContent = ''; nav.hidden = vs.length < 2; if (vs.length < 2) return;
+    const vs = walk(), i = vs.findIndex(v => v[0] === vw()), nav = R.dots; nav.textContent = ''; nav.hidden = vs.length < 2; if (vs.length < 2) return;
     const arr = (d, j) => { const b = h('button', 'pf-arr ' + (d < 0 ? 'pv' : 'nx')); b.type = 'button'; b.dataset.pvn = d; b.disabled = j < 0 || j >= vs.length; b.setAttribute('aria-label', b.disabled ? (d < 0 ? 'No earlier view' : 'No further view') : (d < 0 ? 'Previous view: ' : 'Next view: ') + vs[j][1]); const t = h('span', 'at', b.disabled ? '' : vs[j][1]), a = h('i', '', d < 0 ? '‹' : '›'); a.setAttribute('aria-hidden', 'true'); if (d < 0) b.append(a, t); else b.append(t, a); return b; };
     const row = h('div', 'pf-dr'); row.setAttribute('role', 'group'); row.setAttribute('aria-label', 'Choose a view');
     vs.forEach(([k, t], j) => { const b = h('button', 'pf-dot'); b.type = 'button'; b.dataset.pv = k; b.title = t; b.setAttribute('aria-label', (j + 1) + ' of ' + vs.length + ': ' + t); b.setAttribute('aria-current', String(j === i)); row.append(b); });
@@ -882,11 +1084,12 @@
   function board(keep) {
     if (!D) return;
     const s = cur(); if (s.fin) { if (!keep) emit(); return; }
-    const v = V[vw()], fig = R.fig, vi = s.views.findIndex(q => q[0] === vw());
+    const v = V[vw()], fig = R.fig, vs = walk().length ? walk() : s.views, vi = vs.findIndex(q => q[0] === vw());
     tipHide(); fig.textContent = ''; R.chips.textContent = ''; R.tiles.textContent = ''; R.tiles.className = 'pf-tiles'; reading('', ''); legend([]);
     fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); R.board.dataset.st = s.id; R.board.dataset.lens = vw();
     if (v.chips) v.chips();
-    R.vn.textContent = s.views.length > 1 ? s.views[vi][1] + ' · ' + (vi + 1) + ' of ' + s.views.length : s.views[vi][1];
+    R.vn.textContent = s.deep && vw() === 'orr' ? 'The story' : vs.length > 1 ? vs[vi][1] + ' · ' + (vi + 1) + ' of ' + vs.length : vs[vi][1];
+    deepDoor();
     R.title.textContent = typeof v.title === 'function' ? v.title() : v.title; R.unit.textContent = v.unit; R.table.setAttribute('aria-pressed', String(S.table));
     dots(); note();
     if (!v.scrub) R.scrub.textContent = '';
@@ -899,7 +1102,8 @@
     R.board.classList.toggle('has-tiles', false);
     /* the tiles and the reading line are set by the view before it measures the chart's box: draw twice when they change its height */
     fit();
-    if (S.table) { v.draw(); fig.textContent = ''; legend([]); table(v.table()); } else v.draw();
+    R.table.hidden = !!v.only;
+    if (S.table && !v.only) { v.draw(); fig.textContent = ''; legend([]); table(v.table()); } else v.draw();
     const had = R.board.classList.contains('has-tiles'), has = R.tiles.childNodes.length > 0;
     R.board.classList.toggle('has-tiles', has); R.board.classList.toggle('has-lg', R.lg.childNodes.length > 0 || !!v.scrub);
     if (has !== had && !S.table) { fig.textContent = ''; v.draw(); }
@@ -938,20 +1142,24 @@
     text(); board(); bar();
   }
   const first = i => (ST[i].views[0] || [null])[0];
-  const detail = () => S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : cur().q2 && S.ord === 'ps' ? '/pax' : '');   /* #profit/order/pax: the orbit view in its second state */
+  /* #profit is the orrery at 1995; #profit/order/<year> the orrery at that year; #profit/order/wto and /pax the orbit view in its two states */
+  const detail = () => cur().id === 'order' ? (vw() === 'orr' ? (S.st === 0 && S.oy === 1995 ? '' : '/order' + (S.oy !== 1995 ? '/' + S.oy : '')) : '/order/' + (vw() === 'orb' ? (S.ord === 'ps' ? 'pax' : 'wto') : vw()))
+    : S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : '');
   /* the link: #profit/<station>/<view>. A link made before the arc still lands: “claims” is now part of “profits”, and a view that
      moved to another station is found there */
   function apply(hash) {
     const p = String(hash || '').replace(/^#\/?/, '').split('/'), id = (p[1] || '').toLowerCase(); let view = (p[2] || '').toLowerCase(), i = ST.findIndex(s => s.id === id);
     const home = v => ST.findIndex(s => s.views.some(q => q[0] === v));
     if (i < 0 && id === 'claims') { if (!view) view = 'hold'; i = home(view); }
-    if (id === 'order' && (view === 'pax' || view === 'wto')) { S.ord = view === 'pax' ? 'ps' : 'wto'; view = 'orb'; } else if (id === 'order' && !view) S.ord = 'wto';
+    if (id === 'order' && (view === 'pax' || view === 'wto')) { S.ord = view === 'pax' ? 'ps' : 'wto'; view = 'orb'; }
+    else if (id === 'order' && /^\d{4}$/.test(view)) { S.oy = Math.max(1995, Math.min(2026, +view)); view = 'orr'; }
+    else if (id === 'order' && !view) S.ord = 'wto';
     if (i >= 0 && view && !ST[i].views.some(q => q[0] === view)) { const j = home(view); if (j >= 0) i = j; else view = ''; }
     if (i < 0) return; go(i, view || first(i), true);
   }
   X.profit = { show, bar, go, detail, apply, footnote, title: TITLE,
     where: () => ({ where: 'Station ' + (S.st + 1) + ' · ' + cur().t + (cur().fin ? '' : ' · ' + cur().views.find(v => v[0] === vw())[1] + (S.table ? ' · table' : '')) }),
-    get state() { return { st: cur().id, view: vw(), year: S.year, era: S.era ? S.era.slice() : null, table: S.table, win: S.win, ord: S.ord, layer: S.lay, flows: S.flows, sys: S.sys, orbit: O ? O.B.length : 0, terms: Object.assign({}, S.terms), zoom: !!Z, ready: !!D }; },
+    get state() { return { st: cur().id, view: vw(), oy: S.oy, deep: !!cur().deep && vw() !== 'orr', orrery: Q ? Object.keys(Q.bodies).length : 0, tension: Q ? Q.tension[S.oy] : null, year: S.year, era: S.era ? S.era.slice() : null, table: S.table, win: S.win, ord: S.ord, layer: S.lay, flows: S.flows, sys: S.sys, orbit: O ? O.B.length : 0, terms: Object.assign({}, S.terms), zoom: !!Z, ready: !!D }; },
     stations: ST.map(s => ({ id: s.id, t: s.t, q: s.q, f: s.f, views: s.views.map(v => v[0]) })), notes: Object.assign({}, NOTE),
     copy: () => ST.map(s => ({ id: s.id, q: s.q, q2: s.q2 || null, x: s.x, rd: s.rd, nt: s.nt, more: s.more.slice(), lines: (s.lines || []).slice() })), why: WHY };
   /* the link: #profit/<station>/<view> */

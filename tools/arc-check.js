@@ -1,7 +1,7 @@
 /* Checks for the profit tab patch of 18 Nov 2026 (the entry screens, the renames, the profit dollar as an arc) and for the orbit view.
    Usage: node tools/arc-check.js [baseUrl] [--only=1,2]   — needs `python3 -m http.server 8731` at the repo root. Exits 1 on a failed check.
    1 the renames and the addresses · 2 the entry screens · 3 the arc: stations, views, dots, notes · 4 Bought each year and One year
-   · 5 the finale · 6 phones · 7 the orbit view (stage 2). */
+   · 5 the finale · 6 phones · 7 the orbit view (stage 2) · 8 the orrery (OB1, 23 Nov 2026). */
 const { chromium } = require('playwright');
 const args = process.argv.slice(2), base = args.find(a => /^(https?|file):/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 const ONLY = (args.find(a => /^--only=/.test(a)) || '').slice(7).split(',').filter(Boolean).map(Number), want = n => !ONLY.length || ONLY.includes(n);
@@ -64,7 +64,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     await p.click('#isx-enter .en-star'); let r = await p.evaluate(() => { const nn = document.getElementById('isx-en-note'); return { open: !nn.hidden, t: nn.textContent }; });
     ok(r.open && /Only a very large economy can play this role/.test(r.t) && ['Strange', 'Cohen', 'Kindleberger', 'Eichengreen', 'Helleiner'].every(x => r.t.indexOf(x) >= 0), 'the asterisk opens the footnote with its five references', r);
     await p.click('#isx-enter [data-en="stops"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch b')].map(x => x.textContent));
-    ok(r.length === 6 && /Profits/.test(r[0]) && /Technology/.test(r[1]) && /The order/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
+    ok(r.length === 6 && /The order/.test(r[0]) && /Profits/.test(r[1]) && /Technology/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
     await p.click('#isx-enter [data-en-stop="3"]'); await p.waitForTimeout(900);
     r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st, view: ISX.profit.state.view })); ok(!r.on && r.st === 'regime' && r.view === 'all', 'choosing a station closes the screen and opens it: the regime, on the stacked chart', r);
     await p.click('#isx-helpb'); await p.click('#isx-tabx'); await p.waitForTimeout(300); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(300);
@@ -72,7 +72,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     ok(r.on && r.inside && /the profit dollar/.test(r.link) && /#profit/.test(r.link) && /The profit dollar/.test(r.sum), '“Remind me later” opens the reminder on the screen, for this tab', r);
     await p.keyboard.press('Escape'); await p.waitForTimeout(200); ok(await p.evaluate(() => !ISX.remind.on && ISX.enter.on === 'profit'), 'Esc closes the reminder first, the screen stays');
     await p.click('#isx-enter [data-en="go"]'); await p.waitForTimeout(900);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'profits', '“Start at the first station” opens station 1', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'order', '“Start at the first station” opens station 1, the order (OB1)', r);
     await done(p);
     /* the machinery: levels only after “Learn step by step”; the tour only after “Explore on my own” */
     p = await open('#simulator', { first: 1 }); await p.waitForTimeout(600);
@@ -102,15 +102,16 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   if (want(3)) {
     const p = await open('#profit');
     let r = await p.evaluate(() => ({ st: ISX.profit.stations.map(s => s.id + ':' + s.views.join(',')), tt: document.querySelector('.pf-ttl').childNodes[0].textContent, k: document.getElementById('isx-pf-k').textContent, q: document.getElementById('isx-pf-q').textContent, bar: [...document.querySelectorAll('#isx-tabs .rt [data-rt-target], #isx-tabs .rt .rt-mark')].length }));
-    ok(r.st.join(' | ') === 'profits:pic,hold,flow,own,list | technology:tri,nat,roc | order:ord,pos | regime:all,sum,why,home,pay | ai:wt,capex,ni | finale:' || /^profits:pic,hold,flow,own,list \| technology:tri,nat,roc \| order:orb,ord,pos \| regime:all,sum,why,home,pay \| ai:wt,capex,ni \| finale:$/.test(r.st.join(' | ')), 'six stations hold every view of build 1 (17) and the new ones', r.st);
-    ok(r.tt === 'Why dollar assets need to be the most profitable' && /Station 1 of 6/.test(r.k) && r.q === 'Savers want profitable equity. That is why they buy US stocks.', 'the tab’s title, the station count and station 1’s title', r);
+    ok(r.st.join(' | ') === 'order:orr,orb,ord,pos,fig | profits:pic,hold,flow,own,list | technology:tri,nat,roc | regime:all,sum,why,home,pay | ai:wt,capex,ni | finale:', 'six stations hold every view of build 1 (17) and the new ones', r.st);
+    ok(r.tt === 'Why dollar assets need to be the most profitable' && /Station 1 of 6/.test(r.k) && r.q === 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.', 'the tab’s title, the station count and station 1’s title (the order, OB1)', r);
     await p.click('.pf-star'); r = await p.evaluate(() => ({ open: !document.getElementById('isx-pf-fn').hidden, t: document.getElementById('isx-pf-fn').textContent, ex: document.querySelector('.pf-star').getAttribute('aria-expanded') }));
     ok(r.open && r.ex === 'true' && /Sterling and British Policy/.test(r.t) && /The Geography of Money/.test(r.t) && /International Money/.test(r.t) && /Exorbitant Privilege/.test(r.t) && /The Status Quo Crisis/.test(r.t) && /link not stored/.test(r.t) && /checked 18 Nov 2026/.test(r.t), 'the asterisk opens the footnote under the title', r); await p.click('.pf-star');
-    const TITLES = ['Savers want profitable equity. That is why they buy US stocks.', 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.', null, 'Deficits realise the profits, and the inflow needs the deficits.', 'The AI trade is what now keeps the claim worth buying.', 'What if AI doesn’t deliver?'];
+    const TITLES = ['To secure its profits, a capitalist order needs a centre: one ladder for the whole world.', 'Savers want profitable equity. That is why they buy US stocks.', 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.', 'Deficits realise the profits, and the inflow needs the deficits.', 'The AI trade is what now keeps the claim worth buying.', 'What if AI doesn’t deliver?'];
     const ST = await p.evaluate(() => ISX.profit.stations);
     for (let i = 0; i < ST.length; i++) {
       await p.evaluate(i => ISX.profit.go(i), i); await p.waitForTimeout(150);
       const q = await p.evaluate(() => document.getElementById('isx-pf-q').textContent); if (TITLES[i]) ok(q === TITLES[i], 'station ' + (i + 1) + ' carries its title', q);
+      if (ST[i].id === 'order') continue;   /* the order's story and deep layers: section 8 */
       for (let j = 0; j < ST[i].views.length; j++) {
         const v = ST[i].views[j]; await p.evaluate(v => { const d = document.querySelector('.pf-dot[data-pv="' + v + '"]'); if (d) d.click(); }, v); await p.waitForTimeout(120);
         const s = await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), sv = f.querySelector('svg[role="img"]'), tri = f.querySelector('.pf-tri, .pf-orb'), nt = document.getElementById('isx-pf-note'), dots = [...document.querySelectorAll('.pf-dot')];
@@ -122,7 +123,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
       }
     }
     /* the arrows, the keys of the link, the note's close and “?” */
-    await p.evaluate(() => ISX.profit.go(0, 'pic')); await p.waitForTimeout(150);
+    await p.evaluate(() => ISX.profit.go(1, 'pic')); await p.waitForTimeout(150);
     r = await p.evaluate(() => ({ pv: document.querySelector('.pf-arr.pv').disabled, nx: document.querySelector('.pf-arr.nx').textContent })); ok(r.pv && /Held abroad/.test(r.nx), 'the arrows name the view they lead to; no earlier view on the first', r);
     await p.click('.pf-arr.nx'); await p.waitForTimeout(150); r = await p.evaluate(() => ({ v: ISX.profit.state.view, h: location.hash })); ok(r.v === 'hold' && r.h === '#profit/profits/hold', 'the next arrow moves one view on and the link follows', r);
     await p.click('#isx-pf-note .x'); r = await p.evaluate(() => ({ hid: document.getElementById('isx-pf-note').hidden, q: !document.getElementById('isx-pf-whyq').hidden })); ok(r.hid && r.q, 'the note closes and leaves a “?”', r);
@@ -132,7 +133,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
       await p.evaluate(h => { location.hash = h; }, old); await p.waitForTimeout(250); r = await p.evaluate(() => ISX.profit.state); ok(r.st === st && r.view === v, 'a link from before the arc still lands: ' + old + ' → ' + st + '/' + v, { st: r.st, view: r.view });
     }
     /* the board ends above the bar on a wide screen (two views are taller on purpose) */
-    for (const [st, v] of [[0, 'pic'], [0, 'hold'], [1, 'tri'], [3, 'all'], [3, 'why'], [4, 'wt']]) { await p.evaluate(([st, v]) => { ISX.profit.go(st, v); scrollTo(0, 0); }, [st, v]); await p.waitForTimeout(200); r = await p.evaluate(() => Math.round(document.getElementById('isx-tabs').getBoundingClientRect().top - document.getElementById('isx-pf-board').getBoundingClientRect().bottom)); ok(r >= 0 && r < 60, 'at 1440 × 900 the board of ' + v + ' ends above the bar', r); }
+    for (const [st, v] of [[1, 'pic'], [1, 'hold'], [2, 'tri'], [3, 'all'], [3, 'why'], [4, 'wt']]) { await p.evaluate(([st, v]) => { ISX.profit.go(st, v); scrollTo(0, 0); }, [st, v]); await p.waitForTimeout(200); r = await p.evaluate(() => Math.round(document.getElementById('isx-tabs').getBoundingClientRect().top - document.getElementById('isx-pf-board').getBoundingClientRect().bottom)); ok(r >= 0 && r < 60, 'at 1440 × 900 the board of ' + v + ' ends above the bar', r); }
     await done(p);
   }
 
@@ -181,7 +182,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     r = await p.evaluate(() => ({ y: ISX.profit.state.year, t: document.querySelector('#isx-pf-zoom .pz-y').textContent })); ok(r.y < 1985 && r.t.indexOf(String(r.y)) === 0, 'a tap on a year selects it', r);
     await p.click('#isx-pf-zoom [data-pz="x"]'); await p.waitForTimeout(200); r = await p.evaluate(() => ({ z: !!document.getElementById('isx-pf-zoom'), inert: document.querySelector('#isx-root > .wrap').inert, read: document.getElementById('isx-pf-reading').textContent, y: ISX.profit.state.year })); ok(!r.z && !r.inert && r.read.indexOf(String(r.y)) === 0, 'Close returns to the page, on the year that was chosen', r);
     /* swipe the views; every station fits the phone */
-    await p.evaluate(() => { ISX.profit.go(0, 'pic'); });
+    await p.evaluate(() => { ISX.profit.go(1, 'pic'); });
     await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), b = f.getBoundingClientRect(), mk = (x) => new Touch({ identifier: 1, target: f, clientX: x, clientY: b.top + 80 }); f.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(300)], changedTouches: [mk(300)], bubbles: true })); f.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(120)], bubbles: true })); }); await p.waitForTimeout(200);
     r = await p.evaluate(() => ISX.profit.state); ok(r.st === 'profits' && r.view === 'hold', 'a swipe on the chart moves to the next view, not to the next station', { st: r.st, view: r.view });
     const ST = await p.evaluate(() => ISX.profit.stations);
@@ -194,7 +195,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   }
 
   if (want(7)) {
-    const p = await open('#profit/order');
+    const p = await open('#profit/order/wto');
     await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); await p.waitForTimeout(300);
     const q = () => p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), sv = f.querySelector('svg.pf-orbs'), bodies = [...f.querySelectorAll('[data-ob]')], pos = g => { const r = g.querySelector('.c').getBoundingClientRect(); return [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)]; }, by = n => bodies.find(g => { const l = g.getAttribute('aria-label'); return l === n || l.endsWith(', ' + n); }), fr = f.getBoundingClientRect();
       return { st: ISX.profit.state, q: document.getElementById('isx-pf-q').textContent, sub: document.getElementById('isx-pf-sub').textContent, title: document.getElementById('isx-pf-title').textContent, n: bodies.length, shown: bodies.filter(g => !g.classList.contains('off')).length, cls: sv.getAttribute('class'), alt: (f.querySelector('.pf-orb').getAttribute('aria-label') || '').length, cards: [...f.querySelectorAll('.pf-orbc b')].map(x => x.textContent), us: pos(by('United States')), cn: pos(by('China')), jp: pos(by('Japan')), kz: pos(by('Kazakhstan')), drc: pos(by('DR Congo')), tw: by('Taiwan').getAttribute('class'), kzc: by('Kazakhstan').getAttribute('class'), sa: by('Saudi Arabia').getAttribute('class'), zw: by('Zimbabwe').getAttribute('class'), mid: fr.left + fr.width / 2, w: fr.width, inside: bodies.filter(g => !g.classList.contains('off')).every(g => { const r = g.querySelector('.c').getBoundingClientRect(); return r.left >= fr.left - 2 && r.right <= fr.right + 2 && r.top >= fr.top - 2 && r.bottom <= fr.bottom + 2; }), press: [...document.querySelectorAll('[data-po]')].map(x => x.dataset.po + ':' + x.getAttribute('aria-pressed')).join() }; });
@@ -224,6 +225,47 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     await ph.click('.pf-orbz [data-pzk="+"]'); await ph.waitForTimeout(300); r = await ph.evaluate(() => { const sc = document.querySelector('.pf-orbsc'); return sc.scrollWidth > sc.clientWidth * 1.3; }); ok(r, 'phone: the zoom button enlarges the picture inside its frame');
     await ph.evaluate(() => { const g = [...document.querySelectorAll('[data-ob]')].find(x => x.getAttribute('aria-label') === 'Kazakhstan'); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); }); await ph.waitForTimeout(200);
     ok(/Kazakhstan/i.test(await ph.evaluate(() => document.querySelector('.pf-orbi').textContent)), 'phone: a tap on a body opens its card');
+    await done(ph);
+  }
+  if (want(8)) {   /* 8 · the orrery, the profit tab's first view (OB1, 23 Nov 2026; spec claude/specs/orrery-opener-spec-21-nov.md §9) */
+    const p = await open('#profit');
+    await p.waitForFunction(() => ISX.profit.state.orrery > 0, null, { timeout: 30000 }); await p.waitForTimeout(300);
+    const Q = await p.evaluate(async () => { const d = await ISX.load('orrery'); return { status: d.status, us: d.bodies.USA, cn: d.bodies.CHN, n: Object.keys(d.bodies).length, ev: d.events.map(e => e.year), t: d.tension }; });
+    let r = await p.evaluate(() => ({ st: ISX.profit.state, h: location.hash, q: document.getElementById('isx-pf-q').textContent, sub: document.getElementById('isx-pf-sub').textContent, dots: document.querySelectorAll('.pf-dot').length, deep: (document.querySelector('#isx-pf-deep [data-pf="deep"]') || {}).textContent, alt: (document.querySelector('.pf-orr').getAttribute('aria-label') || '').length }));
+    ok(r.st.st === 'order' && r.st.view === 'orr' && r.st.oy === 1995 && r.h === '#profit' && r.q === 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.' && r.sub === '1995–2026 · drag through the years' && r.dots === 0 && r.alt > 300, 'the front door opens on the order: the orrery at 1995, title A, no dots in the story', r);
+    ok(/For economists: the full statistics/.test(r.deep) && /WIP/.test(r.deep) && Q.status === 'preliminary', 'the deep button is in the foot, with its WIP marker while the data is preliminary', r.deep);
+    const pct = v => (Math.round(v * 10) / 10).toFixed(1) + '%', tn = v => (v < 0 ? '−' : '+') + '$' + (Math.abs(v) / 1000).toFixed(1) + 'tn';
+    for (const y of [1995, 2019, 2025]) {
+      await p.evaluate(y => { const i = document.querySelector('.orr-sl input'); i.value = y; i.dispatchEvent(new Event('input', { bubbles: true })); i.dispatchEvent(new Event('change', { bubbles: true })); }, y); await p.waitForTimeout(650);
+      r = await p.evaluate(() => { const lane = document.querySelector('.orr-s .rg.two .cur'), s = document.querySelector('svg.orr-s'), m = s.getScreenCTM(), pos = id => { const g = document.querySelector('[data-q="' + id + '"]'); const b = g.querySelector('.c').getBoundingClientRect(); return b.left + b.width / 2; };
+        return { ct: document.querySelector('.orr-ct').textContent, card: document.querySelector('.orr-card').textContent, h: location.hash, suns: document.querySelectorAll('.orr-s .q.sun').length, two: s.classList.contains('two'), t: ISX.profit.state.tension, vt: document.querySelector('.orr-sl input').getAttribute('aria-valuetext'), laneX: lane ? lane.getBoundingClientRect().left : null, us: pos('O1-001'), cn: pos('O1-049'), jp: pos('O1-003'), ru: pos('O1-060'), kz: pos('O1-020'), mx: pos('O1-091') }; });
+      const i = y - 1995, want1 = 'US ' + pct(Q.us.share[i]) + ' China ' + pct(Q.cn.share[i]), want2 = 'US ' + tn(Q.us.bcaSum[i]) + ' China ' + (Q.cn.bcaSum[i] == null ? 'not collected' : tn(Q.cn.bcaSum[i]));
+      ok(r.ct.indexOf(want1) > 0 && r.ct.indexOf(want2) > 0 && r.ct.indexOf(String(y)) === 0 && !/NaN|undefined/.test(r.ct + r.card), y + ': the counters equal the data file (' + want1 + '; ' + want2 + ')', r.ct);
+      ok(r.h === (y === 1995 ? '#profit' : '#profit/order/' + y) && /^Year \d{4}\. China, /.test(r.vt), y + ': the link follows the slider and the slider speaks the year and China’s share', { h: r.h, vt: r.vt });
+      ok(r.t === Q.t[y] && (y !== 2019 || r.t === .6) && (y !== 2025 || r.t === 1), y + ': tension e as in spec §5 (' + r.t + ')');
+      if (y < 2025) ok(r.suns === 1 && !r.two && Math.abs(r.us - (await p.evaluate(() => { const b = document.querySelector('.orr-sky').getBoundingClientRect(); return b.left + b.width / 2; }))) < 4, y + ': one system, one sun, the US at its centre', r);
+      else ok(r.suns === 2 && r.two && r.us < r.laneX && r.cn > r.laneX && r.jp < r.laneX && r.ru > r.laneX && Math.abs(r.kz - r.laneX) < 40 && Math.abs(r.mx - r.laneX) < 40, y + ': two suns; Japan in the US system, Russia in China’s, Kazakhstan (both lists) and Mexico (neither) in the lane', r);
+    }
+    ok(await p.evaluate(() => /2016 · Brexit|Brexit/.test([...document.querySelectorAll('.orr-ev button')].map(b => b.getAttribute('aria-label')).join()) && document.querySelectorAll('.orr-ev button').length === 11), 'eleven events on the slider, Brexit among them');
+    await p.evaluate(() => { const i = document.querySelector('.orr-sl input'); i.value = 2019; i.dispatchEvent(new Event('input', { bubbles: true })); }); await p.focus('.orr-sl input'); await p.keyboard.press('PageUp'); await p.waitForTimeout(200);
+    r = await p.evaluate(() => ISX.profit.state.oy); ok(r === 2020, 'Page Up moves to the next event (2019 → 2020)', r); await p.keyboard.press('PageDown'); await p.keyboard.press('PageDown'); r = await p.evaluate(() => ISX.profit.state.oy); ok(r === 2018, 'Page Down moves back by event', r);
+    await p.hover('[data-q="O1-018"] .hit'); await p.waitForTimeout(150); r = await p.evaluate(() => document.getElementById('isx-pf-tip').textContent); ok(/Germany/.test(r) && /Share of world GDP/.test(r) && /Current account summed since 1995/.test(r) && /affiliates/.test(r), 'a body’s card: its place, share, summed current account and US affiliates’ income', r.slice(0, 200));
+    await p.click('#isx-pf-table'); r = await p.evaluate(() => ({ rows: document.querySelectorAll('#isx-pf-fig tbody tr').length, cap: (document.querySelector('#isx-pf-fig caption') || {}).textContent })); ok(r.rows >= 55 && /IMF/.test(r.cap) && /BEA/.test(r.cap), 'the story’s table view lists the year’s figures with sources', r); await p.click('#isx-pf-table');
+    await p.click('#isx-pf-deep [data-pf="deep"]'); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); await p.waitForTimeout(300);
+    r = await p.evaluate(() => ({ st: ISX.profit.state, h: location.hash, orbs: !!document.querySelector('svg.pf-orbs'), po: document.querySelectorAll('[data-po]').length, lay: document.querySelectorAll('[data-pl]').length, flows: !!document.querySelector('[data-pf="flows"]'), cards: document.querySelectorAll('.pf-orbc div').length, dots: document.querySelectorAll('.pf-dot').length, back: (document.querySelector('#isx-pf-deep [data-pf="story"]') || {}).textContent, q: document.getElementById('isx-pf-q').textContent }));
+    ok(r.st.view === 'orb' && r.st.deep && r.orbs && r.po === 2 && r.lay === 6 && r.flows && r.cards === 4 && r.dots === 4 && /Back to the story, 2018/.test(r.back) && r.h === '#profit/order/wto' && r.q === 'To secure the profits, first a global empire: one ladder for the whole world.', 'the deep button opens the full orbit view: the toggle, six layers, flows, four cards; four views by dots; a way back on the same year', r);
+    await p.click('.pf-dot[data-pv="fig"]'); await p.waitForTimeout(250);
+    r = await p.evaluate(() => ({ rows: document.querySelectorAll('#isx-pf-fig tbody tr').length, m: (document.querySelector('.orr-method') || {}).textContent || '', wip: !!document.querySelector('#isx-pf-fig .wipl'), tb: document.getElementById('isx-pf-table').hidden }));
+    ok(r.rows >= 55 && /stock over a flow/.test(r.m) && /FEDS Notes/.test(r.m) && /2006/.test(r.m) && r.wip && r.tb, 'the figures by year: a table, the method note, a WIP note inside', { rows: r.rows, wip: r.wip });
+    await p.click('#isx-pf-deep [data-pf="story"]'); await p.waitForTimeout(400); r = await p.evaluate(() => ({ v: ISX.profit.state.view, y: ISX.profit.state.oy, h: location.hash })); ok(r.v === 'orr' && r.y === 2018 && r.h === '#profit/order/2018', 'back to the story on the same year', r);
+    for (const [hh, v, x] of [['#profit/order/pax', 'orb', s => s.ord === 'ps'], ['#profit/order/wto', 'orb', s => s.ord === 'wto'], ['#profit/order/2016', 'orr', s => s.oy === 2016], ['#profit/order/pos', 'pos', () => true], ['#profit/order', 'orr', () => true], ['#profit/profits', null, s => s.st === 'profits']]) {
+      await p.evaluate(hh => { location.hash = hh; }, hh); await p.waitForTimeout(300); r = await p.evaluate(() => ISX.profit.state); ok((!v || r.view === v) && x(r), 'the address ' + hh + ' resolves', { st: r.st, view: r.view, oy: r.oy, ord: r.ord });
+    }
+    r = await p.evaluate(() => ({ pre: document.getElementById('isx-pf-pre').textContent, k: document.getElementById('isx-pf-k').textContent })); ok(r.pre === 'This is what the order pays its centre.' && /Station 2 of 6/.test(r.k), 'Profits is station 2, opened by its new line', r);
+    await done(p);
+    const ph = await open('#profit/order/2025', { w: 390, h: 844, phone: 1 }); await ph.waitForFunction(() => ISX.profit.state.orrery > 0, null, { timeout: 30000 }); await ph.waitForTimeout(500);
+    r = await ph.evaluate(() => { const sky = document.querySelector('.orr-sky').getBoundingClientRect(), us = document.querySelector('[data-q="O1-001"] .c').getBoundingClientRect(), cn = document.querySelector('[data-q="O1-049"] .c').getBoundingClientRect(); return { sw: document.documentElement.scrollWidth <= innerWidth + 1, stack: us.top < cn.top, inside: [...document.querySelectorAll('.orr-s .q:not(.off) .c')].every(c => { const b = c.getBoundingClientRect(); return b.left >= sky.left - 2 && b.right <= sky.right + 2 && b.top >= sky.top - 2 && b.bottom <= sky.bottom + 2; }) }; });
+    ok(r.sw && r.stack && r.inside, 'phone, 2025: the two systems stack (US above, China below), every body inside the picture, no sideways scroll', r);
     await done(ph);
   }
   await b.close();
