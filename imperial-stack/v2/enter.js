@@ -32,8 +32,8 @@
   var T = {
     profit: { n: '02', hue: '#d78bff', k: 'The profit dollar', h: 'Why dollar assets need to be the most profitable', star: true, site: '#profit', mins: 20,
       b: [['Where you are', 'The world economy needs one asset deep and liquid enough to settle its trade and hold its savings. Only a very large economy can supply it, and to keep the world buying, its assets have to pay. The Circuit showed the money moving; this tab shows what it buys.'],
-        ['What you are about to see', 'Six stations. Each has a title that carries the argument and one chart to check it: the profits, the technology that secures them, the order built around them, the deficits that realise them, the AI trade they now rest on, and what happens if it fails.'],
-        ['How to read it', 'Charts first, text below. The dots under a chart lead to more views of the same point; every number has its table, its date and its source.']],
+        ['What you are about to see', 'The world economy since the WTO opened in 1995: one system around the United States, slowly pulled apart until it splits into two. Then five more stations, each with a title that carries the argument and one chart to check it: the profits the order pays its centre, the technology that secures them, the deficits that realise them, the AI trade they now rest on, and what happens if it fails.'],
+        ['How to use it', 'Drag the years, or press play. Open the full statistics at any time.']],
       acts: [['go', 'Start at the first station'], ['stops', 'Jump to a station'], ['remind', 'Remind me later']] },
     arm: { n: '03', hue: '#44d7ec', k: 'The elite network', h: 'Where Washington’s reach is organised: officials, firms and owners', site: '#elite-network', mins: 20,
       b: [['Where you are', 'The Circuit showed the loop and the machinery how its prices are steered. The elite network shows the reach: which agencies and laws press on which countries and firms, and where US firms earn abroad.'],

@@ -18,23 +18,25 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   ok(await p.evaluate(() => [...document.querySelectorAll('#isx-strip .seg > button')].map(b => b.id).join()) === 'isx-v-map,isx-v-profit,isx-v-arm,isx-v-fin,isx-v-story,isx-v-crisis', 'the tab is second, after the Circuit');
   await p.click('#isx-v-profit'); await ready(p);
   ok(await p.evaluate(() => ISX.view === 'profit' && location.hash === '#profit' && !document.getElementById('isx-scene-profit').hidden && document.getElementById('isx-scene-map').hidden), 'the pill opens the tab at #profit');
-  ok(/^profits:5,technology:3,order:[23],regime:5,ai:3,finale:0$/.test(await p.evaluate(() => ISX.profit.stations.map(s => s.id + ':' + s.views.length).join())), 'six stations: the 17 views of build 1 and the new ones (the arc, 18 Nov)');
+  ok(/^order:\d+,profits:5,technology:3,regime:5,ai:3,finale:0$/.test(await p.evaluate(() => ISX.profit.stations.map(s => s.id + ':' + s.views.length).join())), 'six stations: the 17 views of build 1 and the new ones (the arc, 18 Nov)');
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(150);
-  ok(await p.evaluate(() => ISX.profit.state.st === 'technology' && location.hash === '#profit/technology'), '→ steps to the next station and the link follows');
+  ok(await p.evaluate(() => ISX.profit.state.st === 'profits' && location.hash === '#profit/profits'), '→ steps to the next station and the link follows');
   await p.click('#isx-tabs [data-rt-t="3"]'); await p.waitForTimeout(150);
   ok(await p.evaluate(() => ISX.profit.state.st === 'regime' && document.querySelector('#isx-tabs [aria-current="step"]').textContent.includes('The regime')), 'a station in the bar opens it');
   await p.goBack(); await p.waitForTimeout(300);
   ok(await p.evaluate(() => ISX.view === 'map'), 'Back leaves the tab (stations replace the entry)');
   await p.close();
   p = await open(c, '#profit/regime/pos'); await ready(p);
-  ok(await p.evaluate(() => { const s = ISX.profit.state; return s.st === 'order' && s.view === 'pos' && /Station 3 · The order · Positions/.test(ISX.whereNow().where); }), 'a link opens its station and view (a view that moved is found in its new station); the mistake reference names them');
+  ok(await p.evaluate(() => { const s = ISX.profit.state; return s.st === 'order' && s.view === 'pos' && /Station 1 · The order · Positions/.test(ISX.whereNow().where); }), 'a link opens its station and view (a view that moved is found in its new station); the mistake reference names them');
 
   /* 2 · every view */
   const all = await p.evaluate(() => ISX.profit.stations.flatMap((s, i) => s.views.map(v => [i, v])));
-  if (await p.evaluate(() => ISX.profit.stations[2].views.includes('orb'))) { await p.evaluate(() => ISX.profit.go(2, 'orb')); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); }   /* the orbit view loads its own data file */
+  if (await p.evaluate(() => ISX.profit.stations[0].views.includes('orb'))) { await p.evaluate(() => ISX.profit.go(0, 'orb')); await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); }   /* the orbit view loads its own data file */
   for (const [i, v] of all) {
-    const r = await p.evaluate(([i, v]) => { ISX.profit.go(i, v); const f = document.getElementById('isx-pf-fig'), s = f.querySelectorAll('svg'), R = {}; const alt = f.querySelector('svg[role="img"], .pf-tri, .pf-orb'); R.svg = s.length + (f.querySelector('.pf-tri') ? 1 : 0); R.aria = alt ? (alt.getAttribute('aria-label') || '').length : 0; R.h3 = document.getElementById('isx-pf-title').textContent.length; R.nan = /NaN|undefined/.test(f.innerHTML + document.getElementById('isx-pf-tiles').textContent + document.getElementById('isx-pf-reading').textContent);
-      document.getElementById('isx-pf-table').click(); const t = f.querySelectorAll('table'); R.rows = t.length ? t[0].querySelectorAll('tbody tr').length : 0; R.cap = t.length ? t[0].caption.textContent.length : 0; R.tnan = /NaN|undefined/.test(f.textContent); document.getElementById('isx-pf-table').click(); R.back = f.querySelectorAll('svg').length + (f.querySelector('.pf-tri') ? 1 : 0); return R; }, [i, v]);
+    await p.evaluate(([i, v]) => ISX.profit.go(i, v), [i, v]); await p.waitForTimeout(i === 0 ? 350 : 0);
+    const r = await p.evaluate(([i, v]) => { const f = document.getElementById('isx-pf-fig'), s = f.querySelectorAll('svg'), R = {}; const alt = f.querySelector('.orr-svg, svg[role="img"], .pf-tri, .pf-orb, .orr-method, .orr-pft'); R.svg = s.length + (f.querySelector('.pf-tri') ? 1 : 0) + (f.querySelector('.orr-method, .orr-pft') ? 1 : 0); R.aria = alt ? (alt.getAttribute('aria-label') || '').length : 0; R.h3 = document.getElementById('isx-pf-title').textContent.length; R.nan = /NaN|undefined/.test(f.innerHTML + document.getElementById('isx-pf-tiles').textContent + document.getElementById('isx-pf-reading').textContent); return R; }, [i, v]);
+    const r2 = await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), R = {}; document.getElementById('isx-pf-table').click(); const t = f.querySelectorAll('table'); R.rows = t.length ? t[0].querySelectorAll('tbody tr').length : 0; R.cap = t.length ? t[0].caption.textContent.length : 0; R.tnan = /NaN|undefined/.test(f.textContent); document.getElementById('isx-pf-table').click(); R.back = f.querySelectorAll('svg').length + (f.querySelector('.pf-tri') ? 1 : 0) + (f.querySelector('.orr-method, .orr-pft') ? 1 : 0); return R; });
+    await p.waitForTimeout(150); Object.assign(r, r2);
     ok(r.svg >= 1 && r.aria > 60 && r.h3 > 8 && !r.nan, 'view ' + v + ': one picture with a text alternative');
     ok(r.rows >= 3 && r.cap > 30 && !r.tnan && r.back === r.svg, 'view ' + v + ': a table view, and back');
   }
@@ -46,7 +48,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   /* 3 · the layout */
   for (const [w, h] of [[1440, 900], [1366, 768], [1280, 760], [1024, 768], [390, 800]]) {
     c = await ctx(w, h); p = await open(c, '#profit/regime'); await ready(p); await p.waitForTimeout(300);
-    for (const [i, v] of [[0, 'pic'], [3, 'all'], [3, 'why'], [4, 'capex']]) {
+    for (const [i, v] of [[1, 'pic'], [3, 'all'], [3, 'why'], [4, 'capex']]) {
       const r = await p.evaluate(([i, v]) => { ISX.profit.go(i, v); window.scrollTo(0, 0); const q = s => document.querySelector(s).getBoundingClientRect(), bd = q('#isx-pf-board'), bar = q('#isx-tabs'), tx = q('#isx-pf-text'), fg = q('#isx-pf-fig'), tl = q('#isx-pf-tiles'); return { sx: document.documentElement.scrollWidth - window.innerWidth, board: bd.bottom, bar: bar.top, barB: bar.bottom, text: tx.top, fig: fg.height, figTop: fg.top, tiles: tl.top, vh: window.innerHeight, bw: bd.width, sw: document.getElementById('isx-scene-profit').clientWidth }; }, [i, v]);
       ok(r.sx <= 0, w + ' ' + v + ': no sideways scroll');
       ok(r.barB <= r.vh + 1 && r.bar > r.vh - 130, w + ' ' + v + ': the bar stays at the foot of the screen');
@@ -63,7 +65,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   ok(await p.evaluate(() => [...document.querySelectorAll('.rgdoor')].map(a => a.dataset.door).join()) === 'profit,simulator,elite-network,imperial-arm', 'the ring has four doors, the profit dollar first');
   await p.click('.rgdoor[data-door="profit"]'); await ready(p);
   ok(await p.evaluate(() => ISX.view === 'profit'), 'the ring’s door opens the tab');
-  ok(await p.evaluate(() => { ISX.profit.go(0); const a = document.querySelectorAll('#isx-pf-text .pf-door.lock'); ISX.profit.go(2); const d = document.querySelectorAll('#isx-pf-text .pf-door.lock'); const open = document.querySelectorAll('#isx-pf-text').length; ISX.profit.go(0); const fw = document.querySelectorAll('#isx-pf-text button.pf-door[data-pfw]'); return open && a.length === 0 && fw.length === 2 && d.length === 1 && /coming soon/.test(d[0].textContent) && !d[0].matches('button, a'); }), 'station 1: the two doors to the firm web are open (firm web build, 20 Nov); one locked Atlas door is left, not a control');
+  ok(await p.evaluate(() => { ISX.profit.go(1); const a = document.querySelectorAll('#isx-pf-text .pf-door.lock'); ISX.profit.go(0); const d = document.querySelectorAll('#isx-pf-text .pf-door.lock'); const open = document.querySelectorAll('#isx-pf-text').length; ISX.profit.go(1); const fw = document.querySelectorAll('#isx-pf-text button.pf-door[data-pfw]'); return open && a.length === 0 && fw.length === 2 && d.length === 1 && /coming soon/.test(d[0].textContent) && !d[0].matches('button, a'); }), 'station 1: the two doors to the firm web are open (firm web build, 20 Nov); one locked Atlas door is left, not a control');
   ok(await p.evaluate(() => { ISX.profit.go(5); return [...document.querySelectorAll('#isx-pf-fin [data-pgo]')].map(b => b.dataset.pgo).join(); }) === 'simulator,elite-network,imperial-arm', 'the finale has three doors out');
   await p.click('#isx-pf-fin [data-pgo="elite-network"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => ISX.view === 'arm'), 'a door out opens its tab');
@@ -85,7 +87,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   await p.close(); await c.close();
 
   /* 6 · hints at first use */
-  c = await ctx(1440, 900, true); p = await open(c, '#profit'); await ready(p); await p.waitForTimeout(2600);
+  c = await ctx(1440, 900, true); p = await open(c, '#profit'); await ready(p); await p.keyboard.press('Escape'); await p.evaluate(() => document.getElementById('isx-pf-table').scrollIntoView({ block: 'center' })); await p.waitForTimeout(2600);
   ok(await p.evaluate(() => ISX.hints.on) === 'pf-table', 'first visit: the table hint');
   await p.evaluate(() => ISX.profit.go(3)); await p.waitForTimeout(1500);
   ok(await p.evaluate(() => ISX.hints.on) === 'pf-tile', 'a station with tiles: the tile hint');

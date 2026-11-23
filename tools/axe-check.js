@@ -307,6 +307,12 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   /* the arc (18 Nov): six stations; the views of build 1 in their new stations, with the three ways and the orbits */
   for (const [i, v] of [[0, 'pic'], [1, 'nat'], [0, 'own'], [1, 'roc'], [0, 'hold'], [0, 'flow'], [0, 'list'], [3, 'home'], [3, 'pay'], [3, 'all'], [3, 'sum'], [2, 'pos'], [2, 'ord'], [4, 'wt'], [4, 'capex'], [4, 'ni'], [3, 'why'], [1, 'tri']])
     await run('profit: view ' + v, '#profit', seen, 1440, 900, pf(i, v));
+  /* orrery (OB1/OB2, 23 Nov): the new views of the order station, desktop and phone, and one table */
+  for (const v of ['orr', 'rng', 'fig', 'pft', 'hyp']) await run('orrery: view ' + v, '#profit', seen, 1440, 900, pf(0, v));
+  await run('orrery: the tear in 2025', '#profit/order/2025', seen, 1440, 900, async p => { await pf(0, 'orr')(p); await p.waitForTimeout(600); });
+  await run('orrery, phone: the orrery', '#profit', seen, 390, 844, pf(0, 'orr'));
+  await run('orrery, phone: German Hypocrisy', '#profit', seen, 390, 844, pf(0, 'hyp'));
+  await run('orrery: booked profit as a table', '#profit', seen, 1440, 900, pf(0, 'pft', true));
   await run('profit: the ideal types as a table', '#profit', seen, 1440, 900, pf(2, 'ord', true));
   await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(3, 'all', true));
   await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(3, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });

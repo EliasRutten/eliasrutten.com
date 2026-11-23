@@ -64,7 +64,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     await p.click('#isx-enter .en-star'); let r = await p.evaluate(() => { const nn = document.getElementById('isx-en-note'); return { open: !nn.hidden, t: nn.textContent }; });
     ok(r.open && /Only a very large economy can play this role/.test(r.t) && ['Strange', 'Cohen', 'Kindleberger', 'Eichengreen', 'Helleiner'].every(x => r.t.indexOf(x) >= 0), 'the asterisk opens the footnote with its five references', r);
     await p.click('#isx-enter [data-en="stops"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch b')].map(x => x.textContent));
-    ok(r.length === 6 && /Profits/.test(r[0]) && /Technology/.test(r[1]) && /The order/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
+    ok(r.length === 6 && /The order/.test(r[0]) && /Profits/.test(r[1]) && /Technology/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
     await p.click('#isx-enter [data-en-stop="3"]'); await p.waitForTimeout(900);
     r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st, view: ISX.profit.state.view })); ok(!r.on && r.st === 'regime' && r.view === 'all', 'choosing a station closes the screen and opens it: the regime, on the stacked chart', r);
     await p.click('#isx-helpb'); await p.click('#isx-tabx'); await p.waitForTimeout(300); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(300);
@@ -72,7 +72,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     ok(r.on && r.inside && /the profit dollar/.test(r.link) && /#profit/.test(r.link) && /The profit dollar/.test(r.sum), '“Remind me later” opens the reminder on the screen, for this tab', r);
     await p.keyboard.press('Escape'); await p.waitForTimeout(200); ok(await p.evaluate(() => !ISX.remind.on && ISX.enter.on === 'profit'), 'Esc closes the reminder first, the screen stays');
     await p.click('#isx-enter [data-en="go"]'); await p.waitForTimeout(900);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'profits', '“Start at the first station” opens station 1', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'order', '“Start at the first station” opens station 1', r);
     await done(p);
     /* the machinery: levels only after “Learn step by step”; the tour only after “Explore on my own” */
     p = await open('#simulator', { first: 1 }); await p.waitForTimeout(600);
@@ -102,27 +102,27 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   if (want(3)) {
     const p = await open('#profit');
     let r = await p.evaluate(() => ({ st: ISX.profit.stations.map(s => s.id + ':' + s.views.join(',')), tt: document.querySelector('.pf-ttl').childNodes[0].textContent, k: document.getElementById('isx-pf-k').textContent, q: document.getElementById('isx-pf-q').textContent, bar: [...document.querySelectorAll('#isx-tabs .rt [data-rt-target], #isx-tabs .rt .rt-mark')].length }));
-    ok(r.st.join(' | ') === 'profits:pic,hold,flow,own,list | technology:tri,nat,roc | order:ord,pos | regime:all,sum,why,home,pay | ai:wt,capex,ni | finale:' || /^profits:pic,hold,flow,own,list \| technology:tri,nat,roc \| order:orb,ord,pos \| regime:all,sum,why,home,pay \| ai:wt,capex,ni \| finale:$/.test(r.st.join(' | ')), 'six stations hold every view of build 1 (17) and the new ones', r.st);
-    ok(r.tt === 'Why dollar assets need to be the most profitable' && /Station 1 of 6/.test(r.k) && r.q === 'Savers want profitable equity. That is why they buy US stocks.', 'the tab’s title, the station count and station 1’s title', r);
+    ok(r.st.join(' | ') === 'order:orr,orb,ord,pos,fig,rng,pft,hyp | profits:pic,hold,flow,own,list | technology:tri,nat,roc | regime:all,sum,why,home,pay | ai:wt,capex,ni | finale:' || /^order:orr,orb,ord,pos,fig,rng,pft,hyp \| profits:pic,hold,flow,own,list \| technology:tri,nat,roc \| regime:all,sum,why,home,pay \| ai:wt,capex,ni \| finale:$/.test(r.st.join(' | ')), 'six stations hold every view of build 1 (17) and the new ones', r.st);
+    ok(r.tt === 'Why dollar assets need to be the most profitable' && /Station 1 of 6/.test(r.k) && r.q === 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.', 'the tab’s title, the station count and station 1’s title (the orrery)', r);
     await p.click('.pf-star'); r = await p.evaluate(() => ({ open: !document.getElementById('isx-pf-fn').hidden, t: document.getElementById('isx-pf-fn').textContent, ex: document.querySelector('.pf-star').getAttribute('aria-expanded') }));
     ok(r.open && r.ex === 'true' && /Sterling and British Policy/.test(r.t) && /The Geography of Money/.test(r.t) && /International Money/.test(r.t) && /Exorbitant Privilege/.test(r.t) && /The Status Quo Crisis/.test(r.t) && /link not stored/.test(r.t) && /checked 18 Nov 2026/.test(r.t), 'the asterisk opens the footnote under the title', r); await p.click('.pf-star');
-    const TITLES = ['Savers want profitable equity. That is why they buy US stocks.', 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.', null, 'Deficits realise the profits, and the inflow needs the deficits.', 'The AI trade is what now keeps the claim worth buying.', 'What if AI doesn’t deliver?'];
+    const TITLES = ['To secure its profits, a capitalist order needs a centre: one ladder for the whole world.', 'Savers want profitable equity. That is why they buy US stocks.', 'The highest technological sophistication is the surest way to secure profits: through economics, coercion and code.', 'Deficits realise the profits, and the inflow needs the deficits.', 'The AI trade is what now keeps the claim worth buying.', 'What if AI doesn’t deliver?'];
     const ST = await p.evaluate(() => ISX.profit.stations);
     for (let i = 0; i < ST.length; i++) {
       await p.evaluate(i => ISX.profit.go(i), i); await p.waitForTimeout(150);
       const q = await p.evaluate(() => document.getElementById('isx-pf-q').textContent); if (TITLES[i]) ok(q === TITLES[i], 'station ' + (i + 1) + ' carries its title', q);
       for (let j = 0; j < ST[i].views.length; j++) {
         const v = ST[i].views[j]; await p.evaluate(v => { const d = document.querySelector('.pf-dot[data-pv="' + v + '"]'); if (d) d.click(); }, v); await p.waitForTimeout(120);
-        const s = await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), sv = f.querySelector('svg[role="img"]'), tri = f.querySelector('.pf-tri, .pf-orb'), nt = document.getElementById('isx-pf-note'), dots = [...document.querySelectorAll('.pf-dot')];
+        const s = await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), sv = f.querySelector('svg[role="img"], .orr-svg'), tri = f.querySelector('.pf-tri, .pf-orb, .orr-method, .orr-pft'), nt = document.getElementById('isx-pf-note'), dots = [...document.querySelectorAll('.pf-dot')];
           return { view: ISX.profit.state.view, alt: sv ? (sv.getAttribute('aria-label') || '').length : tri ? (tri.getAttribute('aria-label') || '').length : 0, vn: document.getElementById('isx-pf-vn').textContent, title: document.getElementById('isx-pf-title').textContent, note: !nt.hidden, noteT: nt.querySelector('span').textContent, dots: dots.length, cur: dots.filter(d => d.getAttribute('aria-current') === 'true').length, chips: [...document.querySelectorAll('#isx-pf-chips [data-pv]')].length, hash: location.hash }; });
         ok(s.view === v && s.alt > 60 && s.title.length > 8, ST[i].id + '/' + v + ': the view draws, with a text alternative', s);
-        ok(s.dots === ST[i].views.length && s.cur === 1 && s.chips === 0 && s.vn.indexOf((j + 1) + ' of ' + ST[i].views.length) > 0, ST[i].id + '/' + v + ': dots are the switch (no pills) and the view’s name stands above the chart', s);
+        ok(s.dots === ST[i].views.length && s.cur === 1 && s.chips === (ST[i].id === 'order' && j > 0 ? 1 : 0) && s.vn.indexOf((j + 1) + ' of ' + ST[i].views.length) > 0, ST[i].id + '/' + v + ': dots are the switch (no pills) and the view’s name stands above the chart', s);
         ok(j === 0 ? !s.note : s.note && s.noteT.length > 40, ST[i].id + '/' + v + (j ? ': a secondary view carries its note' : ': the main screen carries no note'), s);
         await p.click('#isx-pf-table'); const t = await p.evaluate(() => ({ rows: document.querySelectorAll('#isx-pf-fig table tbody tr').length, cap: (document.querySelector('#isx-pf-fig caption') || {}).textContent })); ok(t.rows >= 3 && t.cap && t.cap.length > 30, ST[i].id + '/' + v + ': the table view has its rows and a caption', t); await p.click('#isx-pf-table');
       }
     }
     /* the arrows, the keys of the link, the note's close and “?” */
-    await p.evaluate(() => ISX.profit.go(0, 'pic')); await p.waitForTimeout(150);
+    await p.evaluate(() => ISX.profit.go(1, 'pic')); await p.waitForTimeout(150);
     r = await p.evaluate(() => ({ pv: document.querySelector('.pf-arr.pv').disabled, nx: document.querySelector('.pf-arr.nx').textContent })); ok(r.pv && /Held abroad/.test(r.nx), 'the arrows name the view they lead to; no earlier view on the first', r);
     await p.click('.pf-arr.nx'); await p.waitForTimeout(150); r = await p.evaluate(() => ({ v: ISX.profit.state.view, h: location.hash })); ok(r.v === 'hold' && r.h === '#profit/profits/hold', 'the next arrow moves one view on and the link follows', r);
     await p.click('#isx-pf-note .x'); r = await p.evaluate(() => ({ hid: document.getElementById('isx-pf-note').hidden, q: !document.getElementById('isx-pf-whyq').hidden })); ok(r.hid && r.q, 'the note closes and leaves a “?”', r);
@@ -132,7 +132,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
       await p.evaluate(h => { location.hash = h; }, old); await p.waitForTimeout(250); r = await p.evaluate(() => ISX.profit.state); ok(r.st === st && r.view === v, 'a link from before the arc still lands: ' + old + ' → ' + st + '/' + v, { st: r.st, view: r.view });
     }
     /* the board ends above the bar on a wide screen (two views are taller on purpose) */
-    for (const [st, v] of [[0, 'pic'], [0, 'hold'], [1, 'tri'], [3, 'all'], [3, 'why'], [4, 'wt']]) { await p.evaluate(([st, v]) => { ISX.profit.go(st, v); scrollTo(0, 0); }, [st, v]); await p.waitForTimeout(200); r = await p.evaluate(() => Math.round(document.getElementById('isx-tabs').getBoundingClientRect().top - document.getElementById('isx-pf-board').getBoundingClientRect().bottom)); ok(r >= 0 && r < 60, 'at 1440 × 900 the board of ' + v + ' ends above the bar', r); }
+    for (const [st, v] of [[1, 'pic'], [1, 'hold'], [2, 'tri'], [3, 'all'], [3, 'why'], [4, 'wt']]) { await p.evaluate(([st, v]) => { ISX.profit.go(st, v); scrollTo(0, 0); }, [st, v]); await p.waitForTimeout(200); r = await p.evaluate(() => Math.round(document.getElementById('isx-tabs').getBoundingClientRect().top - document.getElementById('isx-pf-board').getBoundingClientRect().bottom)); ok(r >= 0 && r < 60, 'at 1440 × 900 the board of ' + v + ' ends above the bar', r); }
     await done(p);
   }
 
@@ -181,7 +181,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     r = await p.evaluate(() => ({ y: ISX.profit.state.year, t: document.querySelector('#isx-pf-zoom .pz-y').textContent })); ok(r.y < 1985 && r.t.indexOf(String(r.y)) === 0, 'a tap on a year selects it', r);
     await p.click('#isx-pf-zoom [data-pz="x"]'); await p.waitForTimeout(200); r = await p.evaluate(() => ({ z: !!document.getElementById('isx-pf-zoom'), inert: document.querySelector('#isx-root > .wrap').inert, read: document.getElementById('isx-pf-reading').textContent, y: ISX.profit.state.year })); ok(!r.z && !r.inert && r.read.indexOf(String(r.y)) === 0, 'Close returns to the page, on the year that was chosen', r);
     /* swipe the views; every station fits the phone */
-    await p.evaluate(() => { ISX.profit.go(0, 'pic'); });
+    await p.evaluate(() => { ISX.profit.go(1, 'pic'); });
     await p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), b = f.getBoundingClientRect(), mk = (x) => new Touch({ identifier: 1, target: f, clientX: x, clientY: b.top + 80 }); f.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(300)], changedTouches: [mk(300)], bubbles: true })); f.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(120)], bubbles: true })); }); await p.waitForTimeout(200);
     r = await p.evaluate(() => ISX.profit.state); ok(r.st === 'profits' && r.view === 'hold', 'a swipe on the chart moves to the next view, not to the next station', { st: r.st, view: r.view });
     const ST = await p.evaluate(() => ISX.profit.stations);
@@ -194,7 +194,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   }
 
   if (want(7)) {
-    const p = await open('#profit/order');
+    const p = await open('#profit/order/wto');
     await p.waitForFunction(() => ISX.profit.state.orbit > 0, null, { timeout: 20000 }); await p.waitForTimeout(300);
     const q = () => p.evaluate(() => { const f = document.getElementById('isx-pf-fig'), sv = f.querySelector('svg.pf-orbs'), bodies = [...f.querySelectorAll('[data-ob]')], pos = g => { const r = g.querySelector('.c').getBoundingClientRect(); return [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)]; }, by = n => bodies.find(g => { const l = g.getAttribute('aria-label'); return l === n || l.endsWith(', ' + n); }), fr = f.getBoundingClientRect();
       return { st: ISX.profit.state, q: document.getElementById('isx-pf-q').textContent, sub: document.getElementById('isx-pf-sub').textContent, title: document.getElementById('isx-pf-title').textContent, n: bodies.length, shown: bodies.filter(g => !g.classList.contains('off')).length, cls: sv.getAttribute('class'), alt: (f.querySelector('.pf-orb').getAttribute('aria-label') || '').length, cards: [...f.querySelectorAll('.pf-orbc b')].map(x => x.textContent), us: pos(by('United States')), cn: pos(by('China')), jp: pos(by('Japan')), kz: pos(by('Kazakhstan')), drc: pos(by('DR Congo')), tw: by('Taiwan').getAttribute('class'), kzc: by('Kazakhstan').getAttribute('class'), sa: by('Saudi Arabia').getAttribute('class'), zw: by('Zimbabwe').getAttribute('class'), mid: fr.left + fr.width / 2, w: fr.width, inside: bodies.filter(g => !g.classList.contains('off')).every(g => { const r = g.querySelector('.c').getBoundingClientRect(); return r.left >= fr.left - 2 && r.right <= fr.right + 2 && r.top >= fr.top - 2 && r.bottom <= fr.bottom + 2; }), press: [...document.querySelectorAll('[data-po]')].map(x => x.dataset.po + ':' + x.getAttribute('aria-pressed')).join() }; });

@@ -66,7 +66,21 @@
   const TITLE = 'Why dollar assets need to be the most profitable';
   const WHY = 'Profits are booked in the firm, and capital flows to where the firm is listed. That decides how liquid the market is and how much investment can be raised by selling shares and bonds.';
   const ST = [
-    { id: 'profits', t: 'Profits', f: '42% of the largest firms’ profits · 2026', q: 'Savers want profitable equity. That is why they buy US stocks.',
+    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
+      qv: { orr: 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.' }, subv: { orr: '1995–2026 · drag through the years' },
+      q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
+      views: [['orr', 'The story'], ['orb', 'The orbits'], ['ord', 'Two orders, one picture'], ['pos', 'Positions'], ['fig', 'The figures by year'], ['rng', 'Creditors and debtors'], ['pft', 'Where profits are booked'], ['hyp', 'German Hypocrisy']],
+      x: 'Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories.',
+      rd: 'The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.',
+      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
+      more: ['The reading of the WTO order as a global empire follows Peter Gowan (The Global Gamble, 1999) and Herman Mark Schwartz (2019). Finance is the same in both orders: savings flow in as claims, demand flows out as imports.',
+        'The orbits combine the tiers of world-systems analysis (Immanuel Wallerstein) with polarity: a hierarchy inside each system, and two systems side by side. Membership of Pax Silica is a privilege, not a requirement for exploitation: access to the full stack in return for alignment, with the rank inside following the division of labour. “Silicon curtain” is Jake Wright’s term.',
+        'Beneath the institutions lies the material base. The outer orbit holds the extraction zones: mineral sources that function as extractive neocolonies whether or not they sit at the table. A zone sits in the overlap when capital linked to both centres is present, as in the DR Congo, Indonesia and Zambia; it sits in China’s system when the owners are Chinese only.',
+        'The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
+        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.'],
+      src: ['gowan', 'schwartz', 'o1p', 'o1w', 'usgs', 'wright', 'imfc', 'forbes', 'bbp', 'fritz'],
+      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }, { pv: 'hyp', t: 'German Hypocrisy', s: 'The orrery with surpluses as gravity' }] },
+    { id: 'profits', lead: 'This is what the order pays its centre.', t: 'Profits', f: '42% of the largest firms’ profits · 2026', q: 'Savers want profitable equity. That is why they buy US stocks.',
       views: [['pic', 'In one picture'], ['hold', 'Held abroad'], ['flow', 'Bought each year'], ['own', 'By owner'], ['list', 'The listing premium']],
       x: 'A profit belongs to the firm that books it, wherever it was earned, and the firm belongs to the market where it is listed. In the 2026 Forbes list, US firms took 42.2% of the profits of the world’s 2,000 largest listed firms, with 26.1% of world GDP. Foreign investors held $22.2tn of US shares in mid-2026, against $9.3tn of Treasuries.',
       rd: 'The US is the imperial organiser of capital accumulation globally: the profits stay with the firm listed in the US wherever they are earned, and that claim is what foreign investors buy.',
@@ -86,19 +100,6 @@
         'A list of year Y is set against world GDP of the year before, at market exchange rates. A weak yen lifts Japan’s ratio; a single year swings with one-off profits and losses, so the pooled windows are the steadier measure.',
         'The return on capital is the territorial comparison: what capital earns inside each economy, housing included. The US return has held near 8% for three decades. It cannot show what US firms book abroad, which is why profit capture leads.'],
       src: ['schwartz', 'forbes', 'imfg', 'pwt', 'wb', 'beaip', 'asml'], doors: [] },
-    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
-      q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
-      views: [['orb', 'The orbits'], ['ord', 'Two orders, one picture'], ['pos', 'Positions']],
-      x: 'Under the WTO order, from 1995, the TRIPS agreement protects the hub’s rents everywhere and assembly moves to the cheapest place. Under Pax Silica, from 2025, export controls and licences add a second fence, which decides who may hold the tools at all, and chains are re-routed to its 26 signatories.',
-      rd: 'The old order worked like a ladder that kept the rich at the top; Pax Silica entrenches the value and supply chains around the US.',
-      nt: 'Ideal types, drawn schematically: no economy matches one exactly, and reality is a process, not a model to be measured.',
-      more: ['The reading of the WTO order as a global empire follows Peter Gowan (The Global Gamble, 1999) and Herman Mark Schwartz (2019). Finance is the same in both orders: savings flow in as claims, demand flows out as imports.',
-        'The orbits combine the tiers of world-systems analysis (Immanuel Wallerstein) with polarity: a hierarchy inside each system, and two systems side by side. Membership of Pax Silica is a privilege, not a requirement for exploitation: access to the full stack in return for alignment, with the rank inside following the division of labour. “Silicon curtain” is Jake Wright’s term.',
-        'Beneath the institutions lies the material base. The outer orbit holds the extraction zones: mineral sources that function as extractive neocolonies whether or not they sit at the table. A zone sits in the overlap when capital linked to both centres is present, as in the DR Congo, Indonesia and Zambia; it sits in China’s system when the owners are Chinese only.',
-        'The positions are measured: the IMF’s current accounts (average of 2018 to 2025) against the Forbes lists of 2019 to 2026. The hub sits alone, with the largest deficit and the largest share of profits; the deficit at the hub is not the deficit in the periphery.',
-        'The consumption-led and export-led growth models come from the growth-model literature (Baccaro, Blyth and Pontusson, 2022). They are two sides of a single process, and beneath them sits a hierarchy: a hub, export-led spokes around it, and a periphery of commodity exporters and developing economies.'],
-      src: ['gowan', 'schwartz', 'o1p', 'o1w', 'usgs', 'wright', 'imfc', 'forbes', 'bbp', 'fritz'],
-      doors: [{ lock: 1, t: 'The same sum, from the surplus side', s: 'China, Germany, Japan and Korea' }] },
     { id: 'regime', t: 'The regime', f: 'Federal deficit 6.3% of GDP · 2025', q: 'Deficits realise the profits, and the inflow needs the deficits.',
       views: [['all', 'Every year since 1960'], ['sum', 'One year'], ['why', 'Why the deficit cannot shrink'], ['home', 'Who holds them at home'], ['pay', 'The payout']],
       x: 'In the accounts the line runs one way: since 2014 the federal deficit has supplied 6.3% of GDP a year to US profits. In the regime it {{bothways|runs both ways}}: the profits draw the world’s savings in, and the state borrows to hold up demand and jobs at home.',
@@ -128,6 +129,11 @@
   ];
   /* why you are seeing this: one short note above the chart of every view that is not a station's main screen (drafts for Elias) */
   const NOTE = {
+    orb: 'The order as it was drawn before the story: one system under the WTO order, two under Pax Silica, with the body cards, the layers and the flows. The story’s picture is the same order, moving with the years.',
+    fig: 'The figures behind every year of the orrery: each economy’s share of world GDP, its current account summed since 1995 and what US firms’ affiliates earned there, with source, vintage and caveats.',
+    rng: 'Mass drives the tear in the story; the summed current account is shown here instead: a creditor wears an outer ring, a debtor an inner notch.',
+    pft: 'Where the profit is booked is not where the order earns it: seven places book more than half of the net income of US firms’ foreign affiliates on under a third of their sales.',
+    hyp: 'The joke view: the same orrery with the current account summed since 1995, as a share of that year’s GDP, as gravity.',
     hold: 'The stock, not the flow: what foreigners already own. Shares overtook Treasuries in 2017, so the claim the world holds is now mostly a claim on profits.',
     flow: 'Who buys matters as much as how much. A central bank buying Treasuries lends to the US state; an investor buying shares buys a claim on US firms’ profits. The mix shows which of the two the system now runs on.',
     own: 'The national accounts count profits by owner, not by headquarters: a second measure of the same thing, kept apart from the Forbes lists.',
@@ -152,6 +158,7 @@
 
   /* ---------- state ---------- */
   const S = { st: 0, view: ST.map(s => (s.views[0] || [null])[0]), year: 2025, era: null, win: '2011-2026', table: false, ord: 'wto', terms: { npi: true, fed: true, div: true, rest: false, hh: true, ca: true }, whyOff: U.stGet('isx-pf-why') === 'off', lay: null, flows: false, sys: 'us', oz: 1 };
+  const OZ = { y: 1995, hy: 2025 };
   let D = null, B = null, G = null, built = false, R = {}, lastW = 0;
   const cur = () => ST[S.st], vw = () => S.view[S.st];
   const emit = act => { X.emit('profit', { st: cur().id, view: vw(), act: act || null }); };
@@ -169,7 +176,7 @@
   /* ---------- the scene's frame, built once ---------- */
   function build() {
     host.innerHTML = '<div class="pf-top"><p class="pf-tt"><span class="pf-ttk">The profit dollar</span><span class="pf-ttl">' + esc(TITLE) + '<button type="button" class="pf-star" data-pf="fn" aria-expanded="false" aria-controls="isx-pf-fn" aria-label="Footnote: why only a very large economy can play this role">*</button></span><span class="pf-k" id="isx-pf-k"></span></p><div class="pf-fn" id="isx-pf-fn" hidden></div></div>'
-      + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
+      + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><p class="pf-lead" id="isx-pf-lead" hidden></p><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
       + '<div class="pf-jump"><button type="button" data-pf="read">The explanation <span aria-hidden="true">↓</span></button><button type="button" data-how data-pf="how">How we count <span aria-hidden="true">↓</span></button></div></div>'
       + '<section class="pf-board" id="isx-pf-board" aria-label="Chart"><div class="pf-chips" id="isx-pf-chips"></div>'
       + '<div class="pf-bhead"><div class="pf-bh"><span class="pf-vn" id="isx-pf-vn"></span><h3 id="isx-pf-title"></h3></div><span class="pf-br"><span class="pf-unit" id="isx-pf-unit"></span><button type="button" class="pf-whyq" id="isx-pf-whyq" data-pf="whyq" aria-label="Why you are seeing this" hidden>?</button></span></div>'
@@ -180,7 +187,7 @@
       + '<div class="pf-tip" id="isx-pf-tip" hidden></div></section>'
       + '<section class="pf-fin" id="isx-pf-fin" aria-labelledby="isx-pf-q" hidden></section>'
       + '<div class="pf-text" id="isx-pf-text" tabindex="-1"></div>';
-    ['k', 'q', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
+    ['k', 'q', 'lead', 'sub', 'head', 'fn', 'board', 'chips', 'vn', 'whyq', 'note', 'title', 'unit', 'tiles', 'reading', 'fig', 'dots', 'scrub', 'lg', 'table', 'tip', 'fin', 'text'].forEach(k => { R[k] = document.getElementById('isx-pf-' + k); });
     R.top = host.querySelector('.pf-top');
     host.addEventListener('click', e => {
       const b = e.target.closest('[data-pf], [data-pv], [data-pvn], [data-pe], [data-pw], [data-pt], [data-po], [data-pl], [data-ps], [data-pzk], [data-pgo], [data-pweb], [data-pfw]'); if (!b) return;
@@ -217,7 +224,7 @@
     if (window.ResizeObserver) new ResizeObserver(() => { if (X.view !== 'profit' || !D || cur().fin) return; const w = R.fig.clientWidth; if (Math.abs(w - lastW) < 2) return; clearTimeout(rt); rt = setTimeout(() => board(true), 90); }).observe(R.fig);
     built = true;
   }
-  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
+  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; if (cur().qv) text(); board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
   function stepV(d) { const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), j = i + d; if (j < 0 || j >= vs.length) return; setV(vs[j][0]); }
 
   /* ---------- the title's footnote (the same text opens from the entry screen). The five references were checked on 18 Nov 2026 against
@@ -232,10 +239,12 @@
 
   /* ---------- the text under the board ---------- */
   function text() {
-    const s = cur(), two = s.q2 && S.ord === 'ps';
+    const s = cur(), two = s.q2 && S.ord === 'ps' && vw() !== 'orr';
     R.k.innerHTML = 'Station ' + (S.st + 1) + ' of ' + ST.length + ' <i>·</i> <b>' + esc(s.f) + '</b>';
-    R.q.textContent = two ? s.q2 : s.q; R.q.classList.toggle('long', R.q.textContent.length > 84);
-    const sub = two ? s.sub2 : s.sub; R.sub.hidden = !sub; R.sub.textContent = sub || '';
+    const qv = s.qv && s.qv[vw()], sv = s.subv && s.subv[vw()];
+    R.q.textContent = qv || (two ? s.q2 : s.q); R.q.classList.toggle('long', R.q.textContent.length > 84);
+    R.lead.hidden = !s.lead; R.lead.textContent = s.lead || '';
+    const sub = sv || (two ? s.sub2 : s.sub); R.sub.hidden = !sub; R.sub.textContent = sub || '';
     host.dataset.st = s.id; host.classList.toggle('fin', !!s.fin);
     R.board.hidden = !!s.fin; R.text.hidden = !!s.fin; R.fin.hidden = !s.fin; host.querySelector('.pf-jump').hidden = !!s.fin;
     if (s.fin) { finale(); return; }
@@ -244,7 +253,7 @@
       + `<article class="pf-mech"><div class="pf-ck">The mechanism</div>${s.more.map(t => `<p>${tips(t)}</p>`).join('')}</article>`
       + `<article class="pf-side">${s.doors.length ? `<div class="pf-ck">Go deeper</div><div class="pf-doors">${s.doors.map(door).join('')}</div>` : ''}<div class="pf-ck">Sources</div><p class="pf-src">${src}</p></article>`;
   }
-  const door = d => d.lock ? `<div class="pf-door lock" role="group" aria-label="${esc(d.t)}: coming soon"><span class="dl">${LOCK}<b>${esc(d.t)}</b><em>coming soon</em></span><small>${esc(d.s)}</small></div>`
+  const door = d => d.pv ? `<button type="button" class="pf-door" data-pv="${d.pv}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>` : d.lock ? `<div class="pf-door lock" role="group" aria-label="${esc(d.t)}: coming soon"><span class="dl">${LOCK}<b>${esc(d.t)}</b><em>coming soon</em></span><small>${esc(d.s)}</small></div>`
     : d.fw ? `<button type="button" class="pf-door" data-pfw="${d.fw}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`   /* firm web build (20 Nov 2026): the two Atlas doors of station 1 are open */
     : d.web ? `<button type="button" class="pf-door" data-pweb><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`
     : `<button type="button" class="pf-door go" data-pgo="${d.go}" style="--dc:${d.c}"><span class="dl"><b>${esc(d.t)}</b><i aria-hidden="true">›</i></span><small>${esc(d.s)}</small></button>`;
@@ -691,6 +700,7 @@
     const mem = [b.mem.p ? 'Pax Silica, ' + b.mem.p : '', b.mem.t ? 'Pax Silica participant, not a signatory (27 Jan 2026)' : '', b.mem.a ? 'AI statement, ' + b.mem.a.replace(/\s*\(.*$/, '') : '', b.mem.w ? 'WAICO, ' + b.mem.w.replace(/\s*\(.*$/, '') : '', b.mem.b ? 'BRICS, ' + b.mem.b.replace(/\s*\(.*$/, '') : '', b.mem.e ? 'EU member' : '', b.mem.s ? b.mem.s.split(',')[0].replace(/\s*\(.*$/, '') : ''].filter(Boolean);
     box.append(h('p', 'ml', mem.length ? mem.join(' · ') : 'On none of the lists read.'));
     if (b.members) box.append(h('p', 'ml', b.members.join(', ') + '.'));
+    if (b.full === 'Germany' || b.n === 'Germany') { const a = h('button', 'pf-quiet', 'German hypocrisy →'); a.type = 'button'; a.dataset.pv = 'hyp'; box.append(a); }   /* OB2: Germany’s card links to the joke view */
   }
   function orbPlace(L, instant) {
     const svg = R.fig.querySelector('svg.pf-orbs'); if (!svg) return; const ps = S.ord === 'ps', ph = phone(), lay = OLAY.find(l => l[0] === S.lay);
@@ -884,7 +894,7 @@
     const s = cur(); if (s.fin) { if (!keep) emit(); return; }
     const v = V[vw()], fig = R.fig, vi = s.views.findIndex(q => q[0] === vw());
     tipHide(); fig.textContent = ''; R.chips.textContent = ''; R.tiles.textContent = ''; R.tiles.className = 'pf-tiles'; reading('', ''); legend([]);
-    fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); R.board.dataset.st = s.id; R.board.dataset.lens = vw();
+    fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); fig.classList.toggle('orr-fig', ['orr', 'fig', 'rng', 'pft', 'hyp'].includes(vw())); R.board.dataset.st = s.id; R.board.dataset.lens = vw();
     if (v.chips) v.chips();
     R.vn.textContent = s.views.length > 1 ? s.views[vi][1] + ' · ' + (vi + 1) + ' of ' + s.views.length : s.views[vi][1];
     R.title.textContent = typeof v.title === 'function' ? v.title() : v.title; R.unit.textContent = v.unit; R.table.setAttribute('aria-pressed', String(S.table));
@@ -938,7 +948,7 @@
     text(); board(); bar();
   }
   const first = i => (ST[i].views[0] || [null])[0];
-  const detail = () => S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : cur().q2 && S.ord === 'ps' ? '/pax' : '');   /* #profit/order/pax: the orbit view in its second state */
+  const detail = () => cur().id === 'order' && vw() === 'orr' ? (OZ.y !== 1995 ? '/order/' + OZ.y : '') : cur().id === 'order' && vw() === 'hyp' ? '/order/german-hypocrisy' : cur().id === 'order' && vw() === 'orb' ? '/order/' + (S.ord === 'ps' ? 'pax' : 'wto') : S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : cur().q2 && S.ord === 'ps' ? '/pax' : '');   /* #profit/order/pax: the orbit view in its second state */
   /* the link: #profit/<station>/<view>. A link made before the arc still lands: “claims” is now part of “profits”, and a view that
      moved to another station is found there */
   function apply(hash) {
@@ -946,10 +956,13 @@
     const home = v => ST.findIndex(s => s.views.some(q => q[0] === v));
     if (i < 0 && id === 'claims') { if (!view) view = 'hold'; i = home(view); }
     if (id === 'order' && (view === 'pax' || view === 'wto')) { S.ord = view === 'pax' ? 'ps' : 'wto'; view = 'orb'; } else if (id === 'order' && !view) S.ord = 'wto';
+    if (id === 'order' && /^(199[5-9]|20[0-2]\d)$/.test(view) && +view <= 2026) { OZ.y = +view; view = 'orr'; } else if (id === 'order' && view === 'german-hypocrisy') view = 'hyp';
     if (i >= 0 && view && !ST[i].views.some(q => q[0] === view)) { const j = home(view); if (j >= 0) i = j; else view = ''; }
     if (i < 0) return; go(i, view || first(i), true);
   }
-  X.profit = { show, bar, go, detail, apply, footnote, title: TITLE,
+  const orbitP = () => O ? Promise.resolve(O) : X.load('orbit').then(d => (O = d));
+  const ORR = X.orrery ? X.orrery({ V, S, R, h, el, esc, phone, OZ, board: board, vw, reading, legend, tiles, table, emit, sync, host, orbit: orbitP, setV }) : null;
+  X.profit = { show, bar, go, detail, apply, footnote, title: TITLE, orrery: ORR,
     where: () => ({ where: 'Station ' + (S.st + 1) + ' · ' + cur().t + (cur().fin ? '' : ' · ' + cur().views.find(v => v[0] === vw())[1] + (S.table ? ' · table' : '')) }),
     get state() { return { st: cur().id, view: vw(), year: S.year, era: S.era ? S.era.slice() : null, table: S.table, win: S.win, ord: S.ord, layer: S.lay, flows: S.flows, sys: S.sys, orbit: O ? O.B.length : 0, terms: Object.assign({}, S.terms), zoom: !!Z, ready: !!D }; },
     stations: ST.map(s => ({ id: s.id, t: s.t, q: s.q, f: s.f, views: s.views.map(v => v[0]) })), notes: Object.assign({}, NOTE),
