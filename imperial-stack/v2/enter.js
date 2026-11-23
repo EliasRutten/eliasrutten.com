@@ -11,6 +11,8 @@
    Machinery entry round (19 Nov 2026): this is the machinery's only entry. Its levels come from the page's data (ISX.simWays), never
    from the page's markup, and start through ISX.simWay; each shows a Time and a Difficulty bar and no minutes, shown or spoken.
    “Explore on my own” is not a level: the full map, nothing pinned, no thesis (ISX.simFree). Expert is the full map with the thesis.
+   Thesis view (23 Nov 2026): “Just the thesis” is a fourth way in, between the levels and the free map (ISX.simChain): the chain of
+   complexes lit on the map, the state's part, the thesis. Not a lesson.
    Motion: slow, one line at a time (veil, masthead, title, rule, the three blocks, the buttons); the first key or click shows the rest
    at once. Leaving, the text drifts toward the visitor and the veil lifts. Only opacity and transform move. Under reduced motion: a
    plain fade. Nothing here filters the tab behind (the globe's canvas must never sit under a CSS filter); the veil blurs its backdrop.
@@ -42,7 +44,7 @@
       b: [['Where you are', 'You came in through the Circuit, which showed the loop: the world’s savings flowing into US assets while the US buys more than it sells. Economics has come far in recognising these imbalances and the hot money around them as distorting and destabilising. What it misses is that the instability is manufactured, and used as a weapon for geoeconomic ends.'],
         ['What you are about to see', 'A schematic of the imperial machinery that manages this system and makes its cogs turn: the desks in Washington, the levers they pull and the prices those levers move. The real state apparatus is more complex than this schematic, so we made a guide that takes you through it step by step.'],
         ['How to use it', 'We want this to be a learning tool for anyone interested, so the guide has three levels of difficulty. You can also play with the machinery on your own instead of learning by steps. Understanding the mechanics takes time: if you want to come back to it, set a reminder. For more depth, {{sub|paid pieces on the Substack}} take one part of the machinery at a time.']],
-      acts: [['levels', 'Learn step by step', 'The guide, at one of three levels'], ['free', 'Explore on my own', 'The full map: no guide, no thesis'], ['remind', 'Remind me later']] },
+      acts: [['levels', 'Learn step by step', 'The guide, at one of three levels'], ['thesis', 'Just the thesis', 'The chain on the map: nothing to learn'], ['free', 'Explore on my own', 'The full map: no guide, no thesis'], ['remind', 'Remind me later']] },
     story: { n: '05', hue: '#e4ebf1', k: 'The imperial arm', h: 'Scenarios: how the arm is used', site: '#imperial-arm', mins: 20,
       b: [['Where you are', 'The machinery showed how prices are steered; the elite network who steers them. This is the arm in use: the moments Washington reached into another country’s economy, and what it took.'],
         ['What you are about to see', 'Cases, each told as a chain from decision to consequence, with the levers they used.'],
@@ -155,6 +157,7 @@
     if (d.en === 'remind') return;                       /* v2/remind.js opens its panel on [data-remind] and asks remindCtx what to say */
     if (d.en === 'levels') { if (more('levels', b) === false) close('go'); return; }   /* the guide is already under way: nothing to choose */
     if (d.en === 'stops') { if (more('stops', b) === false) close('go'); return; }
+    if (d.en === 'thesis') { close('thesis', function () { if (X.simChain) X.simChain(kb); }); return; }   /* 23 Nov 2026: the thesis view, the chain on the map (not a level, not the free map) */
     if (d.en === 'free') { close('free', function () { if (X.simFree) X.simFree(kb); tourOffer(); }); return; }
     if (d.en === 'tour') { close('tour', function () { if (X.hints && X.hints.replay) X.hints.replay(v); }); return; }
     if (d.en === 'lever') { close('lever', function () { var l = root.querySelector('#isx-scene-story [data-b3="ledger"]'); if (l) l.click(); }); return; }

@@ -191,3 +191,58 @@
   #isx-root .s2 .thx { position: relative; order: 1; left: auto; top: auto; width: auto; max-height: none; margin: 0; }
   #isx-root .s2 .thx-ch, #isx-root .s2 .thx-go, #isx-root .s2 .thx-f { min-height: 44px; }
 }
+
+/* ---------- thesis view (23 Nov 2026): “Just the thesis”, the chain on the map ----------
+   The panel is Expert's thesis panel (.thx) with its own body; on phones it sits under the map, like the guide's card.
+   While it is open the full map's own tools step aside (nothing is removed): the trays, the Indicators button, the “More inside” tabs. */
+#isx-root .s2.tv-on .s2tray, #isx-root .s2.tv-on .b1ind, #isx-root .s2.tv-on .b1play, #isx-root .s2.tv-on .scount, #isx-root .s2.tv-on .s2key, #isx-root .s2.tv-on #isx-vdoors, #isx-root .s2.tv-on .pcnt { display: none !important; }
+#isx-root .s2 .tv-b0[aria-pressed="true"] { border-color: #ffb547; color: #ffd27a; }
+#isx-root .s2 .tvx { width: 348px; }
+#isx-root .s2 .tvx .thx-f { letter-spacing: .08em; }
+#isx-root .s2 .tv-bd { display: flex; flex-direction: column; gap: 12px; }
+#isx-root .s2 .tv-bd > * { flex: none; min-width: 0; }
+#isx-root .s2 .tv-cur { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-height: 150px; align-content: start; }
+#isx-root .s2 .tv-cur p, #isx-root .s2 .tv-cur h4, #isx-root .s2 .tv-cur ul, #isx-root .s2 .tv-cur blockquote { margin: 0; }
+#isx-root .s2 .tv-k { font: 400 10.5px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .tv-t { padding-left: 10px; border-left: 3px solid var(--rc, #ffd27a); font: 600 17px/1.2 var(--sans); color: #fff; }
+#isx-root .s2 .tv-link { display: flex; gap: 8px; font: 400 14px/1.45 var(--sans); color: #ffd27a; }
+#isx-root .s2 .tv-link i { flex: none; font-style: normal; color: #ffb547; }
+#isx-root .s2 .tv-say { font: 400 14.5px/1.5 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .tv-lead { font: 500 14.5px/1.45 var(--sans); color: #ffd27a; }
+#isx-root .s2 .tv-who { font: 400 12.5px/1.45 var(--sans); color: #9fb1c2; }
+#isx-root .s2 .tv-who span, #isx-root .s2 .tv-wo b, #isx-root .s2 .tv-does b, #isx-root .s2 .tv-pk { display: block; margin-bottom: 2px; font: 400 10px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .tv-does { display: grid; gap: 8px; padding: 0; list-style: none; }
+#isx-root .s2 .tv-does li { font: 400 13.5px/1.45 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .tv-does b { color: #ffd27a; }
+#isx-root .s2 .tv-wo { padding: 8px 10px; border: 1px solid rgba(255, 138, 92, .35); border-radius: 9px; background: rgba(255, 90, 78, .06); font: 400 13.5px/1.45 var(--sans); color: #f1dcd6; }
+#isx-root .s2 .tv-wo b { color: #ff9d7a; }
+#isx-root .s2 .tv-src { font: 400 12px/1.45 var(--sans); color: #9fb1c2; }
+#isx-root .s2 .tv-th { padding: 0 0 0 12px; border-left: 2px solid #ffb547; font: 400 13.5px/1.5 var(--sans); color: #e4ebf1; }
+#isx-root .s2 .tv-pk { margin: 2px 0 -4px; }
+#isx-root .s2 .tv-pay { font: 500 14px/1.5 var(--sans); color: #ffd27a; }
+#isx-root .s2 .tv-nav { display: flex; gap: 8px; }
+#isx-root .s2 .tv-nb { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid #33475a; border-radius: 10px; background: none; color: #dfe7ee; font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+#isx-root .s2 .tv-nb:first-child { flex: 0 1 108px; }
+#isx-root .s2 .tv-nb.pri { border-color: #ffb547; background: rgba(255, 181, 71, .1); color: #ffd27a; }
+#isx-root .s2 .tv-nb:hover:not([disabled]) { border-color: #ffb547; color: #fff; }
+#isx-root .s2 .tv-nb[disabled] { opacity: .4; cursor: default; }
+#isx-root .s2 .tv-nb svg { width: 16px; height: 16px; }
+#isx-root .s2 .tv-l { margin: 2px 0 -6px; font: 400 10px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #8ea0b2; }
+#isx-root .s2 .tv-chs { display: flex; flex-wrap: wrap; gap: 6px; }
+#isx-root .s2 .tv-ch { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 10px 0 8px; border: 1px solid #22313f; border-left: 3px solid var(--rc); border-radius: 8px; background: rgba(13, 22, 32, .6); color: #dbe4ec; font: 500 12.5px/1 var(--sans); cursor: pointer; }
+#isx-root .s2 .tv-ch small { font: 400 10px/1 var(--mono); color: #8ea0b2; }
+#isx-root .s2 .tv-ch:hover, #isx-root .s2 .tv-ch[aria-pressed="true"] { border-color: var(--rc); color: #fff; background: rgba(255, 181, 71, .08); }
+#isx-root .s2 .tv-out { display: flex; flex-wrap: wrap; gap: 4px 18px; padding-top: 8px; border-top: 1px solid #1c2a37; }
+#isx-root .s2 .tvx :is(.tv-nb, .tv-ch, .s2lnk):focus-visible { outline: 2px solid #ffb547; outline-offset: 2px; }
+/* the complex in hand stands out from the chain already lit */
+#isx-root .s2.tv-on .fn.tvc .fnr { stroke: var(--nc); stroke-width: 2.2; filter: drop-shadow(0 0 7px var(--nc)); }
+#isx-root .rt-host .rt .tv-xb { white-space: nowrap; }
+@media (max-width: 760px) {
+  #isx-root #isx-cock.s2 .tvx { position: relative; order: 4; left: auto; top: auto; width: auto; max-height: none; margin: 0; }
+  #isx-root #isx-cock.s2.full.tv-on .mapscroll svg { min-width: 0; }
+  #isx-root #isx-cock.s2.tv-on .mapscroll { overflow: hidden; }
+  #isx-root .s2 .tv-cur { min-height: 0; }
+  #isx-root .s2 .tv-nb, #isx-root .s2 .tv-ch, #isx-root .s2 .tvx .s2lnk { min-height: 44px; }
+  #isx-root .s2 .tv-bd { overflow: visible; }
+}
+@media (prefers-reduced-motion: reduce) { #isx-root .s2.tv-on .fn.tvc .fnr { filter: none; } }

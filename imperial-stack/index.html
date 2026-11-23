@@ -6138,11 +6138,11 @@ function renderFin() { dcSync();
        The three long lists (what it explains, what Washington did, shares and bonds sold) sit under the stage, in “The full picture”. */
     host.innerHTML = `<section class="cock s2" id="isx-cock" aria-label="The imperial machinery: the Scott Bessent Simulator">`
       + `<div class="s2stage" id="isx-stage"><div class="mapscroll"><svg id="isx-rmap" viewBox="-3 -3 ${MAPW + 6} ${MAPH + 6}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Relations between abroad, the state, the financial sector, the AI build-out, households and energy"></svg></div></div>`
-      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Three ways in: open the levels of the guide (Foundations, Fluent, Expert) or explore on your own"><span aria-hidden="true">↩</span>Three ways in</button><button type="button" class="cb-tourb cl-keyb" id="isx-cl-keyb" data-cl-key aria-expanded="false" aria-controls="isx-cl-key" aria-label="Key to the map: boxes, lines, colours and gauges"><span aria-hidden="true">◐</span>Key</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
+      + `<header class="s2top"><div class="s2ttl"><div class="fk">Scott Bessent Simulator · data as of ${fe(LIVE.asof || '')}</div><div class="s2tr"><h2 class="b4sr">Scott Bessent Simulator</h2>${simBarHTML()}<button type="button" class="cb-tourb" id="isx-simtour-b" data-simtour aria-label="Take the tour of the Scott Bessent Simulator"><span aria-hidden="true">?</span>Tour</button><button type="button" class="cb-tourb cb-waysb" id="isx-ways-b" data-b1more="ways" aria-label="Three ways in: open the levels of the guide (Foundations, Fluent, Expert) or explore on your own"><span aria-hidden="true">↩</span>Three ways in</button><button type="button" class="cb-tourb tv-b0" id="isx-tv-b0" data-tv0 aria-pressed="false" aria-label="Just the thesis: the chain on the map, nothing to learn"><span aria-hidden="true">◆</span>Just the thesis</button><button type="button" class="cb-tourb cl-keyb" id="isx-cl-keyb" data-cl-key aria-expanded="false" aria-controls="isx-cl-key" aria-label="Key to the map: boxes, lines, colours and gauges"><span aria-hidden="true">◐</span>Key</button></div></div><div class="s2sw">${finSwitch()}</div></header>`
       + `<button type="button" class="b1ind" id="isx-b1ind" data-tray="read" aria-expanded="false" aria-controls="isx-b1led"><span class="pips" aria-hidden="true">${RORD.map(r => `<i style="--rc:${ROLE[r][3]}"></i>`).join('')}</span>Indicators <b></b><span class="vh"> reached · open the role ledger</span></button>`
       + `<div class="b1play" id="isx-b1play" role="group" aria-label="Indicators in play at this step"></div><span class="scount" id="isx-scount" aria-live="off"></span>`
-      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><aside class="cl-key" id="isx-cl-key" role="dialog" aria-labelledby="isx-cl-key-h" hidden>${keyHTML()}</aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><button type="button" data-b1more="hints" hidden>Show hints again</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
-      + simNarrHTML() + thxHTML()
+      + `<aside class="b1led" id="isx-b1led" role="dialog" aria-label="Indicators by role" hidden></aside><aside class="tw-gs" id="isx-gsteps" role="dialog" aria-labelledby="isx-gs-h" hidden></aside><aside class="cl-key" id="isx-cl-key" role="dialog" aria-labelledby="isx-cl-key-h" hidden>${keyHTML()}</aside><div class="b1more" id="isx-b1more" role="group" aria-label="More" hidden><button type="button" data-b1more="ways">Three ways in</button><button type="button" data-tv0>Just the thesis</button><button type="button" data-tray="read">Indicators</button><button type="button" data-simtour>Take the tour</button><button type="button" class="tw-gsm" data-gsteps>Guide steps</button><button type="button" data-b1more="share">Share this view</button><button type="button" data-b1more="hints" hidden>Show hints again</button><a href="https://www.buymeacoffee.com/ruttenelias" target="_blank" rel="noopener">Support this free map</a></div>`
+      + simNarrHTML() + thxHTML() + tvHTML()
       + `<aside class="dossier" id="isx-rside" aria-live="polite" hidden></aside>`
       + `<div class="s2low" id="isx-s2low"><div class="s2tray tr-pick" id="isx-s2tray-pick" hidden><div class="sn-pick" id="isx-sn-pick"></div></div>`
       + `<div class="s2tray tr-play" id="isx-s2tray-play" hidden>${playBarHTML()}</div>`
@@ -6171,11 +6171,11 @@ function renderFin() { dcSync();
 
 /* ---------- selection state ---------- */
 function clearSel() { fsel = null; fedge = null; fplay = null; fpstep = 0; flev.clear(); fch = null; fchH = null; }
-function pickNode(n) { if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); emit('simpick', { n: fsel }); }
+function pickNode(n) { if (tvOn()) { tvPick(tvOf(n)); return; }   /* thesis view: an actor lights its complex alone; its dossier belongs to the full map */ if (!simVis()(n)) return; /* stage 5: not before the guide gets there (fix round: a node a chain borrows opens too) */ const same = fsel === n && fplay == null && !flev.size; clearSel(); fsel = same ? null : n; styleRmap(); renderSide(); emit('simpick', { n: fsel }); }
 /* interface fixes: a line opens too. The tips and the opening card say “click any actor or line for what it does and its
    sources”; until now a line only showed a hover note. Its card names the two actors, what passes between them and, where a
    gauge sits on the line, that gauge with its date and source. In the guide a line opens once the guide has reached it. */
-function pickEdge(i) { if (simOn() && SIM.R && !SIM.R.e.has(i)) return; const same = fedge === i && !fsel && fplay == null && !flev.size; clearSel(); fedge = same ? null : i; styleRmap(); renderSide(); emit('simpick', { e: fedge }); const dx = $('dx'); if (dx && fedge != null) dx.focus({ preventScroll: true }); /* a line cannot hold the focus itself: Esc then closes its card */ }
+function pickEdge(i) { if (tvOn()) return; if (simOn() && SIM.R && !SIM.R.e.has(i)) return; const same = fedge === i && !fsel && fplay == null && !flev.size; clearSel(); fedge = same ? null : i; styleRmap(); renderSide(); emit('simpick', { e: fedge }); const dx = $('dx'); if (dx && fedge != null) dx.focus({ preventScroll: true }); /* a line cannot hold the focus itself: Esc then closes its card */ }
 function wireCockpit(host) {
   host.querySelectorAll('.lv').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; const was = flev.has(i); fplay = null; fsel = null; fedge = null; if (was) flev.delete(i); else flev.add(i); styleRmap(); renderSide(was ? null : i); levRove(b); }));
   const lb = $('levbar');
@@ -6243,10 +6243,11 @@ function drawRmap() {
   }
   styleRmap();
 }
-function fHover(n) { if (simOn()) n = null; if (fhover === n) return; fhover = n; styleRmap(); }
+function fHover(n) { if (simOn() || tvOn()) n = null; if (fhover === n) return; fhover = n; styleRmap(); }
 /* tiers build B: a play's steps in its own order (new steps are appended to PLAYS, so decision keys keep their names) */
 const pStep = (P, i) => P.steps[P.ord ? P.ord[i] : i];
 function activeEdges(all) {
+  if (tvOn()) return tvLit().e;   /* thesis view (23 Nov 2026): the chain so far, or one complex alone */
   if (fplay != null) return new Set(all ? RUNS[fplay].steps.flatMap(s => s[2]) : pStep(RUNS[fplay], fpstep)[2]);
   if (flev.size) return new Set([...flev].flatMap(i => LEDGE[i]));
   const n = (all ? null : fhover) || fsel; if (n) return new Set(FE.map((e, i) => (e[0] === n || e[1] === n) ? i : -1).filter(i => i >= 0));
@@ -6255,13 +6256,14 @@ function activeEdges(all) {
   if (!all) { const se = simActive(); if (se) return se; } /* v.1.12: in story mode the step in hand is lit */
   return null;
 }
-function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); if (fsel) s.add(fsel); return s; }
+function nodesOf(act) { const s = new Set(); if (act) act.forEach(i => { s.add(FE[i][0]); s.add(FE[i][1]); }); if (fsel) s.add(fsel); if (tvOn()) tvLit().n.forEach(n => s.add(n));   /* thesis view: a complex lights all its actors, with or without a line between them */ return s; }
 function styleRmap() {
   const svg = $('rmap'); if (!svg) return;
   const act = activeEdges(), nodes = nodesOf(act); fnodes = nodes;
   const vis = simVis();   /* stage 5: an actor the guide has not reached is never lit */
   svg.querySelectorAll('.fe').forEach(p => { const on = !act || act.has(+p.dataset.e); p.classList.toggle('on', !!act && on); p.classList.toggle('dim', !on); });
-  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); });
+  const tvn = tvOn() ? tvLit().cur : null;
+  svg.querySelectorAll('.fn').forEach(g => { const n = g.dataset.n; g.classList.toggle('dim', !!act && !nodes.has(n)); g.classList.toggle('lit', !!act && nodes.has(n) && vis(n)); g.classList.toggle('sel', n === fsel); g.classList.toggle('tvc', !!tvn && tvn.has(n)); });
   ROOT.querySelectorAll('.lv').forEach(b => { const i = +b.dataset.l, on = flev.has(i); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   /* round 5b: a pulled lever keeps its holder outlined in gold, with the number of its levers pulled in a ring on the box's corner */
   { const hc = {}; flev.forEach(i => { const H = lholdOf(i); if (H && vis(H[0])) hc[H[0]] = (hc[H[0]] || 0) + 1; });
@@ -8345,7 +8347,7 @@ const SFULL = [-3, -3, MAPW + 6, MAPH + 6];
    right of the card, under the readings, above the bar and any pinned tray. In the guide it frames the step in hand
    and the one before it (the rest of what is revealed stays on the map, partly out of view); otherwise the whole map.
    Phones keep the old behaviour: the map is a block of its own and the camera frames the step. */
-function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = PHONE() ? (simOn() ? '1.12' : '') : ''; }
+function simAspect() { const svg = $('rmap'); if (!svg) return; svg.style.aspectRatio = PHONE() ? (simOn() || tvOn() ? '1.12' : '') : ''; }
 function simBox(set) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
   set.forEach(n => { const F = FN[n]; x0 = Math.min(x0, F[1] - hwOf(n)); x1 = Math.max(x1, F[1] + hwOf(n)); y0 = Math.min(y0, F[2] - NH / 2); y1 = Math.max(y1, F[2] + NH / 2 + (tagsOf(n).length ? 12 : 0)); });
@@ -8356,8 +8358,9 @@ function simCamTarget() {
   const on = simOn(), L = sLine(), b = SIM.beat, phone = PHONE();
   if (phone) {
     cock.dataset.z = 'far';   /* B1-3: on a phone the gauges show their value only; the strip under the map names them */
-    if (!on || b < 0 || (b >= L.beats.length && L.main)) return SFULL;
-    const act = simActive(), R = SIM.R, set = act ? enodes([...act]) : new Set([...R.n, ...R.tmp]); if (!set.size) return SFULL;
+    const tv = tvOn() ? tvLit().cam : null;   /* thesis view: a phone frames what the beat in hand lights */
+    if (!tv && (!on || b < 0 || (b >= L.beats.length && L.main))) return SFULL;
+    const act = tv ? null : simActive(), R = SIM.R, set = tv || (act ? enodes([...act]) : new Set([...R.n, ...R.tmp])); if (!set.size || set.size > 30) return SFULL;
     let [x0, y0, x1, y1] = simBox(set); x0 -= 14; x1 += 14; y0 -= 36; y1 += 14;
     const ar = svg.clientWidth / Math.max(1, svg.clientHeight) || (MAPW + 6) / (MAPH + 6);
     let w = Math.max(x1 - x0, 300), h = y1 - y0; const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -8373,7 +8376,7 @@ function simCamTarget() {
   cock.style.setProperty('--it', Math.round(iT) + 'px'); cock.style.setProperty('--ib', Math.round(iB0) + 'px');
   /* stage 5: in the full view the map also clears the legend, which wraps to two rows on narrower screens (the rail keeps its own bottom, --ib) */
   const kt = on ? null : rel('s2low', 't'), iB = kt != null ? Math.max(iB0, H - kt + 10) : iB0;
-  const thx = !on && !phone && cock.classList.contains('thx-on') ? rel('thx', 'r') : null;   /* 19 Nov: Expert's thesis panel stands on the left of the full map */
+  const thx = !on && !phone && cock.classList.contains('thx-on') ? rel('thx', 'r') : !on && !phone && cock.classList.contains('tv-on') ? rel('tv', 'r') : null;   /* 23 Nov: the thesis view's panel stands in the same place */   /* 19 Nov: Expert's thesis panel stands on the left of the full map */
   const iL = on && !folded && rel('snarr', 'r') != null ? rel('snarr', 'r') + 34 : thx != null ? thx + 24 : 26, iR = 26;
   let box, cap;
   if (on && b >= 0 && b < L.beats.length) {
@@ -8464,6 +8467,7 @@ function simBar() {
   const host = $('s2bar'); if (!host || !RT) return;
   const L = sLine(), b = SIM.beat, n = L.beats.length, on = SIM.mode === 'story', stage = $('cock');
   host.hidden = false;
+  if (tvOn()) { tvBar(host, stage); return; }
   if (!on) {
     RT.render(host, { id: 'sim', label: 'Scott Bessent Simulator: plays and levers', stage, back: { enabled: false, label: 'Back' },
       next: { kind: 'return', kicker: 'Back to the guide', title: b < 0 ? 'the opening card' : b >= n ? (L.main ? 'the whole machine' : 'the last card') : SIM.ph === 'ask' ? 'your call after step ' + (b + 1) : SIM.ph ? 'the other path after step ' + (b + 1) : 'step ' + (b + 1) + ' of ' + n, pkicker: 'Back to', ptitle: 'the guide' },
@@ -8515,9 +8519,11 @@ function simNav(ev) {
   if (view !== 'fin' || finMode !== 'plumb' || !$('cock')) return;
   if (ev.target != null) {
     const t = String(ev.target).split(':');
+    if (t[0] === 'tv') { if (tvOn()) tvGo(+t[1]); return; }
     if (t[0] === 'd' || t[0] === 'c' || t[0] === 'x') { if (SLINES[+t[1]]) simPhase(+t[1], +t[2], t[0] === 'd' ? 'ask' : t[0] === 'c' ? 'chain' : 'crisis', +t[3] || 0); return; }
     if (SLINES[+t[0]]) simGo(+t[0], +t[1]); return;
   }
+  if (tvOn()) { tvGo(ev.nav === 'back' ? SIM.tv - 1 : SIM.tv >= TVB.length - 1 ? 0 : SIM.tv + 1); return; }
   if (SIM.mode !== 'story') { if (ev.nav === 'next' && ev.how === 'click') simTab('guide'); return; }
   const L = sLine(), b = SIM.beat, n = L.beats.length;
   if (ev.nav === 'back') { if (b >= 0) simBack(); return; }
@@ -8913,12 +8919,13 @@ function sWays() {
 const sFocus = q => { const c = $('cock'), f = c && c.querySelector(q); if (f && f.getClientRects().length) f.focus({ preventScroll: true }); };
 function sWayGo(k, kb) {
   if (!SWAYS.some(W => W.k === k)) return; stSet(SWAY, k); track('Way', { way: k });
+  SIM.tv = null; SIM.tvSolo = null;
   if (k === 'map') { stSet(STHX, '1'); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) sFocus('#isx-thx .thx-ch'); return; }
   stSet(STHX, null); SIM.ret = null; if (SIM.mode !== 'story') { SIM.mode = 'story'; stSet(SKEY.mode, 'story'); }
   simGo(k === 'ground' && SGI >= 0 ? SGI : SPI, 0, 'focus');
 }
 /* “Explore on my own”: the full map, nothing pinned, no thesis, no guide */
-function sFree(kb) { stSet(STHX, '0'); clearSel(); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) sFocus('[data-s4tab][aria-pressed="true"]'); }
+function sFree(kb) { SIM.tv = null; SIM.tvSolo = null; stSet(STHX, '0'); clearSel(); if (SIM.mode !== 'full') simSetMode('full'); else simApply(false); if (kb) sFocus('[data-s4tab][aria-pressed="true"]'); }
 /* the thesis on the map (Expert): SMAIN.thesis in Elias Rutten's wording, then the guide's chapters, each lighting its actors and
    lines on the map and opening its first step on demand. One panel, foldable; shown in the full view after Expert was chosen.
    Storage: isx-sim-thesis ('1' after Expert, '0' after “Explore on my own”); isx-thx-fold (session) for the fold. */
@@ -8934,7 +8941,7 @@ function thxHTML() {
 }
 function simThx() {
   const t = $('thx'), cock = $('cock'); if (!t || !cock) return;
-  const on = SIM.mode === 'full' && stGet(STHX) === '1';
+  const on = SIM.mode === 'full' && stGet(STHX) === '1' && !tvOn();
   if (on && t.hidden) { const f = stGet('isx-thx-fold', true), fold = f ? f === '1' : PHONE(); thxFold(t, fold); }
   t.hidden = !on; if (!on && (fch != null || fchH != null)) { fch = null; fchH = null; }
   if (!t._w) { t._w = true;
@@ -8947,6 +8954,142 @@ function simThx() {
 function thxFold(t, fold) {
   t.classList.toggle('folded', fold); const b = t.querySelector('[data-thxf]'); if (b) { b.textContent = fold ? 'Open' : 'Fold'; b.setAttribute('aria-expanded', String(!fold)); }
   t.querySelector('.thx-b').hidden = fold;
+}
+/* ---------- thesis view (23 Nov 2026): “Just the thesis” ----------
+   Elias Rutten, 22 Nov 2026: “a button that is not educative but just shows the thesis … Chain on the map. It should make use of the
+   existing mechanics of things lighting up. It should just show the various complexes that link the machine together.” And: “group together
+   the things that work together to create the chain and it should be explained how state machinery is used to prevent friction in the
+   chain and manage the system so it doesn't break”. Spec: claude/specs/thesis-view-23-nov.md.
+   A fourth way in, on the full map: the map dims, six complexes of existing actors light in order with only the main lines between them
+   (TVC, and the chain beats of TVB), then four beats for the state (its lines, e, reach the links they keep smooth, k), then the thesis.
+   It is not a second lighting system: activeEdges() and nodesOf() ask tvLit() what is lit, styleRmap() draws it, simCamTarget() frames it,
+   and Back, Next, the marks, ← → and the swipe come through the bar (simBar, simNav). State: SIM.tv (the beat, null when off) and
+   SIM.tvSolo (a complex lit alone; TVC.length is the state). Nothing is stored: a reload opens the full map.
+   Every sentence here is a draft for Elias Rutten. No figure and no claim is new: each state beat names the crisis cards (SDEC) it rests on. */
+const TVC = [
+  { k: 'hh', t: 'American households', s: 'Households', c: '#3ee6b8', n: ['CON', 'TOP', 'MTG', 'SVR'], say: 'American households buy more from the world than America sells to it.' },
+  { k: 'fab', t: 'The world’s factories', s: 'Factories', c: '#44d7ec', n: ['EXP', 'CHP'], say: 'Exporters and chip makers abroad earn more dollars than they spend.' },
+  { k: 'sav', t: 'The world’s savers', s: 'Savers', c: '#ffb547', n: ['SAV', 'OFF'], say: 'Their pension funds, central banks and savers need somewhere to keep those dollars.' },
+  { k: 'mkt', t: 'US shares and bonds', s: 'Shares and bonds', c: '#d78bff', n: ['SPX', 'ISS', 'BND'], say: 'America supplies the claims they buy: today, above all, the shares and bonds of the AI firms.' },
+  { k: 'ai', t: 'The AI build-out', s: 'AI build-out', c: '#ff5d8f', n: ['HYP', 'LAB', 'PCR', 'INS'], say: 'A handful of firms spend the money on data centres and chips, part of it through vehicles kept off their books.' },
+  { k: 'debt', t: 'The market for Washington’s debt', s: 'Washington’s debt', c: '#ffd27a', n: ['MMF', 'BNK', 'STB', 'CEN', 'HFD', 'DUA', 'Y10', 'MOV'], say: 'Under all of it lies the government’s own debt, held less and less by foreign central banks and more and more by funds on borrowed money.' },
+];
+const TVS = ['TSY', 'FED', 'REG', 'CGR', 'WH', 'ENG'], TVSC = '#e4ebf1';
+const TVB = [
+  { c: 0 },
+  { c: 1, e: E('CON>EXP'), link: 'What households spend becomes the sales of other countries.' },
+  { c: 2, e: E('CHP>SAV', 'EXP>OFF'), link: 'What those countries do not spend becomes savings in dollars.' },
+  { c: 3, e: E('SAV>SPX', 'SAV>BND'), link: 'The savings come back to America as purchases of its shares and bonds.' },
+  { c: 4, e: E('SPX>ISS', 'ISS>HYP', 'BND>HYP'), link: 'High share prices let the firms sell new shares and bonds, and the proceeds pay for the build-out.' },
+  { t: 'The loop closes', e: E('HYP>CHP', 'HYP>SPX', 'SPX>TOP', 'TOP>CON'), link: 'The orders for chips go back to the factories abroad, and rising shares keep the richest households spending.', at: ['HYP', 'CHP', 'SPX', 'TOP', 'CON'] },
+  { c: 5, out: 1, e: E('OFF>TSY', 'Y10>BND', 'Y10>PCR', 'Y10>MTG'), link: 'The interest Washington pays sets the price of every bond the AI firms sell and of every mortgage.' },
+  { st: 0, t: 'It finds buyers for its debt', lead: 'The chain does not hold by itself: at every weak link, the state steps in.',
+    e: E('TSY>MMF', 'TSY>BNK', 'TSY>STB', 'CGR>STB', 'WH>STB', 'REG>BNK'), k: E('OFF>TSY', 'DUA>STB'), dec: ['0-1', '0-4'],
+    does: [['TSY', 'The Treasury borrows in short-term bills, which money funds and banks hold as cash.'], ['CGR', 'Congress obliges the issuers of dollar tokens to hold those bills, so savers abroad who buy the tokens lend to Washington.'], ['REG', 'The regulators loosen the limit on how much the largest banks may hold.']],
+    wo: 'Long bonds find no steady buyer, and every jump in long-term rates lands on the build-out and on mortgages.' },
+  { st: 1, t: 'It keeps the bond market calm',
+    e: E('TSY>Y10', 'TSY>MOV', 'FED>BNK'), k: E('BNK>HFD', 'MOV>HFD', 'Y10>BND', 'Y10>MTG'), dec: ['0-7', '0-6'],
+    does: [['TSY', 'The Treasury buys back its own long bonds when long-term rates climb.'], ['FED', 'The Federal Reserve lends without limit against Treasuries and buys bills, so the overnight loans behind those funds keep flowing.']],
+    wo: 'A sudden swing in prices forces the funds to sell, and no private buyer takes the bonds.' },
+  { st: 2, t: 'It keeps dollars within reach abroad',
+    e: E('FED>OFF', 'TSY>YEN', 'TSY>GOV', 'GOV>WH'), k: E('YEN>OFF', 'OFF>TSY'), dec: ['5-3'],
+    does: [['FED', 'The Federal Reserve lends dollars to foreign central banks against their Treasuries, so they need not sell them.'], ['TSY', 'The Treasury steps into the currency market beside Japan and extends dollar lines to governments it bargains with.'], ['WH', 'The White House trades tariff terms for pledges to invest in America.']],
+    wo: 'A holder short of dollars sells Treasuries to raise them, and long-term rates rise in America.' },
+  { st: 3, t: 'It absorbs the shocks',
+    e: E('ENG>OIL', 'ENG>PET', 'WH>MKM', 'MKM>OIL', 'WH>EXP', 'CGR>CON'), k: E('OIL>INF', 'INF>FED', 'OIL>Y10', 'OIL>FUEL', 'FUEL>CON'), dec: ['6-1', '9-4'],
+    does: [['ENG', 'When oil jumps, Washington releases reserves, waives sanctions on oil at sea and keeps the peace talks in the headlines.'], ['WH', 'When its own tariffs set the bond market selling, the White House paused them.'], ['CGR', 'Congress sends households larger tax refunds, which holds their spending up.']],
+    wo: 'An oil shock reaches the bond market through inflation and the Fed, and the share market through long-term rates.' },
+  { end: 1, t: 'The thesis' },
+];
+const TVP = ['The world’s savings have to keep landing in American shares and bonds, and the chain that carries them there does not hold by itself.', 'The state holds it together, and whoever holds a chain the whole world depends on can also pull it.'];
+const TVPAY = 'That is why the dollar needs the AI trade: it is where the world’s savings now land, and every valve you have seen keeps them landing there.';   /* the guide's closing line, unchanged (guide spine §2) */
+const tvOn = () => SIM.tv != null && SIM.mode === 'full';
+const tvName = i => { const B = TVB[i]; return B.c != null ? TVC[B.c].t : B.t; };
+const tvOf = n => { const i = TVC.findIndex(C => C.n.includes(n)); return i >= 0 ? i : TVS.includes(n) ? TVC.length : null; };
+const tvIn = ns => FE.map((e, i) => ns.includes(e[0]) && ns.includes(e[1]) ? i : -1).filter(i => i >= 0);   /* the lines inside a complex */
+const TVCH = TVB.findIndex(B => B.st != null);   /* the chain's beats come first: 0 … TVCH − 1 */
+let tvMemo = null;
+function tvLit() {
+  const key = SIM.tv + ':' + SIM.tvSolo; if (tvMemo && tvMemo.key === key) return tvMemo;
+  const e = new Set(), n = new Set(), cur = new Set(), cam = new Set(), b = SIM.tv, B = TVB[b], so = SIM.tvSolo;
+  const add = (S, xs) => xs.forEach(x => S.add(x));
+  if (so != null) {
+    const ns = so < TVC.length ? TVC[so].n : TVS;
+    add(n, ns); add(cur, ns); add(e, so < TVC.length ? tvIn(ns) : TVB.flatMap(X => X.st != null ? X.e : []));
+    add(cam, ns); if (so >= TVC.length) add(cam, [...enodes([...e])]);
+  } else if (B.end) {
+    TVB.forEach(X => { add(e, X.e || []); add(e, X.k || []); }); TVC.forEach(C => add(n, C.n)); add(n, TVS);
+  } else if (B.st != null) {
+    add(e, B.e); add(e, B.k); add(n, TVS); add(cur, B.does.map(D => D[0]));
+    add(cam, [...enodes(B.e)]); add(cam, [...enodes(B.k)]);
+  } else {
+    for (let i = 0; i <= b; i++) { const X = TVB[i]; add(e, X.e || []); if (X.c != null) add(n, TVC[X.c].n); }
+    if (B.c != null) { add(cur, TVC[B.c].n); add(cam, TVC[B.c].n); } else add(cur, B.at || []);
+    add(cam, [...enodes(B.e || [])]);
+  }
+  return tvMemo = { key, e, n, cur, cam };
+}
+function sChain(kb) {
+  clearSel(); SIM.tv = 0; SIM.tvSolo = null; SIM.tray = null; gsOpen(false); track('Way', { way: 'thesis' });
+  if (SIM.mode !== 'full') simSetMode('full'); else simApply(true);
+  const st = $('stage'); if (PHONE() && st) st.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  if (kb) sFocus('#isx-tv [data-tvn="1"]');
+}
+function tvGo(b) { if (!tvOn()) return; b = Math.max(0, Math.min(TVB.length - 1, b)); if (b === SIM.tv && SIM.tvSolo == null) return; const fwd = b === SIM.tv + 1; SIM.tv = b; SIM.tvSolo = null; simApply(true, fwd); track('Thesis', { beat: String(b) }); }
+function tvPick(i) { if (!tvOn() || i == null) return; SIM.tvSolo = SIM.tvSolo === i ? null : i; simApply(true); }
+function tvOff(kb) { if (SIM.tv == null) return; SIM.tv = null; SIM.tvSolo = null; simApply(true); if (kb) sFocus('#isx-tv-b0'); }
+function tvHTML() {
+  return `<aside class="thx tvx" id="isx-tv" aria-labelledby="isx-tv-h" hidden><div class="thx-h"><h3 id="isx-tv-h"><i aria-hidden="true">◆</i>Just the thesis</h3><button type="button" class="thx-f" data-tvx>Back to the full map</button></div><div class="thx-b tv-bd" id="isx-tv-bd"></div></aside>`;
+}
+/* the panel: Back and Next (always in the same place), the beat in hand (a polite live region), the seven chips, the two ways out */
+function tvBodyHTML() {
+  const b = SIM.tv, B = TVB[b], n = TVB.length, so = SIM.tvSolo, last = b >= n - 1;
+  const p = (cls, t) => `<p class="${cls}">${fe(t)}</p>`;
+  let k, h;
+  if (so != null) {
+    const st = so >= TVC.length, ns = st ? TVS : TVC[so].n;
+    k = 'Lit alone'; h = `<h4 class="tv-t" style="--rc:${st ? TVSC : TVC[so].c}">${fe(st ? 'The state' : TVC[so].t)}</h4>` + p('tv-say', st ? 'The desks in Washington that keep the chain from breaking.' : TVC[so].say)
+      + `<p class="tv-who"><span>On the map</span>${ns.map(x => fe(FN[x][3])).join(' · ')}</p><p class="tv-ret"><button type="button" class="s2lnk" data-tvc="${so}">← Back to the chain</button></p>`;
+  } else if (B.end) {
+    k = 'Where it ends'; h = `<h4 class="tv-t" style="--rc:${SMAIN.c}">The thesis</h4><blockquote class="tv-th">${richText(fe(SMAIN.thesis))}</blockquote><p class="tv-pk">In plain words</p>` + TVP.map(t => p('tv-say', t)).join('') + p('tv-pay', TVPAY);
+  } else if (B.st != null) {
+    k = `The state · ${B.st + 1} of ${n - 1 - TVCH}`; h = (B.lead ? p('tv-lead', B.lead) : '') + `<h4 class="tv-t" style="--rc:${TVSC}">${fe(B.t)}</h4><ul class="tv-does">${B.does.map(([a, t]) => `<li><b>${fe(FN[a][3])}</b>${fe(t)}</li>`).join('')}</ul>`
+      + `<p class="tv-wo"><b>Without it</b>${fe(B.wo)}</p><p class="tv-src">Where it breaks, from the guide’s calls: ${B.dec.map(d => '“' + fe(SDEC[d].crisis.t) + '”').join(', ')}.</p>`;
+  } else {
+    k = `The chain · ${b + 1} of ${TVCH}`; const lk = B.link ? `<p class="tv-link"><i aria-hidden="true">↳</i>${fe(B.link)}</p>` : '', cx = B.c != null ? `<h4 class="tv-t" style="--rc:${TVC[B.c].c}">${fe(TVC[B.c].t)}</h4>` + p('tv-say', TVC[B.c].say) : `<h4 class="tv-t" style="--rc:${SMAIN.c}">${fe(B.t)}</h4>`;
+    h = B.out || B.c == null ? cx + lk : lk + cx;   /* the link into a complex comes before it; the debt market's link leads out of it, so it follows */
+  }
+  const chip = (i, t, c) => `<button type="button" class="tv-ch" data-tvc="${i}" style="--rc:${c}" aria-pressed="${so === i}">${i < TVC.length ? `<small aria-hidden="true">${i + 1}</small>` : ''}${fe(t)}</button>`;
+  return `<div class="tv-nav"><button type="button" class="tv-nb" data-tvn="-1"${b <= 0 ? ' disabled' : ''}>${sArrL}<span>Back</span></button>${last ? `<button type="button" class="tv-nb pri" data-tvn="r"><span>Play it again</span></button>` : `<button type="button" class="tv-nb pri" data-tvn="1"><span>Next</span>${sArrR}</button>`}</div>`
+    + `<div class="tv-cur" id="isx-tv-cur" aria-live="polite" aria-atomic="true"><p class="tv-k">${fe(k)}</p>${h}</div>`
+    + `<p class="tv-l" id="isx-tv-l">Light one group alone</p><div class="tv-chs" role="group" aria-labelledby="isx-tv-l">${TVC.map((C, i) => chip(i, C.s, C.c)).join('')}${chip(TVC.length, 'The state', TVSC)}</div>`
+    + `<div class="tv-out"><button type="button" class="s2lnk" data-tvx>Back to the full map</button><button type="button" class="s2lnk" data-tvg>Take the guide</button></div>`;
+}
+function simTv() {
+  const t = $('tv'), cock = $('cock'); if (!t || !cock) return;
+  const on = tvOn(), was = cock.classList.contains('tv-on');
+  t.hidden = !on; cock.classList.toggle('tv-on', on);
+  cock.querySelectorAll('[data-tv0][aria-pressed]').forEach(x => x.setAttribute('aria-pressed', String(on)));
+  if (!on) { if (was) $('tv-bd').innerHTML = ''; return; }
+  const key = SIM.tv + ':' + SIM.tvSolo, bd = $('tv-bd'); if (bd.dataset.k === key && bd.firstChild) return;
+  const ae = document.activeElement, keep = ae && bd.contains(ae) ? (ae.dataset.tvc != null ? `[data-tvc="${ae.dataset.tvc}"].tv-ch` : ae.dataset.tvn != null ? `[data-tvn="${ae.dataset.tvn}"]` : null) : null;
+  bd.dataset.k = key; bd.innerHTML = tvBodyHTML(); bd.scrollTop = 0;
+  if (keep) { const f = bd.querySelector(keep + ':not([disabled])') || bd.querySelector('.tv-nb.pri'); if (f) f.focus({ preventScroll: true }); }
+}
+/* the bar in the thesis view: the chain's beats, the state's, the thesis; Back, Next, ← → and the swipe move through them */
+function tvBar(host, stage) {
+  const b = SIM.tv, n = TVB.length, B = TVB[b], last = b >= n - 1;
+  const mk = i => ({ kind: TVB[i].end ? 'end' : 'step', state: i === b ? 'cur' : i < b ? 'done' : '', target: 'tv:' + i, title: tvName(i) });
+  const ix = f => TVB.map((X, i) => i).filter(i => f(TVB[i]));
+  const segs = [{ label: 'The chain', colour: '#ffb547', current: B.st == null && !B.end, target: 'tv:0', title: 'The chain', marks: ix(X => X.st == null && !X.end).map(mk) },
+    { label: 'The state', colour: TVSC, current: B.st != null, target: 'tv:' + TVCH, title: 'The state’s part', marks: ix(X => X.st != null).map(mk) },
+    { label: '', colour: SMAIN.c, current: !!B.end, grow: 2, cls: 'end', marks: [mk(n - 1)] }];
+  const cs = segs.find(s => s.current);
+  RT.render(host, { id: 'sim', label: 'Just the thesis: the chain, the state, the thesis', stage,
+    back: { enabled: b > 0, label: b > 0 ? 'Back: ' + tvName(b - 1) : 'Back' },
+    next: last ? { kind: 'return', kicker: 'Play it again', title: 'from the start', pkicker: 'Play it', ptitle: 'again' } : { kicker: 'Next', title: tvName(b + 1), ptitle: 'Next' },
+    line: null, segs, controls: `<button type="button" class="tw-gsb tv-xb" data-tvx>Back to the full map</button>`,
+    ph: { label: cs.label || 'The thesis', count: String(b + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0'), colour: cs.colour, marks: cs.marks } });
 }
 /* the figure the closing card needs and the page did not carry: stored here with its source (copy Part F, point 2) */
 const SFIG = { gbp: { v: '47%', k: 'Hyperscalers’ share of sterling corporate bond issuance', d: '2026 to early September', src: 'Bank of England Financial Policy Committee record, 25 Sep 2026 (data round F6, section 3)' } };
@@ -9043,6 +9186,7 @@ function simNarr(anim) {
 /* ---------- one place that applies the state ---------- */
 function simApply(anim, fwd) {
   const cock = $('cock'); if (!cock) return;
+  if (SIM.mode !== 'full') { SIM.tv = null; SIM.tvSolo = null; }   /* thesis view: it lives on the full map only */
   const on = simOn(), prev = SIM.shown;
   fhover = null;   /* stage 5: the map is about to move; what the pointer was over no longer counts */
   cock.classList.toggle('st', on); cock.classList.toggle('full', !on); { const was = cock.classList.contains('dcall'), now = on && (SIM.ph === 'ask' || sEpIn()); cock.classList.toggle('dcall', now); SIM.dcArr = now && !was; if (now !== was) dcHold(now); } { const st = $('stage'); if (st) st.inert = on && (SIM.ph === 'ask' || sEpIn()); } cock.classList.toggle('alt', on && sInChain()); cock.classList.toggle('ask', on && SIM.ph === 'ask'); ROOT.classList.toggle('sim-story', on);
@@ -9055,11 +9199,11 @@ function simApply(anim, fwd) {
   if (anim && prev && !reduce) simEnter(prev, R, fwd);
   SIM.shown = R;
   if (on) simNarr(anim);
-  simBar(); simTrays(); simThx();
+  simBar(); simTrays(); simThx(); simTv();
   const sc = $('scount'); if (sc) sc.innerHTML = on ? `Actors <b>${R.n.size}</b> / ${Object.keys(FN).length} · Relations <b>${R.ne}</b> / ${FE.length} · Levers <b>${R.l.size}</b> / ${LEVERS.length}` : '';
   simCam(anim);
   try { stSet(SKEY.pos, JSON.stringify(Object.assign(SIM.ph ? Object.assign({ l: SIM.line, b: SIM.beat, ph: SIM.ph, c: SIM.c }, SIM.ph === 'ask' ? { dp: SIM.dp } : {}) : { l: SIM.line, b: SIM.beat }, SIM.epRet ? { r: [SIM.epRet.l, SIM.epRet.b] } : {})), true); } catch (e) { /* ignore */ }
-  emit('sim', { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph });   /* round 5b: where the Simulator stands now */
+  emit('sim', { mode: SIM.mode, line: SIM.line, beat: SIM.beat, ph: SIM.ph, tv: tvOn() ? SIM.tv : null });   /* round 5b: where the Simulator stands now */
 }
 /* clarity build: episodes. Opened from a core step (ret: back to that step), from the bar's list or from the full view (back to the step
    the episode belongs to). The guide never stops for one: it is offered on the card and returns where it was left. */
@@ -9275,6 +9419,11 @@ function simMount() {
     if (t.id === 'isx-s2fold') { const f = $('snarr').classList.toggle('folded'); t.textContent = f ? '+' : '–'; t.setAttribute('aria-expanded', String(!f)); t.setAttribute('aria-label', f ? 'Open the card' : 'Fold the card'); simCam(true); return; }
     if (d.tray) { simTray(d.tray); if (SIM.tray === 'pick' && e.detail === 0) focusIn($('sn-pick'), '.pk-l.on, button'); else if (SIM.tray === 'read' && e.detail === 0) focusIn($('b1led'), '.lcl'); return; }
     if (d.s4more != null) { const m = $('b1more'); if (m) { const hb = m.querySelector('[data-b1more="hints"]'); if (hb) hb.hidden = stGet('isx-hints-off') !== '1'; m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); if (!m.hidden && e.detail === 0) m.querySelector('button').focus({ preventScroll: true }); } return; }
+    if (d.tv0 != null) { $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) mb.setAttribute('aria-expanded', 'false'); if (tvOn()) tvOff(e.detail === 0); else sChain(e.detail === 0); return; }
+    if (d.tvn != null) { tvGo(d.tvn === 'r' ? 0 : SIM.tv + +d.tvn); if (e.detail === 0) sFocus(SIM.tv >= TVB.length - 1 ? '#isx-tv [data-tvn="r"]' : SIM.tv <= 0 ? '#isx-tv [data-tvn="1"]' : `#isx-tv [data-tvn="${d.tvn === 'r' ? 1 : d.tvn}"]`); return; }
+    if (d.tvc != null) { tvPick(+d.tvc); return; }
+    if (d.tvx != null) { tvOff(e.detail === 0); return; }
+    if (d.tvg != null) { tvOff(false); if (ISX.enter) ISX.enter.open('fin', true, 'levels'); return; }
     if (d.b1more === 'ways') { $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) mb.setAttribute('aria-expanded', 'false'); if (ISX.enter) ISX.enter.open('fin', true, 'levels'); return; }   /* 19 Nov: the levels are on the tab's entry screen; the place in the guide is kept */
     if (d.b1more === 'hints') { if (window.ISX.hints) ISX.hints.reset(); else stSet('isx-hints-off', null); track('Hints', { on: 'again' });
       $('b1more').hidden = true; const mb = ROOT.querySelector('[data-s4more]'); if (mb) { mb.setAttribute('aria-expanded', 'false'); mb.focus({ preventScroll: true }); } return; }   /* clarity patch (round 5b's note 5): “Hide hints” is no longer final */
@@ -9325,7 +9474,8 @@ function simMount() {
     if (e.key !== 'Escape' || e.defaultPrevented) return;
     if ($('sec3')) { e.preventDefault(); simSector(null, $('sec3')._from); return; }
     if ($('gsteps') && !$('gsteps').hidden) { e.preventDefault(); gsOpen(false); return; }
-    if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
+    if (tvOn()) { e.preventDefault(); if (SIM.tvSolo != null) tvPick(SIM.tvSolo); else tvOff(true); }   /* thesis view: Esc drops a complex lit alone, then leaves for the full map */
+    else if (SIM.tray) { e.preventDefault(); const was = SIM.tray; SIM.tray = null; simTrays(); focusIn($('s2bar'), `[data-tray="${was}"]`); }
     else if (fsel || fedge != null || flev.size || fplay != null) { e.preventDefault(); clearSel(); styleRmap(); renderSide(); }
     else if (simOn()) { e.preventDefault(); simSetMode('full'); focusIn(cock, '[data-s4tab][aria-pressed="true"]'); }
   });
@@ -9408,7 +9558,9 @@ window.ISX = {
   stepNums: () => sNums(), get acts() { return SACTS.map(A => A.slice()); }, get episodes() { return SEPI.map(X => ({ id: X.id, t: X.t, w: X.w, from: X.from, n: X.b.length })); }, get numKeys() { return Object.keys(SNUM); },   /* clarity build, for v2/clarity.js and the checks */
   get figs() { return JSON.parse(JSON.stringify(SFIGN)); },
   get calls() { return JSON.parse(JSON.stringify(SCALL)); },   /* clarity patch: the call screens' pages, tiles and pieces, for checks */   /* guide build: the figures this round stored, for checks */
-  simWays: () => sWays(), simWay: (k, kb) => sWayGo(k, kb), simFree: kb => sFree(kb), get simThesis() { const t = $('thx'); return !!t && !t.hidden; },
+  simWays: () => sWays(), simWay: (k, kb) => sWayGo(k, kb), simFree: kb => sFree(kb),
+  /* 23 Nov: the thesis view. simChain opens it (the entry screen's “Just the thesis”); chain is read-only, for checks */
+  simChain: kb => sChain(kb), get chain() { const L = tvOn() ? tvLit() : null; return { on: tvOn(), beat: tvOn() ? SIM.tv : null, solo: tvOn() ? SIM.tvSolo : null, n: TVB.length, beats: TVB.map((B, i) => ({ t: tvName(i), kind: B.end ? 'end' : B.st != null ? 'state' : 'chain', e: (B.e || []).slice(), k: (B.k || []).slice(), dec: (B.dec || []).slice() })), complexes: TVC.map(C => ({ k: C.k, t: C.t, n: C.n.slice() })), state: TVS.slice(), lit: L ? { e: [...L.e], n: [...L.n] } : null }; }, get simThesis() { const t = $('thx'); return !!t && !t.hidden; },
   /* 19 Nov: nothing started in the machinery: no level chosen, the guide at its first step, nothing chosen on the map */
   get simFresh() { return finMode === 'plumb' && !stGet(SWAY) && SIM.mode === 'story' && SIM.line === 0 && SIM.beat === 0 && !SIM.ph; },
   get mins() { return { ground: sMins(['gnd', 'main']), guide: sMins(['pre', 'main']), main: sMins(['main']), gnd: sMins(['gnd']), pre: sMins(['pre']) }; },

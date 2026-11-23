@@ -36,7 +36,7 @@
     { id: 'term', side: 'card', line: function () { return 'Dotted words have a definition: hover, or tap.'; },
       when: function () { if (S.mode !== 'story') return null; var d = [].slice.call(root.querySelectorAll('#isx-sn-body dfn.df')).filter(function (e) { var c = e.closest('details'); return vis(e) && (!c || c.open); }); return d[0] || null; } },
     { id: 'map', side: 'node', line: function () { return (U.COARSE ? 'Tap' : 'Click') + ' anything lit on the map for what it does and its sources.'; },
-      when: function () { if (S.mode !== 'story') return S.mode === 'full' ? q('#isx-rmap .fn:not(.dim)') : null; return inStep() ? q('#isx-rmap .fn.lit:not(.s4dim)') : null; } },
+      when: function () { if (S.mode !== 'story') return S.mode === 'full' && S.tv == null ? q('#isx-rmap .fn:not(.dim)') : null;   /* 23 Nov 2026: not in the thesis view, where a click lights a complex */ return inStep() ? q('#isx-rmap .fn.lit:not(.s4dim)') : null; } },
     { id: 'gauge', side: 'bottom', line: function () { return 'A new indicator: its figure, date and source. All of them sit under Indicators.'; },
       when: function () { if (!inStep() || !q('#isx-b1play .ipc.new')) return null; var b = $('b1ind'); return vis(b) ? b : q('#isx-b1play .ipc.new'); } },
     { id: 'door', side: 'node', line: function () { return 'A deeper view of this part. Close it to come back here.'; },
@@ -146,7 +146,7 @@
   function later(ms) { clearTimeout(timer); timer = setTimeout(consider, X.reduce ? Math.min(ms, 200) : ms); }
 
   X.on('sim', function (d) {
-    var now = d.mode + ':' + d.line + ':' + d.beat + ':' + (d.ph || '');
+    var now = d.mode + ':' + d.line + ':' + d.beat + ':' + (d.ph || '') + (d.tv != null ? ':tv' : '');
     S = d;
     if (now !== at) { at = now; if (cur) close(false); }
     if (d.mode !== 'story') later(1100);   /* the full map has no card: its one hint comes once the map has settled */

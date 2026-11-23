@@ -203,6 +203,23 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('entry round: Expert, a chapter lit', '#simulator', XP, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-thx .thx-ch[data-thxc="2"]').click()); await p.waitForTimeout(300); });
   await run('entry round: Expert, the thesis folded', '#simulator', XP, 1440, 900, async p => { await p.evaluate(() => document.querySelector('#isx-thx [data-thxf]').click()); await p.waitForTimeout(300); });
   await run('entry round, phone: Expert, the thesis open', '#simulator', XP, 390, 844, async p => { await p.evaluate(() => { const t = document.querySelector('#isx-thx'); if (t.classList.contains('folded')) t.querySelector('[data-thxf]').click(); }); await p.waitForTimeout(300); });
+  /* thesis view (23 Nov 2026): “Just the thesis”: the entry screen's fourth button, the header's button, a chain beat, the loop closing,
+     a state beat, the thesis, a complex lit alone and the state lit alone, at desktop and phone */
+  const TVQ = { ...QE, 'isx-sim-mode': 'full', 'isx-hints-off': '1' };
+  const tvAt = (n, f) => async p => { await p.evaluate(() => ISX.simChain()); await p.waitForTimeout(900); if (n) { await p.evaluate(n => document.querySelector(`#isx-s2bar [data-rt-t="tv:${n}"]`) ? document.querySelector(`#isx-s2bar [data-rt-t="tv:${n}"]`).click() : [...Array(n)].forEach(() => document.querySelector('#isx-tv [data-tvn="1"]').click()), n); await p.waitForTimeout(1300); } if (f) { await p.evaluate(f); await p.waitForTimeout(1200); } };
+  await run('thesis view: the entry screen, four ways in', '#simulator', { ...seen }, 1440, 900, async p => { await p.keyboard.press('Tab'); await p.waitForTimeout(400); });
+  await run('thesis view: the header button on the full map', '#simulator', TVQ, 1440, 900);
+  await run('thesis view: the chain, first beat', '#simulator', TVQ, 1440, 900, tvAt(0));
+  await run('thesis view: the chain, a link lit', '#simulator', TVQ, 1280, 760, tvAt(3));
+  await run('thesis view: the loop closes', '#simulator', TVQ, 1440, 900, tvAt(5));
+  await run('thesis view: the state, first beat', '#simulator', TVQ, 1440, 900, tvAt(7));
+  await run('thesis view: the state, the shocks', '#simulator', TVQ, 1280, 760, tvAt(10));
+  await run('thesis view: the thesis', '#simulator', TVQ, 1440, 900, tvAt(11));
+  await run('thesis view: a complex lit alone', '#simulator', TVQ, 1440, 900, tvAt(2, () => document.querySelector('#isx-tv [data-tvc="5"]').click()));
+  await run('thesis view: the state lit alone', '#simulator', TVQ, 1440, 900, tvAt(2, () => document.querySelector('#isx-tv [data-tvc="6"]').click()));
+  await run('thesis view, phone: a chain beat', '#simulator', TVQ, 390, 844, tvAt(2));
+  await run('thesis view, phone: a state beat', '#simulator', TVQ, 390, 844, tvAt(8));
+  await run('thesis view, phone: the thesis', '#simulator', TVQ, 390, 844, tvAt(11));
   await run('entry round: the levels for a returning visitor (“Last time”)', '#simulator', { ...sim(0), 'isx-way': 'ground' }, 1440, 900, async p => { await p.evaluate(() => ISX.enter.open('fin', true, 'levels')); await p.waitForTimeout(800); });
   for (const [hash, w, h] of [['#profit', 1280, 800], ['#elite-network', 1280, 800], ['#simulator', 1280, 800], ['#imperial-arm', 1280, 800], ['#profit', 390, 844], ['#elite-network', 390, 844], ['#simulator', 390, 844], ['#imperial-arm', 390, 844]])
     await run(`entry round${w < 700 ? ', phone' : ''}: “How this tab works” reopens the entry screen (${hash})`, hash, { ...seen }, w, h, async p => { await p.evaluate(() => document.getElementById('isx-tabx').click()); await p.waitForTimeout(900); });
