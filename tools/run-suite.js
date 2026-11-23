@@ -19,7 +19,7 @@ const port = arg('port', '8731');
 const only = arg('only', '').split(',').filter(Boolean);
 const skip = arg('skip', '').split(',').filter(Boolean);
 const base = `http://127.0.0.1:${port}/imperial-stack/`;
-const ORDER = ['b4', 'b6', 'content', 'entry', 'fix', 'onboard', 'welcome', 'stage1', 'stage2', 'stage3', 'profit', 'arc', 'b1', 'b3',
+const ORDER = ['b4', 'b6', 'content', 'entry', 'thesis', 'fix', 'onboard', 'welcome', 'stage1', 'stage2', 'stage3', 'profit', 'arc', 'b1', 'b3',
   'interface', 'firms', 'clarity', 'tiers', 'stage5', 'axe'];
 const list = ORDER.filter(n => (!only.length || only.includes(n)) && !skip.includes(n));
 fs.mkdirSync(logs, { recursive: true });
