@@ -142,14 +142,19 @@
     roc: 'The contrast. Inside the territory, capital in the US earns an ordinary return: the outsized profits are booked by firms across borders, not earned by the territory.',
     ord: 'The two orders as fences on one value chain: the first protects the rents everywhere, the second decides who may hold the tools at all.',
     pos: 'The same order, measured: each economy’s balance with the world against its firms’ share of profits. The hub sits alone.',
-    sum: 'This is the profit equation for one year: the bars that add to profits and the ones that take from them. The lines below show each term since 1960, so you can see which one does the work in which era.',
+    sum: 'This is the profit equation for one year: the bars that add to profits and the ones that take from them. The lines below show each term since 1960, so you can see which one does the work when. The moments mark turning points; pick one to set it against the five years before.',
     why: 'Two eras side by side. Something has to put back what household saving and the deficit with the world take out; the chart shows what did it then and what does it now.',
     home: 'Who collects at home: the claim on profits is held by few households, so the payout lands at the top.',
     pay: 'What the profits become: dividends and buybacks, paid to those who hold the shares.',
     capex: 'The build-out in dollars: what five firms spend on data centres, chips and power each year.',
     ni: 'Spending against what the firms earn. Once the two lines meet, the build-out needs outside money.'
   };
-  const ERAS = [[1960, 1979], [1980, 1999], [2000, 2013], [2014, 2025]];
+  /* 24 Nov 2026 (Elias): the moments replace the four fixed eras (1960–79, 1980–99, 2000–13, 2014–25), which looked as if they carried the
+     argument. They are markers to notice shifts: each is a span of years, and picking one sets its average against the five years before.
+     [first year, last year, chip and chart label, full name] */
+  const ERAS = [[1973, 1974, 'Oil shock', 'The oil shock and the petrodollar'], [1979, 1982, 'Neoliberal turn', 'The Volcker shock and the neoliberal turn'], [1997, 1998, 'Asian crisis', 'The Asian financial crisis: states begin to self-insure in Treasuries'], [2001, 2001, 'China in the WTO', 'China joins the WTO'], [2008, 2014, '2008–14', 'The financial crisis, to the end of QE'], [2020, 2021, 'Covid', 'The covid stimulus']];
+  const span = (a, b) => a === b ? String(a) : a + '–' + String(b).slice(2);
+  const eraOf = e => ERAS.find(x => x[0] === e[0] && x[1] === e[1]);
   const TERMS = [['npi', 'Net private investment'], ['fed', 'Federal net borrowing'], ['div', 'Dividends'], ['rest', 'State and local, other'], ['hh', 'Household saving'], ['ca', 'Deficit with the world']];
   const NAME = { USA: 'United States', 'CHN+HKG': 'China with Hong Kong', CHN: 'China', JPN: 'Japan', DEU: 'Germany', GBR: 'United Kingdom', FRA: 'France', KOR: 'South Korea', IND: 'India', TWN: 'Taiwan', CHE: 'Switzerland', SAU: 'Saudi Arabia', NLD: 'Netherlands' };
   const SHORT = { 'United Kingdom': 'UK', 'South Korea': 'Korea', 'United States': 'US', 'China with Hong Kong': 'China with HK', 'Saudi Arabia': 'Saudi', Netherlands: 'NL', Switzerland: 'Swiss' };
@@ -170,7 +175,7 @@
     G = d.G.map(r => ({ y: r[0], nat: r[1], dom: r[2], net: r[3], netp: r[4], rec: r[5], pay: r[6], recp: r[7] }));
   }
   const avg = (k, a, b) => { const rs = B.filter(r => !r.prov && r.y >= a && r.y <= b); return rs.reduce((s, r) => s + r[k], 0) / rs.length; };
-  function yr() { if (S.era) { const [a, b] = S.era, o = { era: true, label: a + '–' + String(b).slice(2) }; ['pat', 'npi', 'fed', 'div', 'hh', 'ca', 'rest'].forEach(k => o[k] = avg(k, a, b)); return o; } return B.find(r => r.y === S.year); }
+  function yr() { if (S.era) { const [a, b] = S.era, m = eraOf(S.era), o = { era: true, label: span(a, b), name: m ? m[3] : '', a, b }; ['pat', 'npi', 'fed', 'div', 'hh', 'ca', 'rest'].forEach(k => { o[k] = avg(k, a, b); o[k + '0'] = avg(k, a - 5, a - 1); }); return o; } return B.find(r => r.y === S.year); }
   const termLabel = (k, v) => k === 'fed' && v < 0 ? 'Federal surplus' : k === 'ca' && v > 0 ? 'Surplus with the world' : TERMS.find(t => t[0] === k)[1];
 
   /* ---------- the scene's frame, built once ---------- */
@@ -194,7 +199,7 @@
       const d = b.dataset;
       if (d.pv) { setV(d.pv); }
       else if (d.pvn) { stepV(+d.pvn); }
-      else if (d.pe != null) { const e2 = ERAS[+d.pe]; S.era = S.era && S.era[0] === e2[0] ? null : e2; board(); emit('year'); }
+      else if (d.pe != null) { const e2 = ERAS[+d.pe].slice(0, 2); S.era = S.era && S.era[0] === e2[0] ? null : e2; board(); emit('year'); }
       else if (d.pw) { S.win = d.pw; S.table = false; board(); }
       else if (d.pt) { S.terms[d.pt] = !S.terms[d.pt]; board(true); const again = R.fig.querySelector('[data-pt="' + d.pt + '"]'); if (again) again.focus({ preventScroll: true }); emit('term'); }
       else if (d.po) {   /* the order's two states: the title changes and the bodies move to their new places */
@@ -517,9 +522,17 @@
 
   /* ---------- the regime and the order (stations 4 and 3) ---------- */
   const MOMENT = { 2000: r => `The federal budget was in surplus (${f1(r.fed)}% of GDP); net private investment carried profits.`, 2009: r => `Net private investment fell to ${f1(r.npi)}% of GDP; federal borrowing, ${f1(r.fed)}%, held profits up.`, 2020: r => `Federal borrowing reached ${f1(r.fed)}% of GDP; households saved ${f1(-r.hh)}%.`, 2025: r => `The federal deficit supplied ${f1(r.fed)} points, more than net private investment (${f1(r.npi)}).` };
-  function eqReading() { const r = yr(); let t = `profits after tax ${f1(r.pat)}% of GDP. `; if (r.era) t += `Net private investment ${f1(r.npi)}, federal net borrowing ${f1(r.fed)}.`; else if (r.prov) t += 'Third-quarter profits are published on 25 Nov 2026.'; else if (MOMENT[r.y]) t += MOMENT[r.y](r); else t += phone() ? 'Drag the year, or pick an era.' : 'Move over the chart, drag the year, or pick an era.'; reading(r.era ? r.label + ', average a year: ' : r.prov ? 'First half of 2026, provisional: ' : r.p + ': ', t); }
+  const dpt = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(1);
+  function eqReading() { const r = yr(); let t = `profits after tax ${f1(r.pat)}% of GDP. `; if (r.era) t += `Against ${r.a - 5}–${String(r.a - 1).slice(2)}: net private investment ${dpt(r.npi - r.npi0)} points, federal net borrowing ${dpt(r.fed - r.fed0)}, profits ${dpt(r.pat - r.pat0)}.`; else if (r.prov) t += 'Third-quarter profits are published on 25 Nov 2026.'; else if (MOMENT[r.y]) t += MOMENT[r.y](r); else t += phone() ? 'Drag the year, or pick a moment.' : 'Move over the chart, drag the year, or pick a moment.'; reading(r.era ? r.name + ', ' + r.label + ', average a year: ' : r.prov ? 'First half of 2026, provisional: ' : r.p + ': ', t); }
   function eqTiles() { const r = yr(); tiles([{ big: 1, op: '=', v: f1(r.pat) + '%', k: 'Profits after tax = the sum', d: r.era ? 'average, ' + r.label : r.prov ? 'first half of 2026, provisional' : r.p + ' · ' + bn(r.bn) }].concat(TERMS.map(([k]) => ({ op: r[k] < 0 ? '−' : '+', v: f1(r[k]), k: termLabel(k, r[k]), c: C[k] }))), true); }
-  const eraChips = () => { R.chips.append(h('span', 'gap'), h('span', 'cl', 'Eras')); ERAS.forEach((e, i) => { const b = h('button', 'pf-chip', e[0] + '–' + String(e[1]).slice(2)); b.type = 'button'; b.dataset.pe = i; b.setAttribute('aria-pressed', String(!!S.era && S.era[0] === e[0])); R.chips.append(b); }); };
+  const eraChips = () => { R.chips.append(h('span', 'gap'), h('span', 'cl', 'Moments')); ERAS.forEach((e, i) => { const b = h('button', 'pf-chip', e[2]); b.type = 'button'; b.dataset.pe = i; b.title = e[3] + ', ' + span(e[0], e[1]); b.setAttribute('aria-label', e[3] + ', ' + span(e[0], e[1]) + ': its average against the five years before'); b.setAttribute('aria-pressed', String(!!S.era && S.era[0] === e[0])); R.chips.append(b); }); };
+  /* the moments on a chart: a thin line at each, a faint band over a span, a short label on two rows; the picked one lit. x(y) gives a year's
+     centre, w the width of one year. No labels on phones: the chips carry them. */
+  const marks = (svg, x, w, top, hh) => { const ph = phone(); ERAS.forEach(([a, b, k], j) => { const on = !!S.era && S.era[0] === a, xa = x(a) - w / 2, xb = x(b) + w / 2;
+    if (on) svg.append(el('rect', { x: xa, y: top, width: xb - xa, height: hh, fill: '#ffffff', opacity: .07 }));
+    else if (b > a) svg.append(el('rect', { x: xa, y: top, width: xb - xa, height: hh, fill: '#ffffff', opacity: .022 }));
+    svg.append(el('line', { x1: xa, x2: xa, y1: top, y2: top + hh, stroke: on ? C.ink : C.ink2, 'stroke-width': 1, 'stroke-dasharray': on ? null : '2 3', opacity: on ? .9 : .5 }));
+    if (!ph) svg.append(el('text', { x: xa + 4, y: top + ([0, 1, 0, 1, 0, 0][j] ? 24 : 11), class: 'lb', fill: on ? C.ink : C.ink2, stroke: C.bg, 'stroke-width': 3, 'paint-order': 'stroke' }, k)); }); };
   const eqTable = () => ({ cap: 'What US profits after tax are made of, % of GDP (BEA national accounts, national basis; 4 Nov 2026). The first half of 2026 is provisional.', head: ['Year', 'Profits after tax', 'Net private investment', 'Federal net borrowing', 'Dividends', 'Household saving', 'Balance with the world', 'State and local borrowing', 'Government capital transfers', 'Discrepancy', 'Profits, $bn'], rows: [...B].reverse().map(r => [r.prov ? '2026, first half' : r.p, f2(r.pat), f2(r.npi), f2(r.fed), f2(r.div), f2(r.hh), f2(r.ca), f2(r.sl), f2(r.ct), f2(r.disc), r.bn.toLocaleString('en-US', { minimumFractionDigits: 1 })]) });
   const pickYear = (svg, W, x0, slot) => ev => { const bb = svg.getBoundingClientRect(), i = Math.max(0, Math.min(B.length - 1, Math.floor(((ev.clientX - bb.left) * (W / bb.width) - x0) / slot))); if (S.era || B[i].y !== S.year) { S.era = null; S.year = B[i].y; board(true); emit('year'); } };
   V.all = { title: 'Where US profits come from, every year since 1960', unit: '% of GDP · United States', scrub: 1, chips: eraChips, draw() {
@@ -531,7 +544,7 @@
     for (let v = -15; v <= 25; v += 5) svg.append(el('line', { x1: m.l, x2: m.l + pw, y1: Y(v), y2: Y(v), stroke: v === 0 ? C.ink2 : '#17222d', 'stroke-width': v === 0 ? 1.4 : 1 }), el('text', { x: m.l - 6, y: Y(v) + 3.5, 'text-anchor': 'end' }, String(Math.abs(v))));
     svg.append(el('text', { x: m.l + 6, y: Y(25) + 4, class: 'lb', fill: C.ink }, '↑ Adds to profits, % of GDP'), el('text', { x: m.l + 6, y: Y(-15) + 4, class: 'lb', fill: C.ink }, '↓ Takes from profits, % of GDP'));
     B.forEach((r, i) => { if (!r.prov && r.y % 10 === 0 && !(ph && r.y % 20 !== 0)) svg.append(el('text', { x: Xs(i), y: H - 4, 'text-anchor': 'middle' }, String(r.y))); });
-    if (S.era) { const a = B.findIndex(r => r.y === S.era[0]), b = B.findIndex(r => r.y === S.era[1]); svg.append(el('rect', { x: m.l + slot * a, y: m.t, width: slot * (b - a + 1), height: phh, fill: '#ffffff', opacity: .04 })); }
+    marks(svg, y => Xs(y - 1960), slot, m.t, phh);
     const sel = i => S.era ? (B[i].y >= S.era[0] && B[i].y <= S.era[1] && !B[i].prov) : B[i].y === S.year;
     B.forEach((r, i) => {
       const g = el('g', { class: 'col', opacity: (sel(i) ? 1 : (S.era ? .3 : .55)) * (r.prov ? .6 : 1) }), pos = [], neg = []; let a = 0;
@@ -558,13 +571,13 @@
   function termLines(svg, W, H, o) {
     const ph = phone(), m = { l: 34, r: o.zoom || ph ? 12 : 128, t: 18, b: 22 }, Bf = B.filter(r => !r.prov), n = Bf.length, pw = W - m.l - m.r, phh = H - m.t - m.b, lo = -14, hi = 16;
     const Xs = i => m.l + pw * i / (n - 1), Y = v => m.t + (hi - v) / (hi - lo) * phh;
-    ERAS.forEach(([a, b], k) => { const xa = Xs(a - 1960) - (a > 1960 ? pw / (n - 1) / 2 : 0), xb = Xs(b - 1960) + (b < 2025 ? pw / (n - 1) / 2 : 0), on = S.era && S.era[0] === a; if (k % 2 === 0 || on) svg.append(el('rect', { x: xa, y: m.t, width: xb - xa, height: phh, fill: '#ffffff', opacity: on ? .06 : .018 })); svg.append(el('text', { x: (xa + xb) / 2, y: m.t + 11, 'text-anchor': 'middle' }, a + '–' + String(b).slice(2))); });
     for (let t = -10; t <= 15; t += 5) svg.append(el('line', { x1: m.l, x2: m.l + pw, y1: Y(t), y2: Y(t), stroke: t === 0 ? C.ink2 : '#17222d', 'stroke-width': t === 0 ? 1.4 : 1 }), el('text', { x: m.l - 6, y: Y(t) + 3.5, 'text-anchor': 'end' }, String(Math.abs(t))));
     svg.append(el('text', { x: m.l + 6, y: Y(lo) - 6, class: 'lb' }, 'below the line: takes from profits, % of GDP'));
     const every = W > 1500 ? 5 : W > 760 ? 10 : 20; Bf.forEach((r, i) => { if (r.y % every === 0) svg.append(el('text', { x: Xs(i), y: H - 5, 'text-anchor': 'middle' }, String(r.y))); });
     const path = k => Bf.map((r, i) => Xs(i).toFixed(1) + ',' + Y(r[k]).toFixed(1)).join(' ');
     LT.forEach(([k]) => { if (S.terms[k]) svg.append(el('polyline', { points: path(k), fill: 'none', stroke: C[k], 'stroke-width': 2, 'stroke-linejoin': 'round', opacity: .92 })); });
     svg.append(el('polyline', { points: path('pat'), fill: 'none', stroke: C.bg, 'stroke-width': 7, 'stroke-linejoin': 'round' }), el('polyline', { points: path('pat'), fill: 'none', stroke: C.pat, 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+    marks(svg, y => Xs(y - 1960), pw / (n - 1), m.t, phh);   /* after the lines, so the labels stay readable */
     if (!o.zoom && !ph) { const lr = Bf[n - 1]; svg.append(el('text', { x: Xs(n - 1) + 10, y: Y(lr.pat) - 1, class: 'lb', fill: C.ink }, 'Profits after tax'), el('text', { x: Xs(n - 1) + 10, y: Y(lr.pat) + 13, class: 'lb' }, 'the sum')); }
     if (!S.era) { const i = Math.min(n - 1, Math.max(0, S.year - 1960)), r = Bf[i]; svg.append(el('line', { x1: Xs(i), x2: Xs(i), y1: m.t, y2: m.t + phh, stroke: C.lab, 'stroke-width': 1, opacity: .8 }));
       LT.forEach(([k]) => { if (S.terms[k]) svg.append(el('circle', { cx: Xs(i), cy: Y(r[k]), r: 3.5, fill: C[k], stroke: C.bg, 'stroke-width': 1.5 })); }); svg.append(el('circle', { cx: Xs(i), cy: Y(r.pat), r: 4.5, fill: C.pat, stroke: C.bg, 'stroke-width': 2 }));
