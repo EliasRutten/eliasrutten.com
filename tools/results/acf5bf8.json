@@ -1,5 +1,5 @@
 {
- "commit": "3c415bc",
+ "commit": "acf5bf8",
  "started": "2026-11-24T00:36:04.060Z",
  "base": "http://127.0.0.1:8731/imperial-stack/",
  "checks": [
@@ -41,14 +41,12 @@
   },
   {
    "check": "thesis",
-   "exit": 1,
-   "pass": 125,
-   "fail": 1,
-   "failed": [
-    "FAIL  nothing is stored: a reload opens the full map"
-   ],
-   "seconds": 59,
-   "commit": "3c415bc"
+   "exit": 0,
+   "pass": 129,
+   "fail": 0,
+   "failed": [],
+   "seconds": 61,
+   "commit": "acf5bf8"
   },
   {
    "check": "fix",
@@ -115,14 +113,12 @@
   },
   {
    "check": "arc",
-   "exit": 1,
-   "pass": 0,
-   "fail": 1,
-   "failed": [
-    "FAIL  fin: three blocks, three buttons, no second row yet  → {\"tab\":\"fin\",\"k\":\"04 of 05·The imperial machinery\",\"h\":\"How Washington keeps the circuit turning\",\"blocks\":[\"Where you are\",\"What you are a"
-   ],
-   "seconds": 95,
-   "commit": "3c415bc"
+   "exit": 0,
+   "pass": 247,
+   "fail": 0,
+   "failed": [],
+   "seconds": 97,
+   "commit": "acf5bf8"
   },
   {
    "check": "b1",
@@ -189,14 +185,15 @@
   },
   {
    "check": "axe",
-   "exit": 1,
-   "pass": 287,
+   "exit": 0,
+   "pass": 321,
    "fail": 0,
    "failed": [],
-   "seconds": 1527,
-   "commit": "3c415bc"
+   "seconds": 1762,
+   "commit": "acf5bf8"
   }
  ],
- "finished": "2026-11-24T01:56:58.668Z",
- "clean": false
+ "finished": "2026-11-24T02:30:45.182Z",
+ "clean": true,
+ "note": "Full suite on 24 Nov 2026 at 3c415bc (code), one check at a time, 2 cores. First pass: thesis (1 stale expectation: a reload no longer opens the full map, F20), arc (1 stale: four entry buttons on the machinery tab since 23 Nov) and axe (stale orbit step: the orbits moved to station 0 with the orrery) failed; the other 18 passed. Those three check scripts were updated and re-run alone on the same code (commit acf5bf8 changes only tools/*-check.js): thesis 129/129, arc 247/247, axe 321/321 with no violations. The entries for these three carry commit acf5bf8."
 }
