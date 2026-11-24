@@ -1,0 +1,3 @@
+# GitHub Pages (Jekyll) leaves these out of the published site. The repository itself is public, so the source stays readable on GitHub.
+exclude:
+  - tools

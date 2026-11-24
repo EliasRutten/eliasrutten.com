@@ -15,6 +15,7 @@
       if (X.armMode === 'rev') return X.revSec && X.revSec !== 'all' ? '/sec=' + X.revSec : '';
       return (X.armRel && X.armRel !== 'all' ? '/rel=' + X.armRel : '') + (X.armSel ? '/node=' + X.armSel.toLowerCase() : '') + (X.armLay === 'reach' && X.armView === 'orbit' ? '/v=orbit' : X.armLay === 'reach' && X.armView === 'reach' && !X.util.PHONE() ? '/v=reach' : '');   /* round 6: the drawing, when it is not the default (19 Nov: Orbit anywhere; Reach at desktop width, where Layers is the default) */
     }
+    if (X.view === 'fin') return X.finMode === 'plumb' && X.chain && X.chain.on ? '/thesis' : '';   /* 24 Nov 2026 (F20): the thesis view, #simulator/thesis */
     if (X.view !== 'map') return '';                       /* the other tabs add theirs in later stages */
     var d = '', sel = X.sel;
     if (X.firms && X.firms.isOpen) { var fa = X.firms.addr; return '/firms' + (fa ? '=' + fa : ''); }   /* the firm web: #circuit/firms=country;v=state;fc=china (round 2: every combination has an address) */
@@ -37,6 +38,13 @@
     if (X.view === 'story' && X.openCase) {
       var sp = String(hash || '').replace(/^#\/?/, '').split('/');
       if (sp[1]) X.openCase(sp[1].toLowerCase(), sp[2] === 'close' ? 'close' : /^\d{1,2}$/.test(sp[2] || '') ? +sp[2] - 1 : null);
+      return;
+    }
+    /* 24 Nov 2026 (F20): #simulator/thesis opens the thesis view on the map; the plain address closes it */
+    if (X.view === 'fin') {
+      var fp = String(hash || '').replace(/^#\/?/, '').split('/').slice(1), th = fp[0] === 'thesis', on = !!(X.chain && X.chain.on);
+      if (th && !on && X.simChain && X.finMode === 'plumb') X.simChain(false);
+      else if (!th && on && X.simChainOff) X.simChainOff();
       return;
     }
     if (X.view !== 'map') return;
