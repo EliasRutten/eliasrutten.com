@@ -143,7 +143,11 @@ const ok = (c, t, x) => { if (c) pass++; else { fail++; console.log('FAIL  ' + t
     ok(s.mode === 'story' && !s.on && !s.panel && s.card, 'a level starts the guide; the thesis view is gone', s);
     await p.evaluate(() => ISX.simChain()); await p.waitForTimeout(500); await p.evaluate(() => ISX.simWay('map')); await p.waitForTimeout(500); s = await st(p); ok(!s.on && s.thx, 'Expert after it: the thesis panel, not the chain');
     await p.evaluate(() => ISX.simChain()); await p.waitForTimeout(500); await p.evaluate(() => ISX.simFree()); await p.waitForTimeout(500); s = await st(p); ok(!s.on && !s.thx && !s.panel, '“Explore on my own” after it: the bare full map');
-    await p.evaluate(() => ISX.simChain()); await p.waitForTimeout(400); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted); await p.waitForTimeout(800); s = await st(p); ok(!s.on && s.mode === 'full', 'nothing is stored: a reload opens the full map');
+    /* 24 Nov 2026 (F20): the thesis view has an address of its own. A reload keeps it (the address is the memory); once the view is left, the address is plain again and a reload opens the full map; nothing is stored. */
+    await p.evaluate(() => ISX.simChain()); await p.waitForTimeout(400); ok(await p.evaluate(() => location.hash) === '#simulator/thesis', 'the thesis view writes its address, #simulator/thesis');
+    await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted); await p.waitForTimeout(800); s = await st(p); ok(s.on, 'a reload at that address opens the thesis view again');
+    await p.evaluate(() => ISX.simChainOff()); await p.waitForTimeout(400); ok(await p.evaluate(() => location.hash) === '#simulator', 'leaving it makes the address plain again');
+    await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted); await p.waitForTimeout(800); s = await st(p); ok(!s.on && s.mode === 'full', 'nothing is stored: a reload from the plain address opens the full map');
     await done(p);
   }
 

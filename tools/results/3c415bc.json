@@ -1,0 +1,202 @@
+{
+ "commit": "3c415bc",
+ "started": "2026-11-24T00:36:04.060Z",
+ "base": "http://127.0.0.1:8731/imperial-stack/",
+ "checks": [
+  {
+   "check": "b4",
+   "exit": 0,
+   "pass": 88,
+   "fail": 0,
+   "failed": [],
+   "seconds": 196,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "b6",
+   "exit": 0,
+   "pass": 24,
+   "fail": 0,
+   "failed": [],
+   "seconds": 81,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "content",
+   "exit": 0,
+   "pass": 71,
+   "fail": 0,
+   "failed": [],
+   "seconds": 44,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "entry",
+   "exit": 0,
+   "pass": 138,
+   "fail": 0,
+   "failed": [],
+   "seconds": 108,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "thesis",
+   "exit": 1,
+   "pass": 125,
+   "fail": 1,
+   "failed": [
+    "FAIL  nothing is stored: a reload opens the full map"
+   ],
+   "seconds": 59,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "fix",
+   "exit": 0,
+   "pass": 67,
+   "fail": 0,
+   "failed": [],
+   "seconds": 22,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "onboard",
+   "exit": 0,
+   "pass": 70,
+   "fail": 0,
+   "failed": [],
+   "seconds": 137,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "welcome",
+   "exit": 0,
+   "pass": 74,
+   "fail": 0,
+   "failed": [],
+   "seconds": 235,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "stage1",
+   "exit": 0,
+   "pass": 40,
+   "fail": 0,
+   "failed": [],
+   "seconds": 71,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "stage2",
+   "exit": 0,
+   "pass": 61,
+   "fail": 0,
+   "failed": [],
+   "seconds": 131,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "stage3",
+   "exit": 0,
+   "pass": 54,
+   "fail": 0,
+   "failed": [],
+   "seconds": 73,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "profit",
+   "exit": 0,
+   "pass": 151,
+   "fail": 0,
+   "failed": [],
+   "seconds": 38,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "arc",
+   "exit": 1,
+   "pass": 0,
+   "fail": 1,
+   "failed": [
+    "FAIL  fin: three blocks, three buttons, no second row yet  → {\"tab\":\"fin\",\"k\":\"04 of 05·The imperial machinery\",\"h\":\"How Washington keeps the circuit turning\",\"blocks\":[\"Where you are\",\"What you are a"
+   ],
+   "seconds": 95,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "b1",
+   "exit": 0,
+   "pass": 175,
+   "fail": 0,
+   "failed": [],
+   "seconds": 226,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "b3",
+   "exit": 0,
+   "pass": 53,
+   "fail": 0,
+   "failed": [],
+   "seconds": 134,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "interface",
+   "exit": 0,
+   "pass": 142,
+   "fail": 0,
+   "failed": [],
+   "seconds": 284,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "firms",
+   "exit": 0,
+   "pass": 110,
+   "fail": 0,
+   "failed": [],
+   "seconds": 89,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "clarity",
+   "exit": 0,
+   "pass": 108,
+   "fail": 0,
+   "failed": [],
+   "seconds": 226,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "tiers",
+   "exit": 0,
+   "pass": 106,
+   "fail": 0,
+   "failed": [],
+   "seconds": 67,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "stage5",
+   "exit": 0,
+   "pass": 114,
+   "fail": 0,
+   "failed": [],
+   "seconds": 1012,
+   "commit": "3c415bc"
+  },
+  {
+   "check": "axe",
+   "exit": 1,
+   "pass": 287,
+   "fail": 0,
+   "failed": [],
+   "seconds": 1527,
+   "commit": "3c415bc"
+  }
+ ],
+ "finished": "2026-11-24T01:56:58.668Z",
+ "clean": false
+}
