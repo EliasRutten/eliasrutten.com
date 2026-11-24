@@ -95,7 +95,7 @@
 #isx-root .orr-hyp { display: grid; gap: 8px; margin-top: 10px; }
 #isx-root .orr-line { margin: 0; font: 600 17px/1.4 var(--display); color: #e4ebf1; } #isx-root .orr-aside { margin: 0; color: #9aabba; font-style: italic; }
 #isx-root .orr-q { padding: 10px 14px; border: 1px dashed #3a4d5e; border-radius: 10px; color: #9aabba; } #isx-root .orr-q p { margin: 4px 0 0; }
-#isx-root .orr-q figure { margin: 8px 0; } #isx-root .orr-q blockquote { margin: 0; color: #e4ebf1; } #isx-root .orr-q figcaption { font-size: 12px; color: #9aabba; }
+#isx-root .orr-q figure { margin: 8px 0; } #isx-root .orr-q blockquote { margin: 0; color: #e4ebf1; } #isx-root .orr-q figcaption { font-size: 12px; color: #9aabba; } #isx-root .orr-q .orr-qo { margin: 2px 0; font-size: 12px; font-style: italic; color: #8a9aa9; } #isx-root .orr-q figcaption a { color: #D9A441; }
 #isx-root .orr-nt { margin: 0; font-size: 12px; color: #7f91a0; }
 #isx-root .orr-method { margin-top: 12px; font-size: 13px; line-height: 1.5; } #isx-root .orr-method p { margin: 8px 0; color: #b9c8d4; } #isx-root .orr-method .wn { display: inline; margin-left: 6px; color: #ffd27a; }
 #isx-root .orr-pft { display: grid; gap: 8px; padding: 6px 0; } #isx-root .orr-pft .pr { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; } #isx-root .orr-pft .n { font-size: 13px; color: #cbd8e2; text-align: right; }

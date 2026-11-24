@@ -1,0 +1,51 @@
+{
+ "quotes": [
+  {
+   "who": "Friedrich Merz",
+   "role": "Federal Chancellor",
+   "date": "25 Feb 2026",
+   "lang": "de",
+   "orig": "China betreibt mit großem Erfolg eine aktive Industriepolitik. Das ist Ihr gutes Recht, und wir tun das auch.",
+   "text": "China pursues an active industrial policy with great success. That is your good right, and we do that too.",
+   "src": "Speech to the Advisory Committee of German-Chinese Business, Beijing; Bundesregierung, Bulletin 21-1",
+   "url": "https://www.bundesregierung.de/breg-de/service/newsletter-und-abos/bulletin/bk-deutschland-china-2409298"
+  },
+  {
+   "who": "Friedrich Merz",
+   "role": "Federal Chancellor",
+   "date": "25 Feb 2026",
+   "lang": "de",
+   "orig": "Aus unserer Sicht ist es wichtig, marktverzerrende Subventionen abzubauen und dort zu einer Konsolidierung des Marktes zu kommen, wo wir Überkapazitäten sehen.",
+   "text": "From our perspective, it is important to reduce market-distorting subsidies and to consolidate the market where we see overcapacities.",
+   "src": "Same speech",
+   "url": "https://www.bundesregierung.de/breg-de/service/newsletter-und-abos/bulletin/bk-deutschland-china-2409298"
+  },
+  {
+   "who": "Friedrich Merz",
+   "role": "Federal Chancellor",
+   "date": "21 Oct 2026",
+   "lang": "de",
+   "orig": "Wer die Funktionsfähigkeit der Märkte stört, durch unfaire Subventionen, Überkapazitäten, aggressive Preissetzung oder eine künstlich unterbewertete Währung, muss mit Gegenwind rechnen.",
+   "text": "Whoever disrupts the functioning of markets through unfair subsidies, overcapacities, aggressive pricing or an artificially undervalued currency must expect headwinds.",
+   "src": "Speech at the Berlin Global Dialogue; Bundesregierung, Bulletin",
+   "url": "https://www.bundesregierung.de/breg-de/service/newsletter-und-abos/bulletin/bk-berlin-global-dialogue-2458338"
+  },
+  {
+   "who": "IMF",
+   "role": "staff, Article IV mission to Germany",
+   "date": "15 May 2017",
+   "text": "Germany’s current account surplus was the world’s largest in U.S. dollar terms.",
+   "src": "Concluding statement of the 2017 Article IV mission (on 2016)",
+   "url": "https://www.imf.org/en/news/articles/2017/05/15/mcs05152017-germany-staff-concluding-statement-of-the-2017-article-iv-mission"
+  },
+  {
+   "who": "US Treasury",
+   "role": "report on foreign exchange policies",
+   "date": "17 Oct 2018",
+   "text": "Germany has the world’s largest current account surplus in nominal dollar terms…",
+   "src": "Report to Congress, October 2018: $329bn over the four quarters to June 2018; Germany on the monitoring list",
+   "url": "https://home.treasury.gov/system/files/206/2018-10-17-%28Fall-2018-FX%20Report%29.pdf"
+  }
+ ],
+ "source": "OR1c (Gemini, 24 Nov 2026); every quote checked against the linked primary source by Claude on 24 Nov 2026"
+}

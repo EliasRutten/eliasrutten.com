@@ -85,7 +85,7 @@ data = {'status': 'preliminary',
  'events': [{'id': 'E%02d' % (i + 1), 'year': e[0], 'date': e[1], 'step': e[2], 'label': e[3], 'line': e[4], 'src': e[5]} for i, e in enumerate(EV)],
  'tension': tension,
  'profit2024': [{'line': r['line'], 'sales': int(r['sales_usd_m']), 'ni': int(r['net_income_usd_m']), 'margin': float(r['net_income_to_sales_pct']), 'shNi': float(r['share_of_world_net_income_pct']), 'shSales': float(r['share_of_world_sales_pct'])} for r in d6],
- 'hypocrisy': {'quotes': []}}
+ 'hypocrisy': json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'orrery-hypocrisy.json'), encoding='utf-8'))}
 # estimate flags: the IMF's own "estimate_from_year" per row
 est = {}
 for r in A1:
