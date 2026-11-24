@@ -313,6 +313,14 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('orrery, phone: the orrery', '#profit', seen, 390, 844, pf(0, 'orr'));
   await run('orrery, phone: German Hypocrisy', '#profit', seen, 390, 844, pf(0, 'hyp'));
   await run('orrery: booked profit as a table', '#profit', seen, 1440, 900, pf(0, 'pft', true));
+  /* mobile round, 24 Nov: Full screen on a desktop, on a phone held sideways and upright (the key open, a body picked), and the other two views */
+  const fsOpen = (v, pick) => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready, null, { timeout: 30000 }); await p.evaluate(() => { ISX.orrOpened = true; }); await pf(0, v)(p); await p.click('.orr-fsb'); await p.waitForTimeout(700); if (pick) { await p.evaluate(() => document.querySelector('.orr-fs .orr-svg .ob[data-b]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await p.waitForTimeout(250); } };
+  await run('orrery: full screen, desktop', '#profit', seen, 1440, 900, fsOpen('orr', true));
+  await run('orrery, phone: full screen, sideways, key open', '#profit', seen, 844, 390, fsOpen('orr'));
+  await run('orrery, phone: full screen, sideways, a body picked', '#profit', seen, 844, 390, async p => { await fsOpen('orr', true)(p); await p.click('.orr-tbb.ky'); await p.waitForTimeout(150); });
+  await run('orrery, phone: full screen, upright, with the hint', '#profit', seen, 390, 844, fsOpen('orr'));
+  await run('orrery: full screen, creditors and debtors', '#profit', seen, 1440, 900, fsOpen('rng'));
+  await run('orrery: full screen, German Hypocrisy', '#profit', seen, 1440, 900, fsOpen('hyp'));
   await run('profit: the ideal types as a table', '#profit', seen, 1440, 900, pf(2, 'ord', true));
   await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(3, 'all', true));
   await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(3, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });
