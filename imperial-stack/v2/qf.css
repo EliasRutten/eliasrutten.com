@@ -1,0 +1,29 @@
+/* quick-fix round, 25 Nov 2026 (loaded last, so it wins over the earlier files)
+   1. the thesis menu opens above the Legend and the zoom buttons
+   2. the thesis button's new label, “Read the preliminary thesis”, may wrap to two lines instead of being cut off
+   3. at tablet and small-laptop widths the indicator strip and the step bar show their labels in full, at 12 px or more */
+
+/* 1 · The bar that holds the thesis button sits in a layer (z 5) below the Legend and the zoom buttons (z 6),
+   so the menu it opens was drawn under them. While the menu is open, the bar rises above them. */
+#isx-root #isx-tabs:has(.espop.on) { z-index: 8; }
+
+/* 2 · the label: two lines at most, never an ellipsis */
+#isx-root .dock6 .dk-es b, #isx-root .b4es b { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.12; }
+#isx-root .dock6 .dk-es b { font-size: 13px; }
+
+@media (min-width: 761px) and (max-width: 1279px) {
+  /* 3a · indicator strip: the label wraps onto a second line instead of being cut */
+  #isx-root #isx-resbar .res .k { white-space: normal; overflow: visible; text-overflow: clip; font-size: 12px; letter-spacing: .02em; line-height: 1.15; padding-right: 12px; }
+  #isx-root #isx-resbar .res { max-width: none; }
+
+  /* 3b · step bar: “Start the loop”, “Overview” and “Close” in full */
+  #isx-root .rt-host .rt .rt-nx { width: 184px; gap: 8px; padding: 0 10px 0 12px; }
+  #isx-root .rt-host .rt .rt-nx small { font-size: 12px; letter-spacing: .03em; overflow: visible; text-overflow: clip; }
+  #isx-root .rt-host .rt .rt-s:has(#isx-play) { min-width: 108px; }
+  #isx-root .rt-host .rt .rt-st.c b { overflow: visible; text-overflow: clip; letter-spacing: .01em; }
+}
+/* the same cut-off “Close” label shows up on laptops up to 1439 px */
+@media (min-width: 761px) and (max-width: 1439px) {
+  #isx-root .rt-host .rt .rt-s:has([data-rt-t="ring"]) { min-width: 50px; }
+  #isx-root .rt-host .rt .rt-s:has([data-rt-t="ring"]) .rt-sl { font-size: 12px; letter-spacing: .04em; overflow: visible; text-overflow: clip; }
+}
