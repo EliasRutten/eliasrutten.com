@@ -321,6 +321,16 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('orrery, phone: full screen, upright, with the hint', '#profit', seen, 390, 844, fsOpen('orr'));
   await run('orrery: full screen, creditors and debtors', '#profit', seen, 1440, 900, fsOpen('rng'));
   await run('orrery: full screen, German Hypocrisy', '#profit', seen, 1440, 900, fsOpen('hyp'));
+  /* orrery OR7 (25 Nov): the frame, the arcs and the pause button in 2026; the two steps; one step as a table */
+  const or7 = more => async p => { await p.waitForFunction(() => ISX.profit && ISX.profit.state.ready && document.querySelector('.orr-svg .ob'), null, { timeout: 30000 }); await p.evaluate(() => { const k = document.querySelector('.orr-skip'); if (k) k.click(); }); await p.waitForTimeout(900); if (more) await more(p); };
+  await run('orrery OR7: 2026, the frame and China’s arcs', '#profit/order/2026', seen, 1440, 900, or7());
+  await run('orrery OR7: step 1, profit and production', '#profit/order/profit-and-production', seen, 1440, 900, or7());
+  await run('orrery OR7: step 2, clearing', '#profit/order/clearing', seen, 1440, 900, or7());
+  await run('orrery OR7: step 1 as a table', '#profit/order/profit-and-production', seen, 1440, 900, or7(async p => { await p.click('#isx-pf-table'); await p.waitForTimeout(300); }));
+  await run('orrery OR7, phone: 2026', '#profit/order/2026', seen, 390, 844, or7());
+  await run('orrery OR7, phone: step 1', '#profit/order/profit-and-production', seen, 390, 844, or7());
+  await run('orrery OR7, phone: step 2', '#profit/order/clearing', seen, 390, 844, or7());
+  await run('orrery OR7: full screen in 2026', '#profit/order/2026', seen, 1440, 900, or7(async p => { await p.click('.orr-fsb'); await p.waitForTimeout(900); }));
   await run('profit: the ideal types as a table', '#profit', seen, 1440, 900, pf(2, 'ord', true));
   await run('profit: the equation as a table', '#profit', seen, 1280, 760, pf(3, 'all', true));
   await run('profit: the text under the board', '#profit/regime', seen, 1440, 900, async p => { await pf(3, 'all')(p); await p.click('[data-pf="read"]'); await p.waitForTimeout(500); });

@@ -163,7 +163,7 @@
 
   /* ---------- state ---------- */
   const S = { st: 0, view: ST.map(s => (s.views[0] || [null])[0]), year: 2025, era: null, win: '2011-2026', table: false, ord: 'wto', terms: { npi: true, fed: true, div: true, rest: false, hh: true, ca: true }, whyOff: U.stGet('isx-pf-why') === 'off', lay: null, flows: false, sys: 'us', oz: 1 };
-  const OZ = { y: 1995, hy: 2025 };
+  const OZ = { y: 1995, hy: 2025, step: null };   /* step (OR7): one of the two steps after the story, 'pp' or 'cl' */
   let D = null, B = null, G = null, built = false, R = {}, lastW = 0;
   const cur = () => ST[S.st], vw = () => S.view[S.st];
   const emit = act => { X.emit('profit', { st: cur().id, view: vw(), act: act || null }); };
@@ -961,7 +961,7 @@
     text(); board(); bar();
   }
   const first = i => (ST[i].views[0] || [null])[0];
-  const detail = () => cur().id === 'order' && vw() === 'orr' ? (OZ.y !== 1995 ? '/order/' + OZ.y : '') : cur().id === 'order' && vw() === 'hyp' ? '/order/german-hypocrisy' : cur().id === 'order' && vw() === 'orb' ? '/order/' + (S.ord === 'ps' ? 'pax' : 'wto') : S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : cur().q2 && S.ord === 'ps' ? '/pax' : '');   /* #profit/order/pax: the orbit view in its second state */
+  const detail = () => cur().id === 'order' && vw() === 'orr' ? (OZ.step === 'pp' ? '/order/profit-and-production' : OZ.step === 'cl' ? '/order/clearing' : OZ.y !== 1995 ? '/order/' + OZ.y : '') : cur().id === 'order' && vw() === 'hyp' ? '/order/german-hypocrisy' : cur().id === 'order' && vw() === 'orb' ? '/order/' + (S.ord === 'ps' ? 'pax' : 'wto') : S.st === 0 && vw() === first(0) ? '' : '/' + cur().id + (vw() && vw() !== first(S.st) ? '/' + vw() : cur().q2 && S.ord === 'ps' ? '/pax' : '');   /* #profit/order/pax: the orbit view in its second state */
   /* the link: #profit/<station>/<view>. A link made before the arc still lands: “claims” is now part of “profits”, and a view that
      moved to another station is found there */
   function apply(hash) {
@@ -969,7 +969,9 @@
     const home = v => ST.findIndex(s => s.views.some(q => q[0] === v));
     if (i < 0 && id === 'claims') { if (!view) view = 'hold'; i = home(view); }
     if (id === 'order' && (view === 'pax' || view === 'wto')) { S.ord = view === 'pax' ? 'ps' : 'wto'; view = 'orb'; } else if (id === 'order' && !view) S.ord = 'wto';
-    if (id === 'order' && /^(199[5-9]|20[0-2]\d)$/.test(view) && +view <= 2026) { OZ.y = +view; view = 'orr'; } else if (id === 'order' && view === 'german-hypocrisy') view = 'hyp';
+    if (id === 'order') OZ.step = null;
+    if (id === 'order' && (view === 'profit-and-production' || view === 'clearing')) { OZ.step = view === 'clearing' ? 'cl' : 'pp'; OZ.y = 2026; view = 'orr'; }   /* OR7: the two steps after the story have their own address */
+    else if (id === 'order' && /^(199[5-9]|20[0-2]\d)$/.test(view) && +view <= 2026) { OZ.y = +view; view = 'orr'; } else if (id === 'order' && view === 'german-hypocrisy') view = 'hyp';
     if (i >= 0 && view && !ST[i].views.some(q => q[0] === view)) { const j = home(view); if (j >= 0) i = j; else view = ''; }
     if (i < 0) return; go(i, view || first(i), true);
   }

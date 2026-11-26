@@ -69,7 +69,7 @@ EV = [  # spec §6 (dates checked in OR1b; the Brexit referendum 23 Jun 2016 and
  (2019, '2019-12-11', 0.60, 'Appellate Body', 'The WTO’s Appellate Body can no longer hear appeals. Washington had blocked every new appointment since 2017.', 'WTO annual report, 11 Dec 2019'),
  (2020, '2020-03-11', 0.65, 'Covid', 'A pandemic breaks the supply chains.', 'WHO, 11 Mar 2020'),
  (2022, '2022-02-26', 0.80, 'Reserves frozen', 'Russia’s central bank reserves are frozen. In October, the first chip export controls on China.', 'Joint statement 26 Feb 2022 (secondary); BIS rule 7 Oct 2022'),
- (2025, '2025-12-12', 1.00, 'Pax Silica', 'Tariffs on the whole world, then Pax Silica: the silicon curtain.', 'EO 14257, 2 Apr 2025; Pax Silica launched 12 Dec 2025 (State Department; OR2 part C)')]
+ (2025, '2025-12-12', 1.00, 'Pax Silica', 'Tariffs on the whole world, then Pax Silica: the silicon curtain.', 'EO 14257, 2 Apr 2025; Pax Silica launched 12 Dec 2025 (State Department)')]
 steps = {e[0]: e[2] for e in EV}; tension = {}; last = 0.0; nxt = [e for e in EV]
 for i, y in enumerate(YEARS):
     # steps take effect in their year; the tension between events moves linearly with the year
