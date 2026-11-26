@@ -291,8 +291,9 @@
         why.setAttribute('d', `M${x.toFixed(1)} ${y0.toFixed(1)}L${x.toFixed(1)} ${y1.toFixed(1)}`); const t = word('why', 'ill'), ty = L.cy - (L.ry[3] + L.ry[4]) / 2 - fy + 4;
         /* the claim in two lines on the picture itself, beside the arrow: where the mass is made, and where the profit is claimed */
         if (t.__two !== true) { t.textContent = ''; t.append(el('tspan', {}, 'Made on the outer rings,'), el('tspan', { dy: 14 }, 'claimed at the core*')); t.__two = true; }
-        const tx = Sx(x) + 9; t.setAttribute('x', tx.toFixed(1)); t.setAttribute('y', Sy(ty).toFixed(1)); t.setAttribute('text-anchor', 'start'); [...t.children].forEach(n => n.setAttribute('x', tx.toFixed(1))); t.style.display = '';
-        st.whyLab = [Sx(x) - 6, Sy(ty) - 12, Sx(x) + 172, Sy(ty) + 20];
+        const lft = compact && H > W, tx = Sx(x) + (lft ? -9 : 9);   /* a phone upright: left of the arrow, clear of the buttons at the upper right */
+        t.setAttribute('x', tx.toFixed(1)); t.setAttribute('y', Sy(ty).toFixed(1)); t.setAttribute('text-anchor', lft ? 'end' : 'start'); [...t.children].forEach(n => n.setAttribute('x', tx.toFixed(1))); t.style.display = '';
+        st.whyLab = lft ? [Sx(x) - 172, Sy(ty) - 12, Sx(x) + 6, Sy(ty) + 20] : [Sx(x) - 6, Sy(ty) - 12, Sx(x) + 172, Sy(ty) + 20];
         note = '* Illustrative: the direction in which profit is claimed, ring by ring. It carries no figure; the grey lines do.'; }
       else st.whyLab = null;
       why.style.display = whyOn ? '' : 'none';

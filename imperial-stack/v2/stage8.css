@@ -311,3 +311,6 @@
 #isx-root .orr.stg .orr-more[hidden] { display: none; }
 #isx-root .orr.stg .orr-more:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
 #isx-root .orr.stg.mid .orr-fn { white-space: normal; text-wrap: balance; text-align: center; }   /* two lines rather than a cut */
+#isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.bk, #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.z { flex: none; width: 8px; height: 8px; border-radius: 0; border: 0; transform: rotate(45deg); margin: 4px 9px 0; }   /* the key draws the diamonds the picture draws */
+#isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.bk { background: #D9A441; } #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.z { background: #8FD3CF; }
+#isx-root .orr.stg.port .orr-sc { max-width: calc(100% - 214px); }   /* a phone upright: the step's heading keeps clear of the buttons */
