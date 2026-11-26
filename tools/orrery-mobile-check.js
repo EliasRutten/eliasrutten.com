@@ -20,7 +20,7 @@ const ok = (name, cond, extra) => { n++; if (!cond) fails++; console.log((cond ?
   };
   const year = (p, y) => p.evaluate(y => { const i = document.querySelector((document.querySelector('.orr-fs') ? '.orr-fs ' : '') + '.orr-sl input'); i.value = y; i.dispatchEvent(new Event('input', { bubbles: true })); i.dispatchEvent(new Event('change', { bubbles: true })); }, y).then(() => p.waitForTimeout(700));
   /* the visible names of the picture, in page pixels */
-  const names = p => p.evaluate(() => { const sc = document.querySelector('.orr-fs') ? '.orr-fs ' : ''; return [...document.querySelectorAll(sc + '.orr-svg text')].filter(t => { const cs = getComputedStyle(t); return !t.classList.contains('off') && cs.visibility !== 'hidden' && +cs.opacity > .05 && t.textContent; }).map(t => { const r = t.getBoundingClientRect(); return { t: t.textContent, ring: t.classList.contains('orr-rl') || t.classList.contains('orr-lt'), x0: r.left + 1, y0: r.top + 2, x1: r.right - 1, y1: r.bottom - 2, fs: getComputedStyle(t).fontSize }; }); });
+  const names = p => p.evaluate(() => { const sc = document.querySelector('.orr-fs') ? '.orr-fs ' : ''; return [...document.querySelectorAll(sc + '.orr-svg text:not(.orr-rimt)')].filter(t => {   /* OR8: the rim's words run on a curve (their box is not where they are); orrery-or7-check and orrery-or8-check look at the rim */ const cs = getComputedStyle(t); return !t.classList.contains('off') && cs.visibility !== 'hidden' && +cs.opacity > .05 && t.textContent; }).map(t => { const r = t.getBoundingClientRect(); return { t: t.textContent, ring: t.classList.contains('orr-rl') || t.classList.contains('orr-lt'), x0: r.left + 1, y0: r.top + 2, x1: r.right - 1, y1: r.bottom - 2, fs: getComputedStyle(t).fontSize }; }); });
   const overlaps = L => { const o = []; for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], c = L[j]; if (a.x0 < c.x1 && c.x0 < a.x1 && a.y0 < c.y1 && c.y0 < a.y1) o.push(a.t + ' × ' + c.t); } return o; };
 
   /* A · a Full screen button on every view, at both sizes; the desktop one is an icon */
@@ -65,7 +65,8 @@ const ok = (name, cond, extra) => { n++; if (!cond) fails++; console.log((cond ?
     const r = await p.evaluate(() => { const ov = document.querySelector('.orr-fs'), o = ISX.profit.orrery.cur, sl = ov.querySelector('.orr-sl').getBoundingClientRect(), st = ov.querySelector('.orr-stage').getBoundingClientRect(), vb = ov.querySelector('.orr-svg').getAttribute('viewBox').split(' ').map(Number);
       return { role: ov.getAttribute('role'), modal: ov.getAttribute('aria-modal'), label: ov.getAttribute('aria-label'), inert: document.querySelector('#isx-root > .wrap').inert, cls: ov.className, vb, sl: [sl.left, sl.top, sl.right, sl.bottom].map(Math.round), st: [st.left, st.top, st.right, st.bottom].map(Math.round), win: [innerWidth, innerHeight], focus: document.activeElement.textContent, native: !!document.fullscreenElement }; });
     ok('D · full screen: a modal dialog with a name, the page behind it inert, Close focused', r.role === 'dialog' && r.modal === 'true' && !!r.label && r.inert && r.focus === 'Close', r);
-    ok('D · full screen: the picture fills the window above the year slider (844 × 330 over a 60 px bar)', r.vb[2] === 844 && r.vb[3] === 330 && r.sl[3] <= 390 && r.sl[0] >= 0 && r.sl[2] <= 844 && r.sl[3] - r.sl[1] >= 56, r);
+    /* OR8: in the story's full screen the timeline is inside the stage (with the narrator above it), so the picture's svg is the whole window */
+    ok('D · full screen: the stage fills the window (844 × 390) and the year slider stands inside it, at its foot', r.vb[2] === 844 && r.vb[3] === 390 && r.sl[3] <= 390 && r.sl[0] >= 0 && r.sl[2] <= 844 && r.sl[1] >= 280, r);
     ok('D · full screen: the landscape layout (L.ph false), compact names', r.cls.includes('compact') && !r.cls.includes('portrait') && r.vb[2] > r.vb[3], r);
     const fit = [];
     for (const y of [1995, 2008, 2014, 2019, 2022, 2025]) { await year(p, y); fit.push(...await p.evaluate(y => { const st = document.querySelector('.orr-fs .orr-stage').getBoundingClientRect(); return [...document.querySelectorAll('.orr-fs .orr-svg .rg')].filter(e => +getComputedStyle(e).opacity > .05).map(e => e.getBoundingClientRect()).filter(r => r.left < st.left - 2 || r.right > st.right + 2 || r.top < st.top - 2 || r.bottom > st.bottom + 2).map(r => y + ': ' + [r.left, r.top, r.right, r.bottom].map(Math.round).join(',')); }, y)); }
@@ -101,7 +102,7 @@ const ok = (name, cond, extra) => { n++; if (!cond) fails++; console.log((cond ?
     ok('E · upright: one line asks the visitor to turn the phone', r.hint.length > 10 && r.hint.length < 70 && r.cls.includes('portrait'), r);
     await year(p, 2014); await (await p.context().newCDPSession(p)).send('Emulation.setDeviceMetricsOverride', { width: 844, height: 390, deviceScaleFactor: 1, mobile: true }); await p.waitForTimeout(900);
     const s = await p.evaluate(() => ({ hint: document.querySelector('.orr-hint').hidden, cls: document.querySelector('.orr-fs').className, vb: document.querySelector('.orr-fs .orr-svg').getAttribute('viewBox'), yr: document.querySelector('.orr-fs .orr-yr').textContent }));
-    ok('E · turned: the hint goes, the landscape layout fills the new window, the year is kept', s.hint && !s.cls.includes('portrait') && s.vb === '0 0 844 330' && s.yr === '2014', s);
+    ok('E · turned: the hint goes, the landscape layout fills the new window, the year is kept', s.hint && !s.cls.includes('portrait') && s.vb === '0 0 844 390' && s.yr === '2014', s);   /* OR8: the story's stage is the whole window (its timeline is inside it) */
     await p.keyboard.press('Escape'); await p.waitForTimeout(300); ok('E · Escape closes', !(await p.evaluate(() => !!document.querySelector('.orr-fs')))); await p._c.close();
   }
 
@@ -111,7 +112,7 @@ const ok = (name, cond, extra) => { n++; if (!cond) fails++; console.log((cond ?
     const t0 = await T();
     await p.mouse.move(bx.x + 300, bx.y + 80); await p.mouse.down(); await p.mouse.move(bx.x + 300, bx.y + 420, { steps: 10 }); await p.mouse.up(); const hi = await T();
     await p.mouse.move(bx.x + 300, bx.y + 420); await p.mouse.down(); await p.mouse.move(bx.x + 300, bx.y + 10, { steps: 10 }); await p.mouse.up(); const lo = await T();
-    ok('F · desktop: a drag down tilts to at most 0.7, a drag up to at least 0.25', t0 === .4 && hi <= .7 && hi > .6 && lo >= .25 && lo < .3, { t0, hi, lo });
+    ok('F · desktop: a drag down tilts to at most 0.7, a drag up to at least 0.25', t0 >= .32 && t0 <= .66 && hi <= .7 && hi > .6 && lo >= .25 && lo < .3, { t0, hi, lo });   /* OR8: the stage's rings start as round as its box allows (0.32 to 0.66), not at 0.4 */
     const idle = await p.evaluate(() => new Promise(res => { const o = ISX.profit.orrery.cur; const a = o.L.tilt, f0 = o.st.raf; setTimeout(() => res({ same: o.L.tilt === a, raf: o.st.raf, f0 }), 500); }));
     ok('F · desktop: idle after a drag, no motion runs (no animation frame pending)', idle.same && idle.raf === 0, idle);
     await p.focus('.orr-svg .ob'); await p.keyboard.press('Shift+ArrowDown'); const k1 = await T(); await p.keyboard.press('Shift+ArrowUp'); await p.keyboard.press('Shift+ArrowUp'); const k2 = await T();

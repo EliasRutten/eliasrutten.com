@@ -210,7 +210,7 @@
       else if (d.ps) { S.sys = d.ps; board(true); const again = host.querySelector('[data-ps="' + d.ps + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pzk) { S.oz = Math.max(1, Math.min(3, S.oz * (d.pzk === '+' ? 1.5 : 1 / 1.5))); board(true); const again = host.querySelector('[data-pzk="' + d.pzk + '"]'); if (again) again.focus({ preventScroll: true }); }
       else if (d.pf === 'flows') { S.flows = !S.flows; board(true); const again = R.chips.querySelector('[data-pf="flows"]'); if (again) again.focus({ preventScroll: true }); emit('flows'); }
-      else if (d.pf === 'table') { S.table = !S.table; board(); emit('table'); }
+      else if (d.pf === 'table') { S.table = !S.table; board(); bar(); emit('table'); if (S.table && cur().id === 'order') R.table.focus({ preventScroll: true }); }
       else if (d.pf === 'fn') { foot(b); }
       else if (d.pf === 'whyx') { S.whyOff = true; U.stSet('isx-pf-why', 'off'); board(true); R.whyq.focus({ preventScroll: true }); }
       else if (d.pf === 'whyq') { S.whyOff = false; U.stSet('isx-pf-why', null); board(true); const x = R.note.querySelector('.x'); if (x) x.focus({ preventScroll: true }); }
@@ -223,13 +223,13 @@
     });
     /* the views are swiped on phones (the chart is marked data-noswipe, so the bar's own swipe between stations leaves it alone) */
     let sx = 0, sy = 0, st = 0;
-    R.fig.addEventListener('touchstart', e => { st = e.touches.length === 1 && phone() && !e.target.closest('.pf-tw, .pf-terms, input') ? 1 : 0; if (st) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    R.fig.addEventListener('touchstart', e => { st = e.touches.length === 1 && phone() && !e.target.closest('.pf-tw, .pf-terms, input, .orr-dock, .orr-hud, .orr-kin, .orr-info') ? 1 : 0; if (st) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
     R.fig.addEventListener('touchend', e => { if (!st) return; st = 0; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.6) stepV(dx < 0 ? 1 : -1); }, { passive: true });
     let rt = 0;
     if (window.ResizeObserver) new ResizeObserver(() => { if (X.view !== 'profit' || !D || cur().fin) return; const w = R.fig.clientWidth; if (Math.abs(w - lastW) < 2) return; clearTimeout(rt); rt = setTimeout(() => board(true), 90); }).observe(R.fig);
     built = true;
   }
-  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; if (cur().qv) text(); board(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
+  function setV(id) { if (!cur().views.some(v => v[0] === id) || id === vw()) return; S.view[S.st] = id; S.table = false; if (cur().qv) text(); board(); if (cur().id === 'order') bar(); sync(); emit('view'); const d = R.dots.querySelector('[aria-current="true"]'); if (d && R.dots.contains(document.activeElement)) d.focus({ preventScroll: true }); }
   function stepV(d) { const vs = cur().views, i = vs.findIndex(v => v[0] === vw()), j = i + d; if (j < 0 || j >= vs.length) return; setV(vs[j][0]); }
 
   /* ---------- the title's footnote (the same text opens from the entry screen). The five references were checked on 18 Nov 2026 against
@@ -250,7 +250,7 @@
     R.q.textContent = qv || (two ? s.q2 : s.q); R.q.classList.toggle('long', R.q.textContent.length > 84);
     R.lead.hidden = !s.lead; R.lead.textContent = s.lead || '';
     const sub = sv || (two ? s.sub2 : s.sub); R.sub.hidden = !sub; R.sub.textContent = sub || '';
-    host.dataset.st = s.id; host.classList.toggle('fin', !!s.fin);
+    host.dataset.st = s.id; host.classList.toggle('fin', !!s.fin); stageMode();
     R.board.hidden = !!s.fin; R.text.hidden = !!s.fin; R.fin.hidden = !s.fin; host.querySelector('.pf-jump').hidden = !!s.fin;
     if (s.fin) { finale(); return; }
     const src = s.src.map(k => SRC[k]).map(x => x[1] ? `<a href="${esc(x[1])}" target="_blank" rel="noopener">${esc(x[0])}</a>` : esc(x[0])).join('. ') + '.';
@@ -902,10 +902,18 @@
     const chips = R.chips.childNodes.length ? R.chips.offsetHeight + 8 : 0, nt = R.note.hidden ? 0 : R.note.offsetHeight + 8;
     R.board.style.setProperty('--pfx', Math.round(R.top.offsetHeight + 12 + R.head.offsetHeight - 51 + chips + nt - 38) + 'px');   /* build 1 had a head of 51 px and a row of view chips of 38 px */
   }
+  /* OR8: the order's story is a stage: it fills the screen between the header and the bar, and the page's own head, chips and foot step aside
+     (their parts are on the stage: v2/stage8.js). Every other view, and the story's table, keeps the page layout. */
+  const isStage = () => cur().id === 'order' && vw() === 'orr' && !S.table && !cur().fin;
+  function stageMode() { const on = isStage(); host.classList.toggle('stg', on); if (X.root) X.root.classList.toggle('orr-stg', on); if (!on) R.fig.style.height = '';
+    tableHome(); }
+  /* “View as table” is one button: the stage borrows it for its own row, and it comes home before the figure is cleared */
+  function tableHome() { const ft = host.querySelector('.pf-foot'); if (ft && R.table && R.table.parentNode !== ft) ft.append(R.table); }
   function board(keep) {
     if (!D) return;
     const s = cur(); if (s.fin) { if (!keep) emit(); return; }
     const v = V[vw()], fig = R.fig, vi = s.views.findIndex(q => q[0] === vw());
+    stageMode();
     tipHide(); fig.textContent = ''; R.chips.textContent = ''; R.tiles.textContent = ''; R.tiles.className = 'pf-tiles'; reading('', ''); legend([]);
     fig.dataset.lens = vw(); fig.classList.toggle('tall', !!v.tall); fig.classList.toggle('orr-fig', ['orr', 'fig', 'rng', 'pft', 'hyp'].includes(vw())); R.board.dataset.st = s.id; R.board.dataset.lens = vw();
     if (v.chips) v.chips();
@@ -922,10 +930,10 @@
     R.board.classList.toggle('has-tiles', false);
     /* the tiles and the reading line are set by the view before it measures the chart's box: draw twice when they change its height */
     fit();
-    if (S.table) { v.draw(); fig.textContent = ''; legend([]); table(v.table()); } else v.draw();
+    if (S.table) { v.draw(); tableHome(); fig.textContent = ''; legend([]); table(v.table()); } else v.draw();
     const had = R.board.classList.contains('has-tiles'), has = R.tiles.childNodes.length > 0;
     R.board.classList.toggle('has-tiles', has); R.board.classList.toggle('has-lg', R.lg.childNodes.length > 0 || !!v.scrub);
-    if (has !== had && !S.table) { fig.textContent = ''; v.draw(); }
+    if (has !== had && !S.table) { tableHome(); fig.textContent = ''; v.draw(); }
     lastW = fig.clientWidth;
     if (!keep) emit();
   }
@@ -936,7 +944,7 @@
     const last = S.st === ST.length - 1;
     RT.render(hostB, { id: 'profit', label: 'The order: six stations', stage: scene, count: (S.st + 1) + ' / ' + ST.length,
       back: { enabled: S.st > 0, label: S.st > 0 ? 'Back: ' + ST[S.st - 1].t : 'Back' },
-      next: last ? { kicker: 'Go on', title: 'The imperial arm', ptitle: 'Arm' } : { kicker: 'Next', title: ST[S.st + 1].t, ptitle: ST[S.st + 1].t.replace(/^The /, '') },
+      next: last ? { kicker: 'Go on', title: 'The imperial arm', ptitle: 'Arm' } : { kicker: isStage() ? 'Next station' : 'Next', title: ST[S.st + 1].t, ptitle: ST[S.st + 1].t.replace(/^The /, '') },   /* OR8: on the stage the way forward is the stage's own “Next”; the bar's is named for what it is, the next station */
       segs: [{ label: 'The order', short: 'The order', colour: '#d78bff', current: true, lab: true, wide: true, grow: 9, marks: ST.map((s, i) => ({ kind: 'step', n: '0' + (i + 1), t: s.t, state: i === S.st ? 'cur' : i < S.st ? 'done' : '', target: String(i), title: s.t + ' · ' + s.q, sub: s.f })) }] });
   }
   function sync() { if (X.view !== 'profit') return; X.routeSync(); }

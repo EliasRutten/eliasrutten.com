@@ -71,7 +71,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   await p.click('#isx-pf-fin [data-pgo="elite-network"]'); await p.waitForTimeout(300);
   ok(await p.evaluate(() => ISX.view === 'arm'), 'a door out opens its tab');
   await p.evaluate(() => { ISX.setView('profit'); ISX.profit.go(5); }); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(300);
-  ok(await p.evaluate(() => ISX.view === 'fin'), 'Next after the finale goes on to the imperial machinery');
+  ok(await p.evaluate(() => ISX.view === 'story'), 'Next after the finale goes on to the imperial arm (T1, 26 Nov 2026: the order is followed by the arm)');
   ok(await p.evaluate(() => { const s = document.documentElement.innerHTML; return (s.match(/go: \['profit\/(regime|ai)'/g) || []).length === 3; }), 'three cards of the machinery link into the tab');
   await p.close();
   p = await open(c, '#simulator'); await p.evaluate(() => { sessionStorage.setItem('isx-sim-pos', JSON.stringify({ l: 13, b: 9 })); }); await p.reload(); await p.waitForFunction(() => window.ISX && ISX.booted); await p.waitForTimeout(800);

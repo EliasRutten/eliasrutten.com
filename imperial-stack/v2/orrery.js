@@ -13,7 +13,11 @@
    · Marks from the lists only from their dates: Pax Silica from 2025 (12 Dec 2025), WAICO from 2026 (16 Jul 2026).
    · Two steps after 2026, each one picture: “profit-and-production” (two small charts) and “clearing” (surpluses into one named point).
    · At rest, after the split: pulses run along the flow lines and China's system turns once in six minutes; the US system stands still.
-     One loop in the registry (v2/perf.js), a “Pause motion” button, nothing under reduced motion. */
+     One loop in the registry (v2/perf.js), a “Pause motion” button, nothing under reduced motion.
+   OR8 (26 Nov 2026; handoff claude/handoffs/orrery-stage-or8-26-nov.md): the story is a stage. It fills the screen between the header and the bar and
+   carries its own narration, chapters, key and controls (v2/stage8.js builds them: X.orrStage); the same stage is the full screen. The old order is the
+   rim of the picture (it was a strip at its foot); China's arcs show from their dates, round China where it stands; the flow lines carry pulses in every
+   year; the picture is laid out in a box (OX, OY, WP, HL) that leaves the stage's columns and its dock free. */
 (function () {
   'use strict';
   const X = window.ISX; if (!X) return;
@@ -48,13 +52,14 @@
 
     /* ---------- the geometry ---------- */
     const TILT = [.25, .7];   /* the ring plane's tilt, ring height over ring width: the drag's range (desktop) */
-    function layout(W, H, ph, tilt) {
+    function layout(W, H, ph, tilt, ox, oy, mg) {   /* OR8: the picture stands in a box of W by H whose corner is (ox, oy); mg is the room kept above and below the rings */
+      ox = ox || 0; oy = oy || 0; mg = mg || 16;
       tilt = ph ? .9 : clamp(tilt == null ? .4 : tilt, TILT[0], TILT[1]);
       /* a steeper tilt makes the rings taller: shrink them together so the outer ring stays inside the stage */
-      const fit = ph ? 1 : Math.min(1, (H / 2 - 16) / (.31 * W * tilt)), rk = [.07, .13, .19, .25, .31].map(v => v * W * fit);
-      const L = { W, H, ph, tilt, fit, cx: W / 2, cy: H / 2, rx: rk, ry: rk.map(v => v * tilt), v: ph ? [0, 1] : [1, 0], f: ph ? H * .12 : W * .095 };
-      L.s = ph ? .7 : .8; L.U = ph ? [W / 2, H * .27] : [W * .27, H / 2]; L.Cn = ph ? [W / 2, H * .74] : [W * .73, H / 2];
-      L.band = { both: ph ? [H * .505, W * .12, W * .88] : [H * .1, W * .34, W * .66], swing: ph ? [H * .965, W * .1, W * .9] : [H * .92, W * .12, W * .88] };
+      const fit = ph ? Math.min(1, (H / 2 - mg) / (.31 * W * tilt + H * .12)) : Math.min(1, (H / 2 - mg) / (.31 * W * tilt)), rk = [.07, .13, .19, .25, .31].map(v => v * W * fit);
+      const L = { W, H, ph, tilt, fit, cx: ox + W / 2, cy: oy + H / 2, rx: rk, ry: rk.map(v => v * tilt), v: ph ? [0, 1] : [1, 0], f: ph ? H * .12 : W * .095 };
+      L.s = ph ? .7 : .8; L.U = ph ? [ox + W / 2, oy + H * .27] : [ox + W * .27, oy + H / 2]; L.Cn = ph ? [ox + W / 2, oy + H * .74] : [ox + W * .73, oy + H / 2];
+      L.band = { both: ph ? [oy + H * .505, ox + W * .12, ox + W * .88] : [oy + Math.max(H * .1, 26), ox + W * .34, ox + W * .66], swing: ph ? [oy + H * .965, ox + W * .1, ox + W * .9] : [oy + Math.min(H * .92, H - 50), ox + W * (!ph && H < 250 ? .29 : .12), ox + W * .88] };   /* OR8: in a low box both rows of a band stay inside the rim */
       return L;
     }
     const polar = (ring, sec, k, n) => { const a = (sec * 60 + 8 + (n > 1 ? k * (44 / (n - 1)) : 22)) * Math.PI / 180 - Math.PI / 2; return [Math.cos(a), Math.sin(a)]; };
@@ -98,25 +103,33 @@
     /* ---------- the picture ---------- */
     const WARM = '#E9C77F', COOL = '#8FD3CF', GREY = '#7d8d9b', GOLD = '#D9A441';
     function Orrery(host, o) {   /* o: { mode: 'story' | 'rings' | 'hyp', year } */
-      const full = !!o.full, ph = full ? o.W < o.H : phone(), W = full ? o.W : Math.max(300, host.clientWidth || 800), mode = o.mode, hyp = mode === 'hyp', story = mode === 'story';
-      const FH = story ? (W >= 1000 ? 26 : W >= 560 ? 44 : 84) : 0;   /* OR7: the old order's strip at the foot of the stage; the picture is laid out above it (HL) */
-      const H = full ? o.H : (ph ? 600 : clamp(Math.round(W * .38), 330, 480)) + (W >= 1000 ? 0 : FH), HL = H - FH;
-      const compact = full ? Math.min(W, H) < 560 : ph;   /* a phone: names only for the big bodies, the rings and bands in a key */
-      const L = layout(W, HL, ph, OZ.tilt != null ? OZ.tilt : (full ? .5 : .4)), list = prepBodies(), gid = o.mode + (full ? 'f' : '');
-      const maxY = hyp ? 2025 : 2026, LP = ORD().lists.pax, LW = ORD().lists.waico, canStep = story && !full, ppIn = compact || W < 900;   /* ppIn: step 1's charts stand in the card, not on the picture */
+      const full = !!o.full, mode = o.mode, hyp = mode === 'hyp', story = mode === 'story', stg = story;   /* OR8: the story is a stage, on the page and in full screen */
+      const W = full ? o.W : Math.max(300, host.clientWidth || 800), H = full ? o.H : stg ? Math.max(260, host.clientHeight || 600) : (phone() ? 600 : clamp(Math.round(W * .38), 330, 480));
+      let ph = full || stg ? W < H : phone(); const FH = 0; let MG = stg ? (Math.min(W, H) < 560 ? 22 : 38) : 16;
+      let HL = H, OX = 0, OY = 0, WP = W;   /* the box the picture is laid out in: the stage keeps its columns and its dock outside it */
+      const compact = full || stg ? Math.min(W, H) < 560 : ph;   /* a phone: names only for the big bodies, the rings and bands in a key */
+      const tilt0 = () => OZ.tilt != null ? OZ.tilt : stg && !ph ? clamp((HL / 2 - MG) / (.31 * WP), .32, .66) : full ? .5 : .4;   /* the stage's rings are as round as its box allows */
+      const L = layout(W, HL, ph, tilt0(), 0, 0, MG), list = prepBodies(), gid = o.mode + (full ? 'f' : '');
+      const relay = t => { Object.assign(L, layout(WP, HL, ph, t == null ? tilt0() : t, OX, OY, MG), { e: L.e, rot: L.rot }); };
+      const maxY = hyp ? 2025 : 2026, LP = ORD().lists.pax, LW = ORD().lists.waico, canStep = story; let ppIn = compact || W < 900;   /* ppIn: step 1's charts stand in the card, not on the picture */
       const Vw = { k: o.view ? o.view.k : 1, x: o.view ? o.view.x : 0, y: o.view ? o.view.y : 0 };   /* the zoom and pan of the full-screen view */
       const Sx = x => Vw.x + Vw.k * x, Sy = y => Vw.y + Vw.k * y;
       const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'orr-svg', role: 'group', 'aria-label': hyp ? 'The orrery with gravity switched to the current account summed since 1995, as a share of that year’s GDP. Germany becomes a sun.' : 'The world economy as an orrery, 1995 to 2026: the United States at the centre of one system, China pulled out as a second centre; size is the share of world GDP.' });
-      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); if (full) { svg.style.width = W + 'px'; svg.style.height = H + 'px'; }
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); if (full || stg) { svg.style.width = W + 'px'; svg.style.height = H + 'px'; }
       svg.setAttribute('aria-description', 'Drag to tilt the rings, or press Shift and the up or down arrow.' + (full ? ' Pinch to zoom, drag to pan; the plus, minus and arrow keys do the same.' : ''));
       const defs = el('defs'); [['u', '#FFF4DA', '#F3D28C'], ['c', '#E9FFFD', '#8FD3CF']].forEach(([id, a, b]) => { const g = el('radialGradient', { id: 'orr-g' + id + gid }); g.append(el('stop', { offset: '0', 'stop-color': a, 'stop-opacity': 1 }), el('stop', { offset: '.35', 'stop-color': b, 'stop-opacity': .55 }), el('stop', { offset: '1', 'stop-color': b, 'stop-opacity': 0 })); defs.append(g); });
       svg.append(defs);
       const gStars = el('g', { class: 'orr-stars' }); let sd = 7; const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
       for (let i = 0; i < 140; i++) gStars.append(el('circle', { cx: (rnd() * W).toFixed(1), cy: (rnd() * H).toFixed(1), r: (.4 + rnd() * .8).toFixed(2), opacity: (.08 + rnd() * .27).toFixed(2) }));
-      const gLane = el('g', { class: 'orr-lane' }), lane = ph ? el('rect', { x: 0, y: HL * .5 - 12, width: W, height: 24 }) : el('rect', { x: W / 2 - 12, y: 8, width: 24, height: HL - 16 });
-      gLane.append(lane, ph ? el('line', { x1: 8, x2: W - 8, y1: HL * .5, y2: HL * .5, class: 'dot' }) : el('line', { x1: W / 2, x2: W / 2, y1: 8, y2: HL - 8, class: 'dot' }));
+      const gLane = el('g', { class: 'orr-lane' }), lane = el('rect'), laneL = el('line', { class: 'dot' }); gLane.append(lane, laneL);
       const gT = el('g', { class: 'orr-lbl', 'aria-hidden': 'true' });   /* every name: unscaled, so zooming moves the words but never grows them */
-      const laneT = compact ? [] : [['on both lists', ph ? [W / 2, HL * .5 - 18] : [W / 2, 22]], ['on neither list', ph ? [W / 2, HL - 6] : [W / 2, HL - 6]]].map(([t, p]) => { const n = el('text', { 'text-anchor': 'middle', class: 'orr-lt' }, t.toUpperCase()); n.__p = p; gT.append(n); return n; });
+      const laneT = compact ? [] : ['on both lists', 'on neither list'].map(t => { const n = el('text', { 'text-anchor': 'middle', class: 'orr-lt' }, t.toUpperCase()); n.__p = [0, 0]; gT.append(n); return n; });
+      const setA = (n, a) => Object.keys(a).forEach(k => n.setAttribute(k, a[k]));
+      function geom() {   /* the lane between the two systems and its two names, in the picture's box */
+        if (ph) { setA(lane, { x: OX, y: OY + HL * .5 - 12, width: WP, height: 24 }); setA(laneL, { x1: OX + 8, x2: OX + WP - 8, y1: OY + HL * .5, y2: OY + HL * .5 }); }
+        else { setA(lane, { x: L.cx - 12, y: OY + 8, width: 24, height: HL - 16 }); setA(laneL, { x1: L.cx, x2: L.cx, y1: OY + 8, y2: OY + HL - 8 }); }
+        if (laneT.length) { laneT[0].__p = ph ? [L.cx, OY + HL * .5 - 18] : [L.cx, OY + (stg ? 26 : 22)]; laneT[1].__p = [L.cx, OY + HL - (stg ? 18 : 6)]; }
+      }
       const gRings = el('g', { class: 'orr-rings' }), RN = ['THE CORE', 'TOOLS, CHIPS AND FINANCE', 'THE ASSEMBLY LINE', 'ENERGY AND MINERALS', 'ROLE NOT COLLECTED'];
       const ringE = [], pairU = [], pairC = [], ringT = [];
       for (let k = 0; k < 5; k++) { const a = el('ellipse', { class: 'rg' }), b = el('ellipse', { class: 'rg pu' }), c = el('ellipse', { class: 'rg pc' }); [a, b, c].forEach(n => { if (k === 4) n.setAttribute('stroke-dasharray', '3 5'); }); ringE.push(a); pairU.push(b); pairC.push(c); gRings.append(a, b, c); const t = el('text', { class: 'orr-rl', 'text-anchor': 'start' }, RN[k]); ringT.push(t); if (!compact) gT.append(t); }
@@ -132,30 +145,24 @@
       const sPaths = list.filter(q => q.d && q.d.inc).map((q, i) => { const p = el('path', { class: 'st', fill: 'none', pathLength: 1 }), pu = el('path', { class: 'pls', fill: 'none', pathLength: 1 }); pu.style.animationDelay = (-(i * .61) % 4).toFixed(2) + 's'; gStream.append(p, pu); q.st = p; q.pu = pu; return q; });
       /* OR7: China's own institutions as arcs round China (named on the picture, in the key on a phone); the lines of the clearing step; the old order's frame */
       const gArc = el('g', { class: 'orr-arcs' }), gFlow = el('g', { class: 'orr-flows' }), flowT = [];
-      const arcs = story ? ARCS().map((a, i) => { const g = el('g', { class: 'oa', 'data-a': a.id, role: 'button', tabindex: -1, 'aria-label': a.full + ', ' + a.year + ': one of China’s own institutions' }), pa = el('path', { class: 'ar', fill: 'none' }), hp = el('path', { class: 'ah', fill: 'none' }), t = el('text', { class: 'orr-al off', 'data-a': a.id }, a.n + ' ' + a.year); g.append(hp, pa); gArc.append(g); if (!compact) gT.append(t); return { a, i, g, p: pa, hp, t, on: false, end: [0, 0] }; }) : [];
+      const arcs = story ? ARCS().map((a, i) => { const g = el('g', { class: 'oa', 'data-a': a.id, role: 'button', tabindex: -1, 'aria-label': a.full + ', ' + a.year + ': one of China’s own institutions' }), pa = el('path', { class: 'ar', fill: 'none' }), hp = el('path', { class: 'ah', fill: 'none' }), t = el('text', { class: 'orr-al off', 'data-a': a.id }, a.n + ' ' + a.year); g.append(hp, pa); gArc.append(g); if (!compact || stg) gT.append(t);   /* OR8: the arcs carry their names at every size */ return { a, i, g, p: pa, hp, t, on: false, end: [0, 0] }; }) : [];
       const arcH = story ? el('text', { class: 'orr-ahd off', 'text-anchor': 'middle' }, 'CHINA’S OWN INSTITUTIONS') : null; if (arcH) gT.append(arcH);
-      ['w', 'g', 'c'].forEach(k => { const m = el('marker', { id: 'orr-m' + k + gid, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 9, markerHeight: 9, orient: 'auto-start-reverse', markerUnits: 'userSpaceOnUse' }); m.append(el('path', { d: 'M1 1.5L9 5L1 8.5z', class: 'mk' + k })); defs.append(m); });
-      const frameR = story ? el('rect', { class: 'orr-frame', x: 3.5, y: 3.5, width: W - 7, height: H - 7, rx: 12, fill: 'none' }) : null;
+      ['w', 'g', 'c', 'p'].forEach(k => { const m = el('marker', { id: 'orr-m' + k + gid, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 9, markerHeight: 9, orient: 'auto-start-reverse', markerUnits: 'userSpaceOnUse' }); m.append(el('path', { d: 'M1 1.5L9 5L1 8.5z', class: 'mk' + k })); defs.append(m); });
+      const frameR = null;   /* OR8: the old order is the rim of the picture, drawn by the stage */
       const gV = el('g', { class: 'orr-view' }); gV.append(gLane, gRings, gStream, gArc, gFlow, gSun, gB, gR); svg.append(gStars, gV, gT); if (frameR) svg.append(frameR);
       const wrap = h('div', 'orr' + (hyp ? ' hyp' : '') + (mode === 'rings' ? ' rng' : '')); wrap.dataset.mode = mode;
       const top = h('div', 'orr-top'), counters = h('div', 'orr-ct'); counters.setAttribute('aria-hidden', 'true');
       const cy = h('div', 'orr-yr'), evl = h('div', 'orr-evl'), c1 = h('div', 'orr-c'), c2 = h('div', 'orr-c'), c3 = h('div', 'orr-c');
-      counters.append(cy, c1, c2, c3); if (full) counters.insertBefore(evl, c1);
-      const c4 = story && !compact ? h('div', 'orr-c ln') : null; if (c4) { c4.innerHTML = '<span><i></i>Lines into the US</span><b>What US firms’ affiliates earned there (BEA)</b>'; counters.append(c4); }
+      counters.append(cy, c1, c2, c3); if (full && !stg) counters.insertBefore(evl, c1);
+      const c4 = null;   /* OR8: the stage says what its lines are, under “Flows” */
       const info = h('aside', 'orr-info'); info.setAttribute('aria-live', 'polite'); info.tabIndex = 0;
       const stage = h('div', 'orr-stage'); stage.append(svg, counters);
       let cnW = null, strip = null;
-      if (story) {
-        strip = h('div', 'orr-old'); strip.style.height = (FH - 8) + 'px'; strip.setAttribute('role', 'group'); strip.setAttribute('aria-label', 'The frame round the picture is the old order. ' + ORD().frame.line);
-        const grp = (cls, k, items, tick) => { const g = h('span', 'og ' + cls); g.append(h('b', '', k)); items.forEach(([n, y]) => { const s = h('span', 'oi'); if (tick) s.append(h('i', 'tk')); s.append(n + ' ', h('em', '', String(y))); g.append(s); if (tick && n === 'WTO') cnW = s; }); return g; };
-        const old = []; ORD().old.forEach(([n, y]) => { const l = old[old.length - 1]; if (l && l[1] === y) l[0] += ' and ' + n; else old.push([n, y]); });
-        strip.append(grp('a', 'The old order', old, false), grp('b', 'China inside it', ORD().cn, true)); stage.append(strip);
-      }
       /* “Pause motion” (WCAG 2.2.2): shown only while something can move, that is after the split and without reduced motion */
       const pm = story ? h('button', full ? 'orr-tbb pm' : 'orr-pm') : null;
-      const pmSync = () => { if (!pm) return; pm.hidden = !(st.split && !reduce()); pm.textContent = X.orrPaused ? '▶ Resume motion' : '❚❚ Pause motion'; };
+      const pmSync = () => { if (!pm) return; pm.hidden = !((stg || st.split) && !reduce()); pm.textContent = X.orrPaused ? '▶ Resume motion' : '❚❚ Pause motion'; };
       const rc = full ? null : h('div', 'orr-rc'); if (rc) stage.append(rc);
-      if (pm) { pm.type = 'button'; pm.hidden = true; pm.title = 'Stops the slow turn of China’s system and the pulses on the lines'; pm.addEventListener('click', () => { X.orrPaused = !X.orrPaused; pmSync(); loopSync(); }); }
+      if (pm) { pm.type = 'button'; pm.hidden = true; pm.title = 'Stops the pulses on the lines and the slow turn of China’s system'; pm.addEventListener('click', () => { X.orrPaused = !X.orrPaused; pmSync(); loopSync(); }); }
       /* the Full screen button: on a phone it says so; on a desktop it is an expand icon, its words shown on hover and focus */
       let fsb = null;
       if (!full) { fsb = h('button', 'orr-fsb'); fsb.type = 'button'; fsb.setAttribute('aria-label', 'Full screen'); fsb.title = 'Full screen';
@@ -163,9 +170,10 @@
         rc.append(fsb); }
       /* the full-screen chrome: zoom, reset, key, close; the key; the hint; the card of the body tapped */
       let tbar = null, keyP = null, keyB = null, btm = null, hintEl = null;
-      if (!full && story && !compact) {   /* OR7: on a wide screen the marks' key opens on the picture itself */
-        keyB = h('button', 'orr-kyb', 'Key'); keyB.type = 'button'; keyB.setAttribute('aria-expanded', 'false'); keyB.setAttribute('aria-controls', 'isx-orr-key-in'); keyB.addEventListener('click', () => { keyP.hidden = !keyP.hidden; keyB.setAttribute('aria-expanded', String(!keyP.hidden)); X.orrKeyIn = !keyP.hidden; });
-        keyP = h('div', 'orr-kin pf-lg'); keyP.id = 'isx-orr-key-in'; keyP.hidden = !X.orrKeyIn; keyB.setAttribute('aria-expanded', String(!!X.orrKeyIn)); keyP.setAttribute('role', 'group'); keyP.setAttribute('aria-label', 'The key'); marksKey(keyP, 'orr', 0, false); rc.append(keyB); stage.append(keyP); }
+      if (!full && story) {   /* OR8: the key is on the picture at every size; a wide stage has room for it and shows it from the start */
+        keyB = h('button', 'orr-kyb', 'Key'); keyB.type = 'button'; keyB.setAttribute('aria-controls', 'isx-orr-key-in'); keyB.addEventListener('click', () => { keyP.hidden = !keyP.hidden; keyB.setAttribute('aria-expanded', String(!keyP.hidden)); X.orrKeyIn = !keyP.hidden; st.ob = null; placeLabels(); });
+        keyP = h('div', 'orr-kin pf-lg'); keyP.id = 'isx-orr-key-in'; keyP.hidden = X.orrKeyIn === undefined ? !(W >= 1180 && H >= 600 && !compact) : !X.orrKeyIn; keyB.setAttribute('aria-expanded', String(!keyP.hidden)); keyP.setAttribute('role', 'group'); keyP.setAttribute('aria-label', 'The key'); rc.append(keyB); stage.append(keyP);
+        if (R.table) rc.append(R.table); }   /* the page's own “View as table” stands in the stage's row (profit.js takes it home before the board is redrawn) */
       if (rc && pm) rc.append(pm);
       if (full) {
         tbar = h('div', 'orr-tb'); tbar.setAttribute('role', 'toolbar'); tbar.setAttribute('aria-label', 'The orrery’s controls');
@@ -183,18 +191,27 @@
       const ownD = h('div', 'orr-own'), ownB = [];
       if (story) { OWN().forEach((a, i) => { const d = h('button', 'orr-owd r' + (i % 2)); d.type = 'button'; d.style.left = ((a.year - 1995) / (maxY - 1995) * 100) + '%'; d.dataset.y = a.year; d.dataset.a = a.id; d.title = a.full + ', ' + a.year; d.setAttribute('aria-label', a.year + ': ' + (a.full.indexOf(a.n) >= 0 ? a.full : a.n + ', ' + a.full) + ', one of China’s own institutions');   /* the name on screen is part of the accessible name */ d.append(h('i', '', a.n)); ownD.append(d); ownB.push(d); }); track.classList.add('has-own'); }
       track.append(dots, inp); if (story) track.append(ownD);
-      if (story && !full) { const pc = h('div', 'orr-pc'), tk = h('div', 'orr-tkey'); tk.innerHTML = '<span><i class="e"></i>Events</span><span><i class="o"></i>China’s own</span>'; tk.setAttribute('role', 'group'); tk.setAttribute('aria-label', 'On the timeline: gold dots are events, teal diamonds are China’s own institutions'); pc.append(play, tk); slider.append(pc, track); } else slider.append(play, track);
+      if (!stg) slider.append(play, track);   /* the stage lays out its own dock (stage8.js) */
       let steps = null;
-      if (canStep) { steps = h('nav', 'orr-steps'); steps.setAttribute('aria-label', 'The story, then two steps. Left and right arrows move between them.'); play.setAttribute('aria-label', 'Play the years, 1995 to 2026, then the two steps');
-        [['', 'The story', '1995–2026'], ['pp', 'Step 1', STEPS.pp.short], ['cl', 'Step 2', STEPS.cl.short]].forEach(([k, a, b], i) => { if (i) { const s = h('span', 'sep', '›'); s.setAttribute('aria-hidden', 'true'); steps.append(s); } const bt = h('button', 'orr-stp'); bt.type = 'button'; bt.dataset.step = k; bt.append(h('small', '', a), h('b', '', b)); steps.append(bt); }); }
-      const narr = h('div', 'orr-card'), deepb = h('button', 'orr-deep'); deepb.type = 'button'; deepb.dataset.pv = hyp ? 'orr' : 'orb';
-      wrap.append(stage, slider); if (steps) wrap.append(steps); if (!hyp && mode === 'story' && !full) wrap.append(narr);
-      if (full) btm.append(info); else wrap.append(info);
+      if (canStep) play.setAttribute('aria-label', 'Play the film: the years 1995 to 2026 in eight chapters, then the two steps');
+      const deepb = h('button', 'orr-deep'); deepb.type = 'button'; deepb.dataset.pv = hyp ? 'orr' : 'orb';
+      if (stg) { deepb.append(h('b', '', 'For economists: the full statistics'), h('span', 'wipp', 'WIP'), h('small', '', 'The figures behind every year, the two orders side by side, and the method.')); deepb.classList.toggle('next', o.year >= 2025);
+        if (full) deepb.addEventListener('click', () => { o.onClose && o.onClose(); K.setV && K.setV('orb'); }); }
+      if (stg) wrap.append(stage); else { wrap.append(stage, slider); if (full) btm.append(info); else wrap.append(info); }
       host.append(wrap);
       const st = { yf: o.year, e: 0, sel: o.sel || null, band: null, noclick: false, raf: 0, playing: false, drag: false, lastInt: Math.round(o.year), opening: false, step: null, split: false, rot: X.orrRot || 0, era: -1, ins: null, nk: '', flows: null, pp: null };
       const moons = list.filter(q => q.b.sys === 'cn' && !q.core), isoB = iso => list.find(q => q.iso === iso && !q.bk);
+      const chQ = list.find(q => q.china);
+      /* OR8: the stage (v2/stage8.js) lays itself out round the picture; then the picture's box is known */
+      const stepTo = to => { const l = st.lastInt; render(to); if (Math.round(to) !== l) { cross(l, Math.round(to)); st.lastInt = Math.round(to); } };
+      const SG = stg ? X.orrStage({ h, el, OD, st, L, Vw, Sx, Sy, W, H, full, ph, compact, wrap, stage, rc, svg, defs, gV, gT, gSun, gid, list, isoB, at, f1, bn, clamp, lerp, reduce, R, STEPS, maxY,
+        counters, info, slider, play, track, deepb, keyP, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y),
+        stepCopy: s => stepCopy(s), unpick: () => unpick(), evAt, ownAt, live: () => live(), stopYear: () => { cancelAnimationFrame(st.raf); st.raf = 0; },
+        pbox: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), posAt: (iso, yf) => { const q = isoB(iso); return q ? place(q, L, yf, tension(yf)) : [L.cx, L.cy]; } }) : null;
+      if (SG) { const b = SG.box(); OX = b.ox; OY = b.oy; WP = b.wp; HL = b.hl; ph = WP < HL; if (!compact && HL < 250) MG = 28;   /* a low box: the rings take more of it, so that each ring's name has its own line */ if (!compact && HL < 250 && keyP) SG.fillKey(keyP); if (!compact && HL < 250) ppIn = true;   /* a low box has no room under the two bodies: step 1's charts stand in the narrator */   /* the picture is laid out upright only when its own box is */ relay(null); steps = SG.chs; }
+      geom();
       /* mass */
-      const share = (q, yf) => q.d ? at(q.d.share, yf) : null, kS = 28 / Math.sqrt(26) * (W / 1380) * (ph ? 1.25 : 1), kH = 28 / Math.sqrt(103) * (W / 1380) * (ph ? 1.25 : 1);
+      const share = (q, yf) => q.d ? at(q.d.share, yf) : null, kS = 28 / Math.sqrt(26) * (Math.max(WP, W * .72) / 1380) * (ph ? 1.25 : 1), kH = 28 / Math.sqrt(103) * (W / 1380) * (ph ? 1.25 : 1);
       function render(yf) {
         if (st.step && Math.round(yf) < maxY) leaveStep(); st.yf = yf; L.rot = st.rot; const yr0 = Math.round(yf), e = hyp ? 0 : tension(yf), u = ease((e - .85) / .15), f = L.f * clamp(e / .85, 0, 1), vx = L.v[0], vy = L.v[1];
         L.e = e; const Uc = u > 0 ? [lerp(L.cx - vx * f, L.U[0], u), lerp(L.cy - vy * f, L.U[1], u)] : [L.cx - vx * f, L.cy - vy * f], Cc = u > 0 ? [lerp(L.cx + vx * f, L.Cn[0], u), lerp(L.cy + vy * f, L.Cn[1], u)] : [L.cx + vx * f, L.cy + vy * f];
@@ -203,7 +220,9 @@
           ringE[k].setAttribute('cx', L.cx); ringE[k].setAttribute('cy', L.cy); ringE[k].setAttribute('rx', ax); ringE[k].setAttribute('ry', ay); ringE[k].style.opacity = u > 0 ? 1 - u : 1;
           const pr = L.rx[k] * (1 - .2 * u) , pry = L.ry[k] * (1 - .2 * u) * (ph ? 1 : 1), ax2 = lerp(L.rx[k], sx, u), ay2 = lerp(L.ry[k] , sy, u);
           [[pairU[k], Uc], [pairC[k], Cc]].forEach(([n, c]) => { n.setAttribute('cx', c[0]); n.setAttribute('cy', c[1]); n.setAttribute('rx', ax2); n.setAttribute('ry', ay2); n.style.opacity = u; });
-          if (!compact) { ringT[k].setAttribute('x', Sx(Uc[0] - L.rx[k] * .72 * (u > 0 ? L.s : 1)).toFixed(1)); ringT[k].setAttribute('y', Sy(Uc[1] + L.ry[k] * 1.02 + 10).toFixed(1)); ringT[k].style.opacity = hyp ? 0 : 1; }
+          if (!compact && stg) { ringT[k].setAttribute('x', Sx(Uc[0]).toFixed(1)); ringT[k].setAttribute('y', (Sy(Uc[1] + lerp(ay, sy, u)) + 3.5).toFixed(1)); ringT[k].setAttribute('text-anchor', 'middle');
+            ringT[k].style.opacity = HL < 250 ? String(1 - ease((e - .88) / .12)) : '';   /* a low box: once the two systems have parted the bands need the room, and the rings are named in the key */ }   /* OR8: on the stage a ring's name stands on its own ring, at its foot, where no sector puts a body */
+          else if (!compact) { ringT[k].setAttribute('x', Sx(Uc[0] - L.rx[k] * .72 * (u > 0 ? L.s : 1)).toFixed(1)); ringT[k].setAttribute('y', Sy(Uc[1] + L.ry[k] * 1.02 + 10).toFixed(1)); ringT[k].style.opacity = hyp ? 0 : 1; }
         }
         gLane.style.opacity = hyp ? 0 : ease((e - .88) / .12); laneT.forEach(t => { t.style.opacity = ease((e - .93) / .07); t.setAttribute('x', Sx(t.__p[0]).toFixed(1)); t.setAttribute('y', Sy(t.__p[1]).toFixed(1)); });
         /* OR7: nothing from the lists before its date. Before 2025 a body shows its tier and its system only; in 2025 Pax Silica's first signatures; from 2026 WAICO, so “both lists” */
@@ -211,7 +230,8 @@
         const sU = hyp ? (share({ d: OD.bodies[BYISO().USA] }, yf) || 24) : (at(OD.bodies[BYISO().USA].share, yf) || 24), sC = hyp ? 0 : (at(OD.bodies[BYISO().CHN].share, yf) || 2);
         const rU = hyp ? 11 : kS * Math.sqrt(sU), rC = kS * Math.sqrt(sC);
         const rsc = 1 / Math.sqrt(Vw.k);   /* bodies grow with the zoom by its square root, so a crowd spreads out as you zoom in */
-        placeSun(sunU, Uc, rU * 2.6 * rsc, rU * rsc); const chQ = list.find(q => q.china); placeSun(sunC, hyp || !chQ ? Cc : place(chQ, L, yf, e), rC * 2.6 * rsc, rC * rsc); sunC.style.opacity = hyp ? 0 : clamp(e * 3 + (yf >= 2001 ? .35 : 0), 0, 1);
+        const chP = hyp || !chQ ? Cc : place(chQ, L, yf, e);
+        placeSun(sunU, Uc, rU * 2.6 * rsc, rU * rsc); placeSun(sunC, chP, rC * 2.6 * rsc, rC * rsc); sunC.style.opacity = hyp ? 0 : clamp(e * 3 + (yf >= 2001 ? .35 : 0), 0, 1);
         let usP = Uc;
         list.forEach(q => {
           const p = place(q, L, yf, e), sh = hyp ? null : share(q, yf), sp = hyp && q.d ? at(q.d.sumpct, yf) : null;
@@ -229,17 +249,19 @@
           q.vis = !(q.b.k === 'g' && !q.d);
         });
         /* the streams: BEA income by host country, drawn inward to the US sun */
-        sPaths.forEach(q => { const v = at(q.d.inc, yf), p = q.p; if (!v || v <= 0 || (q.b.sys === 'cn' && u > .5) || q.core) { q.st.style.opacity = 0; q.pu.style.display = 'none'; return; } const w = clamp(.5 + Math.sqrt(v / 1000) * .38, .5, 6), mx = (p[0] + usP[0]) / 2, my = (p[1] + usP[1]) / 2 + (L.ph ? 0 : 10);
+        sPaths.forEach(q => { const v = SG ? SG.inc(q, yf) : at(q.d.inc, yf), p = q.p; if (!v || v <= 0 || (q.b.sys === 'cn' && u > .5) || q.core || (SG && st.layer !== 'earn')) { q.st.style.opacity = 0; q.pu.style.display = 'none'; return; } const w = clamp(.5 + Math.sqrt(v / 1000) * .38, .5, 6), mx = (p[0] + usP[0]) / 2, my = (p[1] + usP[1]) / 2 + (L.ph ? 0 : 10);
           q.st.setAttribute('d', `M${p[0].toFixed(1)} ${p[1].toFixed(1)}Q${mx.toFixed(1)} ${(my + (p[1] < usP[1] ? 12 : -12)).toFixed(1)} ${usP[0].toFixed(1)} ${usP[1].toFixed(1)}`); q.st.setAttribute('stroke-width', w.toFixed(2)); q.st.style.opacity = ''; q.st.dataset.on = '1';
-          if (story && e >= .985) { const len = Math.max(20, Math.hypot(p[0] - usP[0], p[1] - usP[1]) * 1.03); q.pu.setAttribute('d', q.st.getAttribute('d')); q.pu.setAttribute('stroke-width', Math.max(1.2, w).toFixed(2)); q.pu.style.strokeDasharray = (7 / len).toFixed(4) + ' ' + (93 / len).toFixed(4); q.pu.style.setProperty('--per', (-100 / len).toFixed(4)); q.pu.style.display = ''; } else q.pu.style.display = 'none'; });
+          if (story && (stg || e >= .985)) { const len = Math.max(20, Math.hypot(p[0] - usP[0], p[1] - usP[1]) * 1.03); q.pu.setAttribute('d', q.st.getAttribute('d')); q.pu.setAttribute('stroke-width', Math.max(1.2, w).toFixed(2)); q.pu.style.strokeDasharray = (7 / len).toFixed(4) + ' ' + (93 / len).toFixed(4); q.pu.style.setProperty('--per', (-100 / len).toFixed(4)); q.pu.style.display = ''; } else q.pu.style.display = 'none'; });
         /* OR7: China's own institutions as arcs round China, once the two systems have parted (u > 0); each ends at its name */
         if (story) {
           /* each arc starts just past the top and runs down one side of China to its name: by turns right and left, so the names stand in two short columns that no arc crosses */
-          const R0 = compact ? Math.max(rC * .9 + 5, 13) : Math.max(rC * .9 + 10, 30), stp = compact ? 3.2 : 8, T0 = .22;
-          arcs.forEach(A => { const on = u > 0 && yr0 >= A.a.year, r = R0 + A.i * stp, rt = A.i % 2 === 0, yo = compact ? r * .3 : 15 + Math.floor(A.i / 2) * 13.5, be = Math.asin(Math.min(.98, yo / r)), a0 = -Math.PI / 2 + (rt ? -T0 : T0), a1 = rt ? -be : -Math.PI + be, pt = a => [Cc[0] + r * Math.cos(a), Cc[1] + r * Math.sin(a)], s0 = pt(a0), s1 = pt(a1), d = `M${s0[0].toFixed(1)} ${s0[1].toFixed(1)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${rt ? 1 : 0} ${s1[0].toFixed(1)} ${s1[1].toFixed(1)}`;
-            A.p.setAttribute('d', d); A.hp.setAttribute('d', d); A.g.style.opacity = on ? u.toFixed(3) : 0; A.g.style.pointerEvents = on && u > .9 ? '' : 'none'; A.g.setAttribute('tabindex', on && u > .9 ? 0 : -1); A.on = on && u > .6; A.end = s1; A.rt = rt; });
-          st.ah = [Cc[0], Cc[1] + Math.max(14, rC * .72) + 22];
-          ownB.forEach(d => d.classList.toggle('on', +d.dataset.y <= yr0)); if (cnW) cnW.classList.toggle('off', yr0 < ORD().cn[2][1]);
+          const R0 = compact ? (stg ? Math.max(rC * .9 + 6, 17) : Math.max(rC * .9 + 5, 13)) : Math.max(rC * .9 + 10, 30), stp = compact ? (stg ? 6.6 : 3.2) : 8, T0 = .22;
+          const Ca = stg ? chP : Cc;   /* OR8: the arcs stand round China where it is, from each institution's date */
+          arcs.forEach(A => { const on = (stg || u > 0) && yr0 >= A.a.year, r = R0 + A.i * stp, rt = A.i % 2 === 0, yo = compact ? (stg ? 9 + Math.floor(A.i / 2) * 13.5 : r * .3) : 15 + Math.floor(A.i / 2) * 13.5, be = Math.asin(Math.min(.98, yo / r)), a0 = -Math.PI / 2 + (rt ? -T0 : T0), a1 = rt ? -be : -Math.PI + be, pt = a => [Ca[0] + r * Math.cos(a), Ca[1] + r * Math.sin(a)], s0 = pt(a0), s1 = pt(a1), d = `M${s0[0].toFixed(1)} ${s0[1].toFixed(1)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${rt ? 1 : 0} ${s1[0].toFixed(1)} ${s1[1].toFixed(1)}`;
+            A.p.setAttribute('d', d); A.hp.setAttribute('d', d); A.g.style.opacity = on ? (stg ? 1 : u.toFixed(3)) : 0; A.g.style.pointerEvents = on && (stg || u > .9) ? '' : 'none'; A.g.setAttribute('tabindex', on && (stg || u > .9) ? 0 : -1); A.on = on && (stg || u > .6); A.end = s1; A.rt = rt; });
+          st.ah = [Ca[0], Ca[1] + Math.max(14, rC * .72) + (stg ? 12 + Math.min(arcs.filter(A => A.on).length, 8) * (compact ? 6.6 : 8) : 22)];
+          if (stg && !compact) st.ah[1] = Math.min(st.ah[1], OY + HL - 15 - 9);   /* the heading stays inside the rim */
+          ownB.forEach(d => d.classList.toggle('on', +d.dataset.y <= yr0));
           if (st.py !== yr0) { st.py = yr0; st.ins = null; }
         }
         if (c4) c4.hidden = !sPaths.some(q => q.st.style.opacity !== '0');
@@ -250,13 +272,13 @@
         if (hyp) { const g = OD.bodies[BYISO().DEU]; c1.innerHTML = '<span>Germany, summed since 1995</span><b>' + f1(at(g.sumpct, yf)) + '% of GDP</b>'; c2.innerHTML = '<span>China (from 1997)</span><b>' + (at(CN.sumpct, yf) == null ? 'not collected' : f1(at(CN.sumpct, yf)) + '% of GDP') + '</b>'; c3.innerHTML = '<span>United States</span><b>' + f1(at(U.sumpct, yf)) + '% of GDP</b>'; }
         else {
           c1.innerHTML = '<span>US share of world GDP</span><b>' + f1(at(U.share, yf)) + '%</b>'; c2.innerHTML = '<span>China’s share</span><b>' + f1(at(CN.share, yf)) + '%</b>';
-          const cu = at(U.sum, yf), cc = at(CN.sum, yf); c3.innerHTML = '<span>Current account summed since 1995</span><b>US ' + tn(cu) + ' · China ' + (cc == null ? 'from 1997' : tn(cc)) + '</b>' + (yr === 2026 ? '<em class="wipp">IMF estimate</em>' : '');
+          const cu = at(U.sum, yf), cc = at(CN.sum, yf); c3.innerHTML = '<span>Current account summed since 1995</span><b>US ' + tn(cu) + ' · China ' + (cc == null ? 'from 1997' : tn(cc)) + '</b>' + (yr === 2026 ? '<em class="est">2026: IMF estimate</em>' : '');
         }
         if (story) narrate(yr);
         inp.setAttribute('aria-valuetext', spoken(yr)); if (!st.drag && document.activeElement !== inp) inp.value = yf; else if (!st.drag) inp.value = yf;
         if (st.sel) infoFor(st.sel);
-        if (full) { const ev = hyp ? null : evAt(yr), ins = story ? ownAt(yr) : null; evl.textContent = ev ? ev.year + ' · ' + ev.label : ''; if (ins) evl.append(h('span', 'own', 'China’s own · ' + ins.year + ' · ' + ins.n)); }
-        OZ[hyp ? 'hy' : 'y'] = yr; syncKey(); drawStep(); placeLabels(); if (canStep && cur && cur.wrap === wrap) R.title.textContent = V.orr.title();
+        if (full && !stg) { const ev = hyp ? null : evAt(yr), ins = story ? ownAt(yr) : null; evl.textContent = ev ? ev.year + ' · ' + ev.label : ''; if (ins) evl.append(h('span', 'own', 'China’s own · ' + ins.year + ' · ' + ins.n)); }
+        OZ[hyp ? 'hy' : 'y'] = yr; syncKey(); if (SG) SG.draw({ yf, yr0, e, u, f, Uc, Cc }); drawStep(); placeLabels(); if (canStep && cur && cur.wrap === wrap) R.title.textContent = V.orr.title();
       }
       /* ---------- the names: only the big ones on a phone, and never two on top of each other ---------- */
       const LBL_MIN = hyp ? 55 : 2.5;   /* a phone names a body above this mass: 2.5% of world GDP (hyp: 55% of GDP summed) */
@@ -266,7 +288,8 @@
       function obstacles() {
         const t = performance.now(); if (st.ob && t - st.obT < 300) return st.ob; const r = svg.getBoundingClientRect(), z = W / (r.width || W), out = [];
         const add = n => { if (!n || !n.isConnected) return; const b = n.getBoundingClientRect(); if (b.width && b.height) out.push([(b.left - r.left) * z - 4, (b.top - r.top) * z - 3, (b.right - r.left) * z + 4, (b.bottom - r.top) * z + 3]); };
-        if (!st.step) counters.querySelectorAll(':scope > div').forEach(add); add(fsb); add(strip); if (pm && !pm.hidden) add(pm); if (!full && keyB) { add(keyB); if (!keyP.hidden) add(keyP); } if (st.cap) add(st.cap); if (st.fn) add(st.fn); if (st.pp) st.pp.querySelectorAll('.orr-ch').forEach(add); if (tbar) tbar.querySelectorAll('button').forEach(add);
+        if (SG) SG.obstacles(add, out); else if (!st.step) counters.querySelectorAll(':scope > div').forEach(add);
+        add(fsb); if (rc) rc.querySelectorAll('.pf-tbtn').forEach(add); if (pm && !pm.hidden) add(pm); if (!full && keyB) { add(keyB); if (!keyP.hidden) add(keyP); } if (st.cap) add(st.cap); if (st.fn) add(st.fn); if (st.pp) st.pp.querySelectorAll('.orr-ch').forEach(add); if (tbar) tbar.querySelectorAll('button').forEach(add);
         st.ob = out; st.obT = t; return out;
       }
       function placeLabels() {
@@ -276,23 +299,41 @@
         const nb = new Set([...near].sort((a, b) => a[0] - b[0]).slice(0, 4).map(a => a[1]));
         /* OR7: the names of China's arcs and of the step's lines are placed first; body names give way to them */
         arcs.forEach(A => { if (!A.t.isConnected) return; const vis = A.on && !st.opening; A.t.classList.toggle('off', !vis); if (!vis) return; if (!A.tw) { try { A.tw = A.t.getComputedTextLength(); } catch (x) { A.tw = 0; } } const w = A.tw || A.t.textContent.length * 5.6, x = Sx(A.end[0]) + (A.rt ? 6 : -6), y = Sy(A.end[1]) + 3.5; A.t.setAttribute('x', x.toFixed(1)); A.t.setAttribute('y', y.toFixed(1)); A.t.setAttribute('text-anchor', A.rt ? 'start' : 'end'); placed.push(A.rt ? [x - 2, y - 9, x + w + 2, y + 3] : [x - w - 2, y - 9, x + 2, y + 3]); });
-        if (arcH) { const vis = !!(arcs.length && arcs[0].on && !st.opening && st.ah); arcH.classList.toggle('off', !vis); if (vis) { const x = Sx(st.ah[0]), y = Sy(st.ah[1]); arcH.setAttribute('x', x.toFixed(1)); arcH.setAttribute('y', y.toFixed(1)); placed.push([x - 96, y - 10, x + 96, y + 4]); } }
+        if (arcH) { const vis = !!(arcs.length && arcs[0].on && !st.opening && st.ah) && (!stg || arcs.filter(A => A.on).length >= 4) && !(stg && !compact && HL < 250 && L.e < .9) && !(stg && compact && !ph);   /* OR8: the heading comes once there are several arcs to head (in a low box, once China's system stands on its own: before that the rings' names need the room) */ arcH.classList.toggle('off', !vis); if (vis) { const x = Sx(st.ah[0]), y = Sy(st.ah[1]); arcH.setAttribute('x', x.toFixed(1)); arcH.setAttribute('y', y.toFixed(1)); placed.push([x - 96, y - 10, x + 96, y + 4]); } }
         if (st.flabs) st.flabs.forEach(r => placed.push(r));
+        /* OR8, a low box: no line is free above or below a band, so a band's name looks for the nearest free place beside its bodies (and keeps it while it stays free) */
+        if (stg && !ph && HL < 250 && laneT.length && L.e >= .93 && !st.step) {
+          const dots = list.filter(q => q.p && q.vis !== false).map(q => { const rr = Math.max(3, q.r * Math.sqrt(k)) + 2, x = Sx(q.p[0]), y = Sy(q.p[1]); return [x - rr, y - rr, x + rr, y + rr]; });
+          const free = r => r[0] > OX + 6 && r[2] < OX + WP - 6 && r[1] > OY + 22 && r[3] < OY + HL - 17 && !dots.some(d => hit(d, r)) && !placed.some(p => hit(p, r));
+          laneT.forEach((t, i) => { const B = L.band[i ? 'swing' : 'both'], w = t.textContent.length * 7.4 + 8, bx = Sx((B[1] + B[2]) / 2), rect = (x, y) => [x - w / 2, y - 10, x + w / 2, y + 4];
+            let best = t.__s && free(rect(t.__s[0], t.__s[1])) ? t.__s : null;
+            if (!best) { let bd = 1e9; [B[0] + 13, B[0] - 14, B[0] + 38, B[0] - 30, B[0] + 54].forEach(yy => { const y = Sy(yy); for (let x = OX + 8 + w / 2; x <= OX + WP - 8 - w / 2; x += 10) { if (!free(rect(x, y))) continue; const d = Math.abs(x - bx) + Math.abs(yy - B[0] - 13) * 3; if (d < bd) { bd = d; best = [x, y]; } } }); }
+            t.__s = best; t.style.visibility = best ? '' : 'hidden'; if (best) { t.setAttribute('x', best[0].toFixed(1)); t.setAttribute('y', best[1].toFixed(1)); } });
+        } else laneT.forEach(t => { if (t.__s) { t.__s = null; t.style.visibility = ''; } });
         /* the words that stay on the picture (desktop): ring names and the lane's, nudged apart */
-        ringT.concat(laneT).forEach(t => { if (!t.isConnected || t.style.opacity === '0') return; const x = +t.getAttribute('x'), y0 = +t.getAttribute('y'), w = t.classList.contains('orr-lt') ? Math.max(120, t.textContent.length * 8.2) : (t.textContent.length * 7.4), anc = t.getAttribute('text-anchor') === 'middle' ? -w / 2 : 0; let y = y0, r = [x + anc, y - 10, x + anc + w, y + 3];
-          for (let n = 0; n < 6 && placed.some(p => hit(p, r)); n++) { y += 5; r = [x + anc, y - 10, x + anc + w, y + 3]; } if (y !== y0) t.setAttribute('y', y.toFixed(1)); placed.push(r); });
+        ringT.concat(laneT).forEach(t => { if (stg && st.rimY && t.classList.contains('orr-rl')) { const out = +t.getAttribute('y') > st.rimY[1] - 3; t.style.visibility = out ? 'hidden' : ''; if (out) return; }   /* the camera has moved in: a ring whose foot lies outside the frame is not named under it */
+          if (!t.isConnected || t.style.opacity === '0' || +t.style.opacity < .05 && t.style.opacity !== '') return; const x = +t.getAttribute('x'), y0 = +t.getAttribute('y'), w = t.classList.contains('orr-lt') ? Math.max(120, t.textContent.length * 8.2) : (t.textContent.length * 7.4), anc = t.getAttribute('text-anchor') === 'middle' ? -w / 2 : t.getAttribute('text-anchor') === 'end' ? -w : 0, up = stg ? 9 : 10, dn = stg ? 2.5 : 3; let y = y0, r = [x + anc, y - up, x + anc + w, y + dn];
+          if (t.__s) { placed.push(r); return; }   /* a band's name that found its own place */
+          for (let n = 0; n < 6 && placed.some(p => hit(p, r)); n++) { y += 5; r = [x + anc, y - up, x + anc + w, y + dn]; } if (y !== y0) t.setAttribute('y', y.toFixed(1)); placed.push(r); });
         const cand = list.map(q => { let pr = -1; if (!q.p) return null;
-          if (q === sel) pr = 4e9; else if (q.core) pr = 3e9; else if (nb.has(q)) pr = 2e9 + (q.mass || 0);
+          /* OR8: a body at the end of a flow line carries the line's figure after its name, and is always named */
+          const sf = st.sfx ? st.sfx.get(q.id) : null, txt = q.vt + (sf || ''); if (q.txt !== txt) { q.tx.textContent = txt; q.txt = txt; q.tw = 0; } q.tx.classList.toggle('fx', !!sf);
+          if (q === sel) pr = 4e9; else if (q.core) pr = 3e9; else if (sf && !st.step) pr = 2.5e9 + (q.mass || 0); else if (nb.has(q)) pr = 2e9 + (q.mass || 0);
           else if (!compact) pr = 1e9 + (q.mass || 0); else if (q.mass != null && q.mass >= LBL_MIN / (k * k)) pr = 1e9 + q.mass;
           return pr < 0 ? null : [pr, q]; }).filter(Boolean).sort((a, b) => b[0] - a[0]);
         const on = new Set();
         cand.forEach(([pr, q]) => {
           const cx = Sx(q.p[0]), cy = Sy(q.p[1]), rr = q.r * Math.sqrt(k), w = measure(q), hh = 12, g = 4;
           const opts = [[cx + rr + g, cy, 'start'], [cx - rr - g, cy, 'end'], [cx, cy - rr - 9, 'middle'], [cx, cy + rr + 10, 'middle'], [cx + rr * .7 + g, cy - rr - 6, 'start'], [cx + rr * .7 + g, cy + rr + 8, 'start'], [cx - rr * .7 - g, cy - rr - 6, 'end'], [cx - rr * .7 - g, cy + rr + 8, 'end']];
-          let pick_ = null; const ord = q.lo != null && q.b.sys === 'cn' ? [opts[q.lo]].concat(opts.filter((_, i) => i !== q.lo)) : opts;   /* a moon's name keeps its side while it fits there */
+          if (stg && pr >= 2.5e9) opts.push([cx + rr + g, cy - 14, 'start'], [cx + rr + g, cy + 14, 'start'], [cx - rr - g, cy - 14, 'end'], [cx - rr - g, cy + 14, 'end'], [cx, cy - rr - 22, 'middle'], [cx, cy + rr + 23, 'middle'], [cx + rr + g, cy - 27, 'start'], [cx + rr + g, cy + 27, 'start'], [cx - rr - g, cy - 27, 'end'], [cx - rr - g, cy + 27, 'end']);   /* OR8: a name that must show (a centre, the end of a flow line) has more places to stand */
+          let pick_ = null; const ord = stg && q.china && arcs.some(A => A.on) ? [opts[3], opts[5], opts[7]].concat(opts) : q.lo != null && q.b.sys === 'cn' ? [opts[q.lo]].concat(opts.filter((_, i) => i !== q.lo)) : opts;   /* OR8: China's name stands under it once its arcs are drawn: their names stand beside it */   /* a moon's name keeps its side while it fits there */
           for (const op of ord) { const [x, y, an] = op, x0 = an === 'start' ? x : an === 'end' ? x - w : x - w / 2, r = [x0 - 1, y - hh / 2, x0 + w + 1, y + hh / 2 + 1];
-            if (r[0] < 2 || r[2] > W - 2 || r[1] < 2 || r[3] > HL - 2) continue; if (placed.some(p => hit(p, r))) continue; pick_ = [x, y, an, r]; q.lo = opts.indexOf(op); break; }
-          if (!pick_ && pr >= 3e9) { const [x, y, an] = opts[0], x0 = an === 'start' ? x : an === 'end' ? x - w : x - w / 2; pick_ = [x, y, an, [x0 - 1, y - hh / 2, x0 + w + 1, y + hh / 2 + 1]]; }   /* the body tapped is never dropped: the others yield, the smaller first */
+            if (r[0] < 2 || r[2] > W - 2 || r[1] < OY + 2 || r[3] > OY + HL - 2) continue; if (placed.some(p => hit(p, r))) continue; pick_ = [x, y, an, r]; q.lo = opts.indexOf(op); break; }
+          if (!pick_ && pr >= 2.5e9) {   /* a name that must show is never dropped: it takes the place where it lies over the least */
+            let best = null; for (const op of ord) { const [x, y, an] = op, x0 = an === 'start' ? x : an === 'end' ? x - w : x - w / 2, r = [x0 - 1, y - hh / 2, x0 + w + 1, y + hh / 2 + 1]; if (r[0] < 2 || r[2] > W - 2 || r[1] < OY + 2 || r[3] > OY + HL - 2) continue;
+              const ov = placed.reduce((sum, p) => sum + Math.max(0, Math.min(p[2], r[2]) - Math.max(p[0], r[0])) * Math.max(0, Math.min(p[3], r[3]) - Math.max(p[1], r[1])), 0); if (!best || ov < best[0]) best = [ov, x, y, an, r]; }
+            if (!best) { const [x, y, an] = ord[0], x0 = an === 'start' ? x : an === 'end' ? x - w : x - w / 2; best = [0, x, y, an, [x0 - 1, y - hh / 2, x0 + w + 1, y + hh / 2 + 1]]; }
+            pick_ = best.slice(1); }
           if (!pick_) return; placed.push(pick_[3]); on.add(q);
           q.tx.setAttribute('x', pick_[0].toFixed(1)); q.tx.setAttribute('y', (pick_[1] + 4).toFixed(1)); q.tx.setAttribute('text-anchor', pick_[2]);
         });
@@ -302,12 +343,12 @@
         Vw.k = clamp(Vw.k, 1, 5); Vw.x = clamp(Vw.x, W - W * Vw.k, 0); Vw.y = clamp(Vw.y, H - H * Vw.k, 0);
         gV.setAttribute('transform', 'translate(' + Vw.x.toFixed(2) + ' ' + Vw.y.toFixed(2) + ') scale(' + Vw.k.toFixed(4) + ')'); render(st.yf);
       }
-      function zoomBy(f, c) { c = c || [W / 2, H / 2]; const k0 = Vw.k, k = clamp(k0 * f, 1, 5), wx = (c[0] - Vw.x) / k0, wy = (c[1] - Vw.y) / k0; Vw.k = k; Vw.x = c[0] - k * wx; Vw.y = c[1] - k * wy; applyView(); }
-      function resetView() { Vw.k = 1; Vw.x = 0; Vw.y = 0; if (full) { OZ.tilt = null; Object.assign(L, layout(W, HL, ph, .5), { e: L.e }); } applyView(); }
-      function setTilt(t) { t = clamp(t, TILT[0], TILT[1]); if (L.ph || Math.abs(t - L.tilt) < .0005) return; OZ.tilt = t; Object.assign(L, layout(W, HL, ph, t), { e: L.e }); render(st.yf); }
+      function zoomBy(f, c) { if (SG) SG.userView(); c = c || [W / 2, H / 2]; const k0 = Vw.k, k = clamp(k0 * f, 1, 5), wx = (c[0] - Vw.x) / k0, wy = (c[1] - Vw.y) / k0; Vw.k = k; Vw.x = c[0] - k * wx; Vw.y = c[1] - k * wy; applyView(); }
+      function resetView() { Vw.k = 1; Vw.x = 0; Vw.y = 0; if (full || stg) { OZ.tilt = null; relay(null); } if (SG) SG.resetCam(); applyView(); }
+      function setTilt(t) { t = clamp(t, TILT[0], TILT[1]); if (L.ph || Math.abs(t - L.tilt) < .0005) return; OZ.tilt = t; relay(t); render(st.yf); }
       /* the key: the rings and bands, named off the picture */
       function syncKey() {
-        const box = full ? keyP : (compact ? K.R.lg : null); if (!box) return; const on = L.e >= .9; if (st.band === on && box === st.bandBox) return; st.band = on; st.bandBox = box;
+        const box = full || stg ? keyP : (compact ? K.R.lg : null); if (!box) return; const on = L.e >= .9; if (st.band === on && box === st.bandBox) return; st.band = on; st.bandBox = box;
         box.querySelectorAll('[data-band]').forEach(n => { n.hidden = !on; });
       }
       function keyShow(v) { keyP.hidden = !v; keyB.setAttribute('aria-expanded', String(v)); X.orrKey = v; }
@@ -317,45 +358,38 @@
         return hyp ? 'Year ' + yr + '. Germany, ' + f1(at(OD.bodies[BYISO().DEU].sumpct, yr)) + '% of GDP summed since 1995. China, ' + (at(CN.sumpct, yr) == null ? 'not collected' : f1(at(CN.sumpct, yr)) + '%') + '.'
           : 'Year ' + yr + '. China, ' + f1(at(CN.share, yr)) + '% of world GDP.' + (ev && ev.year === yr ? ' Event: ' + ev.line : ''); };
       function infoFor(id) {
-        const q = list.find(x => x.id === id); info.textContent = ''; info.dataset.idle = q ? '' : '1'; if (!q) { info.append(h('p', 'oh', (ph ? 'Tap' : 'Move over or select') + ' a body for its share, its summed current account and what US firms’ affiliates earned there.')); return; }
+        const q = list.find(x => x.id === id); info.textContent = ''; info.dataset.idle = q ? '' : '1'; if (SG) SG.onSel(null); if (!q) { info.append(h('p', 'oh', (ph ? 'Tap' : 'Move over or select') + ' a body for its share, its summed current account and what US firms’ affiliates earned there.')); return; }
         const yr = Math.round(st.yf), d = q.d, b = q.b; st.sel = id;
         info.append(h('span', 'k', q.bk ? 'Booking point' : (q.core ? 'Centre' : (b.wring === 1 ? 'Tools, chips and finance' : OB.sectors[b.wsec] || ''))), h('b', '', q.name));
         const rows = [];
         if (d && d.share && !q.bk) rows.push(['Share of world GDP, ' + yr, at(d.share, yr) == null ? 'not collected' : f1(at(d.share, yr)) + '%' + (d.estFrom && yr >= d.estFrom ? ' (IMF estimate)' : '')]);
         if (d && d.sum) rows.push(['Current account summed since 1995', at(d.sum, yr) == null ? 'not collected' : tn(at(d.sum, yr)) + (at(d.sumpct, yr) != null ? ' · ' + f1(at(d.sumpct, yr)) + '% of that year’s GDP' : '')]);
-        if (d && d.inc) rows.push(['Income of US affiliates there, ' + yr, at(d.inc, yr) == null ? 'not collected' : '$' + (Math.round(at(d.inc, yr)) / 1000).toFixed(1) + 'bn (BEA' + (yr < 2006 ? ', net of withholding taxes' : '') + ')']);
+        const FL = OD.flows, hf = FL && q.iso ? FL.h1.out[q.iso] : null, b1 = v => '$' + (v / 1000).toFixed(1) + 'bn';
+        if (d && d.inc && yr >= 2026 && hf) rows.push(['Income of US affiliates there, first half of 2026', b1(hf[1]) + ' (first half of 2025: ' + b1(hf[0]) + '; BEA, six months)']);   /* OR8: BEA has the first half of 2026; a full year does not exist yet */
+        else if (d && d.inc) rows.push(['Income of US affiliates there, ' + yr, at(d.inc, yr) == null ? 'not collected' : '$' + (Math.round(at(d.inc, yr)) / 1000).toFixed(1) + 'bn (BEA' + (yr < 2006 ? ', net of withholding taxes' : '') + ')']);
+        const cbk = FL && q.iso && !hyp ? FL.swap.cb[q.iso] : null; if (cbk && yr >= 2007) rows.push(['Fed dollar swap line', cbk + ((FL.swap.drew[String(yr)] || []).includes(q.iso) ? ': drew dollars in ' + yr : ': no dollars drawn in ' + yr) + ' (Federal Reserve, New York Fed)']);
+        const tc = FL && q.iso && !hyp ? FL.tic.hold[q.iso] : null; if (tc) { const v = tc[yi(yr)]; rows.push(['US Treasuries held there, ' + (yr >= 2026 ? FL.tic.last : 'end of ' + yr), v != null ? bn(v) + ' (Treasury TIC; custody, not ownership)' : yr < 2000 ? 'no country figures before 2000' : 'not among the holders Treasury lists that year']); }
         if (q.china) rows.push(['Streams into China', 'not collected']);
         const M = !hyp && OD.members && q.iso ? OD.members[q.iso] : null;   /* OR7: official lists read 25 Nov 2026; shown as of the slider's year */
         if (M) { const f = m => m[0] + ' (' + (/^first/.test(m[2]) ? 'since the ' + m[2] : /^(partner|founder|founding)/.test(m[2]) ? m[2] : 'since ' + m[2]) + ')', now = M.filter(m => m[1] != null && m[1] <= yr && !(q.china && m[0] === 'ADB')).map(f), nc = M.filter(m => m[1] == null && (m[2] === 'not collected' || yr >= 2026)).map(m => m[0] + ': ' + m[2]);
           rows.push(['Member of, ' + yr, now.concat(nc).join(' · ') || (q.china ? 'none of SCO, BRICS, NDB, AIIB or WAICO yet' : 'none of ADB, AIIB, NDB, SCO or BRICS')], q.china ? ['In the old order, ' + yr, ORD().cn.filter(x => x[1] <= yr).map(x => x[0] + ' (since ' + x[1] + ')').join(' · ')] : ['IMF, World Bank and WTO membership', 'not collected']); }
         rows.forEach(r => { const p = h('p', 'rw'); p.append(h('span', '', r[0]), h('b', '', r[1])); info.append(p); });
         if (b.role && !q.bk) info.append(h('p', 'ro', b.role));
-        if (q.iso === 'DEU' || q.iso === 'NLD') { const a = h('button', 'lk', q.iso === 'DEU' ? 'German hypocrisy →' : 'The Netherlands declines to comment. →'); a.type = 'button'; a.dataset.pv = 'hyp'; info.append(a); }
+        if (q.iso === 'DEU' || q.iso === 'NLD') { const a = h('button', 'lk', q.iso === 'DEU' ? 'German hypocrisy →' : 'The Netherlands declines to comment. →'); a.type = 'button'; a.dataset.pv = 'hyp'; if (full && stg) a.addEventListener('click', () => { o.onClose && o.onClose(); K.setV && K.setV('hyp'); }); info.append(a); }
+        if (SG) SG.onSel(q);
       }
-      /* ---------- OR7: the card under the timeline: the event, and what China builds; in a step, the step ---------- */
-      function narrate(yr) {
-        const key = yr + '|' + (st.step || '') + '|' + (st.ins || ''); if (key === st.nk) return; st.nk = key; narr.textContent = ''; narr.dataset.step = st.step || '';
-        const nav = (bk, nx) => { const n = h('div', 'orr-nav'); [bk, nx].forEach((x, i) => { if (!x) return; const b = h('button', 'orr-nx' + (i ? ' fw' : '')); b.type = 'button'; if (x[2]) b.dataset.pv = x[2]; else b.dataset.gs = x[0] || ''; b.textContent = (i ? 'Next: ' : '← Back: ') + x[1] + (i ? ' →' : ''); n.append(b); }); return n; };
-        if (st.step) {
-          const S = STEPS[st.step], a = h('div', 'orr-ev1 stp'); a.append(h('span', 'k', 'After the story · step ' + S.n + ' of 2'), h('p', '', S.title + '.'));
-          if (st.step === 'pp') { const D = OD.steps.pp, fl = v => { const i = v.findIndex(x => x != null); let j = v.length - 1; while (v[j] == null) j--; return [D.years[i], v[i], D.years[j], v[j]]; }, u = fl(D.us), c = fl(D.cn);
-            const mx = D.cn.reduce((r, v, i) => v != null && v > r[1] ? [D.years[i], v] : r, [0, 0]);
-            a.append(h('p', 'd', 'In the ' + u[2] + ' Forbes list, US firms took ' + f1(u[3]) + '% of the profits of the world’s 2,000 largest listed firms, up from ' + f1(u[1]) + '% in the ' + u[0] + ' list. China made ' + f1(c[3]) + '% of the world’s manufacturing value added in ' + c[2] + ', up from ' + f1(c[1]) + '% in ' + c[0] + '; its highest share was ' + f1(mx[1]) + '%, in ' + mx[0] + '.'));
-            if (ppIn && st.pp) a.append(st.pp);
-            if (!ppIn) a.append(h('small', '', 'Sources: ' + D.usSrc + ' ' + D.cnSrc)); a.append(nav(['', 'The story, 2026'], ['cl', 'China finances the system it competes with'])); }
-          else { const C = OD.steps.cl, nm = iso => (isoB(iso) || { name: iso }).name, o = C.into.slice(1).map(x => nm(x[0]) + ' ' + bn(x[1]));
-            a.append(h('p', 'd', 'In ' + C.year + ' China ran a surplus of ' + bn(C.into[0][1]) + ' with the world, ' + o.join(' and ') + '; the United States ran a deficit of ' + bn(C.us) + '. These are the three largest surpluses among the economies on the picture, not the whole pool.'), ...(ph || W >= 1000 ? [] : [h('p', 'ast', '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.')]),
-              h('small', '', 'Source: ' + C.src), nav(['pp', 'Profit and production'], ['', 'For economists: the full statistics', 'orb'])); }
-          narr.append(a); return; }
-        const ev = evAt(yr), a = h('div', 'orr-ev1'); a.append(h('span', 'k', ev ? ev.year + ' · ' + ev.label : String(yr)), h('p', '', ev ? ev.line : ''), h('small', '', ev ? 'Source: ' + ev.src : ''));
-        if (yr >= LW) a.append(h('span', 'k k2', '2026 · Pax Silica grows'), h('p', 'x', 'More governments sign through the year: the list stood at 25 signatories beside the United States on 25 Nov 2026 (State Department).'));
-        const lk = h('button', 'lk', 'All four cards →'); lk.type = 'button'; lk.dataset.pv = 'orb'; a.append(lk);
-        const ins = (st.ins && OWN().find(x => x.id === st.ins)) || ownAt(yr), b = h('div', 'orr-ins');
-        b.append(h('span', 'k t', ins ? 'China builds its own · ' + ins.year + ' · ' + (compact && ins.full.length > 34 ? ins.n : ins.full) : 'The frame · the old order'), h('p', '', ins ? ins.line : ORD().frame.line), h('small', '', 'Source: ' + (ins ? ins.src : ORD().frame.src)));
-        narr.append(a, b); if (canStep && yr >= maxY) narr.append(nav(null, ['pp', 'Profit gathers at the centre; production moves to China']));
+      /* ---------- the narration (OR8): the stage's narrator writes the chapter, the event and what China builds; the two steps' sentences are made here ---------- */
+      function narrate(yr) { if (SG) SG.narr(yr); }
+      function stepCopy(s) {
+        if (s === 'pp') { const D = OD.steps.pp, fl = v => { const i = v.findIndex(x => x != null); let j = v.length - 1; while (v[j] == null) j--; return [D.years[i], v[i], D.years[j], v[j]]; }, u = fl(D.us), c = fl(D.cn);
+          const mx = D.cn.reduce((r, v, i) => v != null && v > r[1] ? [D.years[i], v] : r, [0, 0]);
+          return { body: 'In the ' + u[2] + ' Forbes list, US firms took ' + f1(u[3]) + '% of the profits of the world’s 2,000 largest listed firms, up from ' + f1(u[1]) + '% in the ' + u[0] + ' list. China made ' + f1(c[3]) + '% of the world’s manufacturing value added in ' + c[2] + ', up from ' + f1(c[1]) + '% in ' + c[0] + '; its highest share was ' + f1(mx[1]) + '%, in ' + mx[0] + '.',
+            charts: ppIn && st.pp ? st.pp : null, src: ppIn ? '' : 'Sources: ' + D.usSrc + ' ' + D.cnSrc }; }
+        const C = OD.steps.cl, nm = iso => (isoB(iso) || { name: iso }).name, o = C.into.slice(1).map(x => nm(x[0]) + ' ' + bn(x[1]));
+        return { body: 'In ' + C.year + ' China ran a surplus of ' + bn(C.into[0][1]) + ' with the world, ' + o.join(' and ') + '; the United States ran a deficit of ' + bn(C.us) + '. These are the three largest surpluses among the economies on the picture, not the whole pool.', ast: compact ? '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.' : null, src: 'Source: ' + C.src };
       }
       /* ---------- OR7: the two steps after 2026 ---------- */
-      function stepUI() { if (!steps) return; steps.querySelectorAll('.orr-stp').forEach(b => { if ((b.dataset.step || '') === (st.step || '')) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); }); }
+      function stepUI() { if (SG) SG.onStep(); }
       function stepClear() { gFlow.textContent = ''; flowT.forEach(n => n.remove()); flowT.length = 0; st.flows = null; st.flabs = null; st.ppL = null; if (st.pp) { st.pp.remove(); st.pp = null; } if (st.cap) { st.cap.remove(); st.cap = null; } if (st.fn) { st.fn.remove(); st.fn = null; } if (st.vn0 != null) R.vn.textContent = st.vn0; list.forEach(q => { q.g.classList.remove('keep'); q.tx.classList.remove('keep'); }); }
       function leaveStep() { stepClear(); st.step = null; OZ.step = null; wrap.dataset.step = ''; st.nk = ''; stepUI(); st.ob = null; if (canStep) R.title.textContent = V.orr.title(); }
       function setStep(s, quiet) {
@@ -366,7 +400,7 @@
         if (s) { const keep = ['USA', 'CHN'].concat(s === 'cl' ? OD.steps.cl.into.map(x => x[0]) : []); list.forEach(q => { const k = !q.bk && keep.includes(q.iso); q.g.classList.toggle('keep', k); q.tx.classList.toggle('keep', k && q.core); }); }
         if (s) { if (st.vn0 == null) st.vn0 = R.vn.textContent; R.vn.textContent = 'After the story · step ' + STEPS[s].n + ' of 2';   /* in a step the counters step back; a caption says what the picture's figures are and of which year */
           st.cap = h('div', 'orr-sc'); st.cap.append(h('b', '', s === 'pp' ? 'Two shares of the world’s total' : 'Current accounts in ' + OD.steps.cl.year + ', $bn (IMF)')); stage.append(st.cap);
-          if (s === 'cl' && (ph || W >= 1000)) { st.fn = h('p', 'orr-fn', '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.'); st.fn.style.bottom = (FH + 6) + 'px'; stage.append(st.fn); } }
+          if (s === 'cl' && !stg) { st.fn = h('p', 'orr-fn', '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.'); stage.append(st.fn); } }
         if (s === 'pp') buildPP(); else if (s === 'cl') buildCL();
         narrate(Math.round(st.yf)); stepUI(); drawStep(); placeLabels(); R.title.textContent = V.orr.title(); deepb.classList.toggle('next', st.yf >= 2025);
         if (!quiet) { X.emit('profit', { st: 'order', view: K.vw(), act: 'step' }); K.sync && K.sync(); }
@@ -391,23 +425,23 @@
         sv.addEventListener('pointerleave', () => [hx, hd, ht].forEach(n => { n.style.display = 'none'; }));
         box.append(h('div', 'ct', title), sv, h('small', '', us ? D.usSrc : D.cnSrc)); return box;
       }
-      function buildPP() { const avail = HL - L.cy - Math.max(34, isoB('USA').r * 1.25 + 12) - 6, plotH = ppIn ? 84 : clamp(Math.round(avail - 96), 44, 92); st.pp = h('div', 'orr-pp' + (ppIn ? ' in' : '')); st.pp.append(chart('us', plotH), chart('cn', plotH)); if (!ppIn) { stage.append(st.pp); return; }
+      function buildPP() { const avail = OY + HL - L.cy - Math.max(34, isoB('USA').r * 1.25 + 12) - 6, plotH = ppIn ? (stg && !compact ? 44 : 84) : clamp(Math.round(avail - 96), 44, 92); st.pp = h('div', 'orr-pp' + (ppIn ? ' in' : '')); st.pp.append(chart('us', plotH), chart('cn', plotH)); if (!ppIn) { stage.append(st.pp); return; }
         /* a narrow stage: the charts stand in the card under the picture, and the picture carries the two end figures by their bodies */
         const D = OD.steps.pp, last = v => { let j = v.length - 1; while (v[j] == null) j--; return [D.years[j], v[j]]; }, u = last(D.us), c = last(D.cn);
         st.ppL = [['USA', 'US firms: ' + f1(u[1]) + '% of the profits', 'of the world’s 2,000 largest listed firms · ' + u[0] + ' list'], ['CHN', 'China: ' + f1(c[1]) + '% of the world’s', 'manufacturing value added · ' + c[0]]].map(([iso, a, b]) => { const tx = el('text', { class: 'orr-fl' }, a), t2 = el('text', { class: 'orr-fl fg sur' }, b); gT.append(tx, t2); flowT.push(tx, t2); return { iso, t: tx, t2 }; }); }
       /* step 2: surpluses run into one named point, never into the United States; one line runs from it into the United States; goods and dollars between the poles are dashed and illustrative */
       function buildCL() {
-        const C = OD.steps.cl, two = L.ph || W < 900;   /* a narrow stage: the name and the figure on two lines */
+        const C = OD.steps.cl, two = L.ph || (WP < 1150 && !(compact && HL < 240));   /* two lines where the picture is narrow; one where it is low (a phone held sideways) */   /* a narrow stage: the name and the figure on two lines */
         const mk = (cls, label, fig, from, to, v) => { const pa = el('path', { class: 'fl ' + cls, fill: 'none', 'data-from': from, 'data-to': to }), pu = v == null ? null : el('path', { class: 'fpu', fill: 'none', pathLength: 1 }), tx = el('text', { class: 'orr-fl ' + cls }, fig && !two ? label + ' · ' + fig : label), t2 = fig && two ? el('text', { class: 'orr-fl fg ' + cls }, fig) : null; gFlow.append(pa); if (pu) gFlow.append(pu); gT.append(tx); flowT.push(tx); if (t2) { gT.append(t2); flowT.push(t2); } return { p: pa, pu, t: tx, t2, from, to, v, cls }; };
         st.flows = C.into.map(([iso, v], i) => mk('sur', i ? (isoB(iso) || { name: iso }).name : 'China’s surplus', bn(v), iso, 'clearing', v));
         st.flows.push(mk('def', 'finances the US deficit', bn(C.us), 'clearing', 'USA', Math.abs(C.us)), mk('ill g', L.ph ? '↑ Goods*' : '← Goods*', null, 'CHN', 'USA', null), mk('ill dl', L.ph ? 'Dollars* ↓' : 'Dollars* →', null, 'USA', 'CHN', null));
         const g = el('g', { class: 'fp' }); g.append(el('circle', { class: 'o', r: 9 }), el('circle', { class: 'i', r: 3.2 })); gFlow.append(g); st.pt = g; st.ptT = el('text', { class: 'orr-fl pt' }, 'Multilateral clearing*'); gT.append(st.ptT); flowT.push(st.ptT);
       }
       function drawStep() {
-        if (st.step === 'pp' && st.pp && !ppIn) { const pw = Math.min(300, Math.round(W * .36)), gap = Math.max(34, isoB('USA').r * 1.25 + 12); [['.u', isoB('USA').p], ['.c', isoB('CHN').p]].forEach(([s, c]) => { const n = st.pp.querySelector(s); n.style.width = pw + 'px'; n.style.left = clamp(c[0] - pw / 2, 8, W - pw - 8).toFixed(0) + 'px'; n.style.top = (c[1] + gap).toFixed(0) + 'px'; }); }
+        if (st.step === 'pp' && st.pp && !ppIn) { const pw = Math.min(300, Math.round(WP * .36)), gap = Math.max(34, isoB('USA').r * 1.25 + 12); [['.u', isoB('USA').p], ['.c', isoB('CHN').p]].forEach(([s, c]) => { const n = st.pp.querySelector(s); n.style.width = pw + 'px'; n.style.left = clamp(c[0] - pw / 2, OX + 8, OX + WP - pw - 8).toFixed(0) + 'px'; n.style.top = (c[1] + gap).toFixed(0) + 'px'; }); }
         if (st.step === 'pp' && st.ppL) { const fl = []; st.ppL.forEach(F => { const q = isoB(F.iso), sx = clamp(Sx(q.p[0]), 150, W - 150), sy = Sy(q.p[1]) + q.r * .8 + 24; let w = 0; try { w = Math.max(F.t.getComputedTextLength(), F.t2.getComputedTextLength()); } catch (x) { w = 0; } w = w || 250; [F.t, F.t2].forEach((n, i) => { n.setAttribute('x', sx.toFixed(1)); n.setAttribute('y', (sy + i * 16).toFixed(1)); n.setAttribute('text-anchor', 'middle'); }); fl.push([sx - w / 2 - 3, sy - 10, sx + w / 2 + 3, sy + 20]); }); st.flabs = fl; }
         if (st.step !== 'cl' || !st.flows) return;
-        const P = [L.cx, L.cy], v = L.ph, nrm = v ? [1, 0] : [0, 1], flabs = [], pos = k => k === 'clearing' ? P : isoB(k).p, rad = k => k === 'clearing' ? 12 : isoB(k).r * (isoB(k).core ? .74 : 1) + 4;
+        const P = [L.cx, L.cy], v = L.ph, low = compact && !v && HL < 240 /* a phone held sideways: the picture is low, so the names keep clear of the centre line */, nrm = v ? [1, 0] : [0, 1], flabs = [], pos = k => k === 'clearing' ? P : isoB(k).p, rad = k => k === 'clearing' ? 12 : isoB(k).r * (isoB(k).core ? .74 : 1) + 4;
         const tl = F => { if (!F.tw) { try { F.tw = Math.max(F.t.getComputedTextLength(), F.t2 ? F.t2.getComputedTextLength() : 0); } catch (x) { F.tw = 0; } } return F.tw || F.t.textContent.length * 5.8; };
         /* a name at (x, y): where a figure stands under it, y is the first of the two lines */
         const lab = (F, x, y, an) => { const sx = Sx(x), sy = Sy(y), w = tl(F), x0 = an === 'start' ? sx : an === 'end' ? sx - w : sx - w / 2; [F.t, F.t2].forEach((n, i) => { if (!n) return; n.setAttribute('x', sx.toFixed(1)); n.setAttribute('y', (sy + i * 16).toFixed(1)); n.setAttribute('text-anchor', an); }); flabs.push([x0 - 3, sy - 10, x0 + w + 3, sy + 4 + (F.t2 ? 16 : 0)]); };
@@ -417,25 +451,25 @@
         st.flows.forEach(F => {
           const A0 = pos(F.from), B0 = pos(F.to), dd = Math.hypot(B0[0] - A0[0], B0[1] - A0[1]) || 1, ux = (B0[0] - A0[0]) / dd, uy = (B0[1] - A0[1]) / dd, ra = rad(F.from), rb = rad(F.to) + 3, A = [A0[0] + ux * ra, A0[1] + uy * ra], B = [B0[0] - ux * rb, B0[1] - uy * rb], M = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
           let d, len = dd, bow = 0;
-          if (F.cls.indexOf('ill') === 0) bow = (F.cls === 'ill g' ? (v ? -.72 * W : .5 * HL) : (v ? .72 * W : .78 * HL));
-          else if (F.cls === 'sur' && F.from !== 'CHN') bow = side * (.1 + .22 * others.indexOf(F)) * (v ? W : HL);
+          if (F.cls.indexOf('ill') === 0) bow = (F.cls === 'ill g' ? (v ? -.72 * WP : .5 * HL) : (v ? .72 * WP : .78 * HL));
+          else if (F.cls === 'sur' && F.from !== 'CHN') bow = side * (.1 + .22 * others.indexOf(F)) * (v ? WP : HL);
           if (bow) { const Cp = [M[0] + nrm[0] * bow, M[1] + nrm[1] * bow], Ap = [M[0] + nrm[0] * bow / 2, M[1] + nrm[1] * bow / 2]; d = `M${A[0].toFixed(1)} ${A[1].toFixed(1)}Q${Cp[0].toFixed(1)} ${Cp[1].toFixed(1)} ${B[0].toFixed(1)} ${B[1].toFixed(1)}`; len = dd * 1.2 + Math.abs(bow) * .5;
             if (F.cls.indexOf('ill') === 0) { if (v) lab(F, Ap[0] + (bow < 0 ? 7 : -7), Ap[1] + 24, bow < 0 ? 'start' : 'end'); else lab(F, Ap[0], Ap[1] + 15, 'middle'); }
             else if (v) lab(F, Ap[0] + (bow > 0 ? 7 : -7), Ap[1] + (others.indexOf(F) ? -24 : 8), bow > 0 ? 'start' : 'end'); else lab(F, Ap[0], Ap[1] + (bow < 0 ? -7 - up(F) : 15), 'middle'); }
           else { d = `M${A[0].toFixed(1)} ${A[1].toFixed(1)}L${B[0].toFixed(1)} ${B[1].toFixed(1)}`; flabs.push([Math.min(Sx(A0[0]), Sx(B0[0])) - 5, Math.min(Sy(A0[1]), Sy(B0[1])) - 5, Math.max(Sx(A0[0]), Sx(B0[0])) + 5, Math.max(Sy(A0[1]), Sy(B0[1])) + 5]);
             if (v) { if (F.cls === 'def') lab(F, M[0] - side * 10, M[1] - 2, side > 0 ? 'end' : 'start'); else lab(F, M[0] + 10, M[1] - 2, 'start'); }
-            else if (F.cls === 'def' && F.t2) lab(F, M[0], M[1] + 17, 'middle'); else if (F.t2) lab(F, A[0] + (ux < 0 ? -8 : 8), M[1] - 21, ux < 0 ? 'end' : 'start'); else lab(F, M[0], M[1] - 8, 'middle'); }
+            else if (F.cls === 'def' && F.t2) lab(F, M[0], M[1] + 17, 'middle'); else if (F.t2) lab(F, A[0] + (ux < 0 ? -8 : 8), M[1] - 21, ux < 0 ? 'end' : 'start'); else if (F.cls === 'def' && low) lab(F, P[0] - 14, M[1] + 15, 'end');   /* it ends before the pool, whose own name starts under it */ else lab(F, M[0], M[1] - 8, 'middle'); }
           F.p.setAttribute('d', d); const w = F.v == null ? 1.4 : clamp(1.4 + Math.sqrt(F.v) / 9, 1.6, 5.6); F.p.setAttribute('stroke-width', w.toFixed(2)); F.p.setAttribute('marker-end', 'url(#orr-m' + (F.cls === 'def' ? 'g' : F.v == null ? 'c' : 'w') + gid + ')');
           if (F.pu) { F.pu.setAttribute('d', d); F.pu.setAttribute('stroke-width', w.toFixed(2)); F.pu.style.strokeDasharray = (9 / len).toFixed(4) + ' ' + (51 / len).toFixed(4); F.pu.style.setProperty('--per', (-60 / len).toFixed(4)); }
         });
         st.pt.setAttribute('transform', `translate(${P[0].toFixed(1)} ${P[1].toFixed(1)})`);
-        const PT = { t: st.ptT }; if (v) lab(PT, P[0] + 15, P[1] - 9, 'start'); else lab(PT, P[0], P[1] - 17, 'middle');
+        const PT = { t: st.ptT }; if (v) lab(PT, P[0] + 15, P[1] - 9, 'start'); else if (low) lab(PT, P[0] + 9, P[1] + 25, 'start'); else lab(PT, P[0], P[1] - 17, 'middle');
         st.flabs = flabs;
       }
       /* the marks' key follows the lists' dates as the picture does */
       function syncMarks(era) { [full ? keyP : (story || compact ? R.lg : null), !full ? keyP : null].forEach(box => { if (!box) return; const mkk = box.querySelector('.orr-mk'); if (mkk && story) fillMarks(mkk, 'orr', era, compact); box.querySelectorAll('[data-band]').forEach(n => { n.lastChild.textContent = era < 2 ? 'Between the two systems' : n.dataset.band === '1' ? 'On both lists' : 'On neither list'; }); }); }
-      const motion = { wants: () => story && st.split && !st.opening && !reduce(),
-        step(dt, n) { st.rot = (st.rot + dt * ROT) % (Math.PI * 2); X.orrRot = st.rot; L.rot = st.rot; moons.forEach(q => { const c = place(q, L, st.yf, L.e); q.p = c; q.g.setAttribute('transform', `translate(${c[0].toFixed(2)} ${c[1].toFixed(2)})`); }); if (n % 6 === 0) placeLabels(); } };
+      const motion = { wants: () => story && (stg || st.split) && !st.opening && !reduce(),   /* OR8: the pulses on the flow lines run in every year; China's system turns only once the systems have parted */
+        step(dt, n) { if (!st.split) return; st.rot = (st.rot + dt * ROT) % (Math.PI * 2); X.orrRot = st.rot; L.rot = st.rot; moons.forEach(q => { const c = place(q, L, st.yf, L.e); q.p = c; q.g.setAttribute('transform', `translate(${c[0].toFixed(2)} ${c[1].toFixed(2)})`); }); if (n % 6 === 0) placeLabels(); } };
       /* the interaction */
       const pick = id => { st.sel = id; list.forEach(q => q.g.classList.toggle('sel', q.id === id)); infoFor(id); placeLabels(); };
       const unpick = () => { if (!st.sel) return; st.sel = null; list.forEach(q => q.g.classList.remove('sel')); infoFor(null); placeLabels(); };
@@ -450,7 +484,7 @@
       const ripC = el('circle', { class: 'ripc', opacity: 0, fill: 'none' }); gR.append(ripC);
       const c_pulse = () => { const c = isoB('CHN'); if (!c || !c.p) return; ripC.setAttribute('cx', c.p[0].toFixed(1)); ripC.setAttribute('cy', c.p[1].toFixed(1)); ripC.setAttribute('r', (Math.max(8, c.r) + 9).toFixed(1)); ripC.classList.remove('go'); void ripC.getBoundingClientRect(); ripC.classList.add('go'); };
       const e_ripple = () => { const e = st.e, f = L.f * clamp(L.e / .85, 0, 1); ripple.setAttribute('cx', L.cx); ripple.setAttribute('cy', L.cy); ripple.setAttribute('rx', L.rx[4] + f * Math.abs(L.v[0]) + 14); ripple.setAttribute('ry', L.ry[4] + f * Math.abs(L.v[1]) + 14); ripple.classList.remove('go'); void ripple.getBoundingClientRect(); ripple.classList.add('go'); return true; };
-      const stop = () => { cancelAnimationFrame(st.raf); st.raf = 0; if (st.playing) { st.playing = false; play.textContent = '▶ Play'; play.setAttribute('aria-pressed', 'false'); } };
+      const stop = () => { if (SG) SG.filmStop(); cancelAnimationFrame(st.raf); st.raf = 0; if (st.playing) { st.playing = false; play.textContent = '▶ Play'; play.setAttribute('aria-pressed', 'false'); } };
       const live = () => wrap.isConnected && X.view === 'profit' && !document.hidden;
       function go(y, ms) {   /* to a year, over ms (instantly under reduced motion) */
         y = clamp(y, 1995, maxY); const a = st.yf, t0 = performance.now(); cancelAnimationFrame(st.raf);
@@ -474,17 +508,12 @@
       });
       dots.addEventListener('click', ev => { const b = ev.target.closest('[data-y]'); if (b) { stop(); go(+b.dataset.y, 600); } });
       ownD.addEventListener('click', ev => { const b = ev.target.closest('[data-y]'); if (b) { stop(); go(+b.dataset.y, 600); } });
-      if (steps) {
-        const ORDR = [null, 'pp', 'cl'];
-        steps.addEventListener('click', ev => { const b = ev.target.closest('[data-step]'); if (b) { stop(); setStep(b.dataset.step || null); } });
-        steps.addEventListener('keydown', ev => { const dlt = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0; if (!dlt) return; ev.preventDefault(); const i = ORDR.indexOf(st.step), j = clamp(i + dlt, 0, 2); if (j === i) return; stop(); setStep(ORDR[j]); steps.querySelectorAll('.orr-stp')[j].focus({ preventScroll: true }); });
-        narr.addEventListener('click', ev => { const b = ev.target.closest('[data-gs]'); if (b) { stop(); setStep(b.dataset.gs || null); const c = steps.querySelector('[aria-current]'); if (c) c.focus({ preventScroll: true }); } });
-      }
       /* an arc, or its name: the card says what that institution is */
       const arcPick = id => { if (!id || st.step) return; st.ins = id; narrate(Math.round(st.yf)); };
       svg.addEventListener('click', ev => { const g = ev.target.closest && ev.target.closest('[data-a]'); if (g) arcPick(g.dataset.a); });
       gArc.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { const g = ev.target.closest('[data-a]'); if (g) { ev.preventDefault(); arcPick(g.dataset.a); } } });
       play.addEventListener('click', () => {
+        if (SG) { SG.playToggle(); return; }   /* OR8: Play runs the film of chapters */
         if (st.playing) { stop(); return; }
         if (st.yf >= maxY - .01 && (!canStep || st.step === 'cl')) { render(1995); st.lastInt = 1995; }
         const STOPS = hyp ? [] : [...new Set(EVS().map(e => e.year).concat(story ? OWN().map(a => a.year) : []))].sort((a, b) => a - b), isEv = y => EVS().some(e => e.year === y);
@@ -511,10 +540,10 @@
       const mid = () => { const [a, b] = [...ptr.values()]; return { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, m: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2] }; };
       const move = ev => {
         if (!ptr.has(ev.pointerId) || !gst) return; ptr.set(ev.pointerId, pt(ev));
-        if (gst.pinch) { if (ptr.size < 2) return; const c = mid(), k = clamp(gst.k0 * c.d / gst.d0, 1, 5), wx = (gst.m0[0] - gst.v0.x) / gst.k0, wy = (gst.m0[1] - gst.v0.y) / gst.k0; Vw.k = k; Vw.x = c.m[0] - k * wx; Vw.y = c.m[1] - k * wy; gst.moved = true; applyView(); return; }
+        if (gst.pinch) { if (ptr.size < 2) return; const c = mid(), k = clamp(gst.k0 * c.d / gst.d0, 1, 5), wx = (gst.m0[0] - gst.v0.x) / gst.k0, wy = (gst.m0[1] - gst.v0.y) / gst.k0; Vw.k = k; Vw.x = c.m[0] - k * wx; Vw.y = c.m[1] - k * wy; gst.moved = true; if (SG) SG.userView(); applyView(); return; }
         if (ev.pointerId !== gst.id) return; const p = ptr.get(ev.pointerId), dx = p[0] - gst.p0[0], dy = p[1] - gst.p0[1];
         if (!gst.moved && Math.hypot(dx, dy) < 5) return; gst.moved = true;
-        if (full && (gst.type !== 'mouse' || (Vw.k > 1 && !gst.shift))) { Vw.x = gst.v0.x + dx; Vw.y = gst.v0.y + dy; applyView(); }
+        if (full && (gst.type !== 'mouse' || (Vw.k > 1 && !gst.shift))) { Vw.x = gst.v0.x + dx; Vw.y = gst.v0.y + dy; if (SG) SG.userView(); applyView(); }
         else if (gst.type !== 'touch' && !L.ph) setTilt(gst.t0 + dy * .0018);
       };
       const up = ev => {
@@ -538,12 +567,12 @@
         if (ev.shiftKey && (k === 'ArrowUp' || k === 'ArrowDown')) setTilt(L.tilt + (k === 'ArrowDown' ? .05 : -.05));
         else if (!full) used = false;
         else if (k === '+' || k === '=') zoomBy(1.5); else if (k === '-' || k === '_') zoomBy(1 / 1.5); else if (k === '0') resetView();
-        else if (k === 'ArrowLeft') { Vw.x += 40; applyView(); } else if (k === 'ArrowRight') { Vw.x -= 40; applyView(); } else if (k === 'ArrowUp') { Vw.y += 40; applyView(); } else if (k === 'ArrowDown') { Vw.y -= 40; applyView(); }
+        else if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') { if (SG) SG.userView(); if (k === 'ArrowLeft') Vw.x += 40; else if (k === 'ArrowRight') Vw.x -= 40; else if (k === 'ArrowUp') Vw.y += 40; else Vw.y -= 40; applyView(); }
         else used = false;
         if (used) ev.preventDefault();
       });
       if (fsb) fsb.addEventListener('click', () => openFull(mode, fsb, api));
-      if (full) { keyShow(X.orrKey === undefined ? compact : X.orrKey);   /* a phone's first full screen opens the key once; after that it stays as the visitor left it */ if (!hyp) ringKey(keyP, true, hl, mode === 'rings'); marksKey(keyP, mode === 'rings' ? 'rng' : mode === 'story' ? 'orr' : mode, 0, compact); }
+      if (full) { keyShow(X.orrKey === undefined ? compact : X.orrKey);   /* a phone's first full screen opens the key once; after that it stays as the visitor left it */ if (!stg) { if (!hyp) ringKey(keyP, true, hl, mode === 'rings'); marksKey(keyP, mode === 'rings' ? 'rng' : mode === 'story' ? 'orr' : mode, 0, compact); } }
       /* the opening (spec §7): once per visit; Skip or Esc */
       function opening() {
         if (mode !== 'story' || X.orrOpened || full) return false; X.orrOpened = true;
@@ -565,8 +594,9 @@
       render(o.year); st.lastInt = Math.round(o.year); applyView(); if (st.sel) pick(st.sel); else infoFor(null);
       if (canStep) { stepUI(); if (OZ.step && STEPS[OZ.step] && o.year >= maxY) setStep(OZ.step, true); else OZ.step = null; }
       document.fonts && document.fonts.ready && document.fonts.ready.then(() => { if (wrap.isConnected) { list.forEach(q => { q.tw = 0; }); placeLabels(); } });
-      if (mode === 'story' && !full) { const dp = h('div', 'orr-foot'); deepb.append(h('b', '', 'For economists: the full statistics'), h('span', 'wipp', 'WIP'), h('small', '', 'The figures behind every year, the two orders side by side, and the method.')); deepb.classList.toggle('next', o.year >= 2025); dp.append(deepb); wrap.append(dp); }
-      const api = { render, go, stop, opening, st, wrap, deep: deepb, slider, svg, list, L, fsb, hl, setStep, motion, pm, steps, arcs, syncMarks, setTilt, zoomBy, resetView, view: Vw, keyShow, refreshKey: () => { st.band = null; syncKey(); }, hint: hintEl, key: keyP, tb: tbar, W, H, compact };
+      if (stg) { pmSync(); loopSync(); }   /* the pulses run from the first frame */
+      if (SG && !o.view) { const c = SG.CH[SG.idx()]; SG.camTo(c.cam, 0, c.y1); }   /* the picture opens where its chapter looks */
+      const api = { render, go, stop, opening, st, wrap, deep: deepb, slider, svg, list, L, fsb, hl, setStep, motion, pm, steps, arcs, syncMarks, setTilt, zoomBy, resetView, view: Vw, SG, stage, box: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), keyShow, refreshKey: () => { st.band = null; syncKey(); }, hint: hintEl, key: keyP, tb: tbar, W, H, compact };
       return api;
     }
 
@@ -587,7 +617,7 @@
         if (btn && hl) { s.addEventListener('mouseenter', () => hl(k, true)); s.addEventListener('mouseleave', () => hl(k, false)); s.addEventListener('focus', () => hl(k, true)); s.addEventListener('blur', () => hl(k, false)); } });
       if (bands) ['On both lists', 'On neither list'].forEach((t, i) => { const s = h('span', 'olg orr-kr band'); s.dataset.band = String(i + 1); s.hidden = true; s.append(h('i', 'ln'), t); box.append(s); });   /* the lane's two sides, where the marks do not already say it */
     }
-    const fillMarks = (m, mode, era, compact) => { m.textContent = ''; (mode === 'orr' ? MARKS_ORR[clamp(era || 0, 0, 2)] : (MARKS[mode] || [])).forEach(([c, t]) => { const s = h('span', 'olg'); s.append(h('i', c), t); m.append(s); });
+    const fillMarks = (m, mode, era, compact) => { m.textContent = ''; (mode === 'orr' ? MARKS_ORR[clamp(era || 0, 0, 2)] : (MARKS[mode] || [])).forEach(([c, t]) => { const s = h('span', 'olg' + (c === 'sl' ? ' k-sl' : '')); s.append(h('i', c), t); m.append(s); });
       if (mode === 'orr' && compact && era >= 1) { const s = h('span', 'olg own'); s.append(h('i', 'arc'), 'China’s own institutions, the arcs from the inside out: ' + ARCS().map(a => a.n + ' ' + a.year).join(' · ')); m.append(s); } };
     const marksKey = (box, mode, era, compact) => { const m = h('span', 'orr-mk'); fillMarks(m, mode, era, compact); box.append(m); };
 
@@ -601,10 +631,10 @@
     function fsBuild(snap) {
       const f = FS; if (!f) return; const old = f.o;
       if (old) { old.stop(); old.wrap.remove(); }
-      const W = Math.round(f.body.clientWidth), H = Math.round(f.body.clientHeight) - BAR;
+      const story = f.mode === 'story', W = Math.round(f.body.clientWidth), H = Math.round(f.body.clientHeight) - (story ? 0 : BAR);   /* OR8: the story's timeline is inside its stage */
       const prevW = old ? old.W : W, yk = f.mode === 'hyp' ? 'hy' : 'y', v = snap ? snap.view : null;
       const o = Orrery(f.body, { mode: f.mode, year: OZ[yk], full: true, W, H, sel: snap ? snap.sel : null, view: v ? { k: v.k, x: v.x * W / prevW, y: v.y * W / prevW } : null, onClose: closeFull });
-      f.o = o; f.W = W; f.H = H + BAR; loopSync(); f.ov.classList.toggle('portrait', W < H); f.ov.classList.toggle('compact', o.compact);
+      f.o = o; f.W = W; f.H = H + (story ? 0 : BAR); loopSync(); f.ov.classList.toggle('portrait', W < H); f.ov.classList.toggle('compact', o.compact);
       const hint = o.hint; if (hint) { const need = W < H && handheld(); hint.hidden = !need; if (need) hint.textContent = 'Turn your phone sideways to see the whole picture.'; }
       o.refreshKey();
     }
@@ -636,7 +666,7 @@
       try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (x) { }
       if (f.ov.parentNode) f.ov.parentNode.removeChild(f.ov);
       document.documentElement.classList.remove('isx-pzlock'); const wr = X.root && X.root.querySelector(':scope > .wrap'); if (wr) wr.inert = false; loopSync();
-      const yk = f.mode === 'hyp' ? 'hy' : 'y', i = cur && cur.wrap && cur.wrap.isConnected ? cur : f.inl; if (i && i.wrap && i.wrap.isConnected) { i.render(OZ[yk]); i.st.lastInt = Math.round(OZ[yk]); }
+      const yk = f.mode === 'hyp' ? 'hy' : 'y', i = cur && cur.wrap && cur.wrap.isConnected ? cur : f.inl; if (i && i.wrap && i.wrap.isConnected) { i.render(OZ[yk]); i.st.lastInt = Math.round(OZ[yk]); if (i.SG && f.mode === 'story') i.setStep(OZ.step || null, true); }
       const b = f.from; if (b && b.isConnected) b.focus({ preventScroll: true });
     }
     X.on && X.on('view', v => { if (v !== 'profit') closeFull(); });
@@ -656,17 +686,22 @@
     const back = () => { const b = h('button', 'pf-chip orr-back', '← Back to the story, ' + OZ.y); b.type = 'button'; b.dataset.pv = 'orr'; K.R.chips.append(b, h('span', 'gap')); };
     const DEEP = ['fig', 'rng', 'pft', 'hyp'];
     let cur = null;
-    const mount = mode => { const fig = R.fig; fig.classList.add('orr-fig'); const o = Orrery(fig, { mode, year: mode === 'hyp' ? OZ.hy : OZ.y }); cur = o; loopSync(); return o; };
+    /* OR8: the story's stage ends where the bar begins: its height is what the window leaves under its top, never less than a phone held sideways can show whole */
+    const stageH = fig => { const bar = document.getElementById('isx-tabs'), bh = bar && getComputedStyle(bar).position !== 'absolute' ? bar.offsetHeight + 20 : bar ? bar.offsetHeight + 14 : 0, top = fig.getBoundingClientRect().top + window.scrollY, nat = window.innerHeight - top - bh, all = window.innerHeight - bh - 8; return Math.round(window.innerWidth <= 760 && window.innerHeight > window.innerWidth ? all : nat >= 420 ? nat : Math.min(all, Math.max(nat, 420))); };   /* a phone upright: a screenful under its header, as the Circuit is there */
+    const mount = mode => { const fig = R.fig; fig.classList.add('orr-fig'); fig.style.height = mode === 'story' ? stageH(fig) + 'px' : ''; const o = Orrery(fig, { mode, year: mode === 'hyp' ? OZ.hy : OZ.y }); cur = o; loopSync();
+      /* OR8, a low and wide window (a phone held sideways): the stage is one screen, under the header. The first time it opens, the page comes to rest on it */
+      if (mode === 'story' && !X.orrAligned && innerHeight < 560 && innerWidth > innerHeight) { X.orrAligned = true; requestAnimationFrame(() => { const r = fig.getBoundingClientRect(); if (r.top > 8 && scrollY < 4 && X.root.classList.contains('v-profit')) scrollTo({ top: scrollY + r.top - 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }); }
+      return o; };
+    let rsT = 0; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { if (X.view !== 'profit' || K.vw() !== 'orr' || !cur || !cur.SG || !cur.wrap.isConnected || FS) return; if (Math.abs(stageH(R.fig) - cur.H) > 6) K.board(true); }, 140); });
     const WIPN = 'WIP';
     V.orr = {
-      title: () => OZ.step && STEPS[OZ.step] && K.vw() === 'orr' ? STEPS[OZ.step].title : cur && cur.L && cur.L.e >= .9 ? 'Two systems, and a curtain between them' : 'One system around the United States', unit: 'Size: share of world GDP · Position: tier and role · Schematic', tall: true,
+      title: () => cur && cur.SG && cur.wrap.isConnected && K.vw() === 'orr' ? cur.SG.chTitle() : OZ.step && STEPS[OZ.step] && K.vw() === 'orr' ? STEPS[OZ.step].title : 'One system around the United States', unit: 'Size: share of world GDP · Position: tier and role · Schematic', tall: true,
       draw() {
         if (!need()) return; const o = mount('story'); K.reading('', '');
         if (OZ.y >= 2025) o.deep.classList.add('next');
         const first = !X.orrOpened && OZ.y === 1995; if (first) o.opening();
         o.render(OZ.y); R.title.textContent = V.orr.title();
-        R.lg.textContent = ''; marksKey(R.lg, 'orr', o.st.era, o.compact); R.lg.append(h('span', 'olg none', 'Streams into China: not collected'));
-        if (o.compact) { ringKey(R.lg, false, null, false); o.refreshKey(); }   /* on a phone the rings and bands are named here, not on the picture */
+        R.lg.textContent = ''; o.refreshKey();   /* OR8: the key is on the picture (the stage fills it), at every size */
         const oo = o.render; o.render = v => { oo(v); R.title.textContent = V.orr.title(); };
       },
       table: () => { if (!OD) return { cap: 'The orrery is loading.', head: ['Body'], rows: [['…']] }; const yr = OZ.y, ids = Object.keys(OD.bodies);

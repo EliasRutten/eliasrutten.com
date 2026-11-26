@@ -164,7 +164,7 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     ok(r.doors.join(',') === 'simulator|The imperial machinery,elite-network|The elite network,imperial-arm|The imperial arm' && /when-the-bubble-pops/.test(r.ess || ''), 'the doors lead to the imperial machinery, the elite network and the imperial arm; the essay is linked', r);
     await p.click('#isx-pf-fin .pf-door[data-pgo="imperial-arm"]'); await p.waitForTimeout(400); ok(await p.evaluate(() => ISX.view === 'story'), 'a door opens its tab');
     await p.evaluate(() => { location.hash = '#profit/finale'; }); await p.waitForTimeout(400);
-    await p.evaluate(() => { const n = ISX.route.next('profit'); if (n) n.click(); }); await p.waitForTimeout(400); ok(await p.evaluate(() => ISX.view === 'fin'), 'Next after the finale goes on to the imperial machinery');
+    await p.evaluate(() => { const n = ISX.route.next('profit'); if (n) n.click(); }); await p.waitForTimeout(400); ok(await p.evaluate(() => ISX.view === 'story'), 'Next after the finale goes on to the imperial arm (T1, 26 Nov 2026: the order is followed by the arm)');
     await done(p);
   }
 

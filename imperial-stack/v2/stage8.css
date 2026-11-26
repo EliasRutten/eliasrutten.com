@@ -1,0 +1,299 @@
+/* The Imperial Stack v2 · stage8.css (round OR8, 26 Nov 2026). Linked after orrery.css; every rule starts with #isx-root.
+   The order's stage: the story fills the screen between the header and the bar, the way the Circuit and the machinery do, and carries its own
+   narration, chapters, key and controls (v2/stage8.js). Sizes: “wide” has a column on each side of the picture (252 px, COL in the script),
+   “mid” lays the HUD over the picture's corner, “port” is a phone upright (the narration is a sheet under the picture), “land” a phone sideways
+   (the narration is one slim bar). --top is where the page's header ends over the stage; --dock is the height of the narrator and the timeline. */
+
+/* ---------- the profit scene steps aside ---------- */
+#isx-root.v-profit.orr-stg #isx-scene-profit { padding: 0; }
+#isx-root.v-profit.orr-stg .frame { background: radial-gradient(ellipse 70% 75% at 50% 46%, #0c1b2c 0%, #060c14 58%, var(--bg) 100%); }
+#isx-root .pf.stg { position: relative; gap: 0; }
+#isx-root .pf.stg .pf-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#isx-root .pf.stg .pf-jump { display: none; }
+#isx-root .pf.stg .pf-board { display: block; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+#isx-root .pf.stg .pf-board > :is(.pf-chips, .pf-bhead, .pf-note, .pf-tiles, .pf-reading, .pf-foot) { display: none; }
+#isx-root .pf.stg .pf-fig.orr-fig { min-height: 0; overflow: hidden; }
+#isx-root .pf.stg .pf-text { margin: 18px 22px 16px; }
+/* the tab's title line stands on the stage, under the brand */
+#isx-root .pf.stg .pf-top { position: absolute; z-index: 4; left: 22px; top: 92px; max-width: 232px; pointer-events: none; }
+#isx-root .pf.stg .pf-top > * { pointer-events: auto; }
+#isx-root .pf.stg .pf-tt { display: grid; gap: 3px; margin: 0; font-size: 10.5px; line-height: 1.35; }
+#isx-root .pf.stg .pf-ttl { font-size: 10.5px; letter-spacing: .1em; }
+#isx-root .pf.stg .pf-k { font-size: 10.5px; letter-spacing: .12em; }
+#isx-root .pf.stg .pf-fn { width: min(430px, 80vw); padding: 12px 14px; border-radius: 12px; background: rgba(8, 13, 19, .97); border: 1px solid #1b2a37; }
+#isx-root.v-profit.orr-stg #isx-tabs .rt-nx { background: none; box-shadow: none; color: #b9c8d4; }   /* the bar's own next is the next station: the stage's “Next” is the way forward */
+#isx-root.v-profit.orr-stg #isx-tabs .rt-nx:hover { background: rgba(255, 210, 122, .08); color: #ffd27a; }
+@media (min-width: 761px) and (max-width: 1179px) { #isx-root .pf.stg .pf-top { max-width: 60%; } #isx-root .pf.stg .pf-tt { display: block; } #isx-root .pf.stg .pf-k { display: none; } }
+/* a short window with the header over the scene (a phone held sideways): the stage starts under the header, and is a screenful of its own */
+@media (min-width: 761px) and (max-height: 560px) { #isx-root.v-profit.orr-stg #isx-scene-profit { padding-top: 118px; } #isx-root .pf.stg .pf-top { max-width: 44%; } #isx-root .pf.stg .pf-ttl { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 760px) {
+  #isx-root .pf.stg .pf-top { position: static; max-width: none; padding: 4px 12px 6px; }
+  #isx-root .pf.stg .pf-k { display: none; }
+  #isx-root .pf.stg .pf-text { margin: 14px 10px 10px; }
+}
+
+/* ---------- the stage ---------- */
+#isx-root .orr.stg { height: 100%; gap: 0; }
+#isx-root .orr.stg .orr-stage { height: 100%; border: 0; border-radius: 0; background: none; --top: 0px; --hudtop: 0px; --dock: 240px; }
+#isx-root .orr-fs .orr.stg .orr-stage { background: radial-gradient(ellipse 70% 75% at 50% 46%, #0c1b2c 0%, #060c14 58%, #04070b 100%); }
+#isx-root .orr.stg .orr-svg { position: absolute; left: 0; top: 0; transition: opacity .45s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg .orr-stage.tc .orr-svg { opacity: .42; }
+#isx-root .orr.stg .orr-svg .ol, #isx-root .orr.stg .orr-svg .orr-fl, #isx-root .orr.stg .orr-svg .orr-al, #isx-root .orr.stg .orr-svg .orr-ahd { stroke: #060b12; }
+#isx-root .orr.stg .orr-svg .orr-rl { fill: #8fa3b3; paint-order: stroke; stroke: #060b12; stroke-width: 3px; stroke-linejoin: round; }
+
+/* the HUD: the year, the counters, which flows are shown and what they are */
+#isx-root .orr.stg .orr-hud { position: absolute; z-index: 2; left: 16px; top: calc(var(--hudtop) + 6px); width: 226px; display: grid; gap: 8px; transition: opacity .4s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg .orr-ct { position: static; gap: 4px; pointer-events: none; }
+#isx-root .orr.stg .orr-yr { font: 600 40px/1 var(--display); letter-spacing: .03em; color: #fff; text-shadow: 0 0 22px rgba(120, 190, 255, .35); }
+#isx-root .orr.stg .orr-c span { font-size: 10.5px; letter-spacing: .12em; }
+#isx-root .orr.stg .orr-c b { font-size: 15px; }
+#isx-root .orr.stg .orr-c em.est { display: block; margin-top: 1px; font: normal 10.5px/1.3 var(--mono); letter-spacing: .08em; color: #c9a45e; }   /* a dated note, not a button */
+#isx-root .orr.stg[data-step="pp"] .orr-hud, #isx-root .orr.stg[data-step="cl"] .orr-hud { opacity: 0; pointer-events: none; }
+#isx-root .orr.stg[data-step="pp"] .orr-ct, #isx-root .orr.stg[data-step="cl"] .orr-ct { opacity: 1; }
+#isx-root .orr.stg .orr-sc { left: 16px; top: calc(var(--hudtop) + 8px); }
+#isx-root .orr-fsel { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 6px; margin-top: 2px; }
+#isx-root .orr-fsel .fk { flex: 0 0 100%; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #7f91a0; }
+#isx-root .orr-fb { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(8, 13, 19, .6); border: 1px solid #263847; color: #9aabba; font: 500 11px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: color .18s, border-color .18s, background .18s; }
+#isx-root .orr-fb i { flex: none; width: 14px; height: 0; border-top: 2px solid #9aabba; }
+#isx-root .orr-fb.l-paper i { border-top-color: #E9C77F; } #isx-root .orr-fb.l-clear i { border-top-color: #dfe8ee; }
+#isx-root .orr-fb:hover { color: #fff; border-color: #5d6f7e; }
+#isx-root .orr-fb[aria-checked="true"] { background: rgba(120, 190, 255, .1); border-color: rgba(143, 196, 240, .7); color: #fff; }
+#isx-root .orr-fb:focus-visible, #isx-root .orr-chp:focus-visible, #isx-root .orr-ix:focus-visible, #isx-root .orr-nexp:focus-visible, #isx-root .orr-jump .lk2:focus-visible, #isx-root .orr-old:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .orr-fcap { margin: 0; font: 11px/1.45 var(--sans); color: #9aabba; }
+#isx-root .orr-hud .ku { margin: 2px 0 0; font: 10.5px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #627483; }
+#isx-root .orr.stg .k-sl { display: none; }   /* the lines are named under “Flows” */
+
+/* the controls at the top right, the key under them */
+#isx-root .orr.stg .orr-rc { right: 14px; top: calc(var(--top) + 6px); max-width: 70%; }
+#isx-root .orr.stg .orr-pm, #isx-root .orr.stg .orr-kyb, #isx-root .orr.stg .orr-fsb, #isx-root .orr.stg .orr-rc .pf-tbtn { height: 40px; background: rgba(8, 13, 19, .7); border: 1px solid #33475a; }
+#isx-root .orr.stg .orr-rc .pf-tbtn { margin: 0; padding: 0 14px; border-radius: 999px; color: #cbd8e2; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: none; cursor: pointer; white-space: nowrap; }
+#isx-root .orr.stg .orr-rc .pf-tbtn:hover { background: rgba(20, 32, 43, .9); color: #fff; } #isx-root .orr.stg .orr-rc .pf-tbtn:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .orr.stg .orr-kin { right: 14px; top: calc(var(--top) + 50px); width: 226px; max-width: none; max-height: calc(100% - var(--top) - var(--dock) - 62px); background: rgba(8, 13, 19, .9); }
+/* a wide stage's right column: the buttons in two rows, then the key or the card of the body picked, then the door */
+#isx-root .orr.stg.wide .orr-rc { width: 226px; max-width: none; flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+#isx-root .orr.stg.wide .orr-rc > * { flex: 1 1 auto; }
+#isx-root .orr.stg.wide .orr-rc .orr-fsb { flex: 0 0 40px; order: 9; }
+#isx-root .orr-col { position: absolute; z-index: 2; right: 14px; top: calc(var(--top) + 92px); bottom: calc(var(--dock) + 4px); width: 226px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+#isx-root .orr-fs .orr-col { top: 62px; width: 240px; }
+#isx-root .orr-col > * { pointer-events: auto; }
+#isx-root .orr.stg .orr-col .orr-kin, #isx-root .orr.stg .orr-col .orr-key { position: static; flex: 0 1 auto; min-height: 60px; width: auto; max-width: none; max-height: none; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #2b3a49 transparent; }
+#isx-root .orr.stg .orr-col .orr-info { position: static; flex: 0 1 auto; min-height: 60px; width: auto; max-height: none; }
+#isx-root .orr.stg .orr-col .orr-side { position: static; width: auto; margin-top: auto; flex: none; }
+#isx-root .orr.stg.wide.has-sel .orr-col :is(.orr-kin, .orr-key) { display: none; }
+#isx-root .orr.stg.wide.has-sel .orr-deep small { display: none; }
+#isx-root .orr.stg .orr-kin .olg, #isx-root .orr.stg .orr-key .olg { align-items: flex-start; min-height: 0; padding: 3px 0; font-size: 11.5px; line-height: 1.35; }
+#isx-root .orr.stg .orr-kin .olg i, #isx-root .orr.stg .orr-key .olg i { margin-top: 3px; }
+#isx-root .orr-kin .ku, #isx-root .orr-key .ku { margin: 0 0 4px; font: 10.5px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #7f91a0; }
+#isx-root .orr-kin .kf, #isx-root .orr-key .kf { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid #1b2a37; font: 11.5px/1.45 var(--sans); color: #9aabba; }
+#isx-root .orr-kin .kf:empty, #isx-root .orr-key .kf:empty { display: none; }
+#isx-root .orr-kin .olg i.rim, #isx-root .orr-key .olg i.rim { flex: none; display: inline-block; width: 16px; height: 9px; margin: 3px 8px 0 4px; border: 1.5px solid #c9d6e0; border-radius: 50%; }
+#isx-root .orr-kin .olg.none, #isx-root .orr-key .olg.none { color: #7f91a0; padding-left: 28px; }
+#isx-root .orr.stg.wide.has-sel .orr-kin { display: none; }
+#isx-root .orr.stg .orr-key { top: 64px; }
+
+/* the card of the body picked */
+#isx-root .orr.stg .orr-info { position: absolute; z-index: 4; box-sizing: border-box; left: 12px; bottom: calc(var(--dock) + 8px); width: min(330px, calc(100% - 24px)); min-height: 0; max-height: calc(100% - var(--top) - var(--dock) - 20px); overflow: auto; padding: 10px 14px; font-size: 12.5px; background: rgba(8, 13, 19, .95); }
+#isx-root .orr.stg .orr-info[data-idle="1"] { display: none !important; }
+#isx-root .orr-kin .kh, #isx-root .orr-key .kh { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid #1b2a37; font: 11px/1.4 var(--sans); color: #7f91a0; }
+#isx-root .orr.stg .orr-info .rw { display: grid; gap: 0; margin: 5px 0; } #isx-root .orr.stg .orr-info .rw span { font-size: 11px; }
+#isx-root .orr.stg .orr-info .rw b { font: 500 12.5px/1.35 var(--sans); margin: 0; }
+#isx-root .orr-ix { position: absolute; right: 6px; top: 6px; width: 30px; height: 30px; border-radius: 50%; background: none; border: 1px solid #33475a; color: #cbd8e2; font: 16px/1 var(--sans); cursor: pointer; }
+#isx-root .orr-ix:hover { color: #fff; border-color: #8496a5; }
+
+/* the door, and the two jumps into the text under the stage */
+#isx-root .orr-side { display: grid; gap: 6px; }
+#isx-root .orr.stg .orr-deep { width: 100%; padding: 8px 12px; border-radius: 12px; }
+#isx-root .orr.stg .orr-deep b { font-size: 13px; }
+#isx-root .orr-jump { display: flex; gap: 14px; }
+#isx-root .orr-jump .lk2 { padding: 2px 0; background: none; border: 0; border-bottom: 1px dotted #5d6f7e; color: #9aabba; font: 11.5px var(--sans); cursor: pointer; }
+#isx-root .orr-jump .lk2 span { color: var(--pgold, #ffb547); } #isx-root .orr-jump .lk2:hover { color: #fff; }
+#isx-root .orr.stg:not(.wide) .orr-jump { display: none; }
+#isx-root .orr.stg.mid .orr-sl .orr-side, #isx-root .orr.stg.land .orr-sl .orr-side { flex: none; width: auto; }
+#isx-root .orr.stg.mid .orr-deep small, #isx-root .orr.stg.land .orr-deep small { display: none !important; }
+#isx-root .orr.stg.mid .orr-deep, #isx-root .orr.stg.land .orr-deep { flex-direction: row; align-items: center; white-space: nowrap; }
+#isx-root .orr.stg.land .orr-deep b { font-size: 11.5px; } #isx-root .orr.stg.land .orr-deep { padding: 6px 10px; }
+
+/* the footnote of a starred line, at the foot of the picture */
+#isx-root .orr.stg .orr-fn { z-index: 1; left: var(--boxc, 50%); right: auto; transform: translateX(-50%); width: max-content; max-width: var(--boxw, calc(100% - 32px)); bottom: calc(var(--dock) + 1px); padding: 0 8px; font-size: 11px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .orr.stg .orr-fn[hidden] { display: none; }
+
+/* ---------- the dock: the narrator (its head is the chapter strip) and the timeline ---------- */
+#isx-root .orr-dock { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 4px 16px 2px; }
+#isx-root .orr-nar { box-sizing: border-box; justify-self: center; width: min(1240px, 100%); padding: 7px 26px 10px; border-radius: 30px; background: linear-gradient(180deg, rgba(13, 24, 36, .9), rgba(8, 14, 21, .93)); border: 1px solid #22384b; box-shadow: 0 0 0 1px rgba(120, 190, 255, .05), 0 0 34px -10px rgba(80, 150, 220, .35), 0 20px 50px -28px #000; backdrop-filter: blur(8px); }
+#isx-root .orr-nar .k { display: block; font: 10.5px/1.3 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffb547; }
+#isx-root .orr-nar .k.t { color: #8FD3CF; } #isx-root .orr-nar .k.k2 { margin-top: 6px; }
+/* the head: where you are, the ten chapters, back, and the one way forward */
+#isx-root .orr-chs { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 34px; padding-bottom: 6px; margin-bottom: 7px; border-bottom: 1px solid rgba(64, 98, 128, .35); }
+#isx-root .orr-chs .nk { flex: none; white-space: nowrap; }
+#isx-root .orr-chs .chl { flex: none; display: flex; align-items: center; gap: 5px; margin-left: 6px; margin-right: auto; }
+#isx-root .orr-chs .chl > span:nth-child(9) { margin-left: 8px; padding-left: 12px; border-left: 1px solid #263847; }
+#isx-root .orr-chp { display: inline-flex; align-items: center; gap: 7px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 999px; background: rgba(8, 13, 19, .6); border: 1px solid #263847; cursor: pointer; white-space: nowrap; transition: border-color .18s, background .18s; }
+#isx-root .orr-chp small { font: 10.5px/1 var(--mono); color: #8496a5; } #isx-root .orr-chp[aria-current]::after { content: attr(data-s); font: 600 12.5px/1 var(--display); letter-spacing: .04em; color: #fff; }
+#isx-root .orr-chp.done small { color: #c9d6e0; } #isx-root .orr-chp:hover { border-color: #8496a5; } #isx-root .orr-chp:hover small { color: #fff; }
+#isx-root .orr-chp[aria-current] { background: rgba(255, 181, 71, .14); border-color: rgba(255, 181, 71, .65); } #isx-root .orr-chp[aria-current] small { color: #ffb547; } 
+#isx-root .orr-chs.tight .orr-chp[aria-current]::after { content: none; }
+#isx-root .orr.stg .orr-stp { min-height: 0; }
+#isx-root .orr-cnt { display: none; font: 10.5px/1 var(--mono); letter-spacing: .1em; color: #9aabba; }
+#isx-root .orr-chs .orr-nx { flex: 0 1 auto; min-width: 64px; min-height: 32px; padding: 0 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: rgba(8, 13, 19, .7); font-size: 12.5px; }
+#isx-root .orr-chs .orr-nx.bk { max-width: 26%; }
+#isx-root .orr-chs .orr-nx.fw { max-width: 48%; background: rgba(255, 181, 71, .16); border-color: rgba(255, 181, 71, .75); color: #ffd27a; box-shadow: 0 0 18px -6px rgba(255, 181, 71, .6); }
+#isx-root .orr-chs .orr-nx.fw:hover { background: rgba(255, 181, 71, .26); color: #fff; }
+#isx-root .orr-chs .orr-nx[hidden] { display: none; }
+/* the body: the chapter's narration, and beside it what the timeline marks at this year */
+#isx-root .orr-nar .nb { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, 2fr); gap: 0 24px; height: 118px; }
+#isx-root .orr-nar .nn { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 0 24px; }
+#isx-root .orr-nar .nz, #isx-root .orr-nar .nn > div { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #2b3a49 transparent; }
+#isx-root .orr-nar .nt { margin: 0 0 3px; font: 600 18px/1.15 var(--display); letter-spacing: .05em; text-transform: uppercase; color: #fff; }
+#isx-root .orr-nar .nz p.d { margin: 0 0 2px; max-width: 108ch; font: 400 13px/1.4 var(--sans); color: #d9e3ea; }
+#isx-root .orr-nar .nz p.ast { margin: 4px 0 0; font: 12px/1.4 var(--sans); color: #9aabba; }
+#isx-root .orr-nar .nz small { display: block; margin-top: 3px; font: 11px/1.35 var(--sans); color: #7f91a0; }
+#isx-root .orr-nar .ne, #isx-root .orr-nar .ni { padding-left: 16px; border-left: 1px solid #1e3040; }
+#isx-root .orr-nar .ne:empty, #isx-root .orr-nar .ni:empty { border-left-color: transparent; }
+#isx-root .orr-nar .ne p, #isx-root .orr-nar .ni p { margin: 3px 0 2px; font: 400 12.5px/1.38 var(--sans); color: #b9c8d4; }
+#isx-root .orr-nar .ne small, #isx-root .orr-nar .ni small { display: block; font: 10.5px/1.3 var(--sans); color: #7f91a0; }
+#isx-root .orr-nar .k.now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; vertical-align: 1px; }
+#isx-root .orr-nar[data-step="pp"] .nb, #isx-root .orr-nar[data-step="cl"] .nb { grid-template-columns: minmax(0, 1fr); }
+#isx-root .orr-nar[data-step="pp"] .nn, #isx-root .orr-nar[data-step="cl"] .nn { display: none; }
+#isx-root .orr-nexp { display: none; }
+/* the timeline */
+#isx-root .orr.stg .orr-sl { align-items: flex-start; gap: 14px; padding: 0 22px 0 0; }
+#isx-root .orr.stg .orr-play { height: 38px; background: rgba(255, 181, 71, .1); }
+#isx-root .orr.stg .orr-tr.has-own { padding-bottom: 30px; }
+#isx-root .orr.stg .orr-owd.r2 i { top: 58px; } #isx-root .orr.stg .orr-tr.has-own.own3 { padding-bottom: 43px; }   /* a third row of names where two cannot hold them apart */
+#isx-root .orr-yrs { display: none; position: relative; height: 13px; margin-top: 1px; }
+#isx-root .orr-yrs span { position: absolute; top: 0; transform: translateX(-50%); font: 10.5px/1 var(--mono); color: #7f91a0; }
+#isx-root .orr-yrs span:first-child { transform: none; } #isx-root .orr-yrs span:last-child { transform: translateX(-100%); }
+#isx-root .orr-fs .orr.stg .orr-sl { height: auto; padding: 0 22px 0 0; background: none; border-top: 0; }
+#isx-root .orr-fs .orr.stg .orr-tr.has-own { padding-bottom: 30px; } #isx-root .orr-fs .orr.stg .orr-owd i { display: block; }
+#isx-root .orr.stg .orr-mk { display: flex; flex-direction: column; }
+#isx-root .orr.stg .orr-kin .olg i.rim, #isx-root .orr.stg .orr-key .olg i.rim { flex: none; display: inline-block; width: 16px; height: 9px; margin: 3px 8px 0 4px; border: 1.5px solid #c9d6e0; border-radius: 50%; background: none; }
+#isx-root .orr.stg .orr-kin .olg i.arc, #isx-root .orr.stg .orr-key .olg i.arc { flex: none; width: 14px; height: 7px; margin: 4px 9px 0 5px; border: 1.5px solid #8FD3CF; border-bottom: 0; border-radius: 9px 9px 0 0; background: none; }
+
+/* ---------- the title card: it passes, slowly ---------- */
+#isx-root .orr-tc { position: absolute; z-index: 5; left: 0; right: 0; top: var(--top); bottom: var(--dock); display: grid; align-content: center; justify-items: center; gap: 8px; padding: 0 24px; text-align: center; pointer-events: none; opacity: 0; }
+#isx-root .orr-tc::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 190px; transform: translateY(-50%); background: linear-gradient(90deg, transparent, rgba(5, 9, 15, .88) 22%, rgba(5, 9, 15, .88) 78%, transparent); border-block: 1px solid transparent; border-image: linear-gradient(90deg, transparent, rgba(255, 210, 122, .5) 30%, rgba(255, 210, 122, .5) 70%, transparent) 1; }
+#isx-root .orr-tc > * { position: relative; }
+#isx-root .orr-tc .k { font: 10.5px/1 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: #ffb547; }
+#isx-root .orr-tc b { font: 600 clamp(22px, 3.2vw, 40px)/1.08 var(--title); letter-spacing: .05em; text-transform: uppercase; color: #fff; text-shadow: 0 0 34px rgba(120, 190, 255, .55); max-width: 22ch; }
+#isx-root .orr-tc p { margin: 2px 0 0; max-width: 52ch; font: 400 14px/1.45 var(--sans); color: #b9c8d4; }
+#isx-root .orr-tc.in { animation: orrtc 2.2s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes orrtc { 0% { opacity: 0; letter-spacing: .02em; } 22% { opacity: 1; } 78% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------- the picture's new parts ---------- */
+/* the rim: the WTO order, named on the picture; lit in its own chapter */
+#isx-root .orr-svg .orr-old { cursor: pointer; outline: none; }
+#isx-root .orr-svg .orr-rim { stroke: #9fb4c6; stroke-opacity: .5; stroke-width: 1.3; transition: stroke .45s, stroke-opacity .45s; }
+#isx-root .orr-svg .orr-rimt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; fill: #93a6b6; paint-order: stroke; stroke: #060b12; stroke-width: 3px; stroke-linejoin: round; }
+#isx-root .orr-svg .orr-rimt .hd { fill: #e4ebf1; } #isx-root .orr-svg .orr-rimt.b .hd { fill: #8FD3CF; } #isx-root .orr-svg .orr-rimt.b { fill: #a9cfcc; }
+#isx-root .orr.stg[data-ch="wto"] .orr-svg .orr-rim { stroke: #ffd27a; stroke-opacity: .9; filter: drop-shadow(0 0 5px rgba(255, 210, 122, .55)); }
+#isx-root .orr.stg[data-ch="wto"] .orr-svg .orr-rimt .hd { fill: #ffd27a; }
+#isx-root .orr-svg .orr-old:hover .orr-rim, #isx-root .orr-svg .orr-old:focus-visible .orr-rim { stroke-opacity: .95; stroke-width: 2; }
+#isx-root .orr.compact .orr-svg .orr-rimt, #isx-root .orr.stg.port .orr-svg .orr-rimt, #isx-root .orr.stg.land .orr-svg .orr-rimt { font-size: 10.5px; letter-spacing: .1em; }
+#isx-root .orr.stg[data-step="pp"] .orr-svg .orr-old, #isx-root .orr.stg[data-step="cl"] .orr-svg .orr-old { opacity: .3; }
+#isx-root .orr.opening .orr-svg .orr-old { opacity: 0; } #isx-root .orr-svg .orr-old { transition: opacity .6s; }
+/* the flow layers */
+#isx-root .orr-svg .orr-fx .fl.pap { stroke: #E9C77F; stroke-opacity: .7; }
+#isx-root .orr-svg .orr-fx .fl.swp { stroke: #cfe3f2; stroke-opacity: .75; stroke-dasharray: 2 5; }
+#isx-root .orr-svg .mkp { fill: #E9C77F; }
+#isx-root .orr-svg .orr-fx .fpu.pap { stroke: #FFF4DA; opacity: .9; } #isx-root .orr-svg .orr-fx .fpu.swp { stroke: #fff; opacity: .95; animation-duration: 2.2s; }
+#isx-root .orr-svg .orr-fx .fpu.def { stroke: #FFF4DA; }
+#isx-root .orr-svg .orr-fx .fl.why { stroke: #ffd27a; stroke-opacity: .85; stroke-width: 1.6; stroke-dasharray: 5 6; }
+#isx-root .orr-svg .orr-fl.ill { fill: #ffd27a; font-weight: 500; }
+#isx-root .orr-svg .ol.fx { fill: #f3e2b8; opacity: 1; font-weight: 500; }
+#isx-root .orr.stg[data-layer="clear"] .orr-svg .ol.fx { fill: #e4ebf1; }
+#isx-root .orr.stg[data-step="pp"] .orr-svg .orr-fx, #isx-root .orr.stg[data-step="cl"] .orr-svg .orr-fx { display: none; }
+/* the pulses on the lines run in every year on the stage (they ran after the split only) */
+#isx-root .orr.stg .orr-svg .pls { opacity: .34; animation: orrflow 5s linear infinite; animation-play-state: paused; }
+#isx-root .orr.stg.run .orr-svg .pls, #isx-root .orr.stg.run .orr-svg .fl.why { animation-play-state: running; }
+#isx-root .orr.stg .orr-svg .orr-streams .st { opacity: .3; }
+/* what is not the chapter's subject steps back; nothing is taken away */
+#isx-root .orr.stg[data-ch="own"] .orr-svg .oa .ar { stroke-opacity: 1; stroke-width: 1.8; filter: drop-shadow(0 0 4px rgba(143, 211, 207, .6)); }
+#isx-root .orr.stg[data-ch="why"] .orr-svg .orr-streams .st { opacity: .5; }
+#isx-root .orr.stg .orr-svg .orr-rl { transition: fill .4s; } #isx-root .orr.stg[data-ch="why"] .orr-svg .orr-rl { fill: #cbd8e2; }
+
+/* ---------- the opening ---------- */
+#isx-root .orr.stg.opening :is(.orr-hud, .orr-dock, .orr-side, .orr-kin, .orr-info, .orr-fn) { opacity: 0; pointer-events: none; }
+#isx-root .orr.stg.opened :is(.orr-hud, .orr-dock, .orr-side, .orr-kin) { animation: orrfade .7s backwards; }   /* backwards only: once it has arrived, a panel obeys its own rules again (the HUD steps back in the two steps) */
+#isx-root .orr.stg .orr-skip { top: calc(var(--top) + 8px); right: 14px; }
+#isx-root .orr.stg .orr-cap { bottom: calc(var(--dock) * .5); }
+
+/* ---------- mid: no side columns ---------- */
+#isx-root .orr.stg.mid .orr-hud { width: 204px; gap: 6px; }
+#isx-root .orr.stg.mid .orr-ct { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; align-items: start; }   /* the two shares side by side: the column must end above the narrator */
+#isx-root .orr.stg.mid .orr-ct > .orr-yr, #isx-root .orr.stg.mid .orr-ct > .orr-c:nth-child(4) { grid-column: 1 / -1; }
+#isx-root .orr.stg.mid .orr-yr { font-size: 34px; }
+#isx-root .orr.stg.mid .orr-fsel .fk { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+#isx-root .orr.stg.mid .orr-fcap { display: none; }   /* said in the key, which the “Key” button opens */
+#isx-root .orr.stg.mid .orr-nar { padding: 7px 20px 9px; border-radius: 26px; }
+#isx-root .orr.stg.mid .orr-nar .nb { gap: 0 18px; height: 112px; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); }
+#isx-root .orr.stg.mid .orr-nar .nn { display: block; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #2b3a49 transparent; padding-left: 14px; border-left: 1px solid #1e3040; }
+#isx-root .orr.stg.mid .orr-nar .nn > div { overflow: visible; padding-left: 0; border-left: 0; } #isx-root .orr.stg.mid .orr-nar .ni { margin-top: 6px; }
+#isx-root .orr.stg.mid .orr-nar .nt { font-size: 16.5px; }
+#isx-root .orr.stg.mid .orr-nar .nn .orr-pp.in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; margin: 0; max-width: none; }
+#isx-root .orr.stg.mid .orr-nar .nn .orr-pp.in .ct { font-size: 11.5px; line-height: 1.25; }
+#isx-root .orr.stg.mid .orr-nar[data-step="pp"] .nb { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+#isx-root .orr.stg.mid .orr-tr.has-own { padding-bottom: 28px; } #isx-root .orr.stg.mid .orr-tr.has-own.own3 { padding-bottom: 41px; }
+
+/* ---------- a phone upright: the picture, then the narration as a sheet ---------- */
+#isx-root .orr.stg.port .orr-hud { left: 10px; top: calc(var(--hudtop) + 4px); width: 118px; gap: 4px; }
+#isx-root .orr.stg.port .orr-yr { font-size: 30px; } #isx-root .orr.stg.port .orr-c b { font-size: 12.5px; } #isx-root .orr.stg.port .orr-c span { font-size: 10.5px; letter-spacing: .06em; }
+#isx-root .orr.stg.port .orr-ct .orr-c:nth-child(4) { display: none; }   /* the summed current account is in the body's card and the table */
+#isx-root .orr.stg.port .orr-rc { right: 8px; top: calc(var(--top) + 4px); max-width: 236px; flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+#isx-root .orr.stg.port .orr-rc .orr-fsb { order: -1; }
+#isx-root .orr-kin .orr-fsel, #isx-root .orr-key .orr-fsel { margin: 0 0 4px; } #isx-root .orr-kin .orr-fcap, #isx-root .orr-key .orr-fcap { margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid #1b2a37; }
+#isx-root .orr.stg.port .orr-fb, #isx-root .orr.stg.land .orr-fb { min-height: 36px; padding: 0 12px; font-size: 12px; }
+#isx-root .orr.stg.port :is(.orr-pm, .orr-kyb, .orr-fsb, .pf-tbtn) { height: 40px; padding: 0 11px; font-size: 10.5px; }
+#isx-root .orr.stg.port .orr-kin, #isx-root .orr.stg.land .orr-kin { left: 8px; right: 8px; top: calc(var(--top) + 6px); width: auto; z-index: 6; max-height: calc(100% - var(--top) - 16px); }
+#isx-root .orr.stg.port .orr-dock { padding: 0 8px 4px; gap: 6px; }
+#isx-root .orr.stg.port .orr-nar { padding: 6px 14px 8px; border-radius: 20px; }
+#isx-root .orr.stg.port .orr-nar .nb { display: block; height: 132px; overflow-y: auto; overscroll-behavior: contain; }
+#isx-root .orr.stg.port .orr-nar .nb.more, #isx-root .orr.stg.mid .orr-nar .nn.more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); }
+#isx-root .orr.stg.port .orr-chs .orr-nx.fw { white-space: normal; line-height: 1.2; text-align: left; padding-top: 3px; padding-bottom: 3px; overflow: visible; }   /* its chapter's name in full, on two lines if need be */
+#isx-root .orr.stg.port .orr-nar .nn { display: block; } #isx-root .orr.stg.port .orr-nar .nz, #isx-root .orr.stg.port .orr-nar .nn > div { overflow: visible; }
+#isx-root .orr.stg.port .orr-nar .ne, #isx-root .orr.stg.port .orr-nar .ni { margin-top: 6px; padding: 6px 0 0; border-left: 0; border-top: 1px solid #1e3040; }
+#isx-root .orr.stg.port .orr-nar .nt { font-size: 17px; }
+#isx-root .orr.stg.port .orr-chs .chl, #isx-root .orr.stg.land .orr-chs .chl { display: none; }
+#isx-root .orr.stg.port .orr-chs { gap: 8px; min-height: 40px; margin-bottom: 5px; padding-bottom: 5px; } #isx-root .orr.stg.port .orr-chs .nk { flex: none; margin-right: auto; letter-spacing: .1em; }
+#isx-root .orr.stg.port .orr-chs .orr-nx { min-height: 40px; padding: 0 12px; } #isx-root .orr.stg.port .orr-chs .orr-nx.bk { flex: none; max-width: none; } #isx-root .orr.stg.port .orr-chs .orr-nx.fw { flex: 0 1 auto; max-width: none; }
+#isx-root .orr.stg.port .orr-svg .orr-al, #isx-root .orr.stg.land .orr-svg .orr-al { font-size: 10.5px; }
+#isx-root .orr.stg.port .orr-sl { gap: 8px; padding-right: 6px; } #isx-root .orr.stg.port .orr-pc { gap: 3px; } #isx-root .orr.stg.port .orr-tkey { display: none; }
+#isx-root .orr.stg.port .orr-tr.has-own, #isx-root .orr.stg.land .orr-tr.has-own { padding-bottom: 0; }
+#isx-root .orr.stg.port .orr-yrs, #isx-root .orr.stg.land .orr-yrs { display: block; }
+#isx-root .orr.stg.port .orr-owd i, #isx-root .orr.stg.land .orr-owd i, #isx-root .orr.stg.port .orr-evd i, #isx-root .orr.stg.land .orr-evd i { display: none; }
+#isx-root .orr.stg.port .orr-owd, #isx-root .orr.stg.land .orr-owd { pointer-events: none; }
+#isx-root .orr.stg.port .orr-deep { flex-direction: row; align-items: center; justify-content: center; padding: 7px 10px; } #isx-root .orr.stg.port .orr-deep small { display: none !important; }
+#isx-root .orr.stg.port .orr-tc b { font-size: 24px; }
+
+/* ---------- a phone sideways: the narration is one slim bar ---------- */
+#isx-root .orr.stg.land .orr-hud { left: 8px; top: calc(var(--hudtop) + 2px); width: 124px; gap: 2px; }
+#isx-root .orr.stg.land .orr-yr { font-size: 24px; } #isx-root .orr.stg.land .orr-c b { font-size: 12px; } #isx-root .orr.stg.land .orr-c span { font-size: 10.5px; letter-spacing: .05em; }
+#isx-root .orr.stg.land .orr-ct .orr-c:nth-child(4) { display: none; }   /* the summed current account is in the body's card and the table */
+#isx-root .orr.stg.land .orr-rc { right: 6px; top: calc(var(--top) + 2px); gap: 4px; }
+#isx-root .orr.stg.land :is(.orr-pm, .orr-kyb, .orr-fsb, .pf-tbtn) { height: 40px; padding: 0 10px; font-size: 10.5px; }
+#isx-root .orr.stg.land .orr-dock { gap: 3px; padding: 0 8px 2px; }
+#isx-root .orr.stg.land .orr-nar { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 6px 0 6px; border-radius: 18px; overflow: hidden; }
+#isx-root .orr.stg.land .orr-chs { display: contents; }
+#isx-root .orr.stg.land .orr-chs .nk { display: none; } #isx-root .orr.stg.land .orr-cnt { display: inline; order: 1; flex: none; }
+#isx-root .orr.stg.land .orr-chs .orr-nx { flex: none; min-height: 28px; padding: 0 10px; font-size: 11.5px; max-width: 150px; } #isx-root .orr.stg.land .orr-chs .orr-nx.fw { max-width: 210px; } #isx-root .orr.stg.land .orr-chs .orr-nx.bk { order: 0; } #isx-root .orr.stg.land .orr-chs .orr-nx.fw { order: 4; }
+#isx-root .orr.stg.land .orr-nar .nb { order: 2; flex: 1; min-width: 0; display: block; height: auto; }
+#isx-root .orr.stg.land .orr-nar .nn { display: none; } #isx-root .orr.stg.land .orr-nar .nz { overflow: hidden; }
+#isx-root .orr.stg.land .orr-nar .nz { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+#isx-root .orr.stg.land .orr-nar .nt { margin: 0; font-size: 14px; flex: none; }
+#isx-root .orr.stg.land .orr-nar .nz p.d { margin: 0; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #isx-root .orr.stg.land .orr-nar .nz p.d ~ * { display: none; }
+#isx-root .orr.stg.land .orr-nexp { order: 3; display: inline-block; flex: none; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(120, 190, 255, .1); border: 1px solid rgba(143, 196, 240, .6); color: #dbeaf6; font: 600 11px var(--sans); cursor: pointer; }
+#isx-root .orr.stg.land .orr-nar.open { position: absolute; z-index: 7; left: 8px; right: 8px; bottom: 42px; height: auto; max-height: calc(100% - var(--top) - 52px); flex-wrap: wrap; overflow: auto; padding: 8px 12px; border-radius: 16px; }
+#isx-root .orr.stg.land .orr-nar.open .nb { order: 5; flex: 1 1 100%; } #isx-root .orr.stg.land .orr-nar.open .nz { overflow: visible; } #isx-root .orr.stg.land .orr-nar.open .nn { display: block; }
+#isx-root .orr.stg.land .orr-nar.open .nz { display: block; white-space: normal; } #isx-root .orr.stg.land .orr-nar.open .nz p.d { margin: 0 0 4px; overflow: visible; } #isx-root .orr.stg.land .orr-nar.open .nz p.d ~ * { display: block; }
+#isx-root .orr.stg.land .orr-nar.open .ne, #isx-root .orr.stg.land .orr-nar.open .ni { margin-top: 6px; padding: 6px 0 0; border-left: 0; border-top: 1px solid #1e3040; overflow: visible; }
+#isx-root .orr.stg.land .orr-sl { gap: 8px; align-items: center; padding-right: 4px; } #isx-root .orr.stg.land .orr-play { height: 30px; min-width: 70px; } #isx-root .orr.stg.land .orr-tkey { display: none; } #isx-root .orr.stg.land .orr-tr { padding-top: 10px; }
+#isx-root .orr.stg.land .orr-tc::before { height: 120px; } #isx-root .orr.stg.land .orr-tc b { font-size: 20px; } #isx-root .orr.stg.land .orr-tc p { display: none; }
+#isx-root .orr.stg.land .orr-info { bottom: calc(var(--dock) + 4px); max-width: 300px; font-size: 11.5px; }
+
+/* ---------- full screen: the same stage, with the toolbar ---------- */
+#isx-root .orr-fs .orr.stg .orr-tb { top: 8px; right: 8px; }
+#isx-root .orr-fs .orr.stg.land .orr-tbb, #isx-root .orr-fs .orr.stg.port .orr-tbb { min-width: 40px; min-height: 40px; padding: 0 10px; font-size: 11px; }
+#isx-root .orr-fs .orr.stg.mid .orr-key { right: 14px; top: 62px; width: 240px; max-width: none; max-height: calc(100% - var(--dock) - 74px); }
+#isx-root .orr-fs .orr.stg.port .orr-hud { top: 60px; } #isx-root .orr-fs .orr.stg .orr-btm { bottom: calc(var(--dock) + 6px); }
+#isx-root .orr-fs .orr.stg.port .orr-key { left: 8px; right: 8px; top: 106px; max-width: none; max-height: calc(100% - 114px); z-index: 6; }
+#isx-root .orr-fs .orr.stg.land .orr-key { top: 56px; z-index: 6; max-height: calc(100% - 62px); }
+@media (prefers-reduced-motion: reduce) { #isx-root .orr-tc { display: none; } }
