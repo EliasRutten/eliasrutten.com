@@ -64,7 +64,7 @@
           'One order has become two poles. The economies that stand between the two systems are named on the band between them.'] },
       { id: 'now', y0: 2026, y1: 2026, k: '2026', t: 'WAICO, and the order as it stands', s: '2026', layer: 'earn', cam: 'all',
         p: () => { const t = h1Top(); return ['On 16 July 2026 twenty-nine countries sign the agreement that founds the World Artificial Intelligence Cooperation Organization, in Shanghai: China’s list beside Washington’s.',
-          'Pax Silica grows through the year: 25 signatories beside the United States on 25 Nov 2026 (State Department).',
+          'Pax Silica grows through the year: on 21 Nov 2026 the State Department listed 24 states and the European Union beside the United States.',
           'Profit still flows to the centre: in the first half of 2026 US firms’ affiliates earned ' + bn1(t[1]) + ' in ' + (/^(Netherlands|United Kingdom)$/.test(nameOf(t[0])) ? 'the ' : '') + nameOf(t[0]) + ' alone (BEA).']; } },
       { id: 'pp', step: 'pp', k: 'After the story', t: STEPS.pp.title, s: STEPS.pp.short, layer: null, cam: 'all' },
       { id: 'cl', step: 'cl', k: 'After the story', t: STEPS.cl.title, s: STEPS.cl.short, layer: null, cam: 'all' }];
@@ -140,6 +140,11 @@
       [...tr.querySelectorAll('.orr-owd')].forEach(d => { const i = d.querySelector('i'); d.classList.remove('r0', 'r1', 'r2'); d.classList.add('r0'); const r = i.getBoundingClientRect(); let k = rows.findIndex(R => !R.some(q => r.left < q[1] + 6 && q[0] < r.right + 6)); if (k < 0) k = 2; rows[k].push([r.left, r.right]); d.classList.remove('r0'); d.classList.add('r' + k); deep = Math.max(deep, k); });
       tr.classList.toggle('own3', deep === 2);
     }
+    /* the picture fades at its box's edges only while the camera has moved in (then bodies reach past the box); at rest the mask is off,
+       since a mask over a moving picture makes the browser repaint all of it every frame */
+    let boxMask = '', maskOn = null;
+    function maskSync() { const on = !!boxMask && (Vw.k > 1.01 || Math.abs(Vw.x) > .5 || Math.abs(Vw.y) > .5); if (on === maskOn) return; maskOn = on; const m = on ? boxMask : '';
+      svg.style.webkitMaskImage = m; svg.style.maskImage = m; svg.style.webkitMaskComposite = on ? 'source-in' : ''; svg.style.maskComposite = on ? 'intersect' : ''; }
     function box() {
       fitTrack();
       const sr = stage.getBoundingClientRect(); let top = 0;
@@ -155,7 +160,7 @@
       const mid = !wide && !land && !ph, ox = wide ? COL : mid ? MIDL : land ? LANDL : 0, oxr = wide ? COL : 0, oy = full ? (ph ? 100 : compact ? 44 : 58) : wide ? top + 4 : ph ? 46 : Math.max(top, ht, rcb) + 2, hl = Math.max(120, H - oy - dh - (compact ? 4 : 22));   /* a large stage keeps a strip under the picture for the footnote of a starred line */
       stage.style.setProperty('--boxw', (W - ox - oxr - 16) + 'px'); stage.style.setProperty('--boxc', (ox + (W - ox - oxr) / 2) + 'px');
       const m = 'linear-gradient(to right, transparent ' + Math.max(0, ox - 26) + 'px, #000 ' + (ox + 6) + 'px, #000 ' + (W - oxr - 6) + 'px, transparent ' + Math.min(W, W - oxr + 26) + 'px), linear-gradient(to bottom, transparent ' + Math.max(0, oy - 12) + 'px, #000 ' + (oy + 4) + 'px, #000 ' + (oy + hl) + 'px, transparent ' + (oy + hl + 22) + 'px)';
-      svg.style.webkitMaskImage = m; svg.style.maskImage = m; svg.style.webkitMaskComposite = 'source-in'; svg.style.maskComposite = 'intersect';
+      boxMask = m; maskOn = null; maskSync();
       return { ox, oy, wp: W - ox - oxr, hl, dock: dh, top };
     }
 
@@ -168,10 +173,13 @@
     const cnS = ORD.cn.map(x => el('tspan', {}, ' ◆ ' + x[0].toUpperCase() + ' ' + x[1])); tpBot.append(el('tspan', { class: 'hd' }, 'CHINA INSIDE IT'), ...cnS);
     /* a phone held upright: the top of the rim lies between the counters and the buttons, so the order's name runs along its foot */
     const [tFoot, tpFoot] = mkT(ridb, 'b n'); tpFoot.append(el('tspan', { class: 'hd' }, NAME)); tFoot.style.display = 'none';
-    gRim.append(rimP, tTop, tBot, tFoot); const gR = el('g', { class: 'orr-rimg' }); gR.append(gRim); gT.parentNode.insertBefore(gR, gT);
-    gRim.setAttribute('aria-label', 'The rim of the picture is the WTO order, the old order. ' + ORD.frame.line);
+    /* the button is the rim's line; its printed words stand beside it, hidden from screen readers (the button's name says them), and take the same click */
+    gRim.append(rimP); const gW = el('g', { class: 'orr-rimw', 'aria-hidden': 'true' }); gW.append(tTop, tBot, tFoot);
+    const gR = el('g', { class: 'orr-rimg' }); gR.append(gRim, gW); gT.parentNode.insertBefore(gR, gT);
+    /* the printed words repeat the name, so a screen reader hears the name once; it starts with the words on the rim, so speech input finds it */
+    gRim.setAttribute('aria-label', 'The WTO order, 1995–, the rim of the picture: the old order. ' + ORD.frame.line);   /* it starts with the words printed on the rim, so speech input finds it */
     const pickFrame = () => { if (st.step) return; st.ins = 'frame'; C.narrate(Math.round(st.yf)); };
-    gRim.addEventListener('click', pickFrame); gRim.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pickFrame(); } });
+    gRim.addEventListener('click', pickFrame); gW.addEventListener('click', pickFrame); gRim.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pickFrame(); } });
     let rimMode = '', rimG = null;
     const sup = (a, b, n, t) => { const c = Math.cos(t), s = Math.sin(t); return [a * Math.sign(c) * Math.pow(Math.abs(c), 2 / n), b * Math.sign(s) * Math.pow(Math.abs(s), 2 / n)]; };
     const OXb = () => C.pbox().ox, OYb = () => C.pbox().oy;
@@ -194,7 +202,8 @@
       cnS[2].style.visibility = g.yr0 < ORD.cn[2][1] ? 'hidden' : '';
       const PB = C.pbox(); tTop.style.display = cy - b - 14 < PB.oy - 12 ? 'none' : ''; if (cy + b + 16 > PB.oy + PB.hl + (compact ? 2 : 6)) tBot.style.display = 'none';
       /* the words stand outside the rim: no name inside it can meet them. When the camera has moved in, bodies reach the frame: then the words are kept clear */
-      const foot = compact && L.ph && !full; tFoot.style.display = foot && cy + b + 16 <= PB.oy + PB.hl + 4 ? '' : 'none'; if (foot) { tTop.style.display = 'none'; tBot.style.display = 'none'; tpFoot.setAttribute('startOffset', st.layer === 'clear' && !st.step && u < .5 ? '24%' : '50%'); }   /* the clearing pool and its name stand at the lower right: the order's name moves to the lower left */
+      const foot = compact && L.ph && !full; tFoot.style.display = foot && cy + b + 16 <= PB.oy + PB.hl + 4 ? '' : 'none'; if (foot) { tTop.style.display = 'none'; tBot.style.display = 'none'; if (st.layer === 'clear' && !st.step && u < .5) tFoot.style.display = 'none'; }   /* the pool and its name stand on the rim's foot: the order's name steps aside while they are drawn */
+      if (compact && !L.ph && st.layer === 'clear' && !st.step && u < .5) tBot.style.display = 'none';   /* a phone held sideways: the pool stands on the rim's lower edge, so its lower line steps aside while the pool is drawn */   /* the clearing pool and its name stand at the lower right: the order's name moves to the lower left */
       st.rimLabs = []; st.rimY = [cy - b, cy + b];
       if (Vw.k > 1.01) { const along = (Q, len, tw, up) => { let acc = 0; for (let i = 1; i < Q.length; i++) { acc += Math.hypot(Q[i][0] - Q[i - 1][0], Q[i][1] - Q[i - 1][1]); if (acc > (len - tw) / 2 - 6 && acc < (len + tw) / 2 + 6) st.rimLabs.push(up ? [Q[i][0] - 12, Q[i][1] - 17, Q[i][0] + 12, Q[i][1] + 1] : [Q[i][0] - 12, Q[i][1] + 1, Q[i][0] + 12, Q[i][1] + 17]); } };
         if (tTop.style.display !== 'none') along(Qt, lt, mode === 'long' ? longW : NAME.length * cw, true); if (tBot.style.display !== 'none') along(Qb, lb, botW, false); }
@@ -231,6 +240,7 @@
       if (lay === 'earn') {
         const top = C.list.filter(q => !q.core && q.vis !== false && q.p).map(q => [inc(q, st.yf), q]).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, NTOP);
         if (!CH[st.ch < 0 ? 0 : st.ch].quiet || st.pin) top.forEach(([v, q]) => sfx.set(q.id, ' · ' + bn1(v)));
+        st.puTop = new Set(top.map(([, q]) => q.id));   /* only the largest lines carry a pulse: the flow reads as moving, and the picture is not repainted for dozens of them every frame */
         cap = (half(st.yf) ? 'Grey lines: what US firms’ affiliates earned in each economy in the first half of 2026: six months, there is no full 2026 yet (BEA, 24 Sep 2026).'
           : 'Grey lines: what US firms’ affiliates earned in each economy in ' + yr + ' (BEA' + (yr < 2006 ? ', net of withholding taxes' : '') + ').') + (CH[st.ch < 0 ? 0 : st.ch].quiet && !st.pin ? '' : ' The largest carry their figure.') + ' Streams into China: not collected.';
       } else if (lay === 'paper') {
@@ -386,8 +396,8 @@
 
     /* ---------- the narrator ---------- */
     /* where a sheet scrolls (a phone's narrator, a middle-sized stage's notices), a soft lower edge says there is more */
-    const more = () => [nb, nn].forEach(n => n.classList.toggle('more', n.scrollHeight - n.scrollTop - n.clientHeight > 6));
-    nb.addEventListener('scroll', more, { passive: true }); nn.addEventListener('scroll', more, { passive: true });
+    const more = () => [nb, nn, C.keyP].forEach(n => n && n.classList.toggle('more', n.scrollHeight - n.scrollTop - n.clientHeight > 6));
+    [nb, nn, C.keyP].forEach(n => n && n.addEventListener('scroll', more, { passive: true })); if (C.keyB) C.keyB.addEventListener('click', () => requestAnimationFrame(more));
     const scr = ph && compact ? nb : (!wide && !compact ? nn : null); if (scr) { scr.tabIndex = 0; scr.setAttribute('role', 'group'); scr.setAttribute('aria-label', scr === nb ? 'The narration, in full' : 'This year’s notices'); }
     if (C.keyP) C.keyP.tabIndex = 0;
     function notice(box, k, cls, line, src, extra) { box.textContent = ''; box.append(h('span', 'k ' + cls, k), h('p', '', line), h('small', '', 'Source: ' + src)); if (extra) extra.forEach(e => box.append(e)); }
@@ -395,7 +405,7 @@
       chSync(); const i = st.ch, c = CH[i], key = i + '|' + yr + '|' + (st.ins || ''); if (key === st.nk) return; st.nk = key;
       if (st.nch !== i) { st.nch = i; nb.scrollTop = 0; nn.scrollTop = 0; } requestAnimationFrame(more);
       nar.dataset.step = c.step || ''; nz.textContent = ''; navSync();
-      kick.textContent = 'Chapter ' + (i + 1) + ' of ' + NCH + (c.step ? ' · after the story' : ''); nz.append(h('h3', 'nt', chTitle(i) + (c.step ? '.' : '')));
+      kick.textContent = 'Chapter ' + (i + 1) + ' of ' + NCH + (c.step && !(compact && ph) ? ' · after the story' : '');   /* a phone held upright: the row keeps room for Back and Next */ nz.append(h('h3', 'nt', chTitle(i) + (c.step ? '.' : '')));
       if (c.step) {
         const S = C.stepCopy(c.step); nz.append(h('p', 'd', S.body)); if (S.ast) nz.append(h('p', 'ast', S.ast)); ne.textContent = ''; ni.textContent = '';
         if (S.charts) (compact ? nz : ne).append(S.charts);   /* a middle-sized stage: the two charts stand beside the narration, where a year's notices stand in the story */
@@ -403,7 +413,7 @@
       }
       nz.append(h('p', 'd', c.p().join(' '))); if (compact && st.note) nz.append(h('p', 'ast', st.note));   /* a phone has no room for the footnote under the picture: it stands under the narration */
       const ev = C.evAt(yr), blocks = [];
-      if (yr >= LW) { ne.textContent = ''; ne.append(h('span', 'k e now', '2026 · Pax Silica grows'), h('p', 'x', 'More governments sign through the year: the list stood at 25 signatories beside the United States on 25 Nov 2026 (State Department).')); }   /* 2025's own notice, Pax Silica, is the chapter before */
+      if (yr >= LW) { ne.textContent = ''; notice(ne, '2026 · Pax Silica grows', 'e now', 'More governments sign through the year.', 'State Department, Pax Silica page, list read 21 Nov 2026'); }   /* 2025's own notice, Pax Silica, is the chapter before */
       else if (ev) notice(ne, ev.year + ' · ' + ev.label, 'e' + (ev.year === yr ? ' now' : ''), ev.line, ev.src, blocks); else ne.textContent = '';
       const ins = st.ins === 'frame' ? null : (st.ins && OWN.find(x => x.id === st.ins)) || C.ownAt(yr);
       if (ins) notice(ni, 'China builds its own · ' + ins.year + ' · ' + (compact && ins.full.length > 34 ? ins.n : ins.full), 't' + (ins.year === yr ? ' now' : ''), ins.line, ins.src);
@@ -418,7 +428,7 @@
       if (st.poolLab) out.push(st.poolLab); if (st.whyLab) out.push(st.whyLab); if (st.rimLabs) st.rimLabs.forEach(r => out.push(r));
     }
 
-    function draw(g) { chSync(); drawRim(g); drawFx(g); }
+    function draw(g) { chSync(); maskSync(); drawRim(g); drawFx(g); }
     function onSel(q) { wrap.classList.toggle('has-sel', !!q); if (q && !C.info.contains(ix)) C.info.append(ix); }
     function onStep() { chSync(); navSync(); capKey = ''; C.render(st.yf); }   /* the picture is drawn again so that its layer, its starred line and its names are the step's (or the chapter's) own */
     wrap.dataset.layer = st.layer;

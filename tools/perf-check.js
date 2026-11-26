@@ -47,6 +47,13 @@ const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null;
   await run('circuit, first opening (own tier)', '#circuit', null, '', "ISX.opening.play('circuit')", 7000);
   await run('circuit, first opening (tier high)', '#circuit', null, '?tier=high', "ISX.opening.play('circuit')", 7000);
   const entry = async p => { await p.evaluate(() => { const e = document.getElementById('isx-scene-fin'); if (e) e.scrollIntoView({ block: 'center' }); const w = document.querySelector('#isx-cock [data-b1more="ways"]'); if (w) w.click(); }); await p.waitForTimeout(1500); };
+  /* OR8 (26 Nov 2026): the order's stage. The same four states run on OR7's build (b340e74) for the comparison: at rest in 2026 (pulses and
+     China's slow turn), the film from its start (Play), 2008 (the paper layer on OR8; OR7 has no layer), and a phone held upright. */
+  const ord = async p => { await p.waitForFunction(() => window.ISX && ISX.profit && ISX.profit.orrery && ISX.profit.orrery.cur, null, { timeout: 60000 }); await p.evaluate(() => { ISX.orrOpened = true; const k = document.querySelector('.orr-skip'); if (k) k.click(); }); await p.waitForTimeout(2500); };
+  await run('order, 2026 at rest', '#profit/order/2026', ord, '', null, 7000);
+  await run('order, the film from 1995', '#profit/order/1995', ord, '', "const b = document.querySelector('.orr-play'); if (b) b.click()", 8000);
+  await run('order, 2008', '#profit/order/2008', ord, '', null, 7000);
+  await run('order, phone, 2026', '#profit/order/2026', ord, '', null, 7000, { width: 390, height: 844 });
   await run('simulator, the entry at rest', '#simulator', entry, '', null, 7000);
   await run('simulator, its entry screen (own tier; 19 Nov 2026: the Simulator’s own opening went with the old card)', '#simulator', entry, '', "ISX.enter.open('fin', true)", 7000);
   await run('simulator, its entry screen (tier high)', '#simulator', entry, '?tier=high', "ISX.enter.open('fin', true)", 7000);

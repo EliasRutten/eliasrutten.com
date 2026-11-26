@@ -80,9 +80,12 @@
 #isx-root .orr.stg .orr-col .orr-info { position: static; flex: 0 1 auto; min-height: 60px; width: auto; max-height: none; }
 #isx-root .orr.stg .orr-col .orr-side { position: static; width: auto; margin-top: auto; flex: none; }
 #isx-root .orr.stg.wide.has-sel .orr-col :is(.orr-kin, .orr-key) { display: none; }
-#isx-root .orr.stg.wide.has-sel .orr-deep small { display: none; }
+#isx-root .orr.stg.wide.has-sel .orr-deep small, #isx-root .orr.stg.wide .orr-col:has(.orr-kin:not([hidden])) .orr-deep small { display: none; }   /* the key open: the door keeps its title and gives the key the room */
+#isx-root .orr.stg.wide .orr-col:has(.orr-kin:not([hidden])) .orr-deep { flex-direction: row; align-items: center; gap: 8px; }
 #isx-root .orr.stg .orr-kin .olg, #isx-root .orr.stg .orr-key .olg { align-items: flex-start; min-height: 0; padding: 3px 0; font-size: 11.5px; line-height: 1.35; }
 #isx-root .orr.stg .orr-kin .olg i, #isx-root .orr.stg .orr-key .olg i { margin-top: 3px; }
+#isx-root .orr.stg.port .orr-kin { background: rgba(6, 10, 15, .97); }   /* a sheet over the narration: the words under it must not read through */
+#isx-root .orr.stg :is(.orr-kin, .orr-key) svg.ri { width: 26px; height: 14px; flex: none; margin-top: 2px; }   /* the rings' little ellipses keep their size wherever the key lays its marks out */
 #isx-root .orr-kin .ku, #isx-root .orr-key .ku { margin: 0 0 4px; font: 10.5px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #7f91a0; }
 #isx-root .orr-kin .kf, #isx-root .orr-key .kf { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid #1b2a37; font: 11.5px/1.45 var(--sans); color: #9aabba; }
 #isx-root .orr-kin .kf:empty, #isx-root .orr-key .kf:empty { display: none; }
@@ -119,7 +122,7 @@
 
 /* ---------- the dock: the narrator (its head is the chapter strip) and the timeline ---------- */
 #isx-root .orr-dock { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 4px 16px 2px; }
-#isx-root .orr-nar { box-sizing: border-box; justify-self: center; width: min(1240px, 100%); padding: 7px 26px 10px; border-radius: 30px; background: linear-gradient(180deg, rgba(13, 24, 36, .9), rgba(8, 14, 21, .93)); border: 1px solid #22384b; box-shadow: 0 0 0 1px rgba(120, 190, 255, .05), 0 0 34px -10px rgba(80, 150, 220, .35), 0 20px 50px -28px #000; backdrop-filter: blur(8px); }
+#isx-root .orr-nar { box-sizing: border-box; justify-self: center; width: min(1240px, 100%); padding: 7px 26px 10px; border-radius: 30px; background: linear-gradient(180deg, rgba(13, 24, 36, .95), rgba(8, 14, 21, .97)); border: 1px solid #22384b; box-shadow: 0 0 0 1px rgba(120, 190, 255, .05), 0 0 34px -10px rgba(80, 150, 220, .35), 0 20px 50px -28px #000; backdrop-filter: none; }   /* no blur: a blurred panel over a moving picture is repainted every frame; the panel is opaque enough without it */
 #isx-root .orr-nar .k { display: block; font: 10.5px/1.3 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #ffb547; }
 #isx-root .orr-nar .k.t { color: #8FD3CF; } #isx-root .orr-nar .k.k2 { margin-top: 6px; }
 /* the head: where you are, the ten chapters, back, and the one way forward */
@@ -181,16 +184,16 @@
 
 /* ---------- the picture's new parts ---------- */
 /* the rim: the WTO order, named on the picture; lit in its own chapter */
-#isx-root .orr-svg .orr-old { cursor: pointer; outline: none; }
+#isx-root .orr-svg .orr-old, #isx-root .orr-svg .orr-rimw { cursor: pointer; outline: none; }
 #isx-root .orr-svg .orr-rim { stroke: #9fb4c6; stroke-opacity: .5; stroke-width: 1.3; transition: stroke .45s, stroke-opacity .45s; }
 #isx-root .orr-svg .orr-rimt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; fill: #93a6b6; paint-order: stroke; stroke: #060b12; stroke-width: 3px; stroke-linejoin: round; }
 #isx-root .orr-svg .orr-rimt .hd { fill: #e4ebf1; } #isx-root .orr-svg .orr-rimt.b .hd { fill: #8FD3CF; } #isx-root .orr-svg .orr-rimt.b { fill: #a9cfcc; }
 #isx-root .orr.stg[data-ch="wto"] .orr-svg .orr-rim { stroke: #ffd27a; stroke-opacity: .9; filter: drop-shadow(0 0 5px rgba(255, 210, 122, .55)); }
 #isx-root .orr.stg[data-ch="wto"] .orr-svg .orr-rimt .hd { fill: #ffd27a; }
-#isx-root .orr-svg .orr-old:hover .orr-rim, #isx-root .orr-svg .orr-old:focus-visible .orr-rim { stroke-opacity: .95; stroke-width: 2; }
+#isx-root .orr-svg .orr-rimg:hover .orr-rim, #isx-root .orr-svg .orr-old:focus-visible .orr-rim { stroke-opacity: .95; stroke-width: 2; }
 #isx-root .orr.compact .orr-svg .orr-rimt, #isx-root .orr.stg.port .orr-svg .orr-rimt, #isx-root .orr.stg.land .orr-svg .orr-rimt { font-size: 10.5px; letter-spacing: .1em; }
-#isx-root .orr.stg[data-step="pp"] .orr-svg .orr-old, #isx-root .orr.stg[data-step="cl"] .orr-svg .orr-old { opacity: .3; }
-#isx-root .orr.opening .orr-svg .orr-old { opacity: 0; } #isx-root .orr-svg .orr-old { transition: opacity .6s; }
+#isx-root .orr.stg[data-step="pp"] .orr-svg .orr-rimg, #isx-root .orr.stg[data-step="cl"] .orr-svg .orr-rimg { opacity: .3; }
+#isx-root .orr.opening .orr-svg .orr-rimg { opacity: 0; } #isx-root .orr-svg .orr-rimg { transition: opacity .6s; }
 /* the flow layers */
 #isx-root .orr-svg .orr-fx .fl.pap { stroke: #E9C77F; stroke-opacity: .7; }
 #isx-root .orr-svg .orr-fx .fl.swp { stroke: #cfe3f2; stroke-opacity: .75; stroke-dasharray: 2 5; }
@@ -247,7 +250,7 @@
 #isx-root .orr.stg.port .orr-dock { padding: 0 8px 4px; gap: 6px; }
 #isx-root .orr.stg.port .orr-nar { padding: 6px 14px 8px; border-radius: 20px; }
 #isx-root .orr.stg.port .orr-nar .nb { display: block; height: 132px; overflow-y: auto; overscroll-behavior: contain; }
-#isx-root .orr.stg.port .orr-nar .nb.more, #isx-root .orr.stg.mid .orr-nar .nn.more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); }
+#isx-root .orr.stg.port .orr-nar .nb.more, #isx-root .orr.stg.mid .orr-nar .nn.more, #isx-root .orr.stg .orr-kin.more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent); }
 #isx-root .orr.stg.port .orr-chs .orr-nx.fw { white-space: normal; line-height: 1.2; text-align: left; padding-top: 3px; padding-bottom: 3px; overflow: visible; }   /* its chapter's name in full, on two lines if need be */
 #isx-root .orr.stg.port .orr-nar .nn { display: block; } #isx-root .orr.stg.port .orr-nar .nz, #isx-root .orr.stg.port .orr-nar .nn > div { overflow: visible; }
 #isx-root .orr.stg.port .orr-nar .ne, #isx-root .orr.stg.port .orr-nar .ni { margin-top: 6px; padding: 6px 0 0; border-left: 0; border-top: 1px solid #1e3040; }

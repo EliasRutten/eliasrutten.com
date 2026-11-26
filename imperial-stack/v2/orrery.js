@@ -205,7 +205,7 @@
       /* OR8: the stage (v2/stage8.js) lays itself out round the picture; then the picture's box is known */
       const stepTo = to => { const l = st.lastInt; render(to); if (Math.round(to) !== l) { cross(l, Math.round(to)); st.lastInt = Math.round(to); } };
       const SG = stg ? X.orrStage({ h, el, OD, st, L, Vw, Sx, Sy, W, H, full, ph, compact, wrap, stage, rc, svg, defs, gV, gT, gSun, gid, list, isoB, at, f1, bn, clamp, lerp, reduce, R, STEPS, maxY,
-        counters, info, slider, play, track, deepb, keyP, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y),
+        counters, info, slider, play, track, deepb, keyP, keyB, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y),
         stepCopy: s => stepCopy(s), unpick: () => unpick(), evAt, ownAt, live: () => live(), stopYear: () => { cancelAnimationFrame(st.raf); st.raf = 0; },
         pbox: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), posAt: (iso, yf) => { const q = isoB(iso); return q ? place(q, L, yf, tension(yf)) : [L.cx, L.cy]; } }) : null;
       if (SG) { const b = SG.box(); OX = b.ox; OY = b.oy; WP = b.wp; HL = b.hl; ph = WP < HL; if (!compact && HL < 250) MG = 28;   /* a low box: the rings take more of it, so that each ring's name has its own line */ if (!compact && HL < 250 && keyP) SG.fillKey(keyP); if (!compact && HL < 250) ppIn = true;   /* a low box has no room under the two bodies: step 1's charts stand in the narrator */   /* the picture is laid out upright only when its own box is */ relay(null); steps = SG.chs; }
@@ -251,7 +251,7 @@
         /* the streams: BEA income by host country, drawn inward to the US sun */
         sPaths.forEach(q => { const v = SG ? SG.inc(q, yf) : at(q.d.inc, yf), p = q.p; if (!v || v <= 0 || (q.b.sys === 'cn' && u > .5) || q.core || (SG && st.layer !== 'earn')) { q.st.style.opacity = 0; q.pu.style.display = 'none'; return; } const w = clamp(.5 + Math.sqrt(v / 1000) * .38, .5, 6), mx = (p[0] + usP[0]) / 2, my = (p[1] + usP[1]) / 2 + (L.ph ? 0 : 10);
           q.st.setAttribute('d', `M${p[0].toFixed(1)} ${p[1].toFixed(1)}Q${mx.toFixed(1)} ${(my + (p[1] < usP[1] ? 12 : -12)).toFixed(1)} ${usP[0].toFixed(1)} ${usP[1].toFixed(1)}`); q.st.setAttribute('stroke-width', w.toFixed(2)); q.st.style.opacity = ''; q.st.dataset.on = '1';
-          if (story && (stg || e >= .985)) { const len = Math.max(20, Math.hypot(p[0] - usP[0], p[1] - usP[1]) * 1.03); q.pu.setAttribute('d', q.st.getAttribute('d')); q.pu.setAttribute('stroke-width', Math.max(1.2, w).toFixed(2)); q.pu.style.strokeDasharray = (7 / len).toFixed(4) + ' ' + (93 / len).toFixed(4); q.pu.style.setProperty('--per', (-100 / len).toFixed(4)); q.pu.style.display = ''; } else q.pu.style.display = 'none'; });
+          if (story && (stg || e >= .985) && !(stg && st.puTop && !st.puTop.has(q.id))) { const len = Math.max(20, Math.hypot(p[0] - usP[0], p[1] - usP[1]) * 1.03); q.pu.setAttribute('d', q.st.getAttribute('d')); q.pu.setAttribute('stroke-width', Math.max(1.2, w).toFixed(2)); q.pu.style.strokeDasharray = (7 / len).toFixed(4) + ' ' + (93 / len).toFixed(4); q.pu.style.setProperty('--per', (-100 / len).toFixed(4)); q.pu.style.display = ''; } else q.pu.style.display = 'none'; });
         /* OR7: China's own institutions as arcs round China, once the two systems have parted (u > 0); each ends at its name */
         if (story) {
           /* each arc starts just past the top and runs down one side of China to its name: by turns right and left, so the names stand in two short columns that no arc crosses */
@@ -469,7 +469,8 @@
       /* the marks' key follows the lists' dates as the picture does */
       function syncMarks(era) { [full ? keyP : (story || compact ? R.lg : null), !full ? keyP : null].forEach(box => { if (!box) return; const mkk = box.querySelector('.orr-mk'); if (mkk && story) fillMarks(mkk, 'orr', era, compact); box.querySelectorAll('[data-band]').forEach(n => { n.lastChild.textContent = era < 2 ? 'Between the two systems' : n.dataset.band === '1' ? 'On both lists' : 'On neither list'; }); }); }
       const motion = { wants: () => story && (stg || st.split) && !st.opening && !reduce(),   /* OR8: the pulses on the flow lines run in every year; China's system turns only once the systems have parted */
-        step(dt, n) { if (!st.split) return; st.rot = (st.rot + dt * ROT) % (Math.PI * 2); X.orrRot = st.rot; L.rot = st.rot; moons.forEach(q => { const c = place(q, L, st.yf, L.e); q.p = c; q.g.setAttribute('transform', `translate(${c[0].toFixed(2)} ${c[1].toFixed(2)})`); }); if (n % 6 === 0) placeLabels(); } };
+        step(dt, n) { if (!st.split) return; if (stg) { st.rdt = (st.rdt || 0) + dt; if (n % 2) return; dt = st.rdt; st.rdt = 0; }   /* OR8: the stage moves China's bodies 30 times a second (the turn is slow; the picture is repainted half as often) */
+          st.rot = (st.rot + dt * ROT) % (Math.PI * 2); X.orrRot = st.rot; L.rot = st.rot; moons.forEach(q => { const c = place(q, L, st.yf, L.e); q.p = c; q.g.setAttribute('transform', `translate(${c[0].toFixed(2)} ${c[1].toFixed(2)})`); }); if (n % (stg ? 30 : 6) === 0) placeLabels(); } };   /* OR8: the stage places the names twice a second (a body moves about 1 px in that time; each placement makes the browser lay out the whole picture again) */
       /* the interaction */
       const pick = id => { st.sel = id; list.forEach(q => q.g.classList.toggle('sel', q.id === id)); infoFor(id); placeLabels(); };
       const unpick = () => { if (!st.sel) return; st.sel = null; list.forEach(q => q.g.classList.remove('sel')); infoFor(null); placeLabels(); };
@@ -596,7 +597,7 @@
       document.fonts && document.fonts.ready && document.fonts.ready.then(() => { if (wrap.isConnected) { list.forEach(q => { q.tw = 0; }); placeLabels(); } });
       if (stg) { pmSync(); loopSync(); }   /* the pulses run from the first frame */
       if (SG && !o.view) { const c = SG.CH[SG.idx()]; SG.camTo(c.cam, 0, c.y1); }   /* the picture opens where its chapter looks */
-      const api = { render, go, stop, opening, st, wrap, deep: deepb, slider, svg, list, L, fsb, hl, setStep, motion, pm, steps, arcs, syncMarks, setTilt, zoomBy, resetView, view: Vw, SG, stage, box: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), keyShow, refreshKey: () => { st.band = null; syncKey(); }, hint: hintEl, key: keyP, tb: tbar, W, H, compact };
+      const api = { render, go, stop, opening, st, wrap, placeLabels: () => placeLabels(), deep: deepb, slider, svg, list, L, fsb, hl, setStep, motion, pm, steps, arcs, syncMarks, setTilt, zoomBy, resetView, view: Vw, SG, stage, box: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), keyShow, refreshKey: () => { st.band = null; syncKey(); }, hint: hintEl, key: keyP, tb: tbar, W, H, compact };
       return api;
     }
 
