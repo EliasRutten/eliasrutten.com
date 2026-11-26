@@ -64,7 +64,7 @@
           'One order has become two poles. The economies that stand between the two systems are named on the band between them.'] },
       { id: 'now', y0: 2026, y1: 2026, k: '2026', t: 'WAICO, and the order as it stands', s: '2026', layer: 'earn', cam: 'all',
         p: () => { const t = h1Top(); return ['On 16 July 2026 twenty-nine countries sign the agreement that founds the World Artificial Intelligence Cooperation Organization, in Shanghai: China’s list beside Washington’s.',
-          'Pax Silica grows through the year: on 21 Nov 2026 the State Department listed 24 states and the European Union beside the United States.',
+          'Pax Silica grows through the year: the State Department’s list, read on 21 Nov 2026, names 24 states and the European Union beside the United States, 26 parties in all.',
           'Profit still flows to the centre: in the first half of 2026 US firms’ affiliates earned ' + bn1(t[1]) + ' in ' + (/^(Netherlands|United Kingdom)$/.test(nameOf(t[0])) ? 'the ' : '') + nameOf(t[0]) + ' alone (BEA).']; } },
       { id: 'pp', step: 'pp', k: 'After the story', t: STEPS.pp.title, s: STEPS.pp.short, layer: null, cam: 'all' },
       { id: 'cl', step: 'cl', k: 'After the story', t: STEPS.cl.title, s: STEPS.cl.short, layer: null, cam: 'all' }];
@@ -82,6 +82,10 @@
     const fbtn = LAYERS.map(([k, t]) => { const b = h('button', 'orr-fb l-' + k); b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.layer = k; b.append(h('i'), t); fsel.append(b); return b; });
     const fcap = h('p', 'orr-fcap'); fcap.setAttribute('aria-live', 'polite');
     const fnote = h('p', 'orr-fn'); fnote.hidden = true;
+    /* phones: one short line that says what the lines on the picture measure (the full caption is in the key) */
+    const fc1 = h('p', 'orr-fc1'); fc1.hidden = true;
+    /* a phone held upright: the narration's sheet says when there is more to read */
+    const moreB = h('button', 'orr-more', 'More ↓'); moreB.type = 'button'; moreB.hidden = true; moreB.setAttribute('aria-label', 'Read more of this chapter');
     /* the narrator: the chapter's narration, and beside it what the timeline marks at this year */
     const nar = h('section', 'orr-nar'); nar.setAttribute('aria-label', 'The narration');
     const nb = h('div', 'nb'), nz = h('div', 'nz'), nn = h('div', 'nn'), ne = h('div', 'ne'), ni = h('div', 'ni orr-ins'); nz.setAttribute('aria-live', 'polite'); nn.append(ne, ni); nb.append(nz, nn);
@@ -107,7 +111,7 @@
     if (!full) { const j = h('div', 'orr-jump'); [['read', 'The explanation'], ['how', 'How we count']].forEach(([k, t]) => { const b = h('button', 'lk2'); b.type = 'button'; b.dataset.pf = k; if (k === 'how') b.setAttribute('data-how', ''); b.append(t + ' ', h('span', '', '↓')); j.append(b); }); side.append(j); }
     /* the card of the body picked gets a way to put it down */
     const ix = h('button', 'orr-ix', '×'); ix.type = 'button'; ix.setAttribute('aria-label', 'Close this card'); ix.addEventListener('click', () => C.unpick());
-    stage.append(hud, C.info, side, fnote, tcard, dock);
+    stage.append(hud, C.info, side, fnote, tcard, dock); if (compact) (ph ? stage : hud).append(fc1);
     /* a wide stage's right column: the key (or the card of the body picked), then the door; they share the column and never overlap */
     const col = wide ? h('div', 'orr-col') : null;
     if (col) { stage.append(col); if (C.keyP) col.append(C.keyP); col.append(C.info, side); } else if (ph) dock.append(side); else C.slider.append(side);
@@ -157,7 +161,7 @@
       stage.style.setProperty('--dock', dh + 'px');
       /* a wide stage has its columns; elsewhere the picture starts under the tab's title line (a phone upright: under its row of buttons) */
       const rcb = !full && !wide && (!compact || land) && C.rc ? Math.round(C.rc.getBoundingClientRect().bottom - sr.top) + 4 : 0;   /* a middle-sized stage: the picture and the rim's words start under the row of buttons */
-      const mid = !wide && !land && !ph, ox = wide ? COL : mid ? MIDL : land ? LANDL : 0, oxr = wide ? COL : 0, oy = full ? (ph ? 100 : compact ? 44 : 58) : wide ? top + 4 : ph ? 46 : Math.max(top, ht, rcb) + 2, hl = Math.max(120, H - oy - dh - (compact ? 4 : 22));   /* a large stage keeps a strip under the picture for the footnote of a starred line */
+      const mid = !wide && !land && !ph, ox = wide ? COL : mid ? MIDL : land ? LANDL : 0, oxr = wide ? COL : 0, oy = full ? (ph ? 100 : compact ? 44 : 58) : wide ? top + 4 : ph ? 46 : Math.max(top, ht, rcb) + 2, hl = Math.max(120, H - oy - dh - (compact ? (ph ? 20 : 4) : mid ? 36 : 22));   /* a large stage keeps a strip under the picture for the footnote of a starred line */
       stage.style.setProperty('--boxw', (W - ox - oxr - 16) + 'px'); stage.style.setProperty('--boxc', (ox + (W - ox - oxr) / 2) + 'px');
       const m = 'linear-gradient(to right, transparent ' + Math.max(0, ox - 26) + 'px, #000 ' + (ox + 6) + 'px, #000 ' + (W - oxr - 6) + 'px, transparent ' + Math.min(W, W - oxr + 26) + 'px), linear-gradient(to bottom, transparent ' + Math.max(0, oy - 12) + 'px, #000 ' + (oy + 4) + 'px, #000 ' + (oy + hl) + 'px, transparent ' + (oy + hl + 22) + 'px)';
       boxMask = m; maskOn = null; maskSync();
@@ -202,8 +206,9 @@
       cnS[2].style.visibility = g.yr0 < ORD.cn[2][1] ? 'hidden' : '';
       const PB = C.pbox(); tTop.style.display = cy - b - 14 < PB.oy - 12 ? 'none' : ''; if (cy + b + 16 > PB.oy + PB.hl + (compact ? 2 : 6)) tBot.style.display = 'none';
       /* the words stand outside the rim: no name inside it can meet them. When the camera has moved in, bodies reach the frame: then the words are kept clear */
-      const foot = compact && L.ph && !full; tFoot.style.display = foot && cy + b + 16 <= PB.oy + PB.hl + 4 ? '' : 'none'; if (foot) { tTop.style.display = 'none'; tBot.style.display = 'none'; if (st.layer === 'clear' && !st.step && u < .5) tFoot.style.display = 'none'; }   /* the pool and its name stand on the rim's foot: the order's name steps aside while they are drawn */
-      if (compact && !L.ph && st.layer === 'clear' && !st.step && u < .5) tBot.style.display = 'none';   /* a phone held sideways: the pool stands on the rim's lower edge, so its lower line steps aside while the pool is drawn */   /* the clearing pool and its name stand at the lower right: the order's name moves to the lower left */
+      const foot = compact && H > W;   /* a phone held upright, whichever way the picture is laid out */ tFoot.style.display = foot && cy + b + 16 <= PB.oy + PB.hl + 4 ? '' : 'none'; if (foot) { tTop.style.display = 'none'; tBot.style.display = 'none'; if (st.layer === 'clear' && !st.step && u < .5) tFoot.style.display = 'none'; }   /* the pool and its name stand on the rim's foot: the order's name steps aside while they are drawn */
+      if (compact && !L.ph && st.layer === 'clear' && !st.step && u < .5) tBot.style.display = 'none';
+      tpBot.setAttribute('startOffset', wide && st.layer === 'clear' && !st.step && u < .5 ? '38%' : '50%');   /* a larger stage: the lower line slides left of the pool, which stands on the rim at its lower right */   /* a phone held sideways: the pool stands on the rim's lower edge, so its lower line steps aside while the pool is drawn */   /* the clearing pool and its name stand at the lower right: the order's name moves to the lower left */
       st.rimLabs = []; st.rimY = [cy - b, cy + b];
       if (Vw.k > 1.01) { const along = (Q, len, tw, up) => { let acc = 0; for (let i = 1; i < Q.length; i++) { acc += Math.hypot(Q[i][0] - Q[i - 1][0], Q[i][1] - Q[i - 1][1]); if (acc > (len - tw) / 2 - 6 && acc < (len + tw) / 2 + 6) st.rimLabs.push(up ? [Q[i][0] - 12, Q[i][1] - 17, Q[i][0] + 12, Q[i][1] + 1] : [Q[i][0] - 12, Q[i][1] + 1, Q[i][0] + 12, Q[i][1] + 17]); } };
         if (tTop.style.display !== 'none') along(Qt, lt, mode === 'long' ? longW : NAME.length * cw, true); if (tBot.style.display !== 'none') along(Qb, lb, botW, false); }
@@ -273,7 +278,7 @@
             st.poolLab = [sx - hw, sy + (dn ? 15 : -44), sx + hw, sy + (dn ? 47 : -12)]; }
           note = '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets.';
           const ex = val(F.cn.exp, yr), mn = val(F.cn.man, yr), cb = val(pool.bal.CHN, yr);
-          cap = 'White lines: current-account surpluses run into one pool; gold: what the pool finances. ' + yr + ', ' + nE + ' economies (IMF).' + (cb == null ? ' China: no IMF figure for ' + yr + '.' : '')
+          cap = 'White lines: current-account surpluses run into one pool; gold: what the pool finances. ' + yr + ', ' + nE + ' economies (IMF). The two totals differ: as measured, the world’s current accounts do not add up to zero.' + (cb == null ? ' China: no IMF figure for ' + yr + '.' : '')
             + (ex != null ? ' China’s share of the world’s goods exports: ' + pc1(ex) + (mn != null ? '; of its manufacturing: ' + pc1(mn) : '; of its manufacturing: not collected before 2004') + ' (World Bank).' : '');
         } else cap = 'The clearing pool is drawn to 2025. The IMF’s 2026 figures are projections and are not shown.';
       }
@@ -283,15 +288,26 @@
       const whyOn = !st.step && st.ch === 1 && lay === 'earn' && g.u < .05;
       if (whyOn) {   /* straight down from the top of the energy ring to the core: the one line through the rings where no sector puts a body */
         const fy = g.f * Math.abs(L.v[1]), x = g.Uc[0], y0 = L.cy - (L.ry[3] + fy) + 2, y1 = g.Uc[1] - US.r * .74 - 8;
-        why.setAttribute('d', `M${x.toFixed(1)} ${y0.toFixed(1)}L${x.toFixed(1)} ${y1.toFixed(1)}`); const t = word('why', 'ill'); t.textContent = 'Profit is claimed inward*'; const ty = L.cy - (L.ry[3] + L.ry[4]) / 2 - fy + 4;
-        t.setAttribute('x', (Sx(x) + 9).toFixed(1)); t.setAttribute('y', Sy(ty).toFixed(1)); t.setAttribute('text-anchor', 'start'); t.style.display = '';
-        st.whyLab = [Sx(x) - 6, Sy(ty) - 12, Sx(x) + 170, Sy(ty) + 6];
+        why.setAttribute('d', `M${x.toFixed(1)} ${y0.toFixed(1)}L${x.toFixed(1)} ${y1.toFixed(1)}`); const t = word('why', 'ill'), ty = L.cy - (L.ry[3] + L.ry[4]) / 2 - fy + 4;
+        /* the claim in two lines on the picture itself, beside the arrow: where the mass is made, and where the profit is claimed */
+        if (t.__two !== true) { t.textContent = ''; t.append(el('tspan', {}, 'Made on the outer rings,'), el('tspan', { dy: 14 }, 'claimed at the core*')); t.__two = true; }
+        const tx = Sx(x) + 9; t.setAttribute('x', tx.toFixed(1)); t.setAttribute('y', Sy(ty).toFixed(1)); t.setAttribute('text-anchor', 'start'); [...t.children].forEach(n => n.setAttribute('x', tx.toFixed(1))); t.style.display = '';
+        st.whyLab = [Sx(x) - 6, Sy(ty) - 12, Sx(x) + 172, Sy(ty) + 20];
         note = '* Illustrative: the direction in which profit is claimed, ring by ring. It carries no figure; the grey lines do.'; }
       else st.whyLab = null;
       why.style.display = whyOn ? '' : 'none';
       st.sfx = sfx;
       if (st.step === 'cl') note = '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.';   /* step 2's own starred lines */
       if (note !== fnote.textContent) { fnote.textContent = note; st.nk = ''; } fnote.hidden = !note || compact; st.note = note;
+      if (compact) { const tx = st.step ? '' : lay === 'earn' ? 'Grey lines: US firms’ affiliates’ income there, ' + (half(st.yf) ? 'first half of 2026' : yr) + ' (BEA)'
+          : lay === 'paper' ? (yr < 2000 ? 'Gold lines: US Treasuries held abroad; none by country before 2000' : 'Gold lines: US Treasuries held there, ' + (yr >= 2026 ? 'Sep 2026' : 'end ' + yr) + ' (TIC)')
+          : lay === 'clear' ? (yr <= 2025 ? 'Surpluses into one pool; gold: what it finances (IMF, ' + yr + ')' : 'The clearing pool is drawn to 2025 (IMF)') : '';   /* one line on a phone; the full caption is in the key */
+        if (fc1.textContent !== tx) fc1.textContent = tx; fc1.hidden = !tx; }
+      /* after the split, the dark lane between the two systems carries its name */
+      if (!st.step && g.e >= .9) { const PB = C.pbox(), t = word('curt', 'ctn'); t.textContent = 'Silicon curtain';
+        if (!L.ph) { const x = Sx(L.cx), y = Sy(PB.oy + PB.hl * (compact ? .7 : .5));   /* phones: below the names of China's arcs */ t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', (y + 4).toFixed(1)); t.setAttribute('text-anchor', 'middle'); t.setAttribute('transform', 'rotate(-90 ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')'); st.curtLab = [x - 8, y - 64, x + 8, y + 64]; }
+        else { const x = Sx(PB.ox) + 12, y = Sy(PB.oy + PB.hl * .5) + 4; t.removeAttribute('transform'); t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', y.toFixed(1)); t.setAttribute('text-anchor', 'start'); st.curtLab = [x - 4, y - 10, x + 124, y + 4]; }
+        t.style.opacity = clamp((g.e - .9) / .1, 0, 1).toFixed(2); t.style.display = ''; } else st.curtLab = null;
       const key = (lay || '') + '|' + yr + '|' + cap.length + '|' + st.ch; if (key !== capKey) { capKey = key; fcap.textContent = cap; fbtn.forEach(b => b.setAttribute('aria-checked', String(b.dataset.layer === lay))); if (C.keyP && C.keyP.__cap) C.keyP.__cap.textContent = cap; }
     }
     function setLayer(k, pin) { if (st.step) return; st.layer = k; st.pin = !!pin; capKey = ''; C.render(st.yf); }
@@ -398,7 +414,8 @@
 
     /* ---------- the narrator ---------- */
     /* where a sheet scrolls (a phone's narrator, a middle-sized stage's notices), a soft lower edge says there is more */
-    const more = () => [nb, nn, C.keyP].forEach(n => n && n.classList.toggle('more', n.scrollHeight - n.scrollTop - n.clientHeight > 6));
+    const more = () => { [nb, nn, C.keyP].forEach(n => n && n.classList.toggle('more', n.scrollHeight - n.scrollTop - n.clientHeight > 6)); moreB.hidden = !(compact && ph && nb.classList.contains('more')); };
+    nar.append(moreB); moreB.addEventListener('click', () => nb.scrollBy({ top: Math.round(nb.clientHeight * .8), behavior: reduce() ? 'auto' : 'smooth' }));
     [nb, nn, C.keyP].forEach(n => n && n.addEventListener('scroll', more, { passive: true })); if (C.keyB) C.keyB.addEventListener('click', () => requestAnimationFrame(more));
     const scr = ph && compact ? nb : (!wide && !compact ? nn : null); if (scr) { scr.tabIndex = 0; scr.setAttribute('role', 'group'); scr.setAttribute('aria-label', scr === nb ? 'The narration, in full' : 'This year’s notices'); }
     if (C.keyP) C.keyP.tabIndex = 0;
@@ -427,7 +444,7 @@
     function obstacles(add, out) {
       add(hud); add(fnote.hidden ? null : fnote); if (wide) { add(side); } if (!tcard.classList.contains('in')) { /* the card passes */ }
       if (C.info.dataset.idle !== '1' || wide) add(C.info);
-      if (st.poolLab) out.push(st.poolLab); if (st.whyLab) out.push(st.whyLab); if (st.rimLabs) st.rimLabs.forEach(r => out.push(r));
+      if (st.poolLab) out.push(st.poolLab); if (st.whyLab) out.push(st.whyLab); if (st.curtLab) out.push(st.curtLab); if (st.rimLabs) st.rimLabs.forEach(r => out.push(r));
     }
 
     function draw(g) { chSync(); maskSync(); drawRim(g); drawFx(g); }

@@ -300,3 +300,14 @@
 #isx-root .orr-fs .orr.stg.port .orr-key { left: 8px; right: 8px; top: 106px; max-width: none; max-height: calc(100% - 114px); z-index: 6; }
 #isx-root .orr-fs .orr.stg.land .orr-key { top: 56px; z-index: 6; max-height: calc(100% - 62px); }
 @media (prefers-reduced-motion: reduce) { #isx-root .orr-tc { display: none; } }
+
+/* OR8, after the fresh-eyes reviews (26 Nov) */
+#isx-root .orr-svg text.orr-fl.ctn { font: 600 10.5px/1 var(--mono); letter-spacing: .22em; text-transform: uppercase; fill: #9fb2c2; }
+#isx-root .orr.stg .orr-fc1 { margin: 0; font-size: 10.5px; line-height: 1.35; color: #a9bac8; }
+#isx-root .orr.stg.port .orr-fc1 { position: absolute; z-index: 1; left: 10px; right: 10px; bottom: calc(var(--dock) + 2px); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .orr.stg.land .orr-hud .orr-fc1 { margin-top: 4px; }
+#isx-root .orr.stg.port .orr-nar { position: relative; }
+#isx-root .orr.stg .orr-more { position: absolute; z-index: 2; right: 16px; bottom: 8px; padding: 4px 11px; border-radius: 999px; border: 1px solid rgba(255, 181, 71, .55); background: rgba(10, 16, 24, .96); color: #ffd27a; font: 600 11.5px/1.2 var(--display); cursor: pointer; }
+#isx-root .orr.stg .orr-more[hidden] { display: none; }
+#isx-root .orr.stg .orr-more:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .orr.stg.mid .orr-fn { white-space: normal; text-wrap: balance; text-align: center; }   /* two lines rather than a cut */
