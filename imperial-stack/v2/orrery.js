@@ -597,6 +597,9 @@
       document.fonts && document.fonts.ready && document.fonts.ready.then(() => { if (wrap.isConnected) { list.forEach(q => { q.tw = 0; }); placeLabels(); } });
       if (stg) { pmSync(); loopSync(); }   /* the pulses run from the first frame */
       if (SG && !o.view) { const c = SG.CH[SG.idx()]; SG.camTo(c.cam, 0, c.y1); }   /* the picture opens where its chapter looks */
+      /* OR8: the picture is the stage's last child, so the keyboard and a screen reader meet the counters, the key, the narration, the chapters
+         and the timeline first and the picture's sixty bodies after them (every panel is stacked above the picture, so nothing changes on screen) */
+      if (stg) stage.append(svg);
       const api = { render, go, stop, opening, st, wrap, placeLabels: () => placeLabels(), deep: deepb, slider, svg, list, L, fsb, hl, setStep, motion, pm, steps, arcs, syncMarks, setTilt, zoomBy, resetView, view: Vw, SG, stage, box: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), keyShow, refreshKey: () => { st.band = null; syncKey(); }, hint: hintEl, key: keyP, tb: tbar, W, H, compact };
       return api;
     }

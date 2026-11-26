@@ -345,7 +345,7 @@
     }
     /* go to a chapter: the year glides to its first year (a step opens), the camera follows, the title card passes */
     function go(i, how) {
-      i = clamp(i, 0, NCH - 1); const c = CH[i]; if (how !== 'film') filmStop();
+      i = clamp(i, 0, NCH - 1); const c = CH[i]; if (how !== 'film') filmStop(); st.chT = i; st.chAt = performance.now();   /* the chapter being glided to: the next press counts from it */
       st.pin = false; st.cam = st.cam === 'user' ? 'user' : c.cam;
       if (c.step) { C.setStep(c.step); camTo('all', 800); if (how !== 'film') card(i, 1800); return; }
       if (st.step) C.setStep(null);
@@ -355,7 +355,9 @@
     chl.addEventListener('click', ev => { const b = ev.target.closest('[data-ch]'); if (b) go(+b.dataset.ch, 'user'); });
     bk.addEventListener('click', () => go(st.ch - 1, 'user'));
     fw.addEventListener('click', ev => { if (st.ch < NCH - 1) { ev.stopPropagation(); go(st.ch + 1, 'user'); } else filmStop(); });
-    const keyNav = ev => { if (ev.target.closest('input, .orr-fsel, .orr-svg')) return; const d = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0; if (!d || ev.ctrlKey || ev.metaKey || ev.altKey) return; const j = clamp(st.ch + d, 0, NCH - 1); if (j === st.ch) return; ev.preventDefault(); go(j, 'user'); if (ev.target.closest('.orr-chs')) (ev.target.closest('.orr-nx') || chb[j]).focus({ preventScroll: true }); };
+    const keyNav = ev => { if (ev.target.closest('input, .orr-fsel, .orr-svg')) return; const d = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : ev.key === 'Home' ? -99 : ev.key === 'End' ? 99 : 0; if (!d || ev.ctrlKey || ev.metaKey || ev.altKey) return; const from = st.chT != null && performance.now() - st.chAt < 1500 ? st.chT : st.ch, j = clamp(from + d, 0, NCH - 1);   /* Home and End: the first and the last chapter */
+      if (j === from) { if (ev.target.closest('.orr-chs')) { ev.preventDefault(); ev.stopPropagation(); } return; }   /* at the ends the row keeps the key: it never leaves the station from under the visitor's focus */
+      ev.preventDefault(); go(j, 'user'); if (ev.target.closest('.orr-chs')) (ev.target.closest('.orr-nx') || chb[j]).focus({ preventScroll: true }); };
     dock.addEventListener('keydown', keyNav);
 
     /* ---------- the film: Play runs the chapters; the year eases between its stops ---------- */
