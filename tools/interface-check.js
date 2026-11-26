@@ -87,7 +87,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
 
   /* ================= 2. three doors at the end of the ring ================= */
   if (want(2)) {
-    const DOORS = [['#profit', 'The profit dollar', 'Whose profits the world’s savings buy', 'profit'], ['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#elite-network', 'The elite network', 'See the internal structure of dominant American capital', 'arm'], ['#imperial-arm', 'The imperial arm', 'Scenarios: how Washington leverages the stack internationally', 'story']];
+    const DOORS = [['#simulator', 'The imperial machinery', 'Follow the money in the Scott Bessent Simulator', 'fin'], ['#profit', 'The order', 'Whose profits the world’s savings buy', 'profit'], ['#imperial-arm', 'The imperial arm', 'Scenarios: how Washington leverages the stack internationally', 'story'], ['#elite-network', 'The elite network', 'See the internal structure of dominant American capital', 'arm']];   /* the bar’s order since T1, 26 Nov 2026 */
     for (const [w, h, touch] of [[1440, 900, false], [1280, 760, false], [1024, 768, false], [390, 844, true]]) {
       const p = await page('#circuit/ring', { w, h, touch, wait: 2200 });
       const r = await js(p, () => { const d = [...document.querySelectorAll('#isx-tournarr a.rgdoor')], bar = document.getElementById('isx-tabs').getBoundingClientRect(), card = document.getElementById('isx-tournarr').getBoundingClientRect(), rb = document.getElementById('isx-resbar'), rbr = rb && rb.getClientRects().length && getComputedStyle(rb).visibility !== 'hidden' ? rb.getBoundingClientRect() : null;
@@ -95,7 +95,7 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
           old: document.querySelectorAll('#isx-tournarr .rggo, #isx-tournarr [data-ring="sim"]').length, again: !!document.querySelector('#isx-tournarr [data-ring="again"]'), phone: innerWidth <= 760,
           fit: innerWidth <= 760 || (card.top >= 0 && card.bottom <= bar.top + 1 && scrollY === 0 && (!rbr || card.top >= rbr.bottom - 1 || card.left >= rbr.right)), cardTop: Math.round(card.top), rb: rbr && Math.round(rbr.bottom) }; });
       const d = r.doors, tag = `doors (${w}×${h})`;
-      ok(`${tag}: four doors, in order, with their titles and subtitles; the single Simulator button is gone (profit tab build 1: the profit dollar is the first door)`, d.length === 4 && d.every((x, i) => x.href === DOORS[i][0] && x.t === DOORS[i][1] && x.s === DOORS[i][2] && x.vis) && r.old === 0 && r.again, r);
+      ok(`${tag}: four doors, in order, with their titles and subtitles; the single Simulator button is gone (T1, 26 Nov 2026: the doors follow the bar, the machinery first, the order third)`, d.length === 4 && d.every((x, i) => x.href === DOORS[i][0] && x.t === DOORS[i][1] && x.s === DOORS[i][2] && x.vis) && r.old === 0 && r.again, r);
       ok(`${tag}: equal weight: the same size, border and type for all four`, d.length === 4 && d.every(x => Math.abs(x.w - d[0].w) <= 1 && Math.abs(x.h - d[0].h) <= 1 && x.bw === d[0].bw && x.fs === d[0].fs && x.fw === d[0].fw), d);
       ok(`${tag}: the card with the doors fits its place (above the bar, clear of the key numbers)`, r.fit, r);
       await p.context().close();
@@ -249,8 +249,8 @@ const LINE = /^(Click|Tap) any actor or line for what it does and its sources\.$
     /* machinery entry round (19 Nov 2026): the old in-page entry and its row “How the guide works” are gone. The tab's entry screen says
        how to use it, and the guide's own hints carry the dotted-words line on the first card that has one */
     let p = await page('#simulator', { pos: '{"l":0,"b":-1}' });
-    let r = await js(p, async () => { ISX.enter.open('fin', true); await new Promise(q => setTimeout(q, 150)); const e = document.getElementById('isx-enter'), h = [...e.querySelectorAll('.en-b section')].find(x => /How to use it/.test(x.textContent)); const out = { vis: !!h && h.getClientRects().length > 0, line: h ? h.textContent : '', beat: ISX.sim.beat }; ISX.enter.close(); return out; });
-    ok('tutorial: the machinery’s entry screen says how to use it; the guide stands at its first step (no step −1)', r.vis && /three levels of\s+difficulty/.test(r.line) && r.beat === 0, r);
+    let r = await js(p, async () => { ISX.enter.open('fin', true); await new Promise(q => setTimeout(q, 150)); const e = document.getElementById('isx-enter'), h = e.querySelector('.en-h'); const out = { vis: !!h && h.getClientRects().length > 0, line: h ? h.textContent : '', beat: ISX.sim.beat }; ISX.enter.close(); return out; });
+    ok('tutorial: the machinery’s entry screen (one paragraph since T1, 26 Nov) says how to use it; the guide stands at its first step (no step −1)', r.vis && /level of difficulty/.test(r.line) && r.beat === 0, r);
     r = await js(p, () => ISX.hints && ISX.hints.lines ? ISX.hints.lines() : {});
     ok('tutorial: the guide’s hints keep the dotted-words line', JSON.stringify(r).includes('Dotted words have a definition'), r);
     await p.context().close();

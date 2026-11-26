@@ -131,11 +131,11 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
   ok(r.lock === 0 && r.fw.join() === 'type:Who owns the profits,country:Who owns which firm' && r.web === 1, 'station 1: both doors to the firm web are open; the ownership web’s door stays', r);
   await p.click('#isx-pf-text button.pf-door[data-pweb]'); await up(p); await p.waitForTimeout(300);
   r = await p.evaluate(() => ({ view: ISX.view, v: ISX.firms.state.view, n: ISX.firms.state.inFirms, back: document.querySelector('#isx-fw .wclose').textContent.trim() }));
-  ok(r.view === 'map' && r.v === 'earned' && r.n === 14 && /Back to the profit dollar/.test(r.back), 'the ownership web’s door (“Where it is earned”) opens the firm web on its 14 sited firms, and leads back to the profit dollar', r);
+  ok(r.view === 'map' && r.v === 'earned' && r.n === 14 && /Back to the order/.test(r.back), 'the ownership web’s door (“Where it is earned”) opens the firm web on its 14 sited firms, and leads back to the order', r);
   await p.click('#isx-fw .wclose'); await p.waitForTimeout(500); await p.evaluate(() => ISX.profit.go(1));
   await p.click('#isx-pf-text button.pf-door[data-pfw="type"]'); await up(p); await p.waitForTimeout(300);
   r = await p.evaluate(() => ({ view: ISX.view, by: ISX.firms.state.by, back: document.querySelector('#isx-fw .wclose').textContent.trim() }));
-  ok(r.view === 'map' && r.by === 'type' && /Back to the profit dollar/.test(r.back), '“Who owns the profits” opens the firm web, and its way back names the profit dollar', r);
+  ok(r.view === 'map' && r.by === 'type' && /Back to the order/.test(r.back), '“Who owns the profits” opens the firm web, and its way back names the order', r);
   await p.click('#isx-fw .wclose'); await p.waitForTimeout(500);
   ok(await p.evaluate(() => ISX.view === 'profit' && !ISX.firms.isOpen), 'back to the profit dollar');
   await p.evaluate(() => ISX.profit.go(1)); await p.click('#isx-pf-text button.pf-door[data-pfw="country"]'); await up(p); await p.waitForTimeout(300);

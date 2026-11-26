@@ -649,7 +649,7 @@
       if (o.addr != null) read(o.addr); else { if (o.view || o.by || o.firm) setView(o.view || ''); if (o.by) S.by = o.by === 'country' ? 'country' : 'type'; }   /* a door opens its own view; the tray's tile opens the web as it was left */
       if (!host.querySelector('svg .fn')) draw();
       if (o.firm && M.byId[o.firm]) S.sel = 'f:' + o.firm;
-      host.querySelector('.wct').textContent = from === 'profit' ? 'Back to the profit dollar' : 'Back to the globe';
+      host.querySelector('.wct').textContent = from === 'profit' ? 'Back to the order' : 'Back to the globe';
       host.hidden = false; root.classList.add('web-on', 'fw-on'); refresh(false);
       var stg = host.querySelector('.fwpan'); if (stg.scrollWidth > stg.clientWidth + 4) stg.scrollLeft = (stg.scrollWidth - stg.clientWidth) / 2;   /* phones: the picture pans; start at its middle */
       try { if (X.globe) X.globe.pauseAnimation(); } catch (e) { /* ignore */ }

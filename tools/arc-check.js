@@ -22,8 +22,8 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
 
   if (want(1)) {
     let p = await open('');
-    const pills = await p.evaluate(() => ['map', 'profit', 'arm', 'fin', 'story'].map(k => document.querySelector('#isx-v-' + k + ' .lg').textContent));
-    ok(JSON.stringify(pills) === JSON.stringify(['The circuit', 'The profit dollar', 'The elite network', 'The imperial machinery', 'The imperial arm']), 'the five tabs are named: circuit, profit dollar, elite network, imperial machinery, imperial arm', pills);
+    const pills = await p.evaluate(() => ['map', 'fin', 'profit', 'story', 'arm'].map(k => document.querySelector('#isx-v-' + k + ' .lg').textContent));
+    ok(JSON.stringify(pills) === JSON.stringify(['The circuit', 'The imperial machinery', 'The order', 'The imperial arm', 'The elite network']), 'the five tabs are named, in the bar’s order (T1, 26 Nov): circuit, imperial machinery, the order, imperial arm, elite network', pills);
     await p.click('#isx-v-arm'); await p.waitForTimeout(300);
     ok(await p.evaluate(() => location.hash) === '#elite-network', 'the elite network writes #elite-network');
     await p.click('#isx-v-story'); await p.waitForTimeout(300);
@@ -38,19 +38,19 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     let r = await p.evaluate(() => ({ v: ISX.view, h: location.hash })); ok(r.v === 'story' && r.h === '#imperial-arm', 'an old address typed while the page is open is rewritten too', r);
     await p.evaluate(() => { location.hash = '#circuit/ring'; }); await p.waitForTimeout(900);
     const doors = await p.evaluate(() => [...document.querySelectorAll('.rgdoor')].map(a => a.getAttribute('href') + '|' + a.querySelector('b').textContent));
-    ok(doors.join(',') === '#profit|The profit dollar,#simulator|The imperial machinery,#elite-network|The elite network,#imperial-arm|The imperial arm', 'the ring has four doors with the new names and addresses', doors);
+    ok(doors.join(',') === '#simulator|The imperial machinery,#profit|The order,#imperial-arm|The imperial arm,#elite-network|The elite network', 'the ring has four doors in the bar’s order, with the new names and addresses', doors);
     await done(p);
   }
 
   if (want(2)) {
-    const COPY = { profit: ['The profit dollar', 'Why dollar assets need to be the most profitable'], arm: ['The elite network', 'Where Washington’s reach is organised: officials, firms and owners'], fin: ['The imperial machinery', 'How Washington keeps the circuit turning'], story: ['The imperial arm', 'Scenarios: how the arm is used'] };
+    const COPY = { fin: ['The imperial machinery', 'You saw how the AI trade has become a global circuit. This tab shows how it is managed domestically within the US. Click for your level of difficulty, or explore on your own.'], profit: ['The order', 'You saw the circuit and how Washington manages it at home. This tab shows the world order that pays its profit to the centre: how it grew from 1995, and why it is splitting in two. Press play, or drag the years.'], story: ['The imperial arm', 'You saw how the machinery is run. This tab shows the arm in use: the moments Washington reached into another country’s economy, and what it took. Pick a case, or follow one lever across all of them.'], arm: ['The elite network', 'You saw the cases. This tab shows who stands behind them: the officials, firms and owners through whom Washington’s reach is organised. Start with one agency and follow its lines, or take the tour.'] };   /* T1, 26 Nov 2026: one paragraph a tab; the machinery's is Elias's own words */
     let p = await open('', { first: 1 });
     ok(!(await p.evaluate(() => ISX.enter.on)), 'the Circuit has no new entry screen (it keeps “About this map”)');
-    for (const v of ['profit', 'arm', 'fin', 'story']) {
+    for (const v of ['fin', 'profit', 'story', 'arm']) {
       await p.click('#isx-v-' + v); await p.waitForTimeout(700);
-      const r = await p.evaluate(() => { const e = document.getElementById('isx-enter'); if (!e) return null; const w = document.querySelector('#isx-root > .wrap'); return { tab: e.dataset.tab, k: e.querySelector('.en-k').textContent, h: e.querySelector('.en-h').childNodes[0].textContent, blocks: [...e.querySelectorAll('.en-b h3')].map(x => x.textContent), btns: e.querySelectorAll('.en-acts .en-btn').length, inert: w.inert, modal: e.getAttribute('aria-modal'), more: e.querySelector('#isx-en-more').hidden, cover: e.getBoundingClientRect().width >= innerWidth && e.getBoundingClientRect().height >= innerHeight, focus: e.contains(document.activeElement) }; });
+      const r = await p.evaluate(() => { const e = document.getElementById('isx-enter'); if (!e) return null; const w = document.querySelector('#isx-root > .wrap'); return { tab: e.dataset.tab, k: e.querySelector('.en-k').textContent, h: e.querySelector('.en-h').childNodes[0].textContent, blocks: e.querySelectorAll('.en-b, .en-b h3, h2, h3').length, paras: e.querySelectorAll('.en-h').length, sentences: (e.querySelector('.en-h').childNodes[0].textContent.match(/[.!?](\s|$)/g) || []).length, n: (e.querySelector('.en-k').textContent.match(/0\d/) || [''])[0], btns: e.querySelectorAll('.en-acts .en-btn').length, inert: w.inert, modal: e.getAttribute('aria-modal'), more: e.querySelector('#isx-en-more').hidden, cover: e.getBoundingClientRect().width >= innerWidth && e.getBoundingClientRect().height >= innerHeight, focus: e.contains(document.activeElement) }; });
       ok(r && r.tab === v && r.k.indexOf(COPY[v][0]) >= 0 && r.h === COPY[v][1], 'entering “' + COPY[v][0] + '” for the first time shows its entry screen, with its title', r);
-      ok(r && r.blocks.length === 3 && r.blocks[0] === 'Where you are' && r.blocks[1] === 'What you are about to see' && /^How to (use|read) it$/.test(r.blocks[2]) && r.btns === (v === 'fin' ? 4 : 3) && r.more, v + ': three blocks, ' + (v === 'fin' ? 'four buttons (the thesis view’s “Just the thesis” is the fourth, 23 Nov)' : 'three buttons') + ', no second row yet', r);
+      ok(r && r.blocks === 0 && r.paras === 1 && r.sentences >= 2 && r.sentences <= 3 && r.n === { fin: '02', profit: '03', story: '04', arm: '05' }[v] && r.btns === (v === 'fin' ? 4 : 3) && r.more, v + ': one paragraph of two or three sentences and no blocks, numbered in the bar’s order, ' + (v === 'fin' ? 'four buttons (the thesis view’s “Just the thesis” is the fourth, 23 Nov)' : 'three buttons') + ', no second row yet', r);
       ok(r && r.cover && r.inert && r.modal === 'true' && r.focus, v + ': the screen covers the window, holds the focus, and the page behind is out of reach', r);
       await p.keyboard.press('Escape'); await p.waitForTimeout(900);
       const after = await p.evaluate(v => ({ on: ISX.enter.on, el: !!document.getElementById('isx-enter'), inert: document.querySelector('#isx-root > .wrap').inert, seen: localStorage.getItem('isx-enter-' + v), view: ISX.view }), v);
@@ -64,20 +64,20 @@ const ok = (c, t, x) => { n++; if (!c) { fail++; console.log('FAIL  ' + t + (x !
     await p.click('#isx-enter .en-star'); let r = await p.evaluate(() => { const nn = document.getElementById('isx-en-note'); return { open: !nn.hidden, t: nn.textContent }; });
     ok(r.open && /Only a very large economy can play this role/.test(r.t) && ['Strange', 'Cohen', 'Kindleberger', 'Eichengreen', 'Helleiner'].every(x => r.t.indexOf(x) >= 0), 'the asterisk opens the footnote with its five references', r);
     await p.click('#isx-enter [data-en="stops"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch b')].map(x => x.textContent));
-    ok(r.length === 6 && /The order/.test(r[0]) && /Profits/.test(r[1]) && /Technology/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
+    ok(r.length === 6 && /The system/.test(r[0]) && /Profits/.test(r[1]) && /Technology/.test(r[2]) && /The regime/.test(r[3]) && /The AI trade/.test(r[4]), '“Jump to a station” shows the six stations', r);
     await p.click('#isx-enter [data-en-stop="3"]'); await p.waitForTimeout(900);
     r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st, view: ISX.profit.state.view })); ok(!r.on && r.st === 'regime' && r.view === 'all', 'choosing a station closes the screen and opens it: the regime, on the stacked chart', r);
     await p.click('#isx-helpb'); await p.click('#isx-tabx'); await p.waitForTimeout(300); await p.click('#isx-enter [data-en="remind"]'); await p.waitForTimeout(300);
     r = await p.evaluate(() => { const m = document.getElementById('isx-remind'); return { on: ISX.remind.on, inside: !!m && document.getElementById('isx-enter').contains(m), link: decodeURIComponent(ISX.remind.link || ''), sum: m && m.querySelector('.rm-sum').textContent }; });
-    ok(r.on && r.inside && /the profit dollar/.test(r.link) && /#profit/.test(r.link) && /The profit dollar/.test(r.sum), '“Remind me later” opens the reminder on the screen, for this tab', r);
+    ok(r.on && r.inside && /the order/.test(r.link) && /#profit/.test(r.link) && /The order/.test(r.sum), '“Remind me later” opens the reminder on the screen, for this tab', r);
     await p.keyboard.press('Escape'); await p.waitForTimeout(200); ok(await p.evaluate(() => !ISX.remind.on && ISX.enter.on === 'profit'), 'Esc closes the reminder first, the screen stays');
     await p.click('#isx-enter [data-en="go"]'); await p.waitForTimeout(900);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'order', '“Start at the first station” opens station 1', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, st: ISX.profit.state.st })); ok(!r.on && r.st === 'order', '“Start at the beginning” opens station 1', r);
     await done(p);
     /* the machinery: levels only after “Learn step by step”; the tour only after “Explore on my own” */
     p = await open('#simulator', { first: 1 }); await p.waitForTimeout(600);
-    r = await p.evaluate(() => ({ on: ISX.enter.on, ge: !document.querySelector('#isx-gentry'), more: document.querySelector('#isx-en-more') && document.querySelector('#isx-en-more').hidden, txt: document.querySelector('#isx-enter .en-b').textContent, sub: (document.querySelector('#isx-enter .en-sub') || {}).href }));
-    ok(r.on === 'fin' && r.ge && r.more && /manufactured, and used as a weapon/.test(r.txt) && /paid pieces on the Substack/.test(r.txt) && /substack\.com/.test(r.sub || ''), 'the machinery’s screen carries the approved text and the line on the paid pieces, with the Substack link', r);
+    r = await p.evaluate(() => ({ on: ISX.enter.on, ge: !document.querySelector('#isx-gentry'), more: document.querySelector('#isx-en-more') && document.querySelector('#isx-en-more').hidden, txt: document.querySelector('#isx-enter .en-h').textContent, old: document.querySelectorAll('#isx-enter .en-b, #isx-enter .en-sub').length }));
+    ok(r.on === 'fin' && r.ge && r.more && r.txt === 'You saw how the AI trade has become a global circuit. This tab shows how it is managed domestically within the US. Click for your level of difficulty, or explore on your own.' && r.old === 0, 'the machinery’s screen is Elias’s paragraph, word for word (T1, 26 Nov: the three blocks and the line on the paid pieces are gone on his word; the header’s Substack button stays)', r);
     /* machinery entry round (19 Nov 2026): the levels come from data, with a Time and a Difficulty bar and no minutes (changed on purpose) */
     await p.click('#isx-enter [data-en="levels"]'); r = await p.evaluate(() => [...document.querySelectorAll('#isx-en-more .en-ch')].map(x => x.dataset.enWay + ':' + (x.querySelector('.en-tb i') ? 'bar' : '') + ':' + (/\d+\s*min|minutes/i.test(x.textContent) ? 'mins' : '')));
     ok(r.join() === 'ground:bar:,guide:bar:,map:bar:', 'the three levels appear only after “Learn step by step”, with Time and Difficulty bars and no minutes', r);

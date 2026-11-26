@@ -148,7 +148,7 @@ const PHONE_PARTS = [['#isx-cmd', '#isx-tabs'], ['#isx-zoom'], ['#isx-resbar'], 
     await done(p);
     p = await page('#profit', { ls: { 'isx-enter': null } }); await p.waitForFunction(() => !!document.getElementById('isx-enter'), null, { timeout: 10000 }).catch(() => {});
     r = await p.evaluate(() => { const i = document.querySelector('#isx-enter input[data-en-off]'); return { box: !!i, k: document.querySelector('#isx-enter .en-k').textContent.replace(/\s+/g, ' ') }; });
-    ok('a tab’s entry screen carries the box, numbered “02 of 05”', r.box && /02 of 05/.test(r.k), r);
+    ok('a tab’s entry screen carries the box, numbered “03 of 05” (the order is third since T1, 26 Nov)', r.box && /03 of 05/.test(r.k), r);
     await p.waitForTimeout(5000);   /* the screen's slow arrival: a first press shows the rest at once, and moves what is under the pointer */
     await p.click('#isx-enter input[data-en-off]');
     ok('its box writes the same key', await p.evaluate(() => localStorage.getItem('isx-intro') === 'off' && !!document.getElementById('isx-enter')));

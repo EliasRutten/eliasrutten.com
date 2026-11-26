@@ -15,7 +15,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
 
   /* 1 · the tab and its route */
   let c = await ctx(1440, 900), p = await open(c, '#circuit');
-  ok(await p.evaluate(() => [...document.querySelectorAll('#isx-strip .seg > button')].map(b => b.id).join()) === 'isx-v-map,isx-v-profit,isx-v-arm,isx-v-fin,isx-v-story,isx-v-crisis', 'the tab is second, after the Circuit');
+  ok(await p.evaluate(() => [...document.querySelectorAll('#isx-strip .seg > button')].map(b => b.id).join()) === 'isx-v-map,isx-v-fin,isx-v-profit,isx-v-story,isx-v-arm,isx-v-crisis', 'the order’s tab is third (T1, 26 Nov: Circuit, Machinery, The order, Arm, Network)');
   await p.click('#isx-v-profit'); await ready(p);
   ok(await p.evaluate(() => ISX.view === 'profit' && location.hash === '#profit' && !document.getElementById('isx-scene-profit').hidden && document.getElementById('isx-scene-map').hidden), 'the pill opens the tab at #profit');
   ok(/^order:\d+,profits:5,technology:3,regime:5,ai:3,finale:0$/.test(await p.evaluate(() => ISX.profit.stations.map(s => s.id + ':' + s.views.length).join())), 'six stations: the 17 views of build 1 and the new ones (the arc, 18 Nov)');
@@ -27,7 +27,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   ok(await p.evaluate(() => ISX.view === 'map'), 'Back leaves the tab (stations replace the entry)');
   await p.close();
   p = await open(c, '#profit/regime/pos'); await ready(p);
-  ok(await p.evaluate(() => { const s = ISX.profit.state; return s.st === 'order' && s.view === 'pos' && /Station 1 · The order · Positions/.test(ISX.whereNow().where); }), 'a link opens its station and view (a view that moved is found in its new station); the mistake reference names them');
+  ok(await p.evaluate(() => { const s = ISX.profit.state; return s.st === 'order' && s.view === 'pos' && /Station 1 · The system · Positions/.test(ISX.whereNow().where); }), 'a link opens its station and view (a view that moved is found in its new station); the mistake reference names them');
 
   /* 2 · every view */
   const all = await p.evaluate(() => ISX.profit.stations.flatMap((s, i) => s.views.map(v => [i, v])));
@@ -63,7 +63,7 @@ const ok = (c, t) => { n++; if (!c) { fail++; console.log('FAIL  ' + t); } else 
   /* 4 · links in and out */
   c = await ctx(1440, 900); p = await open(c, '#circuit');
   await p.evaluate(() => ISX.setRing(true)); await p.waitForTimeout(400);
-  ok(await p.evaluate(() => [...document.querySelectorAll('.rgdoor')].map(a => a.dataset.door).join()) === 'profit,simulator,elite-network,imperial-arm', 'the ring has four doors, the profit dollar first');
+  ok(await p.evaluate(() => [...document.querySelectorAll('.rgdoor')].map(a => a.dataset.door).join()) === 'simulator,profit,imperial-arm,elite-network', 'the ring has four doors, in the bar’s order (T1, 26 Nov)');
   await p.click('.rgdoor[data-door="profit"]'); await ready(p);
   ok(await p.evaluate(() => ISX.view === 'profit'), 'the ring’s door opens the tab');
   ok(await p.evaluate(() => { ISX.profit.go(1); const a = document.querySelectorAll('#isx-pf-text .pf-door.lock'); ISX.profit.go(0); const d = document.querySelectorAll('#isx-pf-text .pf-door.lock'); const open = document.querySelectorAll('#isx-pf-text').length; ISX.profit.go(1); const fw = document.querySelectorAll('#isx-pf-text button.pf-door[data-pfw]'); return open && a.length === 0 && fw.length === 2 && d.length === 1 && /coming soon/.test(d[0].textContent) && !d[0].matches('button, a'); }), 'station 1: the two doors to the firm web are open (firm web build, 20 Nov); one locked Atlas door is left, not a control');

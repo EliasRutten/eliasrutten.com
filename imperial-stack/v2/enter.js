@@ -1,10 +1,12 @@
 /* The Imperial Stack v2 · enter.js (profit tab patch, 18 Nov 2026; spec claude/specs/profit-tab-v4-17-nov.md §1 rows 1, 2 and 4, §3,
    and its addendum §1: “entry and exit screens are cinematic”)
-   One entry screen for every tab but the Circuit, which keeps its own (“About this map”). The preview's template, restyled to the
-   site: the whole window, a small centred masthead, the tab's title in the title face, the gold rule, three blocks with a clean line
-   between them (“Where you are”, “What you are about to see”, “How to use it”), three buttons, nothing else. A second row of choices
-   appears only after the button that needs it (the machinery's three levels after “Learn step by step”, the profit dollar's stations
-   after “Jump to a station”); the machinery's tour is offered only after “Explore on my own”.
+   One entry screen for every tab but the Circuit, which keeps its own (“About this map”). T1 (26 Nov 2026): the three blocks (“Where you
+   are”, “What you are about to see”, “How to use it”) are gone; each screen is a small centred masthead (“0N of 05 · the tab”), one short
+   paragraph in large type that says what the tab explains and what to do (“You saw … This tab shows … Pick …”), the gold rule, the buttons.
+   The machinery's paragraph is Elias's own words, unedited; the other three are drafts. The order of the tabs, and so the numbers, is
+   Circuit 01, Machinery 02, The order 03, Arm 04, Network 05 (the keys here are the page's: fin, profit, story, arm).
+   A second row of choices appears only after the button that needs it (the machinery's three levels after “Learn step by step”, the
+   order's stations after “Jump to a station”); the machinery's tour is offered only after “Explore on my own”.
    It is shown once per browser, the first time a tab is entered at its door (the header, a door, Next, a plain link), never on a link
    to a place inside the tab. Esc or a click outside skips it; “How this tab works” in the header opens it again, on every tab that
    has one, without touching the visitor's place in the tab; “#replay” in the address shows all of them again.
@@ -13,7 +15,7 @@
    “Explore on my own” is not a level: the full map, nothing pinned, no thesis (ISX.simFree). Expert is the full map with the thesis.
    Thesis view (23 Nov 2026): “Just the thesis” is a fourth way in, between the levels and the free map (ISX.simChain): the chain of
    complexes lit on the map, the state's part, the thesis. Not a lesson.
-   Motion: slow, one line at a time (veil, masthead, title, rule, the three blocks, the buttons); the first key or click shows the rest
+   Motion: slow, one line at a time (veil, masthead, paragraph, rule, the buttons); the first key or click shows the rest
    at once. Leaving, the text drifts toward the visitor and the veil lifts. Only opacity and transform move. Under reduced motion: a
    plain fade. Nothing here filters the tab behind (the globe's canvas must never sit under a CSS filter); the veil blurs its backdrop.
    Storage: isx-enter-<view> ('1' once seen). The check scripts' switches isx-tips-sim = 'off' and isx-enter = 'off' keep it away.
@@ -21,37 +23,27 @@
 (function () {
   'use strict';
   var X = window.ISX; if (!X) return;
-  var U = X.util, root = X.root, $ = X.$, esc = U.esc, KEY = 'isx-enter-', SUB = 'https://eliasrutten.substack.com';
+  var U = X.util, root = X.root, $ = X.$, esc = U.esc, KEY = 'isx-enter-';
   /* first-visit welcome (18 Nov): one key for every intro screen, isx-intro = 'off' once “Don’t show this again” is ticked here, on the
      Circuit's welcome or at the tour's last stop */
   var off = function () { return U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off' || U.stGet('isx-intro') === 'off'; };
   var intro0 = null;
-  var SSL = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="ssl"><path fill="currentColor" d="M3 3h18v2.6H3zm0 4.9h18v2.6H3zm0 4.9h18V21l-9-5-9 5z"/></svg>';
 
-  /* ---------- the copy: one entry a tab (drafts for Elias; the machinery's is the preview's, approved 17 Nov) ---------- */
+  /* ---------- the copy: one entry a tab, one paragraph (T1, 26 Nov 2026: the machinery's is Elias's own words; the others are drafts for him) ---------- */
   var T = {
-    profit: { n: '02', hue: '#d78bff', k: 'The profit dollar', h: 'Why dollar assets need to be the most profitable', star: true, site: '#profit', mins: 20,
-      b: [['Where you are', 'The world economy needs one asset deep and liquid enough to settle its trade and hold its savings. Only a very large economy can supply it, and to keep the world buying, its assets have to pay. The Circuit showed the money moving; this tab shows what it buys.'],
-        ['What you are about to see', 'The world economy since the WTO opened in 1995: one system around the United States, slowly pulled apart until it splits into two. Then five more stations, each with a title that carries the argument and one chart to check it: the profits the order pays its centre, the technology that secures them, the deficits that realise them, the AI trade they now rest on, and what happens if it fails.'],
-        ['How to use it', 'Drag the years, or press play. Open the full statistics at any time.']],
-      acts: [['go', 'Start at the first station'], ['stops', 'Jump to a station'], ['remind', 'Remind me later']] },
-    arm: { n: '03', hue: '#44d7ec', k: 'The elite network', h: 'Where Washington’s reach is organised: officials, firms and owners', site: '#elite-network', mins: 20,
-      b: [['Where you are', 'The Circuit showed the loop and the machinery how its prices are steered. The elite network shows the reach: which agencies and laws press on which countries and firms, and where US firms earn abroad.'],
-        ['What you are about to see', 'A map of pressure points. Each agency is a lever; each line is a law, a licence or a sanction landing somewhere. Open one to see what it does and when it was last used.'],
-        ['How to use it', 'Start with one agency and follow its lines, or take the short tour first.']],
-      acts: [['tour', 'Take the tour'], ['go', 'Explore on my own'], ['remind', 'Remind me later']] },
-    fin: { n: '04', hue: '#ffd27a', k: 'The imperial machinery', h: 'How Washington keeps the circuit turning', site: '#simulator', mins: 45,
-      b: [['Where you are', 'You came in through the Circuit, which showed the loop: the world’s savings flowing into US assets while the US buys more than it sells. Economics has come far in recognising these imbalances and the hot money around them as distorting and destabilising. What it misses is that the instability is manufactured, and used as a weapon for geoeconomic ends.'],
-        ['What you are about to see', 'A schematic of the imperial machinery that manages this system and makes its cogs turn: the desks in Washington, the levers they pull and the prices those levers move. The real state apparatus is more complex than this schematic, so we made a guide that takes you through it step by step.'],
-        ['How to use it', 'We want this to be a learning tool for anyone interested, so the guide has three levels of difficulty. You can also play with the machinery on your own instead of learning by steps. Understanding the mechanics takes time: if you want to come back to it, set a reminder. For more depth, {{sub|paid pieces on the Substack}} take one part of the machinery at a time.']],
+    fin: { n: '02', hue: '#ffd27a', k: 'The imperial machinery', site: '#simulator', mins: 45,
+      p: 'You saw how the AI trade has become a global circuit. This tab shows how it is managed domestically within the US. Click for your level of difficulty, or explore on your own.',
       acts: [['levels', 'Learn step by step', 'The guide, at one of three levels'], ['thesis', 'Just the thesis', 'The chain on the map: nothing to learn'], ['free', 'Explore on my own', 'The full map: no guide, no thesis'], ['remind', 'Remind me later']] },
-    story: { n: '05', hue: '#e4ebf1', k: 'The imperial arm', h: 'Scenarios: how the arm is used', site: '#imperial-arm', mins: 20,
-      b: [['Where you are', 'The machinery showed how prices are steered; the elite network who steers them. This is the arm in use: the moments Washington reached into another country’s economy, and what it took.'],
-        ['What you are about to see', 'Cases, each told as a chain from decision to consequence, with the levers they used.'],
-        ['How to use it', 'Pick a case, or follow one lever across all of them.']],
-      acts: [['go', 'Pick a case'], ['lever', 'Follow one lever'], ['remind', 'Remind me later']] }
+    profit: { n: '03', hue: '#d78bff', k: 'The order', site: '#profit', mins: 20, star: true,
+      p: 'You saw the circuit and how Washington manages it at home. This tab shows the world order that pays its profit to the centre: how it grew from 1995, and why it is splitting in two. Press play, or drag the years.',
+      acts: [['go', 'Start at the beginning'], ['stops', 'Jump to a station'], ['remind', 'Remind me later']] },
+    story: { n: '04', hue: '#e4ebf1', k: 'The imperial arm', site: '#imperial-arm', mins: 20,
+      p: 'You saw how the machinery is run. This tab shows the arm in use: the moments Washington reached into another country’s economy, and what it took. Pick a case, or follow one lever across all of them.',
+      acts: [['go', 'Pick a case'], ['lever', 'Follow one lever'], ['remind', 'Remind me later']] },
+    arm: { n: '05', hue: '#44d7ec', k: 'The elite network', site: '#elite-network', mins: 20,
+      p: 'You saw the cases. This tab shows who stands behind them: the officials, firms and owners through whom Washington’s reach is organised. Start with one agency and follow its lines, or take the tour.',
+      acts: [['tour', 'Take the tour'], ['go', 'Explore on my own'], ['remind', 'Remind me later']] }
   };
-  var txt = function (t) { return esc(t).replace(/\{\{sub\|([^}]+)\}\}/g, function (m, x) { return '<a class="en-sub" href="' + SUB + '" target="_blank" rel="noopener">' + SSL + x + '</a>'; }); };
 
   var el = null, live = null, wrap = root.querySelector(':scope > .wrap') || root.firstElementChild, back = null, offer = null, offerT = 0, outT = 0;
   var at = function () { return live; };
@@ -78,11 +70,10 @@
     var c = T[v], i = 0, r = function () { return ' class="en-r" style="--i:' + (i++) + '"'; };
     var star = c.star ? '<button type="button" class="en-star" data-en="note" aria-expanded="false" aria-controls="isx-en-note" aria-label="Footnote: why only a very large economy can play this role">*</button>' : '';
     var h = '<div class="en-veil" aria-hidden="true"></div><div class="en-in"><div class="en-col" style="--eh:' + c.hue + '">'
-      + '<p' + r().replace('en-r', 'en-r en-k') + '><i class="dia" aria-hidden="true"></i><span>' + c.n + ' <em>of 05</em></span><span class="sep" aria-hidden="true">·</span><span>' + esc(c.k) + '</span></p>'
-      + '<h2' + r().replace('en-r', 'en-r en-h') + ' id="isx-en-h">' + esc(c.h) + star + '</h2>'
+      + '<p' + r().replace('en-r', 'en-r en-k') + ' id="isx-en-k"><i class="dia" aria-hidden="true"></i><span>' + c.n + ' <em>of 05</em></span><span class="sep" aria-hidden="true">·</span><span>' + esc(c.k) + '</span></p>'
+      + '<p' + r().replace('en-r', 'en-r en-h') + ' id="isx-en-h">' + esc(c.p) + star + '</p>'
       + '<i' + r().replace('en-r', 'en-r en-rule') + ' aria-hidden="true"></i>'
       + (c.star ? '<div class="en-note" id="isx-en-note" hidden></div>' : '')
-      + '<div class="en-b">' + c.b.map(function (b) { return '<section' + r() + '><h3>' + esc(b[0]) + '</h3><p>' + txt(b[1]) + '</p></section>'; }).join('') + '</div>'
       + '<div' + r().replace('en-r', 'en-r en-acts') + '>' + c.acts.map(function (a, j) { return '<button type="button" class="en-btn' + (j ? '' : ' pri') + '" data-en="' + a[0] + '"' + (a[0] === 'remind' ? ' data-remind="enter"' : '') + (a[0] === 'levels' || a[0] === 'stops' ? ' aria-expanded="false" aria-controls="isx-en-more"' : '') + '>' + (a[2] ? '<span class="en-bt">' : '') + esc(a[1]) + (j ? '' : ' <span aria-hidden="true">→</span>') + (a[2] ? '</span><small>' + esc(a[2]) + '</small>' : '') + '</button>'; }).join('') + '</div>'
       + '<div class="en-more" id="isx-en-more" hidden></div>'
       + '<p' + r().replace('en-r', 'en-r en-fine') + '><button type="button" class="en-skip" data-en="skip">Skip</button><span>Esc works too. The ? at the top left opens this again.</span><label class="en-off"><input type="checkbox" data-en-off' + (U.stGet('isx-intro') === 'off' ? ' checked' : '') + '> <span>Don’t show this again</span></label></p>'
@@ -102,7 +93,7 @@
     if (offer) dropOffer();
     back = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
     el = document.createElement('div'); el.className = 'en' + (X.reduce ? ' en-all' : ''); el.id = 'isx-enter'; el.dataset.tab = v;
-    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'isx-en-h'); el.tabIndex = -1;
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'isx-en-k'); el.setAttribute('aria-describedby', 'isx-en-h'); el.tabIndex = -1;
     el.innerHTML = html(v); root.appendChild(el); live = v; hold(true);
     U.stSet(KEY + v, '1');
     el.addEventListener('click', onClick); el.addEventListener('keydown', onKey);
@@ -285,7 +276,7 @@
   };
 
   X.enter = { open: open, close: function () { close('skip'); }, get on() { return at(); }, tabs: Object.keys(T), key: KEY,
-    copy: function () { var o = {}; Object.keys(T).forEach(function (k) { o[k] = { k: T[k].k, h: T[k].h, b: T[k].b.map(function (b) { return b.slice(); }), acts: T[k].acts.map(function (a) { return a[1]; }) }; }); return o; } };
+    copy: function () { var o = {}; Object.keys(T).forEach(function (k) { o[k] = { n: T[k].n, k: T[k].k, p: T[k].p, acts: T[k].acts.map(function (a) { return a[1]; }) }; }); return o; } };
 
   if (document.readyState === 'complete') consider(); else window.addEventListener('load', consider);
 })();

@@ -1,7 +1,7 @@
 /* The Imperial Stack v2 · profit.js (profit tab build 1, 17 Nov 2026; the arc: profit tab patch, 18 Nov 2026)
-   The profit dollar: its own tab, second after the Circuit, under the title “Why dollar assets need to be the most profitable*”.
+   The order (until 26 Nov 2026 “the profit dollar”): its own tab, third in the bar after the Circuit and the machinery, under the title “Why dollar assets need to be the most profitable*”.
    Told as an arc of six stations whose titles carry the argument (spec claude/specs/profit-tab-v4-17-nov.md and its addendum, which wins):
-   1 Profits · 2 Technology · 3 The order · 4 The regime · 5 The AI trade · 6 the finale. Layout (Elias, 17 Nov): the statistics and the
+   1 Profits · 2 Technology · 3 The system (the order's story; it was “The order” until 26 Nov, the tab itself now has that name) · 4 The regime · 5 The AI trade · 6 the finale. Layout (Elias, 17 Nov): the statistics and the
    chart take the full width at the top, the text sits under them, on every screen size; the page may scroll, and buttons lead to the
    explanation and the methodology. One chart a board, one key a chart, a table view and a text alternative for every picture.
    The views of a station are switched with dots under the chart (arrows, swipe on phones); the view's name stands above the chart.
@@ -61,12 +61,12 @@
     asml: ['ASML, sales by region, 2024 and 2025 (as on the Circuit, step 03), link not stored', null]
   };
   /* ---------- the arc (patch of 18 Nov 2026; spec profit-tab-v4 and its addendum §1): six stations whose titles carry the argument ----------
-     1 Profits · 2 Technology · 3 The order · 4 The regime · 5 The AI trade · 6 the finale. The first view of a station is its main screen:
+     1 Profits · 2 Technology · 3 The system (the order's story; it was “The order” until 26 Nov, the tab itself now has that name) · 4 The regime · 5 The AI trade · 6 the finale. The first view of a station is its main screen:
      the title explains it, so it carries no note. Every other view carries one short note above its chart (NOTE). */
   const TITLE = 'Why dollar assets need to be the most profitable';
   const WHY = 'Profits are booked in the firm, and capital flows to where the firm is listed. That decides how liquid the market is and how much investment can be raised by selling shares and bonds.';
   const ST = [
-    { id: 'order', t: 'The order', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
+    { id: 'order', t: 'The system', f: '26 signatories of Pax Silica · 23 Oct 2026', q: 'To secure the profits, first a global empire: one ladder for the whole world.', sub: 'The WTO order, 1995–.',
       qv: { orr: 'To secure its profits, a capitalist order needs a centre: one ladder for the whole world.' }, subv: { orr: '1995–2026 · drag through the years' },
       q2: 'Then China climbed the ladder. Now: Pax Silica and the silicon curtain.', sub2: '2025–.',
       views: [['orr', 'The story'], ['orb', 'The orbits'], ['ord', 'Two orders, one picture'], ['pos', 'Positions'], ['fig', 'The figures by year'], ['rng', 'Creditors and debtors'], ['pft', 'Where profits are booked'], ['hyp', 'German Hypocrisy']],
@@ -180,7 +180,7 @@
 
   /* ---------- the scene's frame, built once ---------- */
   function build() {
-    host.innerHTML = '<div class="pf-top"><p class="pf-tt"><span class="pf-ttk">The profit dollar</span><span class="pf-ttl">' + esc(TITLE) + '<button type="button" class="pf-star" data-pf="fn" aria-expanded="false" aria-controls="isx-pf-fn" aria-label="Footnote: why only a very large economy can play this role">*</button></span><span class="pf-k" id="isx-pf-k"></span></p><div class="pf-fn" id="isx-pf-fn" hidden></div></div>'
+    host.innerHTML = '<div class="pf-top"><p class="pf-tt"><span class="pf-ttk">The order</span><span class="pf-ttl">' + esc(TITLE) + '<button type="button" class="pf-star" data-pf="fn" aria-expanded="false" aria-controls="isx-pf-fn" aria-label="Footnote: why only a very large economy can play this role">*</button></span><span class="pf-k" id="isx-pf-k"></span></p><div class="pf-fn" id="isx-pf-fn" hidden></div></div>'
       + '<div class="pf-head" id="isx-pf-head"><div class="pf-hk"><p class="pf-lead" id="isx-pf-lead" hidden></p><h2 class="pf-q" id="isx-pf-q"></h2><p class="pf-sub" id="isx-pf-sub" hidden></p></div>'
       + '<div class="pf-jump"><button type="button" data-pf="read">The explanation <span aria-hidden="true">↓</span></button><button type="button" data-how data-pf="how">How we count <span aria-hidden="true">↓</span></button></div></div>'
       + '<section class="pf-board" id="isx-pf-board" aria-label="Chart"><div class="pf-chips" id="isx-pf-chips"></div>'
@@ -934,10 +934,10 @@
   function bar() {
     const RT = X.route, hostB = $('tabs'); if (!RT || !hostB) return;
     const last = S.st === ST.length - 1;
-    RT.render(hostB, { id: 'profit', label: 'The profit dollar: six stations', stage: scene, count: (S.st + 1) + ' / ' + ST.length,
+    RT.render(hostB, { id: 'profit', label: 'The order: six stations', stage: scene, count: (S.st + 1) + ' / ' + ST.length,
       back: { enabled: S.st > 0, label: S.st > 0 ? 'Back: ' + ST[S.st - 1].t : 'Back' },
-      next: last ? { kicker: 'Go on', title: 'The imperial machinery', ptitle: 'Machinery' } : { kicker: 'Next', title: ST[S.st + 1].t, ptitle: ST[S.st + 1].t.replace(/^The /, '') },
-      segs: [{ label: 'The profit dollar', short: 'Profits', colour: '#d78bff', current: true, lab: true, wide: true, grow: 9, marks: ST.map((s, i) => ({ kind: 'step', n: '0' + (i + 1), t: s.t, state: i === S.st ? 'cur' : i < S.st ? 'done' : '', target: String(i), title: s.t + ' · ' + s.q, sub: s.f })) }] });
+      next: last ? { kicker: 'Go on', title: 'The imperial arm', ptitle: 'Arm' } : { kicker: 'Next', title: ST[S.st + 1].t, ptitle: ST[S.st + 1].t.replace(/^The /, '') },
+      segs: [{ label: 'The order', short: 'The order', colour: '#d78bff', current: true, lab: true, wide: true, grow: 9, marks: ST.map((s, i) => ({ kind: 'step', n: '0' + (i + 1), t: s.t, state: i === S.st ? 'cur' : i < S.st ? 'done' : '', target: String(i), title: s.t + ' · ' + s.q, sub: s.f })) }] });
   }
   function sync() { if (X.view !== 'profit') return; X.routeSync(); }
   function go(i, view, quiet) {
@@ -952,7 +952,7 @@
   X.route && X.route.on(ev => {
     if (ev.id !== 'profit' || X.view !== 'profit') return;
     if (ev.target != null) go(+ev.target);
-    else if (ev.nav === 'next') { if (S.st === ST.length - 1) { X.setView('fin'); $('frame').scrollIntoView({ block: 'start' }); } else go(S.st + 1); }
+    else if (ev.nav === 'next') { if (S.st === ST.length - 1) { X.setView('story'); $('frame').scrollIntoView({ block: 'start' }); } else go(S.st + 1); }
     else if (S.st > 0) go(S.st - 1);
   });
   function show() {
@@ -986,7 +986,7 @@
   const hd = X.hashDetail, ad = X.applyDetail;
   X.hashDetail = function () { return X.view === 'profit' ? detail() : hd ? hd() : ''; };
   X.applyDetail = function (hh) { if (X.view === 'profit') { apply(hh); return; } if (ad) ad(hh); };
-  const vn = X.viewName; X.viewName = function () { return X.view === 'profit' ? 'the profit dollar, ' + cur().t.toLowerCase() : vn ? vn() : ''; };
+  const vn = X.viewName; X.viewName = function () { return X.view === 'profit' ? 'the order, ' + cur().t.toLowerCase() : vn ? vn() : ''; };
   X.on('view', v => { if (v !== 'profit') { tipHide(); if (Z) zoomClose(); } });
   /* the page chose this tab before the file loaded (a link straight to it) */
   if (X.view === 'profit') { const h0 = window.__isxHash0 || location.hash; if (/^#\/?profit[^/]*\/./.test(h0)) apply(h0); show(); }
