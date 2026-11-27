@@ -55,6 +55,8 @@
   var rt = 0;
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { place(true); }, 80); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { place(true); });
+  /* 27 Nov (go-live): the marker follows the open tab when the tabs change width after it was placed (the short labels take over, the context segment comes in): T1’s tab order put it about 40 px off on a tab change */
+  if (window.ResizeObserver) { var ro = new ResizeObserver(function () { place(true); }); [].forEach.call(seg.querySelectorAll('button'), function (b) { ro.observe(b); }); }
   /* ---------- the Circuit's right edge: zoom above the legend, both on the frame's margin ---------- */
   var scene = $('scene-map'), zoom = $('zoom'), leg = $('legbox');
   if (scene && zoom && leg) {

@@ -81,7 +81,7 @@ const ok = (c, t, x) => { if (c) pass++; else { fail++; console.log('FAIL  ' + t
     for (const hash of ['#circuit', '#simulator', '#elite-network', '#profit', '#imperial-arm']) {
       const p = await page(hash, { w, h, m, ls: { 'isx-enter': 'off' } });
       const r = await p.evaluate(id => { const b = document.getElementById(id); return { tag: b.tagName, txt: b.textContent.replace(/\s+/g, ' ').trim(), name: b.getAttribute('aria-label') || '' }; }, id);
-      ok(/The thesis · coming soon/.test(r.txt) && !/(^|[^\w])Essay([^\w]|$)/.test(r.txt + ' ' + r.name) && /Related piece/.test(r.txt), `${w} ${hash}: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own`, r);
+      ok(/Read the preliminary thesis/.test(r.txt) && !/(^|[^\w])Essay([^\w]|$)/.test(r.txt + ' ' + r.name) && /Related piece/.test(r.txt), `${w} ${hash}: the Substack button leads with the thesis (“Read the preliminary thesis”) and never says “Essay” on its own`, r);
       await p.evaluate(id => document.getElementById(id).click(), id); await p.waitForTimeout(400);
       const pp = await p.evaluate(() => { const x = document.getElementById('isx-espop'); return { on: x.classList.contains('on'), th: (x.querySelector('.es-th') || {}).href, rel: [...x.querySelectorAll('.es-rel')].map(a => a.textContent.replace(/\s+/g, ' ').trim()), dated: [...x.querySelectorAll('.es-rel small')].every(s => /\b20\d\d\b/.test(s.textContent)) }; });
       ok(pp.on && /substack\.com\/subscribe$/.test(pp.th || '') && pp.rel.length >= 2 && pp.rel.length <= 3 && pp.dated, `${w} ${hash}: its panel: the thesis (subscribe), then two or three dated related pieces`, pp);
