@@ -170,7 +170,7 @@
 
   function prep(d) {
     D = d;
-    B = d.B.map(r => ({ p: r[0], y: r[0] === '2026H1' ? 2026 : +r[0], prov: r[0] === '2026H1', bn: r[1], pat: r[2], npi: r[3], fed: r[4], sl: r[5], ct: r[6], hh: r[7], ca: r[8], div: r[9], disc: r[10] }));
+    B = d.B.map(r => ({ p: r[0], y: +r[0].slice(0, 4), prov: r[0].length > 4, bn: r[1], pat: r[2], npi: r[3], fed: r[4], sl: r[5], ct: r[6], hh: r[7], ca: r[8], div: r[9], disc: r[10] }));
     B.forEach(r => { r.rest = Math.round((r.sl + r.ct + r.disc) * 100) / 100; });
     G = d.G.map(r => ({ y: r[0], nat: r[1], dom: r[2], net: r[3], netp: r[4], rec: r[5], pay: r[6], recp: r[7] }));
   }
@@ -523,8 +523,8 @@
   /* ---------- the regime and the order (stations 4 and 3) ---------- */
   const MOMENT = { 2000: r => `The federal budget was in surplus (${f1(r.fed)}% of GDP); net private investment carried profits.`, 2009: r => `Net private investment fell to ${f1(r.npi)}% of GDP; federal borrowing, ${f1(r.fed)}%, held profits up.`, 2020: r => `Federal borrowing reached ${f1(r.fed)}% of GDP; households saved ${f1(-r.hh)}%.`, 2025: r => `The federal deficit supplied ${f1(r.fed)} points, more than net private investment (${f1(r.npi)}).` };
   const dpt = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(1);
-  function eqReading() { const r = yr(); let t = `profits after tax ${f1(r.pat)}% of GDP. `; if (r.era) t += `Against ${r.a - 5}–${String(r.a - 1).slice(2)}: net private investment ${dpt(r.npi - r.npi0)} points, federal net borrowing ${dpt(r.fed - r.fed0)}, profits ${dpt(r.pat - r.pat0)}.`; else if (r.prov) t += 'Third-quarter profits are published on 25 Nov 2026.'; else if (MOMENT[r.y]) t += MOMENT[r.y](r); else t += phone() ? 'Drag the year, or pick a moment.' : 'Move over the chart, drag the year, or pick a moment.'; reading(r.era ? r.name + ', ' + r.label + ', average a year: ' : r.prov ? 'First half of 2026, provisional: ' : r.p + ': ', t); }
-  function eqTiles() { const r = yr(); tiles([{ big: 1, op: '=', v: f1(r.pat) + '%', k: 'Profits after tax = the sum', d: r.era ? 'average, ' + r.label : r.prov ? 'first half of 2026, provisional' : r.p + ' · ' + bn(r.bn) }].concat(TERMS.map(([k]) => ({ op: r[k] < 0 ? '−' : '+', v: f1(r[k]), k: termLabel(k, r[k]), c: C[k] }))), true); }
+  function eqReading() { const r = yr(); let t = `profits after tax ${f1(r.pat)}% of GDP. `; if (r.era) t += `Against ${r.a - 5}–${String(r.a - 1).slice(2)}: net private investment ${dpt(r.npi - r.npi0)} points, federal net borrowing ${dpt(r.fed - r.fed0)}, profits ${dpt(r.pat - r.pat0)}.`; else if (r.prov) t += 'The first three quarters of 2026 are the average of BEA’s figures of 25 Nov 2026; the third estimate follows on 23 Dec 2026.'; else if (MOMENT[r.y]) t += MOMENT[r.y](r); else t += phone() ? 'Drag the year, or pick a moment.' : 'Move over the chart, drag the year, or pick a moment.'; reading(r.era ? r.name + ', ' + r.label + ', average a year: ' : r.prov ? 'First three quarters of 2026, provisional: ' : r.p + ': ', t); }
+  function eqTiles() { const r = yr(); tiles([{ big: 1, op: '=', v: f1(r.pat) + '%', k: 'Profits after tax = the sum', d: r.era ? 'average, ' + r.label : r.prov ? 'first three quarters of 2026, provisional' : r.p + ' · ' + bn(r.bn) }].concat(TERMS.map(([k]) => ({ op: r[k] < 0 ? '−' : '+', v: f1(r[k]), k: termLabel(k, r[k]), c: C[k] }))), true); }
   const eraChips = () => { R.chips.append(h('span', 'gap'), h('span', 'cl', 'Moments')); ERAS.forEach((e, i) => { const b = h('button', 'pf-chip', e[2]); b.type = 'button'; b.dataset.pe = i; b.title = e[3] + ', ' + span(e[0], e[1]); b.setAttribute('aria-label', e[3] + ', ' + span(e[0], e[1]) + ': its average against the five years before'); b.setAttribute('aria-pressed', String(!!S.era && S.era[0] === e[0])); R.chips.append(b); }); };
   /* the moments on a chart: a thin line at each, a faint band over a span, a short label on two rows; the picked one lit. x(y) gives a year's
      centre, w the width of one year. No labels on phones: the chips carry them. */
@@ -533,13 +533,13 @@
     else if (b > a) svg.append(el('rect', { x: xa, y: top, width: xb - xa, height: hh, fill: '#ffffff', opacity: .022 }));
     svg.append(el('line', { x1: xa, x2: xa, y1: top, y2: top + hh, stroke: on ? C.ink : C.ink2, 'stroke-width': 1, 'stroke-dasharray': on ? null : '2 3', opacity: on ? .9 : .5 }));
     if (!ph) svg.append(el('text', { x: xa + 4, y: top + ([0, 1, 0, 1, 0, 0][j] ? 24 : 11), class: 'lb', fill: on ? C.ink : C.ink2, stroke: C.bg, 'stroke-width': 3, 'paint-order': 'stroke' }, k)); }); };
-  const eqTable = () => ({ cap: 'What US profits after tax are made of, % of GDP (BEA national accounts, national basis; 4 Nov 2026). The first half of 2026 is provisional.', head: ['Year', 'Profits after tax', 'Net private investment', 'Federal net borrowing', 'Dividends', 'Household saving', 'Balance with the world', 'State and local borrowing', 'Government capital transfers', 'Discrepancy', 'Profits, $bn'], rows: [...B].reverse().map(r => [r.prov ? '2026, first half' : r.p, f2(r.pat), f2(r.npi), f2(r.fed), f2(r.div), f2(r.hh), f2(r.ca), f2(r.sl), f2(r.ct), f2(r.disc), r.bn.toLocaleString('en-US', { minimumFractionDigits: 1 })]) });
+  const eqTable = () => ({ cap: 'What US profits after tax are made of, % of GDP (BEA national accounts, national basis; 4 Nov 2026; the first three quarters of 2026 from BEA’s release of 25 Nov 2026). The first three quarters of 2026 are provisional.', head: ['Year', 'Profits after tax', 'Net private investment', 'Federal net borrowing', 'Dividends', 'Household saving', 'Balance with the world', 'State and local borrowing', 'Government capital transfers', 'Discrepancy', 'Profits, $bn'], rows: [...B].reverse().map(r => [r.prov ? '2026, Q1–Q3' : r.p, f2(r.pat), f2(r.npi), f2(r.fed), f2(r.div), f2(r.hh), f2(r.ca), f2(r.sl), f2(r.ct), f2(r.disc), r.bn.toLocaleString('en-US', { minimumFractionDigits: 1 })]) });
   const pickYear = (svg, W, x0, slot) => ev => { const bb = svg.getBoundingClientRect(), i = Math.max(0, Math.min(B.length - 1, Math.floor(((ev.clientX - bb.left) * (W / bb.width) - x0) / slot))); if (S.era || B[i].y !== S.year) { S.era = null; S.year = B[i].y; board(true); emit('year'); } };
   V.all = { title: 'Where US profits come from, every year since 1960', unit: '% of GDP · United States', scrub: 1, chips: eraChips, draw() {
     eqTiles(); eqReading();
     const fig = R.fig, W = fig.clientWidth, H = fig.clientHeight, ph = phone(), m = { l: ph ? 26 : 34, r: ph ? 8 : 150, t: 22, b: 20 }, pw = W - m.l - m.r, phh = H - m.t - m.b;
     const y0 = -16, y1 = 27, Y = v => m.t + (y1 - v) / (y1 - y0) * phh, slot = pw / B.length, Xs = i => m.l + slot * i + slot / 2, bw = Math.max(2, Math.min(14, slot - (slot > 6 ? 2 : 1.4)));
-    const svg = svgOf(W, H, 'Stacked columns, one a year from 1960 to the first half of 2026, as a share of GDP. Above the zero line, what adds to US profits: net private investment, federal net borrowing, dividends. Below it, what takes from profits: household saving and the deficit with the world. The white line is profits after tax, the sum of all the bars. In 1960 to 1979 net private investment averaged 8.0% of GDP and federal borrowing 3.0%; in 2014 to 2025, 4.5% and 6.3%. Profits rose from 6.5% to 10.2% of GDP.');
+    const svg = svgOf(W, H, 'Stacked columns, one a year from 1960 to the first three quarters of 2026, as a share of GDP. Above the zero line, what adds to US profits: net private investment, federal net borrowing, dividends. Below it, what takes from profits: household saving and the deficit with the world. The white line is profits after tax, the sum of all the bars. In 1960 to 1979 net private investment averaged 8.0% of GDP and federal borrowing 3.0%; in 2014 to 2025, 4.5% and 6.3%. Profits rose from 6.5% to 10.2% of GDP.');
     svg.append(el('rect', { x: m.l, y: Y(0), width: pw, height: Y(y0) - Y(0), fill: C.red, opacity: .045 }));
     for (let v = -15; v <= 25; v += 5) svg.append(el('line', { x1: m.l, x2: m.l + pw, y1: Y(v), y2: Y(v), stroke: v === 0 ? C.ink2 : '#17222d', 'stroke-width': v === 0 ? 1.4 : 1 }), el('text', { x: m.l - 6, y: Y(v) + 3.5, 'text-anchor': 'end' }, String(Math.abs(v))));
     svg.append(el('text', { x: m.l + 6, y: Y(25) + 4, class: 'lb', fill: C.ink }, '↑ Adds to profits, % of GDP'), el('text', { x: m.l + 6, y: Y(-15) + 4, class: 'lb', fill: C.ink }, '↓ Takes from profits, % of GDP'));
@@ -556,7 +556,7 @@
     });
     const pts = B.map((r, i) => Xs(i) + ',' + Y(r.pat)).join(' ');
     svg.append(el('polyline', { points: pts, fill: 'none', stroke: C.bg, 'stroke-width': 6, 'stroke-linejoin': 'round' }), el('polyline', { points: pts, fill: 'none', stroke: C.pat, 'stroke-width': 2.4, 'stroke-linejoin': 'round' }));
-    if (!S.era) { const i = B.findIndex(r => r.y === S.year), r = B[i]; svg.append(el('line', { x1: Xs(i), x2: Xs(i), y1: m.t - 6, y2: m.t + phh, stroke: C.lab, 'stroke-width': 1, opacity: .7 }), el('circle', { cx: Xs(i), cy: Y(r.pat), r: 4.5, fill: C.pat, stroke: C.bg, 'stroke-width': 2 }), el('text', { x: Math.min(Math.max(Xs(i), m.l + 30), m.l + pw - 30), y: m.t - 8, 'text-anchor': 'middle', class: 'lb', fill: C.lab }, r.prov ? 'H1 2026' : String(r.y))); }
+    if (!S.era) { const i = B.findIndex(r => r.y === S.year), r = B[i]; svg.append(el('line', { x1: Xs(i), x2: Xs(i), y1: m.t - 6, y2: m.t + phh, stroke: C.lab, 'stroke-width': 1, opacity: .7 }), el('circle', { cx: Xs(i), cy: Y(r.pat), r: 4.5, fill: C.pat, stroke: C.bg, 'stroke-width': 2 }), el('text', { x: Math.min(Math.max(Xs(i), m.l + 30), m.l + pw - 30), y: m.t - 8, 'text-anchor': 'middle', class: 'lb', fill: C.lab }, r.prov ? 'Q1–Q3 2026' : String(r.y))); }
     if (!ph) { const lr = B[B.length - 1], x = m.l + pw + 10; svg.append(el('line', { x1: x, x2: x + 12, y1: Y(lr.pat), y2: Y(lr.pat), stroke: C.pat, 'stroke-width': 2.4 }), el('text', { x: x + 18, y: Y(lr.pat) - 2, class: 'lb', fill: C.ink }, 'Profits after tax'), el('text', { x: x + 18, y: Y(lr.pat) + 12, class: 'lb' }, 'the sum of the bars')); }
     const hit = el('rect', { x: m.l, y: 0, width: pw, height: H, fill: 'transparent', style: 'cursor:crosshair' }), pick = pickYear(svg, W, m.l, slot);
     hit.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse' && !S.era) pick(ev); }); hit.addEventListener('pointerdown', pick);
@@ -589,7 +589,7 @@
     const fig = R.fig, W = fig.clientWidth, H = fig.clientHeight, ph = phone(), r = yr(), wrap = h('div', 'pf-oy'), hb = Math.round(Math.max(118, Math.min(190, H * .3)));
     /* the bridge: what adds, what takes, and the sum */
     const [lo, hi] = bext(), items = TERMS.map(([k]) => [k, r[k]]), n = items.length + 1, mb = { l: 8, r: 8, t: 22, b: ph ? 30 : 34 }, bw = (W - mb.l - mb.r) / n, Y = v => mb.t + (hb - mb.t - mb.b) * (hi - v) / (hi - lo);
-    const s1 = svgOf(W, hb, `The profit equation for ${r.era ? r.label + ', average' : r.prov ? 'the first half of 2026' : r.p}, as a share of GDP: net private investment ${f1(r.npi)}, federal net borrowing ${r.fed < 0 ? 'minus ' : ''}${f1(r.fed)}, dividends ${f1(r.div)}, state and local borrowing, transfers and discrepancy ${r.rest < 0 ? 'minus ' : ''}${f1(r.rest)}, household saving minus ${f1(-r.hh)}, the balance with the world ${r.ca < 0 ? 'minus ' : ''}${f1(r.ca)}; profits after tax ${f1(r.pat)}.`);
+    const s1 = svgOf(W, hb, `The profit equation for ${r.era ? r.label + ', average' : r.prov ? 'the first three quarters of 2026' : r.p}, as a share of GDP: net private investment ${f1(r.npi)}, federal net borrowing ${r.fed < 0 ? 'minus ' : ''}${f1(r.fed)}, dividends ${f1(r.div)}, state and local borrowing, transfers and discrepancy ${r.rest < 0 ? 'minus ' : ''}${f1(r.rest)}, household saving minus ${f1(-r.hh)}, the balance with the world ${r.ca < 0 ? 'minus ' : ''}${f1(r.ca)}; profits after tax ${f1(r.pat)}.`);
     s1.setAttribute('class', 'oy-b'); s1.style.height = hb + 'px';
     const defs = el('defs'), pat = el('pattern', { id: 'isx-pf-hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }); pat.append(el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: C.bg, 'stroke-width': 2, opacity: .55 })); defs.append(pat); s1.append(defs);
     s1.append(el('line', { x1: mb.l, x2: W - mb.r, y1: Y(0), y2: Y(0), stroke: '#5d6f7e', 'stroke-width': 1 }));
@@ -628,7 +628,7 @@
     svg.textContent = ''; svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.width = W + 'px'; svg.style.height = H + 'px';
     const L = termLines(svg, W, H, { zoom: 1 }), hit = el('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' });
     hit.addEventListener('click', ev => { S.era = null; S.year = L.pick(ev); zoomDraw(); }); svg.append(hit);
-    const r = yr(); Z.el.querySelector('.pz-y').textContent = (r.prov ? 'First half of 2026' : r.p) + ' · profits ' + f1(r.pat) + '% of GDP';
+    const r = yr(); Z.el.querySelector('.pz-y').textContent = (r.prov ? 'First three quarters of 2026' : r.p) + ' · profits ' + f1(r.pat) + '% of GDP';
   }
   function zoomOpen(from) {
     if (Z) return;
@@ -923,9 +923,9 @@
     if (!v.scrub) R.scrub.textContent = '';
     else {
       let inp = R.scrub.querySelector('input');
-      if (!inp) { inp = h('input'); inp.type = 'range'; inp.min = 1960; inp.max = 2026; inp.step = 1; inp.setAttribute('aria-label', 'Year'); inp.addEventListener('input', () => { S.era = null; S.year = +inp.value; board(true); emit('year'); }); R.scrub.append(h('span', '', '1960'), inp, h('span', '', '2026 H1')); }
+      if (!inp) { inp = h('input'); inp.type = 'range'; inp.min = 1960; inp.max = 2026; inp.step = 1; inp.setAttribute('aria-label', 'Year'); inp.addEventListener('input', () => { S.era = null; S.year = +inp.value; board(true); emit('year'); }); R.scrub.append(h('span', '', '1960'), inp, h('span', '', '2026 Q1–Q3')); }
       if (document.activeElement !== inp || S.era) inp.value = S.era ? S.era[1] : S.year;
-      inp.setAttribute('aria-valuetext', S.era ? 'average of ' + S.era[0] + ' to ' + S.era[1] : S.year === 2026 ? 'first half of 2026, provisional' : String(S.year));
+      inp.setAttribute('aria-valuetext', S.era ? 'average of ' + S.era[0] + ' to ' + S.era[1] : S.year === 2026 ? 'first three quarters of 2026, provisional' : String(S.year));
     }
     R.board.classList.toggle('has-tiles', false);
     /* the tiles and the reading line are set by the view before it measures the chart's box: draw twice when they change its height */
