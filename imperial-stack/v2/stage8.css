@@ -384,3 +384,45 @@
 #isx-root .orr.stg .orr-nar[data-step="pp"]:not(.open) .nb:has(.nn .orr-pp) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
 #isx-root .orr.stg .orr-nar .nz .bt.all { font-size: 15px; line-height: 1.42; }   /* a chapter reached by the years: its sentences together */
 #isx-root .orr.stg.mid .orr-nar .nz .bt.all { font-size: 14px; } #isx-root .orr.stg.port .orr-nar .nz .bt.all { font-size: 14px; }
+
+/* ---------- OR10 · the prologue (27 Nov 2026; handoff claude/handoffs/story-mode-and-scroll-27-nov.md §1, prompt P2) ----------
+   A level intro: 1991, the United States alone, its allies, the world expected to converge, Russia and China apart; then chapter 1.
+   The film stops where the story needs the visitor's hand (a body to pick; in chapter 3 the years handed over) and asks in the story's words. */
+#isx-root .orr.stg .orr-svg .orr-bodies .ob:is(.al, .alp):not(.ctr) { transition: opacity .6s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg.b-al:not(.b-r4) .orr-svg .orr-bodies .ob.al[data-r]:not(.ctr):not(.ru):not(.x0) { opacity: 1 !important; pointer-events: auto; }
+#isx-root .orr.stg.b-alp:not(.b-r4) .orr-svg .orr-bodies .ob.alp[data-r]:not(.ctr):not(.ru):not(.x0) { opacity: 1 !important; pointer-events: auto; }   /* the Pacific allies a moment after NATO's */   /* the allies show before their rings do (once every ring is lit, the rings' own rules hold) */
+#isx-root .orr.stg.intro .orr-chs :is(.chl, .orr-cnt, .orr-nx) { visibility: hidden; }   /* the prologue is not a chapter: the strip of chapters waits for chapter 1 (Skip the prologue is the way on) */
+#isx-root .orr.stg:not(.b-ru) .orr-svg .orr-bodies .ob.ru { opacity: 0 !important; pointer-events: none; }   /* Russia waits for the sentence that names it */
+#isx-root .orr.stg .orr-svg :is(.orr-rings, .orr-bodies .ob:not(.ctr)) { transition: opacity .6s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg.b-cnru .orr-svg .orr-rings { opacity: .45; }   /* Russia and China apart: the rest of the world dims, it is not removed */
+#isx-root .orr.stg.b-cnru .orr-svg .orr-bodies .ob:not(.ctr):not(.ru):not(.sel) { opacity: .28; }
+#isx-root .orr.stg.intro .orr-ct .orr-yr { visibility: hidden; }   /* the prologue is 1991: the picture's year (1995) waits for chapter 1; the footnote says where the sizes come from */
+/* Continue ›: the next line of the story, at every beat; at an ask, “Let the film do it ›” */
+#isx-root .orr.stg .orr-cont { display: inline-flex; align-items: center; position: absolute; z-index: 2; right: 104px; bottom: 12px; height: 30px; padding: 0 14px; border-radius: 999px; background: rgba(255, 181, 71, .08); border: 1px solid rgba(255, 181, 71, .55); color: #ffd27a; font: 600 11.5px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+#isx-root .orr.stg .orr-cont:hover { background: rgba(255, 181, 71, .18); color: #fff3d6; }
+#isx-root .orr.stg .orr-cont:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+#isx-root .orr.stg .orr-cont[hidden] { display: none; }
+#isx-root .orr.stg .orr-nar:has(.orr-cont:not([hidden])) .nz .bt { padding-right: 280px; }
+#isx-root .orr.stg .orr-nar.open .orr-cont { display: none; }
+#isx-root .orr.stg.mid .orr-nar:has(.orr-cont:not([hidden])) .nz .bt { padding-right: 270px; }
+#isx-root .orr.stg.port .orr-cont { right: 92px; bottom: 8px; }
+#isx-root .orr.stg.port .orr-nar:has(.orr-cont:not([hidden])) .nz .bt { padding-right: 0; }
+#isx-root .orr.stg.land .orr-cont { position: static; order: 2; height: 26px; padding: 0 10px; font-size: 11px; }
+#isx-root .orr.stg.land .orr-nar:has(.orr-cont:not([hidden])) .nz .bt { padding-right: 0; }
+/* an ask: the sentence is the story's question */
+#isx-root .orr.stg.ask .orr-nar .nz .bt { color: #ffd27a; }
+/* the body asked for: an amber ring round it (two slow pulses as the ask comes, then still) */
+#isx-root .orr-svg .orr-cue { stroke: #ffd27a; stroke-width: 1.6; vector-effect: non-scaling-stroke; pointer-events: none; opacity: .95; }
+#isx-root .orr-svg .orr-cue.go { animation: orrcue 1.6s cubic-bezier(.2, .8, .2, 1) 2; transform-box: fill-box; transform-origin: center; }
+@keyframes orrcue { 0% { opacity: .2; transform: scale(1.6); } 60% { opacity: .95; transform: scale(1); } 100% { opacity: .95; transform: scale(1); } }
+#isx-root .orr.stg.ask-pick .orr-svg .ob.cue { cursor: pointer; }
+/* the years handed over: the slider is lit, a tag rides on its thumb, the year to reach is marked */
+#isx-root .orr.stg.ask-years :is(.orr-evd, .orr-owd) { pointer-events: none; }   /* the thumb stands on 2001's dot: while the years are the visitor's, the dots let the drag through */
+#isx-root .orr.stg.ask-years .orr-tr input[type=range] { outline: 1px solid rgba(255, 181, 71, .7); outline-offset: 3px; border-radius: 999px; }
+#isx-root .orr-askt { position: absolute; top: 0; transform: translateX(-50%); padding: 2px 8px; border-radius: 999px; background: rgba(10, 16, 24, .96); border: 1px solid rgba(255, 181, 71, .7); color: #ffd27a; font: 600 10.5px/1.3 var(--sans); white-space: nowrap; pointer-events: none; z-index: 2; }
+#isx-root .orr-aske { position: absolute; top: 54px; transform: translateX(-50%); font: 600 10.5px/1 var(--mono); color: #ffd27a; pointer-events: none; }
+#isx-root .orr-aske::before { content: ""; position: absolute; left: 50%; bottom: 100%; margin-bottom: 2px; width: 1px; height: 7px; background: #ffd27a; }
+#isx-root .orr.stg:is(.port, .land) .orr-aske { top: 44px; }
+@media (prefers-reduced-motion: reduce) { #isx-root .orr-svg .orr-cue.go { animation: none; } #isx-root .orr.stg .orr-svg :is(.orr-rings, .orr-bodies .ob:not(.ctr)) { transition: none; } }
+/* a phone held sideways: the story’s sentence may take up to three lines (the prologue's are longer than one line can hold; a cut sentence cannot be read) */
+#isx-root .orr.stg.land .orr-nar .nz .bt { white-space: normal; display: -webkit-box; -webkit-line-clamp: 3; font-size: 12px; -webkit-box-orient: vertical; overflow: hidden; text-overflow: clip; line-height: 1.3; }
