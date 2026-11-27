@@ -565,19 +565,24 @@
        A visitor who has met the tab before, or switched the entry screens off, finds chapter 1 told to its end, with Play. */
     function opening() {
       if (full || X.orrOpened) return false;
-      const U = X.util, E = X.enter, K_ = (E && E.key) || 'isx-enter-', seen = () => !!U && U.stGet(K_ + 'profit') === '1';
-      if (X.orrIntroWant === undefined) { const off = !U || U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off' || U.stGet('isx-intro') === 'off';
-        X.orrIntroWant = !!E && (E.on === 'profit' || (!off && !seen() && (E.tabs || []).indexOf('profit') >= 0)); }
-      if (!X.orrIntroWant) return false;
+      const U = X.util, K_ = () => (X.enter && X.enter.key) || 'isx-enter-', seen = () => !!U && U.stGet(K_() + 'profit') === '1';
+      /* whether this visit wants the introduction; null while the entry screen's script has not run yet (the single-file build draws the stage first) */
+      const decide = () => { const E = X.enter; if (X.orrIntroWant !== undefined) return X.orrIntroWant; if (!E) return null;
+        const off = !U || U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off' || U.stGet('isx-intro') === 'off';
+        X.orrIntroWant = E.on === 'profit' || (!off && !seen() && (E.tabs || []).indexOf('profit') >= 0); return X.orrIntroWant; };
+      if (decide() === false) return false;
       st.intro = true; wrap.classList.add('intro'); setBeat(-1, -1, 0, true); calmSync();
       const t0 = performance.now();
       const poll = () => {
         if (!wrap.isConnected || !st.intro || X.orrOpened || st.bt && st.bt.ch >= 0) return;
+        const w = decide();
+        if (w === null && performance.now() - t0 < 3000) { setTimeout(poll, 100); return; }
+        if (!w) { st.intro = false; wrap.classList.remove('intro'); st.bt = null; calmSync(); C.render(st.yf); return; }   /* not wanted after all: chapter 1 as told to its end */
         if (X.enter && X.enter.on) { X.orrEntrySeen = true; setTimeout(poll, 250); return; }   /* the screen is up */
         if (!X.orrEntrySeen && !seen() && performance.now() - t0 < 4000) { setTimeout(poll, 250); return; }   /* the screen is still to come */
         if (X.view !== 'profit' || document.hidden) { setTimeout(poll, 500); return; }
         X.orrOpened = true; intro(false); };
-      setTimeout(poll, X.orrEntrySeen ? (reduce() ? 0 : 450) : 250);   /* after the screen has gone: start as it fades */
+      setTimeout(poll, X.orrEntrySeen ? (reduce() ? 0 : 450) : 100);   /* after the screen has gone: start as it fades */
       return true;
     }
 
