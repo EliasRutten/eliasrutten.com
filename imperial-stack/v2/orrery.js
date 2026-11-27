@@ -206,7 +206,7 @@
       const stepTo = to => { const l = st.lastInt; render(to); if (Math.round(to) !== l) { cross(l, Math.round(to)); st.lastInt = Math.round(to); } };
       const SG = stg ? X.orrStage({ h, el, OD, st, L, Vw, Sx, Sy, W, H, full, ph, compact, wrap, stage, rc, svg, defs, gV, gT, gSun, gid, list, isoB, at, f1, bn, clamp, lerp, reduce, R, STEPS, maxY,
         counters, info, slider, play, track, deepb, keyP, keyB, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y), settle: () => done(),   /* OR9: the stage's own glides end as the slider's do: the address and the page follow the year */
-        stepCopy: s => stepCopy(s), unpick: () => unpick(), evAt, ownAt, live: () => live(), stopYear: () => { cancelAnimationFrame(st.raf); st.raf = 0; },
+        stepCopy: s => stepCopy(s), unpick: () => unpick(), pick: id => pick(id), evAt, ownAt, live: () => live(), stopYear: () => { cancelAnimationFrame(st.raf); st.raf = 0; },
         pbox: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), posAt: (iso, yf) => { const q = isoB(iso); return q ? place(q, L, yf, tension(yf)) : [L.cx, L.cy]; } }) : null;
       if (SG) { const b = SG.box(); OX = b.ox; OY = b.oy; WP = b.wp; HL = b.hl; ph = WP < HL; if (!compact && HL < 250) MG = 28;   /* a low box: the rings take more of it, so that each ring's name has its own line */ if (!compact && HL < 250 && keyP) SG.fillKey(keyP); if (!compact && HL < 250) ppIn = true;   /* a low box has no room under the two bodies: step 1's charts stand in the narrator */   /* the picture is laid out upright only when its own box is */ relay(null); steps = SG.chs; }
       geom();
@@ -477,8 +477,9 @@
       const pick = id => { st.sel = id; list.forEach(q => q.g.classList.toggle('sel', q.id === id)); infoFor(id); placeLabels(); };
       const unpick = () => { if (!st.sel) return; st.sel = null; list.forEach(q => q.g.classList.remove('sel')); infoFor(null); placeLabels(); };
       const idOf = ev => { const g = ev.target.closest && ev.target.closest('[data-b]'); return g ? g.dataset.b : null; };
-      svg.addEventListener('pointerover', ev => { const id = idOf(ev); if (id && ev.pointerType === 'mouse' && id !== st.sel) pick(id); });
-      svg.addEventListener('click', ev => { const id = idOf(ev); if (id) pick(id); else if (compact) { unpick(); if (full && !keyP.hidden) keyShow(false); } });
+      const shown = id => { if (!stg) return true; const g = svg.querySelector('[data-b="' + id + '"]'); return !g || +getComputedStyle(g).opacity > .15; };   /* OR10: on the stage a body the story has not shown yet cannot be picked (a resting pointer met it as the prologue lit the picture) */
+      svg.addEventListener('pointerover', ev => { const id = idOf(ev); if (id && ev.pointerType === 'mouse' && id !== st.sel && shown(id)) pick(id); });
+      svg.addEventListener('click', ev => { const id = idOf(ev); if (id && shown(id)) pick(id); else if (id) return; else if (compact) { unpick(); if (full && !keyP.hidden) keyShow(false); } });
       svg.addEventListener('click', ev => { if (st.noclick) { ev.stopPropagation(); ev.preventDefault(); } }, true);
       svg.addEventListener('focusin', ev => { const id = idOf(ev); if (id && id !== st.sel) pick(id); });
       svg.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { const id = idOf(ev); if (id) { ev.preventDefault(); pick(id); } } });
@@ -495,9 +496,11 @@
         const step = now => { if (!wrap.isConnected) return; const t = clamp((now - t0) / ms, 0, 1), v = lerp(a, y, ease(t)), l = st.lastInt; render(v); if (Math.round(v) !== l) { cross(l, Math.round(v)); st.lastInt = Math.round(v); } if (t < 1) st.raf = requestAnimationFrame(step); else done(); };
         st.raf = requestAnimationFrame(step);
       }
-      const done = () => { st.raf = 0; X.emit('profit', { st: 'order', view: K.vw(), act: 'year' }); K.sync && K.sync(); };
-      inp.addEventListener('pointerdown', () => { stop(); st.drag = true; });
-      inp.addEventListener('input', () => { stop(); const l = st.lastInt; render(+inp.value); if (Math.round(+inp.value) !== l) { cross(l, Math.round(+inp.value)); st.lastInt = Math.round(+inp.value); } });
+      const done = () => { st.raf = 0; X.emit('profit', { st: 'order', view: K.vw(), act: 'year' }); K.sync && K.sync(); if (SG && SG.yearDone) SG.yearDone(Math.round(st.yf)); };   /* OR10: the years the story handed over have reached its mark */
+      /* OR10: when the story hands the years over (stage8.js handY), the slider moves them without ending the film, inside the span the story asks for */
+      const handY = v => SG && SG.handY ? SG.handY(v) : null;
+      inp.addEventListener('pointerdown', () => { if (handY() == null) stop(); st.drag = true; });
+      inp.addEventListener('input', () => { const hy = handY(+inp.value); if (hy == null) stop(); else if (+inp.value !== hy) inp.value = hy; const v = +inp.value, l = st.lastInt; render(v); if (Math.round(v) !== l) { cross(l, Math.round(v)); st.lastInt = Math.round(v); } });
       const release = () => { if (!st.drag) return; st.drag = false; go(Math.round(+inp.value), 220); };
       inp.addEventListener('pointerup', release); inp.addEventListener('change', () => { if (st.drag) release(); else if (!st.raf) go(Math.round(+inp.value), 0); });
       inp.addEventListener('keydown', ev => {
@@ -507,7 +510,7 @@
         else if (ev.key === 'PageDown' && !hyp) { const p = E.filter(e => e.year < y); t = p.length ? p[p.length - 1].year : 1995; }
         else if (ev.key === 'PageUp' && !hyp) { const n = E.find(e => e.year > y); t = n ? n.year : maxY; }
         else if (ev.key === 'Home') t = 1995; else if (ev.key === 'End') t = maxY;
-        if (t != null) { ev.preventDefault(); stop(); go(t, 450); }
+        if (t != null) { ev.preventDefault(); const hy = handY(t); if (hy == null) stop(); go(hy == null ? t : hy, 450); }
       });
       dots.addEventListener('click', ev => { const b = ev.target.closest('[data-y]'); if (b) { stop(); go(+b.dataset.y, 600); } });
       ownD.addEventListener('click', ev => { const b = ev.target.closest('[data-y]'); if (b) { stop(); go(+b.dataset.y, 600); } });

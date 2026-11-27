@@ -50,10 +50,27 @@
        y: the year the beat moves to (eased, about 0.85 s a year); h: how long it holds, in seconds (never less than the sentence takes to read at 200 words a minute, plus a second to look).
        Flags that stay once given (they are the picture's grammar): us, r0–r4 (the rings and their bodies), cn, rim, rimI, rimF, rn0–rn4 (a ring's name, and the largest economies on it),
        aYYYY (China's arcs up to that year), curt, lane. Flags of one chapter only: hl0–hl4 (a ring lit), arrow, fx, def, swap, tic, ppU, ppC, clS, clD, clI, rimL. */
-    const IN = { id: 'intro', k: 'Introduction', t: 'How to read the picture', s: 'Introduction', cam: 'all',
-      b: [{ s: 'At the centre, the United States.', on: ['us'], h: 3.8 },
-        { s: 'Around it, the world economy in rings: the nearer the centre, the higher the place in the chain.', on: ['r0'], at: [[.7, 'r1'], [1.4, 'r2'], [2.1, 'r3'], [2.8, 'r4']], h: 7 },
-        { s: 'China starts at the edge. It joins the chain in 2001.', on: ['cn'], h: 5 }] };
+    /* OR10: the prologue (Elias's storyline of 27 Nov, handoff claude/handoffs/story-mode-and-scroll-27-nov.md §1), a level intro in place of OR9's three beats.
+       cam: where the camera goes with the beat (us: close on the United States; al: the allies round it; all: the whole picture; cnru: Russia and China, with the centre in view).
+       ask: where the story needs the visitor's hand. The film stops and waits, in the story's words; “Let the film do it” does it for them. Once a visit, in the film that began at the prologue.
+       r: what the story says once the hand has acted (held rh seconds). Every sentence is a draft for Elias to edit (change note claude/imperial-stack-orrery-or10-27-nov.md §3). */
+    const sh0 = (iso, y) => { const q = isoB(iso); return q && q.d && q.d.share ? val(q.d.share, y) : null; };
+    const IN = { id: 'prologue', k: 'Prologue', t: '1991 · The end of history', s: 'Prologue', cam: 'us',
+      b: [{ s: 'December 1991: the Soviet Union dissolves. The United States has won the Cold War.', on: ['us'], h: 5.4 },
+        { s: 'Liberal hubris is at its zenith. The end of history is declared.', cam: 'al', camMs: 2600, h: 5 },
+        { s: 'Around the victor stand the winners: its allies in NATO and across the Pacific.', on: ['al'], at: [[1.8, 'alp'], [3.2, 'aln']], h: 7 },   /* NATO first, then the Pacific, then the largest named (the time-strip reviewers saw all thirteen arrive at once) */
+        { s: 'The world market would henceforth be ruled from here, as one chain of production round the centre.', cam: 'all', camMs: 2200, on: ['r0'], at: [[1.2, 'r1'], [2.4, 'r2'], [3.6, 'r3'], [4.8, 'r4'], [6.4, 'szN']], h: 8.8 },   /* a ring at a time, slower than OR9's: the reviewers saw rings, bodies and the footnote land together */
+        { s: 'Every economy was expected to converge on it: the nearer the centre, the higher the place in the chain.', on: ['szN', 'hl3'], at: [[1.4, 'hl2'], [2.8, 'hl1'], [4.2, 'hl0']], h: 7.6 },
+        { s: 'Russia and China were expected to follow. They had no interest in joining on those terms.', cam: 'cnru', camMs: 1600, on: ['ru', 'ruN', 'cnru'], at: [[1.6, 'cn']], h: 7,
+          ask: { id: 'pickCN', kind: 'pick', iso: 'CHN', s: () => (compact ? 'Tap' : 'Pick') + ' China to see where it stands.',
+            r: () => 'A body’s card holds its figures. China in 1995: ' + pc1(sh0('CHN', 1995)) + ' of world GDP (IMF).', rh: 6 } }],
+      p: () => ['The Soviet Union dissolved on 26 December 1991 (Supreme Soviet, Declaration 142-N). “The end of history”: Francis Fukuyama, “The End of History?”, The National Interest, summer 1989; the book, 1992.',
+        'The allies lit are the sixteen members of NATO in 1991, of which eight stand on the picture as economies (Canada, France, Germany, Greece, Italy, the Netherlands, Norway and the United Kingdom), and the treaty allies of the Pacific on it: Japan, South Korea, the Philippines, Australia and Thailand (NATO, member countries; State Department, U.S. Collective Defense Arrangements). The Rio Treaty’s signatories in the Americas are not lit.',
+        'Russia joined the IMF on 1 June 1992 and the WTO on 22 August 2012 (IMF; WTO). China joined the WTO on 11 December 2001 (WTO).',
+        'The sizes on the picture are each economy’s share of world GDP in 1995, the first year it draws (IMF).'] };
+    /* OR10: the allies the prologue lights (NATO's sixteen members in 1991; the treaty allies of the Pacific). Booking points are not lit */
+    const NATO = new Set(['CAN', 'FRA', 'DEU', 'GRC', 'ITA', 'NLD', 'NOR', 'GBR']), PAC = new Set(['JPN', 'KOR', 'PHL', 'AUS', 'THA']), ALLY = new Set([...NATO, ...PAC]);
+    C.list.forEach(q => { if (q.bk || q.core) return; if (NATO.has(q.iso)) q.g.classList.add('al'); if (PAC.has(q.iso)) q.g.classList.add('alp'); if (q.iso === 'RUS') q.g.classList.add('ru'); });
     const CH = [
       { id: 'wto', quiet: true, y0: 1995, y1: 1995, k: '1995', t: 'The WTO order', s: 'The WTO order', layer: 'earn', cam: 'all',
         b: [{ s: 'In 1995 the world economy is one order around the United States.', on: ['rim'], h: 5 },
@@ -71,7 +88,9 @@
           'The mass is made on the outer rings, but the profit is claimed by whoever owns, finances and designs: finance is dominant, production is determinant.',
           'The grey lines are that claim, measured: what US firms’ affiliates earned in each economy (BEA). The dashed arrow is illustrative*.'] },
       { id: 'joins', y0: 2001, y1: 2007, k: '2001', t: 'China joins on the assembly ring', s: 'China joins', layer: 'clear', cam: 'cn',
-        b: [{ s: 'In December 2001 China joins the WTO, on the assembly ring.', h: 4.8 },
+        b: [{ s: 'In December 2001 China joins the WTO, on the assembly ring.', h: 4.8,
+            ask: { id: 'yearsCN', kind: 'years', from: 2001, to: 2007, film: true, s: () => 'Now the years are yours: drag them to 2007 and watch China grow.',
+              r: () => 'From 2001 to 2007 China’s share of world GDP rises from ' + pc1(sh0('CHN', 2001)) + ' to ' + pc1(sh0('CHN', 2007)) + ' (IMF).', rh: 6.4 } },
           { s: 'As it grows, its surplus runs into one pool with the world’s other surpluses.', on: ['fx'], y: 2007, h: 8 },
           { s: 'The pool, not China, finances the US deficit: it buys dollar assets.', on: ['def'], h: 5.6 }],
         p: () => ['On 11 December 2001 China joins the WTO, on the assembly ring.',
@@ -122,11 +141,12 @@
           { s: 'Goods go one way, dollars the other: China finances the system it competes with.', on: ['clI'], h: 6.2 }] }];
     const NCH = CH.length, byYear = y => { for (let i = 7; i >= 0; i--) if (y >= CH[i].y0) return i; return 0; };
     /* OR9: which flags stay once given, and the flags in force at a place in the story (chapter i, beat b, t seconds into it; the intro is chapter −1) */
-    const STICKY = /^(us|r[0-4]|cn|rim|rimI|rimF|rn[0-4]|nm[0-4]|a\d{4}|curt|lane|lists)$/;
+    const STICKY = /^(us|al|alp|ru|r[0-4]|cn|rim|rimI|rimF|rn[0-4]|nm[0-4]|a\d{4}|curt|lane|lists)$/;   /* OR10: the allies and Russia, once the prologue has lit them, stay */
     const beatsOf = i => i < 0 ? IN.b : CH[i].b;
     const flagsAt = (i, b, t) => {
       const F = [], add = (B, tt, sticky) => { (B.on || []).forEach(f => { if (!sticky || STICKY.test(f)) F.push(f); }); (B.at || []).forEach(a => { if (tt >= a[0]) a.slice(1).forEach(f => { if (!sticky || STICKY.test(f)) F.push(f); }); }); };
-      const upTo = B => B.forEach((x, j) => { if (j < b) add(x, 1e9, false); else if (j === b) add(x, t, false); });
+      const ONCE = /^(aln)$/;   /* OR10: flags of one beat only (the allies' names, while the sentence is about them) */
+      const upTo = B => B.forEach((x, j) => { if (j < b) { const n = F.length; add(x, 1e9, false); for (let k = F.length - 1; k >= n; k--) if (ONCE.test(F[k])) F.splice(k, 1); } else if (j === b) add(x, t, false); });
       if (i < 0) { upTo(IN.b); return F; }
       IN.b.forEach(x => add(x, 1e9, true)); for (let c = 0; c < i; c++) CH[c].b.forEach(x => add(x, 1e9, true));
       upTo(CH[i].b); return F; };
@@ -159,13 +179,18 @@
     const nx = h('button', 'orr-nexp'); nx.type = 'button'; nx.setAttribute('aria-expanded', 'false'); nx.textContent = nxT(false); nx.title = 'This chapter in full, with its figures and sources';   /* its name is its words (axe: label-content-name-mismatch) */
     const openNar = o => { nar.classList.toggle('open', o); if (o) { nb.tabIndex = 0; nb.setAttribute('role', 'group'); nb.setAttribute('aria-label', 'The chapter in full'); } else if (nb.getAttribute('aria-label') === 'The chapter in full') { nb.removeAttribute('tabindex'); nb.removeAttribute('role'); nb.removeAttribute('aria-label'); }   /* open, the sheet scrolls: it takes the focus (axe: scrollable-region-focusable) */ nx.setAttribute('aria-expanded', String(o)); nx.textContent = nxT(o); if (o) takeOver(); requestAnimationFrame(() => { more(); st.ob = null; }); };
     nx.addEventListener('click', () => openNar(!nar.classList.contains('open')));
+    /* OR10: the play button's name follows its words (“❚❚ Pause” was named “Play the years…”; axe: label-content-name-mismatch) */
+    const playName = () => { const t = C.play.textContent, n = /Pause/.test(t) ? 'Pause the film' : /Replay/.test(t) ? 'Replay the film' : 'Play the years, 1995 to 2026'; if (C.play.getAttribute('aria-label') !== n) C.play.setAttribute('aria-label', n); };
+    new MutationObserver(playName).observe(C.play, { childList: true, characterData: true, subtree: true });
+    /* OR10: “Continue ›”: the story's next line, at every beat while it is told (its handler is with the runner) */
+    const cont = h('button', 'orr-cont'); cont.type = 'button'; cont.hidden = true;
     /* the chapter strip, the narrator's head: where you are, ten chapters, back, and the one way forward */
     const kick = h('span', 'k nk'), chs = h('nav', 'orr-chs'); chs.setAttribute('aria-label', 'Chapters: eight of the story, then two steps. Left and right arrows move between them.');
     const bk = h('button', 'orr-nx bk'), fw = h('button', 'orr-nx fw'); bk.type = 'button'; fw.type = 'button';
     const chl = h('div', 'chl'); chl.setAttribute('role', 'list');
     const chb = CH.map((c, i) => { const li = h('span'); li.setAttribute('role', 'listitem'); const b = h('button', 'orr-chp' + (c.step ? ' orr-stp' : '')); b.type = 'button'; b.dataset.ch = i; if (c.step) b.dataset.step = c.step; b.append(h('small', '', String(i + 1))); b.dataset.s = c.s;   /* the short title beside the number of the chapter you are in is drawn from this (css), so the button's own text is its number and its name for a screen reader is the label */ b.setAttribute('aria-label', 'Chapter ' + (i + 1) + ' of ' + NCH + ': ' + chTitle(i)); b.title = chTitle(i); li.append(b); chl.append(li); return b; });
     const cnt = h('span', 'orr-cnt'); cnt.setAttribute('aria-hidden', 'true');
-    chs.append(kick, chl, cnt, bk, fw); nar.append(chs, nb, nx);
+    chs.append(kick, chl, cnt, bk, fw); nar.append(chs, nb, cont, nx);
     /* the timeline row */
     const tkey = h('div', 'orr-tkey'); tkey.innerHTML = '<span><i class="e"></i>Events</span><span><i class="o"></i>China’s own</span>'; tkey.setAttribute('role', 'group'); tkey.setAttribute('aria-label', 'On the timeline: gold dots are events, teal diamonds are China’s own institutions');
     const pc = h('div', 'orr-pc'); pc.append(C.play, tkey);
@@ -319,6 +344,8 @@
     const big = q => { if (q.__big === undefined) { const a = q.d && q.d.share ? q.d.share.filter(v => v != null) : []; q.__big = a.length ? Math.max.apply(null, a) >= MAIN : false; } return q.__big; };
     const nameMode = q => {
       if (q.core) return st.fl.has(q.china ? 'cn' : 'us') ? 'lit' : 'off';
+      if (q.iso === 'RUS' && !q.bk) { if (!st.fl.has('ru')) return 'off'; if (st.fl.has('ruN')) return 'all'; }   /* OR10: Russia from the prologue's sentence that names it */
+      if (st.fl.has('aln') && !q.bk && ALLY.has(q.iso)) return big(q) ? 'all' : 'off';   /* OR10: the prologue's allies, the largest of them named while the sentence is about them */
       if (!st.fl.has('r' + clamp(q.b.wring, 0, 4))) return 'off';
       if ((st.allNames || st.pin) && !compact) return 'all';
       if (compact && (st.allNames || st.pin)) return null;   /* a phone keeps its own rule: the big bodies, more as you zoom */
@@ -388,6 +415,7 @@
       else st.whyLab = null;
       why.style.display = whyOn ? '' : 'none';
       st.sfx = sfx;
+      if (!st.step && st.fl.has('szN')) note = 'Sizes: each economy’s share of world GDP in 1995, the first year the picture draws (IMF).';   /* OR10: the prologue speaks of 1991; the picture's figures begin in 1995 */
       if (st.step === 'cl' && st.fl.has('clS')) note = '* No pair of countries settles alone: surpluses meet deficits in one pool, and the pool buys dollar assets. Lines between the poles show a direction only.';   /* OR9: with the first line into the pool */   /* step 2's own starred lines */
       if (note !== fnote.textContent) { fnote.textContent = note; st.nk = ''; } fnote.hidden = !note || compact; st.note = note;
       if (compact) { const tx = st.step ? '' : lay === 'earn' ? 'Grey lines: US firms’ affiliates’ income there, ' + (half(st.yf) ? 'first half of 2026' : yr) + ' (BEA)'
@@ -411,6 +439,14 @@
     let camRaf = 0;
     function camTarget(mode, yEnd) {
       if (mode === 'all' || !mode) return { k: 1, x: 0, y: 0 };
+      /* OR10: the prologue's camera. Close on the United States; then the box round it and its allies; then Russia and China with the centre in view */
+      const fit = (isos, kmax) => { const P = isos.map(s => C.posAt(s, yEnd)), xs = P.map(p => p[0]), ys = P.map(p => p[1]), pad = compact ? 26 : 40;
+        const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad, PB = C.pbox();
+        const k = clamp(Math.min(PB.wp / (x1 - x0), PB.hl / (y1 - y0)), 1, kmax), p = [(x0 + x1) / 2, (y0 + y1) / 2];
+        return { k, x: clamp(L.cx - k * p[0], W - W * k, 0), y: clamp(L.cy - k * p[1], H - H * k, 0) }; };
+      if (mode === 'us') { const k = compact ? 2.1 : 2.5, p = C.posAt('USA', yEnd); return { k, x: clamp(L.cx - k * p[0], W - W * k, 0), y: clamp(L.cy - k * p[1], H - H * k, 0) }; }
+      if (mode === 'al') return fit(['USA'].concat([...ALLY].filter(s => isoB(s))), 1.6);
+      if (mode === 'cnru') return fit(['USA', 'RUS', 'CHN'], 1.5);
       const k = mode === 'sys' ? (compact ? 1.2 : 1.1) : (compact ? 1.32 : 1.16), cn = C.posAt('CHN', yEnd), us = C.posAt('USA', yEnd);
       const p = mode === 'sys' ? [L.cx, L.cy] : [cn[0] * .65 + us[0] * .35, cn[1] * .65 + us[1] * .35];   /* China, with the centre it stands in still in view */
       const fx = L.cx, fy = L.cy;   /* what is looked at comes to the middle of the picture's box */
@@ -430,12 +466,12 @@
     const CARD = 1.8;   /* seconds a chapter's card holds before its first beat */
     function card(i, ms) {
       clearTimeout(tcT); tcard.classList.remove('in'); stage.classList.remove('tc'); if (reduce()) return;
-      tcard.textContent = ''; tcard.append(h('span', 'k', 'Chapter ' + (i + 1) + ' of ' + NCH), h('b', '', chTitle(i)));   /* OR9: the tab's line moved from this card to chapter 1's “Read” */
+      tcard.textContent = ''; tcard.append(h('span', 'k', i < 0 ? IN.k : 'Chapter ' + (i + 1) + ' of ' + NCH), h('b', '', i < 0 ? IN.t : chTitle(i)));   /* OR9: the tab's line moved from this card to chapter 1's “Read” · OR10: the prologue has its own card */
       void tcard.offsetWidth; tcard.style.setProperty('--tcd', (ms || 2200) + 'ms'); tcard.classList.add('in'); stage.classList.add('tc'); tcT = setTimeout(() => { tcard.classList.remove('in'); stage.classList.remove('tc'); }, ms || 2200);
     }
 
     /* ---------- OR9: the flags in force, and what they light ---------- */
-    const FLAGS = ['us', 'r0', 'r1', 'r2', 'r3', 'r4', 'cn', 'rim', 'rimI', 'rimF', 'rn0', 'rn1', 'rn2', 'rn3', 'rn4', 'curt', 'lane', 'lists', 'arrow', 'fx', 'def', 'swap', 'tic', 'ppU', 'ppC', 'ppUw', 'ppCw', 'clP', 'clS', 'clS2', 'clD', 'clI', 'rimL'];
+    const FLAGS = ['us', 'al', 'alp', 'aln', 'ru', 'ruN', 'cnru', 'szN', 'r0', 'r1', 'r2', 'r3', 'r4', 'cn', 'rim', 'rimI', 'rimF', 'rn0', 'rn1', 'rn2', 'rn3', 'rn4', 'curt', 'lane', 'lists', 'arrow', 'fx', 'def', 'swap', 'tic', 'ppU', 'ppC', 'ppUw', 'ppCw', 'clP', 'clS', 'clS2', 'clD', 'clI', 'rimL'];
     C.list.forEach(q => { if (q.core) q.g.classList.add('ctr', q.china ? 'cn' : 'us'); });
     svg.querySelectorAll('.orr-rings ellipse').forEach((e, j) => { e.dataset.k = String(Math.floor(j / 3)); });
     gT.querySelectorAll('.orr-rl').forEach((t, j) => { t.dataset.k = String(j); });
@@ -443,6 +479,7 @@
     function sayLine() {   /* the sentence on the stage: the beat's; a chapter reached by the years (no beat running) shows its sentences together */
       const B = st.bt; let s = '';
       if (B && B.b >= 0) { const L = beatsOf(B.ch); if (L[B.b]) s = B.t >= 1e9 ? L.map(x => x.s).join(' ') : L[B.b].s; }
+      if (st.say) s = st.say;   /* OR10: the story asks for the visitor's hand, or answers it */
       if (s === btKey) return; btKey = s; bt.classList.remove('in'); void bt.offsetWidth; bt.textContent = s; bt.classList.toggle('all', !!B && B.t >= 1e9); if (s) bt.classList.add('in'); requestAnimationFrame(more);
     }
     function setBeat(i, b, t, quiet) {
@@ -456,7 +493,7 @@
       if (was !== now) { capKey = ''; st.ob = null; if (!quiet) C.render(st.yf); }
     }
     /* while the film plays the tools wait; they come back the moment the visitor takes over (or reaches for them with the keyboard) */
-    function calmSync() { wrap.classList.toggle('calm', (st.intro || (!!run && run.film)) && !st.reach); }
+    function calmSync() { wrap.classList.toggle('calm', (st.intro || (!!run && run.film)) && !st.reach); contSync(); }
     function takeOver() { if (run && run.film) pause(); st.reach = true; calmSync(); }
     stage.addEventListener('focusin', ev => { if (ev.target.matches && ev.target.matches(':focus-visible') && !ev.target.closest('.orr-svg')) { st.reach = true; calmSync(); } });
 
@@ -500,18 +537,20 @@
     let run = null;
     function tween(y, d) { run.tw = { a: st.yf, b: y, t: 0, d: reduce() ? 0 : d }; }
     function chapterIn(i) {   /* a chapter opens: its card, nothing of it yet on the picture; the year glides to its first year; the camera to what it is about */
+      if (i < 0) { run.i = -1; run.b = -1; run.t = 0; run.ph = 'card'; st.pin = false; setBeat(-1, -1, 0); card(-1, CARD * 1000); if (Math.abs(st.yf - 1995) > .01) tween(1995, .8); camTo(IN.cam, 0, 1995); return; }   /* OR10: the prologue's card; the camera already close on the centre */
       const c = CH[i]; run.i = i; run.b = -1; run.t = 0; run.ph = 'card'; st.pin = false;
+      if (st.sel && i === 0 && run.first) C.unpick();   /* OR10: the card picked in the prologue closes as chapter 1 begins */
       if (c.step) C.setStep(c.step); else { if (st.step) C.setStep(null); if (c.layer) st.layer = c.layer; }
       setBeat(i, -1, 0); card(i, CARD * 1000);
       if (!c.step && Math.abs(st.yf - c.y0) > .01) tween(c.y0, run.film ? 1.1 : .8);
       if (st.cam !== 'user') st.cam = c.cam; camTo(c.step ? 'all' : c.cam, 850, c.y1);
     }
-    function beatIn(i, b, t) { run.i = i; run.b = b; run.t = t; run.ph = 'beat'; const B = beatsOf(i)[b]; setBeat(i, b, t); if (B.y != null && Math.abs(B.y - st.yf) > .01) tween(B.y, Math.max(.7, Math.abs(B.y - st.yf) * .85)); }
+    function beatIn(i, b, t) { run.i = i; run.b = b; run.t = t; run.ph = 'beat'; st.say = null; const B = beatsOf(i)[b]; setBeat(i, b, t); if (B.y != null && Math.abs(B.y - st.yf) > .01) tween(B.y, Math.max(.7, Math.abs(B.y - st.yf) * .85)); if (B.cam) camTo(B.cam, B.camMs || 900, st.yf); contSync(); }   /* OR10: a beat may move the camera (the prologue's) */
     function startRun(film, i, b, t) {
       C.stopYear(); if (run) cancelAnimationFrame(run.raf);
-      run = { film, i, b, t: t || 0, raf: 0, last: performance.now(), tw: null, ph: 'beat' };
+      run = { film, i, b, t: t || 0, raf: 0, last: performance.now(), tw: null, ph: 'beat', first: i < 0 || !!st.resumeFirst }; st.resumeFirst = false;   /* first: the film that began at the prologue (OR10: only it asks for the visitor's hand) */
       if (film) { st.playing = true; C.play.textContent = '❚❚ Pause'; C.play.setAttribute('aria-pressed', 'true'); if (st.cam === 'user') st.cam = 'all'; }
-      if (b < 0 && i >= 0) chapterIn(i); else beatIn(i, Math.max(0, b), t || 0);
+      if (b < 0) chapterIn(i); else beatIn(i, Math.max(0, b), t || 0);
       calmSync(); run.raf = requestAnimationFrame(tick);
     }
     function tick(now) {
@@ -521,12 +560,38 @@
       if (run.tw) { const T = run.tw; T.t += dt; const q = T.d ? clamp(T.t / T.d, 0, 1) : 1; C.stepTo(lerp(T.a, T.b, rm ? 1 : q * q * (3 - 2 * q))); if (q >= 1) { run.tw = null; C.settle(); } }
       const t0 = run.t; run.t += dt;
       if (run.ph === 'card') { if (run.t >= (rm ? .6 : CARD) && !run.tw) beatIn(run.i, 0, 0); }
+      else if (run.ph === 'ask') { if (run.tw === null && run.auto) { run.auto = false; answer(); } }   /* OR10: the film waits for the visitor's hand */
+      else if (run.ph === 'reply') { if (run.t >= run.rh && !run.tw && !next()) return; }
       else { const B = beatsOf(run.i)[run.b]; st.bt.t = run.t;
         if ((B.at || []).some(a => a[0] > t0 && a[0] <= run.t)) setBeat(run.i, run.b, run.t);   /* a part the sentence names a moment later */
-        if (run.t >= B.h && !run.tw && !next()) return; }
+        if (run.t >= B.h && !run.tw && !beatEnd()) return; }
       run.raf = requestAnimationFrame(tick);
     }
+    /* OR10: a beat that asks for the visitor's hand: once a visit, in the film that began at the prologue (the prologue's own ask in any run of it) */
+    X.orrAsked = X.orrAsked || {};
+    const askOk = A => !!A && !X.orrAsked[A.id] && (run.i < 0 || (run.first && (!A.film || run.film)));
+    function beatEnd() { const B = beatsOf(run.i)[run.b]; if (B && B.ask && askOk(B.ask)) { askIn(B.ask); return true; } return next(); }
+    let cue = null, askTag = null, askEnd = null;
+    function askIn(A) {
+      run.ph = 'ask'; run.ask = A; run.t = 0; st.ask = A; st.say = A.s(); btKey = ''; sayLine(); wrap.classList.add('ask', 'ask-' + A.kind);
+      if (A.kind === 'pick') { const q = isoB(A.iso); if (q) { q.g.classList.add('cue'); if (!cue) { cue = el('circle', { class: 'orr-cue', fill: 'none' }); gV.append(cue); } cueAt(); cue.classList.remove('go'); void cue.getBoundingClientRect(); cue.classList.add('go'); } }
+      if (A.kind === 'years') { if (!askTag) { askTag = h('span', 'orr-askt'); askTag.setAttribute('aria-hidden', 'true'); askEnd = h('span', 'orr-aske', String(A.to)); askEnd.setAttribute('aria-hidden', 'true'); C.track.append(askTag, askEnd); }
+        askTag.textContent = 'Drag to ' + A.to + ' →'; askEnd.style.left = ((A.to - 1995) / (maxY - 1995) * 100) + '%'; tagAt(); }
+      contSync();
+    }
+    function cueAt() { if (!cue || !st.ask || st.ask.kind !== 'pick') return; const q = isoB(st.ask.iso); if (!q || !q.p) return; cue.setAttribute('cx', q.p[0].toFixed(1)); cue.setAttribute('cy', q.p[1].toFixed(1)); cue.setAttribute('r', (q.r / Math.sqrt(Vw.k) + 8 / Vw.k).toFixed(2)); }
+    function tagAt() { if (askTag) askTag.style.left = ((st.yf - 1995) / (maxY - 1995) * 100) + '%'; }
+    function askClear() { st.ask = null; st.say = null; wrap.classList.remove('ask', 'ask-pick', 'ask-years'); C.list.forEach(q => q.g.classList.remove('cue')); if (cue) { cue.remove(); cue = null; } if (askTag) { askTag.remove(); askEnd.remove(); askTag = askEnd = null; } }
+    /* the hand has acted (by: 'hand'), or the visitor let the film do it ('film'): the story answers, then goes on */
+    function answer(by) {
+      if (!run || run.ph !== 'ask') return; const A = run.ask;
+      if (by === 'film') { if (A.kind === 'pick') { const q = isoB(A.iso); if (q) C.pick(q.id); } else if (A.kind === 'years' && Math.abs(st.yf - A.to) > .01) { tween(A.to, Math.max(.7, Math.abs(A.to - st.yf) * .85)); run.auto = true; return; } }
+      X.orrAsked[A.id] = true; askClear(); btKey = '';
+      if (A.r) { run.ph = 'reply'; run.t = 0; run.rh = A.rh || 5; st.say = A.r(); sayLine(); contSync(); return; }
+      next();
+    }
     function next() {   /* the beat has been read: the next beat, the next chapter (the film), or rest */
+      st.say = null;
       if (run.b + 1 < beatsOf(run.i).length) { beatIn(run.i, run.b + 1, 0); return true; }
       if (run.i < 0) { endIntro(); chapterIn(0); calmSync(); return true; }   /* the introduction leads into chapter 1, in the film or on its own */
       st.bt.done = true;
@@ -537,8 +602,8 @@
       calmSync(); return false;
     }
     /* Pause keeps the picture as it is, mid-beat; navigation (the years, a chip, a key, full screen) ends the run and the chapter stands as told to its end */
-    function pause() { if (!run) return; cancelAnimationFrame(run.raf); const f = run.film; run = null; if (f || st.playing) { st.playing = false; C.play.textContent = '▶ Play'; C.play.setAttribute('aria-pressed', 'false'); } calmSync(); }
-    function filmStop() { const had = !!run || st.intro; pause(); if (st.intro) endIntro(); if (had) { st.bt = null; C.hl(-1, false); st.hk = -1; requestAnimationFrame(() => { if (wrap.isConnected && !run) C.render(st.yf); }); } }
+    function pause() { if (!run) return; cancelAnimationFrame(run.raf); const f = run.film; st.resumeFirst = run.first; if (run.ph === 'ask' || run.ph === 'reply') { askClear(); if (run.ph === 'reply') { st.bt && (st.bt.t = 0); } } run = null; if (f || st.playing) { st.playing = false; C.play.textContent = '▶ Play'; C.play.setAttribute('aria-pressed', 'false'); } calmSync(); }
+    function filmStop() { const had = !!run || st.intro; pause(); st.resumeFirst = false; if (st.intro) endIntro(); if (had) { st.bt = null; C.hl(-1, false); st.hk = -1; requestAnimationFrame(() => { if (wrap.isConnected && !run) C.render(st.yf); }); } }
     function playToggle() {
       if (run && run.film) { pause(); return; }
       const B = st.bt;
@@ -549,16 +614,33 @@
       startRun(true, st.ch, -1);   /* a chapter reached by the years: told from its start */
     }
 
+    /* ---------- OR10: every beat can be skipped. “Continue ›” moves on to the next beat (at an ask: “Let the film do it ›”) ---------- */
+    function contSync() { const on = !!run; cont.hidden = !on; if (!on) return; const t = run.ph === 'ask' ? 'Let the film do it ›' : 'Continue ›'; if (cont.textContent !== t) cont.textContent = t;
+      cont.title = run.ph === 'ask' ? 'The film does it for you, and goes on' : 'The next line of the story'; }
+    cont.addEventListener('click', () => { if (!run) return;
+      if (run.ph === 'ask') { answer('film'); return; }
+      if (run.ph === 'card') { beatIn(run.i, 0, 0); return; }
+      if (run.ph === 'reply') { if (run.tw) return; next(); return; }
+      const B = beatsOf(run.i)[run.b]; if (B) { setBeat(run.i, run.b, B.h); st.bt.t = B.h; } beatEnd(); });   /* the beat's parts all show before the story moves on */
+    /* the years handed over: orrery.js asks while the slider moves. handY() says whether the years are the visitor's (and keeps them inside the ask's span) */
+    function handY(v) { const A = run && run.ph === 'ask' && st.ask && st.ask.kind === 'years' ? st.ask : null; if (!A) return null; if (v == null) return A.from; return clamp(v, A.from, A.to); }
+    function yearDone(y) { tagAt(); const A = run && run.ph === 'ask' && st.ask && st.ask.kind === 'years' ? st.ask : null; if (A && y >= A.to) answer('hand'); }
+    /* the body asked for, picked (a click, a tap, Enter, or the pointer resting on it) */
+    let dwell = 0;
+    const isAsked = id => { const A = run && run.ph === 'ask' && st.ask && st.ask.kind === 'pick' ? st.ask : null; if (!A) return false; const q = isoB(A.iso); return !!q && q.id === id; };
+    svg.addEventListener('click', ev => { const g = ev.target.closest && ev.target.closest('[data-b]'); if (g && isAsked(g.dataset.b)) setTimeout(() => answer('hand'), 0); });
+    svg.addEventListener('keydown', ev => { if (ev.key !== 'Enter' && ev.key !== ' ') return; const g = ev.target.closest && ev.target.closest('[data-b]'); if (g && isAsked(g.dataset.b)) setTimeout(() => answer('hand'), 0); });
+
     /* ---------- OR9: the introduction, once a visit, after the tab's entry screen has gone ---------- */
     let skipB = null;
     const esc = ev => { if (ev.key === 'Escape' && st.intro) { ev.preventDefault(); skipIntro(); } };
     function endIntro() { st.intro = false; wrap.classList.remove('intro'); if (skipB) { skipB.remove(); skipB = null; } document.removeEventListener('keydown', esc); }
-    function skipIntro() { filmStop(); st.reach = true; calmSync(); }
+    function skipIntro() { filmStop(); st.reach = true; camTo('all', reduce() ? 0 : 700); calmSync(); }   /* OR10: the camera comes back to the whole picture */
     function intro(replay) {
       if (st.step) C.setStep(null); st.intro = true; wrap.classList.add('intro'); setBeat(-1, -1, 0);
-      if (!skipB) { skipB = h('button', 'orr-skip', 'Skip the introduction'); skipB.type = 'button'; skipB.addEventListener('click', skipIntro); stage.append(skipB); document.addEventListener('keydown', esc); }
-      const film = replay || X.orrEnterAct === 'go';   /* “Start at the beginning” on the entry screen: the film runs on after the introduction */
-      startRun(film, -1, 0, 0);
+      if (!skipB) { skipB = h('button', 'orr-skip', 'Skip the prologue'); skipB.type = 'button'; skipB.addEventListener('click', skipIntro); stage.append(skipB); document.addEventListener('keydown', esc); }
+      const film = replay || X.orrEnterAct === 'go';   /* “Start at the beginning” on the entry screen: the film runs on after the prologue */
+      startRun(film, -1, -1, 0);   /* OR10: from the prologue's card */
     }
     /* the orrery asks for the introduction on its first drawing at 1995 (orrery.js opening()). It is wanted once a visit, when the tab's entry screen
        is due (a first visit as the site counts it); while that screen covers the tab, or is about to open, the stage stands empty and waits.
@@ -571,13 +653,13 @@
         const off = !U || U.stGet('isx-tips-sim') === 'off' || U.stGet('isx-enter') === 'off' || U.stGet('isx-intro') === 'off';
         X.orrIntroWant = E.on === 'profit' || (!off && !seen() && (E.tabs || []).indexOf('profit') >= 0); return X.orrIntroWant; };
       if (decide() === false) return false;
-      st.intro = true; wrap.classList.add('intro'); setBeat(-1, -1, 0, true); calmSync();
+      st.intro = true; wrap.classList.add('intro'); setBeat(-1, -1, 0, true); calmSync(); camTo(IN.cam, 0, 1995);   /* OR10: the prologue opens close on the centre */
       const t0 = performance.now();
       const poll = () => {
         if (!wrap.isConnected || !st.intro || X.orrOpened || st.bt && st.bt.ch >= 0) return;
         const w = decide();
         if (w === null && performance.now() - t0 < 3000) { setTimeout(poll, 100); return; }
-        if (!w) { st.intro = false; wrap.classList.remove('intro'); st.bt = null; calmSync(); C.render(st.yf); return; }   /* not wanted after all: chapter 1 as told to its end */
+        if (!w) { st.intro = false; wrap.classList.remove('intro'); st.bt = null; camTo('all', 0); calmSync(); C.render(st.yf); return; }   /* not wanted after all: chapter 1 as told to its end */
         if (X.enter && X.enter.on) { X.orrEntrySeen = true; setTimeout(poll, 250); return; }   /* the screen is up */
         if (!X.orrEntrySeen && !seen() && performance.now() - t0 < 4000) { setTimeout(poll, 250); return; }   /* the screen is still to come */
         if (X.view !== 'profit' || document.hidden) { setTimeout(poll, 500); return; }
@@ -601,10 +683,10 @@
       /* a body's or an arc's card asked for: the narrator opens on its notice */
       if (st.ins && st.ins !== st.insShown && !nar.classList.contains('open')) openNar(true); st.insShown = st.ins;
       nar.dataset.step = c.step || ''; fullT.textContent = ''; navSync();
-      kick.textContent = I ? 'Introduction' : 'Chapter ' + (i + 1) + ' of ' + NCH + (c.step && !(compact && ph) ? ' · after the story' : '');   /* a phone held upright: the row keeps room for Back and Next */
+      kick.textContent = I ? IN.k : 'Chapter ' + (i + 1) + ' of ' + NCH + (c.step && !(compact && ph) ? ' · after the story' : '');   /* a phone held upright: the row keeps room for Back and Next */
       nt.textContent = I ? IN.t : chTitle(i) + (c.step ? '.' : '');
       fullT.append(h('p', 'sum', c.b.map(x => x.s).join(' ')));
-      if (I) { ne.textContent = ''; ni.textContent = ''; return; }
+      if (I) { fullT.append(h('p', 'd', IN.p().join(' '))); ne.textContent = ''; ni.textContent = ''; return; }   /* OR10: the prologue's dates and sources, in “Read” */
       if (c.step) {
         const S = C.stepCopy(c.step); fullT.append(h('p', 'd', S.body)); if (S.ast) fullT.append(h('p', 'ast', S.ast)); ne.textContent = ''; ni.textContent = '';
         if (S.charts) { if (compact) nz.insertBefore(S.charts, fullT); else ne.append(S.charts); }   /* a phone: the two charts are the step's picture, under its sentence; a middle-sized stage: beside the narration, where a year's notices stand */
@@ -628,12 +710,14 @@
       if (st.poolLab) out.push(st.poolLab); if (st.whyLab) out.push(st.whyLab); if (st.curtLab) out.push(st.curtLab); if (st.rimLabs) st.rimLabs.forEach(r => out.push(r));
     }
 
-    function draw(g) { chSync(); maskSync(); drawRim(g); drawFx(g); }
-    function onSel(q) { wrap.classList.toggle('has-sel', !!q); if (q && !C.info.contains(ix)) C.info.append(ix); }
+    function draw(g) { chSync(); maskSync(); drawRim(g); drawFx(g); if (cue) cueAt(); if (askTag) tagAt(); }
+    function onSel(q) { wrap.classList.toggle('has-sel', !!q); if (q && !C.info.contains(ix)) C.info.append(ix);
+      clearTimeout(dwell); if (q && isAsked(q.id)) dwell = setTimeout(() => { if (st.sel === q.id && isAsked(q.id)) answer('hand'); }, 900); }   /* OR10: a mouse resting on the body asked for picks it */
     function onStep() { chSync(); navSync(); capKey = ''; C.render(st.yf); }   /* the picture is drawn again so that its layer, its starred line and its names are the step's (or the chapter's) own */
     wrap.dataset.layer = st.layer;
     return { box, draw, narr, obstacles, inc, half, playToggle, filmStop, go, chTitle: () => chTitle(st.ch < 0 ? idx() : st.ch), idx, onSel, onStep, fillKey, camTo, dock, chs, nar, hud, wide, land, CH, setLayer, card,
-      IN, streamOn, nameMode, arcOk, opening, beats: () => ({ IN, CH: CH.map(c => ({ id: c.id, b: c.b })) }), where: () => ({ bt: st.bt, run: run ? { film: run.film, i: run.i, b: run.b, ph: run.ph } : null, intro: st.intro, fl: [...st.fl] }), skip: skipIntro,
+      IN, streamOn, nameMode, arcOk, opening, beats: () => ({ IN, CH: CH.map(c => ({ id: c.id, b: c.b })), asks: [IN].concat(CH).flatMap(c => c.b.filter(x => x.ask).map(x => ({ id: x.ask.id, kind: x.ask.kind, s: x.ask.s(), r: x.ask.r ? x.ask.r() : '', rh: x.ask.rh || 0 }))) }),
+      where: () => ({ bt: st.bt, run: run ? { film: run.film, i: run.i, b: run.b, ph: run.ph, first: run.first } : null, intro: st.intro, fl: [...st.fl], ask: st.ask ? st.ask.id : null, say: st.say || '' }), skip: skipIntro, handY, yearDone, answer,
       userView: () => { st.cam = 'user'; cancelAnimationFrame(camRaf); }, resetCam: () => { st.cam = CH[st.ch < 0 ? 0 : st.ch].cam; } };
   };
 })();
