@@ -1,0 +1,118 @@
+{
+ "commit": "1f4cda0",
+ "started": "2026-11-27T19:36:56.067Z",
+ "base": "http://127.0.0.1:8731/imperial-stack/",
+ "checks": [
+  {
+   "check": "b4",
+   "exit": 0,
+   "pass": 88,
+   "fail": 0,
+   "failed": [],
+   "seconds": 203,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "content",
+   "exit": 0,
+   "pass": 71,
+   "fail": 0,
+   "failed": [],
+   "seconds": 45,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "entry",
+   "exit": 0,
+   "pass": 138,
+   "fail": 0,
+   "failed": [],
+   "seconds": 115,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "fix",
+   "exit": 0,
+   "pass": 67,
+   "fail": 0,
+   "failed": [],
+   "seconds": 24,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "welcome",
+   "exit": 0,
+   "pass": 74,
+   "fail": 0,
+   "failed": [],
+   "seconds": 253,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "stage1",
+   "exit": 0,
+   "pass": 40,
+   "fail": 0,
+   "failed": [],
+   "seconds": 75,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "stage2",
+   "exit": 0,
+   "pass": 61,
+   "fail": 0,
+   "failed": [],
+   "seconds": 142,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "stage3",
+   "exit": 0,
+   "pass": 54,
+   "fail": 0,
+   "failed": [],
+   "seconds": 79,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "profit",
+   "exit": 0,
+   "pass": 152,
+   "fail": 0,
+   "failed": [],
+   "seconds": 42,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "arc",
+   "exit": 0,
+   "pass": 247,
+   "fail": 0,
+   "failed": [],
+   "seconds": 108,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "b1",
+   "exit": 0,
+   "pass": 175,
+   "fail": 0,
+   "failed": [],
+   "seconds": 233,
+   "commit": "1f4cda0"
+  },
+  {
+   "check": "interface",
+   "exit": 0,
+   "pass": 142,
+   "fail": 0,
+   "failed": [],
+   "seconds": 299,
+   "commit": "1f4cda0"
+  }
+ ],
+ "finished": "2026-11-27T20:03:54.480Z",
+ "clean": true,
+ "note": "Go-live re-run on 1f4cda0 (v2 9b8eb75 + the go-live fixes): the checks the fixes and R2 touch (b4, content, entry, fix, welcome, stage1, stage2, stage3, profit, arc, b1, interface). The other nine checks are as in 7a20118.json (no code of theirs changed). Also clean on 1f4cda0, outside the suite: orrery-or7 72, or8 56, mobile 47, or9-pacing 33, firms-back 47, firms 110, axe ONLY=profit|orrery|firm web|Back 0 violations, smoke on the single file 34 PASS."
+}

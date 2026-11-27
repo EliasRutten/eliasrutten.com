@@ -1,0 +1,218 @@
+{
+ "commit": "7a20118",
+ "started": "2026-11-27T16:39:38.513Z",
+ "base": "http://127.0.0.1:8731/imperial-stack/",
+ "checks": [
+  {
+   "check": "b4",
+   "exit": 0,
+   "pass": 88,
+   "fail": 0,
+   "failed": [],
+   "seconds": 210,
+   "commit": "7a20118"
+  },
+  {
+   "check": "b6",
+   "exit": 0,
+   "pass": 24,
+   "fail": 0,
+   "failed": [],
+   "seconds": 87,
+   "commit": "7a20118"
+  },
+  {
+   "check": "content",
+   "exit": 0,
+   "pass": 71,
+   "fail": 0,
+   "failed": [],
+   "seconds": 46,
+   "commit": "7a20118"
+  },
+  {
+   "check": "entry",
+   "exit": 1,
+   "pass": 128,
+   "fail": 10,
+   "failed": [
+    "FAIL  1440 #circuit: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Funding ",
+    "FAIL  1440 #simulator: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Fundin",
+    "FAIL  1440 #elite-network: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Fu",
+    "FAIL  1440 #profit: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Funding t",
+    "FAIL  1440 #imperial-arm: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: $200 Oil and World",
+    "FAIL  390 #circuit: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Funding t",
+    "FAIL  390 #simulator: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Funding",
+    "FAIL  390 #elite-network: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Fun",
+    "FAIL  390 #profit: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: How Grandma is Funding th",
+    "FAIL  390 #imperial-arm: the Substack button leads with the thesis, coming soon, and never says “Essay” on its own  {\"tag\":\"BUTTON\",\"txt\":\"Read the preliminary thesisRelated piece: $200 Oil and World "
+   ],
+   "seconds": 117,
+   "commit": "7a20118"
+  },
+  {
+   "check": "thesis",
+   "exit": 0,
+   "pass": 129,
+   "fail": 0,
+   "failed": [],
+   "seconds": 63,
+   "commit": "7a20118"
+  },
+  {
+   "check": "fix",
+   "exit": 0,
+   "pass": 67,
+   "fail": 0,
+   "failed": [],
+   "seconds": 24,
+   "commit": "7a20118"
+  },
+  {
+   "check": "onboard",
+   "exit": 0,
+   "pass": 70,
+   "fail": 0,
+   "failed": [],
+   "seconds": 144,
+   "commit": "7a20118"
+  },
+  {
+   "check": "welcome",
+   "exit": 0,
+   "pass": 74,
+   "fail": 0,
+   "failed": [],
+   "seconds": 252,
+   "commit": "7a20118"
+  },
+  {
+   "check": "stage1",
+   "exit": 1,
+   "pass": 39,
+   "fail": 1,
+   "failed": [
+    "FAIL loops: six registered (the ring’s travelling marker since the interface fixes; the Scenarios scene since B3; the first openings, a one-shot, since round 5b)  → [\"globe\",\"arm\",\"sim\",\"ring\",\"openin"
+   ],
+   "seconds": 75,
+   "commit": "7a20118"
+  },
+  {
+   "check": "stage2",
+   "exit": 0,
+   "pass": 61,
+   "fail": 0,
+   "failed": [],
+   "seconds": 138,
+   "commit": "7a20118"
+  },
+  {
+   "check": "stage3",
+   "exit": 1,
+   "pass": 53,
+   "fail": 1,
+   "failed": [
+    "FAIL strip: it follows a tab change, and the Arm’s switch is in the bar"
+   ],
+   "seconds": 77,
+   "commit": "7a20118"
+  },
+  {
+   "check": "profit",
+   "exit": 0,
+   "pass": 152,
+   "fail": 0,
+   "failed": [],
+   "seconds": 42,
+   "commit": "7a20118"
+  },
+  {
+   "check": "arc",
+   "exit": 0,
+   "pass": 247,
+   "fail": 0,
+   "failed": [],
+   "seconds": 109,
+   "commit": "7a20118"
+  },
+  {
+   "check": "b1",
+   "exit": 1,
+   "pass": 172,
+   "fail": 3,
+   "failed": [
+    "FAIL bar (Circuit): the dock is the page’s own (one #isx-dock, its links and ids unchanged)  → {\"strip\":false,\"sp\":0,\"xs\":[38,84,286],\"cur\":0,\"bars\":1,\"mine\":1,\"parts\":true,\"order\":true,\"inBar\":true,\"",
+    "FAIL bar (Simulator): the dock is the page’s own (one #isx-dock, its links and ids unchanged)  → {\"strip\":false,\"sp\":0,\"xs\":[38,84,476],\"cur\":0,\"bars\":1,\"mine\":1,\"parts\":true,\"order\":true,\"inBar\":true",
+    "FAIL bar (Scenarios): the dock is the page’s own (one #isx-dock, its links and ids unchanged)  → {\"strip\":true,\"sp\":8,\"xs\":[397,901,447],\"cur\":1,\"bars\":1,\"mine\":1,\"parts\":true,\"order\":false,\"inBar\":fa"
+   ],
+   "seconds": 231,
+   "commit": "7a20118"
+  },
+  {
+   "check": "b3",
+   "exit": 0,
+   "pass": 53,
+   "fail": 0,
+   "failed": [],
+   "seconds": 144,
+   "commit": "7a20118"
+  },
+  {
+   "check": "interface",
+   "exit": 0,
+   "pass": 142,
+   "fail": 0,
+   "failed": [],
+   "seconds": 309,
+   "commit": "7a20118"
+  },
+  {
+   "check": "firms",
+   "exit": 0,
+   "pass": 110,
+   "fail": 0,
+   "failed": [],
+   "seconds": 101,
+   "commit": "7a20118"
+  },
+  {
+   "check": "clarity",
+   "exit": 0,
+   "pass": 108,
+   "fail": 0,
+   "failed": [],
+   "seconds": 243,
+   "commit": "7a20118"
+  },
+  {
+   "check": "tiers",
+   "exit": 0,
+   "pass": 106,
+   "fail": 0,
+   "failed": [],
+   "seconds": 71,
+   "commit": "7a20118"
+  },
+  {
+   "check": "stage5",
+   "exit": 0,
+   "pass": 114,
+   "fail": 0,
+   "failed": [],
+   "seconds": 1020,
+   "commit": "7a20118"
+  },
+  {
+   "check": "axe",
+   "exit": 1,
+   "pass": 347,
+   "fail": 6,
+   "failed": [],
+   "seconds": 2166,
+   "commit": "7a20118"
+  }
+ ],
+ "finished": "2026-11-27T18:14:06.771Z",
+ "clean": false,
+ "note": "Full 21-check run on OR10 stacked on FW-back (27 Nov). entry, stage1, stage3, b1 and axe (profit, 6 spoken-name violations) failed there for reasons that were not OR10: stale expectations (thesis button label, loop count), the tab marker T1 left ~40 px off, and the Moments chips’ aria-labels. Fixed in 1f4cda0 and those checks re-run clean in 1f4cda0.json. Everything else clean."
+}
