@@ -149,7 +149,7 @@ const FIRST = [1995, 1996, 2001, 2008, 2013, 2017, 2025, 2026];
     const radio = await p.evaluate(() => [...document.querySelectorAll('.orr-fsel [role="radio"]')].map(b => [b.textContent, b.getAttribute('aria-checked')]));
     ok('D · “Flows”: three choices, one at a time; a choice stays while the years are scrubbed; a chapter sets its own (chapter 3: Clearing)', pin1 === 'paper' && pin2 === 'paper' && pin3 === 'clear' && radio.length === 3 && radio.filter(r => r[1] === 'true').length === 1 && radio.find(r => r[1] === 'true')[0] === 'Clearing', [pin1, pin2, pin3, radio]);
     /* chapter 2's illustrative arrow */
-    await p.click('.orr-chp[data-ch="1"]'); await p.waitForTimeout(1600); const w = await p.evaluate(() => { const e = document.querySelector('.orr-svg .orr-fx .fl.why'), cs = getComputedStyle(e); return { on: cs.display !== 'none', dash: cs.strokeDasharray !== 'none', lab: [...document.querySelectorAll('.orr-svg .orr-fl.ill')].filter(t => getComputedStyle(t).display !== 'none').map(t => t.textContent), note: document.querySelector('.orr-stage > .orr-fn').textContent }; });
+    await p.click('.orr-chp[data-ch="1"]'); await p.waitForFunction(() => !ISX.profit.orrery.cur.SG.where().run, null, { timeout: 40000 }); await p.waitForTimeout(300); const w = await p.evaluate(() => { const e = document.querySelector('.orr-svg .orr-fx .fl.why'), cs = getComputedStyle(e); return { on: cs.display !== 'none', dash: cs.strokeDasharray !== 'none', lab: [...document.querySelectorAll('.orr-svg .orr-fl.ill')].filter(t => getComputedStyle(t).display !== 'none').map(t => t.textContent), note: document.querySelector('.orr-stage > .orr-fn').textContent }; });
     ok('D · chapter 2: one illustrative arrow, dashed and starred, with its line under the picture (“it carries no figure”)', w.on && w.dash && w.lab.join() === 'Made on the outer rings,claimed at the core*' && /^\* Illustrative: the direction in which profit is claimed, ring by ring\. It carries no figure/.test(w.note), w);
     await p._c.close();
   }
@@ -159,8 +159,8 @@ const FIRST = [1995, 1996, 2001, 2008, 2013, 2017, 2025, 2026];
     const p = await open(1440, 900, false, '');
     await p.click('.orr-play'); await p.waitForTimeout(700); const f0 = await p.evaluate(() => ({ play: document.querySelector('.orr-play').textContent, pressed: document.querySelector('.orr-play').getAttribute('aria-pressed'), card: document.querySelector('.orr-tc').classList.contains('in'), cardTxt: document.querySelector('.orr-tc').textContent }));
     ok('E · Play starts the film at chapter 1 with its title card', /Pause/.test(f0.play) && f0.pressed === 'true' && f0.card && /Chapter 1 of 101995 · The WTO order/.test(f0.cardTxt), f0);
-    await p.waitForFunction(() => ISX.profit.orrery.cur.SG.idx() === 1, null, { timeout: 20000 }); const s1 = await S(p);
-    await p.waitForFunction(() => ISX.profit.orrery.cur.st.yf > 1997.2 && ISX.profit.orrery.cur.st.yf < 1999.8, null, { timeout: 12000 }); const mid = await p.evaluate(() => ISX.profit.orrery.cur.st.yf);
+    await p.waitForFunction(() => ISX.profit.orrery.cur.SG.idx() === 1, null, { timeout: 30000 }); const s1 = await S(p);   /* OR9: chapter 1 is told in three beats (about 19 s) */
+    await p.waitForFunction(() => ISX.profit.orrery.cur.st.yf > 1997.2 && ISX.profit.orrery.cur.st.yf < 1999.8, null, { timeout: 25000 }); const mid = await p.evaluate(() => ISX.profit.orrery.cur.st.yf);
     ok('E · the film goes on to chapter 2 by itself, and the year moves between whole years (continuous time)', s1.ch === 1 && Math.abs(mid - Math.round(mid)) > .01, [s1.ch, mid]);
     await p.click('.orr-play'); await p.waitForTimeout(300); const y0 = await p.evaluate(() => ISX.profit.orrery.cur.st.yf); await p.waitForTimeout(900); const y1 = await p.evaluate(() => [ISX.profit.orrery.cur.st.yf, document.querySelector('.orr-play').textContent]);
     ok('E · “Pause” holds the film where it is', y0 === y1[0] && /Play/.test(y1[1]), [y0, y1]);
