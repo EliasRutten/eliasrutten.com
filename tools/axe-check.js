@@ -400,6 +400,11 @@ const base = process.argv[2] || 'http://127.0.0.1:8731/imperial-stack/';
   await run('firm web, phone: the views panel', '#circuit/firms', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw .fvw').click(); }));
   await run('firm web, phone: a view with its caption', '#circuit/firms=v=systems', seen, 390, 844, fwUp());
   await run('firm web, phone: a filter’s panel', '#circuit/firms=v=earned', seen, 390, 844, fwUp(() => { document.querySelector('#isx-fw [data-fwp="hc"]').click(); }));
+  /* FW-back (27 Nov 2026): the Back button, dim at the start and live after a step; the bar in two rows at 1280 */
+  await run('firm web: Back, dim at rest (aria-disabled)', '#circuit/firms', seen, 1440, 900, fwUp());
+  await run('firm web: Back, live after a view', '#circuit/firms', seen, 1440, 900, fwUp(() => ISX.firms.view('state')));
+  await run('firm web: Back, live after two steps, bar in two rows', '#circuit/firms', seen, 1280, 760, fwUp(() => { ISX.firms.view('systems'); ISX.firms.set('fc', 'China'); }));
+  await run('firm web, phone: Back, live after a view', '#circuit/firms', seen, 390, 844, fwUp(() => ISX.firms.view('state')));
   await b.close();
   console.log(total ? total + ' violation type(s) in all' : 'no violations');
   process.exit(total ? 1 : 0);

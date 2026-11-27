@@ -26,6 +26,10 @@
 #isx-root .fw .fgap { flex: 1; }
 #isx-root .fw .fbtn { display: inline-flex; align-items: center; gap: 8px; flex: 0 1 auto; min-width: 0; height: 34px; margin: 0; padding: 0 13px; border-radius: 999px; border: 1px solid #2a3947; background: var(--glass); color: var(--ink); font: 500 12.5px var(--sans); cursor: pointer; white-space: nowrap; }
 #isx-root .fw .fbtn:hover { border-color: #8fa3b6; color: #fff; }
+/* FW-back (27 Nov 2026): the Back button, first in the bar; it stays where it is and dims when there is nothing to undo */
+#isx-root .fw .fback { gap: 6px; padding: 0 12px 0 10px; }
+#isx-root .fw .fback[aria-disabled="true"] { opacity: .42; cursor: default; }
+#isx-root .fw .fback[aria-disabled="true"]:hover { border-color: #2a3947; color: var(--ink); }
 #isx-root .fw .fsw i { flex: none; width: 24px; height: 14px; border-radius: 999px; background: #22313f; position: relative; transition: background .2s; }
 #isx-root .fw .fsw i::after { content: ""; position: absolute; left: 2px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #9aabba; transition: transform .2s, background .2s; }
 #isx-root .fw .fsw[aria-checked="true"] { border-color: #ffb547; } #isx-root .fw .fsw[aria-checked="true"] i { background: rgba(255, 181, 71, .35); } #isx-root .fw .fsw[aria-checked="true"] i::after { transform: translateX(10px); background: #ffb547; }
@@ -153,14 +157,14 @@
 #isx-root .fw .fwtab .num { text-align: right; font-family: var(--mono); font-size: 11.5px; white-space: nowrap; color: #fff; }
 #isx-root .fw .fwtab .wlk { font-weight: 600; text-align: left; }
 
-@media (min-width: 1100px) { #isx-root .fw .fwbar { flex-wrap: nowrap; } }
+/* FW-back (27 Nov 2026): the Back button is one more item, and a picked view adds “Clear” and a count on a chip, so the bar wraps when it must (it was forced onto one row from 1100 px and ran off the screen); the panel under it is placed from the bar's own height (v2/firms.js, placePanel) */
 @media (min-width: 761px) and (max-width: 1400px) { #isx-root .fw .fbtn, #isx-root .fw .fchip { padding: 0 10px; gap: 6px; } #isx-root .fw .fwbar { gap: 6px 5px; } }
 @media (min-width: 761px) and (max-width: 1240px) { #isx-root .web3.fw .wstage { top: 126px; } }
 @media (min-width: 761px) and (max-width: 1099px) { #isx-root .web3.fw .fpanw { top: 84px; } }
 @media (max-width: 760px) {
   #isx-root .web3.fw .wstage { display: block; order: 2; min-width: 0; } #isx-root .web3.fw .wcard { order: 3; overflow: visible; } #isx-root .web3.fw .wclose { order: 1; }
   #isx-root .fw .fwbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } #isx-root .fw .fchip { height: 44px; justify-content: space-between; } #isx-root .fw .fbtn { height: 44px; justify-content: center; } #isx-root .fw .fgap { display: none; }
-  #isx-root .fw .fvw { display: inline-flex; grid-column: 1 / -1; border-color: rgba(255, 181, 71, .55); } #isx-root .web3.fw .fcap:not([hidden]) { display: grid; gap: 3px; margin-top: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a3947; background: rgba(255, 255, 255, .03); }
+  #isx-root .fw .fback { grid-column: 1; } #isx-root .fw .fvw { display: inline-flex; grid-column: 2; border-color: rgba(255, 181, 71, .55); } #isx-root .web3.fw .fcap:not([hidden]) { display: grid; gap: 3px; margin-top: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a3947; background: rgba(255, 255, 255, .03); }
   #isx-root .fw .fcap small { font: 400 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #ffb547; } #isx-root .fw .fcap b { font: 600 17px/1.15 var(--display); letter-spacing: .04em; text-transform: uppercase; color: #fff; } #isx-root .fw .fcap span { font-size: 13px; line-height: 1.45; color: #dbe4ec; }
   #isx-root .web3.fw .fpanw { position: static; margin-top: 6px; } #isx-root .fw .fopt, #isx-root .fw .fpx { height: 44px; } #isx-root .fw .fv1 { min-height: 44px; } #isx-root .web3.fw .wseat button { min-height: 44px; } #isx-root .fw .fold2 summary { min-height: 44px; display: flex; align-items: center; }
   /* the picture keeps a readable size and pans sideways inside its own box; the page itself never scrolls sideways */

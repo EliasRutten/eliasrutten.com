@@ -16,6 +16,10 @@
   var NS = 'http://www.w3.org/2000/svg', esc = U.esc, D = null, OWN = null, SH = null, host = null, M = null, LAY = null, lastFocus = null, from = null;
   var KEYS = ['L', 'fc', 'ht', 'hc'], KNAME = { L: 'Layer', fc: 'Firm’s country', ht: 'Holder type', hc: 'Holder’s country' };
   var blank = function () { return { L: [], fc: [], ht: [], hc: [] }; };
+  /* FW-back (27 Nov 2026): one step at a time. HS is the web's own record of where it has been: each entry is the address (view, filters, compare,
+     type or country) and the pick that were showing; the “← Back” button undoes the last one. An entry whose address changed also has a browser history
+     entry (h), so the browser's Back and this button walk the same path; where the page cannot write history (a sandboxed frame) the button works alone. */
+  var HS = [], pend = null, under = null;
   var S = { sel: null, calm: false, by: 'type', table: false, how: false, more: false, view: '', lens: '', cmp: false, pan: '', f: blank(), g: blank() };
   var VX = -70, VW = 1060, VH = 928, CX = 460, CY = 464, RF = 262, RIM = 400, RB = 423, RC = 441, DX = 62, GAP = 15;
   var TYPES = [['manager', 'Asset managers and funds'], ['founder', 'Founders, families and insiders'], ['state', 'States and state funds'],
@@ -548,21 +552,60 @@
   /* ---------- the controls: four filter chips, each with a panel of values; compare; calm; the table ---------- */
   function bar() {
     var chip = function (k) { var n = S.f[k].length + (S.cmp ? S.g[k].length : 0); return '<button type="button" class="fchip' + (n ? ' set' : '') + '" data-fwp="' + k + '" aria-expanded="' + (S.pan === k) + '" aria-controls="isx-fw-pan"><span>' + KNAME[k] + '</span>' + (n ? '<b>' + n + '<span class="fvh"> picked</span></b>' : '') + '<i aria-hidden="true"></i></button>'; };
-    host.querySelector('.fwbar').innerHTML = '<button type="button" class="fchip fvw" data-fwp="views" aria-expanded="' + (S.pan === 'views') + '" aria-controls="isx-fw-pan"><span>Ten views</span><i aria-hidden="true"></i></button>' + KEYS.map(chip).join('')
+    var fb = host.querySelector('.fwbar'), bk = fb.querySelector('.fback');
+    if (!bk) { fb.insertAdjacentHTML('afterbegin', '<button type="button" class="fbtn fback" data-fw="back" aria-disabled="true" aria-label="Back: undo the last change" title="Undo the last change: a view, a filter, a comparison or a pick"><span aria-hidden="true">←</span><span>Back</span></button>'); bk = fb.firstChild; }
+    while (bk.nextSibling) fb.removeChild(bk.nextSibling);   /* the Back button is made once and never rebuilt, so it keeps focus */
+    fb.insertAdjacentHTML('beforeend', '<button type="button" class="fchip fvw" data-fwp="views" aria-expanded="' + (S.pan === 'views') + '" aria-controls="isx-fw-pan"><span>Ten views</span><i aria-hidden="true"></i></button>' + KEYS.map(chip).join('')
       + '<button type="button" class="fbtn fsw fcmp" data-fw="cmp" role="switch" aria-checked="' + S.cmp + '"><i aria-hidden="true"></i><span>Compare two groups</span></button>'
       + (anyF() ? '<button type="button" class="fbtn" data-fw="reset">Clear</button>' : '')
       + '<span class="fgap"></span><button type="button" class="fbtn fsw fcalm" data-fw="calm" role="switch" aria-checked="' + S.calm + '"><i aria-hidden="true"></i><span>Calm</span></button>'
-      + '<button type="button" class="fbtn" data-fw="table" aria-pressed="' + S.table + '">' + (S.table ? 'View as web' : 'View as table') + '</button>';
+      + '<button type="button" class="fbtn" data-fw="table" aria-pressed="' + S.table + '">' + (S.table ? 'View as web' : 'View as table') + '</button>');
+    syncBack();
     var k = S.pan, pw = host.querySelector('.fpanw');
     if (!k) { pw.innerHTML = ''; pw.hidden = true; return; }
     var row = function (F, g, lab) { return '<div class="fprow" role="group" aria-label="' + esc(lab) + '">' + (S.cmp ? '<span class="fpk" aria-hidden="true">' + (g === 'f' ? 'A' : 'B') + '</span>' : '') + M.opts[k].map(function (o) { return '<button type="button" class="fopt" data-fwo="' + k + '" data-g="' + g + '" data-v="' + esc(o[0]) + '" aria-pressed="' + (F[k].indexOf(o[0]) >= 0) + '">' + esc(o[1]) + '</button>'; }).join('') + '</div>'; };
-    pw.hidden = false;
+    pw.hidden = false; placePanel();
     if (k === 'views') { pw.innerHTML = '<div class="fpan" id="isx-fw-pan" role="group" aria-label="Ten views"><div class="fph"><b>Ten views</b><span>each fills the filters</span><button type="button" class="fpx" data-fw="pan">Done</button></div>' + viewList() + '</div>'; return; }
     pw.innerHTML = '<div class="fpan" id="isx-fw-pan" role="group" aria-label="' + KNAME[k] + ': pick one or more"><div class="fph"><b>' + KNAME[k] + '</b><span>pick one or more' + (S.cmp ? ', for each group' : '') + '</span><button type="button" class="fpx" data-fw="pan">Done</button></div>'
       + row(S.f, 'f', S.cmp ? KNAME[k] + ', group A' : KNAME[k]) + (S.cmp ? row(S.g, 'g', KNAME[k] + ', group B') : '') + '</div>';
   }
+  /* the panel opens just under the bar, whether the bar is one row or two (on phones it is in the flow and this does nothing) */
+  function placePanel() { var pw = host && host.querySelector('.fpanw'), fb = host && host.querySelector('.fwbar'); if (pw && fb && !pw.hidden) pw.style.top = Math.round(fb.offsetTop + fb.offsetHeight + 6) + 'px'; }
+  window.addEventListener('resize', function () { if (host && !host.hidden) placePanel(); });
   var foc = function (sel) { var e = host.querySelector(sel); if (e) e.focus({ preventScroll: true }); };
-  var say = function () { X.emit('firms', { sel: S.sel, by: S.by, table: S.table, view: S.view }); if (X.routeSync) X.routeSync(); };
+  var say = function () { record(); syncBack(); X.emit('firms', { sel: S.sel, by: S.by, table: S.table, view: S.view }); if (X.routeSync) X.routeSync(); };
+  /* ---------- Back: the web's own steps, and the browser's history entries for the ones that changed the address ---------- */
+  var hashOf = function (a) { return '#circuit/firms' + (a ? '=' + a : ''); };
+  function syncBack() { var b = host && host.querySelector('.fback'); if (b) b.setAttribute('aria-disabled', String(HS.length < 2)); }
+  /* the address is about to change: keep the one being left as a browser entry, so the browser's Back returns to it (routeSync then rewrites the top entry) */
+  function pushEntry(a) { var want = hashOf(a); if (location.hash !== want) return false; try { history.pushState(null, '', want); under = want; return true; } catch (e) { return false; } }
+  /* the web is opening from the Circuit: the Circuit's own address becomes an entry below it, so the browser's Back closes the web and lands there */
+  function preOpen() {
+    var pre = '#circuit' + (X.hashDetail ? X.hashDetail() : '');
+    if (under === pre && location.hash === pre) return;   /* that entry is already underneath */
+    try { if (location.hash !== pre) history.replaceState(null, '', pre); history.pushState(null, '', pre); under = pre; } catch (e) { under = null; }
+  }
+  /* called after every change the person makes (and after one the browser's Back or Forward makes: pend then names the entry it came back to) */
+  function record() {
+    var s = { a: addr(), sel: S.sel || null, h: false }, top = HS[HS.length - 1];
+    if (pend) { if (pend.j >= 0) { s.h = HS[pend.j].h; HS.length = pend.j; } else s.h = true; HS.push(s); pend = null; }
+    else {
+      if (top && top.a === s.a && top.sel === s.sel) return;
+      if (top && top.a !== s.a) s.h = pushEntry(top.a);
+      HS.push(s);
+    }
+    if (HS.length > 80) HS.shift();
+  }
+  function undo(j) { var s = HS[j]; pend = { j: j }; read(s.a); S.sel = s.sel && M.nodes[s.sel] ? s.sel : null; S.pan = ''; refresh(true); pend = null; }
+  function back() {
+    var n = HS.length; if (n < 2) return;
+    var cur = HS[n - 1];
+    if (cur.h) {   /* the browser's own step back does the work (go() below applies it), so the two never disagree */
+      var ok = true; try { history.back(); } catch (e) { ok = false; }
+      if (ok) { setTimeout(function () { if (isOpen() && HS.length === n && HS[n - 1] === cur) undo(n - 2); }, 450); return; }   /* nothing came of it: do the step here */
+    }
+    undo(n - 2);
+  }
   /* something about the view changed: lay out again, redraw the controls and the card */
   function refresh(anim, sweep) {
     keepView(); bar(); var st = host.querySelector('.wstage'); st.classList.toggle('tab', S.table); host.querySelector('.fwtab').innerHTML = S.table ? tableHTML() : '';
@@ -619,6 +662,7 @@
       var k2 = t.dataset.fw;
       if (S.pan && k2 !== 'pan') { S.pan = ''; bar(); }   /* any other control closes an open panel */
       if (k2 === 'close') close(true);
+      else if (k2 === 'back') { if (t.getAttribute('aria-disabled') !== 'true') back(); foc('.fback'); }
       else if (k2 === 'calm') { S.calm = !S.calm; bar(); mark(); if (S.calm) { halt(); put(1); } foc('.fcalm'); }
       else if (k2 === 'table') { S.table = !S.table; refresh(false); foc('[data-fw="table"]'); }
       else if (k2 === 'cmp') { S.cmp = !S.cmp; if (!S.cmp) S.g = blank(); else if (!hasFF(S.f) && !hasFF(S.g)) S.pan = 'fc'; S.sel = null; refresh(true); foc('.fcmp'); }
@@ -649,6 +693,7 @@
       if (o.addr != null) read(o.addr); else { if (o.view || o.by || o.firm) setView(o.view || ''); if (o.by) S.by = o.by === 'country' ? 'country' : 'type'; }   /* a door opens its own view; the tray's tile opens the web as it was left */
       if (!host.querySelector('svg .fn')) draw();
       if (o.firm && M.byId[o.firm]) S.sel = 'f:' + o.firm;
+      if (!pend && from !== 'profit' && !isOpen() && !/^#\/?circuit\/firms/.test(location.hash)) preOpen();
       host.querySelector('.wct').textContent = from === 'profit' ? 'Back to the order' : 'Back to the globe';
       host.hidden = false; root.classList.add('web-on', 'fw-on'); refresh(false);
       var stg = host.querySelector('.fwpan'); if (stg.scrollWidth > stg.clientWidth + 4) stg.scrollLeft = (stg.scrollWidth - stg.clientWidth) / 2;   /* phones: the picture pans; start at its middle */
@@ -672,7 +717,7 @@
     if (refocus) { var b = $('tp-firms') || lastFocus; if (b && b.focus) b.focus({ preventScroll: true }); }
     if (X.routeSync) X.routeSync();
   }
-  X.on('view', function () { from = null; close(false); });
+  X.on('view', function () { from = null; under = null; close(false); });
   X.on('motion', function () { if (host && !host.hidden && still()) { halt(); put(1); } });
   /* the page's record of a firm, for the door on its card on the globe */
   var OLDID = { 'ASML': 'asml', 'ASM Intl': 'asm_international', 'Besi': 'besi', 'Nexperia': 'nexperia', 'NXP': 'nxp', 'TSMC': 'tsmc', 'Samsung': 'samsung', 'SK Hynix': 'sk_hynix', 'Nvidia': 'nvidia', 'Foxconn': 'foxconn_hon_hai', 'Tokyo Electron': 'tokyo_electron', 'Applied Materials': 'applied_materials', 'Microsoft': 'microsoft', 'Amazon': 'amazon', 'Alphabet': 'alphabet', 'Meta': 'meta', 'SpaceX': 'spacex', 'Huawei': 'huawei', 'SMIC': 'smic', 'Wingtech': 'wingtech' };
@@ -680,10 +725,16 @@
   X.firms = { open: open, close: close, idOf: function (name) { return OLDID[name] || null; }, pick: function (id) { if (M && isOpen()) { S.sel = null; pick(id); } },
     get isOpen() { return isOpen(); }, get addr() { return addr(); }, views: PRE.map(function (P) { return { id: P.id, t: P.t }; }),
     /* the address inside the tab, applied: opens the web if it is shut, changes the view if it differs */
-    go: function (str) { if (!isOpen()) return open({ addr: str }); if (str !== addr()) { read(str); refresh(true); } },
+    /* also what the browser's Back and Forward arrive by: the entry it comes to is looked up among the web's own steps, so the two stay in step */
+    go: function (str) {
+      var j = -1, i; under = null; for (i = HS.length - 1; i >= 0; i--) if (HS[i].a === str) { j = i; break; }
+      if (!isOpen()) { pend = { j: j }; return open({ addr: str }).then(function () { pend = null; }); }
+      if (str !== addr()) { pend = { j: j }; read(str); if (j >= 0 && HS[j].sel && M.nodes[HS[j].sel]) S.sel = HS[j].sel; refresh(true); pend = null; }
+    },
+    back: back,
     view: function (id) { if (M && isOpen()) { setView(id); S.sel = null; refresh(true, id === 'claim'); } },
     get state() { var vis = function (l) { return l.filter(function (n) { return n.z && n.z.on; }).length; };
-      return { open: isOpen(), sel: S.sel, by: S.by, calm: S.calm, table: S.table, view: S.view, lens: S.lens, cmp: S.cmp, split: !!(LAY && LAY.split), pan: S.pan, f: JSON.parse(JSON.stringify(S.f)), g: JSON.parse(JSON.stringify(S.g)),
+      return { open: isOpen(), steps: Math.max(0, HS.length - 1), sel: S.sel, by: S.by, calm: S.calm, table: S.table, view: S.view, lens: S.lens, cmp: S.cmp, split: !!(LAY && LAY.split), pan: S.pan, f: JSON.parse(JSON.stringify(S.f)), g: JSON.parse(JSON.stringify(S.g)),
         firms: M ? M.firms.length : 0, holders: M ? M.holders.length : 0, links: M ? M.links.length : 0, sectors: M ? M.secs.length : 0, countries: M ? M.countries.length : 0, sites: M ? M.sites.length : 0,
         inFirms: M ? vis(M.firms) : 0, inHolders: M ? vis(M.holders.concat(M.prox)) : 0, lit: M ? M.links.filter(function (L) { return L.vis && L.lit; }).length : 0, k: LAY ? LAY.k : 1, sum: D ? D.sum : null, parts: D ? D.parts || null : null }; },
     set: function (k, v) { if (!M) return; if (k in S.f) S.f[k] = (v == null || v === '' ? [] : [].concat(v)).map(String); else if (k === 'calm' || k === 'table' || k === 'cmp') S[k] = !!v; else if (k === 'by') S.by = v === 'country' ? 'country' : 'type'; refresh(false); } };
