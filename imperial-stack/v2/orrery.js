@@ -172,7 +172,7 @@
       let tbar = null, keyP = null, keyB = null, btm = null, hintEl = null;
       if (!full && story) {   /* OR8: the key is on the picture at every size; a wide stage has room for it and shows it from the start */
         keyB = h('button', 'orr-kyb', 'Key'); keyB.type = 'button'; keyB.setAttribute('aria-controls', 'isx-orr-key-in'); keyB.addEventListener('click', () => { keyP.hidden = !keyP.hidden; keyB.setAttribute('aria-expanded', String(!keyP.hidden)); X.orrKeyIn = !keyP.hidden; st.ob = null; placeLabels(); });
-        keyP = h('div', 'orr-kin pf-lg'); keyP.id = 'isx-orr-key-in'; keyP.hidden = X.orrKeyIn === undefined ? !(W >= 1180 && H >= 600 && !compact) : !X.orrKeyIn; keyB.setAttribute('aria-expanded', String(!keyP.hidden)); keyP.setAttribute('role', 'group'); keyP.setAttribute('aria-label', 'The key'); rc.append(keyB); stage.append(keyP);
+        keyP = h('div', 'orr-kin pf-lg'); keyP.id = 'isx-orr-key-in'; keyP.hidden = X.orrKeyIn === undefined ? true : !X.orrKeyIn;   /* OR9: the key opens on demand at every size (it was open on a wide stage from the start) */ keyB.setAttribute('aria-expanded', String(!keyP.hidden)); keyP.setAttribute('role', 'group'); keyP.setAttribute('aria-label', 'The key'); rc.append(keyB); stage.append(keyP);
         if (R.table) rc.append(R.table); }   /* the page's own “View as table” stands in the stage's row (profit.js takes it home before the board is redrawn) */
       if (rc && pm) rc.append(pm);
       if (full) {
@@ -205,7 +205,7 @@
       /* OR8: the stage (v2/stage8.js) lays itself out round the picture; then the picture's box is known */
       const stepTo = to => { const l = st.lastInt; render(to); if (Math.round(to) !== l) { cross(l, Math.round(to)); st.lastInt = Math.round(to); } };
       const SG = stg ? X.orrStage({ h, el, OD, st, L, Vw, Sx, Sy, W, H, full, ph, compact, wrap, stage, rc, svg, defs, gV, gT, gSun, gid, list, isoB, at, f1, bn, clamp, lerp, reduce, R, STEPS, maxY,
-        counters, info, slider, play, track, deepb, keyP, keyB, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y),
+        counters, info, slider, play, track, deepb, keyP, keyB, marksKey, ringKey, hl, render: v => render(v), go: (y, ms) => go(y, ms), stepTo, setStep: s => setStep(s), applyView: () => applyView(), narrate: y => narrate(y), settle: () => done(),   /* OR9: the stage's own glides end as the slider's do: the address and the page follow the year */
         stepCopy: s => stepCopy(s), unpick: () => unpick(), evAt, ownAt, live: () => live(), stopYear: () => { cancelAnimationFrame(st.raf); st.raf = 0; },
         pbox: () => ({ ox: OX, oy: OY, wp: WP, hl: HL }), posAt: (iso, yf) => { const q = isoB(iso); return q ? place(q, L, yf, tension(yf)) : [L.cx, L.cy]; } }) : null;
       if (SG) { const b = SG.box(); OX = b.ox; OY = b.oy; WP = b.wp; HL = b.hl; ph = WP < HL; if (!compact && HL < 250) MG = 28;   /* a low box: the rings take more of it, so that each ring's name has its own line */ if (!compact && HL < 250 && keyP) SG.fillKey(keyP); if (!compact && HL < 250) ppIn = true;   /* a low box has no room under the two bodies: step 1's charts stand in the narrator */   /* the picture is laid out upright only when its own box is */ relay(null); steps = SG.chs; }
@@ -249,7 +249,7 @@
           q.vis = !(q.b.k === 'g' && !q.d);
         });
         /* the streams: BEA income by host country, drawn inward to the US sun */
-        sPaths.forEach(q => { const v = SG ? SG.inc(q, yf) : at(q.d.inc, yf), p = q.p; if (!v || v <= 0 || (q.b.sys === 'cn' && u > .5) || q.core || (SG && st.layer !== 'earn')) { q.st.style.opacity = 0; q.pu.style.display = 'none'; return; } const w = clamp(.5 + Math.sqrt(v / 1000) * .38, .5, 6), mx = (p[0] + usP[0]) / 2, my = (p[1] + usP[1]) / 2 + (L.ph ? 0 : 10);
+        sPaths.forEach(q => { const v = SG ? SG.inc(q, yf) : at(q.d.inc, yf), p = q.p; if (!v || v <= 0 || (q.b.sys === 'cn' && u > .5) || q.core || (SG && !SG.streamOn(q))) { q.st.style.opacity = 0; q.pu.style.display = 'none'; return; }   /* OR9: on the stage a line is drawn when the story names it (stage8.js streamOn) */ const w = clamp(.5 + Math.sqrt(v / 1000) * .38, .5, 6), mx = (p[0] + usP[0]) / 2, my = (p[1] + usP[1]) / 2 + (L.ph ? 0 : 10);
           q.st.setAttribute('d', `M${p[0].toFixed(1)} ${p[1].toFixed(1)}Q${mx.toFixed(1)} ${(my + (p[1] < usP[1] ? 12 : -12)).toFixed(1)} ${usP[0].toFixed(1)} ${usP[1].toFixed(1)}`); q.st.setAttribute('stroke-width', w.toFixed(2)); q.st.style.opacity = ''; q.st.dataset.on = '1';
           if (story && (stg || e >= .985) && !(stg && st.puTop && !st.puTop.has(q.id))) { const len = Math.max(20, Math.hypot(p[0] - usP[0], p[1] - usP[1]) * 1.03); q.pu.setAttribute('d', q.st.getAttribute('d')); q.pu.setAttribute('stroke-width', Math.max(1.2, w).toFixed(2)); q.pu.style.strokeDasharray = (7 / len).toFixed(4) + ' ' + (93 / len).toFixed(4); q.pu.style.setProperty('--per', (-100 / len).toFixed(4)); q.pu.style.display = ''; } else q.pu.style.display = 'none'; });
         /* OR7: China's own institutions as arcs round China, once the two systems have parted (u > 0); each ends at its name */
@@ -257,7 +257,7 @@
           /* each arc starts just past the top and runs down one side of China to its name: by turns right and left, so the names stand in two short columns that no arc crosses */
           const R0 = compact ? (stg ? Math.max(rC * .9 + 6, 17) : Math.max(rC * .9 + 5, 13)) : Math.max(rC * .9 + 10, 30), stp = compact ? (stg ? 6.6 : 3.2) : 8, T0 = .22;
           const Ca = stg ? chP : Cc;   /* OR8: the arcs stand round China where it is, from each institution's date */
-          arcs.forEach(A => { const on = (stg || u > 0) && yr0 >= A.a.year, r = R0 + A.i * stp, rt = A.i % 2 === 0, yo = compact ? (stg ? 9 + Math.floor(A.i / 2) * 13.5 : r * .3) : 15 + Math.floor(A.i / 2) * 13.5, be = Math.asin(Math.min(.98, yo / r)), a0 = -Math.PI / 2 + (rt ? -T0 : T0), a1 = rt ? -be : -Math.PI + be, pt = a => [Ca[0] + r * Math.cos(a), Ca[1] + r * Math.sin(a)], s0 = pt(a0), s1 = pt(a1), d = `M${s0[0].toFixed(1)} ${s0[1].toFixed(1)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${rt ? 1 : 0} ${s1[0].toFixed(1)} ${s1[1].toFixed(1)}`;
+          arcs.forEach(A => { const on = (stg || u > 0) && yr0 >= A.a.year && (!SG || SG.arcOk(A.a)), r = R0 + A.i * stp, rt = A.i % 2 === 0, yo = compact ? (stg ? 9 + Math.floor(A.i / 2) * 13.5 : r * .3) : 15 + Math.floor(A.i / 2) * 13.5, be = Math.asin(Math.min(.98, yo / r)), a0 = -Math.PI / 2 + (rt ? -T0 : T0), a1 = rt ? -be : -Math.PI + be, pt = a => [Ca[0] + r * Math.cos(a), Ca[1] + r * Math.sin(a)], s0 = pt(a0), s1 = pt(a1), d = `M${s0[0].toFixed(1)} ${s0[1].toFixed(1)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${rt ? 1 : 0} ${s1[0].toFixed(1)} ${s1[1].toFixed(1)}`;
             A.p.setAttribute('d', d); A.hp.setAttribute('d', d); A.g.style.opacity = on ? (stg ? 1 : u.toFixed(3)) : 0; A.g.style.pointerEvents = on && (stg || u > .9) ? '' : 'none'; A.g.setAttribute('tabindex', on && (stg || u > .9) ? 0 : -1); A.on = on && (stg || u > .6); A.end = s1; A.rt = rt; });
           st.ah = [Ca[0], Ca[1] + Math.max(14, rC * .72) + (stg ? 12 + Math.min(arcs.filter(A => A.on).length, 8) * (compact ? 6.6 : 8) : 22)];
           if (stg && !compact) st.ah[1] = Math.min(st.ah[1], OY + HL - 15 - 9);   /* the heading stays inside the rim */
@@ -318,8 +318,10 @@
         const cand = list.map(q => { let pr = -1; if (!q.p) return null;
           /* OR8: a body at the end of a flow line carries the line's figure after its name, and is always named */
           const sf = st.sfx ? st.sfx.get(q.id) : null, txt = q.vt + (sf || ''); if (q.txt !== txt) { q.tx.textContent = txt; q.txt = txt; q.tw = 0; } q.tx.classList.toggle('fx', !!sf);
-          if (q === sel) pr = 4e9; else if (q.core) pr = 3e9; else if (sf && !st.step) pr = 2.5e9 + (q.mass || 0); else if (nb.has(q)) pr = 2e9 + (q.mass || 0);
-          else if (!compact) pr = 1e9 + (q.mass || 0); else if (q.mass != null && q.mass >= LBL_MIN / (k * k)) pr = 1e9 + q.mass;
+          const nm = SG && !st.step ? SG.nameMode(q) : null;   /* OR9: on the stage a name shows when the story has introduced it ('lit', 'faint'), with every name on request ('all') */
+          if (q === sel) pr = 4e9; else if (nm === 'off' && !(sf && !st.step) && !nb.has(q)) pr = -1; else if (q.core) pr = 3e9; else if (sf && !st.step) pr = 2.5e9 + (q.mass || 0); else if (nb.has(q)) pr = 2e9 + (q.mass || 0);
+          else if (nm === 'faint' || nm === 'all') pr = 1e9 + (q.mass || 0); else if (!compact && !SG) pr = 1e9 + (q.mass || 0); else if (compact && q.mass != null && q.mass >= LBL_MIN / (k * k)) pr = 1e9 + q.mass;
+          q.tx.classList.toggle('ctx', nm === 'faint' && !sf && q !== sel);
           return pr < 0 ? null : [pr, q]; }).filter(Boolean).sort((a, b) => b[0] - a[0]);
         const on = new Set();
         cand.forEach(([pr, q]) => {
@@ -428,11 +430,11 @@
       function buildPP() { const avail = OY + HL - L.cy - Math.max(34, isoB('USA').r * 1.25 + 12) - 6, plotH = ppIn ? (stg && !compact ? 44 : 84) : clamp(Math.round(avail - 96), 44, 92); st.pp = h('div', 'orr-pp' + (ppIn ? ' in' : '')); st.pp.append(chart('us', plotH), chart('cn', plotH)); if (!ppIn) { stage.append(st.pp); return; }
         /* a narrow stage: the charts stand in the card under the picture, and the picture carries the two end figures by their bodies */
         const D = OD.steps.pp, last = v => { let j = v.length - 1; while (v[j] == null) j--; return [D.years[j], v[j]]; }, u = last(D.us), c = last(D.cn);
-        st.ppL = [['USA', 'US firms: ' + f1(u[1]) + '% of the profits', 'of the world’s 2,000 largest listed firms · ' + u[0] + ' list'], ['CHN', 'China: ' + f1(c[1]) + '% of the world’s', 'manufacturing value added · ' + c[0]]].map(([iso, a, b]) => { const tx = el('text', { class: 'orr-fl' }, a), t2 = el('text', { class: 'orr-fl fg sur' }, b); gT.append(tx, t2); flowT.push(tx, t2); return { iso, t: tx, t2 }; }); }
+        st.ppL = [['USA', 'US firms: ' + f1(u[1]) + '% of the profits', 'of the world’s 2,000 largest listed firms · ' + u[0] + ' list'], ['CHN', 'China: ' + f1(c[1]) + '% of the world’s', 'manufacturing value added · ' + c[0]]].map(([iso, a, b]) => { const k = iso === 'USA' ? ' ppl u' : ' ppl c', tx = el('text', { class: 'orr-fl' + k }, a), t2 = el('text', { class: 'orr-fl fg sur' + k }, b);   /* OR9: the US's words and China's, each with its beat */ gT.append(tx, t2); flowT.push(tx, t2); return { iso, t: tx, t2 }; }); }
       /* step 2: surpluses run into one named point, never into the United States; one line runs from it into the United States; goods and dollars between the poles are dashed and illustrative */
       function buildCL() {
         const C = OD.steps.cl, two = L.ph || (WP < 1150 && !(compact && HL < 240));   /* two lines where the picture is narrow; one where it is low (a phone held sideways) */   /* a narrow stage: the name and the figure on two lines */
-        const mk = (cls, label, fig, from, to, v) => { const pa = el('path', { class: 'fl ' + cls, fill: 'none', 'data-from': from, 'data-to': to }), pu = v == null ? null : el('path', { class: 'fpu', fill: 'none', pathLength: 1 }), tx = el('text', { class: 'orr-fl ' + cls }, fig && !two ? label + ' · ' + fig : label), t2 = fig && two ? el('text', { class: 'orr-fl fg ' + cls }, fig) : null; gFlow.append(pa); if (pu) gFlow.append(pu); gT.append(tx); flowT.push(tx); if (t2) { gT.append(t2); flowT.push(t2); } return { p: pa, pu, t: tx, t2, from, to, v, cls }; };
+        const mk = (cls, label, fig, from, to, v) => { const pa = el('path', { class: 'fl ' + cls, fill: 'none', 'data-from': from, 'data-to': to }), pu = v == null ? null : el('path', { class: 'fpu ' + cls, fill: 'none', pathLength: 1, 'data-from': from }), tx = el('text', { class: 'orr-fl ' + cls, 'data-from': from }, fig && !two ? label + ' · ' + fig : label), t2 = fig && two ? el('text', { class: 'orr-fl fg ' + cls, 'data-from': from }, fig) : null;   /* OR9: each line, its pulse and its words say where they start, so the stage can show them one by one */ gFlow.append(pa); if (pu) gFlow.append(pu); gT.append(tx); flowT.push(tx); if (t2) { gT.append(t2); flowT.push(t2); } return { p: pa, pu, t: tx, t2, from, to, v, cls }; };
         st.flows = C.into.map(([iso, v], i) => mk('sur', i ? (isoB(iso) || { name: iso }).name : 'China’s surplus', bn(v), iso, 'clearing', v));
         st.flows.push(mk('def', 'finances the US deficit', bn(C.us), 'clearing', 'USA', Math.abs(C.us)), mk('ill g', L.ph ? '↑ Goods*' : '← Goods*', null, 'CHN', 'USA', null), mk('ill dl', L.ph ? 'Dollars* ↓' : 'Dollars* →', null, 'USA', 'CHN', null));
         const g = el('g', { class: 'fp' }); g.append(el('circle', { class: 'o', r: 9 }), el('circle', { class: 'i', r: 3.2 })); gFlow.append(g); st.pt = g; st.ptT = el('text', { class: 'orr-fl pt' }, 'Multilateral clearing*'); gT.append(st.ptT); flowT.push(st.ptT);
@@ -576,6 +578,7 @@
       if (full) { keyShow(X.orrKey === undefined ? compact : X.orrKey);   /* a phone's first full screen opens the key once; after that it stays as the visitor left it */ if (!stg) { if (!hyp) ringKey(keyP, true, hl, mode === 'rings'); marksKey(keyP, mode === 'rings' ? 'rng' : mode === 'story' ? 'orr' : mode, 0, compact); } }
       /* the opening (spec §7): once per visit; Skip or Esc */
       function opening() {
+        if (SG) return SG.opening();   /* OR9: the stage's introduction (stage8.js) replaces the rings' opening, and waits for the tab's entry screen */
         if (mode !== 'story' || X.orrOpened || full) return false; X.orrOpened = true;
         if (reduce()) { wrap.classList.add('fadein'); setTimeout(() => wrap.classList.remove('fadein'), 400); return false; }
         const caps = ['the core', 'tools, chips and finance', 'the assembly line', 'energy and minerals', 'role not collected'], cap = h('div', 'orr-cap'); cap.setAttribute('aria-hidden', 'true'); stage.append(cap);

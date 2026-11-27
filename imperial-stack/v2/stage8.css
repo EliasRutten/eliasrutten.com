@@ -314,3 +314,73 @@
 #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.bk, #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.z { flex: none; width: 8px; height: 8px; border-radius: 0; border: 0; transform: rotate(45deg); margin: 4px 9px 0; }   /* the key draws the diamonds the picture draws */
 #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.bk { background: #D9A441; } #isx-root .orr.stg :is(.orr-kin, .orr-key) .olg i.z { background: #8FD3CF; }
 #isx-root .orr.stg.port .orr-sc { max-width: calc(100% - 214px); }   /* a phone upright: the step's heading keeps clear of the buttons */
+
+/* ---------- OR9 · the pacing (26 Nov 2026; handoff claude/handoffs/orrery-stage-or8-review-26-nov.md) ----------
+   The stage builds one idea at a time. stage8.js puts the story's flags on the wrapper (b-us, b-r0 … b-r4, b-cn, b-rim …): a part of the
+   picture shows from the beat whose sentence names it. While the film plays (.calm) the tools wait; they come back when the visitor takes over. */
+#isx-root .orr.stg .orr-svg :is(.orr-sun, .orr-rings ellipse, .orr-bodies .ob, .orr-rimg, .orr-rl, .orr-lt) { transition: opacity .45s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg:not(.b-us) .orr-svg :is(.orr-sun.u, .ob.ctr.us) { opacity: 0; }
+#isx-root .orr.stg:not(.b-cn) .orr-svg :is(.orr-sun.c, .ob.ctr.cn) { opacity: 0 !important; pointer-events: none; }
+#isx-root .orr.stg:not(.b-r0) .orr-svg :is(.orr-rings ellipse[data-k="0"], .ob[data-r="0"]:not(.ctr)),
+#isx-root .orr.stg:not(.b-r1) .orr-svg :is(.orr-rings ellipse[data-k="1"], .ob[data-r="1"]:not(.ctr)),
+#isx-root .orr.stg:not(.b-r2) .orr-svg :is(.orr-rings ellipse[data-k="2"], .ob[data-r="2"]:not(.ctr)),
+#isx-root .orr.stg:not(.b-r3) .orr-svg :is(.orr-rings ellipse[data-k="3"], .ob[data-r="3"]:not(.ctr)),
+#isx-root .orr.stg:not(.b-r4) .orr-svg :is(.orr-rings ellipse[data-k="4"], .ob[data-r="4"]:not(.ctr)) { opacity: 0 !important; pointer-events: none; }
+#isx-root .orr.stg:not(.b-rn0) .orr-svg .orr-rl[data-k="0"], #isx-root .orr.stg:not(.b-rn1) .orr-svg .orr-rl[data-k="1"], #isx-root .orr.stg:not(.b-rn2) .orr-svg .orr-rl[data-k="2"],
+#isx-root .orr.stg:not(.b-rn3) .orr-svg .orr-rl[data-k="3"], #isx-root .orr.stg:not(.b-rn4) .orr-svg .orr-rl[data-k="4"] { opacity: 0 !important; }
+#isx-root .orr.stg:not(.b-rim) .orr-svg .orr-rimg { opacity: 0; pointer-events: none; }
+#isx-root .orr.stg:not(.b-lane) .orr-svg .orr-lt { opacity: 0 !important; }
+#isx-root .orr-svg .orr-rimt.rf { animation: orrbt .6s cubic-bezier(.2, .8, .2, 1) both; }
+#isx-root .orr.stg.b-rimL .orr-svg .orr-rim { stroke: #ffd27a; stroke-opacity: .9; }   /* chapter 5's last beat: the rim still holds both */
+#isx-root .orr.stg .orr-svg .ol.ctx { fill: #7d8b97; opacity: 1; }   /* the largest economies, named as context once their ring is named (5.7:1 on the night sky) */
+#isx-root .orr.stg .orr-svg .ol.ctx:hover { fill: #b9c8d4; }
+/* the two steps: each part from the beat that names it */
+#isx-root .orr.stg[data-step="pp"]:not(.b-ppU) .orr-ch.u, #isx-root .orr.stg[data-step="pp"]:not(.b-ppC) .orr-ch.c { opacity: 0; visibility: hidden; }
+#isx-root .orr.stg[data-step="pp"] .orr-ch { transition: opacity .45s cubic-bezier(.2, .8, .2, 1); }
+#isx-root .orr.stg[data-step="cl"]:not(.b-clP) .orr-svg :is(.orr-flows .fp, text.orr-fl.pt),
+#isx-root .orr.stg[data-step="cl"]:not(.b-clS) .orr-svg :is(.orr-flows .sur[data-from="CHN"], text.orr-fl.sur[data-from="CHN"]),
+#isx-root .orr.stg[data-step="cl"]:not(.b-clS2) .orr-svg :is(.orr-flows .sur:not([data-from="CHN"]), text.orr-fl.sur:not([data-from="CHN"])),
+#isx-root .orr.stg[data-step="pp"]:not(.b-ppUw) .orr-svg text.ppl.u, #isx-root .orr.stg[data-step="pp"]:not(.b-ppCw) .orr-svg text.ppl.c,   /* a phone: the picture repeats the chart's last figure a moment after the chart */
+#isx-root .orr.stg[data-step="cl"]:not(.b-clD) .orr-svg :is(.orr-flows .def, text.orr-fl.def),
+#isx-root .orr.stg[data-step="cl"]:not(.b-clI) .orr-svg :is(.orr-flows .ill, text.orr-fl.ill) { opacity: 0; }
+#isx-root .orr.stg[data-step="cl"] .orr-svg :is(.orr-flows > *, text.orr-fl) { transition: opacity .45s cubic-bezier(.2, .8, .2, 1); }
+
+/* the film plays: the tools wait (nothing is removed: each is back the moment the visitor pauses, picks a chapter, drags the years or presses Tab) */
+#isx-root .orr.stg :is(.orr-fsel, .orr-fcap, .orr-ct .orr-c, .orr-kyb, .orr-side, .orr-jump, .orr-tkey, .orr-fc1, .orr-kin) { transition: opacity .4s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+#isx-root .orr.stg.calm :is(.orr-fsel, .orr-fcap, .orr-ct .orr-c, .orr-kyb, .orr-side, .orr-jump, .orr-tkey, .orr-fc1, .orr-kin) { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .4s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .4s; }
+#isx-root .orr.stg.calm #isx-pf-table { display: none; }
+#isx-root .orr.stg.calm :is(.orr-evd, .orr-owd) i { visibility: hidden; }   /* the timeline keeps its years and its dots */
+#isx-root .orr.stg .orr-owd:not(.on) i { visibility: hidden; }   /* China's institutions are named on the timeline once the years have reached them */
+#isx-root .orr.stg :is(.orr-owd, .orr-evd):is(:hover, :focus-visible) i { visibility: visible; }
+#isx-root .orr.stg.intro .orr-skip { top: auto; right: auto; left: 50%; bottom: calc(var(--dock) + 14px); transform: translateX(-50%); z-index: 6; }
+
+/* the narrator: one sentence at a time; “Read” (a phone: “More ↓”) opens the chapter in full */
+#isx-root .orr.stg .orr-nar { position: relative; }
+#isx-root .orr.stg .orr-nar:not(.open) .nb { grid-template-columns: minmax(0, 1fr); }
+#isx-root .orr.stg .orr-nar:not(.open) :is(.nn, .full) { display: none; }
+#isx-root .orr.stg .orr-nar .nz .bt { margin: 3px 0 0; max-width: 76ch; padding-right: 92px; font: 400 17px/1.4 var(--sans); color: #e8eff4; text-wrap: pretty; }
+#isx-root .orr.stg .orr-nar .nz .bt.in { animation: orrbt .45s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes orrbt { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+#isx-root .orr.stg .orr-nar.open .nz .bt { display: none; }
+#isx-root .orr.stg .orr-nar.open .nb { height: auto; max-height: min(46vh, 420px); overflow-y: auto; overscroll-behavior: contain; }
+#isx-root .orr.stg .orr-nar .full p.sum { margin: 2px 0 6px; font: 400 15px/1.45 var(--sans); color: #e8eff4; }
+#isx-root .orr.stg .orr-nar .full p.epi { margin: 0 0 6px; font: 400 13px/1.4 var(--sans); color: #ffd27a; }
+#isx-root .orr.stg .orr-nexp { display: inline-flex; align-items: center; position: absolute; z-index: 2; right: 22px; bottom: 12px; height: 30px; padding: 0 14px; border-radius: 999px; background: rgba(120, 190, 255, .1); border: 1px solid rgba(143, 196, 240, .6); color: #dbeaf6; font: 600 11.5px/1 var(--sans); cursor: pointer; }
+#isx-root .orr.stg .orr-nexp:hover { background: rgba(120, 190, 255, .2); color: #fff; }
+#isx-root .orr.stg .orr-more { right: auto; left: 16px; }
+#isx-root .orr.stg.mid .orr-nar .nz .bt { font-size: 16px; }
+#isx-root .orr.stg.port .orr-nar .nz .bt { padding-right: 0; padding-bottom: 34px; font-size: 15px; }
+#isx-root .orr.stg.port .orr-nexp { right: 14px; bottom: 8px; }
+#isx-root .orr.stg.land .orr-nar .nz .bt { margin: 0; padding-right: 0; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#isx-root .orr.stg.land .orr-nexp { position: static; order: 3; height: 26px; padding: 0 10px; font-size: 11px; }
+#isx-root .orr.stg.land .orr-nar.open .nz .full { display: block; white-space: normal; }
+#isx-root .orr-tc.in { animation-duration: var(--tcd, 2.2s); }
+@media (prefers-reduced-motion: reduce) { #isx-root .orr.stg .orr-nar .nz .bt.in, #isx-root .orr-svg .orr-rimt.rf { animation: none; } #isx-root .orr.stg .orr-svg :is(.orr-sun, .orr-rings ellipse, .orr-bodies .ob, .orr-rimg, .orr-rl, .orr-lt) { transition: none; } }
+#isx-root .orr-alln { display: block; margin: 8px 0 2px; padding: 7px 12px; border-radius: 999px; background: rgba(8, 13, 19, .92); border: 1px solid #33475a; color: #dbeaf6; font: 500 11.5px/1.2 var(--sans); cursor: pointer; }
+#isx-root .orr-alln[aria-pressed="true"] { border-color: #ffd27a; color: #ffd27a; } #isx-root .orr-alln:focus-visible { outline: 2px solid #ffd27a; outline-offset: 2px; }
+/* step 1 on a stage whose charts stand beside the narration (a middle-sized or low stage): they are the step's picture, so they show without “Read” */
+#isx-root .orr.stg .orr-nar[data-step="pp"]:not(.open) .nn:has(.orr-pp) { display: block; }
+#isx-root .orr.stg.mid .orr-nar[data-step="pp"]:not(.open) .nb:has(.nn .orr-pp) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+#isx-root .orr.stg .orr-nar[data-step="pp"]:not(.open) .nb:has(.nn .orr-pp) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+#isx-root .orr.stg .orr-nar .nz .bt.all { font-size: 15px; line-height: 1.42; }   /* a chapter reached by the years: its sentences together */
+#isx-root .orr.stg.mid .orr-nar .nz .bt.all { font-size: 14px; } #isx-root .orr.stg.port .orr-nar .nz .bt.all { font-size: 14px; }
