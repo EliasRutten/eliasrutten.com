@@ -91,7 +91,7 @@
     { id: 'state', t: 'The state as shareholder', by: 'type', fill: function () { return { f: { ht: ['state'] } }; } },
     { id: 'chokepoints', t: 'The chokepoints', fill: function () { return { f: { L: ['4'], fc: ['Germany', 'Japan', 'Netherlands', 'United States'] } }; } },
     { id: 'ring', t: 'Firms holding firms', lens: 1 }, { id: 'votes', t: 'Stake against votes', lens: 1 }, { id: 'losses', t: 'Who carries the losses', lens: 1 },
-    { id: 'undisclosed', t: 'What no one discloses', lens: 1 }, { id: 'earned', t: 'Where it is earned, booked and owned', lens: 1, by: 'country' },
+    { id: 'undisclosed', t: 'Profit with no named owner', lens: 1 }, { id: 'earned', t: 'Where it is earned, booked and owned', lens: 1, by: 'country' },
     { id: 'debt', t: 'Balance-sheet engineers', lens: 1, part: 'debt' }];
   var PBY = {}; PRE.forEach(function (P, i) { P.i = i; PBY[P.id] = P; });
   function fillOf(P) { var x = P && P.fill ? P.fill() : {}, o = { cmp: !!x.cmp, f: blank(), g: blank() }; KEYS.forEach(function (k) { if (x.f && x.f[k]) o.f[k] = x.f[k].slice(); if (x.g && x.g[k]) o.g[k] = x.g[k].slice(); }); return o; }
