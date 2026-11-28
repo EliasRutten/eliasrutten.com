@@ -37,7 +37,6 @@
   font-family: "Saira", system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
 .er-about h2 { margin: 0 0 10px; font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 600; font-size: 24px; letter-spacing: .05em; text-transform: uppercase; color: #e4ebf1; }
 .er-about p { margin: 0 0 12px; }
-.er-about .priv { margin: 0 0 12px; font-size: 13px; color: #7f91a0; }
 .er-about .by { font-family: "Martian Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7f91a0; }
 .er-about .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .er-about a.b { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; text-decoration: none; font-weight: 500; font-size: 14.5px; }
@@ -2145,6 +2144,7 @@ button.res:hover { transform: none; box-shadow: none; }
 .intro6 .in-thesis .ssl { color: #fff; }
 .intro6 .in-thesis em { font-style: normal; font-family: var(--mono); font-weight: 400; font-size: 9.5px; letter-spacing: .1em; background: rgba(0, 0, 0, .25); border-radius: 999px; padding: 2px 8px; }
 .intro6 .in-go:focus-visible, .intro6 .in-skip:focus-visible, .intro6 .in-thesis:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.intro6 .in-count { margin: 10px auto 0; max-width: 560px; font-family: var(--sans); font-size: 12px; line-height: 1.5; color: var(--ink3); }
 .intro6 .in-foot { margin: 18px 0 0; font-family: var(--mono); font-size: 10.5px; line-height: 1.7; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); animation: isx-rise .9s ease both 2.6s; }
 .intro6 .in-skip { position: fixed; top: 14px; right: 16px; z-index: 2; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(6, 11, 17, .7); color: var(--ink2); font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; animation: isx-rise .8s ease both .6s; }
 .intro6 .in-skip:hover { color: var(--ink); border-color: #3a4f63; }
@@ -6512,6 +6512,7 @@ const INTRO_HTML = `
       <a class="in-thesis" href="https://eliasrutten.substack.com/p/its-war-but-no-one-sees-it" target="_blank" rel="noopener" title="A preliminary version of the thesis. The full thesis is coming soon.">${SSL}<span>Read the preliminary thesis</span></a>
     </div>
     <p class="in-foot">Work in progress · v.2.0 · data as of 5 Nov 2026 · By Elias Rutten<br>The ?, top left, brings you back here</p>
+    <p class="in-count" id="isx-count-note">This site uses privacy-friendly analytics, without cookies, to see which pages and tabs people open and roughly where visitors come from. I use it to understand what interests people and to improve the website.</p>
   </div>`;
 let introOnce = false, introEl = null, introBusy = false, introPrevFocus = null, introHtmlOv = '';
 
@@ -9650,7 +9651,6 @@ isxBooted = true; routeMute = false; ISXP.sync();
   <p class="by">By Elias Rutten · updated November 2026</p>
   <p>The imperial stack is an interactive by Elias Rutten, a political economist and investigative journalist based in Leiden, the Netherlands. It maps how US technology firms, the dollar system and the American state reinforce one another: how platform rents become hardware orders from US allies, how their surpluses return to Wall Street as purchases of US shares rather than reserves, how Washington engineers demand for its own debt, and how the AI build-out is financed, down to the pension savings behind it.</p>
   <p>It is built around Pax Silica, the US-led coalition on AI and semiconductor supply chains. Fourteen scenarios show the stack being switched on or off, among them Starlink over Crimea, Huawei’s fall under US export controls, the Nexperia affair, Russia’s immobilised reserves, Microsoft’s cut-off of Nayara Energy and Tether’s stablecoins in Kenya. Every figure is dated and sourced; “How we count” explains the methods. Unless a named author is credited, the readings on this map are the author’s.</p>
-  <p class="priv" id="analytics-note">This site counts visits without cookies and without personal data.</p>
   <div class="acts"><a class="b b1" href="https://eliasrutten.substack.com">Read the essays on Substack</a><a class="b b2" href="/">More work by Elias Rutten</a></div>
 </aside>
 

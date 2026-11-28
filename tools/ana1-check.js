@@ -23,6 +23,7 @@ const home = homeArg || (base.startsWith('http://127.0.0.1:8731/') ? 'http://127
 const only = (args.find(a => a.startsWith('--only=')) || '').slice(7);
 const stub = require('path').join(__dirname, 'umami-stub.js');
 const ID = '5cf7242b-231c-40e9-90e5-f37023bf82ec';
+const NOTE = 'This site uses privacy-friendly analytics, without cookies, to see which pages and tabs people open and roughly where visitors come from. I use it to understand what interests people and to improve the website.';
 const TABS = ['circuit', 'simulator', 'profit', 'imperial-arm', 'elite-network'];
 const TAB_BTN = { 'isx-v-map': 'circuit', 'isx-v-fin': 'simulator', 'isx-v-profit': 'profit', 'isx-v-story': 'imperial-arm', 'isx-v-arm': 'elite-network' };
 let fails = 0;
@@ -109,6 +110,11 @@ const clickTabs = async p => {
       return { r, grew: ISX.ana.log.length - n0, events: ISX.ana.events };
     });
     ok(`E · ${tag}: an unlisted event, an unlisted property and a value that is not a listed tab are all refused`, E.r.every(x => x === false) && E.grew === 0, E);
+    /* the notice lives in "About this map" (the entry screen the ? menu replays) */
+    await p.evaluate(() => { const b = document.getElementById('isx-about'); if (b) b.click(); });
+    await p.waitForTimeout(600);
+    const AB = await p.evaluate(() => { const n = document.getElementById('isx-count-note'), r = n && n.getBoundingClientRect(); return { text: n ? n.textContent.trim() : null, shown: !!(r && r.width > 0 && r.height > 0), inIntro: !!(n && n.closest('#isx-intro')) }; });
+    ok(`A · ${tag}: "About this map" carries the analytics notice, visible, and nowhere else in the app`, AB.text === NOTE && AB.shown && AB.inIntro, AB);
     ok(`E · ${tag}: the list holds only \`tab\` in ANA1`, E.events.join() === 'tab', E.events);
     await p._c.close();
 
@@ -151,7 +157,7 @@ const clickTabs = async p => {
         });
         if (mode === 'answer') {
           ok(`${tag}: one tracker tag with the website ID, defer, do-not-track, no hash, the two domains`, H.count === 1 && H.id === ID && H.src === 'https://cloud.umami.is/script.js' && H.defer === true && H.dnt === 'true' && H.hash === 'true' && H.domains === 'eliasrutten.com,www.eliasrutten.com', H);
-          ok(`${tag}: the notice is on the page and visible`, H.note === 'This site counts visits without cookies and without personal data.' && H.noteShown, H);
+          ok(`${tag}: the notice is on the page and visible`, H.note === NOTE && H.noteShown, H);
           ok(`${tag}: no sideways overflow`, !H.overflow, H);
         }
         ok(`${tag}: the page loads with the counter ${mode === 'block' ? 'blocked' : 'answering'}: it has its heading and no error`, H.h1 && !errs.length && (mode === 'block' ? H.umami === 'undefined' : H.umami === 'object'), { H, errs });
