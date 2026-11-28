@@ -4,6 +4,10 @@
    address: the page's address. Default http://127.0.0.1:8731/imperial-stack/ (needs `python3 -m http.server 8731` at the repo root),
             or a build: file:///tmp/art.html (the single-file build from tools/artifact-build.py), or the artifact's own address.
    --allow  hosts the page may load from besides its own (the multi-file artifact loads the globe library from a CDN, for example).
+            Always allowed: the visit counter's host, cloud.umami.is (and api-gateway.umami.dev, where its Cloud posts may go; the second name is
+            not confirmed: the build sandbox cannot reach Umami). Nothing else.
+   --live-tracker  let the page reach Umami for real (the default answers the counter's script and its /api/send from tools/umami-stub.js, so a
+            check never sends visits to the live dashboard and runs where Umami cannot be reached).
    --serve  <url>=<file>: answer that address from a local file (where the CDN cannot be reached, as in the build sandbox; the file must be the
             same release the page pins by hash, so the integrity check still runs). Repeatable.
    Runs at 1440 × 900 and at 390 × 844 (touch). For each size:
@@ -19,7 +23,13 @@ const { chromium } = require('playwright');
 const args = process.argv.slice(2);
 const base = args.find(a => /^(https?|file):/.test(a)) || 'http://127.0.0.1:8731/imperial-stack/';
 const opt = k => { const a = args.find(x => x.startsWith('--' + k + '=')); return a ? a.slice(k.length + 3) : ''; };
-const allow = opt('allow').split(',').filter(Boolean);
+const COUNTER = ['cloud.umami.is', 'api-gateway.umami.dev'];
+const allow = opt('allow').split(',').filter(Boolean).concat(COUNTER);
+const live = args.includes('--live-tracker');
+const stub = require('path').join(__dirname, 'umami-stub.js');
+const EVENT_NAMES = ['tab', 'story_start', 'story_step', 'story_end', 'explore_start', 'ask_bmc_click', 'ask_substack_click', 'ask_view', 'skin_change', 'sound_on'];
+const PROP_KEYS = ['name', 'step', 'skin', 'slot', 'v'];
+const sent = [];   /* every event the page handed to the counter, from its posts to /api/send */
 const only = opt('only');
 const serve = args.filter(x => x.startsWith('--serve=')).map(x => x.slice(8).split(/=(.+)/).slice(0, 2));
 const shots = opt('shots');
@@ -42,6 +52,10 @@ const url = hash => base.replace(/#.*$/, '') + hash;
       const c = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, hasTouch: touch, isMobile: touch });
       if (quiet) await c.addInitScript(() => { try { ['isx-tips-globe', 'isx-tips-sim', 'isx-first', 'isx-insights', 'isx-tour', 'isx-simtour'].forEach(k => localStorage.setItem(k, 'off')); localStorage.setItem('isx-intro-off', '1'); } catch (e) {} });
       for (const [u, f] of serve) await c.route(u, r => r.fulfill({ path: f, contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' } }));
+      if (!live) {
+        await c.route('https://cloud.umami.is/script.js', r => r.fulfill({ path: stub, contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' } }));
+        await c.route('https://cloud.umami.is/api/send', r => { try { const j = JSON.parse(r.request().postData() || '{}'); sent.push(j.payload || {}); } catch (e) { sent.push({ bad: true }); } r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }); });
+      }
       const p = await c.newPage(); p._c = c;
       p.on('pageerror', e => errs.push(hash + ' · ' + String(e).slice(0, 200)));
       p.on('console', m => { if (m.type() === 'error' && !/favicon/i.test(m.text())) errs.push(hash + ' · console: ' + m.text().slice(0, 200)); });
@@ -117,6 +131,16 @@ const url = hash => base.replace(/#.*$/, '') + hash;
     const en = await p.waitForFunction(() => !!document.getElementById('isx-enter'), null, { timeout: 15000 }).then(() => true).catch(() => false);
     ok(`6 · ${tag}: a first visit to a tab (#profit) gets that tab's entry screen`, en);
     await close(p);
+
+    /* 7: the visit counter (round ANA1): the page sent `tab` events, and only what the lists allow. Not under --live-tracker (the posts are not seen). */
+    if (!live) {
+      const tabs7 = sent.filter(e => e.name === 'tab');
+      ok(`7 · ${tag}: the page sent \`tab\` events to the counter (stand-in)`, tabs7.length >= 6, { sent: sent.length });
+      const bad = sent.filter(e => e.bad || !EVENT_NAMES.includes(e.name) || Object.keys(e).some(k => !['website', 'name', 'data'].includes(k)) ||
+        Object.keys(e.data || {}).some(k => !PROP_KEYS.includes(k) || !/^[a-z0-9_-]{1,24}$/.test(String(e.data[k]))));
+      ok(`7 · ${tag}: every event carries a listed name and only listed properties (tab, step, skin, slot, v), short lowercase tokens: no personal data`, !bad.length, bad.slice(0, 4));
+      sent.length = 0;
+    }
 
     /* 2: over every page above */
     ok(`2 · ${tag}: nothing was requested from outside the page's own address${allow.length ? ' (allowed: ' + allow.join(', ') + ')' : ''}`, !outside.length, [...new Set(outside)].slice(0, 6));

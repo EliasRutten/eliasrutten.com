@@ -29,12 +29,15 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Visit counts: Umami Cloud, no cookies, no personal data (round ANA1, 28 Nov 2026). Deferred, so it never delays the page; the page works when it is blocked. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="5cf7242b-231c-40e9-90e5-f37023bf82ec" data-do-not-track="true" data-exclude-hash="true" data-domains="eliasrutten.com,www.eliasrutten.com"></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "@id": "https://eliasrutten.com/imperial-stack/#work", "name": "The Imperial Stack", "headline": "The Imperial Stack: how US tech, the dollar and the American state work as one machine", "description": "An interactive map of the imperial stack: how US tech firms, the dollar and the American state work as one machine. Follow the dollar loop on a live globe, see who finances the AI build-out, the firms that act for the state, and fourteen cases from Starlink to Nexperia. By Elias Rutten.", "url": "https://eliasrutten.com/imperial-stack/", "inLanguage": "en", "isAccessibleForFree": true, "dateModified": "2026-11-24", "image": "https://eliasrutten.com/assets/img/og-stack-2026-11.jpg", "genre": "Interactive data visualisation", "author": {"@type": "Person", "@id": "https://eliasrutten.com/#elias", "name": "Elias Rutten", "url": "https://eliasrutten.com/"}, "keywords": ["Pax Silica", "dollar hegemony", "profit dollar", "US current account", "Treasury QE", "AI capex", "private credit", "big tech", "Palantir", "Starlink", "stablecoins", "Tether", "weaponized interdependence", "Nexperia", "Huawei", "financial statecraft"], "isPartOf": {"@type": "WebSite", "@id": "https://eliasrutten.com/#site"}}</script>
 <style>
 .er-about { max-width: 760px; margin: 40px auto 56px; padding: 26px 26px 22px; border: 1px solid #1a2631; border-radius: 16px; background: #0a1016; color: #cfd9e2;
   font-family: "Saira", system-ui, sans-serif; font-size: 16px; line-height: 1.6; }
 .er-about h2 { margin: 0 0 10px; font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 600; font-size: 24px; letter-spacing: .05em; text-transform: uppercase; color: #e4ebf1; }
 .er-about p { margin: 0 0 12px; }
+.er-about .priv { margin: 0 0 12px; font-size: 13px; color: #7f91a0; }
 .er-about .by { font-family: "Martian Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7f91a0; }
 .er-about .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .er-about a.b { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; text-decoration: none; font-weight: 500; font-size: 14.5px; }
@@ -7053,11 +7056,9 @@ function stGet(k, s) { try { return (s ? sessionStorage : localStorage).getItem(
 function stSet(k, v, s) { try { if (v == null) (s ? sessionStorage : localStorage).removeItem(k); else (s ? sessionStorage : localStorage).setItem(k, v); } catch (e) { /* storage blocked: tips simply show again */ } }
 function tipsOff(k) { return stGet(TKEY[k]) === 'off' || stGet(TKEY[k], true) === 'skip'; }
 
-/* Analytics: off by design. The site loads no third-party scripts, so track() does nothing today.
-   To switch on Plausible (cookie-free): add Plausible’s deferred script tag to the head of this page
-   (data-domain "eliasrutten.com", src https://plausible.io/js/script.js), then add the event names below as goals;
-   counts appear in the Plausible dashboard, plausible.io/eliasrutten.com.
-   Events: Country {country}, Step {step}, Tips {set, how}, Full screen. */
+/* The old Plausible hook (v.1.10). Not connected, on purpose: since round ANA1 (28 Nov 2026) the page counts visits with Umami (cookie-free),
+   and its few events go through ISX.ana in v2/analytics.js (a named list, no personal data). This track() sends nothing, so Step, Country
+   and the rest never reach the tool and the free tier’s 10K a month is not spent on them. Wire one of them in only through ISX.ana. */
 function track(name, props) { try { if (typeof window.plausible === 'function') window.plausible(name, props ? { props } : undefined); } catch (e) { /* ignore */ } }
 
 /* ---------- globe boot: wait for the library, check WebGL, show a still if it cannot run ---------- */
@@ -7200,7 +7201,7 @@ function simTipsShow() { if (window.ISX && ISX.simtour) ISX.simtour.open(true);
    Nothing is written to the address bar until the reader switches tab, so a plain visit still opens on the entry screen.
    Phone step control: under the globe block, sticky while the card is read (phones only, CSS decides).
    Share: copies the link to the active tab; touch devices with the Web Share API open the system sheet instead.
-   No scripts, pixels or SDKs: X and LinkedIn are plain links the reader chooses to open. */
+   Sharing adds no scripts, pixels or SDKs: X and LinkedIn are plain links the reader chooses to open (the visit counter, ANA1, is separate). */
 const PHONE = () => { try { return matchMedia('(max-width: 760px)').matches; } catch (e) { return false; } };
 
 /* ---------- routes ---------- */
@@ -9641,6 +9642,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
 <script defer src="/imperial-stack/v2/profit.js"></script>
 <script defer src="/imperial-stack/v2/enter.js"></script>
 <script defer src="/imperial-stack/v2/welcome.js"></script>
+<script defer src="/imperial-stack/v2/analytics.js"></script>
 
 
 <aside class="er-about" aria-labelledby="er-about-h">
@@ -9648,6 +9650,7 @@ isxBooted = true; routeMute = false; ISXP.sync();
   <p class="by">By Elias Rutten · updated November 2026</p>
   <p>The imperial stack is an interactive by Elias Rutten, a political economist and investigative journalist based in Leiden, the Netherlands. It maps how US technology firms, the dollar system and the American state reinforce one another: how platform rents become hardware orders from US allies, how their surpluses return to Wall Street as purchases of US shares rather than reserves, how Washington engineers demand for its own debt, and how the AI build-out is financed, down to the pension savings behind it.</p>
   <p>It is built around Pax Silica, the US-led coalition on AI and semiconductor supply chains. Fourteen scenarios show the stack being switched on or off, among them Starlink over Crimea, Huawei’s fall under US export controls, the Nexperia affair, Russia’s immobilised reserves, Microsoft’s cut-off of Nayara Energy and Tether’s stablecoins in Kenya. Every figure is dated and sourced; “How we count” explains the methods. Unless a named author is credited, the readings on this map are the author’s.</p>
+  <p class="priv" id="analytics-note">This site counts visits without cookies and without personal data.</p>
   <div class="acts"><a class="b b1" href="https://eliasrutten.substack.com">Read the essays on Substack</a><a class="b b2" href="/">More work by Elias Rutten</a></div>
 </aside>
 
